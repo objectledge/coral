@@ -55,7 +55,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.25 2004-12-21 08:45:31 rafal Exp $
+ * @version $Id: GeneratorComponent.java,v 1.26 2004-12-21 10:48:43 rafal Exp $
  */
 public class GeneratorComponent
 {
@@ -523,14 +523,13 @@ public class GeneratorComponent
         }
     }
 
-    String resolvePrimaryParentClass(ResourceClass rc, ImportTool imports)
+    String resolvePrimaryParentClass(ResourceClass rc)
     {
         String handler = rc.getHandlerClassName();
         int pos = handler.indexOf("Handler");
         String impl = handler.substring(0, pos);
         int dot = impl.lastIndexOf('.');
         String unqImpl = impl.substring(dot+1);
-        imports.add(impl);
         return unqImpl;
     }
     
@@ -579,7 +578,7 @@ public class GeneratorComponent
         }
         else
         {
-            context.put("implParentClass", resolvePrimaryParentClass(rc, imports));
+            context.put("implParentClass", resolvePrimaryParentClass(rc));
         }
         
         context.put("imports", imports);
@@ -588,6 +587,7 @@ public class GeneratorComponent
         context.put("custom", custom);
         context.put("fields", fields);
         context.put("superFields", superFields);
+        context.put("string", new StringTool(100));
 
         String result = template.merge(context);
         return write(path, result);

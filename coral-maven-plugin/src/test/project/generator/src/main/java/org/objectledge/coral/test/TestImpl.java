@@ -151,8 +151,8 @@ public class TestImpl
      * @return a new Test instance.
      * @throws ValueRequiredException if one of the required attribues is undefined.
      */
-    public static Test createTest(CoralSession session, String name, Resource parent, 
-        int i2, String s2)
+    public static Test createTest(CoralSession session, String name, Resource parent, int i2,
+        String s2)
         throws ValueRequiredException
     {
         try

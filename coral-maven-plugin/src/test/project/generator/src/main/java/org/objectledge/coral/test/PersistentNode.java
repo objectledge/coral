@@ -28,7 +28,6 @@
  
 package org.objectledge.coral.test;
 
-import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.store.Resource;
 
 /**

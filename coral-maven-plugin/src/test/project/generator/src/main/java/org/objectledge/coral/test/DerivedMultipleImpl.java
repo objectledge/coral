@@ -146,8 +146,8 @@ public class DerivedMultipleImpl
      * @return a new DerivedMultiple instance.
      * @throws ValueRequiredException if one of the required attribues is undefined.
      */
-    public static DerivedMultiple createDerivedMultiple(CoralSession session, String name, Resource parent, 
-        int i2, String s2)
+    public static DerivedMultiple createDerivedMultiple(CoralSession session, String name,
+        Resource parent, int i2, String s2)
         throws ValueRequiredException
     {
         try

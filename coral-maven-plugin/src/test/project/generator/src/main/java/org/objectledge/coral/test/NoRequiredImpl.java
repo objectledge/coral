@@ -124,7 +124,8 @@ public class NoRequiredImpl
      * @param parent the parent resource.
      * @return a new NoRequired instance.
      */
-    public static NoRequired createNoRequired(CoralSession session, String name, Resource parent)
+    public static NoRequired createNoRequired(CoralSession session, String name, Resource
+        parent)
     {
         try
         {

@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.objectledge.coral.BackendException;
-import org.objectledge.coral.datatypes.GenericResource;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
@@ -120,7 +119,8 @@ public class GenericNodeImpl
      * @param parent the parent resource.
      * @return a new GenericNode instance.
      */
-    public static GenericNode createGenericNode(CoralSession session, String name, Resource parent)
+    public static GenericNode createGenericNode(CoralSession session, String name, Resource
+        parent)
     {
         try
         {

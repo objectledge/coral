@@ -30,7 +30,6 @@ package org.objectledge.coral.test;
 
 import java.util.Date;
 
-import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.parameters.Parameters;
 

@@ -45,7 +45,7 @@ import org.objectledge.utils.LedgeTestCase;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponentTest.java,v 1.9 2004-08-23 15:06:21 rafal Exp $
+ * @version $Id: GeneratorComponentTest.java,v 1.10 2004-12-21 10:48:36 rafal Exp $
  */
 public class GeneratorComponentTest
     extends LedgeTestCase
@@ -280,11 +280,9 @@ public class GeneratorComponentTest
     public void testResolvePrimaryParentClass()
     {
         mockResourceClass.expects(once()).method("getHandlerClassName").will(returnValue("org.objectledge.datatypes.GenericResourceHandler"));
-        mockImportTool.expects(once()).method("add").with(eq("org.objectledge.datatypes.GenericResource")).isVoid();
-        assertEquals("GenericResource", generatorComponent.resolvePrimaryParentClass(resourceClass, importTool));
+        assertEquals("GenericResource", generatorComponent.resolvePrimaryParentClass(resourceClass));
         mockResourceClass.expects(once()).method("getHandlerClassName").will(returnValue("org.objectledge.datatypes.PersistentResourceHandler"));
-        mockImportTool.expects(once()).method("add").with(eq("org.objectledge.datatypes.PersistentResource")).isVoid();
-        assertEquals("PersistentResource", generatorComponent.resolvePrimaryParentClass(resourceClass, importTool));
+        assertEquals("PersistentResource", generatorComponent.resolvePrimaryParentClass(resourceClass));
     }
 
     // implementation ///////////////////////////////////////////////////////////////////////////

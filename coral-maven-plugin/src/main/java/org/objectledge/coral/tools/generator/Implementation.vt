@@ -111,7 +111,10 @@ public class ${class.implClassName}
      * @param ${field.name} the ${field.type}.
 #end
      */
-    public ${class.implClassName}(CoralSchema schema, Database database, Logger logger#foreach($field in $superFields), ${field.type} ${field.name}#end#foreach($field in $fields), ${field.type} ${field.name}#end)
+#macro(ctorSignature)
+public ${class.implClassName}(CoralSchema schema, Database database, Logger logger#foreach($field in $superFields), ${field.type} ${field.name}#end#foreach($field in $fields), ${field.type} ${field.name}#end)##
+#end
+$string.wrap("#ctorSignature()")
     {
         super(schema, database, logger#foreach($field in $superFields), ${field.name}#end);
 #if($attributes.size() > 0)
@@ -173,12 +176,16 @@ public class ${class.implClassName}
      * @throws ValueRequiredException if one of the required attribues is undefined.
 #end
      */
+#macro(createSignature)
 #if($requiredAttributes.size() > 0)
-    public static ${class.interfaceClassName} create${class.interfaceClassName}(CoralSession session, String name, Resource parent, 
-        #foreach($attr in $requiredAttributes)$attr.javaType $attr.name#if($velocityCount != $requiredAttributes.size()), #end#end)
-        throws ValueRequiredException
+public static ${class.interfaceClassName} create${class.interfaceClassName}(CoralSession session, String name, Resource parent, #foreach($attr in $requiredAttributes)$attr.javaType $attr.name#if($velocityCount != $requiredAttributes.size()), #end#end)##
 #else
-    public static ${class.interfaceClassName} create${class.interfaceClassName}(CoralSession session, String name, Resource parent)
+public static ${class.interfaceClassName} create${class.interfaceClassName}(CoralSession session, String name, Resource parent)##
+#end
+#end
+$string.wrap("#createSignature()")
+#if($requiredAttributes.size() > 0)
+        throws ValueRequiredException
 #end
     {
         try

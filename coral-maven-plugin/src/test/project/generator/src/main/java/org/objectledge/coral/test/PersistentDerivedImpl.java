@@ -126,8 +126,8 @@ public class PersistentDerivedImpl
      * @return a new PersistentDerived instance.
      * @throws ValueRequiredException if one of the required attribues is undefined.
      */
-    public static PersistentDerived createPersistentDerived(CoralSession session, String name, Resource parent, 
-        int i1, String s1)
+    public static PersistentDerived createPersistentDerived(CoralSession session, String name,
+        Resource parent, int i1, String s1)
         throws ValueRequiredException
     {
         try

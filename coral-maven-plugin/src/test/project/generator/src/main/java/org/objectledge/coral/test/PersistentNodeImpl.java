@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.objectledge.coral.BackendException;
-import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
@@ -120,7 +119,8 @@ public class PersistentNodeImpl
      * @param parent the parent resource.
      * @return a new PersistentNode instance.
      */
-    public static PersistentNode createPersistentNode(CoralSession session, String name, Resource parent)
+    public static PersistentNode createPersistentNode(CoralSession session, String name,
+        Resource parent)
     {
         try
         {
