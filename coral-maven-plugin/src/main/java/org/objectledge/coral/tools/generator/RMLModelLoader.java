@@ -73,7 +73,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.7 2004-03-23 16:16:41 fil Exp $
+ * @version $Id: RMLModelLoader.java,v 1.8 2004-03-31 10:03:19 fil Exp $
  */
 public class RMLModelLoader
 {
@@ -81,6 +81,14 @@ public class RMLModelLoader
     private RMLVisistor visitor = new RMLVisistor();
     private List exceptions = new ArrayList();    
     private Schema schema;
+
+    /**
+     * Protected no-arg constructor to allow mocking.
+     */
+    protected RMLModelLoader()
+    {
+        
+    }
 
     /**
      * Creates a model loader instance.
@@ -135,7 +143,7 @@ public class RMLModelLoader
     /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.7 2004-03-23 16:16:41 fil Exp $
+     * @version $Id: RMLModelLoader.java,v 1.8 2004-03-31 10:03:19 fil Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {
