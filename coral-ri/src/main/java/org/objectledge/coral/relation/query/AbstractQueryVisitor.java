@@ -45,7 +45,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * Base class for all Query tree visitors.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: AbstractQueryVisitor.java,v 1.1 2004-02-24 13:34:59 zwierzem Exp $
+ * @version $Id: AbstractQueryVisitor.java,v 1.2 2004-02-24 14:55:40 zwierzem Exp $
  */
 public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 {
@@ -154,9 +154,9 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
     public Object visit(ASTRelationMapExpression node, Object data)
     {
 		int numChildren = node.jjtGetNumChildren();
-		if(numChildren != 3)
+		if(numChildren != 2)
 		{
-			throw new Error("RelationMapExpression must have 3 children");
+			throw new Error("RelationMapExpression must have 2 children");
 		}
         return null;
     }
@@ -167,9 +167,9 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
     public Object visit(ASTTransitiveRelationMapExpression node, Object data)
     {
 		int numChildren = node.jjtGetNumChildren();
-		if(numChildren != 3)
+		if(numChildren != 2)
 		{
-			throw new Error("RelationMapExpression must have 3 children");
+			throw new Error("RelationMapExpression must have 2 children");
 		}
         return null;
     }
