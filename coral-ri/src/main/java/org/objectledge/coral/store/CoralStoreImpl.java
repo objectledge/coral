@@ -40,7 +40,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.4 2004-03-05 12:09:18 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.5 2004-03-05 12:59:59 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -94,6 +94,7 @@ public class CoralStoreImpl
     {
         this.persistence = persistence;
         this.coral = coral;
+        this.coralEventHub = coralEventHub;
         this.log = log;
         setupCache(cacheFactory, "resource");
         resourceByParent = new WeakHashMap();
