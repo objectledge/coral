@@ -361,7 +361,13 @@ public class RelationQueryParser/*@bgen(jjtree)*/implements RelationQueryParserT
   public Token token, jj_nt;
   private int jj_gen;
   final private int[] jj_la1 = new int[6];
-  final private int[] jj_la1_0 = {0x20,0x40,0x24a000,0x248000,0x180000,0x100080,};
+  static private int[] jj_la1_0;
+  static {
+      jj_la1_0();
+   }
+   private static void jj_la1_0() {
+      jj_la1_0 = new int[] {0x20,0x40,0x24a000,0x248000,0x180000,0x100080,};
+   }
 
   public RelationQueryParser(java.io.InputStream stream) {
     jj_input_stream = new JavaCharStream(stream, 1, 1);
@@ -452,7 +458,7 @@ public class RelationQueryParser/*@bgen(jjtree)*/implements RelationQueryParserT
   private int[] jj_expentry;
   private int jj_kind = -1;
 
-  final public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.removeAllElements();
     boolean[] la1tokens = new boolean[22];
     for (int i = 0; i < 22; i++) {
