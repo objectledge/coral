@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.objectledge.coral.schema.ResourceClassFlags;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
@@ -49,7 +50,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.3 2004-03-30 09:07:44 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.4 2004-03-31 10:13:54 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -235,6 +236,16 @@ public class GeneratorComponent
                                 l.add(st.nextToken().trim());
                             }
                         }
+                        else
+                        {
+                            throw new IOException("unknown hint @"+token+" in "+path+" at line "+
+                                lnr.getLineNumber());
+                        }
+                    }
+                    else
+                    {
+                        throw new IOException("malformed hint "+in.substring(a)+" in "+path+
+                            " at line "+lnr.getLineNumber()+" - value expected");   
                     }
                 }
                 out.append(in).append('\n');
@@ -273,6 +284,10 @@ public class GeneratorComponent
     void loadSources(String path)
         throws Exception
     {
+        if(!fileSystem.exists(path))
+        {
+            throw new IOException("missing listing file "+path);
+        }
         LineNumberReader lnr = new LineNumberReader(fileSystem.
             getReader(path, fileEncoding));
         while(lnr.ready())
@@ -284,7 +299,19 @@ public class GeneratorComponent
             }
             if(line.startsWith("@include "))
             {
-                loadSources(line.substring(9));
+                String included = line.substring(9);
+                if(!fileSystem.exists(included))
+                {
+                    throw new IOException("missing include file "+included+" in "+path+
+                        " at line "+lnr.getLineNumber()); 
+                }
+                loadSources(included);
+                continue;
+            }
+            if(!fileSystem.exists(line))
+            {
+                throw new IOException("missing source file "+line+" in "+path+
+                    " at line "+lnr.getLineNumber());
             }
             loader.load(fileSystem.getReader(line, fileEncoding));
         }    
@@ -303,6 +330,10 @@ public class GeneratorComponent
     void processClass(ResourceClass rc)
         throws Exception
     {
+        if(rc.hasFlags(ResourceClassFlags.BUILTIN))
+        {
+            return;
+        }
         generateWrapper(rc, classInterfacePath(rc), interfaceTemplate);
         // when resource metaclass support is added we'll have a bit of logic that selects
         // apropriate implementation here.
