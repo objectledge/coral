@@ -38,7 +38,7 @@ import org.objectledge.coral.store.Resource;
  * </p>  
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: Relation.java,v 1.2 2004-02-20 14:49:28 zwierzem Exp $
+ * @version $Id: Relation.java,v 1.3 2004-02-23 12:27:44 zwierzem Exp $
  */
 public interface Relation extends Entity
 {
@@ -50,15 +50,11 @@ public interface Relation extends Entity
 	public Relation getReverse();
 
 	/**
-	 * Returns the relationship definition.
-	 *
-	 * <p>An array of two element arrays will be returned, each of the arrays
-	 * will contain a single definition element. The entries will be ordered
-	 * with respect to first element of the pair.</p>
-	 *
-	 * @return the relationship definition.
+	 * Returns <code>true</code> if this is the reverse view of the relationship.
+	 * 
+	 * @return <code>true</code> if this is the reverse view of the relationship.
 	 */
-	public long[][] getDefinition();
+	public boolean isReverse();
 
 	// reading ------------------------------------------------------------------------------------
 
