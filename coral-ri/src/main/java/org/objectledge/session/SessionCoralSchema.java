@@ -30,7 +30,6 @@ package org.objectledge.session;
 import java.util.Map;
 
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityInUseException;
@@ -47,12 +46,12 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralSchema wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSchema.java,v 1.1 2004-03-05 15:05:55 fil Exp $
+ * @version $Id: SessionCoralSchema.java,v 1.2 2004-03-08 08:19:14 fil Exp $
  */
 public class SessionCoralSchema implements CoralSchema
 {
     private CoralCore coral;
-    private CoralSession session;
+    private CoralSessionImpl session;
 
     /**
      * Creates a session local CoralStore wrapper.
@@ -60,7 +59,7 @@ public class SessionCoralSchema implements CoralSchema
      * @param coral the coral component hub.
      * @param coralSession the coral session.
      */
-    SessionCoralSchema(CoralCore coral, CoralSession session)
+    SessionCoralSchema(CoralCore coral, CoralSessionImpl session)
     {
         this.coral = coral;
         this.session = session;
@@ -71,6 +70,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public AttributeClass[] getAttributeClass()
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -87,6 +87,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public AttributeClass getAttributeClass(long id) throws EntityDoesNotExistException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -103,6 +104,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public AttributeClass getAttributeClass(String name) throws EntityDoesNotExistException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -124,6 +126,7 @@ public class SessionCoralSchema implements CoralSchema
         String dbTable)
         throws EntityExistsException, JavaClassException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -140,6 +143,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public void deleteAttributeClass(AttributeClass attributeClass) throws EntityInUseException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -156,6 +160,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public void setName(AttributeClass attributeClass, String name) throws EntityExistsException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -173,6 +178,7 @@ public class SessionCoralSchema implements CoralSchema
     public void setJavaClass(AttributeClass attributeClass, String javaClass)
         throws JavaClassException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -190,6 +196,7 @@ public class SessionCoralSchema implements CoralSchema
     public void setHandlerClass(AttributeClass attributeClass, String handlerClass)
         throws JavaClassException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -206,6 +213,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public void setDbTable(AttributeClass attributeClass, String dbTable)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -226,6 +234,7 @@ public class SessionCoralSchema implements CoralSchema
         String domain,
         int flags)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -242,6 +251,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public AttributeDefinition[] getAttribute()
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -258,6 +268,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public AttributeDefinition getAttribute(long id) throws EntityDoesNotExistException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -275,6 +286,7 @@ public class SessionCoralSchema implements CoralSchema
     public void deleteAttribute(ResourceClass resourceClass, AttributeDefinition attribute)
         throws IllegalArgumentException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -291,6 +303,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public void setName(AttributeDefinition attribute, String name) throws SchemaIntegrityException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -307,6 +320,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public void setDomain(AttributeDefinition attribute, String domain)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -323,6 +337,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public void setFlags(AttributeDefinition attribute, int flags)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -339,6 +354,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public ResourceClass[] getResourceClass()
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -355,6 +371,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public ResourceClass getResourceClass(long id) throws EntityDoesNotExistException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -371,6 +388,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public ResourceClass getResourceClass(String name) throws EntityDoesNotExistException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -393,6 +411,7 @@ public class SessionCoralSchema implements CoralSchema
         int flags)
         throws EntityExistsException, JavaClassException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -410,6 +429,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public void deleteResourceClass(ResourceClass resourceClass) throws EntityInUseException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -426,6 +446,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public void setName(ResourceClass resourceClass, String name) throws EntityExistsException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -442,6 +463,7 @@ public class SessionCoralSchema implements CoralSchema
      */
     public void setFlags(ResourceClass resourceClass, int flags)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -459,6 +481,7 @@ public class SessionCoralSchema implements CoralSchema
     public void setJavaClass(ResourceClass resourceClass, String javaClass)
         throws JavaClassException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -476,6 +499,7 @@ public class SessionCoralSchema implements CoralSchema
     public void setHandlerClass(ResourceClass resourceClass, String handlerClass)
         throws JavaClassException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -496,6 +520,7 @@ public class SessionCoralSchema implements CoralSchema
         Object value)
         throws SchemaIntegrityException, ValueRequiredException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -513,6 +538,7 @@ public class SessionCoralSchema implements CoralSchema
     public void addParentClass(ResourceClass child, ResourceClass parent, Map attributes)
         throws CircularDependencyException, SchemaIntegrityException, ValueRequiredException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -530,6 +556,7 @@ public class SessionCoralSchema implements CoralSchema
     public void deleteParentClass(ResourceClass child, ResourceClass parent)
         throws IllegalArgumentException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {

@@ -67,11 +67,12 @@ import org.objectledge.coral.store.ResourceOwnership;
  * Session local CoralEventWhiteboard wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralEventWhiteboard.java,v 1.1 2004-03-08 07:22:49 fil Exp $
+ * @version $Id: SessionCoralEventWhiteboard.java,v 1.2 2004-03-08 08:19:14 fil Exp $
  */
 public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
 {
     private CoralCore coral;
+    private CoralSessionImpl session;
 
     /**
      * Constructs a CoralEventWhiteboard wrapper instance.
@@ -91,6 +92,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         PermissionAssignmentChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addPermissionAssignmentChangeListener(listener, object);
     }
 
@@ -101,6 +103,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         PermissionAssignmentChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removePermissionAssignmentChangeListener(listener, object);
     }
 
@@ -111,6 +114,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         RoleAssignmentChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addRoleAssignmentChangeListener(listener, object);
     }
 
@@ -121,6 +125,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         RoleAssignmentChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeRoleAssignmentChangeListener(listener, object);
     }
 
@@ -131,6 +136,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         PermissionAssociationChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addPermissionAssociationChangeListener(listener, object);
     }
 
@@ -141,6 +147,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         PermissionAssociationChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removePermissionAssociationChangeListener(listener, object);
     }
 
@@ -151,6 +158,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         RoleImplicationChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addRoleImplicationChangeListener(listener, object);
     }
 
@@ -161,6 +169,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         RoleImplicationChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeRoleImplicationChangeListener(listener, object);
     }
 
@@ -171,6 +180,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceClassInheritanceChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addResourceClassInheritanceChangeListener(listener, object);
     }
 
@@ -181,6 +191,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceClassInheritanceChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeResourceClassInheritanceChangeListener(listener, object);
     }
 
@@ -191,6 +202,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceClassAttributesChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addResourceClassAttributesChangeListener(listener, object);
     }
 
@@ -201,6 +213,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceClassAttributesChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeResourceClassAttributesChangeListener(listener, object);
     }
 
@@ -209,6 +222,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void addResourceTreeChangeListener(ResourceTreeChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addResourceTreeChangeListener(listener, object);
     }
 
@@ -219,6 +233,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceTreeChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeResourceTreeChangeListener(listener, object);
     }
 
@@ -229,6 +244,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceOwnershipChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addResourceOwnershipChangeListener(listener, object);
     }
 
@@ -239,6 +255,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceOwnershipChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeResourceOwnershipChangeListener(listener, object);
     }
 
@@ -247,6 +264,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void addResourceClassChangeListener(ResourceClassChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addResourceClassChangeListener(listener, object);
     }
 
@@ -257,6 +275,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceClassChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeResourceClassChangeListener(listener, object);
     }
 
@@ -267,6 +286,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         AttributeClassChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addAttributeClassChangeListener(listener, object);
     }
 
@@ -277,6 +297,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         AttributeClassChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeAttributeClassChangeListener(listener, object);
     }
 
@@ -287,6 +308,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         AttributeDefinitionChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addAttributeDefinitionChangeListener(listener, object);
     }
 
@@ -297,6 +319,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         AttributeDefinitionChangeListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeAttributeDefinitionChangeListener(listener, object);
     }
 
@@ -305,6 +328,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void addResourceCreationListener(ResourceCreationListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addResourceCreationListener(listener, object);
     }
 
@@ -313,6 +337,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void removeResourceCreationListener(ResourceCreationListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeResourceCreationListener(listener, object);
     }
 
@@ -321,6 +346,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void addResourceChangeListener(ResourceChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addResourceChangeListener(listener, object);
     }
 
@@ -329,6 +355,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void removeResourceChangeListener(ResourceChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeResourceChangeListener(listener, object);
     }
 
@@ -337,6 +364,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void addResourceDeletionListener(ResourceDeletionListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addResourceDeletionListener(listener, object);
     }
 
@@ -345,6 +373,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void removeResourceDeletionListener(ResourceDeletionListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeResourceDeletionListener(listener, object);
     }
 
@@ -355,6 +384,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceTreeDeletionListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addResourceTreeDeletionListener(listener, object);
     }
 
@@ -365,6 +395,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
         ResourceTreeDeletionListener listener,
         Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeResourceTreeDeletionListener(listener, object);
     }
 
@@ -373,6 +404,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void addSubjectChangeListener(SubjectChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addSubjectChangeListener(listener, object);
     }
 
@@ -381,6 +413,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void removeSubjectChangeListener(SubjectChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeSubjectChangeListener(listener, object);
     }
 
@@ -389,6 +422,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void addRoleChangeListener(RoleChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addRoleChangeListener(listener, object);
     }
 
@@ -397,6 +431,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void removeRoleChangeListener(RoleChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removeRoleChangeListener(listener, object);
     }
 
@@ -405,6 +440,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void addPermissionChangeListener(PermissionChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().addPermissionChangeListener(listener, object);
     }
 
@@ -413,6 +449,7 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      */
     public void removePermissionChangeListener(PermissionChangeListener listener, Object object)
     {
+        session.checkOpen();
         coral.getEventWhiteboard().removePermissionChangeListener(listener, object);
     }
 

@@ -28,7 +28,6 @@
 package org.objectledge.session;
 
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.query.MalformedQueryException;
 import org.objectledge.coral.query.PreparedQuery;
@@ -38,13 +37,13 @@ import org.objectledge.coral.query.QueryResults;
  * Session local CoralQuery wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralQuery.java,v 1.1 2004-03-08 07:22:49 fil Exp $
+ * @version $Id: SessionCoralQuery.java,v 1.2 2004-03-08 08:19:14 fil Exp $
  */
 public class SessionCoralQuery
     implements CoralQuery
 {
     private CoralCore coral;
-    private CoralSession session;
+    private CoralSessionImpl session;
 
     /**
      * Creates a session local CoralQuery wrapper.
@@ -52,7 +51,7 @@ public class SessionCoralQuery
      * @param coral the coral component hub.
      * @param coralSession the coral session.
      */
-    SessionCoralQuery(CoralCore coral, CoralSession session)
+    SessionCoralQuery(CoralCore coral, CoralSessionImpl session)
     {
         this.coral = coral;
         this.session = session;
@@ -63,6 +62,7 @@ public class SessionCoralQuery
      */
     public QueryResults executeQuery(String query) throws MalformedQueryException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -79,6 +79,7 @@ public class SessionCoralQuery
      */
     public PreparedQuery prepareQuery(String query) throws MalformedQueryException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {

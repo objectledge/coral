@@ -30,7 +30,6 @@ package org.objectledge.session;
 import java.util.Map;
 
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityInUseException;
@@ -46,12 +45,12 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStore.java,v 1.1 2004-03-05 15:05:55 fil Exp $
+ * @version $Id: SessionCoralStore.java,v 1.2 2004-03-08 08:19:14 fil Exp $
  */
 public class SessionCoralStore implements CoralStore
 {
     private CoralCore coral;
-    private CoralSession session;
+    private CoralSessionImpl session;
 
     /**
      * Creates a session local CoralStore wrapper.
@@ -59,7 +58,7 @@ public class SessionCoralStore implements CoralStore
      * @param coral the coral component hub.
      * @param coralSession the coral session.
      */
-    SessionCoralStore(CoralCore coral, CoralSession session)
+    SessionCoralStore(CoralCore coral, CoralSessionImpl session)
     {
         this.coral = coral;
         this.session = session;
@@ -70,6 +69,7 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResource()
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -86,6 +86,7 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResource(Resource parent)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -102,6 +103,7 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource getResource(long id) throws EntityDoesNotExistException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -118,6 +120,7 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResource(String name)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -134,6 +137,7 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource getUniqueResource(String name) throws IllegalStateException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -150,6 +154,7 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResource(Resource parent, String name)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -166,6 +171,7 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource getUniqueResource(Resource parent, String name) throws IllegalStateException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -182,6 +188,7 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResourceByPath(String path)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -199,6 +206,7 @@ public class SessionCoralStore implements CoralStore
     public Resource getUniqueResourceByPath(String path)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -215,6 +223,7 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResourceByPath(Resource start, String path)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -232,6 +241,7 @@ public class SessionCoralStore implements CoralStore
     public Resource getUniqueResourceByPath(Resource start, String path)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -254,6 +264,7 @@ public class SessionCoralStore implements CoralStore
         Subject creator)
         throws UnknownAttributeException, ValueRequiredException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -272,6 +283,7 @@ public class SessionCoralStore implements CoralStore
     public void deleteResource(Resource resource)
         throws EntityInUseException, IllegalArgumentException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -288,6 +300,7 @@ public class SessionCoralStore implements CoralStore
      */
     public int deleteTree(Resource res) throws EntityInUseException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -304,6 +317,7 @@ public class SessionCoralStore implements CoralStore
      */
     public void setName(Resource resource, String name)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -320,6 +334,7 @@ public class SessionCoralStore implements CoralStore
      */
     public void setParent(Resource child, Resource parent) throws CircularDependencyException
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -336,6 +351,7 @@ public class SessionCoralStore implements CoralStore
      */
     public void unsetParent(Resource child)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -352,6 +368,7 @@ public class SessionCoralStore implements CoralStore
      */
     public void setOwner(Resource resource, Subject owner)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -372,6 +389,7 @@ public class SessionCoralStore implements CoralStore
         String destinationName,
         Subject subject)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
@@ -393,6 +411,7 @@ public class SessionCoralStore implements CoralStore
         String destinationName,
         Subject subject)
     {
+        session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
