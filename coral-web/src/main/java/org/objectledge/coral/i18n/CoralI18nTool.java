@@ -41,7 +41,7 @@ import org.objectledge.i18n.I18nTool;
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.7 2004-08-19 16:14:54 zwierzem Exp $
+ * @version $Id: CoralI18nTool.java,v 1.8 2004-08-20 07:50:59 zwierzem Exp $
  */
 public class CoralI18nTool extends I18nTool
 {
@@ -83,7 +83,7 @@ public class CoralI18nTool extends I18nTool
      * @param resourceClass the resource class.
      * @return the key for the name of the resource class.
      */
-    public static String getNameKey(ResourceClass resourceClass)
+    protected String getNameKey(ResourceClass resourceClass)
     {
         return "resource."+resourceClass.getName();
     }
@@ -94,7 +94,7 @@ public class CoralI18nTool extends I18nTool
      * @param resource the resource.
      * @return the key for the name of the resource.
      */
-    public static String getNameKey(Resource resource)
+    protected String getNameKey(Resource resource)
     {
         return "resource."+resource.getResourceClass().getName()+
             ".resource-name."+resource.getName();
