@@ -18,14 +18,13 @@ import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.Role;
 import org.objectledge.coral.security.Subject;
-import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 
 /**
  * Resolves RML AST nodes into ARL entities.
  * 
- * @version $Id: RMLEntityResolver.java,v 1.3 2004-08-27 11:29:23 rafal Exp $
+ * @version $Id: RMLEntityResolver.java,v 1.4 2004-12-21 08:10:21 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RMLEntityResolver
@@ -43,15 +42,26 @@ public class RMLEntityResolver
     /**
      * Constructs an {@RMLEntityResolver}.
      *
-     * @param coralSession the CoralSession to use.
+     * @param coralSchema the CoralSchema.
+     * @param coralSecurity the CoralSecurity.
+     * @param coralStore the CoralStore.
      */
-    public RMLEntityResolver(CoralSchema coralSchema, CoralSecurity coralSecurity, CoralStore coralStore)
+    public RMLEntityResolver(CoralSchema coralSchema, CoralSecurity coralSecurity, 
+        CoralStore coralStore)
     {
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
         this.coralStore = coralStore;
     }
 
+    /**
+     * Resolve Permission from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the Permission.
+     * @throws EntityDoesNotExistException if the node does not describe an existing Permissison.
+     * @throws AmbigousEntityNameException if multiple Permissions match node's description.
+     */
     public Permission resolve(ASTpermission node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
@@ -76,6 +86,15 @@ public class RMLEntityResolver
         }
     }
 
+    /**
+     * Resolve Permission list from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the Permission.
+     * @throws EntityDoesNotExistException if the any of the child nodes does not describe an 
+     * existing Permission.
+     * @throws AmbigousEntityNameException if multiple Permissions match a child node's description.
+     */
     public Permission[] resolve(ASTpermissionList node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
@@ -91,6 +110,14 @@ public class RMLEntityResolver
         return result;
     }
 
+    /**
+     * Resolve Role from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the Role.
+     * @throws EntityDoesNotExistException if the node does not describe an existing Role.
+     * @throws AmbigousEntityNameException if multiple Roles match node's description.
+     */
     public Role resolve(ASTrole node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
@@ -115,6 +142,15 @@ public class RMLEntityResolver
         }
     }
 
+    /**
+     * Resolve Role list from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the Role.
+     * @throws EntityDoesNotExistException if the any of the child nodes does not describe an 
+     * existing Role.
+     * @throws AmbigousEntityNameException if multiple Roles match a child node's description.
+     */
     public Role[] resolve(ASTroleList node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
@@ -130,6 +166,14 @@ public class RMLEntityResolver
         return result;
     }
 
+    /**
+     * Resolve Subject from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the Subject.
+     * @throws EntityDoesNotExistException if the node does not describe an existing Subject.
+     * @throws AmbigousEntityNameException if multiple Subjects match node's description.
+     */
     public Subject resolve(ASTsubject node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
@@ -143,6 +187,14 @@ public class RMLEntityResolver
         }
     }
 
+    /**
+     * Resolve Resource from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the Resource.
+     * @throws EntityDoesNotExistException if the node does not describe an existing Resource.
+     * @throws AmbigousEntityNameException if multiple Resources match node's description.
+     */
     public Resource resolve(ASTresource node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
@@ -167,6 +219,14 @@ public class RMLEntityResolver
         }
     }
 
+    /**
+     * Resolve ResourceClass from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the ResourceClass.
+     * @throws EntityDoesNotExistException if the node does not describe an existing ResourceClass.
+     * @throws AmbigousEntityNameException if multiple ResourceClasss match node's description.
+     */
     public ResourceClass resolve(ASTresourceClass node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
@@ -180,6 +240,16 @@ public class RMLEntityResolver
         }
     }
     
+    /**
+     * Resolve ResourceClass list from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the ResourceClass.
+     * @throws EntityDoesNotExistException if the any of the child nodes does not describe an 
+     * existing ResourceClass.
+     * @throws AmbigousEntityNameException if multiple ResourceClasss match a child node's 
+     * description.
+     */
     public ResourceClass[] resolve(ASTresourceClassList node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
@@ -195,6 +265,14 @@ public class RMLEntityResolver
         return result;
     }
 
+    /**
+     * Resolve AttributeClass from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the AttributeClass.
+     * @throws EntityDoesNotExistException if the node does not describe an existing AttributeClass.
+     * @throws AmbigousEntityNameException if multiple AttributeClasss match node's description.
+     */
     public AttributeClass resolve(ASTattributeClass node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
