@@ -42,15 +42,17 @@ import org.objectledge.coral.security.CoralSecurityImpl;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.CoralStoreImpl;
+import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
 import org.picocontainer.MutablePicoContainer;
+import org.picocontainer.PicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.5 2004-03-08 08:33:04 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.6 2004-03-11 17:35:04 fil Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -73,12 +75,13 @@ public class CoralCoreImpl
      * @param eventWhiteboardFactory the event whiteboard factory.
      * @param log the logger.
      */
-    public CoralCoreImpl(Persistence persistence, CacheFactory cacheFactory, 
-        EventWhiteboardFactory eventWhiteboardFactory, Logger log)
+    public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence, 
+        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log)
     {
-        container = new DefaultPicoContainer();
+        container = new DefaultPicoContainer(parentContainer);
         // register global dependencies
         container.registerComponentInstance(Persistence.class, persistence);
+        container.registerComponentInstance(Database.class, persistence.getDatabase());
         container.registerComponentInstance(CacheFactory.class, cacheFactory);
         container.registerComponentInstance(EventWhiteboardFactory.class, eventWhiteboardFactory);
         // TODO multiple/polymorphic loggers?
