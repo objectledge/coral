@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralEventWhiteboardTest.java,v 1.5 2004-05-28 10:04:10 fil Exp $
+ * @version $Id: SessionCoralEventWhiteboardTest.java,v 1.6 2005-01-25 06:31:40 rafal Exp $
  */
 public class SessionCoralEventWhiteboardTest extends LedgeTestCase
 {
@@ -68,7 +68,7 @@ public class SessionCoralEventWhiteboardTest extends LedgeTestCase
         mockCoralCore.stubs().method("getInstantiator").will(returnValue(null));
         mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));        
 
-        session = new CoralSessionImpl(coralCore, keyedObjectPool);
+        session = new CoralSessionImpl(coralCore, keyedObjectPool, null);
         mockCoralCore.expects(once()).method("setCurrentSession").with(same(session)).isVoid();
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);

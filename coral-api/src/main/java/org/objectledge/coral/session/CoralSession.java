@@ -15,7 +15,7 @@ import org.objectledge.coral.store.CoralStore;
 /**
  * An access point to the Coral document store.
  *
- * @version $Id: CoralSession.java,v 1.3 2004-03-18 15:21:42 fil Exp $
+ * @version $Id: CoralSession.java,v 1.4 2005-01-25 06:31:54 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSession
@@ -97,6 +97,16 @@ public interface CoralSession
      * single thread.</p>
      */
     public void makeCurrent();
+    
+    /**
+     * Returns a Throwable created in the scope of open() method invocation.
+     * 
+     * <p>It is expected that the Throwables are created only when high logging verbosity is
+     * enabled in the application. In all other cases this method will return null.</p>
+     * 
+     * @return a Throwable created in the scope of open() method invocation.
+     */
+    public Throwable getOpeningStackTrace();
     
     /**
      * Closes the session.

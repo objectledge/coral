@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImplTest.java,v 1.7 2004-06-29 11:14:29 fil Exp $
+ * @version $Id: CoralSessionImplTest.java,v 1.8 2005-01-25 06:31:40 rafal Exp $
  */
 public class CoralSessionImplTest extends LedgeTestCase
 {
@@ -69,7 +69,7 @@ public class CoralSessionImplTest extends LedgeTestCase
         mockKeyedObjectPool = mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
         
-        coralSession = new CoralSessionImpl(coralCore, keyedObjectPool);
+        coralSession = new CoralSessionImpl(coralCore, keyedObjectPool, null);
         
         mockSubject = mock(Subject.class);
         subject = (Subject)mockSubject.proxy();
@@ -160,7 +160,7 @@ public class CoralSessionImplTest extends LedgeTestCase
         catch(Exception e)
         {
             assertEquals(IllegalStateException.class, e.getClass());
-            assertEquals("attempted to use session from wrong thread", e.getMessage());
+            assertEquals("attempted to use session from wrong thread.", e.getMessage());
         }
     }
     
@@ -171,7 +171,7 @@ public class CoralSessionImplTest extends LedgeTestCase
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(coralSession));
         coralSession.open(principal, subject);
         
-        CoralSessionImpl coralSession2 = new CoralSessionImpl(coralCore, keyedObjectPool);
+        CoralSessionImpl coralSession2 = new CoralSessionImpl(coralCore, keyedObjectPool, null);
         mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession2)).isVoid();
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(coralSession2));
         coralSession2.open(principal, subject);
@@ -185,8 +185,7 @@ public class CoralSessionImplTest extends LedgeTestCase
         catch(Exception e)
         {
             assertEquals(IllegalStateException.class, e.getClass());
-            assertEquals("another session is active for this thread."+
-            " Use makeCurrent() to switch", e.getMessage());            
+            assertTrue(e.getMessage().startsWith("another session is active for this thread."));            
         }
         
         // switch explicitly        

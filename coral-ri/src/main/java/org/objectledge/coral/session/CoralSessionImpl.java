@@ -31,6 +31,7 @@ import java.lang.ref.WeakReference;
 import java.security.Principal;
 
 import org.apache.commons.pool.KeyedObjectPool;
+import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.event.CoralEventWhiteboard;
@@ -43,12 +44,13 @@ import org.objectledge.coral.script.CoralScriptImpl;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
+import org.objectledge.utils.TracingException;
 
 /**
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.10 2004-08-30 08:43:51 rafal Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.11 2005-01-25 06:31:42 rafal Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -69,11 +71,14 @@ public class CoralSessionImpl
     private KeyedObjectPool pool;
     private boolean open;
     private WeakReference ownerThread;
+    private final Logger log;
+    private TracingException openingStackTrace;
 
-    CoralSessionImpl(CoralCore coral, KeyedObjectPool pool)
+    CoralSessionImpl(CoralCore coral, KeyedObjectPool pool, Logger log)
     {
         this.coral = coral;
         this.pool = pool;
+        this.log = log;
                 
         schema = new SessionCoralSchema(coral, this);
         security = new SessionCoralSecurity(coral, this);
@@ -92,6 +97,10 @@ public class CoralSessionImpl
         ownerThread = new WeakReference(Thread.currentThread());
         open = true;
         coral.setCurrentSession(this);
+        if(log != null && log.isDebugEnabled())
+        {
+            openingStackTrace = new TracingException();
+        }
     }
     
     void verify()
@@ -103,15 +112,31 @@ public class CoralSessionImpl
         Thread owner = (Thread)ownerThread.get();
         if(owner == null || !Thread.currentThread().equals(owner))
         {
-            throw new IllegalStateException("attempted to use session from wrong thread");     
+            throw new IllegalStateException("attempted to use session from wrong thread.");     
+        }
+        if(coral.getCurrentSession() == null)
+        {
+            throw new IllegalStateException("no session is active at the moment.");
         }
         if(!this.equals(coral.getCurrentSession()))
         {
+            if(log != null && log.isDebugEnabled())
+            {
+                log.debug("session opened at", coral.getCurrentSession().getOpeningStackTrace());
+            }
             throw new IllegalStateException("another session is active for this thread."+
-                " Use makeCurrent() to switch");
+                "See log to locate missing close(), or use makeCurrent() to switch.");
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */    
+    public Throwable getOpeningStackTrace()
+    {
+        return openingStackTrace;
+    }
+    
     /** 
      * {@inheritDoc}
      */

@@ -60,7 +60,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * A tag for opening Coral sessions from within a Jelly script.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.10 2005-01-21 06:33:44 rafal Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.11 2005-01-25 06:31:35 rafal Exp $
  */
 public class SessionFactoryTag
     extends CoralPluginTag
@@ -201,7 +201,7 @@ public class SessionFactoryTag
             getLog(EventWhiteboardFactory.class), threadPool);
         CoralCore coralCore = new CoralCoreImpl(container, persistence, cacheFactory, 
             eventWhiteboardFactory, getLog(CoralCore.class), false);
-        factory = new CoralSessionFactoryImpl(coralCore);
+        factory = new CoralSessionFactoryImpl(coralCore, getLog(CoralCore.class));
         container.registerComponentInstance(CoralSessionFactory.class, factory);
         return factory;
     }    

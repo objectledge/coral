@@ -32,6 +32,7 @@ import java.security.Principal;
 import org.apache.commons.pool.BaseKeyedPoolableObjectFactory;
 import org.apache.commons.pool.KeyedObjectPool;
 import org.apache.commons.pool.impl.GenericKeyedObjectPool;
+import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -41,7 +42,7 @@ import org.objectledge.coral.security.Subject;
  * An implementation of the Coral session factory.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImpl.java,v 1.6 2004-12-27 03:06:02 rafal Exp $
+ * @version $Id: CoralSessionFactoryImpl.java,v 1.7 2005-01-25 06:31:42 rafal Exp $
  */
 public class CoralSessionFactoryImpl implements CoralSessionFactory
 {
@@ -49,14 +50,17 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
     
     private CoralCore coral;
 
+    private final Logger log;
+
     /**
      * Constructs a session factory instance.
      * 
      * @param coral the Coral component hub.
      */
-    public CoralSessionFactoryImpl(CoralCore coral)
+    public CoralSessionFactoryImpl(CoralCore coral, Logger log)
     {
         this.coral = coral;
+        this.log = log;
         GenericKeyedObjectPool.Config poolConfig = new GenericKeyedObjectPool.Config();
         poolConfig.whenExhaustedAction = GenericKeyedObjectPool.WHEN_EXHAUSTED_GROW;
         pool = new GenericKeyedObjectPool(new Factory(), poolConfig);
@@ -135,7 +139,7 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
          */
         public Object makeObject(Object arg0) throws Exception
         {
-            return new CoralSessionImpl(coral, pool);
+            return new CoralSessionImpl(coral, pool, log);
         }
     }    
 }

@@ -38,7 +38,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImplTest.java,v 1.7 2004-05-28 10:04:10 fil Exp $
+ * @version $Id: CoralSessionFactoryImplTest.java,v 1.8 2005-01-25 06:31:40 rafal Exp $
  */
 public class CoralSessionFactoryImplTest extends LedgeTestCase
 {
@@ -69,7 +69,7 @@ public class CoralSessionFactoryImplTest extends LedgeTestCase
         mockCoralCore.stubs().method("getInstantiator").will(returnValue(null));
         mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));        
         
-        coralSessionFactoryImpl = new CoralSessionFactoryImpl(coralCore);
+        coralSessionFactoryImpl = new CoralSessionFactoryImpl(coralCore, null);
         
         mockPrincipal = mock(Principal.class);
         principal = (Principal)mockPrincipal.proxy();
