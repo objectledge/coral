@@ -49,7 +49,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.2 2004-03-05 14:03:00 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.3 2004-03-05 14:11:04 fil Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -61,6 +61,8 @@ public class CoralCoreImpl
     private CoralEventWhiteboard coralEventWhiteboard;
     
     private MutablePicoContainer container;
+    
+    private ThreadLocal currentSession = new ThreadLocal();
 
     /**
      * Constructs a Coral instance.
@@ -148,5 +150,23 @@ public class CoralCoreImpl
     public CoralQuery getQuery()
     {
         throw new UnsupportedOperationException("non implemented yet");
+    }
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralSession getCurrentSession()
+    {
+        return (CoralSession)currentSession.get();
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralSession setCurrentSession(CoralSession session)
+    {
+        CoralSession previous = (CoralSession)currentSession.get();
+        currentSession.set(session);
+        return previous;
     }
 }

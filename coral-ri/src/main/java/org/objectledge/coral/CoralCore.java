@@ -38,10 +38,12 @@ import org.objectledge.coral.store.CoralStore;
  * A bridge between interdependent Coral componentes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCore.java,v 1.2 2004-03-05 14:03:00 fil Exp $
+ * @version $Id: CoralCore.java,v 1.3 2004-03-05 14:11:04 fil Exp $
  */
 public interface CoralCore
 {
+    // facilities ///////////////////////////////////////////////////////////////////////////////
+    
     /**
      * Returns a CoralSchema implementation.
      * 
@@ -83,4 +85,21 @@ public interface CoralCore
      * @return a CoralQuery implementaion.
      */
     public CoralQuery getQuery(); 
+    
+    // session //////////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Associates a session with the calling thread.
+     *
+     * @param session the session to associate, may be <code>null</code>.
+     * @return the previously associated session, may be <code>null</code>.
+     */
+    public CoralSession setCurrentSession(CoralSession session);
+    
+    /**
+     * Returns the session associated with the calling thread.
+     * 
+     * @return the associated session, may be <code>null</code>.
+     */
+    public CoralSession getCurrentSession();
 }
