@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceOwnership;
 /**
  * Event multiplexer class.
  *
- * @version $Id: CoralEventListener.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: CoralEventListener.java,v 1.3 2004-02-20 12:51:17 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class CoralEventListener
@@ -43,7 +43,7 @@ public abstract class CoralEventListener
     // Memeber objects ///////////////////////////////////////////////////////
     
     /** The {@link CoralEventWhiteboard}. */
-    private CoralEventWiteboard service;
+    private CoralEventWhiteboard service;
 
     // initialization ////////////////////////////////////////////////////////
 
@@ -52,7 +52,7 @@ public abstract class CoralEventListener
      *
      * @param service the event service.
      */
-    public void register(CoralEventWiteboard service)
+    public void register(CoralEventWhiteboard service)
     {
         service.addPermissionAssignmentChangeListener( 
             this, null);

@@ -18,10 +18,10 @@ import org.objectledge.coral.store.ResourceOwnership;
 /**
  * Convenience wrapper around <code>EventService</code>
  *
- * @version $Id: CoralEventWiteboard.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: CoralEventWhiteboard.java,v 1.1 2004-02-20 12:51:17 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
-public interface CoralEventWiteboard
+public interface CoralEventWhiteboard
 {
     // listener registration /////////////////////////////////////////////////
 

@@ -2,7 +2,7 @@ package org.objectledge.coral;
 
 import java.security.Principal;
 
-import org.objectledge.coral.event.CoralEventWiteboard;
+import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
@@ -12,7 +12,7 @@ import org.objectledge.coral.store.CoralStore;
 /**
  * An access point to the Coral document store.
  *
- * @version $Id: CoralSession.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: CoralSession.java,v 1.2 2004-02-20 12:51:17 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSession
@@ -43,7 +43,7 @@ public interface CoralSession
      *
      * @return an instance of {@link CoralEventWhiteboard}.
      */
-    public CoralEventWiteboard getEvent();
+    public CoralEventWhiteboard getEvent();
 
     /**
      * Returns an instance of {@link CoralQuery}.
