@@ -35,19 +35,15 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SchemaTest.java,v 1.2 2004-03-24 15:40:02 fil Exp $
+ * @version $Id: SchemaTest.java,v 1.3 2004-03-24 15:45:36 fil Exp $
  */
 public class SchemaTest extends LedgeTestCase
 {
     private Schema schema;
     private Mock mockResourceClassRC1;
     private ResourceClass resourceClassRC1;
-    private Mock mockResourceClassRC2;
-    private ResourceClass resourceClassRC2;
     private Mock mockAttributeClassAC1;
     private AttributeClass attributeClassAC1;
-    private Mock mockAttributeClassAC2;
-    private AttributeClass attributeClassAC2;
     
     public void setUp()
     {
@@ -55,15 +51,9 @@ public class SchemaTest extends LedgeTestCase
         mockResourceClassRC1 = mock(ResourceClass.class, "RC1");
         mockResourceClassRC1.stub().method("getName").will(returnValue("RC1"));
         resourceClassRC1 = (ResourceClass)mockResourceClassRC1.proxy();
-        mockResourceClassRC2 = mock(ResourceClass.class, "RC2");
-        mockResourceClassRC2.stub().method("getName").will(returnValue("RC2"));
-        resourceClassRC2 = (ResourceClass)mockResourceClassRC2.proxy();
         mockAttributeClassAC1 = mock(AttributeClass.class, "RC1");
         mockAttributeClassAC1.stub().method("getName").will(returnValue("AC1"));
         attributeClassAC1 = (AttributeClass)mockAttributeClassAC1.proxy();
-        mockAttributeClassAC2 = mock(AttributeClass.class, "RC2");
-        mockAttributeClassAC1.stub().method("getName").will(returnValue("AC1"));
-        attributeClassAC2 = (AttributeClass)mockAttributeClassAC2.proxy();
     }
     
     public void testGetResourceClassNonexistent()
