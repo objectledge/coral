@@ -158,8 +158,8 @@ INSERT INTO ledge_id_table VALUES(17, 'coral_attribute_class');
 
 INSERT INTO coral_resource_class VALUES(
 		1, 
-		'node', 
-        'org.objectledge.coral.datatypes.NodeResourceImpl', 
+		'coral.Node', 
+        'org.objectledge.coral.datatypes.NodeImpl', 
         'org.objectledge.coral.datatypes.GenericResourceHandler',
         '',
         4);
