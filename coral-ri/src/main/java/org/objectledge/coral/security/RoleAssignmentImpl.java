@@ -11,14 +11,14 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * An implementation of {@link RoleAssignment} interface.
  *
- * @version $Id: RoleAssignmentImpl.java,v 1.1 2004-02-23 09:22:56 fil Exp $
+ * @version $Id: RoleAssignmentImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleAssignmentImpl
     extends AbstractAssignment
     implements RoleAssignment
 {
-    // Member objects ////////////////////////////////////////////////////////
+    // Instance variables ///////////////////////////////////////////////////////////////////////
 
     /** The subject. */
     protected Subject subject;
@@ -29,11 +29,12 @@ public class RoleAssignmentImpl
     /** grantingAllowed flag. */
     protected boolean grantingAllowed;
 
-    // initialization ////////////////////////////////////////////////////////
+    // initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Creates a {@link RoleAssignment}.
      *
+     * @param coralSecurity the CoralSecurity.
      */
     RoleAssignmentImpl(CoralSecurity coralSecurity)
     {
@@ -42,6 +43,8 @@ public class RoleAssignmentImpl
     
     /**
      * Creates a {@link RoleAssignment}.
+     * 
+     * @param coralSecurity the CoralSecurity.
      *
      * @param grantor the subject that created this assignment.
      * @param subject the involved subject.

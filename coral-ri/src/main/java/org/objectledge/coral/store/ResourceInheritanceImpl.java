@@ -12,7 +12,7 @@ package org.objectledge.coral.store;
 public class ResourceInheritanceImpl
     implements ResourceInheritance
 {
-    // Member objects ////////////////////////////////////////////////////////
+    // Instance variables ///////////////////////////////////////////////////////////////////////
 
     /** The parent. */
     private Resource parent;
@@ -20,7 +20,7 @@ public class ResourceInheritanceImpl
     /** The parent. */
     private Resource child;
 
-    // Initialization ////////////////////////////////////////////////////////
+    // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Constructs a {@link RoleImplicationImpl}.
@@ -34,7 +34,7 @@ public class ResourceInheritanceImpl
         this.child = child;
     }
 
-    // Hashing & equality ////////////////////////////////////////////////////
+    // Hashing & equality ///////////////////////////////////////////////////////////////////////
 
     /**
      * A hashing function that attempts to achieve uniform bit distribution of
@@ -74,7 +74,7 @@ public class ResourceInheritanceImpl
         return false;
     }
 
-    // ResourceInheritace interface //////////////////////////////////////////
+    // ResourceInheritace interface /////////////////////////////////////////////////////////////
 
     /**
      * Returns the parent resource.

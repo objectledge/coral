@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.2 2004-02-20 13:32:52 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.3 2004-02-23 10:13:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -61,6 +61,7 @@ public class AttributeClassImpl
      * @param peristence the Peristence subsystem.
      * @param instantiator the Instantiator.
      * @param eventHub the EventHub.
+     * 
      * @param name the name of the attribute class.
      * @param javaClass the name of the Java class associated with this
      *        attribute class.

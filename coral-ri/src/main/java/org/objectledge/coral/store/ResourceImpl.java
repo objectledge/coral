@@ -38,7 +38,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * ResourceHandler#create(Resource,Map,Connection)} and
  * ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.1 2004-02-23 09:45:08 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.2 2004-02-23 10:13:32 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -105,10 +105,21 @@ public class ResourceImpl
      * Constructs a blank Resource object for reading data in.
      *
      * @param persistence the Persistence subsystem.
+     * @param coralSchema the CoralSchema.
+     * @param coralSecurity the CoralSecurity.
+     * @param coralStore the CoralStore.
+     * @param eventHub the EventHub.
+     * @param coralRegistry the CoralRegistry.
      */
-    public ResourceImpl(Persistence persistence)
+    public ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
+        CoralSecurity coralSecurity, CoralEntityRegistry coralRegistry, EventHub eventHub)
     {
         super(persistence);
+        this.coralSchema = coralSchema;
+        this.coralSecurity = coralSecurity;
+        this.coralStore = coralStore;
+        this.eventHub = eventHub;
+        this.coralRegistry = coralRegistry;
         buildAttributeMap();
     }
     
@@ -116,15 +127,28 @@ public class ResourceImpl
      * Constructs a new security delegate Resource object.
      *
      * @param persistence the Persistence subsystem.
+     * @param coralSchema the CoralSchema.
+     * @param coralSecurity the CoralSecurity.
+     * @param coralStore the CoralStore.
+     * @param eventHub the EventHub.
+     * @param coralRegistry the CoralRegistry.
+     * 
      * @param name the name of the new resource.
      * @param resourceClass the resource class of the new resource.
      * @param parent the parent resource (may be <code>null</code>)
      * @param creator the Subject that creates the resource.
      */
-    public ResourceImpl(Persistence persistence, 
+    public ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
+        CoralSecurity coralSecurity, CoralEntityRegistry coralRegistry, EventHub eventHub,
         String name, ResourceClass resourceClass, Resource parent, Subject creator)
     {
         super(persistence, name);
+        this.coralSchema = coralSchema;
+        this.coralSecurity = coralSecurity;
+        this.coralStore = coralStore;
+        this.eventHub = eventHub;
+        this.coralRegistry = coralRegistry;
+
         this.resourceClass = resourceClass;
         this.parent = parent;
         if(parent != null)

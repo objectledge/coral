@@ -19,7 +19,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * constraints placed upon a specific resource (and optionally it's
  * sub-resources). </p> 
  *
- * @version $Id: PermissionAssignmentImpl.java,v 1.1 2004-02-23 09:15:35 fil Exp $
+ * @version $Id: PermissionAssignmentImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssignmentImpl
@@ -48,7 +48,8 @@ public class PermissionAssignmentImpl
     /**
      * Constructs a {@link RoleImpl}.
      *
-     * @param arl the {@link ResourceServiceImpl}.
+     * @param coralSecurity the CoralSecurity.
+     * @param coralStore the CoralStore.
      */
     PermissionAssignmentImpl(CoralSecurity coralSecurity, CoralStore coralStore)
     {
@@ -59,7 +60,14 @@ public class PermissionAssignmentImpl
     /**
      * Constructs a {@link RoleImpl}.
      *
-     * @param arl the {@link ResourceServiceImpl}.
+     * @param coralSecurity the CoralSecurity.
+     * @param coralStore the CoralStore.
+     * 
+     * @param garntor the grantor of the permission.
+     * @param resource the resource.
+     * @param role the role.
+     * @param permission the permission.
+     * @param inherited <code>true</code> if the permission is effective on child resources too.
      */
     PermissionAssignmentImpl(CoralSecurity coralSecurity, CoralStore coralStore,
         Subject grantor, Resource resource, Role role, Permission permission, boolean inherited )
@@ -71,7 +79,7 @@ public class PermissionAssignmentImpl
         this.inherited = inherited;
     }
 
-    // Hashing & equality ////////////////////////////////////////////////////
+    // Hashing & equality ///////////////////////////////////////////////////////////////////////
 
     /**
      * Returs the hashcode for this entity.
@@ -102,7 +110,7 @@ public class PermissionAssignmentImpl
         return false;
     }
 
-    // Persistent interface //////////////////////////////////////////////////
+    // Persistent interface /////////////////////////////////////////////////////////////////////
 
     /** The key columns. */
     private static final String[] KEY_COLUMNS = { "resource_id", "role_id", 
@@ -175,7 +183,7 @@ public class PermissionAssignmentImpl
         inherited = record.getBoolean("is_inherited");
     }
 
-    // PermissionAssignment interface ////////////////////////////////////////
+    // PermissionAssignment interface ///////////////////////////////////////////////////////////
 
     /**
      * Returns the resouce the this security constraint applies to.
@@ -218,4 +226,3 @@ public class PermissionAssignmentImpl
         return inherited;
     }
 }
- 

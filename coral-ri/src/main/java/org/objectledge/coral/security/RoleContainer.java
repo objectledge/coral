@@ -13,7 +13,7 @@ import org.objectledge.coral.event.RoleImplicationChangeListener;
  * A helper class for managing a set of roles.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RoleContainer.java,v 1.1 2004-02-20 15:43:30 fil Exp $
+ * @version $Id: RoleContainer.java,v 1.2 2004-02-23 10:13:31 fil Exp $
  */
 public class RoleContainer
     implements RoleImplicationChangeListener
@@ -49,12 +49,14 @@ public class RoleContainer
      *
      * @param eventHub the event hub.
      * @param registry the registry.
+     * 
      * @param data the initial roles
      * @param roles <code>true</code> if data set contains {@link Role}
      *        objects, <code>false</code> if it contains {@link
      *        RoleAssignment} objects. 
      */
-    public RoleContainer(EventHub eventHub, CoralEntityRegistry registry, Set data, boolean roles)
+    public RoleContainer(EventHub eventHub, CoralEntityRegistry registry, 
+        Set data, boolean roles)
     {
         this.eventHub = eventHub;
         this.registry = registry;

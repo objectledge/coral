@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 public class ResourceOwnershipImpl
     implements ResourceOwnership
 {
-    // Member objects ////////////////////////////////////////////////////////
+    // Instance variables ///////////////////////////////////////////////////////////////////////
 
     /** The owner. */
     private Subject owner;
@@ -21,7 +21,7 @@ public class ResourceOwnershipImpl
     /** The resource. */
     private Resource resource;
 
-    // Initialization ////////////////////////////////////////////////////////
+    // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Constructs a {@link ResourceOwnershipImpl}.
@@ -36,7 +36,7 @@ public class ResourceOwnershipImpl
         this.resource = resource;
     }
 
-    // Hashing & equality ////////////////////////////////////////////////////
+    // Hashing & equality ///////////////////////////////////////////////////////////////////////
 
     /**
      * A hashing function that attempts to achieve uniform bit distribution of
@@ -76,7 +76,7 @@ public class ResourceOwnershipImpl
         return false;
     }
 
-    // ResourceInheritace interface //////////////////////////////////////////
+    // ResourceInheritace interface /////////////////////////////////////////////////////////////
 
     /**
      * Returns the owner.

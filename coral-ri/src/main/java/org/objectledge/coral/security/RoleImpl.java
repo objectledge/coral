@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * An implementaion of {@link Role interface}.
  *
- * @version $Id: RoleImpl.java,v 1.1 2004-02-20 15:43:30 fil Exp $
+ * @version $Id: RoleImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImpl
@@ -69,21 +69,32 @@ public class RoleImpl
     /**
      * Constructs a {@link RoleImpl}.
      *
-     * @param arl the {@link ResourceServiceImpl}.
+     * @param persistence the Peristence subsystem.
+     * @param eventHub the EventHub.
+     * @param registry the CoralRegistry.
      */
-    RoleImpl(Persistence persistence)
+    RoleImpl(Persistence persistence, EventHub eventHub, CoralEntityRegistry registry)
     {
         super(persistence);
+        this.eventHub = eventHub;
+        this.registry = registry;
     }
 
     /**
      * Constructs a {@link RoleImpl}.
      *
+     * @param persistence the Peristence subsystem.
+     * @param eventHub the EventHub.
+     * @param registry the CoralRegistry.
+     *
      * @param name the name of the role.
      */
-    RoleImpl(Persistence persistence, String name)
+    RoleImpl(Persistence persistence, EventHub eventHub, CoralEntityRegistry registry,
+        String name)
     {
         super(persistence, name);
+        this.eventHub = eventHub;
+        this.registry = registry;
     }
     
     // Persistent interface /////////////////////////////////////////////////////////////////////

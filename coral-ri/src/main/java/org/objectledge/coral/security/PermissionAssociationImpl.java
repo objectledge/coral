@@ -12,14 +12,14 @@ import org.objectledge.database.persistence.PersistenceException;
  * Represents an association between a {@link Permission} and a {@link
  * ResourceClass}. 
  *
- * @version $Id: PermissionAssociationImpl.java,v 1.1 2004-02-23 09:19:44 fil Exp $
+ * @version $Id: PermissionAssociationImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssociationImpl
     extends AbstractAssociation
     implements PermissionAssociation
 {
-    // Member objects ////////////////////////////////////////////////////////
+    // Instance variables ///////////////////////////////////////////////////////////////////////
 
     /** The CoralSchema. */
     private CoralSchema coralSchema;
@@ -33,10 +33,13 @@ public class PermissionAssociationImpl
     /** The {@link Permission}. */
     private Permission permission;
 
-    // Initialization ////////////////////////////////////////////////////////
+    // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Contstructs a PermissionAssociationImpl.
+     * 
+     * @param coralSchema the CoralSchema.
+     * @param coralSecurity the CoralSecurity.
      */
     PermissionAssociationImpl(CoralSchema coralSchema, CoralSecurity coralSecurity)
     {
@@ -47,11 +50,14 @@ public class PermissionAssociationImpl
     /**
      * Contstructs a PermissionAssociationImpl.
      *
+     * @param coralSchema the CoralSchema.
+     * @param coralSecurity the CoralSecurity.
+     *
      * @param resourceClass the involved {@link ResourceClass}.
      * @param permission the involved {@link Permission}.
      */
     PermissionAssociationImpl(CoralSchema coralSchema, CoralSecurity coralSecurity,
-                              ResourceClass resourceClass, Permission permission)
+         ResourceClass resourceClass, Permission permission)
     {
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
@@ -59,7 +65,7 @@ public class PermissionAssociationImpl
         this.permission = permission;
     }
     
-    // Hashing & equality ////////////////////////////////////////////////////
+    // Hashing & equality ///////////////////////////////////////////////////////////////////////
 
     /**
      * Returs the hashcode for this entity.
@@ -87,7 +93,7 @@ public class PermissionAssociationImpl
         return false;
     }
 
-    // Persistent interface //////////////////////////////////////////////////
+    // Persistent interface /////////////////////////////////////////////////////////////////////
 
     /** The key columns */
     private static final String[] KEY_COLUMNS = { "resource_class_id", "permission_id" };    
@@ -160,7 +166,7 @@ public class PermissionAssociationImpl
         }
     }
 
-    // PermissionAssociation interface ///////////////////////////////////////
+    // PermissionAssociation interface //////////////////////////////////////////////////////////
 
     /**
      * Returns the involved {@link ResourceClass}.

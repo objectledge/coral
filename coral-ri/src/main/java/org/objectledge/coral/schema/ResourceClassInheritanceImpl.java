@@ -9,14 +9,14 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents resource class inheritance relationship.
  *
- * @version $Id: ResourceClassInheritanceImpl.java,v 1.1 2004-02-20 14:55:25 fil Exp $
+ * @version $Id: ResourceClassInheritanceImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassInheritanceImpl
     extends AbstractAssociation
     implements ResourceClassInheritance
 {
-    // Member objects ////////////////////////////////////////////////////////
+    // Instance variables ///////////////////////////////////////////////////////////////////////
 
     /** The CoralSchema. */
     private CoralSchema coralSchema;
@@ -27,10 +27,12 @@ public class ResourceClassInheritanceImpl
     /** The child class. */
     private ResourceClass child;
     
-    // Initialization ////////////////////////////////////////////////////////
+    // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Contstructs a ResourceClassInheritanceImpl.
+     * 
+     * @param coralSchema the CoralSchema.
      */
     ResourceClassInheritanceImpl(CoralSchema coralSchema)
     {
@@ -41,10 +43,13 @@ public class ResourceClassInheritanceImpl
     /**
      * Constructs a {@link ResourceClassInheritanceImpl}.
      *
+     * @param coralSchema the CoralSchema.
+     *
      * @param parent the parent class.
      * @param child the child class.
      */
-    ResourceClassInheritanceImpl(CoralSchema coralSchema, ResourceClass parent, ResourceClass child)
+    ResourceClassInheritanceImpl(CoralSchema coralSchema, 
+        ResourceClass parent, ResourceClass child)
     {
         super();
         this.parent = parent;
@@ -52,7 +57,7 @@ public class ResourceClassInheritanceImpl
         this.coralSchema = coralSchema;
     }
 
-    // Hashing & equality ////////////////////////////////////////////////////
+    // Hashing & equality ///////////////////////////////////////////////////////////////////////
 
     /**
      * Returs the hashcode for this entity.
@@ -80,7 +85,7 @@ public class ResourceClassInheritanceImpl
         return false;
     }
 
-    // Persistent interface //////////////////////////////////////////////////
+    // Persistent interface /////////////////////////////////////////////////////////////////////
 
     /** The key columns */
     private static final String[] KEY_COLUMNS = { "parent", "child" };    
@@ -153,7 +158,7 @@ public class ResourceClassInheritanceImpl
         }
     }
 
-    // ResourceClassInheritance inerface /////////////////////////////////////
+    // ResourceClassInheritance inerface ////////////////////////////////////////////////////////
 
     /**
      * Returns the parent class in this relationship.

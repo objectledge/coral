@@ -18,14 +18,12 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: SubjectImpl.java,v 1.1 2004-02-20 15:55:10 fil Exp $
+ * @version $Id: SubjectImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SubjectImpl
     extends AbstractEntity
-    implements Subject,
-               RoleAssignmentChangeListener,
-               SubjectChangeListener
+    implements Subject, RoleAssignmentChangeListener, SubjectChangeListener
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
@@ -54,6 +52,11 @@ public class SubjectImpl
 
     /**
      * Constructs a {@link SubjectImpl}.
+     * 
+     * @param persistence the Peristence subsystem.
+     * @param eventHub the EventHub.
+     * @param registry the CoralRegistry.
+     * @param security the CoralSecurity.
      */
     SubjectImpl(Persistence persistence, EventHub eventHub, CoralEntityRegistry registry, 
         CoralSecurity coralSecurity)
@@ -67,6 +70,10 @@ public class SubjectImpl
     /**
      * Constructs a {@link SubjectImpl}.
      *
+     * @param persistence the Peristence subsystem.
+     * @param eventHub the EventHub.
+     * @param registry the CoralRegistry.
+     * 
      * @param name the name of the subject.
      * @param supervisor the supervisor of the subject.
      */

@@ -9,14 +9,14 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents implication relationship between two roles.
  *
- * @version $Id: RoleImplicationImpl.java,v 1.1 2004-02-23 09:27:25 fil Exp $
+ * @version $Id: RoleImplicationImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImplicationImpl
     extends AbstractAssociation
     implements RoleImplication
 {
-    // Member objects ////////////////////////////////////////////////////////
+    // Instance variables ///////////////////////////////////////////////////////////////////////
 
     /** The CoralSecurity. */
     private CoralSecurity coralSecurity;
@@ -27,10 +27,12 @@ public class RoleImplicationImpl
     /** The sub role. */
     private Role subRole;
     
-    // Initialization ////////////////////////////////////////////////////////
+    // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Constructs a {@link RoleImplicationImpl}.
+     * 
+     * @param coralSecurity the CoralSecurity.
      */
     RoleImplicationImpl(CoralSecurity coralSecurity)
     {
@@ -39,6 +41,8 @@ public class RoleImplicationImpl
     
     /**
      * Constructs a {@link RoleImplicationImpl}.
+     * 
+     * @param coralSecurity the CoralSecurity.
      *
      * @param superRole the implicating/containing role.
      * @param subRole the implied/contained role.
@@ -51,7 +55,7 @@ public class RoleImplicationImpl
         this.subRole = subRole;
     }
 
-    // Hashing & equality ////////////////////////////////////////////////////
+    // Hashing & equality ///////////////////////////////////////////////////////////////////////
 
     /**
      * Returs the hashcode for this entity.
@@ -79,7 +83,7 @@ public class RoleImplicationImpl
         return false;
     }
 
-    // Persistent interface //////////////////////////////////////////////////
+    // Persistent interface /////////////////////////////////////////////////////////////////////
 
     /**
      * Returns the name of the table this type is mapped to.
@@ -152,7 +156,7 @@ public class RoleImplicationImpl
         }
     }
 
-    // RoleImplication interface /////////////////////////////////////////////
+    // RoleImplication interface ////////////////////////////////////////////////////////////////
 
     /**
      * Returns the implicating/containing role.
