@@ -40,7 +40,7 @@ import org.objectledge.templating.velocity.VelocityTemplating;
  * An interface between GeneratorComponent and Maven.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorBean.java,v 1.2 2004-03-30 09:07:44 fil Exp $
+ * @version $Id: GeneratorBean.java,v 1.3 2004-03-31 14:21:22 fil Exp $
  */
 public class GeneratorBean
 {
@@ -77,7 +77,8 @@ public class GeneratorBean
         RMLModelLoader loader = new RMLModelLoader(schema);
 
         GeneratorComponent generator = new GeneratorComponent(fileEncoding, sourceFiles, 
-            targetDir, packagePrefices, licensePath, fileSystem, templating, schema, loader);
+            targetDir, packagePrefices, licensePath, fileSystem, templating, schema, loader,
+            System.out);
         generator.execute();
     }
 
