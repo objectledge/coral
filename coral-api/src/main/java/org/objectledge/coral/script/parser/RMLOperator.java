@@ -30,19 +30,19 @@ package org.objectledge.coral.script.parser;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLOperator.java,v 1.1 2004-03-17 13:17:24 fil Exp $
+ * @version $Id: RMLOperator.java,v 1.2 2004-08-30 09:36:56 rafal Exp $
  */
 public interface RMLOperator
 {
-    public static final int EQUALS = 0;
+    public static final int NOT_EQUALS = 0;
     
-    public static final int NOT_EQUALS = 1;
+    public static final int EQUALS = 1;
     
-    public static final int LESSER = 2;
+    public static final int LESSER = 0;
+    
+    public static final int LESSER_EQUALS = 1;
+    
+    public static final int GREATER_EQUALS = 2;
     
     public static final int GREATER = 3;
-    
-    public static final int GREATER_EQUALS = 4;
-    
-    public static final int LESSER_EQUALS = 5;
 }
