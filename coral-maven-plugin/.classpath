@@ -12,7 +12,7 @@
 	<classpathentry sourcepath="MAVEN_REPO/dna/sources/dna-api-1.1-rc2-src.zip" kind="var" path="MAVEN_REPO/dna/jars/dna-api-1.1-rc2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/cglib/jars/cglib-full-2.0.2.jar"/>
 	<classpathentry sourcepath="MAVEN_REPO/dna/sources/dna-impl-1.1-rc2-src.zip" kind="var" path="MAVEN_REPO/dna/jars/dna-impl-1.1-rc2.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/velocity/jars/velocity-1.4.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/velocity/jars/velocity-1.5-dev-20050406.jar"/>
 	<classpathentry sourcepath="MAVEN_REPO/log4j/sources/log4j-1.2.8-source.zip" kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar"/>
 	<classpathentry kind="src" path="/coral-ri"/>
 	<classpathentry sourcepath="MAVEN_REPO/picocontainer/sources/picocontainer-1.1-src.zip" kind="var" path="MAVEN_REPO/picocontainer/jars/picocontainer-1.1.jar"/>
