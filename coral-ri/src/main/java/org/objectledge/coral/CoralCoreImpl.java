@@ -68,7 +68,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.13 2005-01-21 06:33:13 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.14 2005-01-21 06:48:37 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -153,17 +153,17 @@ public class CoralCoreImpl
 
         if(preload)
         {
-            List startupAdapters = container.getComponentAdaptersOfType(StartupParticipant.class);
-            Set<StartupParticipant> participants = 
-                new HashSet<StartupParticipant>(startupAdapters.size());
+            List startupAdapters = container.getComponentAdaptersOfType(PreloadingParticipant.class);
+            Set<PreloadingParticipant> participants = 
+                new HashSet<PreloadingParticipant>(startupAdapters.size());
             for(Object adapter : startupAdapters)
             {
-                participants.add((StartupParticipant)((ComponentAdapter)adapter)
+                participants.add((PreloadingParticipant)((ComponentAdapter)adapter)
                     .getComponentInstance());
             }
             try
             {
-                performStartup(participants);
+                preloadData(participants);
             }
             catch(Exception e)
             {
@@ -288,11 +288,11 @@ public class CoralCoreImpl
     
     // startup //////////////////////////////////////////////////////////////////////////////////
     
-    private void performStartup(Set<StartupParticipant> participants)
+    private void preloadData(Set<PreloadingParticipant> participants)
         throws Exception
     {
-        SortedMap<Integer, StartupParticipant> order = new TreeMap();
-        for (StartupParticipant participant : participants)
+        SortedMap<Integer, PreloadingParticipant> order = new TreeMap();
+        for (PreloadingParticipant participant : participants)
         {
             for (int phase : participant.getPhases())
             {
@@ -301,7 +301,7 @@ public class CoralCoreImpl
         }
         for (int phase : order.keySet())
         {
-            order.get(phase).startup(phase);
+            order.get(phase).preloadData(phase);
         }
     }
 }

@@ -17,7 +17,7 @@ import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
-import org.objectledge.coral.StartupParticipant;
+import org.objectledge.coral.PreloadingParticipant;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.PermissionAssociationChangeListener;
@@ -57,7 +57,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.10 2005-01-20 11:40:32 rafal Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.11 2005-01-21 06:48:42 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -68,7 +68,7 @@ public class CoralRegistryImpl
                RoleImplicationChangeListener,
                ResourceClassInheritanceChangeListener,
                ResourceClassAttributesChangeListener,
-               StartupParticipant
+               PreloadingParticipant
 {
 
     
@@ -2024,7 +2024,7 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public void startup(int phase)
+    public void preloadData(int phase)
     {
         if(phase == 1)
         {

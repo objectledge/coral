@@ -28,33 +28,33 @@
 package org.objectledge.coral;
 
 /**
- * Implemented by components that actively participate in Coral startup. 
+ * Implemented by components that participate in data preloading. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: StartupParticipant.java,v 1.1 2005-01-20 11:40:17 rafal Exp $
+ * @version $Id: PreloadingParticipant.java,v 1.1 2005-01-21 06:48:37 rafal Exp $
  */
-public interface StartupParticipant
+public interface PreloadingParticipant
 {
     /**
-     * Returns the identifiers of startup phases the component participates in.
+     * Returns the identifiers of preloading phases the component participates in.
      * 
      * <p>Lower phases are executed first. Components that specify the same phase identifier will
      * be invoked in unspecified order.</p>
      * 
-     * @return the identifiers of startup phases the component participates in.
+     * @return the identifiers of preloading phases the component participates in.
      */
     public int[] getPhases();
 
     /**
-     * Performs a phase of startup.
+     * Performs a phase of data preloading.
      * 
      * <p>The method will be invoked as many times as many elements are returned from {@link 
-     * #getPhases()} call. If an exception is thrown by the method the startup process will be 
+     * #getPhases()} call. If an exception is thrown by the method the preloading process will be 
      * aborted.</p>
      * 
      * @param phase phase identifier.
-     * @throws Exception if a fatal error occurs in initialization.
+     * @throws Exception if a fatal error occurs in preloading.
      */
-    public void startup(int phase)
+    public void preloadData(int phase)
         throws Exception;
 }

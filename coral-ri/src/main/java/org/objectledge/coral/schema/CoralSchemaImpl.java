@@ -10,7 +10,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
-import org.objectledge.coral.StartupParticipant;
+import org.objectledge.coral.PreloadingParticipant;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityInUseException;
@@ -24,11 +24,11 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.13 2005-01-20 12:11:14 rafal Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.14 2005-01-21 06:48:27 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
-    implements CoralSchema, StartupParticipant
+    implements CoralSchema, PreloadingParticipant
 {
     // Instance variables ////////////////////////////////////////////////////////////////////////
 
@@ -876,7 +876,7 @@ public class CoralSchemaImpl
     /**
      * {@inheritDoc}
      */
-    public void startup(int phase)
+    public void preloadData(int phase)
         throws SQLException
     {
         if(phase == 4)
