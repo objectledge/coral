@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id: project.xml,v 1.1 2004-02-19 10:55:00 fil Exp $ -->
+<project>
+  <pomVersion>3</pomVersion>
+  
+  <extend>shared/project.xml</extend>
+
+  <!-- project info -->
+  
+  <groupId>coral</groupId>
+  <id>coral-reactor</id>
+  <currentVersion>0.1-dev</currentVersion>
+  
+  <name>Coral</name>
+  <shortDescription>Coral - documentation package.</shortDescription>
+  <description>
+    Coral is as an object oriented database. It manages structured resources, that 
+    can be mapped to Java objects in a JDBC relational database. 
+    
+    Besides simple object persistency mechanism Coral provides an expressive 
+    security system, many kinds of resources relations (intrinsic tree organization 
+    or resources, reference attributes, set theory relations) and a powerful query 
+    facility that can use attribute values and resource relations to select objects 
+    from the store.   
+  </description>
+</project>

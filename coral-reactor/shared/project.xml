@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id: project.xml,v 1.1 2004-02-19 10:55:01 fil Exp $ -->
+<project>
+  <pomVersion>3</pomVersion>
+
+  <!-- project info -->
+
+  <organization>
+    <name>objectledge.org</name>
+    <url>http://objectledge.org/</url>
+    <logo>/images/caltha-logo.gif</logo>
+  </organization>
+  <!-- logo -->
+  <inceptionYear>2003</inceptionYear>
+  <package>org.objectledge.coral</package>
+  <issueTrackingUrl>http://objectledge.org/jira/secure/BrowseProject.jspa?id=10030</issueTrackingUrl>
+   
+  <url>http://objectledge.org/</url>
+  
+  <siteAddress>coral.objectledge.org</siteAddress>
+  <siteDirectory>/home/caltha/objectledge/coral/www</siteDirectory>
+  <distributionSite>objectledge.org</distributionSite>
+  <distributionDirectory>/home/caltha/objectledge/builds</distributionDirectory>
+
+  <repository>
+    <developerConnection>scm:cvs:ext:${maven.username}@cvs.caltha.pl:/cvsroot/${pom.groupId}:${pom.artifactId}</developerConnection>
+    <connection>scm:cvs:pserver:anoncvs@objectledge.org:/cvsroot/${pom.groupId}:${pom.artifactId}</connection>
+    <url>http://coral.objectledge.org/viewcvs.cgi/${pom.artifactId}</url>
+  </repository>
+
+  <versions>
+    <version>
+      <id>0.1</id>
+      <name>0.1</name>
+      <tag>RELEASE-0_1</tag>
+    </version>
+  </versions>
+
+  <licenses>
+    <license>
+      <name>BSD</name>
+      <url>http://coral.objectledge.org/license.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <mailingLists>
+    <mailingList>
+      <name>Coral developers discussion</name>
+      <subscribe>coral-dev-subscribe@lists.objectledge.org</subscribe>
+      <unsubscribe>coral-dev-unsubscribe@lists.objectledge.org</unsubscribe>
+      <archive>http://lists.objectledge.org/pipermail/coral-dev/</archive>
+    </mailingList>
+    <mailingList>
+      <name>Coral commit messages</name>
+      <subscribe>coral-cvs-subscribe@lists.objectledge.org</subscribe>
+      <unsubscribe>coral-cvs-unsubscribe@lists.objectledge.org</unsubscribe>
+      <archive>http://lists.objectledge.org/pipermail/coral-cvs/</archive>
+    </mailingList>
+    <mailingList>
+      <name>Coral commit messages (html version)</name>
+      <subscribe>coral-cvshtml-subscribe@lists.objectledge.org</subscribe>
+      <unsubscribe>coral-cvshtml-unsubscribe@lists.objectledge.org</unsubscribe>
+    </mailingList>
+    <mailingList>
+      <name>Coral issue tracking</name>
+      <subscribe>coral-issues-subscribe@lists.objectledge.org</subscribe>
+      <unsubscribe>coral-issues-unsubscribe@lists.objectledge.org</unsubscribe>
+      <archive>http://lists.objectledge.org/pipermail/coral-issues/</archive>
+    </mailingList>
+  </mailingLists>
+
+  <developers>
+    <developer>
+      <name>Rafal Krzewski</name>
+      <id>fil</id>
+      <email>rafal@caltha.pl</email>
+      <organization>Caltha Sp.J.</organization>
+      <timezone>+1</timezone>
+      <roles>
+        <role>project leader</role>
+        <role>release engineer</role>
+        <role>java developer</role>
+      </roles>
+    </developer>
+    
+    <developer>
+      <name>Pawel Potempski</name>
+      <id>pablo</id>
+      <email>pablo@caltha.pl</email>
+      <organization>Caltha Sp.J.</organization>
+      <timezone>+1</timezone>
+      <roles>
+        <role>java developer</role>
+      </roles>
+    </developer>
+    
+    <developer>
+      <name>Michal Mach</name>
+      <id>mover</id>
+      <email>mover@caltha.pl</email>
+      <organization>Caltha Sp.J.</organization>
+      <timezone>+1</timezone>
+      <roles>
+        <role>java developer</role>
+        <role>documentation engineer</role>
+      </roles>
+    </developer>
+
+    <developer>
+      <name>Damian Gajda</name>
+      <id>zwierzem</id>
+      <email>zwierzem@caltha.pl</email>
+      <organization>Caltha Sp.J.</organization>
+      <timezone>+1</timezone>
+      <roles>
+        <role>java developer</role>
+      </roles>
+    </developer>
+
+  </developers>
+
+  <!-- contributors -->
+  
+</project>

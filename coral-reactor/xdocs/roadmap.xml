@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>Roadmap</title>
+  </properties>
+  
+  <body>
+    <section>
+      <subsection name="0.1 release">
+        <p>Planned release: ...</p>
+        <p>Actual release: ...</p>
+        <p>API</p>
+        <ul>
+          <li>...</li>  
+        </ul>
+        <p>RI</p>
+        <ul>
+          <li>...</li>
+        </ul>
+        <p>Datatypes</p>
+        <ul>
+          <li>...</li>
+        </ul>
+        <p>Maven plugin</p>
+        <ul>
+          <li>...</li>
+        </ul>
+      </subsection>
+    </section>
+  </body>
+</document>
