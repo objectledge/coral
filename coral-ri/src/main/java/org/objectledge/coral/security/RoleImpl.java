@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * An implementaion of {@link org.objectledge.coral.security.Role} interface.
  *
- * @version $Id: RoleImpl.java,v 1.6 2004-02-23 13:50:26 fil Exp $
+ * @version $Id: RoleImpl.java,v 1.7 2004-03-03 07:46:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImpl
@@ -89,7 +89,8 @@ public class RoleImpl
      *
      * @param name the name of the role.
      */
-    RoleImpl(Persistence persistence, CoralEventHub coralEventHub, CoralRegistry coralRegistry,
+    public RoleImpl(Persistence persistence, CoralEventHub coralEventHub, 
+        CoralRegistry coralRegistry,
         String name)
     {
         super(persistence, name);
