@@ -35,6 +35,7 @@ import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.CoralEventHubImpl;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
+import org.objectledge.coral.query.SQLCoralQueryImpl;
 import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.relation.CoralRelationManagerImpl;
 import org.objectledge.coral.relation.CoralRelationQuery;
@@ -58,7 +59,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.10 2004-04-01 08:54:23 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.11 2004-08-30 07:52:33 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -70,6 +71,7 @@ public class CoralCoreImpl
     private CoralEventWhiteboard coralEventWhiteboard;
     private CoralRelationManager coralRelationManager;
     private CoralRelationQuery coralRelationQuery;
+    private CoralQuery coralQuery;
     private Instantiator instantiator;
     private RMLParserFactory rmlParserFactory;
     
@@ -127,6 +129,7 @@ public class CoralCoreImpl
             CoralRelationManagerImpl.class);
         container.registerComponentImplementation(CoralRelationQuery.class, 
             CoralRelationQueryImpl.class);
+        container.registerComponentImplementation(CoralQuery.class, SQLCoralQueryImpl.class);
         // up it goes...
         coralRegistry = (CoralRegistry)container.getComponentInstance(CoralRegistry.class);
         coralSchema = (CoralSchema)container.getComponentInstance(CoralSchema.class);
@@ -136,6 +139,7 @@ public class CoralCoreImpl
             getComponentInstance(CoralRelationManager.class);
         coralRelationQuery = (CoralRelationQuery)container.
             getComponentInstance(CoralRelationQuery.class);
+        coralQuery = (CoralQuery)container.getComponentInstance(CoralQuery.class);
     }
 
     /** 
@@ -183,8 +187,7 @@ public class CoralCoreImpl
      */
     public CoralQuery getQuery()
     {
-        // TODO query support
-        return null;
+        return coralQuery;
     }
 
     /** 
