@@ -15,7 +15,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link Resource} references.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceAttributeHandler.java,v 1.5 2005-01-18 12:39:12 rafal Exp $
+ * @version $Id: ResourceAttributeHandler.java,v 1.6 2005-01-18 12:55:12 rafal Exp $
  */
 public class ResourceAttributeHandler
     extends EntityAttributeHandler
@@ -145,4 +145,16 @@ public class ResourceAttributeHandler
     {
         return true;
     }
+    
+    /**
+     * Converts an attribute value into a human readable string.
+     *
+     * @param value the value to convert.
+     * @return a human readable string.
+     */
+    public String toPrintableString(Object value)
+    {
+        checkValue(value);
+        return ((Resource)value).getPath();
+    }    
 }
