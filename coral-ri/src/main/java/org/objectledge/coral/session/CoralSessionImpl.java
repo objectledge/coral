@@ -25,7 +25,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  
 // POSSIBILITY OF SUCH DAMAGE. 
 // 
-package org.objectledge.session;
+package org.objectledge.coral.session;
 
 import java.lang.ref.WeakReference;
 import java.security.Principal;
@@ -45,7 +45,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.5 2004-03-08 08:25:49 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.1 2004-03-08 08:51:24 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession

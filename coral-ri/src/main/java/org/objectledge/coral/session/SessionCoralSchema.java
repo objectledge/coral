@@ -25,28 +25,30 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  
 // POSSIBILITY OF SUCH DAMAGE. 
 // 
-package org.objectledge.session;
+package org.objectledge.coral.session;
+
+import java.util.Map;
 
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityInUseException;
+import org.objectledge.coral.schema.AttributeClass;
+import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CircularDependencyException;
+import org.objectledge.coral.schema.CoralSchema;
+import org.objectledge.coral.schema.JavaClassException;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.security.CoralSecurity;
-import org.objectledge.coral.security.Permission;
-import org.objectledge.coral.security.Role;
-import org.objectledge.coral.security.SecurityException;
-import org.objectledge.coral.security.Subject;
-import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.schema.SchemaIntegrityException;
+import org.objectledge.coral.store.ValueRequiredException;
 
 /**
- * A session local CoralStore wrapper.
+ * Session local CoralSchema wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSecurity.java,v 1.2 2004-03-08 08:19:14 fil Exp $
+ * @version $Id: SessionCoralSchema.java,v 1.1 2004-03-08 08:51:24 fil Exp $
  */
-public class SessionCoralSecurity implements CoralSecurity
+public class SessionCoralSchema implements CoralSchema
 {
     private CoralCore coral;
     private CoralSessionImpl session;
@@ -57,7 +59,7 @@ public class SessionCoralSecurity implements CoralSecurity
      * @param coral the coral component hub.
      * @param coralSession the coral session.
      */
-    SessionCoralSecurity(CoralCore coral, CoralSessionImpl session)
+    SessionCoralSchema(CoralCore coral, CoralSessionImpl session)
     {
         this.coral = coral;
         this.session = session;
@@ -66,13 +68,13 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public Subject[] getSubject()
+    public AttributeClass[] getAttributeClass()
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getSecurity().getSubject();
+            return coral.getSchema().getAttributeClass();
         }
         finally
         {
@@ -83,13 +85,13 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public Subject getSubject(long id) throws EntityDoesNotExistException
+    public AttributeClass getAttributeClass(long id) throws EntityDoesNotExistException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getSecurity().getSubject(id);
+            return coral.getSchema().getAttributeClass(id);
         }
         finally
         {
@@ -100,13 +102,13 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public Subject getSubject(String name) throws EntityDoesNotExistException
+    public AttributeClass getAttributeClass(String name) throws EntityDoesNotExistException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getSecurity().getSubject(name);
+            return coral.getSchema().getAttributeClass(name);
         }
         finally
         {
@@ -117,13 +119,18 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public Subject createSubject(String name) throws EntityExistsException
+    public AttributeClass createAttributeClass(
+        String name,
+        String javaClass,
+        String handlerClass,
+        String dbTable)
+        throws EntityExistsException, JavaClassException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getSecurity().createSubject(name);
+            return coral.getSchema().createAttributeClass(name, javaClass, handlerClass, dbTable);
         }
         finally
         {
@@ -134,13 +141,13 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public void deleteSubject(Subject subject) throws EntityInUseException
+    public void deleteAttributeClass(AttributeClass attributeClass) throws EntityInUseException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().deleteSubject(subject);
+            coral.getSchema().deleteAttributeClass(attributeClass);
         }
         finally
         {
@@ -151,13 +158,13 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public void setName(Subject subject, String name) throws EntityExistsException
+    public void setName(AttributeClass attributeClass, String name) throws EntityExistsException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().setName(subject, name);
+            coral.getSchema().setName(attributeClass, name);
         }
         finally
         {
@@ -168,13 +175,14 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public Role[] getRole()
+    public void setJavaClass(AttributeClass attributeClass, String javaClass)
+        throws JavaClassException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getSecurity().getRole();
+            coral.getSchema().setJavaClass(attributeClass, javaClass);
         }
         finally
         {
@@ -185,13 +193,14 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public Role getRole(long id) throws EntityDoesNotExistException
+    public void setHandlerClass(AttributeClass attributeClass, String handlerClass)
+        throws JavaClassException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getSecurity().getRole(id);
+            coral.getSchema().setHandlerClass(attributeClass, handlerClass);
         }
         finally
         {
@@ -202,13 +211,13 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public Role[] getRole(String name)
+    public void setDbTable(AttributeClass attributeClass, String dbTable)
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getSecurity().getRole(name);
+            coral.getSchema().setDbTable(attributeClass, dbTable);
         }
         finally
         {
@@ -219,13 +228,17 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public Role getUniqueRole(String name) throws IllegalStateException
+    public AttributeDefinition createAttribute(
+        String name,
+        AttributeClass attributeClass,
+        String domain,
+        int flags)
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getSecurity().getUniqueRole(name);
+            return coral.getSchema().createAttribute(name, attributeClass, domain, flags);
         }
         finally
         {
@@ -236,13 +249,13 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public Role createRole(String name)
+    public AttributeDefinition[] getAttribute()
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getSecurity().createRole(name);
+            return coral.getSchema().getAttribute();
         }
         finally
         {
@@ -253,13 +266,13 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public void deleteRole(Role role) throws EntityInUseException
+    public AttributeDefinition getAttribute(long id) throws EntityDoesNotExistException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().deleteRole(role);
+            return coral.getSchema().getAttribute(id);
         }
         finally
         {
@@ -270,237 +283,14 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public void setName(Role role, String name)
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getSecurity().setName(role, name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public void addSubRole(Role superRole, Role subRole) throws CircularDependencyException
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getSecurity().addSubRole(superRole, subRole);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public void deleteSubRole(Role superRole, Role subRole) throws IllegalArgumentException
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getSecurity().deleteSubRole(superRole, subRole);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public void grant(Role role, Subject subject, boolean grantingAllowed, Subject grantor)
-        throws SecurityException
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getSecurity().grant(role, subject, grantingAllowed, grantor);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public void revoke(Role role, Subject subject, Subject revoker)
-        throws IllegalArgumentException, SecurityException
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getSecurity().revoke(role, subject, revoker);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public Permission[] getPermission()
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getSecurity().getPermission();
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public Permission getPermission(long id) throws EntityDoesNotExistException
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getSecurity().getPermission(id);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public Permission[] getPermission(String name)
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getSecurity().getPermission(name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public Permission getUniquePermission(String name) throws IllegalStateException
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getSecurity().getUniquePermission(name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public Permission createPermission(String name)
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getSecurity().createPermission(name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public void deletePermission(Permission permission) throws EntityInUseException
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getSecurity().deletePermission(permission);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public void setName(Permission permission, String name)
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getSecurity().setName(permission, name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public void addPermission(ResourceClass resourceClass, Permission permission)
-    {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getSecurity().addPermission(resourceClass, permission);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
-    public void deletePermission(ResourceClass resourceClass, Permission permission)
+    public void deleteAttribute(ResourceClass resourceClass, AttributeDefinition attribute)
         throws IllegalArgumentException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().deletePermission(resourceClass, permission);
+            coral.getSchema().deleteAttribute(resourceClass, attribute);
         }
         finally
         {
@@ -511,19 +301,13 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public void grant(
-        Resource resource,
-        Role role,
-        Permission permission,
-        boolean inherited,
-        Subject grantor)
-        throws SecurityException
+    public void setName(AttributeDefinition attribute, String name) throws SchemaIntegrityException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().grant(resource, role, permission, inherited, grantor);
+            coral.getSchema().setName(attribute, name);
         }
         finally
         {
@@ -534,14 +318,249 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public void revoke(Resource resource, Role role, Permission permission, Subject revoker)
-        throws IllegalArgumentException, SecurityException
+    public void setDomain(AttributeDefinition attribute, String domain)
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().revoke(resource, role, permission, revoker);
+            coral.getSchema().setDomain(attribute, domain);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setFlags(AttributeDefinition attribute, int flags)
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            coral.getSchema().setFlags(attribute, flags);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public ResourceClass[] getResourceClass()
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            return coral.getSchema().getResourceClass();
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public ResourceClass getResourceClass(long id) throws EntityDoesNotExistException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            return coral.getSchema().getResourceClass(id);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public ResourceClass getResourceClass(String name) throws EntityDoesNotExistException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            return coral.getSchema().getResourceClass(name);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public ResourceClass createResourceClass(
+        String name,
+        String javaClass,
+        String handlerClass,
+        String dbTable,
+        int flags)
+        throws EntityExistsException, JavaClassException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            return coral.getSchema().createResourceClass(name, javaClass, handlerClass, 
+                dbTable, flags);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void deleteResourceClass(ResourceClass resourceClass) throws EntityInUseException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            coral.getSchema().deleteResourceClass(resourceClass);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setName(ResourceClass resourceClass, String name) throws EntityExistsException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            coral.getSchema().setName(resourceClass, name);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setFlags(ResourceClass resourceClass, int flags)
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            coral.getSchema().setFlags(resourceClass, flags);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setJavaClass(ResourceClass resourceClass, String javaClass)
+        throws JavaClassException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            coral.getSchema().setJavaClass(resourceClass, javaClass);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setHandlerClass(ResourceClass resourceClass, String handlerClass)
+        throws JavaClassException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            coral.getSchema().setHandlerClass(resourceClass, handlerClass);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void addAttribute(
+        ResourceClass resourceClass,
+        AttributeDefinition attribute,
+        Object value)
+        throws SchemaIntegrityException, ValueRequiredException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            coral.getSchema().addAttribute(resourceClass, attribute, value);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void addParentClass(ResourceClass child, ResourceClass parent, Map attributes)
+        throws CircularDependencyException, SchemaIntegrityException, ValueRequiredException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            coral.getSchema().addParentClass(child, parent, attributes);
+        }
+        finally
+        {
+            coral.setCurrentSession(null);
+        }
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void deleteParentClass(ResourceClass child, ResourceClass parent)
+        throws IllegalArgumentException
+    {
+        session.checkOpen();
+        coral.setCurrentSession(session);
+        try
+        {
+            coral.getSchema().deleteParentClass(child, parent);
         }
         finally
         {

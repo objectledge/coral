@@ -25,7 +25,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  
 // POSSIBILITY OF SUCH DAMAGE. 
 // 
-package org.objectledge.session;
+package org.objectledge.coral.session;
 
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.CoralSession;
@@ -67,7 +67,7 @@ import org.objectledge.coral.store.ResourceOwnership;
  * Session local CoralEventWhiteboard wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralEventWhiteboard.java,v 1.2 2004-03-08 08:19:14 fil Exp $
+ * @version $Id: SessionCoralEventWhiteboard.java,v 1.1 2004-03-08 08:51:24 fil Exp $
  */
 public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
 {

@@ -25,7 +25,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  
 // POSSIBILITY OF SUCH DAMAGE. 
 // 
-package org.objectledge.session;
+package org.objectledge.coral.session;
 
 import java.security.Principal;
 
@@ -42,7 +42,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImpl.java,v 1.1 2004-03-08 08:06:56 fil Exp $
+ * @version $Id: CoralSessionFactoryImpl.java,v 1.1 2004-03-08 08:51:24 fil Exp $
  */
 public class CoralSessionFactoryImpl implements CoralSessionFactory
 {
