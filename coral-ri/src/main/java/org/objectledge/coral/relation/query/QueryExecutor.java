@@ -46,7 +46,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * Query executor executes a parsed query and returns the set of queried {@link Resource} ids.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: QueryExecutor.java,v 1.2 2004-02-24 14:58:38 zwierzem Exp $
+ * @version $Id: QueryExecutor.java,v 1.3 2004-02-24 16:12:29 zwierzem Exp $
  */
 public class QueryExecutor extends AbstractQueryVisitor
 {
@@ -59,17 +59,15 @@ public class QueryExecutor extends AbstractQueryVisitor
 	}
 
 	/**
-	 * Visits the sum expression node and preforms set sum operation, the {@link IdSet} coming from
+	 * Visits the sum expression node and performs set sum operation, the {@link IdSet} coming from
 	 * leftmost subexpression is modified and passed as sum result.
 	 * 
 	 * @param node visited node
 	 * @param data additional data storage
 	 * @return the resulting {@link IdSet} 
 	 */
-	public Object visit(ASTSumExpression node, Object data)
+	public Object doVisit(ASTSumExpression node, Object data)
 	{
-		super.visit(node, data);
-
 		int numChildren = node.jjtGetNumChildren();
 		IdSet left = (IdSet)(node.jjtGetChild(0).jjtAccept(this, data));
 		for(int i=1; i<numChildren; i++)
@@ -81,7 +79,7 @@ public class QueryExecutor extends AbstractQueryVisitor
 	}
 
 	/**
-	 * Visits the intersection expression node and preforms set intersection operation,
+	 * Visits the intersection expression node and performs set intersection operation,
 	 * the {@link IdSet} coming from leftmost subexpression is modified and passed as intersection
 	 * result.
 	 * 
@@ -89,10 +87,8 @@ public class QueryExecutor extends AbstractQueryVisitor
 	 * @param data additional data storage
 	 * @return the resulting {@link IdSet} 
 	 */
-	public Object visit(ASTIntersectionExpression node, Object data)
+	public Object doVisit(ASTIntersectionExpression node, Object data)
 	{
-		super.visit(node, data);
-
 		int numChildren = node.jjtGetNumChildren();
 		IdSet left = (IdSet)(node.jjtGetChild(0).jjtAccept(this, data));
 		for(int i=1; i<numChildren; i++)
@@ -138,9 +134,8 @@ public class QueryExecutor extends AbstractQueryVisitor
 	 * @param data additional data storage
 	 * @return the resulting {@link IdSet} 
 	 */
-	public Object visit(ASTRelationMapExpression node, Object data)
+	public Object doVisit(ASTRelationMapExpression node, Object data)
 	{
-		super.visit(node, data);
 		Relation relation = getRelation(node, data);
 		Set mapSet = getMapSet(node, data).getSet();
 		Set resultSet = new HashSet(mapSet.size());
@@ -161,9 +156,8 @@ public class QueryExecutor extends AbstractQueryVisitor
 	 * @param data additional data storage
 	 * @return the resulting {@link IdSet} 
 	 */
-	public Object visit(ASTTransitiveRelationMapExpression node, Object data)
+	public Object doVisit(ASTTransitiveRelationMapExpression node, Object data)
 	{
-		super.visit(node, data);
 		Relation relation = getRelation(node, data);
 		Set mapSet = getMapSet(node, data).getSet();
 		Set resultSet = new HashSet(mapSet.size());

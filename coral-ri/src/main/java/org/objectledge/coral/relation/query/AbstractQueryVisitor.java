@@ -45,7 +45,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * Base class for all Query tree visitors.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: AbstractQueryVisitor.java,v 1.2 2004-02-24 14:55:40 zwierzem Exp $
+ * @version $Id: AbstractQueryVisitor.java,v 1.3 2004-02-24 16:12:29 zwierzem Exp $
  */
 public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 {
@@ -53,6 +53,8 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 	protected CoralRelationManager relationManager;
 	/** Resolver used to retrieve resource ids. */
 	protected ResourceIdentifierResolver resolver;
+	/** Number o mappings over currently visited node. */
+	protected int parentMappings;
 
 	/**
 	 * Creates a new instance of query visitor. 
@@ -66,6 +68,7 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 	{
 		this.relationManager = relationManager;
 		this.resolver = resolver;
+		parentMappings = 0;
 	}
 
 	/**
@@ -120,8 +123,6 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 		}
 	}
 
-	// methods to be overriden --------------------------------------------------------------------
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -132,7 +133,7 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 		{
 			throw new Error("SumExpression must have at least 2 children");
 		}
-		return null;
+		return doVisit(node, data);
 	}
 
 	/**
@@ -145,7 +146,7 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 		{
 			throw new Error("IntersectionExpression must have at least 2 children");
 		}
-		return null;
+		return doVisit(node, data);
 	}
 
     /**
@@ -153,12 +154,15 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
      */
     public Object visit(ASTRelationMapExpression node, Object data)
     {
+		parentMappings++;
 		int numChildren = node.jjtGetNumChildren();
 		if(numChildren != 2)
 		{
 			throw new Error("RelationMapExpression must have 2 children");
 		}
-        return null;
+		Object result = doVisit(node, data);
+		parentMappings--;
+		return result;
     }
 
     /**
@@ -166,11 +170,52 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
      */
     public Object visit(ASTTransitiveRelationMapExpression node, Object data)
     {
+    	parentMappings++;
 		int numChildren = node.jjtGetNumChildren();
 		if(numChildren != 2)
 		{
 			throw new Error("RelationMapExpression must have 2 children");
 		}
-        return null;
+        Object result = doVisit(node, data);
+		parentMappings--;
+		return result;
     }
+
+	// methods to be overriden --------------------------------------------------------------------
+
+	/**
+	 * Performs {@link #doVisit(ASTSumExpression,Object)} logic in subclasses.
+	 * 
+	 * @param node visited node
+	 * @param data additional data storage
+	 * @return the visit results 
+	 */
+	public abstract Object doVisit(ASTSumExpression node, Object data);
+
+	/**
+	 * Performs {@link #doVisit(ASTIntersectionExpression,Object)} logic in subclasses.
+	 * 
+	 * @param node visited node
+	 * @param data additional data storage
+	 * @return the visit results 
+	 */
+	public abstract Object doVisit(ASTIntersectionExpression node, Object data);
+
+	/**
+	 * Performs {@link #doVisit(ASTRelationMapExpression,Object)} logic in subclasses.
+	 * 
+	 * @param node visited node
+	 * @param data additional data storage
+	 * @return the visit results 
+	 */
+	public abstract Object doVisit(ASTRelationMapExpression node, Object data);
+
+	/**
+	 * Performs {@link #doVisit(ASTTransitiveRelationMapExpression,Object)} logic in subclasses.
+	 * 
+	 * @param node visited node
+	 * @param data additional data storage
+	 * @return the visit results 
+	 */
+	public abstract Object doVisit(ASTTransitiveRelationMapExpression node, Object data);
 }
