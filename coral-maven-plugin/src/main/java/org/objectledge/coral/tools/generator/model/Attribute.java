@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * Represents a Coral AttributeDefinition.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Attribute.java,v 1.3 2004-03-25 13:32:16 fil Exp $
+ * @version $Id: Attribute.java,v 1.4 2004-03-25 15:19:57 fil Exp $
  */
 public class Attribute
     extends Entity
@@ -155,8 +155,10 @@ public class Attribute
             }
             catch(Exception e)
             {
+                ///CLOVER:OFF
                 throw (RuntimeException)new IllegalStateException("introspecting java.lang failed").
                     initCause(e);
+                ///CLOVER:ON
             }
         }
         else
