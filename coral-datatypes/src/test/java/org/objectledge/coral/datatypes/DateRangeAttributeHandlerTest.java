@@ -120,8 +120,8 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
             "(data_key, start_date, end_date) VALUES (?, ?, ?)";        
         mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
         mockPreparedStatement.expects(once()).method("setLong").with(eq(1), eq(1L)).isVoid();
-        mockPreparedStatement.expects(once()).method("setDate").with(eq(2), eq(rangeStart)).isVoid();        
-        mockPreparedStatement.expects(once()).method("setDate").with(eq(3), eq(rangeEnd)).isVoid();        
+        mockPreparedStatement.expects(once()).method("setTimestamp").with(eq(2), eq(rangeStart)).isVoid();        
+        mockPreparedStatement.expects(once()).method("setTimestamp").with(eq(3), eq(rangeEnd)).isVoid();        
         mockPreparedStatement.expects(once()).method("execute").will(returnValue(true));
         mockPreparedStatement.expects(once()).method("close").isVoid();
         handler.create(range, connection);
@@ -134,8 +134,8 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
         String stmt = "UPDATE coral_attribute_date_range SET"+
             " start_date = ?, end_date = ? WHERE data_key = ?";
         mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
-        mockPreparedStatement.expects(once()).method("setDate").with(eq(1), eq(rangeStart)).isVoid();        
-        mockPreparedStatement.expects(once()).method("setDate").with(eq(2), eq(rangeEnd)).isVoid();        
+        mockPreparedStatement.expects(once()).method("setTimestamp").with(eq(1), eq(rangeStart)).isVoid();        
+        mockPreparedStatement.expects(once()).method("setTimestamp").with(eq(2), eq(rangeEnd)).isVoid();        
         mockPreparedStatement.expects(once()).method("setLong").with(eq(3), eq(1L)).isVoid();
         mockPreparedStatement.expects(once()).method("execute").will(returnValue(true));
         mockPreparedStatement.expects(once()).method("close").isVoid();

@@ -117,7 +117,7 @@ public class DateAttributeHandlerTest extends LedgeTestCase
         String stmt = "INSERT INTO " + "coral_attribute_date" + "(data_key, data) VALUES (?, ?)";
         mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
         mockPreparedStatement.expects(once()).method("setLong").with(eq(1), eq(1L)).isVoid();
-        mockPreparedStatement.expects(once()).method("setDate").with(eq(2), eq(sqlCurrentDate)).isVoid();        
+        mockPreparedStatement.expects(once()).method("setTimestamp").with(eq(2), eq(sqlCurrentDate)).isVoid();        
         mockPreparedStatement.expects(once()).method("execute").will(returnValue(true));
         handler.create(currentDate, connection);
     }
@@ -128,7 +128,7 @@ public class DateAttributeHandlerTest extends LedgeTestCase
         mockStatement.expects(once()).method("close").isVoid();
         String stmt2 = "UPDATE coral_attribute_date SET data = ? WHERE data_key = ?";
         mockConnection.expects(once()).method("prepareStatement").with(eq(stmt2)).will(returnValue(preparedStatement));
-        mockPreparedStatement.expects(once()).method("setDate").with(eq(1), eq(sqlCurrentDate)).isVoid();        
+        mockPreparedStatement.expects(once()).method("setTimestamp").with(eq(1), eq(sqlCurrentDate)).isVoid();        
         mockPreparedStatement.expects(once()).method("setLong").with(eq(2), eq(1L)).isVoid();
         mockPreparedStatement.expects(once()).method("execute").will(returnValue(true));
         mockStatement.expects(once()).method("close").isVoid();
