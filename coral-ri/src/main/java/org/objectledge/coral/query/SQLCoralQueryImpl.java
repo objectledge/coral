@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.1 2004-08-30 07:06:30 rafal Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.2 2004-08-30 08:47:15 rafal Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -64,7 +64,9 @@ public class SQLCoralQueryImpl
     /** 
      * Constructs an SQLQueryService implementation instance.
      *
-     * @param arl the ResourceService implemenation.
+     * @param database the database to use.
+     * @param coral the coral core.
+     * @param logger the logger.
      */
     public SQLCoralQueryImpl(Database database, CoralCore coral, Logger logger)
     {
