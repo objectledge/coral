@@ -38,7 +38,7 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
  * Represents a Coral ResourceClass.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClass.java,v 1.3 2004-03-22 16:03:15 fil Exp $
+ * @version $Id: ResourceClass.java,v 1.4 2004-03-23 09:56:57 fil Exp $
  */
 public class ResourceClass
     extends Entity
@@ -65,7 +65,7 @@ public class ResourceClass
     public ResourceClass(String name, String javaClassName, String dbTable, int flags)
     {
         super(name, flags);
-        setJavaClass(javaClassName);
+        setJavaClassName(javaClassName);
         setDbTable(dbTable);
     }
     
@@ -113,7 +113,7 @@ public class ResourceClass
 
 
     /**
-     * @param attributeName the name of the attribute.
+     * Returns the attribute with the given name.
      * 
      * @param attributeName the name of the attribute.
      * @return the attribute definition.
@@ -147,7 +147,7 @@ public class ResourceClass
      * 
      * @param javaClassName the name of the Java class for this resource class.
      */    
-    public void setJavaClass(String javaClassName)
+    public void setJavaClassName(String javaClassName)
     {
         if(javaClassName.endsWith("Impl"))
         {
@@ -179,6 +179,7 @@ public class ResourceClass
     public void addAttribute(Attribute attr)
     {
         attributes.put(attr.getName(), attr);
+        attr.setDeclaringClass(this);
     }
     
     /**
@@ -189,6 +190,7 @@ public class ResourceClass
     public void deleteAttribute(Attribute attr)
     {
         attributes.remove(attr.getName());
+        attr.setDeclaringClass(null);
     }
     
     /**
