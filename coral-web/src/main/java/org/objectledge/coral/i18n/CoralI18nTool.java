@@ -41,10 +41,13 @@ import org.objectledge.i18n.I18nTool;
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.8 2004-08-20 07:50:59 zwierzem Exp $
+ * @version $Id: CoralI18nTool.java,v 1.9 2004-08-20 08:26:19 zwierzem Exp $
  */
 public class CoralI18nTool extends I18nTool
 {
+    /** a separate buffer to construct resource name keys. */
+    protected StringBuffer nameBuf = new StringBuffer();
+    
     /**
      * @param i18n th
      * @param locale
@@ -85,7 +88,8 @@ public class CoralI18nTool extends I18nTool
      */
     protected String getNameKey(ResourceClass resourceClass)
     {
-        return "resource."+resourceClass.getName();
+        nameBuf.setLength(0);
+        return nameBuf.append("resource.").append(resourceClass.getName()).toString();
     }
 
     /**
@@ -96,7 +100,8 @@ public class CoralI18nTool extends I18nTool
      */
     protected String getNameKey(Resource resource)
     {
-        return "resource."+resource.getResourceClass().getName()+
-            ".resource-name."+resource.getName();
+        nameBuf.setLength(0);
+        return nameBuf.append("resource.").append(resource.getResourceClass().getName())
+            .append(".resource-name.").append(resource.getName()).toString();
     }
 }
