@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.20 2005-01-19 06:17:45 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.21 2005-01-19 06:59:37 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -244,7 +244,14 @@ public class CoralStoreImpl
                 }
                 catch(Exception e)
                 {
-                    throw new BackendException("failed to load resource #"+id, e);
+                    if(e instanceof EntityDoesNotExistException)
+                    {
+                        throw (EntityDoesNotExistException)e;
+                    }
+                    else
+                    {
+                        throw new BackendException("failed to load resource #"+id, e);
+                    }
                 }
                 finally
                 {
