@@ -33,6 +33,7 @@ import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.schema.CoralSchema;
+import org.objectledge.coral.script.parser.RMLParserFactory;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSession;
@@ -42,7 +43,7 @@ import org.objectledge.coral.store.CoralStore;
  * A bridge between interdependent Coral componentes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCore.java,v 1.6 2004-03-16 14:16:18 fil Exp $
+ * @version $Id: CoralCore.java,v 1.7 2004-03-18 15:22:51 fil Exp $
  */
 public interface CoralCore
 {
@@ -102,7 +103,21 @@ public interface CoralCore
      *
      * @return a CoralRelationQuery.
      */
-    public CoralRelationQuery getRelationQuery();    
+    public CoralRelationQuery getRelationQuery();
+    
+    /**
+     * Returns the object instantiator.
+     * 
+     * @return an Instnatiator.
+     */
+    public Instantiator getInstantiator();
+
+    /**
+     * Returns the RMLParserFactory.
+     * 
+     * @return am RMLParserFactory.
+     */
+    public RMLParserFactory getRMLParserFactory();
     
     // session //////////////////////////////////////////////////////////////////////////////////
     

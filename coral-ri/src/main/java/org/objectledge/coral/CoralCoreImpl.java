@@ -41,6 +41,8 @@ import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.relation.query.CoralRelationQueryImpl;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.CoralSchemaImpl;
+import org.objectledge.coral.script.parser.RMLConstants;
+import org.objectledge.coral.script.parser.RMLParserFactory;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.CoralSecurityImpl;
 import org.objectledge.coral.security.Subject;
@@ -57,7 +59,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.8 2004-03-16 14:16:18 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.9 2004-03-18 15:22:51 fil Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -69,6 +71,8 @@ public class CoralCoreImpl
     private CoralEventWhiteboard coralEventWhiteboard;
     private CoralRelationManager coralRelationManager;
     private CoralRelationQuery coralRelationQuery;
+    private Instantiator instantiator;
+    private RMLParserFactory rmlParserFactory;
     
     private MutablePicoContainer container;
     
@@ -102,8 +106,19 @@ public class CoralCoreImpl
         container.registerComponentInstance(CoralEventHub.class, coralEventHub);
         coralEventWhiteboard = coralEventHub.getGlobal();
         // instantiator
-        Instantiator instantiator = new PicoInstantiator(container);
+        instantiator = new PicoInstantiator(container);
         container.registerComponentInstance(Instantiator.class, instantiator);
+        // RML parsers
+        if(parentContainer.getComponentAdapterOfType(RMLParserFactory.class) == null)
+        {
+            rmlParserFactory = new RMLParserFactory();
+            container.registerComponentInstance(RMLParserFactory.class, rmlParserFactory);
+        }
+        else
+        {
+            rmlParserFactory = (RMLParserFactory)parentContainer.
+                getComponentInstanceOfType(RMLParserFactory.class);
+        }
         // component implementations
         container.registerComponentImplementation(CoralRegistry.class, CoralRegistryImpl.class);
         container.registerComponentImplementation(CoralSchema.class, CoralSchemaImpl.class);
@@ -187,6 +202,22 @@ public class CoralCoreImpl
     public CoralRelationQuery getRelationQuery()
     {
         return coralRelationQuery;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Instantiator getInstantiator()
+    {
+        return instantiator;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public RMLParserFactory getRMLParserFactory()
+    {
+        return rmlParserFactory;
     }
     
     /** 
