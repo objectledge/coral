@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 
 import org.jcontainer.dna.ConfigurationException;
 import org.jcontainer.dna.Logger;
-import org.objectledge.cache.Caching;
+import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
@@ -76,7 +76,7 @@ public class EntityRegistry
      * @param type the entity implementation class.
      * @throws ConfigurationException if the cache is not configured properly.
      */
-    public EntityRegistry(Persistence persistence, Caching cacheFactory, Database database, 
+    public EntityRegistry(Persistence persistence, CacheFactory cacheFactory, Database database, 
         PicoContainer dependencyContainer, Logger log, 
         String kind, final Class type)
         throws ConfigurationException
@@ -96,7 +96,7 @@ public class EntityRegistry
         if(!Persistent.class.isAssignableFrom(type))
         {
             throw new IllegalArgumentException(type.getName()+
-                " does not implement net.labeo.services.persietence.Persistent");
+                " does not implement Persistent intreface");
         }
         
         this.factory = new PicoPersistentFactory(dependencyContainer, type);
@@ -118,15 +118,10 @@ public class EntityRegistry
                 cl = cl.getSuperclass();
             }       
         }
-        if(setName == null || !setName.isAccessible())
-        {
-            throw new IllegalArgumentException(type.getName()+
-                " does not have an accessible setName(String) method");
-        }
         setupCache(cacheFactory, kind);
     }
     
-    private void setupCache(Caching caching, String kind)
+    private void setupCache(CacheFactory caching, String kind)
         throws ConfigurationException
     {
         if(kind.indexOf(' ') > 0)
