@@ -34,6 +34,9 @@
 
 -- cleanup ------------------------------------------------------------------
 
+DELETE FROM coral_relation_data;
+DELETE FROM coral_relation;
+
 DELETE FROM coral_permission_assignment;
 DELETE FROM coral_permission_association;
 DELETE FROM coral_role_assignment;
@@ -57,6 +60,8 @@ DELETE FROM coral_permission;
 DELETE FROM coral_attribute_class;
 DELETE FROM coral_resource_class;
 
+DELETE FROM ledge_id_table WHERE table_name = 'coral_relation';
 DELETE FROM ledge_id_table WHERE table_name = 'coral_role';
 DELETE FROM ledge_id_table WHERE table_name = 'coral_subject';
 DELETE FROM ledge_id_table WHERE table_name = 'coral_permission';
+

@@ -222,3 +222,31 @@ ALTER TABLE coral_permission_association
 ALTER TABLE coral_permission_association
         ADD FOREIGN KEY (permission_id)
         REFERENCES coral_permission (permission_id);
+
+-- CoralRelation ---------------------------------------------------------------
+
+CREATE TABLE coral_relation (
+        relation_id BIGINT NOT NULL,
+        name VARCHAR(255),
+        PRIMARY KEY (relation_id)
+);
+
+CREATE TABLE coral_relation_data (
+        relation_id BIGINT NOT NULL,
+        resource1 BIGINT,
+        resource2 BIGINT,
+        PRIMARY KEY (relation_id, resource1, resource2)
+);
+
+ALTER TABLE coral_relation_data
+        ADD FOREIGN KEY (relation_id)
+        REFERENCES coral_relation (relation_id);
+
+ALTER TABLE coral_relation_data
+        ADD FOREIGN KEY (resource1)
+        REFERENCES coral_resource (resource_id);
+
+ALTER TABLE coral_relation_data
+        ADD FOREIGN KEY (resource2)
+        REFERENCES coral_resource (resource_id);
+
