@@ -62,7 +62,7 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.6 2004-06-29 12:31:21 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.7 2004-07-01 08:52:08 fil Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -432,6 +432,7 @@ public abstract class AbstractResource implements Resource
      */
     public Object get(AttributeDefinition attribute) throws UnknownAttributeException
     {
+        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.get(attribute);
@@ -452,6 +453,7 @@ public abstract class AbstractResource implements Resource
      */
     public boolean isDefined(AttributeDefinition attribute) throws UnknownAttributeException
     {
+        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.isDefined(attribute);
@@ -472,6 +474,7 @@ public abstract class AbstractResource implements Resource
      */
     public boolean isModified(AttributeDefinition attribute) throws UnknownAttributeException
     {
+        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.isModified(attribute);
@@ -493,6 +496,7 @@ public abstract class AbstractResource implements Resource
     public void set(AttributeDefinition attribute, Object value) throws UnknownAttributeException,
         ModificationNotPermitedException, ValueRequiredException
     {
+        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             delegate.set(attribute, value);
@@ -527,6 +531,7 @@ public abstract class AbstractResource implements Resource
      */    
     public void setModified(AttributeDefinition attribute) throws UnknownAttributeException
     {
+        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             delegate.setModified(attribute);
@@ -549,6 +554,7 @@ public abstract class AbstractResource implements Resource
     public void unset(AttributeDefinition attribute) throws ValueRequiredException,
         UnknownAttributeException
     {
+        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             delegate.unset(attribute);
@@ -718,6 +724,23 @@ public abstract class AbstractResource implements Resource
         temp.toArray(result);
         return result;
     }
+
+    private void checkAttribute(AttributeDefinition attribute)
+        throws UnknownAttributeException
+    {
+        if(delegate == null)
+        {
+            throw new IllegalStateException("cannot verity attribute against null delegate");
+        }
+        if(!(attribute.getDeclaringClass().equals(delegate.getResourceClass()) ||
+             attribute.getDeclaringClass().isParent(delegate.getResourceClass())))
+        {
+            throw new UnknownAttributeException("class "+delegate.getResourceClass().getName()+
+                                                "does not have a "+attribute.getName()+
+                                                " attribute declared by "+
+                                                attribute.getDeclaringClass().getName());
+        }
+    }
     
     // subclass contract ////////////////////////////////////////////////////////////////////////
     
@@ -728,4 +751,99 @@ public abstract class AbstractResource implements Resource
     protected abstract void setLocally(AttributeDefinition attribute, Object value);
 
     protected abstract void unsetLocally(AttributeDefinition attribute);
+
+    protected Object loadAttribute(AttributeDefinition attribute, long aId)
+    {
+        Connection conn = null;
+        try
+        {
+            conn = database.getConnection();
+            return attribute.getAttributeClass().getHandler().
+                retrieve(aId, conn);
+        }
+        catch(Exception e)
+        {
+            if(delegate == null)
+            {
+                throw new BackendException("failed to retrieve attribute value " +
+                    "(attribute definition = "+attribute.getName()+
+                    " , attribute id = "+aId+")", e);
+            }
+            else
+            {
+                throw new BackendException("failed to retrieve attribute value " +
+                    "(attribute definition = "+attribute.getName()+
+                    " , attribute id = "+aId+") for resource: "+delegate.getId() , e);
+            }
+        }
+        finally
+        {
+            if(conn != null)
+            {
+                try
+                {
+                    conn.close();
+                }
+                catch(SQLException ee)
+                {
+                    logger.error("Failed to close connection", ee);
+                }
+            }
+        }
+    }
+
+    /**
+     * Update the attribute.
+     * 
+     * @param attribute the attribute.
+     * @param id the id.
+     * @param value the atribute value.
+     * @return the attribute identifier.
+     */
+    protected void updateAttribute(AttributeDefinition attribute, Long idObj, Object value)
+    {
+        long id = idObj != null ? idObj.longValue() : -1;
+        AttributeHandler handler = attribute.getAttributeClass().getHandler();
+        Connection conn = null;
+        try
+        {
+            conn = database.getConnection();
+            if(id != -1)
+            {
+                if(value == null)
+                {
+                    handler.delete(id, conn);
+                }
+                else
+                {
+                    handler.update(id, value, conn);
+                }
+            }
+            else
+            {
+                if(value != null)
+                {
+                    id = handler.create(value, conn);
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            throw new BackendException("failed to update attribute value", e);
+        }
+        finally
+        {
+            if(conn != null)
+            {
+                try
+                {
+                    conn.close();
+                }
+                catch(SQLException ee)
+                {
+                    logger.error("failed to close connection", ee);
+                }
+            }
+        }
+    }
 }
