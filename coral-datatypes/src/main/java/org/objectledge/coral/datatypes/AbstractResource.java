@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.17 2005-01-19 06:09:25 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.18 2005-01-19 13:21:46 pablo Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -68,7 +68,7 @@ public abstract class AbstractResource implements Resource
     private Database database;
 
     /** The logging facility. */
-    private Logger logger;
+    protected Logger logger;
 
     /** Security delegate object. */
     protected Resource delegate;
