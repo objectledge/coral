@@ -9,7 +9,7 @@ import org.objectledge.database.persistence.PersistentObject;
 /**
  * A base of all Coral entitity implementations.
  *
- * @version $Id: AbstractEntity.java,v 1.8 2005-01-17 11:58:37 rafal Exp $
+ * @version $Id: AbstractEntity.java,v 1.9 2005-01-18 10:47:06 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractEntity
@@ -127,7 +127,7 @@ public abstract class AbstractEntity
         buff.append(' ');
         buff.append(getName());
         buff.append(" #");
-        buff.append(getId());
+        buff.append(getIdString());
         buff.append(" @");
         buff.append(Integer.toString(System.identityHashCode(this), 16));
         return buff.toString();

@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * A common base class for {@link QueryService} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.9 2004-12-27 03:05:59 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.10 2005-01-18 10:45:39 rafal Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery
@@ -557,8 +557,8 @@ public abstract class AbstractCoralQueryImpl
                                 catch(EntityDoesNotExistException e)
                                 {
                                     throw new BackendException("invalid constraint on "+
-                                                               "a Resource reference attribute #"+
-                                                               lhs.getId()+": "+lhs.getDomain());
+                                        "a Resource reference attribute #" + lhs.getIdString()
+                                        + ": " + lhs.getDomain());
                                 }
                             }
                         }

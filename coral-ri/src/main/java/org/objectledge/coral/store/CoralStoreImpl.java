@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.18 2005-01-17 09:55:34 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.19 2005-01-18 10:46:14 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -184,7 +184,7 @@ public class CoralStoreImpl
                     List list;
                     if(parent != null)
                     {
-                        list = persistence.load("parent = "+parent.getId(),
+                        list = persistence.load("parent = "+parent.getIdString(),
                                                     resourceFactory);
                     }
                     else
@@ -341,7 +341,7 @@ public class CoralStoreImpl
                 try
                 {
                     conn = persistence.getDatabase().getConnection();
-                    List list = persistence.load("parent = "+parent.getId()+
+                    List list = persistence.load("parent = "+parent.getIdString()+
                         " AND name = '"+DatabaseUtils.escapeSqlString(name)+"'", resourceFactory);
                     rs = instantiate(list, conn);
                 }
@@ -659,7 +659,7 @@ public class CoralStoreImpl
         }
         synchronized(resourceById)
         {
-            resourceById.put(new Long(res.getId()), res);
+            resourceById.put(res.getIdObject(), res);
         }
         synchronized(resourceByName)
         {
@@ -744,12 +744,12 @@ public class CoralStoreImpl
                                 else
                                 {
                                     count = persistence.count("coral_resource", "parent = "+
-                                                                  resource.getId());
+                                                                  resource.getIdString());
                                 }
                                 if(count != 0)
                                 {
-                                    throw new EntityInUseException("resource #"+resource.getId()+
-                                                                   " has "+count+" children");
+                                    throw new EntityInUseException("resource #"+
+                                        resource.getIdString() + " has "+count+" children");
                                 }
                                 Set assignments = coral.getRegistry().
                                     getPermissionAssignments(resource);
@@ -762,7 +762,7 @@ public class CoralStoreImpl
                                 resource.getResourceClass().getHandler().
                                     delete(resource, conn);
                                 persistence.delete((Persistent)resource.getDelegate());
-                                resourceById.remove(new Long(resource.getId()));
+                                resourceById.remove(resource.getIdObject());
                                 Set rs = (Set)resourceByName.get(resource.getName());
                                 if(rs != null)
                                 {
@@ -832,7 +832,7 @@ public class CoralStoreImpl
                                               " error code:"+sqle.getErrorCode(), e);
                                 }
                                 throw new BackendException("failed to delete resource #"+
-                                    resource.getId(), e);
+                                    resource.getIdString(), e);
                             }
                             finally
                             {
@@ -957,7 +957,7 @@ public class CoralStoreImpl
                     if(set.contains(deps[j]) && resources.contains(deps[j]))
                     {
                         throw new EntityInUseException("referential dependency loop on #"+
-                            r.getId());            
+                            r.getIdString());            
                     }
                     stack.add(deps[j]);
                     set.add(deps[j]);
@@ -1239,7 +1239,7 @@ public class CoralStoreImpl
         while(i.hasNext())
         {
             Resource res = (Resource)i.next();
-            Long key = new Long(res.getId());
+            Long key = res.getIdObject();
             Resource cached = (Resource)resourceById.get(key);
             if(cached == null)
             {
@@ -1357,17 +1357,17 @@ public class CoralStoreImpl
                         Resource[] target = getResourceByPath(targetName);
                         if(target.length != 1)
                         {
-                            log.warn("leaving resource #"+dst.getId()+" ("+
+                            log.warn("leaving resource #"+dst.getIdString()+" ("+
                                         dst.getPath()+") attribute "+atDefs[i].getName()+
-                                        " pointing to resource #"+res.getId()+" ("+
+                                        " pointing to resource #"+res.getIdString()+" ("+
                                         res.getPath()+") because "+targetName+
                                         " is an ambigous resource path", null);
                         } 
                         else if((atDefs[i].getFlags() & AttributeFlags.READONLY) != 0)
                         {
-                            log.warn("leaving resource #"+dst.getId()+" ("+
+                            log.warn("leaving resource #"+dst.getIdString()+" ("+
                                         dst.getPath()+") attribute "+atDefs[i].getName()+
-                                        " pointing to resource #"+res.getId()+" ("+
+                                        " pointing to resource #"+res.getIdString()+" ("+
                                         res.getPath()+") because "+atDefs[i].getName()+
                                         " is a READONLY attribute", null);
                         }
@@ -1380,9 +1380,9 @@ public class CoralStoreImpl
                             }
                             catch(Exception e)
                             {
-                                log.warn("leaving resource #"+dst.getId()+" ("+
+                                log.warn("leaving resource #"+dst.getIdString()+" ("+
                                             dst.getPath()+") attribute "+atDefs[i].getName()+
-                                            " pointing to resource #"+res.getId()+" ("+
+                                            " pointing to resource #"+res.getIdString()+" ("+
                                             res.getPath()+") because of "+
                                             "an unexpected exception",e);
                             }   

@@ -261,7 +261,7 @@ public class EntityRegistry
         {
             throw new BackendException("failed to save "+type+" to storage", ex);
         }
-        byId.put(new Long(entity.getId()), entity);
+        byId.put(entity.getIdObject(), entity);
         Set es = (Set)byName.get(entity.getName());
         if(es != null)
         {
@@ -352,9 +352,9 @@ public class EntityRegistry
         }
         catch(PersistenceException ex)
         {
-            throw new BackendException("failed to delete "+kind+" #"+entity.getId(), ex);
+            throw new BackendException("failed to delete "+kind+" #"+entity.getIdString(), ex);
         }
-        byId.remove(new Long(entity.getId()));
+        byId.remove(entity.getIdObject());
         Set es = (Set)byName.get(entity.getName());
         if(es != null)
         {
@@ -488,7 +488,7 @@ public class EntityRegistry
         while(i.hasNext())
         {
             Entity e = (Entity)i.next();
-            Long id = new Long(e.getId());
+            Long id = e.getIdObject();
             Entity ee = (Entity)byId.get(id);
             if(ee == null)
             {

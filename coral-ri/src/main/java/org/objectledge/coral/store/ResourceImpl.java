@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.17 2004-12-23 02:22:33 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.18 2005-01-18 10:46:16 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -201,7 +201,7 @@ public class ResourceImpl
         buff.append(" delegate for ");
         buff.append(getPath());
         buff.append(" #");
-        buff.append(getId());
+        buff.append(getIdString());
         buff.append(" @");
         buff.append(Integer.toString(System.identityHashCode(this), 16));
         return buff.toString();

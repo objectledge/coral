@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.5 2004-12-23 02:04:58 rafal Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.6 2005-01-18 10:45:40 rafal Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -157,13 +157,13 @@ public class SQLCoralQueryImpl
                     query.append("(");
                     query.append("r").append(i+1).append(".resource_class_id");
                     query.append(" = ");
-                    query.append(rcm.getRClass().getId());
+                    query.append(rcm.getRClass().getIdString());
                     for(int j=0; j<children.length; j++)
                     {
                         query.append(" OR ");
                         query.append("r").append(i+1).append(".resource_class_id");
                         query.append(" = ");
-                        query.append(children[j].getId());
+                        query.append(children[j].getIdString());
                     }
                     query.append(")");
                 }
@@ -171,7 +171,7 @@ public class SQLCoralQueryImpl
                 {
                     query.append("r").append(i+1).append(".resource_class_id");
                     query.append(" = ");
-                    query.append(rcm.getRClass().getId());
+                    query.append(rcm.getRClass().getIdString());
                 }
                 query.append('\n');
             }
@@ -199,7 +199,7 @@ public class SQLCoralQueryImpl
                     query.append(" AND ");
                     query.append("r").append(i+1).append("g").append(j+1);
                     query.append(".attribute_definition_id = ");
-                    query.append(ad.getId());
+                    query.append(ad.getIdString());
                     query.append(" AND ");
                     query.append("r").append(i+1).append("a").append(j+1).append(".data_key = ");
                     query.append("r").append(i+1).append("g").append(j+1).append(".data_key");

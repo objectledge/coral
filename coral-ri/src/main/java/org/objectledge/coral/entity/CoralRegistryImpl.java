@@ -55,7 +55,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.8 2004-03-15 09:02:12 fil Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.9 2005-01-18 10:47:08 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -348,7 +348,7 @@ public class CoralRegistryImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             int attrs = persistence.count("coral_attribute_definition", 
-                "attribute_class_id = "+item.getId());
+                "attribute_class_id = "+item.getIdString());
             if(attrs > 0)
             {
                 throw new EntityInUseException("Attribute class "+item.getName()+" is used by "+
@@ -456,7 +456,7 @@ public class CoralRegistryImpl
             shouldCommit = persistence.getDatabase().beginTransaction();
             // Check for resources
             int resources = persistence.count("coral_resource", 
-                "resource_class_id = "+item.getId());
+                "resource_class_id = "+item.getIdString());
             if(resources > 0)
             {
                 throw new EntityInUseException(resources+" resources of the class "+
@@ -464,7 +464,7 @@ public class CoralRegistryImpl
             }
 
             int children = persistence.count("coral_resource_class_inheritance",
-                "parent = "+item.getId());
+                "parent = "+item.getIdString());
             if(children > 0)
             {
                 throw new EntityInUseException(children+" child classes of the class "+
@@ -556,7 +556,7 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("resource_class_id = "+owner.getId(),
+                    list = persistence.load("resource_class_id = "+owner.getIdString(),
                                             attributeDefinitionFactory);
                 }
                 catch(PersistenceException e)
@@ -665,8 +665,8 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("parent = "+owner.getId()+" OR "+
-                                            "child = "+owner.getId(),
+                    list = persistence.load("parent = "+owner.getIdString()+" OR "+
+                                            "child = "+owner.getIdString(),
                                             resourceClassInheritanceFactory);
                 }
                 catch(PersistenceException e)
@@ -807,7 +807,7 @@ public class CoralRegistryImpl
             shouldCommit = persistence.getDatabase().beginTransaction();
             // check for created resources
             int created = persistence.count("coral_resource", 
-                "created_by = "+item.getId());
+                "created_by = "+item.getIdString());
             if(created > 0)
             {
                 throw new EntityInUseException(item.getName()+
@@ -815,7 +815,7 @@ public class CoralRegistryImpl
             }
             // check for owned resources
             int owned = persistence.count("coral_resource", 
-                "owned_by = "+item.getId());
+                "owned_by = "+item.getIdString());
             if(owned > 0)
             {
                 throw new EntityInUseException(item.getName()+
@@ -823,7 +823,7 @@ public class CoralRegistryImpl
             }
             // check for modified resources
             int modified = persistence.count("coral_resource",
-                "modified_by = "+item.getId());
+                "modified_by = "+item.getIdString());
             if(modified > 0)
             {
                     throw new EntityInUseException(item.getName()+
@@ -831,7 +831,7 @@ public class CoralRegistryImpl
             }
             // check for granted role assignments
             int grantedRoles = persistence.count("coral_role_assignment", 
-                 "grantor = "+item.getId());
+                 "grantor = "+item.getIdString());
             if(grantedRoles > 0)
             {
                 throw new EntityInUseException(item.getName()+
@@ -839,7 +839,7 @@ public class CoralRegistryImpl
             }
             // check for granted permission assignments
             int grantedPermissions = persistence.count("coral_permission_assignment", 
-                 "grantor = "+item.getId());
+                 "grantor = "+item.getIdString());
             if(grantedPermissions > 0)
             {
                 throw new EntityInUseException(item.getName()+
@@ -969,7 +969,7 @@ public class CoralRegistryImpl
             shouldCommit = persistence.getDatabase().beginTransaction();
             // check for sub roles
             int subRoles = persistence.count("coral_role_implication", 
-                "super_role = "+item.getId());
+                "super_role = "+item.getIdString());
             if(subRoles > 0)
             {
                 throw new EntityInUseException("Role "+item.getName()+" has "+subRoles+
@@ -977,7 +977,7 @@ public class CoralRegistryImpl
             }
             // check for role assignments
             int subjects = persistence.count("coral_role_assignment", 
-                "role_id = "+item.getId());
+                "role_id = "+item.getIdString());
             if(subjects > 0)
             {
                 throw new EntityInUseException("Role "+item.getName()+" has been assigned to "+
@@ -985,7 +985,7 @@ public class CoralRegistryImpl
             }
             // check for permission assignemts
             int assignments = persistence.count("coral_permission_assignment", 
-                                                    "role_id = "+item.getId());
+                                                    "role_id = "+item.getIdString());
             if(assignments > 0)
             {
                 throw new EntityInUseException("Role "+item.getName()+" received "+
@@ -1114,7 +1114,7 @@ public class CoralRegistryImpl
             shouldCommit = persistence.getDatabase().beginTransaction();
             // check for assignments
             int assignments = persistence.count("coral_permission_assignment", 
-                                                    "permission_id = "+item.getId());
+                                                    "permission_id = "+item.getIdString());
             if(assignments > 0)
             {
                 throw new EntityInUseException("Permission "+item.getName()+" has "+
@@ -1122,7 +1122,7 @@ public class CoralRegistryImpl
             }
             // check for associations
             int associations = persistence.count("coral_permission_association",
-                                                     "permission_id = "+item.getId());
+                                                     "permission_id = "+item.getIdString());
             if(assignments > 0)
             {
                     throw new EntityInUseException("Permission "+item.getName()+" is associated "+
@@ -1195,8 +1195,8 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("super_role = "+owner.getId()+" OR "+
-                                            "sub_role = "+owner.getId(),
+                    list = persistence.load("super_role = "+owner.getIdString()+" OR "+
+                                            "sub_role = "+owner.getIdString(),
                                             roleImplicationFactory);
                 }
                 catch(PersistenceException e)
@@ -1297,7 +1297,7 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("subject_id = "+owner.getId(),
+                    list = persistence.load("subject_id = "+owner.getIdString(),
                                             roleAssignmentFactory);
                 }
                 catch(PersistenceException e)
@@ -1330,7 +1330,7 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("role_id = "+owner.getId(),
+                    list = persistence.load("role_id = "+owner.getIdString(),
                                             roleAssignmentFactory);
                 }
                 catch(PersistenceException e)
@@ -1423,7 +1423,7 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("resource_class_id = "+owner.getId(),
+                    list = persistence.load("resource_class_id = "+owner.getIdString(),
                                             permissionAssociationFactory);
                 }
                 catch(PersistenceException e)
@@ -1456,7 +1456,7 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("permission_id = "+owner.getId(),
+                    list = persistence.load("permission_id = "+owner.getIdString(),
                                             permissionAssociationFactory);
                 }
                 catch(PersistenceException e)
@@ -1553,7 +1553,7 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("resource_id = "+owner.getId(),
+                    list = persistence.load("resource_id = "+owner.getIdString(),
                                             permissionAssignmentFactory);
                 }
                 catch(PersistenceException e)
@@ -1586,7 +1586,7 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("role_id = "+owner.getId(),
+                    list = persistence.load("role_id = "+owner.getIdString(),
                                             permissionAssignmentFactory);
                 }
                 catch(PersistenceException e)
@@ -1910,7 +1910,7 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load("grantor = "+subject.getId(),
+            List list = persistence.load("grantor = "+subject.getIdString(),
                                              roleAssignmentFactory);
             RoleAssignment[] result = new RoleAssignment[list.size()];
             list.toArray(result);
@@ -1929,7 +1929,7 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load("grantor = "+subject.getId(),
+            List list = persistence.load("grantor = "+subject.getIdString(),
                                              permissionAssignmentFactory);
             PermissionAssignment[] result = new PermissionAssignment[list.size()];
             list.toArray(result);
@@ -1948,7 +1948,7 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load("created_by = "+subject.getId(),
+            List list = persistence.load("created_by = "+subject.getIdString(),
                                              roleAssignmentFactory);
             Resource[] result = new Resource[list.size()];
             for(int i=0; i<list.size(); i++)
@@ -1974,7 +1974,7 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load("owned_by = "+subject.getId(),
+            List list = persistence.load("owned_by = "+subject.getIdString(),
                                              roleAssignmentFactory);
             ArrayList temp = new ArrayList();
             ArrayList stack = new ArrayList();
