@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fileset-config file-format-version="1.0.0"/>
+<fileset-config file-format-version="1.0.0">
+    <fileset check-config-name="Ledge checks" enabled="false" name="main sources">
+        <file-match-pattern include-pattern="true" match-pattern="main.*java$"/>
+    </fileset>
+    <fileset check-config-name="Ledge test checks" enabled="false" name="test sources">
+        <file-match-pattern include-pattern="true" match-pattern="test.*java$"/>
+    </fileset>
+</fileset-config>

@@ -34,7 +34,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import org.jmock.Mock;
-import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;

@@ -3,4 +3,7 @@
     <fileset name="main sources" enabled="true" check-config-name="Ledge checks">
         <file-match-pattern match-pattern="main.*java$" include-pattern="true"/>
     </fileset>
+    <fileset name="test sources" enabled="true" check-config-name="Ledge test checks">
+        <file-match-pattern match-pattern="test.*java$" include-pattern="true"/>
+    </fileset>
 </fileset-config>
