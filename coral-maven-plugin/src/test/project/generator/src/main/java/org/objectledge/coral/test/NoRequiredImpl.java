@@ -211,7 +211,17 @@ public class NoRequiredImpl
         }
     }
 
-    /**
+	/**
+	 * Checks if the value of the <code>i4</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>i4</code> attribute is defined.
+	 */
+    public boolean isI4Defined()
+	{
+	    return isDefined(i4Def);
+	}
+	
+	/**
      * Removes the value of the <code>i4</code> attribute.
      */
     public void unsetI4()

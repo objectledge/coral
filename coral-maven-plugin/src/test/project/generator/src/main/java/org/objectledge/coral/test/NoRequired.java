@@ -73,7 +73,14 @@ public interface NoRequired
      */
     public void setI4(int value);
 
-    /**
+	/**
+	 * Checks if the value of the <code>i4</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>i4</code> attribute is defined.
+	 */
+    public boolean isI4Defined();
+
+	/**
      * Removes the value of the <code>i4</code> attribute.
      */
     public void unsetI4();

@@ -301,7 +301,17 @@ public class ${class.implClassName}
     }
 #if(!$attr.required)
 
-    /**
+	/**
+	 * Checks if the value of the <code>${attr.name}</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>${attr.name}</code> attribute is defined.
+	 */
+    public boolean is${attr.javaName}Defined()
+	{
+	    return isDefined(${attr.name}Def);
+	}
+	
+	/**
      * Removes the value of the <code>${attr.name}</code> attribute.
      */
     public void unset${attr.javaName}()

@@ -111,7 +111,14 @@ public interface ${class.interfaceClassName}
     public void set${attr.javaName}($attr.javaType value);
 #if(!$attr.required)
 
-    /**
+	/**
+	 * Checks if the value of the <code>${attr.name}</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>${attr.name}</code> attribute is defined.
+	 */
+    public boolean is${attr.javaName}Defined();
+
+	/**
      * Removes the value of the <code>${attr.name}</code> attribute.
      */
     public void unset${attr.javaName}();

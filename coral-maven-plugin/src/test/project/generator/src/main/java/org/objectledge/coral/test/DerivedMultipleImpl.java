@@ -233,7 +233,17 @@ public class DerivedMultipleImpl
         }
     }
 
-    /**
+	/**
+	 * Checks if the value of the <code>i1</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>i1</code> attribute is defined.
+	 */
+    public boolean isI1Defined()
+	{
+	    return isDefined(i1Def);
+	}
+	
+	/**
      * Removes the value of the <code>i1</code> attribute.
      */
     public void unsetI1()

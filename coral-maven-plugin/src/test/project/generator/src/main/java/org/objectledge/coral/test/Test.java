@@ -74,7 +74,14 @@ public interface Test
      */
     public void setI1(int value);
 
-    /**
+	/**
+	 * Checks if the value of the <code>i1</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>i1</code> attribute is defined.
+	 */
+    public boolean isI1Defined();
+
+	/**
      * Removes the value of the <code>i1</code> attribute.
      */
     public void unsetI1();
