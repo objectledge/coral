@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoaderTest.java,v 1.3 2004-03-23 10:03:04 fil Exp $
+ * @version $Id: RMLModelLoaderTest.java,v 1.4 2004-03-23 11:34:52 fil Exp $
  */
 public class RMLModelLoaderTest
     extends LedgeTestCase
@@ -53,17 +53,10 @@ public class RMLModelLoaderTest
         modelLoader = new RMLModelLoader(schema);
     }
 
-    public void testError()
-        throws Exception
-    {
-        // TODO the first script processed is ignored???
-        modelLoader.process("WHAT THE HELL?!");        
-    }
-
     public void testCreateAttributeClass()
         throws Exception
     {
-        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         assertEquals("jc1", ac1.getJavaClassName());
     }
@@ -71,20 +64,20 @@ public class RMLModelLoaderTest
     public void testDeleteAttributeClass()
         throws Exception
     {
-        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         assertNotNull(ac1);
-        modelLoader.process("DELETE ATTRIBUTE CLASS ac1;");
+        modelLoader.execute("DELETE ATTRIBUTE CLASS ac1;");
         assertTrue(schema.getAttributeClasses().isEmpty());
     }
 
     public void testAlterAttributeClassSetName()
         throws Exception
     {
-        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         assertNotNull(ac1);
-        modelLoader.process("ALTER ATTRIBUTE CLASS ac1 SET NAME ac2;");
+        modelLoader.execute("ALTER ATTRIBUTE CLASS ac1 SET NAME ac2;");
         AttributeClass ac2 = schema.getAttributeClass("ac2");
         assertNotNull(ac2);
         assertSame(ac1, ac2);
@@ -93,17 +86,17 @@ public class RMLModelLoaderTest
     public void testAlterAttributeClassSetJavaClass()
         throws Exception
     {
-        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         assertNotNull(ac1);
-        modelLoader.process("ALTER ATTRIBUTE CLASS ac1 SET JAVA CLASS jc2;");
+        modelLoader.execute("ALTER ATTRIBUTE CLASS ac1 SET JAVA CLASS jc2;");
         assertEquals("jc2", ac1.getJavaClassName());
     }
 
     public void testCreateResourceClass()
         throws Exception
     {
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertEquals("jc1", rc1.getInterfaceClassName());
         assertEquals("jc1Impl", rc1.getImplClassName());
@@ -118,22 +111,22 @@ public class RMLModelLoaderTest
     public void testDeleteResourceClass()
         throws Exception
     {
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertNotNull(rc1);
-        modelLoader.process("DELETE RESOURCE CLASS rc1;");
+        modelLoader.execute("DELETE RESOURCE CLASS rc1;");
         assertTrue(schema.getResourceClasses().isEmpty());
     }
     
     public void testAlterResourceClassAddAttribute()
         throws Exception
     {
-        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertTrue(rc1.getAttributes().isEmpty());
-        modelLoader.process("ALTER RESOURCE CLASS rc1 ADD ATTRIBUTE ac1 a1;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 ADD ATTRIBUTE ac1 a1;");
         Attribute a1 = rc1.getAttribute("a1");
         assertSame(rc1, a1.getDeclaringClass());
         assertSame(ac1, a1.getAttributeClass());
@@ -142,47 +135,47 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassDeleteAttribute()
         throws Exception
     {
-        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         Attribute a1 = rc1.getAttribute("a1");
         assertSame(ac1, a1.getAttributeClass());
-        modelLoader.process("ALTER RESOURCE CLASS rc1 DELETE ATTRIBUTE a1;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 DELETE ATTRIBUTE a1;");
         assertTrue(rc1.getAttributes().isEmpty());
     }
     
     public void testAlterResourceClassAddParentClass()
         throws Exception
     {
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.process("CREATE RESOURCE CLASS rc2 JAVA CLASS jc2 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc2 JAVA CLASS jc2 HANDLER CLASS hc1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         ResourceClass rc2 = schema.getResourceClass("rc2");
         assertTrue(rc1.getParentClasses().isEmpty());
-        modelLoader.process("ALTER RESOURCE CLASS rc2 ADD SUPERCLASS rc1;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc2 ADD SUPERCLASS rc1;");
         assertSame(rc1, rc2.getParentClasses().get(0));                
     }
     
     public void testAlterResourceClassDeleteParentClass()
         throws Exception
     {
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.process("CREATE RESOURCE CLASS rc2 JAVA CLASS jc2 HANDLER CLASS hc1 SUPERCLASSES ( rc1 );");        
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc2 JAVA CLASS jc2 HANDLER CLASS hc1 SUPERCLASSES ( rc1 );");        
         ResourceClass rc1 = schema.getResourceClass("rc1");
         ResourceClass rc2 = schema.getResourceClass("rc2");
         assertSame(rc1, rc2.getParentClasses().get(0));                
-        modelLoader.process("ALTER RESOURCE CLASS rc2 DELETE SUPERCLASS rc1;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc2 DELETE SUPERCLASS rc1;");
         assertTrue(rc1.getParentClasses().isEmpty());
     }
     
     public void testAlterResourceClassSetName()
         throws Exception
     {
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertNotNull(rc1);
-        modelLoader.process("ALTER RESOURCE CLASS rc1 SET NAME rc2;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 SET NAME rc2;");
         ResourceClass rc2 = schema.getResourceClass("rc2");
         assertNotNull(rc2);
         assertSame(rc1, rc2);
@@ -191,12 +184,12 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassSetJavaClass()
         throws Exception
     {    
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertEquals("jc1", rc1.getInterfaceClassName());
         assertEquals("jc1Impl", rc1.getImplClassName());
         assertEquals("jc1", rc1.getInterfaceClassName());
-        modelLoader.process("ALTER RESOURCE CLASS rc1 SET JAVA CLASS jc2Impl;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 SET JAVA CLASS jc2Impl;");
         assertEquals("jc2", rc1.getInterfaceClassName());
         assertEquals("jc2Impl", rc1.getImplClassName());
     }
@@ -204,32 +197,32 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassSetDbTable()
         throws Exception
     {
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertEquals("dt1", rc1.getDbTable());
-        modelLoader.process("ALTER RESOURCE CLASS rc1 SET DB TABLE dt2;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 SET DB TABLE dt2;");
     }
 
     public void testAlterResourceClassSetFlags()
         throws Exception
     {
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertEquals(0, rc1.getFlags());
-        modelLoader.process("ALTER RESOURCE CLASS rc1 SET FLAGS ABSTRACT;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 SET FLAGS ABSTRACT;");
         assertEquals(ResourceClassFlags.ABSTRACT, rc1.getFlags());
     }
     
     public void testAlterResourceClassAlterAttributeSetName()
         throws Exception
     {
-        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         Attribute a1 = rc1.getAttribute("a1");
         assertSame(ac1, a1.getAttributeClass());
-        modelLoader.process("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET NAME a2;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET NAME a2;");
         Attribute a2 = rc1.getAttribute("a2");
         assertSame(ac1, a2.getAttributeClass());
     }
@@ -237,24 +230,24 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassAlterAttributeSetDomain()
         throws Exception
     {
-        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         Attribute a1 = rc1.getAttribute("a1");
         assertNull(a1.getDomain());
-        modelLoader.process("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET DOMAIN '[A-Z]*';");
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET DOMAIN '[A-Z]*';");
         assertEquals("[A-Z]*", a1.getDomain());
     }
 
     public void testAlterResourceClassAlterAttributeSetFlags()
         throws Exception
     {
-        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         Attribute a1 = rc1.getAttribute("a1");
         assertEquals(0, a1.getFlags());
-        modelLoader.process("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET FLAGS REQUIRED;");
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET FLAGS REQUIRED;");
         assertEquals(AttributeFlags.REQUIRED, a1.getFlags());
     }
 }
