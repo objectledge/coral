@@ -191,7 +191,7 @@ public class RMLExecutor
             for(int i=0; i<items.length; i++)
             {
                 result[i+1] = new String[5];
-                result[i+1][0] = Long.toString(items[i].getId());
+                result[i+1][0] = items[i].getIdString();
                 result[i+1][1] = items[i].getName();
                 result[i+1][2] = items[i].getJavaClass().getName();
                 result[i+1][3] = items[i].getHandler().getClass().getName();
@@ -357,7 +357,7 @@ public class RMLExecutor
                         "Id", "Name", "Java class", "Handler class", "Flags"
                     };
                     result[1] = new String[5];
-                    result[1][0] = Long.toString(rc.getId());
+                    result[1][0] = rc.getIdString();
                     result[1][1] = rc.getName();
                     result[1][2] = rc.getJavaClassName();
                     result[1][3] = rc.getHandler().getClass().getName();
@@ -373,7 +373,7 @@ public class RMLExecutor
                         for(int i=0; i<parents.length; i++)
                         {
                             result[i+1] = new String[2];
-                            result[i+1][0] = Long.toString(parents[i].getId());
+                            result[i+1][0] = parents[i].getIdString();
                             result[i+1][1] = parents[i].getName();
 
                             PermissionAssociation[] pas = parents[i].getPermissionAssociations();
@@ -415,7 +415,7 @@ public class RMLExecutor
                         {
                             PermissionAssociation pa = (PermissionAssociation)permissions.get(i);
                             result[i+1] = new String[3];
-                            result[i+1][0] = Long.toString(pa.getPermission().getId());
+                            result[i+1][0] = pa.getPermission().getIdString();
                             result[i+1][1] = pa.getPermission().getName();
                             result[i+1][2] = pa.getResourceClass().getName();
                         }
@@ -443,7 +443,7 @@ public class RMLExecutor
                 for(int i=0; i<items.length; i++)
                 {
                     result[i+1] = new String[3];
-                    result[i+1][0] = Long.toString(items[i].getId());
+                    result[i+1][0] = items[i].getIdString();
                     result[i+1][1] = items[i].getName();
                     result[i+1][2] = items[i].getJavaClassName();
                 }
@@ -745,7 +745,7 @@ public class RMLExecutor
             for(int i=0; i<items.length; i++)
             {
                 result[i+1] = new String[2];
-                result[i+1][0] = Long.toString(items[i].getId());
+                result[i+1][0] = items[i].getIdString();
                 result[i+1][1] = items[i].getName();
             }
             table(result);
@@ -841,7 +841,7 @@ public class RMLExecutor
             for(int i=0; i<items.length; i++)
             {
                 result[i+1] = new String[2];
-                result[i+1][0] = Long.toString(items[i].getId());
+                result[i+1][0] = items[i].getIdString();
                 result[i+1][1] = items[i].getName();
             }
             table(result);
@@ -957,7 +957,7 @@ public class RMLExecutor
                     {
                         Role sup = impls[i].getSuperRole();
                         result[j+1] = new String[2];
-                        result[j+1][0] = Long.toString(sup.getId());
+                        result[j+1][0] = sup.getIdString();
                         result[j+1][1] = sup.getName();
                         j++;
                     }
@@ -970,7 +970,7 @@ public class RMLExecutor
                 for(int i=0; i<sups.length; i++)
                 {
                     result[i+1] = new String[2];
-                    result[i+1][0] = Long.toString(sups[i].getId());
+                    result[i+1][0] = sups[i].getIdString();
                     result[i+1][1] = sups[i].getName();
                 }
             }
@@ -1012,7 +1012,7 @@ public class RMLExecutor
                     {
                         Role sub = impls[i].getSubRole();
                         result[j+1] = new String[2];
-                        result[j+1][0] = Long.toString(sub.getId());
+                        result[j+1][0] = sub.getIdString();
                         result[j+1][1] = sub.getName();
                         j++;
                     }
@@ -1025,7 +1025,7 @@ public class RMLExecutor
                 for(int i=0; i<subs.length; i++)
                 {
                     result[i+1] = new String[2];
-                    result[i+1][0] = Long.toString(subs[i].getId());
+                    result[i+1][0] = subs[i].getIdString();
                     result[i+1][1] = subs[i].getName();
                 }
             }
@@ -1090,7 +1090,7 @@ public class RMLExecutor
             for(int i=0; i<items.length; i++)
             {
                 result[i+1] = new String[2];
-                result[i+1][0] = Long.toString(items[i].getId());
+                result[i+1][0] = items[i].getIdString();
                 result[i+1][1] = items[i].getName();
             }
             table(result);
@@ -1213,7 +1213,7 @@ public class RMLExecutor
                 for(int i=0; i<items.length; i++)
                 {
                     result[i+1] = new String[4];
-                    result[i+1][0] = Long.toString(items[i].getId());
+                    result[i+1][0] = items[i].getIdString();
                     result[i+1][1] = items[i].getPath();
                     result[i+1][2] = items[i].getResourceClass().getName();
                     result[i+1][3] = items[i].getOwner().getName();
@@ -1465,7 +1465,7 @@ public class RMLExecutor
             for(int i=0; i<items.length; i++)
             {
                 result[i+1] = new String[2];
-                result[i+1][0] = Long.toString(items[i].getId());
+                result[i+1][0] = items[i].getIdString();
                 result[i+1][1] = items[i].getName();
             }
             table(result);
@@ -1532,7 +1532,7 @@ public class RMLExecutor
                 {
                     Role role = roles[i].getRole();
                     result[i+1] = new String[5];
-                    result[i+1][0] = Long.toString(role.getId());
+                    result[i+1][0] = role.getIdString();
                     result[i+1][1] = role.getName();
                     result[i+1][2] = roles[i].isGrantingAllowed() ?
                         "yes" : "no";
@@ -1548,7 +1548,7 @@ public class RMLExecutor
                 for(int i=0; i<roles.length; i++)
                 {
                     result[i+1] = new String[2];
-                    result[i+1][0] = Long.toString(roles[i].getId());
+                    result[i+1][0] = roles[i].getIdString();
                     result[i+1][1] = roles[i].getName();
                 }
             }
@@ -1589,7 +1589,7 @@ public class RMLExecutor
                     PermissionAssignment pa = (PermissionAssignment)al.get(i);
                     result[i+1] = new String[6];
                     result[i+1][0] = pa.getRole().getName();
-                    result[i+1][1] = Long.toString(pa.getResource().getId());
+                    result[i+1][1] = pa.getResource().getIdString();
                     result[i+1][2] = pa.getPermission().getName();
                     result[i+1][3] = pa.isInherited() ? "yes" : "no";
                     result[i+1][4] = pa.getGrantedBy().getName();
@@ -1606,7 +1606,7 @@ public class RMLExecutor
                 for(int i=0; i<perms.length; i++)
                 {
                     result[i+1] = new String[2];
-                    result[i+1][0] = Long.toString(perms[i].getId());
+                    result[i+1][0] = perms[i].getIdString();
                     result[i+1][1] = perms[i].getName();
                 }
                 table(result);
@@ -1637,7 +1637,7 @@ public class RMLExecutor
                 {
                     PermissionAssignment pa = paa[i];
                     result[i+1] = new String[5];
-                    result[i+1][0] = Long.toString(pa.getResource().getId());
+                    result[i+1][0] = pa.getResource().getIdString();
                     result[i+1][1] = pa.getPermission().getName();
                     result[i+1][2] = pa.isInherited() ? "yes" : "no";
                     result[i+1][3] = pa.getGrantedBy().getName();
@@ -1654,7 +1654,7 @@ public class RMLExecutor
                 for(int i=0; i<perms.length; i++)
                 {
                     result[i+1] = new String[2];
-                    result[i+1][0] = Long.toString(perms[i].getId());
+                    result[i+1][0] = perms[i].getIdString();
                     result[i+1][1] = perms[i].getName();
                 }
                 table(result);

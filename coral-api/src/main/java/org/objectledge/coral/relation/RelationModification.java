@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * A class representing a batch of {@link Relation} modifications.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModification.java,v 1.8 2004-12-23 07:18:29 rafal Exp $
+ * @version $Id: RelationModification.java,v 1.9 2005-01-18 09:31:44 rafal Exp $
  */
 public class RelationModification
 {
@@ -79,7 +79,7 @@ public class RelationModification
      */
     public void add(Resource r1, Resource r2)
     {
-        add(new Long(r1.getId()), new Long(r2.getId()));
+        add(r1.getIdObject(), r2.getIdObject());
     }
 
     /**
@@ -90,10 +90,10 @@ public class RelationModification
      */
     public void add(Resource r1, Resource[] ress)
     {
-        Long id1 = new Long(r1.getId());
+        Long id1 = r1.getIdObject();
         for (int i = 0; i < ress.length; i++)
         {
-            add(id1, new Long(ress[i].getId()));
+            add(id1, ress[i].getIdObject());
         }
     }
 
@@ -105,10 +105,10 @@ public class RelationModification
      */
     public void add(Resource[] ress, Resource r2)
     {
-        Long id2 = new Long(r2.getId());
+        Long id2 = r2.getIdObject();
         for (int i = 0; i < ress.length; i++)
         {
-            add(new Long(ress[i].getId()), id2);
+            add(ress[i].getIdObject(), id2);
         }
     }
 
@@ -120,7 +120,7 @@ public class RelationModification
      */
     public void remove(Resource r1, Resource r2)
     {
-        rem(new Long(r1.getId()), new Long(r2.getId()));
+        rem(r1.getIdObject(), r2.getIdObject());
     }
 
     /**
@@ -130,7 +130,7 @@ public class RelationModification
      */
     public void remove(Resource r)
     {
-        rem(new Long(r.getId()), null);
+        rem(r.getIdObject(), null);
     }
 
     /**
@@ -140,7 +140,7 @@ public class RelationModification
      */
     public void removeInv(Resource r)
     {    	
-        rem(null, new Long(r.getId()));
+        rem(null, r.getIdObject());
     }
 
     /**

@@ -36,7 +36,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModificationTest.java,v 1.4 2004-05-28 10:04:04 fil Exp $
+ * @version $Id: RelationModificationTest.java,v 1.5 2005-01-18 09:31:38 rafal Exp $
  */
 public class RelationModificationTest  extends LedgeTestCase
 {
@@ -57,33 +57,33 @@ public class RelationModificationTest  extends LedgeTestCase
 	public void testRelationModification()
 	{
 		RelationModification modification = new RelationModification();
-		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
-		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(2L));
+		mockResource1.expects(once()).method("getIdObject").will(returnValue(new Long(1L)));
+		mockResource2.expects(once()).method("getIdObject").will(returnValue(new Long(2L)));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
-		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(3L));
-		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(once()).method("getIdObject").will(returnValue(new Long(3L)));
+		mockResource2.expects(once()).method("getIdObject").will(returnValue(new Long(4L)));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
-		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
-		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(2L));
+		mockResource1.expects(once()).method("getIdObject").will(returnValue(new Long(1L)));
+		mockResource2.expects(once()).method("getIdObject").will(returnValue(new Long(2L)));
 		modification.remove((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
-		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
-		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(once()).method("getIdObject").will(returnValue(new Long(1L)));
+		mockResource2.expects(once()).method("getIdObject").will(returnValue(new Long(4L)));
 		Resource[] ress = new Resource[1];
 		ress[0] = (Resource) mockResource2.proxy();
 		modification.add((Resource) mockResource1.proxy(), ress);
 		
-		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(3L));
-		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(5L));
+		mockResource1.expects(once()).method("getIdObject").will(returnValue(new Long(3L)));
+		mockResource2.expects(once()).method("getIdObject").will(returnValue(new Long(5L)));
 		ress[0] = (Resource) mockResource1.proxy();
 		modification.add(ress, (Resource) mockResource2.proxy());
 		
-		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(3L));
+		mockResource1.expects(once()).method("getIdObject").will(returnValue(new Long(3L)));
 		modification.remove((Resource) mockResource1.proxy());
 		
-		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(once()).method("getIdObject").will(returnValue(new Long(4L)));
 		modification.removeInv((Resource) mockResource1.proxy());
 		
 		Visitor1 v1 = new Visitor1();
