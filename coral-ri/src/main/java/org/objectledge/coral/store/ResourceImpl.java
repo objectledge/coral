@@ -37,7 +37,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * and {@link org.objectledge.coral.schema.ResourceHandler#retrieve(Resource,
  * java.sql.Connection,Object)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.22 2005-03-18 10:26:13 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.23 2005-03-23 11:50:22 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -472,7 +472,14 @@ public class ResourceImpl
      */
     public Resource[] getChildren()
     {
-        return coral.getStore().getResource(this);
+        try
+        {
+            return coral.getStore().getResource(coral.getStore().getResource(getId()));
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new BackendException("Unexpected inconsitency", e);
+        }
     }
     
     /** 
