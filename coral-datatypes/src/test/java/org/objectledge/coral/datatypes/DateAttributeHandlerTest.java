@@ -70,7 +70,7 @@ public class DateAttributeHandlerTest extends LedgeTestCase
     private Mock mockResultSet;
     private ResultSet resultSet;
     private Date currentDate;
-    private java.sql.Date sqlCurrentDate;
+    private java.sql.Timestamp sqlCurrentDate;
 
     private DateAttributeHandler handler;
 
@@ -104,7 +104,7 @@ public class DateAttributeHandlerTest extends LedgeTestCase
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
         currentDate = new Date();
-        sqlCurrentDate = new java.sql.Date(currentDate.getTime());
+        sqlCurrentDate = new java.sql.Timestamp(currentDate.getTime());
     }
 
     public void testAttributeHandlerBase()

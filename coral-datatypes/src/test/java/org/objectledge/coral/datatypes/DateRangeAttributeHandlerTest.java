@@ -69,8 +69,8 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
     private Mock mockResultSet;
     private ResultSet resultSet;
     private DateRange range;
-    private java.sql.Date rangeStart;
-    private java.sql.Date rangeEnd;
+    private java.sql.Timestamp rangeStart;
+    private java.sql.Timestamp rangeEnd;
     private DateRangeAttributeHandler handler;
 
     public void setUp() throws Exception
@@ -105,8 +105,8 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
         Date d1 = new Date();
         Date d2 = new Date(d1.getTime()+60000);
         range = new DateRange(d1, d2);
-        rangeStart = new java.sql.Date(d1.getTime());
-        rangeEnd = new java.sql.Date(d2.getTime());
+        rangeStart = new java.sql.Timestamp(d1.getTime());
+        rangeEnd = new java.sql.Timestamp(d2.getTime());
     }
 
     public void testAttributeHandlerBase()
