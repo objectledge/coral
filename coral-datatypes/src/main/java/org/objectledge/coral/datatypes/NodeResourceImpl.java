@@ -20,7 +20,7 @@ import org.objectledge.database.Database;
  * An implementation of <code>node</code> Coral resource class.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: NodeResourceImpl.java,v 1.3 2004-03-09 15:46:49 fil Exp $
+ * @version $Id: NodeResourceImpl.java,v 1.4 2004-03-31 12:04:55 fil Exp $
  */
 public class NodeResourceImpl
     extends GenericResource
@@ -45,7 +45,7 @@ public class NodeResourceImpl
      *
      * @param rs the ResourceService.
      */
-    public NodeResourceImpl(Database database, Logger logger, CoralSchema coralSchema)
+    public NodeResourceImpl(CoralSchema coralSchema, Database database, Logger logger)
     {
         super(database, logger);
         this.coralSchema = coralSchema;

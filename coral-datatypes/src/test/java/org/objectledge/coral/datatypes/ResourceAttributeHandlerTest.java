@@ -136,7 +136,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
         
-        node = new NodeResourceImpl(database, logger, coralSchema);
+        node = new NodeResourceImpl(coralSchema, database, logger);
     }
 
     public void testAttributeHandlerBase()

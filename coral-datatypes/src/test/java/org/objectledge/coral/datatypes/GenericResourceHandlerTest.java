@@ -147,7 +147,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockCoralSchema.stub().method("getAttribute").with(eq(1L)).will(returnValue(attributeDefinition));
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         
-        node = new NodeResourceImpl(database, logger, coralSchema);
+        node = new NodeResourceImpl(coralSchema, database, logger);
         
         mockInstantiator = mock(Instantiator.class);
         mockInstantiator.stub().method("newInstance").will(returnValue(node));
