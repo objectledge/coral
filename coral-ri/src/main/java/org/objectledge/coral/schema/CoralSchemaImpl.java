@@ -2,12 +2,15 @@ package org.objectledge.coral.schema;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
+import org.objectledge.coral.StartupParticipant;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityInUseException;
@@ -21,11 +24,11 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.12 2005-01-19 08:00:53 rafal Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.13 2005-01-20 12:11:14 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
-    implements CoralSchema
+    implements CoralSchema, StartupParticipant
 {
     // Instance variables ////////////////////////////////////////////////////////////////////////
 
@@ -855,6 +858,60 @@ public class CoralSchemaImpl
                                                     attr.getDeclaringClass().getName());
                 }
             }
+        }
+    }
+    
+    // startup //////////////////////////////////////////////////////////////////////////////////
+    
+    private static final int[] STARTUP_PHASES = { 4 };
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int[] getPhases()
+    {
+        return STARTUP_PHASES;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void startup(int phase)
+        throws SQLException
+    {
+        if(phase == 4)
+        {
+            preloadAttributes();
+        }
+    }
+    
+    private void preloadAttributes()
+        throws SQLException
+    {
+        Connection conn = null;
+        try
+        {
+            long time = System.currentTimeMillis();
+            log.info("preloading attribute values");
+            conn = persistence.getDatabase().getConnection();
+            AttributeClass[] classes = getAttributeClass();
+            Set handlers = new HashSet();
+            for(int i = 0; i<classes.length; i++)
+            {
+                AttributeClass cl = classes[i];
+                AttributeHandler handler = cl.getHandler();
+                if(!handlers.contains(handler))
+                {
+                    handler.preload(conn);
+                    handlers.add(handler);
+                }
+            }
+            time = System.currentTimeMillis() - time;
+            log.info("finished preloading attribute values in "+time+"ms");
+        }
+        finally
+        {
+            DatabaseUtils.close(conn);
         }
     }
 } 
