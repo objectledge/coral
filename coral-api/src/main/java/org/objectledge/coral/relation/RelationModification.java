@@ -28,7 +28,7 @@
 package org.objectledge.coral.relation;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.objectledge.coral.store.Resource;
@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * A class representing a batch of {@link Relation} modifications.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModification.java,v 1.2 2004-02-20 14:49:28 zwierzem Exp $
+ * @version $Id: RelationModification.java,v 1.3 2004-02-24 12:24:00 zwierzem Exp $
  */
 public class RelationModification
 {
@@ -46,13 +46,18 @@ public class RelationModification
     // basic api ----------------------------------------------------------------------------------
 
 	/**
-	 * Returns a list of collected operations.
+	 * Visits list of collected operations.
 	 *  
-	 * @return unmodifiable list of collected operations
+	 * @param 
 	 */
-	public List getOperations()
+	public void visit(ModificationOperationVisitor visitor)
 	{
-		return Collections.unmodifiableList(operations);
+		for (Iterator iter = operations.iterator(); iter.hasNext();)
+		{
+			RelationModification.ModificationOperation operation =
+				(RelationModification.ModificationOperation) iter.next();
+			operation.visit(visitor);
+		}
 	}
 	
 	/**
@@ -72,7 +77,7 @@ public class RelationModification
      * @param r1 the first element of the pair.
      * @param r2 the second element of the pair.
      */
-    public void put(Resource r1, Resource r2)
+    public void add(Resource r1, Resource r2)
     {
         add(new Long(r1.getId()), new Long(r2.getId()));
     }
@@ -83,7 +88,7 @@ public class RelationModification
      * @param r1 the first element of the pairs.
      * @param ress second elements of the pairs.
      */
-    public void put(Resource r1, Resource[] ress)
+    public void add(Resource r1, Resource[] ress)
     {
         Long id1 = new Long(r1.getId());
         for (int i = 0; i < ress.length; i++)
@@ -98,7 +103,7 @@ public class RelationModification
      * @param ress first elements of the pairs.
      * @param r2 the second element of the pairs.
      */
-    public void put(Resource[] ress, Resource r2)
+    public void add(Resource[] ress, Resource r2)
     {
         Long id2 = new Long(r2.getId());
         for (int i = 0; i < ress.length; i++)
@@ -262,6 +267,16 @@ public class RelationModification
         {
             return id2;
         }
+
+		/**
+		 * Inverts the operation direction.
+		 */
+		public void invert()
+		{
+			long temp = id2;
+			this.id2 = id1;
+			this.id1 = temp;
+		}
 
 		/**
 		 * Executes visit on a given visitor
