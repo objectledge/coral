@@ -39,10 +39,11 @@ import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.database.persistence.Persistence;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.1 2004-02-20 16:45:19 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.2 2004-02-23 10:51:19 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -65,11 +66,15 @@ implements Relation
      * <p>An array of two element arrays is expected, each element containting
      * a single definition entry.</p>
      *
+     * @param persistence the persistence system
      * @param store used to retrieve resources
+     * @param name name of the relation
      * @param def the relationship definition
      */
-    public RelationImpl(CoralStore store, long[][] def)
+    public RelationImpl(Persistence persistence, CoralStore store, String name, long[][] def)
     {
+    	super(persistence, name);
+    	
         Set set1 = new HashSet(def.length/2);
         Set set2 = new HashSet(def.length/2);
 
