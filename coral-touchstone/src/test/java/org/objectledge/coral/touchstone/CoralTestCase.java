@@ -31,6 +31,7 @@ import javax.sql.DataSource;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
 import org.dbunit.Assertion;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -46,7 +47,7 @@ import org.objectledge.filesystem.FileSystem;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralTestCase.java,v 1.5 2004-03-12 11:45:57 fil Exp $
+ * @version $Id: CoralTestCase.java,v 1.6 2004-03-12 12:29:30 fil Exp $
  */
 public abstract class CoralTestCase extends TestCase
 {
@@ -56,7 +57,7 @@ public abstract class CoralTestCase extends TestCase
     
     protected IDatabaseConnection databaseConnection;
     
-    private long t;
+    protected Logger log;
     
     public void setUp()
         throws Exception
@@ -92,6 +93,7 @@ public abstract class CoralTestCase extends TestCase
             getComponentInstanceOfType(IdGenerator.class);
         idGenerator.getNextId("global_transaction_hack");
         databaseConnection = new DatabaseDataSourceConnection(ds);
+        log = Logger.getLogger(getClass());
     }
     
     public void tearDown()
