@@ -78,6 +78,10 @@ public class ${class.implClassName}
     private AttributeDefinition ${attr.name}Def;
 
 #end
+#end
+#if($fields.size() > 0)
+	// custom injected fields /////////////////////////////////////////////////
+	
 #foreach($field in $fields)
     /** The ${field.type} */
     protected ${field.type} ${field.name};
