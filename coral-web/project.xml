@@ -49,69 +49,45 @@
       <groupId>dna</groupId>
       <artifactId>dna-api</artifactId>
       <version>1.1-rc2</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>
       <url>http://dna.codehaus.org</url>
     </dependency>
     <dependency>
       <groupId>dna</groupId>
       <artifactId>dna-impl</artifactId>
       <version>1.1-rc2</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>
       <url>http://dna.codehaus.org</url>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.8</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>
       <url>http://logging.apache.org/log4j/docs/</url>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
       <version>SNAPSHOT</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>      
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-container</artifactId>
       <version>SNAPSHOT</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>      
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-web</artifactId>
       <version>SNAPSHOT</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>      
     </dependency>
     <dependency>
       <groupId>nanocontainer</groupId>
       <artifactId>nanocontainer</artifactId>
       <version>cheddar</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>
-       <url>http://nanocontainer.org/</url>
+      <url>http://nanocontainer.org/</url>
     </dependency>
     <dependency>
       <groupId>picocontainer</groupId>
       <artifactId>picocontainer</artifactId>
       <version>1.0-RC-1</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>
        <url>http://picocontainer.org/</url>
     </dependency>
     <dependency>
@@ -120,17 +96,11 @@
       <version>3.0</version>
       <version>3.0</version>
       <url>http://jakarta.apache.org./commons/collections</url>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>      
     </dependency>
     <dependency>
       <id>velocity</id>
       <version>1.4</version>
       <url>http://jakarta.apache.org/velocity</url>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>      
     </dependency>
   </dependencies>
 
