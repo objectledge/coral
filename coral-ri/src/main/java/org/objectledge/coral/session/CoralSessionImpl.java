@@ -50,7 +50,7 @@ import org.objectledge.utils.TracingException;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.11 2005-01-25 06:31:42 rafal Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.12 2005-01-25 06:33:41 rafal Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -168,9 +168,9 @@ public class CoralSessionImpl
     /**
      * {@inheritDoc}
      */
-    public void makeCurrent()
+    public CoralSession makeCurrent()
     {
-        coral.setCurrentSession(this);
+        return coral.setCurrentSession(this);
     }
 
     /** 

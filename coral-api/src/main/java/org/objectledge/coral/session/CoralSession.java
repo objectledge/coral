@@ -15,7 +15,7 @@ import org.objectledge.coral.store.CoralStore;
 /**
  * An access point to the Coral document store.
  *
- * @version $Id: CoralSession.java,v 1.4 2005-01-25 06:31:54 rafal Exp $
+ * @version $Id: CoralSession.java,v 1.5 2005-01-25 06:34:02 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSession
@@ -95,8 +95,10 @@ public interface CoralSession
      * 
      * <p>You don't need to call this method unless you use multiple sessions interchangably in a 
      * single thread.</p>
+     * 
+     * @return the seesion that was previously active (possibly null).
      */
-    public void makeCurrent();
+    public CoralSession makeCurrent();
     
     /**
      * Returns a Throwable created in the scope of open() method invocation.
