@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.18.2.1 2004-09-09 10:09:21 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.18.2.2 2004-09-09 10:19:08 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -38,7 +38,7 @@
   
   <groupId>coral</groupId>
   <id>coral-ri</id>
-  <currentVersion>0.1-dev</currentVersion>
+  <currentVersion>0.1</currentVersion>
   
   <name>Coral RI</name>
   <shortDescription>

@@ -28,13 +28,13 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.1 2004-04-23 13:04:01 fil Exp $ -->
+<!-- $Id: project.xml,v 1.1.2.1 2004-09-09 10:19:09 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
 
   <groupId>coral</groupId>
   <id>coral-maven-plugin-init-test</id>
-  <currentVersion>0.1-dev</currentVersion>
+  <currentVersion>0.1</currentVersion>
   
   <name>Coral Maven Plugin - Init test</name>
 </project>

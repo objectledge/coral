@@ -6,7 +6,7 @@
   <name>Coral web</name>
   <id>coral-web</id>
   <groupId>coral</groupId>
-  <currentVersion>0.1-dev</currentVersion>
+  <currentVersion>0.1</currentVersion>
   <shortDescription>
     Coral Web contains a number of extensions to the ObjectLedge Web table tookit, that
     allow easy creation rich dynamic interfaces on top of Coral resource model.
