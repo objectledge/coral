@@ -17,6 +17,11 @@ $CVSROOT/CVSROOT/log_accum.pl $USER "`echo ${1} | cut -d , -f 1`" < $TEMPFILE
 $CVSROOT/CVSROOT/collect_diffs.rb --from $USER --to coral-cvshtml@lists.caltha.pl "${1}" < $TEMPFILE
 
 #
+# Invoke DamageControl
+#
+ruby /home/damagecontrol/current/bin/requestbuild --url http://localhost:4712/private/xmlrpc --projectname `echo ${1} | cut -d/ -f1`
+
+#
 # clean up
 #
 rm $TEMPFILE
