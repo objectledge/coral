@@ -24,7 +24,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.4 2004-04-01 08:54:27 fil Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.5 2004-05-06 11:19:06 pablo Exp $
  */
 public class PersistentResourceHandler
     extends ResourceHandlerBase
@@ -40,11 +40,12 @@ public class PersistentResourceHandler
     /**
      * Constructor.
      * 
-     * @param coralSecurity the coralSecurity.
+     * @param coralSchema the coral schema.
+     * @param coralSecurity the coral security.
      * @param resourceClass the resource class.
      * @param persistence the persistence.
      * @param logger the logger.
-     * 
+     * @param instantiator the instantiator.
      */
     public PersistentResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
          ResourceClass resourceClass, 
@@ -180,7 +181,6 @@ public class PersistentResourceHandler
      * Updates the contents of the resource in the persistent storage.
      *
      * @param resource the resource.
-     * @param subject the subject that performs the update. 
      * @param conn the JDBC <code>Connection</code> to use. Needed to perform
      *        the operation as a part of a JDBC transaction.
      * @throws SQLException in case of database problems. The caller metod

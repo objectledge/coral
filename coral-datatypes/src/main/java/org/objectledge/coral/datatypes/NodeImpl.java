@@ -19,7 +19,7 @@ import org.objectledge.database.Database;
  * An implementation of <code>coral.Node</code> Coral resource class.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: NodeImpl.java,v 1.1 2004-04-22 18:00:59 zwierzem Exp $
+ * @version $Id: NodeImpl.java,v 1.2 2004-05-06 11:17:13 pablo Exp $
  */
 public class NodeImpl
     extends GenericResource
@@ -42,7 +42,9 @@ public class NodeImpl
      * only. Use <code>load()</code> and <code>create()</code> methods to create
      * instances of the wrapper in your application code.</p>
      *
-     * @param rs the ResourceService.
+     * @param coralSchema the coral schema.
+     * @param database the database.
+     * @param logger the logger.
      */
     public NodeImpl(CoralSchema coralSchema, Database database, Logger logger)
     {
@@ -67,8 +69,10 @@ public class NodeImpl
      * <p>This is a simple wrapper of StoreService.getResource() method plus
      * the typecast.</p>
      *
-     * @param rs the ResourceService
+     * @param coralStore the coral store.
      * @param id the id of the object to be retrieved
+     * @return the node.
+     * @throws EntityDoesNotExistException if cannot retrieve resource. 
      */
     public static Node retrieveNodeResource(CoralStore coralStore, long id)
         throws EntityDoesNotExistException
@@ -91,6 +95,7 @@ public class NodeImpl
      * @param name the name of the new resource
      * @param parent the parent resource.
      * @return a new Node instance.
+     * @throws ValueRequiredException if happens.
      */
     public static Node createNodeResource(CoralStore coralStore, 
                                                    CoralSchema coralSchema,
