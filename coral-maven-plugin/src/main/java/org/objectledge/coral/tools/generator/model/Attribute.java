@@ -27,17 +27,24 @@
 // 
 package org.objectledge.coral.tools.generator.model;
 
+import java.lang.reflect.Field;
+
+import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.schema.AttributeFlags;
+import org.objectledge.coral.store.Resource;
+
 /**
  * Represents a Coral AttributeDefinition.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Attribute.java,v 1.1 2004-03-22 11:54:49 fil Exp $
+ * @version $Id: Attribute.java,v 1.2 2004-03-23 16:16:40 fil Exp $
  */
 public class Attribute
     extends Entity
 {
     // variables /////////////////////////////////////////////////////////////////////////////////
     
+    private Schema schema;
     private AttributeClass attributeClass;
     private ResourceClass declaringClass;
     private String domain;
@@ -45,15 +52,17 @@ public class Attribute
     /**
      * Creates an Attribute instance.
      * 
+     * @param schema the schema this attribute belongs to.
      * @param name the name of the attribute.
      * @param attributeClass the class of the attribute.
      * @param domain the attribute domain.
      * @param flags the flags of the attribute.
      */
-    public Attribute(String name, AttributeClass attributeClass, 
+    public Attribute(Schema schema, String name, AttributeClass attributeClass, 
         String domain, int flags)
     {
         super(name, flags);
+        this.schema = schema;
         this.attributeClass = attributeClass;
         setDomain(domain);
     }
@@ -88,6 +97,121 @@ public class Attribute
     public String getDomain()
     {
         return domain;
+    }    
+    
+    /**
+     * Checks if the attribute is represented by a primitive java type.
+     * 
+     * @return <code>true</code> if the attribute is represented by a primitive java type.
+     */
+    public boolean isPrimitive()
+    {
+        if(attributeClass.getJavaClassName().startsWith("java.lang"))
+        {
+            try
+            {
+                Field f = attributeClass.getJavaClass().getField("TYPE");
+                return true;
+            }
+            catch(NoSuchFieldException e)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    /**
+     * Returns fully qualified Java type name of the attribute.
+     * 
+     * @return fully qualified Java type name of the attribute.
+     * @throws EntityDoesNotExistException if a resource class referenced by this attribute does 
+     * not exist. 
+     */
+    public String getFQJavaType()
+        throws EntityDoesNotExistException
+    {
+        String type = attributeClass.getJavaClassName();
+        if(attributeClass.getJavaClassName().startsWith("java.lang"))
+        {
+            try
+            {
+                Field f = attributeClass.getJavaClass().getField("TYPE");
+                type = ((Class)f.get(null)).getName();
+            }
+            catch(NoSuchFieldException e)
+            {
+                // non primitive
+            }
+            catch(Exception e)
+            {
+                throw (RuntimeException)new IllegalStateException("introspecting java.lang failed").
+                    initCause(e);
+            }
+        }
+        else
+        {
+            if(Resource.class.isAssignableFrom(attributeClass.getJavaClass())  && domain != null)
+            {
+                type = schema.getResourceClass(domain).getFQInterfaceClassName();
+            }
+        }
+        return type;
+    }
+
+    /**
+     * Returns non-qualified Java type name of the attribute.
+     * 
+     * @return non-qualified Java type name of the attribute.
+     * @throws EntityDoesNotExistException if a resource class referenced by this attribute does 
+     * not exist. 
+     */
+    public String getJavaType()
+        throws EntityDoesNotExistException
+    {
+        String type = getFQJavaType();
+        int lastDot = type.lastIndexOf('.');
+        if(lastDot >= 0)
+        {
+            return type.substring(lastDot+1); 
+        }
+        else
+        {
+            return type;
+        }
+    }
+
+    /**
+     * Checks if this attribute is REQUIRED.
+     * 
+     * @return <code>true</code> if this attribuge is REQUIRED.
+     */
+    public boolean isRequired()
+    {
+        return hasFlags(AttributeFlags.REQUIRED);
+    }
+
+    /**
+     * Checks if this attribute is REQUIRED.
+     * 
+     * @return <code>true</code> if this attribuge is REQUIRED.
+     */
+    public boolean isReadonly()
+    {
+        return hasFlags(AttributeFlags.READONLY);
+    }
+    
+    /**
+     * Checks if the attribute is neither BUILTIN nor SYNTHETIC.
+     * 
+     * @return <code>true</code> if the attribute is neither BUILTIN nor SYNTHETIC.
+     */
+    public boolean isConcrete()
+    {
+        return !(hasFlags(AttributeFlags.BUILTIN) || hasFlags(AttributeFlags.SYNTHETIC));
     }
     
     // mutators /////////////////////////////////////////////////////////////////////////////////

@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoaderTest.java,v 1.5 2004-03-23 11:57:35 fil Exp $
+ * @version $Id: RMLModelLoaderTest.java,v 1.6 2004-03-23 16:16:41 fil Exp $
  */
 public class RMLModelLoaderTest
     extends LedgeTestCase
@@ -56,15 +56,15 @@ public class RMLModelLoaderTest
     public void testCreateAttributeClass()
         throws Exception
     {
-        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS java.lang.Integer HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
-        assertEquals("jc1", ac1.getJavaClassName());
+        assertEquals("java.lang.Integer", ac1.getJavaClassName());
     }
     
     public void testDeleteAttributeClass()
         throws Exception
     {
-        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS java.lang.Integer HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         assertNotNull(ac1);
         modelLoader.execute("DELETE ATTRIBUTE CLASS ac1;");
@@ -74,7 +74,7 @@ public class RMLModelLoaderTest
     public void testAlterAttributeClassSetName()
         throws Exception
     {
-        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS java.lang.Integer HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         assertNotNull(ac1);
         modelLoader.execute("ALTER ATTRIBUTE CLASS ac1 SET NAME ac2;");
@@ -86,20 +86,20 @@ public class RMLModelLoaderTest
     public void testAlterAttributeClassSetJavaClass()
         throws Exception
     {
-        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS java.lang.Integer HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         assertNotNull(ac1);
-        modelLoader.execute("ALTER ATTRIBUTE CLASS ac1 SET JAVA CLASS jc2;");
-        assertEquals("jc2", ac1.getJavaClassName());
+        modelLoader.execute("ALTER ATTRIBUTE CLASS ac1 SET JAVA CLASS java.lang.String;");
+        assertEquals("java.lang.String", ac1.getJavaClassName());
     }
 
     public void testCreateResourceClass()
         throws Exception
     {
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
-        assertEquals("jc1", rc1.getInterfaceClassName());
-        assertEquals("jc1Impl", rc1.getImplClassName());
+        assertEquals("org.objectledge.coral.datatypes.Node", rc1.getFQInterfaceClassName());
+        assertEquals("org.objectledge.coral.datatypes.NodeImpl", rc1.getFQImplClassName());
         assertEquals(null, rc1.getDbTable());
     }
     
@@ -111,7 +111,7 @@ public class RMLModelLoaderTest
     public void testDeleteResourceClass()
         throws Exception
     {
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertNotNull(rc1);
         modelLoader.execute("DELETE RESOURCE CLASS rc1;");
@@ -121,8 +121,8 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassAddAttribute()
         throws Exception
     {
-        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS java.lang.Integer HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertTrue(rc1.getDeclaredAttributes().isEmpty());
@@ -135,8 +135,8 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassDeleteAttribute()
         throws Exception
     {
-        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS java.lang.Integer HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         Attribute a1 = rc1.getDeclaredAttribute("a1");
@@ -148,31 +148,31 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassAddParentClass()
         throws Exception
     {
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.execute("CREATE RESOURCE CLASS rc2 JAVA CLASS jc2 HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc2 JAVA CLASS org.objectledge.coral.datatypes.Node2 HANDLER CLASS hc1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         ResourceClass rc2 = schema.getResourceClass("rc2");
-        assertTrue(rc1.getParentClasses().isEmpty());
+        assertTrue(rc1.getDeclaredParentClasses().isEmpty());
         modelLoader.execute("ALTER RESOURCE CLASS rc2 ADD SUPERCLASS rc1;");
-        assertSame(rc1, rc2.getParentClasses().get(0));                
+        assertSame(rc1, rc2.getDeclaredParentClasses().get(0));                
     }
     
     public void testAlterResourceClassDeleteParentClass()
         throws Exception
     {
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.execute("CREATE RESOURCE CLASS rc2 JAVA CLASS jc2 HANDLER CLASS hc1 SUPERCLASSES ( rc1 );");        
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc2 JAVA CLASS org.objectledge.coral.datatypes.Node2 HANDLER CLASS hc1 SUPERCLASSES ( rc1 );");        
         ResourceClass rc1 = schema.getResourceClass("rc1");
         ResourceClass rc2 = schema.getResourceClass("rc2");
-        assertSame(rc1, rc2.getParentClasses().get(0));                
+        assertSame(rc1, rc2.getDeclaredParentClasses().get(0));                
         modelLoader.execute("ALTER RESOURCE CLASS rc2 DELETE SUPERCLASS rc1;");
-        assertTrue(rc1.getParentClasses().isEmpty());
+        assertTrue(rc1.getDeclaredParentClasses().isEmpty());
     }
     
     public void testAlterResourceClassSetName()
         throws Exception
     {
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1 DB TABLE dt1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertNotNull(rc1);
         modelLoader.execute("ALTER RESOURCE CLASS rc1 SET NAME rc2;");
@@ -184,20 +184,19 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassSetJavaClass()
         throws Exception
     {    
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1 DB TABLE dt1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
-        assertEquals("jc1", rc1.getInterfaceClassName());
-        assertEquals("jc1Impl", rc1.getImplClassName());
-        assertEquals("jc1", rc1.getInterfaceClassName());
-        modelLoader.execute("ALTER RESOURCE CLASS rc1 SET JAVA CLASS jc2Impl;");
-        assertEquals("jc2", rc1.getInterfaceClassName());
-        assertEquals("jc2Impl", rc1.getImplClassName());
+        assertEquals("org.objectledge.coral.datatypes.Node", rc1.getFQInterfaceClassName());
+        assertEquals("org.objectledge.coral.datatypes.NodeImpl", rc1.getFQImplClassName());
+        modelLoader.execute("ALTER RESOURCE CLASS rc1 SET JAVA CLASS org.objectledge.coral.datatypes.Node2;");
+        assertEquals("org.objectledge.coral.datatypes.Node2", rc1.getFQInterfaceClassName());
+        assertEquals("org.objectledge.coral.datatypes.Node2Impl", rc1.getFQImplClassName());
     }
     
     public void testAlterResourceClassSetDbTable()
         throws Exception
     {
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1 DB TABLE dt1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertEquals("dt1", rc1.getDbTable());
         modelLoader.execute("ALTER RESOURCE CLASS rc1 SET DB TABLE dt2;");
@@ -206,7 +205,7 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassSetFlags()
         throws Exception
     {
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1 DB TABLE dt1;");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         assertEquals(0, rc1.getFlags());
         modelLoader.execute("ALTER RESOURCE CLASS rc1 SET FLAGS ABSTRACT;");
@@ -216,8 +215,8 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassAlterAttributeSetName()
         throws Exception
     {
-        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS java.lang.Integer HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         Attribute a1 = rc1.getDeclaredAttribute("a1");
@@ -230,8 +229,8 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassAlterAttributeSetDomain()
         throws Exception
     {
-        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS java.lang.Integer HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         Attribute a1 = rc1.getDeclaredAttribute("a1");
         assertNull(a1.getDomain());
@@ -242,8 +241,8 @@ public class RMLModelLoaderTest
     public void testAlterResourceClassAlterAttributeSetFlags()
         throws Exception
     {
-        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
-        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
+        modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS java.lang.Integer HANDLER CLASS hc1;");
+        modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS org.objectledge.coral.datatypes.Node HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         ResourceClass rc1 = schema.getResourceClass("rc1");
         Attribute a1 = rc1.getDeclaredAttribute("a1");
         assertEquals(0, a1.getFlags());

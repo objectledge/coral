@@ -31,7 +31,7 @@ package org.objectledge.coral.tools.generator.model;
  * Represents a Coral AttributeClass
  *  
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClass.java,v 1.1 2004-03-22 11:54:49 fil Exp $
+ * @version $Id: AttributeClass.java,v 1.2 2004-03-23 16:16:39 fil Exp $
  */
 public class AttributeClass
     extends Entity
@@ -41,14 +41,19 @@ public class AttributeClass
     /** The name of the Java class for this attribute. */
     private String javaClassName;
     
+    /** The actual java class of the attribute. */
+    private Class javaClass;
+    
     // constructors /////////////////////////////////////////////////////////////////////////////
     
     /** Creates an attribute class instance. 
      *
      * @param name the name of the attribute class.
-     * @param javaClassName the name of the Java class for this attribute. 
+     * @param javaClassName the name of the Java class for this attribute.
+     * @throws ClassNotFoundException if the specified Java class could not be loaded. 
      */
     public AttributeClass(String name, String javaClassName)
+        throws ClassNotFoundException
     {
         super(name, 0);
         setJavaClassName(javaClassName);
@@ -57,24 +62,37 @@ public class AttributeClass
     // accessors ////////////////////////////////////////////////////////////////////////////////
     
     /**
-     * Returns the name of the Java class for this attribute.
+     * Returns the name of the Java class for this attribute class.
      * 
-     * @return the name of the Java class for this attribute.
+     * @return the name of the Java class for this attribute class.
      */
     public String getJavaClassName()
     {
         return javaClassName;
     }
     
+    /**
+     * Returns the Java class for this attribute class.
+     * 
+     * @return the Java class for this attribute class.
+     */
+    public Class getJavaClass()
+    {
+        return javaClass;
+    }
+    
     // mutators /////////////////////////////////////////////////////////////////////////////////
     
     /**
-     * Sets the name of the Java class for this attribute.
+     * Sets the name of the Java class for this attribute class.
      * 
      * @param javaClassName the name of the Java class for this attribute.
+     * @throws ClassNotFoundException if the specified Java class could not be loaded. 
      */
     public void setJavaClassName(String javaClassName)
+        throws ClassNotFoundException
     {
         this.javaClassName = javaClassName; 
+        javaClass = Class.forName(javaClassName);
     }
 }

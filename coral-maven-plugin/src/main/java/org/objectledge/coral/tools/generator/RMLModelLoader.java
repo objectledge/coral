@@ -73,7 +73,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.6 2004-03-23 11:57:34 fil Exp $
+ * @version $Id: RMLModelLoader.java,v 1.7 2004-03-23 16:16:41 fil Exp $
  */
 public class RMLModelLoader
 {
@@ -135,7 +135,7 @@ public class RMLModelLoader
     /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.6 2004-03-23 11:57:34 fil Exp $
+     * @version $Id: RMLModelLoader.java,v 1.7 2004-03-23 16:16:41 fil Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {
@@ -144,8 +144,15 @@ public class RMLModelLoader
          */    
         public Object visit(ASTcreateAttributeClassStatement node, Object data)
         {
-            AttributeClass ac = new AttributeClass(node.getName(), node.getJavaClass());
-            schema.addAttributeClass(ac); 
+            try
+            {
+                AttributeClass ac = new AttributeClass(node.getName(), node.getJavaClass());
+                schema.addAttributeClass(ac); 
+            }
+            catch(Exception e)
+            {
+                wrap(e);
+            }
             return data;
         }
     
@@ -221,8 +228,8 @@ public class RMLModelLoader
                 {
                     AttributeClass ac = resolve(attrs[i].getAttributeClass());
                     int flags = parseFlags(attrs[i].getFlags());
-                    Attribute attr = new Attribute(attrs[i].getName(), ac, attrs[i].getDomain(), 
-                        flags);
+                    Attribute attr = new Attribute(schema, attrs[i].getName(), ac, 
+                        attrs[i].getDomain(), flags);
                     rc.addAttribute(attr);
                 }
                 schema.addResourceClass(rc);
@@ -262,7 +269,8 @@ public class RMLModelLoader
                 ASTattributeDefinition attrDef = node.getAttributeDefinition();
                 AttributeClass ac = resolve(attrDef.getAttributeClass());
                 int flags = parseFlags(attrDef.getFlags());
-                Attribute attr = new Attribute(attrDef.getName(), ac, attrDef.getDomain(), flags);
+                Attribute attr = new Attribute(schema, attrDef.getName(), ac, 
+                    attrDef.getDomain(), flags);
                 rc.addAttribute(attr);
             }
             catch(Exception e)
