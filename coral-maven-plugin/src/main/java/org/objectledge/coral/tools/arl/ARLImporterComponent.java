@@ -58,7 +58,7 @@ import org.objectledge.utils.StringUtils;
  * Performs importing data from old style ARL schema database to brand new CORAL scheme.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ARLImporterComponent.java,v 1.13 2005-03-23 05:57:56 rafal Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.14 2005-03-23 10:55:42 pablo Exp $
  */
 public class ARLImporterComponent
 {
@@ -1824,8 +1824,13 @@ public class ARLImporterComponent
             stmt.setString(3, unescape(value));
             //stmt.setString(2, escape(unescape(pname)));
             //stmt.setString(3, escape(unescape(value)));
-            stmt.addBatch();
-            size++;
+            
+            // be sure "null" values are not imported!!!
+            if(!value.equals("null"))
+            {
+                stmt.addBatch();
+                size++;
+            }
         }
         int[] result = null;
         try
