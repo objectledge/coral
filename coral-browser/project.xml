@@ -198,7 +198,7 @@
     </dependency>
     <dependency>
       <id>postgresql</id>
-      <version>7.2</version>
+      <version>7.3</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>      
