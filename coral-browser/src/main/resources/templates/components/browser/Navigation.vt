@@ -6,14 +6,14 @@
     <tr>
       #linkCell('admin' 'CONSOLE' $link.view("browser.Console"))
       <td class="inscription" width="95%" align="right">Abstract Resource Layer Browser: &nbsp;</td>
-      #linkCell('admin' 'ZASOBY' $link.view("browser.ResourceView"))
+      #linkCell('admin' 'RESOURCES' $link.view("browser.ResourceView"))
       <td class="separator">|</td>
-      #linkCell('admin' 'KLASY' $link.view("browser.ResourceClassView"))
+      #linkCell('admin' 'CLASSES' $link.view("browser.ResourceClassView"))
       <td class="separator">|</td>
-      #linkCell('admin' 'ROLE' $link.view("browser.RoleView"))
+      #linkCell('admin' 'ROLES' $link.view("browser.RoleView"))
       <td class="separator">|</td>
-      #linkCell('admin' 'PRAWA' $link.view("browser.PermissionView"))
+      #linkCell('admin' 'PERMISSIONS' $link.view("browser.PermissionView"))
       <td class="separator">|</td>
-      #linkCell('admin' 'U¯YTKOWNICY' $link.view("browser.SubjectView"))
+      #linkCell('admin' 'USERS' $link.view("browser.SubjectView"))
     </tr>
   </table>
