@@ -23,7 +23,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.13 2005-01-20 13:09:40 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.14 2005-01-21 06:54:55 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -408,7 +408,7 @@ public class GenericResourceHandler
         Map keyMap = new HashMap();
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
-            "SELECT resource_id, attribute_definition_id, data_key FROM arl_generic_resource "+
+            "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
             "ORDER BY resource_id"
         );
         Map dataKeys = null;
