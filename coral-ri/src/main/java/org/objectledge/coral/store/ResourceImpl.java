@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.13 2004-06-29 12:31:20 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.14 2004-08-24 08:09:31 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -459,7 +459,9 @@ public class ResourceImpl
     {
         if(!builtinAttributes.containsKey(attribute.getName()))
         {
-            throw new UnknownAttributeException("not a builtin attribute");
+            throw new UnknownAttributeException(attribute.getName()+
+            		" declared in "+attribute.getDeclaringClass().getName()+
+            		" is not a builtin attribute ");
         }
         Method method = (Method)builtinAttributes.get(attribute.getName());
         try
