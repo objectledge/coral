@@ -9,7 +9,7 @@ import org.objectledge.database.persistence.PersistentObject;
 /**
  * A base of all Coral entitity implementations.
  *
- * @version $Id: AbstractEntity.java,v 1.3 2004-03-09 15:46:47 fil Exp $
+ * @version $Id: AbstractEntity.java,v 1.4 2004-06-29 12:18:03 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractEntity
@@ -90,11 +90,22 @@ public abstract class AbstractEntity
     /**
      * Returns a String representation of this object.
      *
-     * <p> This method is overriden to augument debugging. Not only the
-     * semantical hashcode is inculded in the represtentation, but also the
-     * object instance's identity hashcode, as returned by
-     * <code>System.getIdentityHashCode(Object)</code>. This is useful for
-     * debugging data consistency issues. </p>
+     * <p> This method is overriden to augument debugging. The format of the representation is as 
+     * following: 
+     * <blockquote>
+     *   <code>javaClass name #id @identity</code>
+     * </blockquote>
+     * Where:
+     * <ul>
+     *   <li><code>javaClass</code> is the actual implementation class of the object</li>
+     *   <li><code>name</code> is the name of the entity as returned by the {@link #getName()} 
+     *     method.</li>
+     *   <li><code>id</code> is the identifier of the entity as returned by the {@link #getId()}
+     *     method.</li> 
+     *   <li><code>idenity</code> is the obeject instance's identity hashcode as retured by the
+     *     <code>System.getIdentityHashCode(Object)</code> function.</li>
+     *  </ul>
+     *  </p>
      * 
      * @return a String representation of this object.
      */
@@ -102,10 +113,12 @@ public abstract class AbstractEntity
     {
         StringBuffer buff = new StringBuffer();
         buff.append(getClass().getName());
-        buff.append('@');
+        buff.append(' ');
+        buff.append(getName());
+        buff.append(" #");
+        buff.append(getId());
+        buff.append(" @");
         buff.append(Integer.toString(System.identityHashCode(this), 16));
-        buff.append(':');
-        buff.append(Integer.toString(hashCode(), 16));
         return buff.toString();
     }
 

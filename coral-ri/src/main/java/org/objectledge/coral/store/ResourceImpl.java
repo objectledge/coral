@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.11 2004-03-28 09:34:15 pablo Exp $
+ * @version $Id: ResourceImpl.java,v 1.12 2004-06-29 12:18:04 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -137,6 +137,42 @@ public class ResourceImpl
         this.modified = this.created;
         buildAttributeMap();
     }
+    
+    /**
+     * Returns a String representation of this object.
+     *
+     * <p> This method is overriden to augument debugging. The format of the representation is as 
+     * following: 
+     * <blockquote>
+     *   <code>javaClass name #id @identity</code>
+     * </blockquote>
+     * Where:
+     * <ul>
+     *   <li><code>javaClass</code> is the actual implementation class of the object</li>
+     *   <li><code>path</code> is the path of the resource as returned by the {@link #getPath()} 
+     *     method.</li>
+     *   <li><code>id</code> is the identifier of the resource as returned by the {@link #getId()}
+     *     method.</li> 
+     *   <li><code>idenity</code> is the object instance's identity hashcode as retured by the
+     *     <code>System.getIdentityHashCode(Object)</code> function.</li>
+     *  </ul>
+     *  </p>
+     * 
+     * @return a String representation of this object.
+     */
+    public String toString()
+    {
+        StringBuffer buff = new StringBuffer();
+        buff.append(getClass().getName());
+        buff.append(" delegate for ");
+        buff.append(getPath());
+        buff.append(" #");
+        buff.append(getId());
+        buff.append(" @");
+        buff.append(Integer.toString(System.identityHashCode(this), 16));
+        return buff.toString();
+    }
+    
 
     // Persitent interface //////////////////////////////////////////////////////////////////////
     
