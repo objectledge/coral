@@ -13,6 +13,7 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
+import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.security.Subject;
@@ -26,7 +27,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.12 2004-07-22 16:35:46 zwierzem Exp $
+ * @version $Id: GenericResource.java,v 1.13 2004-08-23 13:35:03 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -45,7 +46,7 @@ public class GenericResource
      * @param database the database.
      * @param logger the logger.
      */
-    public GenericResource(Database database, Logger logger)
+    public GenericResource(CoralSchema coralSchema, Database database, Logger logger)
     {
         super(database, logger);
     }
