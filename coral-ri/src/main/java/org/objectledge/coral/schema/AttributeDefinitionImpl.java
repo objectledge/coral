@@ -13,7 +13,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a concrete attribute of an resource class.
  *
- * @version $Id: AttributeDefinitionImpl.java,v 1.6 2004-02-25 13:07:20 fil Exp $
+ * @version $Id: AttributeDefinitionImpl.java,v 1.7 2004-02-25 13:13:32 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeDefinitionImpl
@@ -193,7 +193,7 @@ public class AttributeDefinitionImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("failed to revert entity state");
+                throw new BackendException("failed to revert entity state", e);
             }
         }
     }
