@@ -1,4 +1,4 @@
-$page_tool.addScriptLink("js/PopupMenu.js")
+$page_tool.addScriptLink("script/PopupMenu.js")
 $page_tool.addStyleLink("style/popupmenu.css")
 
 #set($tableLink = $link.set('table_id', $table.id))
