@@ -120,9 +120,6 @@ public class ParametersAttributeHandlerTest extends LedgeTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Parameters.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("parameters"));
-/*
-        mockAttributeClass.stubs().method("getDbTable").will(returnValue("arl_attribute_parameters"));
-        */
         handler = new ParametersAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass, parametersManager);
 
         parameters = new DefaultParameters();

@@ -129,7 +129,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Resource.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("resource"));
-        mockAttributeClass.stubs().method("getDbTable").will(returnValue("arl_attribute_resource"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_resource"));
         handler = new ResourceAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
@@ -150,7 +150,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_resource" + "(data_key, ref) VALUES (1, " + resource.getIdString() + ")";
+        String stmt = "INSERT INTO " + "coral_attribute_resource" + "(data_key, ref) VALUES (1, " + resource.getIdString() + ")";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(resource, connection);
     }
@@ -158,7 +158,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_resource SET ref = " + resource.getIdString() + " WHERE data_key = 1";
+        String stmt2 = "UPDATE coral_attribute_resource SET ref = " + resource.getIdString() + " WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, resource, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));

@@ -99,7 +99,7 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Permission.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("permission"));
-        mockAttributeClass.stubs().method("getDbTable").will(returnValue("arl_attribute_permission"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_permission"));
         handler = new PermissionAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
@@ -119,7 +119,7 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_permission" + "(data_key, ref) VALUES (1, " + permission.getIdString() + ")";
+        String stmt = "INSERT INTO " + "coral_attribute_permission" + "(data_key, ref) VALUES (1, " + permission.getIdString() + ")";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(permission, connection);
     }
@@ -127,7 +127,7 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_permission SET ref = " + permission.getIdString() + " WHERE data_key = 1";
+        String stmt2 = "UPDATE coral_attribute_permission SET ref = " + permission.getIdString() + " WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, permission, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));

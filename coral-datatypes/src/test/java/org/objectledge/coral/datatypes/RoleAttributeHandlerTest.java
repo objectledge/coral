@@ -99,7 +99,7 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Role.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("role"));
-        mockAttributeClass.stubs().method("getDbTable").will(returnValue("arl_attribute_role"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_role"));
         handler = new RoleAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
@@ -119,7 +119,7 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_role" + "(data_key, ref) VALUES (1, " + role.getIdString() + ")";
+        String stmt = "INSERT INTO " + "coral_attribute_role" + "(data_key, ref) VALUES (1, " + role.getIdString() + ")";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(role, connection);
     }
@@ -127,7 +127,7 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_role SET ref = " + role.getIdString() + " WHERE data_key = 1";
+        String stmt2 = "UPDATE coral_attribute_role SET ref = " + role.getIdString() + " WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, role, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));

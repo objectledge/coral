@@ -94,7 +94,7 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(ResourceList.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("resource_list"));
-        mockAttributeClass.stubs().method("getDbTable").will(returnValue("arl_attribute_resource_list"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_resource_list"));
         handler = new ResourceListAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
@@ -134,7 +134,7 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_resource_list" + "(data_key, pos, ref) VALUES (1, ?, ?)";
+        String stmt = "INSERT INTO " + "coral_attribute_resource_list" + "(data_key, pos, ref) VALUES (1, ?, ?)";
         mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
         mockPreparedStatement.expects(once()).method("setInt");
         mockPreparedStatement.expects(once()).method("setLong");
@@ -147,8 +147,8 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
 
     public void testUpdate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_resource_list" + "(data_key, pos, ref) VALUES (1, ?, ?)";
-        String deleteStmt = "DELETE FROM arl_attribute_resource_list WHERE data_key = 1";
+        String stmt = "INSERT INTO " + "coral_attribute_resource_list" + "(data_key, pos, ref) VALUES (1, ?, ?)";
+        String deleteStmt = "DELETE FROM coral_attribute_resource_list WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(deleteStmt)).will(returnValue(true));
         mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
         mockPreparedStatement.expects(once()).method("setInt");
