@@ -9,7 +9,7 @@ import org.objectledge.database.persistence.PersistentObject;
 /**
  * A base of all Coral entitity implementations.
  *
- * @version $Id: AbstractEntity.java,v 1.5 2004-12-23 07:15:33 rafal Exp $
+ * @version $Id: AbstractEntity.java,v 1.6 2005-01-17 10:46:17 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractEntity
@@ -26,6 +26,9 @@ public abstract class AbstractEntity
     
     /** The name of the entity. */
     protected String name;
+    
+    /** Precomputed hashcode. */
+    protected int hashCode;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
     
@@ -40,6 +43,7 @@ public abstract class AbstractEntity
         this.persistence = persistence;
         this.id = -1L;
         this.name = name;
+        computeHashCode();
     }
 
     /**
@@ -52,6 +56,7 @@ public abstract class AbstractEntity
         this.persistence = persistence;
         this.id = -1L;
         this.name = null;
+        computeHashCode();
     }
 
     // Hashing & equality ///////////////////////////////////////////////////////////////////////
@@ -66,7 +71,7 @@ public abstract class AbstractEntity
      */
     public int hashCode()
     {
-        return getClass().hashCode() ^ (int)(id * 0x11111111);
+        return hashCode;
     }
 
     /**
@@ -162,6 +167,7 @@ public abstract class AbstractEntity
     {
         id = record.getLong(getKeyColumns()[0]);
         name = record.getString("name");
+        computeHashCode();
     }
 
     /**
@@ -179,6 +185,7 @@ public abstract class AbstractEntity
     {
         this.saved = true;
         this.id = id;
+        computeHashCode();
     }
 
     // Entity inteface //////////////////////////////////////////////////////////////////////////
@@ -213,6 +220,7 @@ public abstract class AbstractEntity
     void setId(long id)
     {
         this.id = id;
+        computeHashCode();
     }
     
     /**
@@ -223,5 +231,12 @@ public abstract class AbstractEntity
     void setName(String name)
     {
         this.name = name;
+    }
+    
+    // implementation ///////////////////////////////////////////////////////////////////////////
+    
+    private void computeHashCode()
+    {
+        hashCode = getClass().hashCode() ^ (int)(id * 0x11111111); 
     }
 }
