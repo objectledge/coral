@@ -13,7 +13,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a concrete attribute of an resource class.
  *
- * @version $Id: AttributeDefinitionImpl.java,v 1.4 2004-02-23 13:50:27 fil Exp $
+ * @version $Id: AttributeDefinitionImpl.java,v 1.5 2004-02-25 13:06:50 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeDefinitionImpl
@@ -79,6 +79,7 @@ public class AttributeDefinitionImpl
         this.declaringClass = null;
         this.domain = domain;
         this.flags = flags;
+        coralEventHub.getInbound().addAttributeDefinitionChangeListener(this, this);
     }
     
     // Persistent interface /////////////////////////////////////////////////////////////////////
