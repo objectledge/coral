@@ -38,7 +38,7 @@ import org.objectledge.coral.relation.RelationModification.RemoveOperation;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: AbstractCoralRelationManager.java,v 1.1 2004-02-20 14:49:28 zwierzem Exp $
+ * @version $Id: AbstractCoralRelationManager.java,v 1.2 2004-02-20 14:58:51 zwierzem Exp $
  */
 public abstract class AbstractCoralRelationManager implements CoralRelationManager
 {
@@ -57,8 +57,11 @@ public abstract class AbstractCoralRelationManager implements CoralRelationManag
 		/**
 		 * Constructs a minimal representation for a {@link RelationModification}
 		 * and {@link Relation}.
+		 * 
+		 * @param modification relation modification data
+		 * @param relation modified relation
 		 */
-		private RelationUpdateData(RelationModification modification, Relation relation)
+		public RelationUpdateData(RelationModification modification, Relation relation)
 		{
 			this.relation = relation;
 			for (Iterator iter = modification.getOperations().iterator(); iter.hasNext();)
@@ -69,6 +72,8 @@ public abstract class AbstractCoralRelationManager implements CoralRelationManag
 			}
 		}
 		
+		// creation api ---------------------------------------------------------------------------
+
         /**
          * {@inheritDoc}
          */
@@ -134,20 +139,49 @@ public abstract class AbstractCoralRelationManager implements CoralRelationManag
 				removed.add(operation);
 			}
 		}
-	}
 
-	private long[][] setToArray(Set set)
-	{
-		ArrayList list = new ArrayList(set.size());
-		for (Iterator iter = set.iterator(); iter.hasNext();)
+		// data retrieval api ---------------------------------------------------------------------
+
+		/**
+		 * Should the relation be cleared.
+		 * @return <code>true</code> if relation should be cleared
+		 */
+		public boolean getClear()
 		{
-			RelationModification.ModificationOperation pair =
-				(RelationModification.ModificationOperation) iter.next();
-			long[] entry = new long[] { pair.getId1(), pair.getId2() };
-			list.add(entry);
+			return clear;
 		}
-		long[][] result = new long[list.size()][];
-		list.toArray(result);
-		return result;
-	}	
+
+		/**
+		 * Additions to the relation.
+		 * @return an array of relation pairs
+		 */
+        public long[][] getAdded()
+        {
+            return setToArray(added);
+        }
+
+		/**
+		 * Removals from the relation.
+		 * @return an array of relation pairs
+		 */
+        public long[][] getRemoved()
+        {
+			return setToArray(removed);
+        }
+
+		private long[][] setToArray(Set set)
+		{
+			ArrayList list = new ArrayList(set.size());
+			for (Iterator iter = set.iterator(); iter.hasNext();)
+			{
+				RelationModification.ModificationOperation pair =
+					(RelationModification.ModificationOperation) iter.next();
+				long[] entry = new long[] { pair.getId1(), pair.getId2() };
+				list.add(entry);
+			}
+			long[][] result = new long[list.size()][];
+			list.toArray(result);
+			return result;
+		}	
+	}
 }
