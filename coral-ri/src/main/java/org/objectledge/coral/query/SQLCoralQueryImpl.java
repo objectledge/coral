@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.4 2004-12-22 07:54:49 rafal Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.5 2004-12-23 02:04:58 rafal Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -94,7 +94,7 @@ public class SQLCoralQueryImpl
         while(it.hasNext())
         {
             ResultColumn rcm = (ResultColumn)it.next();
-            columnMap.put(rcm.alias, rcm);
+            columnMap.put(rcm.getAlias(), rcm);
         }
         if(columns.size() == 1)
         {
@@ -120,9 +120,9 @@ public class SQLCoralQueryImpl
             query.append("coral_resource r").append(i+1);
             query.append('\n');
             ResultColumn rcm = (ResultColumn)columns.get(i);
-            for(int j=0; j<rcm.attributes.size(); j++)
+            for(int j=0; j<rcm.getAttributes().size(); j++)
             {
-                AttributeDefinition ad = (AttributeDefinition)rcm.attributes.get(j);
+                AttributeDefinition ad = (AttributeDefinition)rcm.getAttributes().get(j);
                 if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
                     query.append(", coral_generic_resource ");
@@ -140,7 +140,7 @@ public class SQLCoralQueryImpl
         for(int i=0; i<columns.size(); i++)
         {
             ResultColumn rcm = (ResultColumn)columns.get(i);
-            if(rcm.rClass != null)
+            if(rcm.getRClass() != null)
             {
                 if(whereStarted)
                 {
@@ -151,13 +151,13 @@ public class SQLCoralQueryImpl
                     query.append("WHERE ");
                     whereStarted = true;
                 }
-                ResourceClass[] children = rcm.rClass.getChildClasses();
+                ResourceClass[] children = rcm.getRClass().getChildClasses();
                 if(children.length > 0)
                 {
                     query.append("(");
                     query.append("r").append(i+1).append(".resource_class_id");
                     query.append(" = ");
-                    query.append(rcm.rClass.getId());
+                    query.append(rcm.getRClass().getId());
                     for(int j=0; j<children.length; j++)
                     {
                         query.append(" OR ");
@@ -171,7 +171,7 @@ public class SQLCoralQueryImpl
                 {
                     query.append("r").append(i+1).append(".resource_class_id");
                     query.append(" = ");
-                    query.append(rcm.rClass.getId());
+                    query.append(rcm.getRClass().getId());
                 }
                 query.append('\n');
             }
@@ -180,9 +180,9 @@ public class SQLCoralQueryImpl
         for(int i=0; i<columns.size(); i++)
         {
             ResultColumn rcm = (ResultColumn)columns.get(i);
-            for(int j=0; j<rcm.attributes.size(); j++)
+            for(int j=0; j<rcm.getAttributes().size(); j++)
             {
-                AttributeDefinition ad = (AttributeDefinition)rcm.attributes.get(j);
+                AttributeDefinition ad = (AttributeDefinition)rcm.getAttributes().get(j);
                 if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
                     if(whereStarted)
@@ -251,8 +251,8 @@ public class SQLCoralQueryImpl
             {
                 ResultColumn rcm = (ResultColumn)columns.get(i);
                 from[i] = new String[2];
-                from[i][0] = rcm.rClass != null ? rcm.rClass.getName() : null;
-                from[i][1] = rcm.alias;
+                from[i][0] = rcm.getRClass() != null ? rcm.getRClass().getName() : null;
+                from[i][1] = rcm.getAlias();
             }
             String[] select = statement.getSelect() != null ? 
             		getItems(statement.getSelect()) : null;
@@ -313,12 +313,12 @@ public class SQLCoralQueryImpl
     {
         ResultColumnAttribute rca = (ResultColumnAttribute)
             parseOperand(attribute, true, columnMap);
-        if((rca.attribute.getFlags() & AttributeFlags.BUILTIN) == 0)
+        if((rca.getAttribute().getFlags() & AttributeFlags.BUILTIN) == 0)
         {
-            out.append("r").append(rca.column.index).
-                append("a").append(((Integer)rca.column.nameIndex.
-                                    get(rca.attribute.getName())).intValue()+1);
-            if(Entity.class.isAssignableFrom(rca.attribute.
+            out.append("r").append(rca.getColumn().getIndex()).
+                append("a").append(((Integer)rca.getColumn().getNameIndex().
+                                    get(rca.getAttribute().getName())).intValue()+1);
+            if(Entity.class.isAssignableFrom(rca.getAttribute().
                                              getAttributeClass().getJavaClass()))
             {
                 out.append(".ref");
@@ -330,12 +330,12 @@ public class SQLCoralQueryImpl
         }
         else
         {
-            out.append("r").append(rca.column.index).
+            out.append("r").append(rca.getColumn().getIndex()).
                 append(".");
-            String columnName = (String)attributesMap.get(rca.attribute.getName());                
+            String columnName = (String)attributesMap.get(rca.getAttribute().getName());
             if(columnName == null)
             {
-                columnName = rca.attribute.getName();
+                columnName = rca.getAttribute().getName();
             }
             out.append(columnName);
         }
@@ -428,7 +428,7 @@ public class SQLCoralQueryImpl
                     {
                         AttributeDefinition lhs = 
                             ((ResultColumnAttribute)parseOperand(node.getLHS(), true, columnMap)).
-                             attribute;
+                             getAttribute();
                         appendAttribute(node.getLHS(), columnMap, out);
                         String[] ops = { " <> ", " = " };
                         out.append(ops[node.getOperator()]);
@@ -439,7 +439,7 @@ public class SQLCoralQueryImpl
                         }
                         if(rhs instanceof ResultColumn)
                         {
-                            out.append("r").append(((ResultColumn)rhs).index).
+                            out.append("r").append(((ResultColumn)rhs).getIndex()).
                                 append(".resource_id");
                         }
                         if(rhs instanceof String)
@@ -462,7 +462,7 @@ public class SQLCoralQueryImpl
                     {
                         AttributeDefinition lhs = 
                             ((ResultColumnAttribute)parseOperand(node.getLHS(), true, columnMap)).
-                             attribute;
+                             getAttribute();
                         appendAttribute(node.getLHS(), columnMap, out);
                         String[] ops = { " < ", " <= ", " >= ", " > " };
                         out.append(ops[node.getOperator()]);
@@ -491,7 +491,7 @@ public class SQLCoralQueryImpl
                     {
                         AttributeDefinition lhs = 
                             ((ResultColumnAttribute)parseOperand(node.getLHS(), true, columnMap)).
-                             attribute;
+                             getAttribute();
                         appendAttribute(node.getLHS(), columnMap, out);
                         out.append(" LIKE ");
                         Object rhs = parseOperand(node.getRHS(), false, columnMap);

@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * A common base class for {@link QueryService} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.7 2004-12-22 07:54:49 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.8 2004-12-23 02:04:58 rafal Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery
@@ -795,19 +795,19 @@ public abstract class AbstractCoralQueryImpl
         // instance variables ////////////////////////////////////////////////
 
         /** The resource class, or <code>null</code> for any. */
-        public ResourceClass rClass;
+        private ResourceClass rClass;
 
         /** The 1-based index of the column. */
-        public int index;
+        private int index;
         
         /** The alias or <code>null</code> for none. */
-        public String alias;
+        private String alias;
         
         /** The attributes used in WHERE and ORDER BY clauses. */
-        public List attributes = new ArrayList();
+        private List attributes = new ArrayList();
         
         /** Mapping of attribute names to indices. */
-        public Map nameIndex = new HashMap();
+        private Map nameIndex = new HashMap();
 
         // initialization ////////////////////////////////////////////////////
         
@@ -821,6 +821,56 @@ public abstract class AbstractCoralQueryImpl
         {
             this.rClass = rClass;
             this.alias = alias;
+        }
+        
+        /**
+         * Returns the alias.
+         *
+         * @return the alias.
+         */
+        public String getAlias()
+        {
+            return alias;
+        }
+        
+        /**
+         * Returns the attributes.
+         *
+         * @return the attributes.
+         */
+        public List getAttributes()
+        {
+            return attributes;
+        }
+        
+        /**
+         * Returns the index.
+         *
+         * @return the index.
+         */
+        public int getIndex()
+        {
+            return index;
+        }
+        
+        /**
+         * Returns the nameIndex.
+         *
+         * @return the nameIndex.
+         */
+        public Map getNameIndex()
+        {
+            return nameIndex;
+        }
+        
+        /**
+         * Returns the rClass.
+         *
+         * @return the rClass.
+         */
+        public ResourceClass getRClass()
+        {
+            return rClass;
         }
     }
 
@@ -873,9 +923,29 @@ public abstract class AbstractCoralQueryImpl
         }
 
         /** The column. */
-        public ResultColumn column;
+        private ResultColumn column;
         
         /** The attribute. */
-        public AttributeDefinition attribute;
+        private AttributeDefinition attribute;
+        
+        /**
+         * Returns the attribute.
+         *
+         * @return the attribute.
+         */
+        public AttributeDefinition getAttribute()
+        {
+            return attribute;
+        }
+        
+        /**
+         * Returns the column.
+         *
+         * @return the column.
+         */
+        public ResultColumn getColumn()
+        {
+            return column;
+        }
     }
 }
