@@ -6,7 +6,7 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.event.EventHub;
+import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.RoleAssignmentChangeListener;
 import org.objectledge.coral.event.SubjectChangeListener;
 import org.objectledge.coral.store.Resource;
@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: SubjectImpl.java,v 1.3 2004-02-23 10:24:55 fil Exp $
+ * @version $Id: SubjectImpl.java,v 1.4 2004-02-23 10:42:11 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SubjectImpl
@@ -27,8 +27,8 @@ public class SubjectImpl
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The event hub. */
-    private EventHub eventHub;
+    /** The CoralEventHub. */
+    private CoralEventHub coralEventHub;
     
     /** The CoralRegistry. */
     private CoralRegistry coralRegistry;
@@ -54,15 +54,15 @@ public class SubjectImpl
      * Constructs a {@link SubjectImpl}.
      * 
      * @param persistence the Peristence subsystem.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      * @param coralSecurity the CoralSecurity.
      */
-    SubjectImpl(Persistence persistence, EventHub eventHub, CoralRegistry coralRegistry, 
+    SubjectImpl(Persistence persistence, CoralEventHub coralEventHub, CoralRegistry coralRegistry, 
         CoralSecurity coralSecurity)
     {
         super(persistence);
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         this.coralRegistry = coralRegistry;
         this.coralSecurity = coralSecurity;
     }
@@ -71,18 +71,18 @@ public class SubjectImpl
      * Constructs a {@link SubjectImpl}.
      *
      * @param persistence the Peristence subsystem.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      * 
      * @param name the name of the subject.
      * @param supervisor the supervisor of the subject.
      */
-    SubjectImpl(Persistence persistence, EventHub eventHub, CoralRegistry coralRegistry,
+    SubjectImpl(Persistence persistence, CoralEventHub coralEventHub, CoralRegistry coralRegistry,
         CoralSecurity coralSecurity,  
         String name, Subject supervisor)
     {
         super(persistence, name);
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         this.coralRegistry = coralRegistry;
         this.coralSecurity = coralSecurity;
         this.supervisor = supervisor;
@@ -161,7 +161,7 @@ public class SubjectImpl
                 throw new PersistenceException("Failed to load Subject #"+id, e);
             }
         }
-        eventHub.getInbound().addSubjectChangeListener(this, this);
+        coralEventHub.getInbound().addSubjectChangeListener(this, this);
     }
 
     // SubjectChangeListener interface //////////////////////////////////////////////////////////
@@ -395,7 +395,7 @@ public class SubjectImpl
         if(roleAssignments == null)
         {
             roleAssignments = coralRegistry.getRoleAssignments(this);
-            eventHub.getGlobal().addRoleAssignmentChangeListener(this, this);
+            coralEventHub.getGlobal().addRoleAssignmentChangeListener(this, this);
         }
     }
 
@@ -404,7 +404,7 @@ public class SubjectImpl
         if(roles == null)
         {
             buildRoleAssignments();
-            roles = new RoleContainer(eventHub, coralRegistry, roleAssignments, false);
+            roles = new RoleContainer(coralEventHub, coralRegistry, roleAssignments, false);
         }
     }
     
@@ -414,7 +414,7 @@ public class SubjectImpl
         if(permissions == null)
         {
             buildRoles();
-            permissions = new PermissionContainer(eventHub, coralRegistry, roles);
+            permissions = new PermissionContainer(coralEventHub, coralRegistry, roles);
         }
     }
 }

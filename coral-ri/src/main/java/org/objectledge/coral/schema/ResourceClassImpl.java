@@ -12,7 +12,7 @@ import org.objectledge.coral.CoralInstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.CoralRegistry;
-import org.objectledge.coral.event.EventHub;
+import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssociationChangeListener;
 import org.objectledge.coral.event.ResourceClassAttributesChangeListener;
 import org.objectledge.coral.event.ResourceClassChangeListener;
@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.3 2004-02-23 10:24:56 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.4 2004-02-23 10:42:12 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -44,8 +44,8 @@ public class ResourceClassImpl
     /** The Persistence subsystem. */
     private Persistence persistence;
     
-    /** The event hub. */
-    private EventHub eventHub;
+    /** The CoralEventHub. */
+    private CoralEventHub coralEventHub;
 
     /** Instantiator. */
     private Instantiator instantiator;
@@ -100,11 +100,12 @@ public class ResourceClassImpl
      * @param coralRegistry the CoralRegistry.
      */
     ResourceClassImpl(Persistence persistence, Instantiator instantiator, 
-        CoralRegistry coralRegistry)
+        CoralEventHub coralEventHub, CoralRegistry coralRegistry)
     {
         super(persistence);
         this.instantiator = instantiator;
         this.coralRegistry = coralRegistry;
+        this.coralEventHub = coralEventHub;
     }
     
     /**
@@ -123,13 +124,14 @@ public class ResourceClassImpl
      * @param flags resource class flags.
      */
     ResourceClassImpl(Persistence persistence, Instantiator instantiator, 
-        CoralRegistry coralRegistry,
+        CoralEventHub coralEventHub, CoralRegistry coralRegistry,
         String name, String javaClass, String handlerClass, String dbTable, int flags)
         throws JavaClassException
     {
         super(persistence, name);
         this.instantiator = instantiator;
         this.coralRegistry = coralRegistry;
+        this.coralEventHub = coralEventHub;
         setJavaClass(javaClass);
         setDbTable(dbTable);
         setHandlerClass(handlerClass);
@@ -519,16 +521,16 @@ public class ResourceClassImpl
                 inheritanceCopy.add(item);
                 if(item.getChild().equals(this))
                 {
-                    eventHub.getGlobal().
+                    coralEventHub.getGlobal().
                         addResourceClassInheritanceChangeListener(this, item.getParent());
-                    eventHub.getGlobal().
+                    coralEventHub.getGlobal().
                         addResourceClassAttributesChangeListener(this, item.getParent());
-                    eventHub.getGlobal().
+                    coralEventHub.getGlobal().
                         addPermissionAssociationChangeListener(this, item.getParent());
                 }
                 else
                 {
-                    eventHub.getGlobal().
+                    coralEventHub.getGlobal().
                         addResourceClassInheritanceChangeListener(this, item.getChild());
                 }
             }
@@ -537,16 +539,16 @@ public class ResourceClassImpl
                 inheritanceCopy.remove(item);
                 if(item.getChild().equals(this))
                 {
-                    eventHub.getGlobal().
+                    coralEventHub.getGlobal().
                         removeResourceClassInheritanceChangeListener(this, item.getParent());
-                    eventHub.getGlobal().
+                    coralEventHub.getGlobal().
                         removeResourceClassAttributesChangeListener(this, item.getParent());
-                    eventHub.getGlobal().
+                    coralEventHub.getGlobal().
                         removePermissionAssociationChangeListener(this, item.getParent());
                 }
                 else
                 {
-                    eventHub.getGlobal().
+                    coralEventHub.getGlobal().
                         removeResourceClassInheritanceChangeListener(this, item.getChild());
                 }
             }
@@ -722,7 +724,7 @@ public class ResourceClassImpl
         if(inheritance == null)
         {
             inheritance = coralRegistry.getResourceClassInheritance(this);
-            eventHub.getGlobal().addResourceClassInheritanceChangeListener(this, this);
+            coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, this);
         }
     }
     
@@ -750,9 +752,9 @@ public class ResourceClassImpl
                 {
                     pc.add(rc);
                     rcis = coralRegistry.getResourceClassInheritance(rc);
-                    eventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
-                    eventHub.getGlobal().addResourceClassAttributesChangeListener(this, rc);
-                    eventHub.getGlobal().addPermissionAssociationChangeListener(this, rc);
+                    coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
+                    coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, rc);
+                    coralEventHub.getGlobal().addPermissionAssociationChangeListener(this, rc);
                 }
                 Iterator i = rcis.iterator();
                 while(i.hasNext())
@@ -794,7 +796,7 @@ public class ResourceClassImpl
                 {
                     cc.add(rc);
                     rcis = coralRegistry.getResourceClassInheritance(rc);
-                    eventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
+                    coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
                 }
                 Iterator i = rcis.iterator();
                 while(i.hasNext())
@@ -819,7 +821,7 @@ public class ResourceClassImpl
         if(declaredAttributes == null)
         {
             declaredAttributes = coralRegistry.getDeclaredAttributes(this);
-            eventHub.getGlobal().addResourceClassAttributesChangeListener(this, this);
+            coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, this);
         }   
     }
     
@@ -859,7 +861,7 @@ public class ResourceClassImpl
         if(permissionAssociations == null)
         {
             permissionAssociations = coralRegistry.getPermissionAssociations(this);
-            eventHub.getGlobal().addPermissionAssociationChangeListener(this, this);
+            coralEventHub.getGlobal().addPermissionAssociationChangeListener(this, this);
         }
     }
 
@@ -889,8 +891,8 @@ public class ResourceClassImpl
                 synchronized(rc)
                 {
                     rc.buildAttributeMap();
-                    eventHub.getGlobal().addResourceClassAttributesChangeListener(this, rc);
-                    eventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
+                    coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, rc);
+                    coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
                     i = rc.attributeMap.values().iterator();
                     while(i.hasNext())
                     {

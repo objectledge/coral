@@ -6,22 +6,22 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.objectledge.coral.entity.CoralRegistry;
-import org.objectledge.coral.event.EventHub;
+import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.RoleImplicationChangeListener;
 
 /**
  * A helper class for managing a set of roles.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RoleContainer.java,v 1.3 2004-02-23 10:24:55 fil Exp $
+ * @version $Id: RoleContainer.java,v 1.4 2004-02-23 10:42:11 fil Exp $
  */
 public class RoleContainer
     implements RoleImplicationChangeListener
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The event hub. */
-    private EventHub eventHub;
+    /** The CoralEventHub. */
+    private CoralEventHub coralEventHub;
     
     /** The CoralRegistry. */
     private CoralRegistry coralRegistry;
@@ -47,7 +47,7 @@ public class RoleContainer
     /**
      * Creates a new role container.
      *
-     * @param eventHub the event hub.
+     * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      * 
      * @param data the initial roles
@@ -55,10 +55,10 @@ public class RoleContainer
      *        objects, <code>false</code> if it contains {@link
      *        RoleAssignment} objects. 
      */
-    public RoleContainer(EventHub eventHub, CoralRegistry coralRegistry, 
+    public RoleContainer(CoralEventHub coraleEventHub, CoralRegistry coralRegistry, 
         Set data, boolean roles)
     {
-        this.eventHub = eventHub;
+        this.coralEventHub = coraleEventHub;
         this.coralRegistry = coralRegistry;
         if(roles)
         {
@@ -67,7 +67,7 @@ public class RoleContainer
             {
                 Role role = (Role)i.next();
                 explicitRoles.add(role);
-                eventHub.getGlobal().addRoleImplicationChangeListener(this, role);
+                coraleEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
             }
         }
         else
@@ -77,7 +77,7 @@ public class RoleContainer
             {
                 Role role = ((RoleAssignment)i.next()).getRole();
                 explicitRoles.add(role);
-                eventHub.getGlobal().addRoleImplicationChangeListener(this, role);
+                coraleEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
             }
         }
     }
@@ -91,7 +91,7 @@ public class RoleContainer
      */
     public synchronized void addRole(Role role)
     {
-        eventHub.getGlobal().addRoleImplicationChangeListener(this, role);
+        coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
         explicitRoles.add(role);
         matchingRoles = null;
         superRoles = null;
@@ -230,7 +230,7 @@ public class RoleContainer
                 if(!explicitRoles.contains(r))
                 {
                     sup.add(r);
-                    eventHub.getGlobal().addRoleImplicationChangeListener(this, r);
+                    coralEventHub.getGlobal().addRoleImplicationChangeListener(this, r);
                 }
                 Set ris = coralRegistry.getRoleImplications(r);
                 Iterator i = ris.iterator();
@@ -262,7 +262,7 @@ public class RoleContainer
                 if(!explicitRoles.contains(r))
                 {
                     sub.add(r);
-                    eventHub.getGlobal().addRoleImplicationChangeListener(this, r);
+                    coralEventHub.getGlobal().addRoleImplicationChangeListener(this, r);
                 }
                 Set ris = coralRegistry.getRoleImplications(r);
                 Iterator i = ris.iterator();

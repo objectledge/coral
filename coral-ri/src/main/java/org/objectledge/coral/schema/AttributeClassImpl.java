@@ -5,7 +5,7 @@ import org.objectledge.coral.CoralInstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.event.AttributeClassChangeListener;
-import org.objectledge.coral.event.EventHub;
+import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.3 2004-02-23 10:13:31 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.4 2004-02-23 10:42:12 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -27,8 +27,8 @@ public class AttributeClassImpl
     /** Instantiator. */
     private Instantiator instantiator;
     
-    /** The event hub. */
-    private EventHub eventHub;
+    /** The CoralEventHub. */
+    private CoralEventHub coralEventHub;
     
     /** The associated Java class. */
     private Class javaClass;
@@ -46,13 +46,14 @@ public class AttributeClassImpl
      *
      * @param peristence the Peristence subsystem.
      * @param instantiator the Instantiator.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      */
-    AttributeClassImpl(Persistence persistence, Instantiator instantiator, EventHub eventHub)
+    AttributeClassImpl(Persistence persistence, Instantiator instantiator, 
+        CoralEventHub coralEventHub)
     {
         super(persistence);
         this.instantiator = instantiator;
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
     }
 
     /**
@@ -60,7 +61,7 @@ public class AttributeClassImpl
      *
      * @param peristence the Peristence subsystem.
      * @param instantiator the Instantiator.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      * 
      * @param name the name of the attribute class.
      * @param javaClass the name of the Java class associated with this
@@ -70,14 +71,14 @@ public class AttributeClassImpl
      * @param dbTable the name of the database table that holds the data of
      *        attributes belonging to this class.
      */
-    AttributeClassImpl(Persistence persistence, Instantiator instantiator, EventHub eventHub, 
-        String name, String javaClass, String handlerClass,
-        String dbTable)
+    AttributeClassImpl(Persistence persistence, Instantiator instantiator, 
+        CoralEventHub coralEventHub, 
+        String name, String javaClass, String handlerClass, String dbTable)
         throws JavaClassException
     {
         super(persistence, name);
         this.instantiator = instantiator;
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         setDbTable(dbTable);
         setJavaClass(javaClass);
         setHandlerClass(handlerClass);
@@ -149,7 +150,7 @@ public class AttributeClassImpl
         {
             throw new BackendException("Failed to load AttributeClass #"+id, e);
         }
-        eventHub.getInbound().addAttributeClassChangeListener(this, this);
+        coralEventHub.getInbound().addAttributeClassChangeListener(this, this);
     }
     
     // AttributeClassChangeListener interface ///////////////////////////////////////////////////

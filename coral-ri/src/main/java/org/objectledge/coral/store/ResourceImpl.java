@@ -13,7 +13,7 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.event.EventHub;
+import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
@@ -38,7 +38,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * ResourceHandler#create(Resource,Map,Connection)} and
  * ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.3 2004-02-23 10:24:57 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.4 2004-02-23 10:42:12 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -60,8 +60,8 @@ public class ResourceImpl
     /** The CoralRegistry. */
     private CoralRegistry coralRegistry;
 
-    /** The event hub. */
-    private EventHub eventHub;
+    /** The CoralEventHub. */
+    private CoralEventHub coralEventHub;
 
     /** The class of this resource. */
     private ResourceClass resourceClass;
@@ -108,17 +108,17 @@ public class ResourceImpl
      * @param coralSchema the CoralSchema.
      * @param coralSecurity the CoralSecurity.
      * @param coralStore the CoralStore.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      */
     public ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
-        CoralSecurity coralSecurity, CoralRegistry coralRegistry, EventHub eventHub)
+        CoralSecurity coralSecurity, CoralRegistry coralRegistry, CoralEventHub coralEventHub)
     {
         super(persistence);
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
         this.coralStore = coralStore;
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         this.coralRegistry = coralRegistry;
         buildAttributeMap();
     }
@@ -130,7 +130,7 @@ public class ResourceImpl
      * @param coralSchema the CoralSchema.
      * @param coralSecurity the CoralSecurity.
      * @param coralStore the CoralStore.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      * 
      * @param name the name of the new resource.
@@ -139,14 +139,14 @@ public class ResourceImpl
      * @param creator the Subject that creates the resource.
      */
     public ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
-        CoralSecurity coralSecurity, CoralRegistry coralRegistry, EventHub eventHub,
+        CoralSecurity coralSecurity, CoralRegistry coralRegistry, CoralEventHub coralEventHub,
         String name, ResourceClass resourceClass, Resource parent, Subject creator)
     {
         super(persistence, name);
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
         this.coralStore = coralStore;
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         this.coralRegistry = coralRegistry;
 
         this.resourceClass = resourceClass;
@@ -570,7 +570,7 @@ public class ResourceImpl
         try
         {
             Resource impl = coralStore.getResource(getId());
-            eventHub.getGlobal().fireResourceChangeEvent(impl, subject);
+            coralEventHub.getGlobal().fireResourceChangeEvent(impl, subject);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -683,7 +683,7 @@ public class ResourceImpl
             try
             {
                 Resource impl = coralStore.getResource(getId());
-                eventHub.getGlobal().addPermissionAssignmentChangeListener(this, impl);
+                coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, impl);
             }
             catch(Exception e)
             {

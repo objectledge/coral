@@ -4,7 +4,7 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.event.AttributeDefinitionChangeListener;
-import org.objectledge.coral.event.EventHub;
+import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -13,7 +13,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a concrete attribute of an resource class.
  *
- * @version $Id: AttributeDefinitionImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
+ * @version $Id: AttributeDefinitionImpl.java,v 1.3 2004-02-23 10:42:12 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeDefinitionImpl
@@ -23,8 +23,8 @@ public class AttributeDefinitionImpl
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The event hub. */
-    private EventHub eventHub;
+    /** The CoralEventHub. */
+    private CoralEventHub coralEventHub;
     
     /** The CoralSchema. */
     private CoralSchema coralSchema;
@@ -48,12 +48,13 @@ public class AttributeDefinitionImpl
      *
      * @param peristence the Peristence subsystem.
      * @param instantiator the Instantiator.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      */
-    AttributeDefinitionImpl(Persistence persistence, EventHub eventHub, CoralSchema coralSchema)
+    AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub, 
+        CoralSchema coralSchema)
     {
         super(persistence);
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         this.coralSchema = coralSchema;
     }
 
@@ -62,18 +63,19 @@ public class AttributeDefinitionImpl
      *
      * @param peristence the Peristence subsystem.
      * @param instantiator the Instantiator.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      * 
      * @param name the name of this attribute.
      * @param attributeClass the class of this attribute.
      * @param domain the value domain constraint.
      * @param flags the flags of this attribute.
      */
-    AttributeDefinitionImpl(Persistence persistence, EventHub eventHub, CoralSchema coralSchema,
+    AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub, 
+        CoralSchema coralSchema,
         String name, AttributeClass attributeClass, String domain, int flags)
     {
         super(persistence, name);
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         this.coralSchema = coralSchema;
         this.attributeClass = attributeClass;
         this.declaringClass = null;
@@ -172,7 +174,7 @@ public class AttributeDefinitionImpl
             domain = record.getString("domain");
         }
         this.flags = record.getInteger("flags");
-        eventHub.getInbound().addAttributeDefinitionChangeListener(this, this);
+        coralEventHub.getInbound().addAttributeDefinitionChangeListener(this, this);
     }
 
     // AttributeDefinitionChangeListener interface //////////////////////////////////////////////

@@ -7,7 +7,7 @@ import java.util.Set;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.CoralRegistry;
-import org.objectledge.coral.event.EventHub;
+import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.RoleAssignmentChangeListener;
 import org.objectledge.coral.event.RoleChangeListener;
@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * An implementaion of {@link Role interface}.
  *
- * @version $Id: RoleImpl.java,v 1.3 2004-02-23 10:24:55 fil Exp $
+ * @version $Id: RoleImpl.java,v 1.4 2004-02-23 10:42:11 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImpl
@@ -34,8 +34,8 @@ public class RoleImpl
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The event hub. */
-    private EventHub eventHub;
+    /** The CoralEventHub. */
+    private CoralEventHub coralEventHub;
     
     /** The CoralRegistry. */
     private CoralRegistry coralRegistry;
@@ -70,13 +70,13 @@ public class RoleImpl
      * Constructs a {@link RoleImpl}.
      *
      * @param persistence the Peristence subsystem.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      */
-    RoleImpl(Persistence persistence, EventHub eventHub, CoralRegistry coralRegistry)
+    RoleImpl(Persistence persistence, CoralEventHub coralEventHub, CoralRegistry coralRegistry)
     {
         super(persistence);
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         this.coralRegistry = coralRegistry;
     }
 
@@ -84,16 +84,16 @@ public class RoleImpl
      * Constructs a {@link RoleImpl}.
      *
      * @param persistence the Peristence subsystem.
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      *
      * @param name the name of the role.
      */
-    RoleImpl(Persistence persistence, EventHub eventHub, CoralRegistry coralRegistry,
+    RoleImpl(Persistence persistence, CoralEventHub coralEventHub, CoralRegistry coralRegistry,
         String name)
     {
         super(persistence, name);
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         this.coralRegistry = coralRegistry;
     }
     
@@ -150,7 +150,7 @@ public class RoleImpl
         throws PersistenceException
     {
         super.setData(record);
-        eventHub.getInbound().addRoleChangeListener(this, this);
+        coralEventHub.getInbound().addRoleChangeListener(this, this);
     }
 
     // SubjectChangeListener interface //////////////////////////////////////////////////////////
@@ -436,7 +436,7 @@ public class RoleImpl
         {
             implications = coralRegistry.getRoleImplications(this);
             cimplications = (Set)((HashSet)implications).clone();
-            eventHub.getGlobal().addRoleImplicationChangeListener(this, this);
+            coralEventHub.getGlobal().addRoleImplicationChangeListener(this, this);
         }
     }
 
@@ -446,7 +446,7 @@ public class RoleImpl
         {
             Set roleSet = new HashSet();
             roleSet.add(this);
-            roles = new RoleContainer(eventHub, coralRegistry, roleSet, true);
+            roles = new RoleContainer(coralEventHub, coralRegistry, roleSet, true);
         }
     }
 
@@ -455,7 +455,7 @@ public class RoleImpl
         if(permissions == null)
         {
             buildRoles();
-            permissions = new PermissionContainer(eventHub, coralRegistry, roles);
+            permissions = new PermissionContainer(coralEventHub, coralRegistry, roles);
         }
     }
 
@@ -465,7 +465,7 @@ public class RoleImpl
         {
             permissionAssignments = coralRegistry.getPermissionAssignments(this);
             cpermissionAssignments = (Set)((HashSet)permissionAssignments).clone();
-            eventHub.getGlobal().addPermissionAssignmentChangeListener(this, this);
+            coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, this);
         }
     }
 
@@ -475,7 +475,7 @@ public class RoleImpl
         {
             roleAssignments = coralRegistry.getRoleAssignments(this);
             croleAssignments = (Set)((HashSet)roleAssignments).clone();
-            eventHub.getGlobal().addRoleAssignmentChangeListener(this, this);
+            coralEventHub.getGlobal().addRoleAssignmentChangeListener(this, this);
         }
     }
 }

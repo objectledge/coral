@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.objectledge.coral.entity.CoralRegistry;
-import org.objectledge.coral.event.EventHub;
+import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.ResourceTreeChangeListener;
 import org.objectledge.coral.store.Resource;
@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceInheritance;
  * A helper class for managing a set of permissions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionContainer.java,v 1.3 2004-02-23 10:24:55 fil Exp $
+ * @version $Id: PermissionContainer.java,v 1.4 2004-02-23 10:42:11 fil Exp $
  */
 public class PermissionContainer
     implements PermissionAssignmentChangeListener,
@@ -26,8 +26,8 @@ public class PermissionContainer
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The event hub. */
-    private EventHub eventHub;
+    /** The CoralEventHub. */
+    private CoralEventHub coralEventHub;
     
     /** The CoralRegistry. */
     private CoralRegistry coralRegistry;
@@ -52,15 +52,15 @@ public class PermissionContainer
     /**
      * Constructs a permission container.
      *
-     * @param eventHub the EventHub.
+     * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      * 
      * @param roles a RoleContainer.
      */
-    PermissionContainer(EventHub eventHub, CoralRegistry coralRegistry, 
+    PermissionContainer(CoralEventHub coralEventHub, CoralRegistry coralRegistry, 
         RoleContainer roles)
     {
-        this.eventHub = eventHub;
+        this.coralEventHub = coralEventHub;
         this.coralRegistry = coralRegistry;
         this.roles = roles;
         roles.setPermissionContainer(this);
@@ -171,8 +171,8 @@ public class PermissionContainer
                 childResources.put(item.getParent(), children);
             }
             children.add(item.getChild());
-            eventHub.getGlobal().addResourceTreeChangeListener(this, item.getParent());
-            eventHub.getGlobal().addPermissionAssignmentChangeListener(this, item.getParent());
+            coralEventHub.getGlobal().addResourceTreeChangeListener(this, item.getParent());
+            coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, item.getParent());
         }
         else
         {
@@ -254,8 +254,8 @@ public class PermissionContainer
                     }
                     children.add(rr);
                 }
-                eventHub.getGlobal().addPermissionAssignmentChangeListener(this, r);
-                eventHub.getGlobal().addResourceTreeChangeListener(this, r);
+                coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, r);
+                coralEventHub.getGlobal().addResourceTreeChangeListener(this, r);
                 rr = r;
                 r = r.getParent();
             }
