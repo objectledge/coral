@@ -41,7 +41,7 @@ import org.objectledge.templating.velocity.VelocityTemplating;
  * An interface between GeneratorComponent and Maven.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorBean.java,v 1.10 2004-12-27 03:06:28 rafal Exp $
+ * @version $Id: GeneratorBean.java,v 1.11 2005-02-10 17:48:48 rafal Exp $
  */
 public class GeneratorBean
 {
@@ -58,13 +58,6 @@ public class GeneratorBean
     private String sqlAttributeInfoFile;
     private String sqlListPath;
     
-    /**
-     * Creates new GeneratorBean instance.
-     */
-    public GeneratorBean()
-    {
-    }
-
     /**
      * Performs wrapper generation.
      * 

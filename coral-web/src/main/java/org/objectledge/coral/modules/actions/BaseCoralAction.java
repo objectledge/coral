@@ -12,17 +12,10 @@ import org.objectledge.web.mvc.MVCContext;
 /**
  * The base screen for coral application.
  * 
- * @version $Id: BaseCoralAction.java,v 1.3 2004-10-11 09:06:07 zwierzem Exp $
+ * @version $Id: BaseCoralAction.java,v 1.4 2005-02-10 17:48:56 rafal Exp $
  */
 public abstract class BaseCoralAction implements Valve
 {
-    /**
-     * The constructor.
-     */  
-    public BaseCoralAction()
-    {
-    }
-    
     /**
      * {@inheritDoc}
      */

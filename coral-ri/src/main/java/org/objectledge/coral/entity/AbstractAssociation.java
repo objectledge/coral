@@ -13,15 +13,6 @@ public abstract class AbstractAssociation
     extends PersistentObject
     implements Association
 {
-    // Initialization ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Constructs an association.
-     */
-    public AbstractAssociation() 
-    {
-    }
-    
     // Object implementaion /////////////////////////////////////////////////////////////////////
 
     /**
