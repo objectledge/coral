@@ -58,7 +58,7 @@ import org.objectledge.utils.StringUtils;
  * Performs importing data from old style ARL schema database to brand new CORAL scheme.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ARLImporterComponent.java,v 1.7 2005-01-15 01:42:53 pablo Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.8 2005-01-15 14:46:50 pablo Exp $
  */
 public class ARLImporterComponent
 {
@@ -1691,6 +1691,7 @@ public class ARLImporterComponent
             PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_relation_data " + 
                 "(relation_id, resource1, resource2) VALUES (?, ?, ?)");
             int size = 0;
+            Set alreadyInserted = new HashSet();
             while (rs.next())
             {
                 long resource1 = rs.getLong("resource1");
@@ -1712,6 +1713,13 @@ public class ARLImporterComponent
                     continue;
                 }
                 System.out.println("Relation: '"+relationName+"', R1:"+resource1+", R2:"+resource2);
+                String key = ""+relationId+"_"+resource1+"_"+resource2;
+                if(alreadyInserted.contains(key))
+                {
+                    System.out.println("Duplicate!");
+                    continue;
+                }
+                alreadyInserted.add(key);
                 stmt.setLong(1, relationId);
                 stmt.setLong(2, resource1);
                 stmt.setLong(3, resource2);
