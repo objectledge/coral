@@ -48,7 +48,7 @@ $imports.add($attr.getFQJavaType())##
 #end
 #if(!$attr.readonly)
 $imports.add("org.objectledge.coral.store.ModificationNotPermitedException")##
-#end	
+#end    
 #end
 ##
 $header##
@@ -115,8 +115,8 @@ public class ${class.implClassName}
      *
      * @param session the CoralSession
      * @param id the id of the object to be retrieved
-	 * @return a resource instance.
-	 * @throws EntityDoesNotExistException if the resource with the given id does not exist.
+     * @return a resource instance.
+     * @throws EntityDoesNotExistException if the resource with the given id does not exist.
      */
     public static ${class.interfaceClassName} get${class.interfaceClassName}(CoralSession session, long id)
         throws EntityDoesNotExistException
@@ -148,8 +148,8 @@ public class ${class.implClassName}
      */
 #if($requiredAttributes.size() > 0)
     public static ${class.interfaceClassName} create${class.interfaceClassName}(CoralSession session, String name, Resource parent, 
-	    #foreach($attr in $requiredAttributes)$attr.javaType $attr.name#if($velocityCount != $requiredAttributes.size()), #end#end)
-		throws ValueRequiredException
+        #foreach($attr in $requiredAttributes)$attr.javaType $attr.name#if($velocityCount != $requiredAttributes.size()), #end#end)
+        throws ValueRequiredException
 #else
     public static ${class.interfaceClassName} create${class.interfaceClassName}(CoralSession session, String name, Resource parent)
 #end
@@ -183,7 +183,7 @@ public class ${class.implClassName}
             throw new BackendException("incompatible schema change", e);
         }
 #end
-	}
+    }
 #end
 #if($attributes.size() > 0)
 
@@ -192,7 +192,7 @@ public class ${class.implClassName}
 #if($attr.primitive)
 #if(!$attr.required)
 
-	/**
+    /**
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
      * @return the value of the <code>${attr.name}</code> attribute.
@@ -200,7 +200,7 @@ public class ${class.implClassName}
      *         undefined.
      */
     public ${attr.javaType} get${attr.javaName}()
-		throws IllegalStateException
+        throws IllegalStateException
     {
         if(isDefined(${attr.name}Def))
         {
@@ -212,10 +212,10 @@ public class ${class.implClassName}
         }
     }
 
-	/**
+    /**
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
-	 * @param defaultValue the value to return if the attribute is undefined.
+     * @param defaultValue the value to return if the attribute is undefined.
      * @return the value of the <code>${attr.name}</code> attribute.
      * @throws IllegalStateException if the value of the attribute is 
      *         undefined.
@@ -228,12 +228,12 @@ public class ${class.implClassName}
         }
         else
         {
-			return defaultValue;
+            return defaultValue;
         }
     }
 #else ## $attr.required
 
-	/**
+    /**
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
      * @return the value of the <code>${attr.name}</code> attribute.
@@ -250,7 +250,7 @@ public class ${class.implClassName}
         {
             throw new BackendException("incompatible schema change");
         }
-    }	
+    }    
 #end
 #if(!$attr.readonly)
 
@@ -294,7 +294,7 @@ public class ${class.implClassName}
 #end ## $attr.readonly
 #else ## $!attr.java_primitive
 
-	/**
+    /**
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
      * @return the value of the <code>${attr.name}</code> attribute.
@@ -304,24 +304,24 @@ public class ${class.implClassName}
         return ($attr.javaType)get(${attr.name}Def);
     }
 #if(!$attr.required)
-	
-	/**
+    
+    /**
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
-	 * @param defaultValue the value to return if the attribute is undefined.
+     * @param defaultValue the value to return if the attribute is undefined.
      * @return the value of the <code>${attr.name}</code> attribute.
      */
     public $attr.javaType get${attr.javaName}(${attr.javaType} defaultValue)
     {
-		if(isDefined(${attr.name}Def))
-		{
+        if(isDefined(${attr.name}Def))
+        {
             return ($attr.javaType)get(${attr.name}Def);
-	    }
-		else
-		{
-			return defaultValue;
-		}
-    }	
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }    
 #end
 #if(!$attr.readonly)
 #if(!$attr.required)
