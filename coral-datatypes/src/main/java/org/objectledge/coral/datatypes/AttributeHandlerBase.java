@@ -16,13 +16,14 @@ import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.utils.StringUtils;
 
 /**
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.3 2004-05-06 13:19:59 pablo Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.4 2004-10-25 14:15:33 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -360,7 +361,7 @@ public abstract class AttributeHandlerBase
      */
     protected String escape(String string)
     {
-        return StringUtils.backslashEscape(StringUtils.escapeNonASCIICharacters(string), "'\\");
+        return DatabaseUtils.escapeSqlString(string);
     }
 
 	/**
@@ -370,7 +371,7 @@ public abstract class AttributeHandlerBase
 	 */
 	protected String unescape(String string)
 	{
-		return StringUtils.expandUnicodeEscapes(string);
+		return DatabaseUtils.unescapeSqlString(string);
 	}
 
     /**

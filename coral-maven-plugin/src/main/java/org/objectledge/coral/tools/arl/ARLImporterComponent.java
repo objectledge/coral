@@ -29,20 +29,21 @@ package org.objectledge.coral.tools.arl;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Date;
 
 import javax.sql.DataSource;
 
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.utils.StringUtils;
 
 /**
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ARLImporterComponent.java,v 1.2 2004-04-09 08:31:37 pablo Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.3 2004-10-25 14:15:23 rafal Exp $
  */
 public class ARLImporterComponent
 {
@@ -675,7 +676,7 @@ public class ARLImporterComponent
      */
     private static String escape(String string)
     {
-        return StringUtils.backslashEscape(StringUtils.escapeNonASCIICharacters(string), "'\\");
+        return DatabaseUtils.escapeSqlString(string);
     }
 
     /**
@@ -683,6 +684,6 @@ public class ARLImporterComponent
      */
     private static String unescape(String string)
     {
-        return StringUtils.expandUnicodeEscapes(string);
+        return DatabaseUtils.unescapeSqlString(string);
     }
 }
