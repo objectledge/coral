@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * Represents a Coral AttributeDefinition.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Attribute.java,v 1.7 2004-03-31 10:04:54 fil Exp $
+ * @version $Id: Attribute.java,v 1.8 2004-03-31 13:55:53 fil Exp $
  */
 public class Attribute
     extends Entity
@@ -83,7 +83,7 @@ public class Attribute
     {
         if(!getClass().isAssignableFrom(o.getClass()))
         {
-            throw new ClassCastException("expected "+getClass());
+            throw new ClassCastException("expected "+getClass()+" was "+o.getClass());
         }
         Attribute a = (Attribute)o;
         return name.equals(a.getName()) && 
