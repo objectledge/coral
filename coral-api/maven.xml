@@ -28,36 +28,89 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.4 2004-05-13 14:09:50 fil Exp $ -->
+<!-- $Id: maven.xml,v 1.5 2004-07-06 14:47:28 rafal Exp $ -->
 <project xmlns:j="jelly:core"
-         xmlns:ant="jelly:ant">
+         xmlns:util="jelly:util"
+         xmlns:ant="jelly:ant"
+         xmlns:define="jelly:define"
+         xmlns:coral="coral">
 
   <goal name="coral:javacc">
-    <j:set var="javaccSources" value="${maven.javacc.sourceDirectory}"/>
-    <j:if test="${empty(javaccSources)}">
-      <j:set var="javaccSources" value="${pom.build.sourceDirectory}"/>
-    </j:if>
-    <!-- jjt grammars -->
-    <fileScanner var="treeFiles">
-      <fileset dir="${javaccSources}">
+    <util:file var="srcDir" name="${pom.build.sourceDirectory}"/>
+    <!-- jjtree grammars -->
+    <fileScanner var="srcFiles">
+      <fileset dir="${srcDir.path}">
         <include name="**/*.jjt"/>
       </fileset>
     </fileScanner>
-    <j:forEach var="file" items="${treeFiles.iterator()}">
-      <ant:echo>Generating grammar file for ${file.path}</ant:echo>
-      <jjtree target="${file.path}" javacchome="${build.javacc.home}"/>
+    <j:forEach var="srcFile" items="${srcFiles.iterator()}">
+      <j:set var="relPath" value="${srcFile.parentFile.path.substring(srcDir.path.length())}"/>
+      <util:file var="dstDir" name="${maven.build.dir}/javacc/${relPath}"/>
+      <copy todir="${dstDir.path}" overwrite="true">
+        <fileset dir="${srcFile.parentFile.path}">
+          <include name="*.java"/>
+        </fileset>
+      </copy>
+      <echo>Generating grammar for ${relPath}</echo>
+      <jjtree target="${srcFile.path}" outputdirectory="${dstDir.path}" javacchome="${build.javacc.home}"/>
+      <coral:smartCopy srcDir="${dstDir}" srcMask="*.jj" dstDir="${srcFile.parentFile}"/>
+      <coral:smartCopy srcDir="${dstDir}" srcMask="*.java" dstDir="${srcFile.parentFile}"/>
     </j:forEach>
-    <!-- jj grammars -->
-    <fileScanner var="grammarFiles">
-      <fileset dir="${pom.build.sourceDirectory}">
+
+    <!-- javacc parsers -->
+    <fileScanner var="srcFiles">
+      <fileset dir="${srcDir.path}">
         <include name="**/*.jj"/>
       </fileset>
     </fileScanner>
-    <j:forEach var="file" items="${grammarFiles.iterator()}">
-      <ant:echo>Generating parser for ${file.path}</ant:echo>
-      <javacc target="${file.path}" javacchome="${build.javacc.home}"/>
+    <j:forEach var="srcFile" items="${srcFiles.iterator()}">
+      <j:set var="relPath" value="${srcFile.parentFile.path.substring(srcDir.path.length())}"/>
+      <util:file var="dstDir" name="${maven.build.dir}/javacc/${relPath}"/>
+      <echo>Generating parser for ${relPath}</echo>
+      <javacc target="${srcFile.path}" outputdirectory="${dstDir.path}" javacchome="${build.javacc.home}"/>
+      <coral:smartCopy srcDir="${dstDir}" srcMask="*.java" dstDir="${srcFile.parentFile}"/>
     </j:forEach>
   </goal>
+
+  <define:taglib uri="coral">
+    <!--
+     | @param srcDir java.io.File
+     | @param srcMask java.lang.String
+     | @param dstDir java.io.File
+     -->
+    <define:tag name="smartCopy">
+      <fileScanner var="srcFiles">
+        <fileset dir="${srcDir.path}">
+          <include name="${srcMask}"/>
+        </fileset>
+      </fileScanner>
+      <j:forEach var="srcFile" items="${srcFiles.iterator()}">
+        <j:set var="relPath" value="${srcFile.path.substring(srcDir.path.length())}"/>
+        <util:file var="dstFile" name="${dstDir}/${relPath}"/>
+        <j:choose>
+          <j:when test="${dstFile.exists()}">
+            <util:loadText var="srcContent" file="${srcFile}"/>
+            <util:loadText var="dstContent" file="${dstFile}"/>
+            <j:choose>
+              <j:when test="${!srcContent.equals(dstContent)}">
+                <echo>updating ${dstFile.path} (modified)</echo>
+                <copy file="${srcFile.path}" tofile="${dstFile.path}"/>
+              </j:when>
+              <j:otherwise>
+                <!--
+                <echo>not updating ${dstFile.path} (not modified)</echo>
+                -->
+              </j:otherwise>
+            </j:choose>
+          </j:when>
+          <j:otherwise>
+            <echo>introducing ${dstFile.path} (new file)</echo>
+            <copy file="${srcFile.path}" tofile="${dstFile.path}"/>
+          </j:otherwise>
+        </j:choose>
+      </j:forEach>
+    </define:tag>
+  </define:taglib>
 
   <preGoal name="java:compile">
     <attainGoal name="coral:javacc"/>
