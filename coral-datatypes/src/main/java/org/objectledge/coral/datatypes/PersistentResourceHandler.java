@@ -26,7 +26,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.15 2005-01-20 06:00:24 rafal Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.16 2005-01-20 13:09:39 rafal Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -198,6 +198,14 @@ public class PersistentResourceHandler
      * {@inheritDoc}
      */
     protected Object getData(ResourceClass rc, Connection conn) throws SQLException
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getData(Connection conn) throws SQLException
     {
         return null;
     }

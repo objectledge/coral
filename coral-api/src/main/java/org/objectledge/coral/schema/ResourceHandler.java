@@ -10,7 +10,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages persistency of resources belonging to a specific class .
  *
- * @version $Id: ResourceHandler.java,v 1.5 2004-06-29 09:26:23 fil Exp $
+ * @version $Id: ResourceHandler.java,v 1.6 2005-01-20 13:09:30 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceHandler
@@ -187,4 +187,15 @@ public interface ResourceHandler
      * @param resource the resource to clear.
      */
     public void clearResourceReferences(Resource resource);
+    
+    /**
+     * Retruns implementation dependent data that can speed up retrieving of all resources in the
+     * system.
+     * 
+     * @param conn database connection.
+     * @return implementation specific data.
+     * @throws SQLException if database operation fails.
+     */
+    public Object getData(Connection conn)
+        throws SQLException;
 }

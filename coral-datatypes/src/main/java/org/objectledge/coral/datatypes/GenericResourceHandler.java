@@ -23,7 +23,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.12 2005-01-19 09:01:45 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.13 2005-01-20 13:09:40 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -369,6 +369,46 @@ public class GenericResourceHandler
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
             "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
+            "ORDER BY resource_id"
+        );
+        Map dataKeys = null;
+        Long resId = null;
+        try
+        {
+            while(rs.next())
+            {
+                if(resId == null || resId.longValue() != rs.getLong(1))
+                {
+                    resId = new Long(rs.getLong(1));
+                    dataKeys = new HashMap();
+                    keyMap.put(resId, dataKeys);
+                }
+                dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
+                    new Long(rs.getLong(3)));
+            }
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new BackendException("corrupted data", e);
+        }
+        finally
+        {
+            rs.close();
+            stmt.close();
+        }
+        return keyMap;        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map getData(Connection conn)
+        throws SQLException
+    {
+        Map keyMap = new HashMap();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(
+            "SELECT resource_id, attribute_definition_id, data_key FROM arl_generic_resource "+
             "ORDER BY resource_id"
         );
         Map dataKeys = null;
