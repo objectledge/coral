@@ -27,6 +27,9 @@ $imports.add($class.implParentClass.getFQImplClassName())##
 #if(!$attr.primitive)
 $imports.add($attr.getFQJavaType())##
 #end
+#if(!$attr.readonly)
+$imports.add("org.objectledge.coral.store.ModificationNotPermitedException")##
+#end	
 #end
 ##
 $license##
@@ -143,7 +146,7 @@ public class ${class.implClassName}
             attrs.put(rc.getAttribute("${attr.name}"), ${attr.name});
 #end
 #end
-            Resource res = rs.getStore().createResource(name, parent, rc, attrs);
+            Resource res = session.getStore().createResource(name, parent, rc, attrs);
             if(!(res instanceof ${class.interfaceClassName}))
             {
                 throw new BackendException("incosistent schema: created object is "+
@@ -155,7 +158,13 @@ public class ${class.implClassName}
         {
             throw new BackendException("incompatible schema change", e);
         }
-    }
+#if($requiredAttributes.size() == 0)
+        catch(ValueRequiredException e)
+        {
+            throw new BackendException("incompatible schema change", e);
+        }
+#end
+	}
 #end
 #if($attributes.size() > 0)
 
