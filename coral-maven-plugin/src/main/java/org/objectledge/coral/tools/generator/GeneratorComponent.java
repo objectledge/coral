@@ -54,7 +54,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.22 2004-08-23 15:06:22 rafal Exp $
+ * @version $Id: GeneratorComponent.java,v 1.23 2004-08-24 14:08:32 rafal Exp $
  */
 public class GeneratorComponent
 {
@@ -321,8 +321,12 @@ public class GeneratorComponent
                 if(in.indexOf('@') >=0 )
                 {
                     int a = in.indexOf('@');
-                    int b = in.indexOf(' ',a);
-                    if(b > 0 || ignoredHintNames.contains(in.substring(a)))
+                    int b = in.indexOf(' ', a);
+                    if(b < 0)
+                    {
+                        b = in.indexOf('}', b); // javadoc
+                    }
+                    if(b > 0)
                     {
                         String token = in.substring(a+1, b);
                         if(hintNames.contains(token))
