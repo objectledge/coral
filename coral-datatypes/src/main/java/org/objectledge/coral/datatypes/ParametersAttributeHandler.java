@@ -18,14 +18,13 @@ import org.objectledge.parameters.db.DBParametersManager;
 
 /**
  * Handles persistency of objects supporting
- * <code>labeo.util.configuration.ParameterContainer</code>.
+ * <code>org.objectledge.parameters.Parameters</code>.
  * 
  * <p>This implementation depends on
- * <code>PersistentParameterContainerService</code>, currenty in
- * labeo-experimental.</p>
+ * <code>DBParametersManager</code>, currenty in ledge-components.</p>
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParametersAttributeHandler.java,v 1.4 2004-12-27 03:05:44 rafal Exp $
+ * @version $Id: ParametersAttributeHandler.java,v 1.5 2004-12-27 04:47:33 zwierzem Exp $
  */
 public class ParametersAttributeHandler
     extends AttributeHandlerBase
