@@ -16,4 +16,11 @@ public class ASTdeleteResourceClassStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTresourceClass getResourceClass()
+  {
+      return resourceClass;
+  }
 }

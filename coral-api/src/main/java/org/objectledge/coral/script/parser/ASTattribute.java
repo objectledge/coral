@@ -16,4 +16,16 @@ public class ASTattribute extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public String getName()
+  {
+      return value;
+  }
+  
+  public String getValue()
+  {
+      return value;
+  }
 }

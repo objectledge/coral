@@ -16,4 +16,11 @@ public class ASTdeleteAttributeClassStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTattributeClass getAttributeClass()
+  {
+      return attributeClass;
+  }
 }

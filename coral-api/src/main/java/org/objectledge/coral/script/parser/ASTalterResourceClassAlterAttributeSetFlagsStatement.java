@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterResourceClassAlterAttributeSetFlagsStatement extends SimpleNode {
+public class ASTalterResourceClassAlterAttributeSetFlagsStatement extends ASTalterResourceClassAlterAttributeStatement {
   public ASTalterResourceClassAlterAttributeSetFlagsStatement(int id) {
     super(id);
   }
@@ -15,5 +15,12 @@ public class ASTalterResourceClassAlterAttributeSetFlagsStatement extends Simple
   /** Accept the visitor. **/
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTresourceClassFlagList getFlags()
+  {
+      return resourceClassFlags;
   }
 }

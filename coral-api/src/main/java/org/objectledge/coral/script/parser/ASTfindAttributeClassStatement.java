@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTfindAttributeClassStatement extends SimpleNode {
+public class ASTfindAttributeClassStatement extends ASTfindStatement {
   public ASTfindAttributeClassStatement(int id) {
     super(id);
   }

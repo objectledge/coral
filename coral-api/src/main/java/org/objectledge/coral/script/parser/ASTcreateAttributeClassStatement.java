@@ -16,4 +16,26 @@ public class ASTcreateAttributeClassStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+    /////////////////////////////////////////////////////////////////////////////////////////////
+  
+    public String getName()
+    {
+        return name;
+    }
+  
+    public String getJavaClass()
+    {
+        return javaClass;
+    }
+  
+    public String getHandlerClass()
+    {
+        return handlerClass;
+    }
+  
+    public String getDbTable()
+    {
+        return dbTable;
+    }
 }

@@ -16,4 +16,24 @@ public class ASTattributeDefinition extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public String getName()
+  {
+      return name;
+  }
+  
+  public ASTattributeClass getAttributeClass()
+  {
+      return attributeClass;
+  }
+  
+  public String getDomain()
+  {
+      return domain;
+  }
+  
+  public ASTattributeFlagList getFlags()
+  {
+      return attributeFlags;  
+  }
 }

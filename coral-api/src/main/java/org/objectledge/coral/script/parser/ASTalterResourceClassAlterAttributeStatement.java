@@ -2,12 +2,12 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterResourceClassAlterAttributeSetNameStatement extends ASTalterResourceClassAlterAttributeStatement {
-  public ASTalterResourceClassAlterAttributeSetNameStatement(int id) {
+public class ASTalterResourceClassAlterAttributeStatement extends ASTalterResourceClassStatement {
+  public ASTalterResourceClassAlterAttributeStatement(int id) {
     super(id);
   }
 
-  public ASTalterResourceClassAlterAttributeSetNameStatement(RML p, int id) {
+  public ASTalterResourceClassAlterAttributeStatement(RML p, int id) {
     super(p, id);
   }
 
@@ -16,11 +16,11 @@ public class ASTalterResourceClassAlterAttributeSetNameStatement extends ASTalte
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
-  
+
   ///////////////////////////////////////////////////////////////////////////////////////////////
   
-  public String getNewName()
+  public String getAttributeName()
   {
-      return newName;
+      return attributeName;
   }
 }

@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTsubject extends SimpleNode {
+public class ASTsubject extends ASTentity {
   public ASTsubject(int id) {
     super(id);
   }

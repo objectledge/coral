@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTattributeClass extends SimpleNode {
+public class ASTattributeClass extends ASTentity {
   public ASTattributeClass(int id) {
     super(id);
   }

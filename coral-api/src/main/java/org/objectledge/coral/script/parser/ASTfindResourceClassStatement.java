@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTfindResourceClassStatement extends SimpleNode {
+public class ASTfindResourceClassStatement extends ASTfindStatement {
   public ASTfindResourceClassStatement(int id) {
     super(id);
   }

@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterAttributeClassSetDbTableStatement extends SimpleNode {
+public class ASTalterAttributeClassSetDbTableStatement extends ASTalterAttributeClassStatement {
   public ASTalterAttributeClassSetDbTableStatement(int id) {
     super(id);
   }
@@ -15,5 +15,12 @@ public class ASTalterAttributeClassSetDbTableStatement extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public String getDbTable()
+  {
+      return dbTable;
   }
 }

@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterResourceClassDeleteAttributeStatement extends SimpleNode {
+public class ASTalterResourceClassDeleteAttributeStatement extends ASTalterResourceClassAlterAttributeStatement {
   public ASTalterResourceClassDeleteAttributeStatement(int id) {
     super(id);
   }

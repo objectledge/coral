@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterAttributeClassSetHandlerClassStatement extends SimpleNode {
+public class ASTalterAttributeClassSetHandlerClassStatement extends ASTalterAttributeClassStatement {
   public ASTalterAttributeClassSetHandlerClassStatement(int id) {
     super(id);
   }
@@ -15,5 +15,12 @@ public class ASTalterAttributeClassSetHandlerClassStatement extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public String getHandlerClass()
+  {
+      return handlerClass;
   }
 }
