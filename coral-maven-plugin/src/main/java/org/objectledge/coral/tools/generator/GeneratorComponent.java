@@ -54,7 +54,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.17 2004-05-25 09:22:38 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.18 2004-05-25 09:30:00 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -504,16 +504,17 @@ public class GeneratorComponent
         ArrayList fields = new ArrayList();
         if(fieldHint != null)
         {
-            if(fieldHint.size() % 2 != 0)
-            {
-                throw new Exception("malformed @field hints - expected @field <type> <name> pairs");
-            }
-            fields.ensureCapacity(fieldHint.size()/2);
-            for(int i=0; i<fieldHint.size()/2; i++)
+            fields.ensureCapacity(fieldHint.size());
+            for(int i=0; i<fieldHint.size(); i++)
             {
                 Map entry = new HashMap();
-                entry.put("type", fieldHint.get(i*2));
-                entry.put("name", fieldHint.get(i*2+1));
+                StringTokenizer st = new StringTokenizer((String)fieldHint.get(i));
+                if(st.countTokens() != 2)
+                {
+                    throw new Exception("malformed @field hints - expected @field <type> <name> pairs");
+                }
+                entry.put("type", st.nextToken().trim());
+                entry.put("name", st.nextToken().trim());
                 fields.add(entry);
             }
         }
