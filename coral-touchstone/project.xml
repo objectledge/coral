@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.13 2004-08-20 09:04:59 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.14 2004-09-08 14:53:43 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -204,4 +204,19 @@
       <version>2.0</version>
     </dependency>
   </dependencies>
+  
+  <reports>
+    <report>maven-license-plugin</report>
+    <report>maven-changes-plugin</report>
+    <report>maven-tasklist-plugin</report>
+    <report>maven-jxr-plugin</report>
+    <report>maven-jdepend-plugin</report>
+    <report>maven-checkstyle-plugin</report>
+    <report>maven-junit-report-plugin</report>
+    <report>maven-pmd-plugin</report>
+    <report>maven-simian-plugin</report>
+    <report>maven-faq-plugin</report>    
+    <report>maven-findbugs-plugin</report>
+  </reports>
+
 </project>
