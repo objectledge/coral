@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.22 2005-01-20 06:14:38 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.23 2005-01-20 13:10:30 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -1429,4 +1429,190 @@ public class CoralStoreImpl
         }
         return false;
     } 
+    
+    // startup //////////////////////////////////////////////////////////////////////////////////
+    
+    private static final int[] STARTUP_PHASES = { 2 };
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int[] getPhases()
+    {
+        return STARTUP_PHASES;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void startup(int phase)
+        throws Exception
+    {
+        if(phase == 2)
+        {
+            preloadResources();
+        }
+    }
+    
+    private void preloadResources()
+        throws SQLException, PersistenceException
+    {
+        long time = System.currentTimeMillis();
+        log.info("preloading resource store");
+        synchronized(resourceById)
+        {
+            synchronized(resourceByName)
+            {
+                synchronized(resourceByParent)
+                {
+                    synchronized(resourceByParentAndName)
+                    {
+                        synchronized(resourceSet)
+                        {
+                            Connection conn = null;
+                            try
+                            {
+                                conn = persistence.getDatabase().getConnection();
+                                List list = persistence.load(" true ORDER BY resource_id", 
+                                        resourceFactory);
+                                Map handlerData = new HashMap();
+                                Iterator i = list.iterator();
+                                Set allResources = new HashSet();
+                                resourceSet.put("all", allResources);
+                                // A list to protect temp parent keys from GC - they will be keys
+                                // in WeakHashMaps.
+                                List parentKeys = new ArrayList(allResources.size() / 20);
+                                while(i.hasNext())
+                                {
+                                    Resource res = (Resource)i.next();
+                                    ResourceHandler handler = res.getResourceClass().getHandler();
+                                    Object data = handlerData.get(handler);
+                                    if(data == null)
+                                    {
+                                        data = handler.getData(conn);
+                                        handlerData.put(handler, data);
+                                    }
+                                    res = handler.retrieve(res, conn, data);
+                
+                                    allResources.add(res);
+                
+                                    resourceById.put(res.getIdObject(), res);
+                                    
+                                    Set nameSet = (Set)resourceByName.get(res.getName());
+                                    if(nameSet == null)
+                                    {
+                                        nameSet = new HashSet();
+                                        resourceByName.put(res.getName(), nameSet);
+                                    }
+                                    nameSet.add(res);
+                                    
+                                    Object parentKey;
+                                    if(res.getParentId() < res.getId())
+                                    {
+                                        parentKey = res.getParent();
+                                    }
+                                    else
+                                    {
+                                        parentKey = new Long(res.getParentId());
+                                        parentKeys.add(parentKey);
+                                    }
+                                    Set children = (Set)resourceByParent.get(parentKey);
+                                    if(children == null)
+                                    {
+                                        children = new HashSet();
+                                        resourceByParent.put(parentKey, children);
+                                    }
+                                    children.add(res);
+                                    
+                                    Map nameMap = (Map)resourceByParentAndName.get(parentKey);
+                                    if(nameMap == null)
+                                    {
+                                        nameMap = new HashMap();
+                                        resourceByParentAndName.put(parentKey, nameMap);
+                                    }
+                                    nameSet = (Set)nameMap.get(res.getName());
+                                    if(nameSet == null)
+                                    {
+                                        nameSet = new HashSet();
+                                        nameMap.put(res.getName(), nameSet);                        
+                                    }
+                                    nameSet.add(res);
+                                    
+                                    // prevent unecessary queries for leaf nodes' children
+                                    children = (Set)resourceByParent.get(res);
+                                    if(children == null)
+                                    {
+                                        children = new HashSet();
+                                        resourceByParent.put(res, children);
+                                    }
+                                }
+                                i = allResources.iterator();
+                                while(i.hasNext())
+                                {
+                                    Resource res = (Resource)i.next();
+                                    if(!resourceByParent.containsKey(res))
+                                    {
+                                        resourceByParent.put(res, new HashSet());
+                                        resourceByParentAndName.put(res, new HashMap());
+                                    }
+                                }
+                                // resolve numeric keys into resource keys
+                                i = resourceByParent.entrySet().iterator();
+                                // helper map to avoid ConcurrentModificationException
+                                Map additions = new HashMap();
+                                while(i.hasNext())
+                                {
+                                    Map.Entry entry = (Map.Entry)i.next();
+                                    if(entry.getKey() instanceof Long)
+                                    {
+                                        i.remove();
+                                        Object newKey = resourceById.get(entry.getKey());
+                                        Set rs = (Set)resourceByParent.get(newKey);
+                                        if(rs != null)
+                                        {
+                                            rs.addAll((Set)entry.getValue());
+                                        }
+                                        else
+                                        {
+                                            additions.put(newKey, entry.getValue());
+                                        }
+                                    }
+                                }
+                                resourceByParent.putAll(additions);
+                                additions.clear();
+                                i = resourceByParentAndName.entrySet().iterator();
+                                while(i.hasNext())
+                                {
+                                    Map.Entry entry = (Map.Entry)i.next();
+                                    if(entry.getKey() instanceof Long)
+                                    {
+                                        i.remove();
+                                        Object newKey = resourceById.get(entry.getKey());
+                                        Map nm = (Map)resourceByParentAndName.get(newKey);
+                                        if(nm != null)
+                                        {
+                                            nm.putAll((Map)entry.getValue());
+                                        }
+                                        else
+                                        {
+                                            additions.put(newKey, entry.getValue());
+                                        }
+                                    }
+                                }
+                                resourceByParentAndName.putAll(additions);
+                                additions.clear();
+                                parentKeys.clear();
+                            }
+                            finally
+                            {
+                                DatabaseUtils.close(conn);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        time = System.currentTimeMillis() - time;
+        log.info("finished preloading resource store in "+time+"ms");
+    }    
 }
