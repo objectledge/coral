@@ -48,7 +48,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.9 2004-06-28 07:55:55 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.10 2004-08-30 08:43:51 rafal Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -82,6 +82,7 @@ public class CoralSessionImpl
         script = new CoralScriptImpl(this, coral.getInstantiator(), coral.getRMLParserFactory());
         relationManager = new SessionCoralRelationManager(coral, this);
         relationQuery = new SessionCoralRelationQuery(coral, this);
+        query = new SessionCoralQuery(coral, this);
     }
 
     void open(Principal principal, Subject subject)
