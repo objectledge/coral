@@ -50,7 +50,7 @@ import org.objectledge.utils.TracingException;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.12 2005-01-25 06:33:41 rafal Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.13 2005-01-25 08:36:36 rafal Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -103,17 +103,20 @@ public class CoralSessionImpl
         }
     }
     
+    /**
+     * Verify that the calling thread can perform an operation using this session.
+     */
     void verify()
     {
-        if(!open)
-        {
-            throw new IllegalStateException("session is closed");
-        }
-        Thread owner = (Thread)ownerThread.get();
-        if(owner == null || !Thread.currentThread().equals(owner))
-        {
-            throw new IllegalStateException("attempted to use session from wrong thread.");     
-        }
+        verifyStateAndOwnership();
+        verifyAssociation();
+    }
+
+    /**
+     * Verify that this CoralSession is the Thread's currently active session.
+     */
+    private void verifyAssociation()
+    {
         if(coral.getCurrentSession() == null)
         {
             throw new IllegalStateException("no session is active at the moment.");
@@ -130,6 +133,22 @@ public class CoralSessionImpl
     }
 
     /**
+     * Verify that the session is open, and the invoking Thread owns the session.
+     */
+    private void verifyStateAndOwnership()
+    {
+        if(!open)
+        {
+            throw new IllegalStateException("session is closed");
+        }
+        Thread owner = (Thread)ownerThread.get();
+        if(owner == null || !Thread.currentThread().equals(owner))
+        {
+            throw new IllegalStateException("attempted to use session from wrong thread.");     
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */    
     public Throwable getOpeningStackTrace()
@@ -142,11 +161,9 @@ public class CoralSessionImpl
      */
     public void close()
     {
+        verifyStateAndOwnership();
+        // restore previously active session
         CoralSession current = coral.getCurrentSession();
-        this.makeCurrent();
-        verify();
-        open = false;
-        ownerThread = null;
         if(current == this)
         {
             coral.setCurrentSession(null);
@@ -155,8 +172,11 @@ public class CoralSessionImpl
         {
             coral.setCurrentSession(current);
         }
+        // return the session to the pool.
         try
         {
+            open = false;
+            ownerThread = null;
             pool.returnObject(principal, this);
         }
         catch(Exception e)

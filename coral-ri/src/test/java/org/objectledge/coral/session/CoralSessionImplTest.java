@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImplTest.java,v 1.8 2005-01-25 06:31:40 rafal Exp $
+ * @version $Id: CoralSessionImplTest.java,v 1.9 2005-01-25 08:36:28 rafal Exp $
  */
 public class CoralSessionImplTest extends LedgeTestCase
 {
@@ -97,13 +97,11 @@ public class CoralSessionImplTest extends LedgeTestCase
         
         coralSession.getStore();
 
-        mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
         mockCoralCore.expects(once()).method("setCurrentSession").with(NULL).isVoid();
         coralSession.close();
         
         try
         {
-            mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
             coralSession.close();
             fail("exception expected");
         }
@@ -119,7 +117,6 @@ public class CoralSessionImplTest extends LedgeTestCase
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(coralSession));
         coralSession.open(principal, subject);
         mockKeyedObjectPool.expects(once()).method("returnObject").with(same(principal), same(coralSession)).isVoid();
-        mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
         mockCoralCore.expects(once()).method("setCurrentSession").with(NULL).isVoid();
         coralSession.close();
         // session is closed and returned to the pool
