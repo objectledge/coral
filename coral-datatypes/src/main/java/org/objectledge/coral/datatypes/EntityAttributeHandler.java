@@ -67,7 +67,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      * @param conn the database conneciton.
      * @throws SQLException if a database exception occurs.
      */
-    protected void preload(Connection conn) throws SQLException
+    public void preload(Connection conn) throws SQLException
     {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT max(data_key) from " + getTable());

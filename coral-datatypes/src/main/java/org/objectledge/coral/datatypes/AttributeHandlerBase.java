@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.11 2005-01-20 06:33:48 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.12 2005-01-20 10:48:26 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -100,6 +100,18 @@ public abstract class AttributeHandlerBase
             "DELETE FROM "+getTable()+" WHERE data_key = "+id
         );
         releaseId(id);
+    }
+    
+    /**
+     * Preloads all values of the attribute from the database.
+     * 
+     * @param conn database connection.
+     * @throws SQLException if database operation fails.
+     */
+    public void preload(Connection conn)
+        throws SQLException
+    {
+
     }
 
     // meta information //////////////////////////////////////////////////////

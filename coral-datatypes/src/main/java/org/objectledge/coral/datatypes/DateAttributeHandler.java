@@ -19,11 +19,14 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistency of <code>java.util.Date</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateAttributeHandler.java,v 1.7 2005-01-19 07:34:06 rafal Exp $
+ * @version $Id: DateAttributeHandler.java,v 1.8 2005-01-20 10:48:26 rafal Exp $
  */
 public class DateAttributeHandler
     extends AttributeHandlerBase
 {
+    /** Preloading cache. */
+    private Date[] cache;
+
     /**
      * The constructor.
      * 
@@ -41,6 +44,24 @@ public class DateAttributeHandler
     }
     
     // AttributeHandler interface ////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc}
+     */
+    public void preload(Connection conn)
+        throws SQLException
+    {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT max(data_key) from "+getTable());
+        rs.next();
+        int count = rs.getInt(1);
+        cache = new Date[count+1];
+        rs = stmt.executeQuery("SELECT data_key, data from "+getTable());
+        while(rs.next())
+        {
+            cache[rs.getInt(1)] = new Date(rs.getTimestamp(2).getTime());
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -63,6 +84,14 @@ public class DateAttributeHandler
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length)
+        {
+            Date value = cache[(int)id];
+            if(value != null)
+            {
+                return value;
+            }
+        }
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
             "SELECT data FROM "+getTable()+" WHERE data_key = "+id
@@ -72,7 +101,12 @@ public class DateAttributeHandler
             throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
                 getTable());
         }
-        return new Date(rs.getTimestamp(1).getTime());
+        Date value = new Date(rs.getTimestamp(1).getTime());
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = value;
+        }
+        return value;
     }
 
     /**
@@ -81,6 +115,10 @@ public class DateAttributeHandler
     public void update(long id, Object value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = (Date)value;
+        }
         Statement stmt = null;
         PreparedStatement pstmt = null;
         try
@@ -100,6 +138,19 @@ public class DateAttributeHandler
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void delete(long id, Connection conn)
+        throws EntityDoesNotExistException, SQLException
+    {
+        super.delete(id, conn);
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = null;
+        }
+    }
+    
     // meta information //////////////////////////////////////////////////////
     
     /**

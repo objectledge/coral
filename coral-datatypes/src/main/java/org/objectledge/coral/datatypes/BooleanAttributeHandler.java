@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.BitSet;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
@@ -16,11 +17,17 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.lang.Boolean</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: BooleanAttributeHandler.java,v 1.4 2005-01-19 07:34:06 rafal Exp $
+ * @version $Id: BooleanAttributeHandler.java,v 1.5 2005-01-20 10:48:26 rafal Exp $
  */
 public class BooleanAttributeHandler
     extends AttributeHandlerBase
 {
+    /** Preloading cache - values. */
+    private BitSet cache;
+    
+    /** Preloading cache - defined status. */
+    private BitSet defined;
+
     /**
      * The constructor.
      * 
@@ -37,9 +44,28 @@ public class BooleanAttributeHandler
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }
     
-    
     // AttributeHandler interface ////////////////////////////////////////////
 
+    /**
+     * {@inheritDoc}
+     */
+    public void preload(Connection conn)
+        throws SQLException
+    {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT max(data_key) FROM "+getTable());
+        rs.next();
+        int count = rs.getInt(1);
+        cache = new BitSet(count+1);
+        defined = new BitSet(count+1);
+        rs = stmt.executeQuery("SELECT data_key, data FROM "+getTable());
+        while(rs.next())
+        {
+            cache.set(rs.getInt(1), rs.getBoolean(2));
+            defined.set(rs.getInt(1));
+        }       
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -61,6 +87,13 @@ public class BooleanAttributeHandler
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length())
+        {
+            if(defined.get((int)id))
+            {
+                return cache.get((int)id) ? Boolean.TRUE : Boolean.FALSE;
+            }
+        }
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
             "SELECT data FROM "+getTable()+" WHERE data_key = "+id
@@ -70,7 +103,13 @@ public class BooleanAttributeHandler
             throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
                 getTable());
         }
-        return new Boolean(rs.getBoolean(1));
+        boolean value = rs.getBoolean(1);
+        if(cache != null && id < cache.length())
+        {
+            cache.set((int)id, value);
+            defined.set((int)id);
+        }
+        return value ? Boolean.TRUE : Boolean.FALSE;
     }
 
     /**
@@ -79,6 +118,11 @@ public class BooleanAttributeHandler
     public void update(long id, Object value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length())
+        {
+            cache.set((int)id, ((Boolean)value).booleanValue());
+            defined.set((int)id);
+        }
         Statement stmt = conn.createStatement();
         checkExists(id, stmt);
         stmt.execute(
@@ -86,6 +130,19 @@ public class BooleanAttributeHandler
             (((Boolean)value).booleanValue() ? "1" : "0")+
             " WHERE data_key = "+id
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void delete(long id, Connection conn)
+        throws EntityDoesNotExistException, SQLException
+    {
+        super.delete(id, conn);
+        if(cache != null && id < cache.length())
+        {
+            defined.clear((int)id);
+        }
     }
 
     // meta information //////////////////////////////////////////////////////

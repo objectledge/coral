@@ -23,11 +23,14 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceListAttributeHandler.java,v 1.8 2005-01-19 07:34:06 rafal Exp $
+ * @version $Id: ResourceListAttributeHandler.java,v 1.9 2005-01-20 10:48:26 rafal Exp $
  */
 public class ResourceListAttributeHandler
     extends AttributeHandlerBase
 {
+    /** preloading cache. */
+    protected ResourceList[] cache; 
+
     /**
      * The constructor.
      * 
@@ -45,6 +48,39 @@ public class ResourceListAttributeHandler
     }
     
     // AttributeHandler interface ////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc}
+     */
+    public void preload(Connection conn)
+        throws SQLException
+    {
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery("SELECT max(data_key) from " + getTable());
+        result.next();
+        int count = result.getInt(1);
+        cache = new ResourceList[count + 1];
+        result = stmt.executeQuery(
+            "SELECT data_key, ref FROM "+getTable()+" ORDER BY data_key, pos"
+        );
+        if(result.next())
+        {
+            ArrayList temp = new ArrayList();
+            long lastId;
+            do
+            {
+                do
+                {
+                    lastId = result.getLong(1);
+                    temp.add(new Long(result.getLong(2)));
+                }
+                while(result.next() && result.getLong(1) == lastId);
+                cache[(int)lastId] = instantiate(temp);
+                temp.clear();
+            }
+            while(!result.isAfterLast());
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -103,6 +139,14 @@ public class ResourceListAttributeHandler
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length)
+        {
+            ResourceList value = cache[(int)id];
+            if(value != null)
+            {
+                return value;
+            }
+        }
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
             "SELECT ref FROM "+getTable()+" WHERE data_key = "+id+
@@ -113,7 +157,12 @@ public class ResourceListAttributeHandler
         {
             temp.add(new Long(rs.getLong(1)));
         }
-        return instantiate(temp);
+        ResourceList value =  instantiate(temp);
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = value;
+        }
+        return value;
     }
 
     /**
@@ -122,19 +171,28 @@ public class ResourceListAttributeHandler
     public void update(long id, Object value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length)
+        {
+            if(value instanceof ResourceList)
+            {
+                cache[(int)id] = (ResourceList)value;
+            }
+            else
+            {
+                cache[(int)id] = instantiate((List)value);
+            }
+        }
         Statement stmt = conn.createStatement();
         PreparedStatement pstmt = conn.prepareStatement(
             "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES ("+
             id+", ?, ?)"
         );
-        boolean nonEmpty = false;
         if(value instanceof ResourceList)
         {
             long[] ids = ((ResourceList)value).getIds();
             int size = ((ResourceList)value).size();
             for(int i=0; i<size; i++)
             {
-                nonEmpty = true;
                 pstmt.setInt(1, i);
                 pstmt.setLong(2, ids[i]);
                 pstmt.addBatch();
@@ -146,7 +204,6 @@ public class ResourceListAttributeHandler
             int position = 0;
             while(i.hasNext())
             {
-                nonEmpty = true;
                 Object v = i.next();
                 if(v instanceof Resource)
                 {
@@ -170,10 +227,7 @@ public class ResourceListAttributeHandler
             "DELETE FROM "+getTable()+
             " WHERE data_key = "+id
         );
-        if(nonEmpty)
-        {
-            pstmt.executeBatch();
-        }
+        pstmt.executeBatch();
     }
 
     /**
@@ -182,6 +236,10 @@ public class ResourceListAttributeHandler
     public void delete(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = null;
+        }
         Statement stmt = conn.createStatement();
         stmt.execute(
             "DELETE FROM "+getTable()+" WHERE data_key = "+id

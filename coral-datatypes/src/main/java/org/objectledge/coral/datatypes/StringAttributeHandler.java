@@ -17,11 +17,14 @@ import org.objectledge.database.Database;
  * at most 255 characters.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: StringAttributeHandler.java,v 1.4 2005-01-19 07:34:06 rafal Exp $
+ * @version $Id: StringAttributeHandler.java,v 1.5 2005-01-20 10:48:26 rafal Exp $
  */
 public class StringAttributeHandler
     extends AttributeHandlerBase
 {
+    /** preloading cache. */
+    private String[] cache;
+
     /**
      * The constructor.
      * 
@@ -37,7 +40,26 @@ public class StringAttributeHandler
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }
-        
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void preload(Connection conn)
+        throws SQLException
+    {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT max(data_key) from "+getTable());
+        rs.next();
+        int count = rs.getInt(1);
+        cache = new String[count+1];
+        rs = stmt.executeQuery("SELECT data_key, data from "+getTable());
+        while(rs.next())
+        {
+            cache[rs.getInt(1)] = unescape(rs.getString(2));
+        }
+    }    
+    
     /**
      * {@inheritDoc}
      */
@@ -67,6 +89,14 @@ public class StringAttributeHandler
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length)
+        {
+            String value = cache[(int)id];
+            if(value != null)
+            {
+                return value;
+            }
+        }
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
             "SELECT data FROM "+getTable()+" WHERE data_key = "+id
@@ -76,7 +106,12 @@ public class StringAttributeHandler
             throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
                 getTable());
         }
-		return unescape(rs.getString(1));
+        String value = unescape(rs.getString(1));
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = value;
+        }
+        return value;
     }
 
     /**
@@ -92,7 +127,10 @@ public class StringAttributeHandler
                                                "is 255 characters. Use text attributes "+
                                                "wherever greater capacity is desired");
         }
-
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = str;
+        }
         Statement stmt = conn.createStatement();
         checkExists(id, stmt);
         stmt.execute(
@@ -105,13 +143,26 @@ public class StringAttributeHandler
     /**
      * {@inheritDoc}
      */
+    public void delete(long id, Connection conn)
+        throws EntityDoesNotExistException, SQLException
+    {
+        super.delete(id, conn);
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = null;
+        }
+    }
+    
+    // meta information //////////////////////////////////////////////////////
+    
+    /**
+     * {@inheritDoc}
+     */
     public boolean supportsExternalString()
     {
         return true;
     }
 
-    // meta information //////////////////////////////////////////////////////
-    
     /**
      * {@inheritDoc}
      */

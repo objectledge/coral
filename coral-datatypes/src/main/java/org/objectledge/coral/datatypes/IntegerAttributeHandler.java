@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.BitSet;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
@@ -16,11 +17,17 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.lang.Integer</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: IntegerAttributeHandler.java,v 1.4 2005-01-19 07:34:06 rafal Exp $
+ * @version $Id: IntegerAttributeHandler.java,v 1.5 2005-01-20 10:48:26 rafal Exp $
  */
 public class IntegerAttributeHandler
     extends AttributeHandlerBase
 {
+    /** preloading cache - values. */
+    private int[] cache;
+    
+    /** preloading cache - defined status. */
+    private BitSet defined;
+
     /**
      * The constructor.
      * 
@@ -60,6 +67,13 @@ public class IntegerAttributeHandler
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length)
+        {
+            if(defined.get((int)id))
+            {
+                return new Integer(cache[(int)id]);
+            }
+        }
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
             "SELECT data FROM "+getTable()+" WHERE data_key = "+id
@@ -69,7 +83,13 @@ public class IntegerAttributeHandler
             throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
                 getTable());
         }
-        return new Integer(rs.getInt(1));
+        int value = rs.getInt(1);
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = value;
+            defined.set((int)id);
+        }
+        return new Integer(value);
     }
 
     /**
@@ -78,6 +98,11 @@ public class IntegerAttributeHandler
     public void update(long id, Object value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
+        if(cache != null && id < cache.length)
+        {
+            cache[(int)id] = ((Integer)value).intValue();
+            defined.set((int)id);
+        }
         Statement stmt = conn.createStatement();
         checkExists(id, stmt);
         stmt.execute(
@@ -86,7 +111,19 @@ public class IntegerAttributeHandler
             " WHERE data_key = "+id
         );
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public void delete(long id, Connection conn)
+        throws EntityDoesNotExistException, SQLException
+    {
+        super.delete(id, conn);
+        if(cache != null && id < cache.length)
+        {
+            defined.clear((int)id);
+        }
+    }
     // meta information //////////////////////////////////////////////////////
     
     /**
