@@ -5,7 +5,7 @@ package org.objectledge.coral.schema;
  * Thrown to indicate various schema integrity problems caused by adding
  * attributes, parent resource classes, and attribute flags modifications.
  *
- * @version $Id: SchemaIntegrityException.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: SchemaIntegrityException.java,v 1.3 2004-12-23 07:18:34 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SchemaIntegrityException
@@ -24,7 +24,7 @@ public class SchemaIntegrityException
     public static final int FLAGS_CLASH = 2;
     
     /** Value returned by {@link #getType()} for exceptions caused by
-     *  modification of flags of multiply-inherited attributes  */ 
+     *  modification of flags of multiply-inherited attributes.  */ 
     public static final int MULTIPLE_INHERITANCE = 4;
 
     /**

@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.16 2004-12-23 02:22:33 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.17 2004-12-23 07:15:27 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -61,17 +61,17 @@ public class CoralStoreImpl
      * objects. */
     protected PersistentFactory resourceFactory;
     
-    /** <code>Long</code> id -&gt; <code>Resource<code> */
+    /** <code>Long</code> id -&gt; <code>Resource</code>. */
     protected Map resourceById;
     
-    /** <code>String</code> name -&gt; <code>Set</code> of <code>Resource</code> */
+    /** <code>String</code> name -&gt; <code>Set</code> of <code>Resource</code>. */
     protected Map resourceByName;
     
-    /** <code>Resource</code> parent -&gt; <code>Set</code> of children */
+    /** <code>Resource</code> parent -&gt; <code>Set</code> of children. */
     protected Map resourceByParent;
 
     /** <code>Resource</code> parent -&gt; <code>Map</code> of
-        <code>String</code> name -&gt ; <code>Set</code> of <code>Resource</code> */
+        <code>String</code> name -&gt ; <code>Set</code> of <code>Resource</code> .*/
     protected Map resourceByParentAndName;
 
     /** All resources in the system. */
@@ -577,7 +577,7 @@ public class CoralStoreImpl
      *
      * @param name the name of the new resource.
      * @param parent the parent of the new resource (may be
-     * <coed>null</code>).
+     * <code>null</code>).
      * @param resourceClass the class of the new resource.
      * @param attributes the mapping of {@link AttributeDefinition} objects
      *        into initial values of the attributes.

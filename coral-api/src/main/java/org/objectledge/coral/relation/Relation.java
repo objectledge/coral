@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * </p>  
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: Relation.java,v 1.6 2004-02-24 17:07:55 zwierzem Exp $
+ * @version $Id: Relation.java,v 1.7 2004-12-23 07:18:29 rafal Exp $
  */
 public interface Relation extends Entity
 {
@@ -100,8 +100,9 @@ public interface Relation extends Entity
 	// statistical info ---------------------------------------------------------------------------
 
 	/**
-	 * Returns a number equal to the average size of a mapping for this relation, it is calculated
-	 * in a following way:
+	 * Returns a number equal to the average size of a mapping for this relation.
+     * 
+     * <p>Average size is calculated in a following way:
 	 * <pre>
 	 * TotalSize = 0
 	 * foreach x in RelationPair(x,y)

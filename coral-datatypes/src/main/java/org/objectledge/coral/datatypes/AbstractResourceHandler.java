@@ -28,7 +28,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.5 2004-12-21 08:31:55 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.6 2004-12-23 07:15:36 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -36,13 +36,13 @@ public abstract class AbstractResourceHandler
     /** The resource class this handler is responsible for. */
     protected ResourceClass resourceClass;
 
-    /** The security */
+    /** The security. */
     protected CoralSecurity coralSecurity;
     
-    /** The schema */
+    /** The schema. */
     protected CoralSchema coralSchema;
     
-    /** The instnatiator */
+    /** The instnatiator. */
     protected Instantiator instantiator;
     
     /** resource sets, keyed by resource class. Resources are kept through  weak  references. */

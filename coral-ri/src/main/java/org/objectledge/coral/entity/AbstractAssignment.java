@@ -11,7 +11,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Base of {@link org.objectledge.coral.entity.Assignment} implementations.
  *
- * @version $Id: AbstractAssignment.java,v 1.6 2004-10-05 07:38:25 rafal Exp $
+ * @version $Id: AbstractAssignment.java,v 1.7 2004-12-23 07:15:33 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractAssignment
@@ -23,10 +23,10 @@ public abstract class AbstractAssignment
     /** CoralSecurity. */
     protected CoralCore coral;
 
-    /** The grantor */
+    /** The grantor. */
     protected Subject grantor;
     
-    /** Grant time*/
+    /** Grant time. */
     protected Date grantTime;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////

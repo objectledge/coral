@@ -36,14 +36,14 @@ import org.objectledge.filesystem.FileSystem;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: InitBean.java,v 1.3 2004-04-29 12:22:11 fil Exp $
+ * @version $Id: InitBean.java,v 1.4 2004-12-23 07:15:42 rafal Exp $
  */
 public class InitBean
 {
     private DataSource dataSource;
     
     /**
-     * Sets the dataSource
+     * Sets the dataSource.
      * 
      * @param dataSource the dataSource.
      */

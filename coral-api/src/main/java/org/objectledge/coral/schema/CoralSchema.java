@@ -10,7 +10,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchema.java,v 1.4 2004-03-19 12:16:23 fil Exp $
+ * @version $Id: CoralSchema.java,v 1.5 2004-12-23 07:18:34 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSchema
@@ -89,7 +89,7 @@ public interface CoralSchema
         throws EntityExistsException;
 
     /**
-     * Sets the Java class corresponding to an <code>AttributeClass</code>
+     * Sets the Java class corresponding to an <code>AttributeClass</code>.
      *
      * @param attributeClass the {@link AttributeClass}.
      * @param javaClass the Java class corresponding to an
@@ -280,7 +280,7 @@ public interface CoralSchema
     public void setFlags(ResourceClass resourceClass, int flags);
 
     /**
-     * Sets the Java class corresponding to an <code>ResourceClass</code>
+     * Sets the Java class corresponding to an <code>ResourceClass</code>.
      *
      * @param resourceClass the {@link ResourceClass}.
      * @param javaClass the Java class corresponding to an

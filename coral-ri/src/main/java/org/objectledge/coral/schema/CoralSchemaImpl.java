@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.10 2004-12-23 02:22:36 rafal Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.11 2004-12-23 07:15:32 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -156,7 +156,7 @@ public class CoralSchemaImpl
     }
 
     /**
-     * Sets the Java class corresponding to an <code>AttributeClass</code>
+     * Sets the Java class corresponding to an <code>AttributeClass</code>.
      *
      * @param attributeClass the {@link AttributeClass}.
      * @param javaClass the Java class corresponding to an
@@ -440,7 +440,7 @@ public class CoralSchemaImpl
     }
 
     /**
-     * Sets the Java class corresponding to an <code>ResourceClass</code>
+     * Sets the Java class corresponding to an <code>ResourceClass</code>.
      *
      * @param resourceClass the {@link ResourceClass}.
      * @param javaClass the Java class corresponding to an

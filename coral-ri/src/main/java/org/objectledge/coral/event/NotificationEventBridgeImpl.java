@@ -41,7 +41,7 @@ import org.objectledge.notification.Notification;
 import org.objectledge.notification.NotificationReceiver;
 
 /**
- * The bridge between Notification service and CoralEventWhiteboard
+ * The bridge between Notification service and CoralEventWhiteboard.
  *
  */
 public class NotificationEventBridgeImpl
@@ -72,7 +72,7 @@ public class NotificationEventBridgeImpl
     /** The notification channel. */
     private String channel;
     
-    /** The channel prameter key ('channel') */
+    /** The channel prameter key. ('channel') */
     public static final String CHANNEL_KEY = "channel";
 
     /** The default notification channel. ('CORAL:1.0') */

@@ -9,7 +9,7 @@ import org.objectledge.database.persistence.PersistentObject;
 /**
  * A base of all Coral entitity implementations.
  *
- * @version $Id: AbstractEntity.java,v 1.4 2004-06-29 12:18:03 fil Exp $
+ * @version $Id: AbstractEntity.java,v 1.5 2004-12-23 07:15:33 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractEntity
@@ -30,7 +30,7 @@ public abstract class AbstractEntity
     // Initialization ///////////////////////////////////////////////////////////////////////////
     
     /**
-     * Constructs an entity
+     * Constructs an entity.
      *
      * @param persistence the persistence system.
      * @param name the name of the entity.
@@ -43,7 +43,7 @@ public abstract class AbstractEntity
     }
 
     /**
-     * Constructs an entity
+     * Constructs an entity.
      *
      * @param persistence the persistence system.
      */

@@ -77,7 +77,7 @@ public class TestImpl
 
 	// custom injected fields /////////////////////////////////////////////////
 	
-    /** The CoralStore */
+    /** The CoralStore. */
     protected CoralStore coralStore;
 
     // initialization /////////////////////////////////////////////////////////

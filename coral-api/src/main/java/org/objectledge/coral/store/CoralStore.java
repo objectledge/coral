@@ -13,14 +13,14 @@ import org.objectledge.coral.security.Subject;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStore.java,v 1.4 2004-04-15 12:12:51 pablo Exp $
+ * @version $Id: CoralStore.java,v 1.5 2004-12-23 07:18:36 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralStore
 {
     // constants /////////////////////////////////////////////////////////////
 
-    /** The identifier of the root resource */
+    /** The identifier of the root resource. */
     public static final long ROOT_RESOURCE = 1L;
 
     // public interface //////////////////////////////////////////////////////
@@ -162,7 +162,7 @@ public interface CoralStore
      *
      * @param name the name of the new resource.
      * @param parent the parent of the new resource (may be
-     * <coed>null</code>).
+     * <code>null</code>).
      * @param resourceClass the class of the new resource.
      * @param attributes the mapping of {@link AttributeDefinition} objects
      *        into initial values of the attributes.

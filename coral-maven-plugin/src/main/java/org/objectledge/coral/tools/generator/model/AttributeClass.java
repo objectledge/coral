@@ -28,10 +28,10 @@
 package org.objectledge.coral.tools.generator.model;
 
 /**
- * Represents a Coral AttributeClass
+ * Represents a Coral AttributeClass.
  *  
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClass.java,v 1.4 2004-07-08 15:06:20 rafal Exp $
+ * @version $Id: AttributeClass.java,v 1.5 2004-12-23 07:15:48 rafal Exp $
  */
 public class AttributeClass
     extends Entity

@@ -16,9 +16,9 @@ import org.objectledge.coral.store.ResourceInheritance;
 import org.objectledge.coral.store.ResourceOwnership;
 
 /**
- * Convenience wrapper around <code>EventService</code>
+ * Convenience wrapper around <code>EventService</code>.
  *
- * @version $Id: CoralEventWhiteboard.java,v 1.1 2004-02-20 12:51:17 fil Exp $
+ * @version $Id: CoralEventWhiteboard.java,v 1.2 2004-12-23 07:18:31 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralEventWhiteboard

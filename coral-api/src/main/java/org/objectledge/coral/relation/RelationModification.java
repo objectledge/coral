@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * A class representing a batch of {@link Relation} modifications.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModification.java,v 1.7 2004-03-02 17:15:02 zwierzem Exp $
+ * @version $Id: RelationModification.java,v 1.8 2004-12-23 07:18:29 rafal Exp $
  */
 public class RelationModification
 {
@@ -279,7 +279,7 @@ public class RelationModification
 		}
 
 		/**
-		 * Executes visit on a given visitor
+		 * Executes visit on a given visitor.
 		 * 
 		 * @param visitor visitor of this operation
 		 */		
@@ -293,17 +293,19 @@ public class RelationModification
 	public interface ModificationOperationVisitor
 	{
 		/**
-		 * Visits {@link ClearOperation}
+		 * Visits {@link ClearOperation}.
 		 * @param oper visited operation
 		 */
 		public void visit(ClearOperation oper);
+        
 		/**
-		 * Visits {@link AddOperation}
+		 * Visits {@link AddOperation}.
 		 * @param oper visited operation
 		 */
 		public void visit(AddOperation oper);
+        
 		/**
-		 * Visits {@link RemoveOperation}
+		 * Visits {@link RemoveOperation}.
 		 * @param oper visited operation
 		 */
 		public void visit(RemoveOperation oper);
