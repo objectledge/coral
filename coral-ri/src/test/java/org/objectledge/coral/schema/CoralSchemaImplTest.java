@@ -50,7 +50,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.14 2005-02-10 17:47:13 rafal Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.15 2005-04-06 09:43:39 rafal Exp $
  */
 public class CoralSchemaImplTest extends LedgeTestCase
 {
@@ -490,6 +490,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
     {
         mockResourceClass.stubs().method("getHandler").will(returnValue(resourceHandler));
         mockAttributeDefinition.stubs().method("getDeclaringClass").will(returnValue(resourceClass));
+        mockDatabase.stubs().method("setTransactionTimeout").isVoid();
         mockDatabase.expects(once()).method("beginTransaction").will(returnValue(true));
         // TODO ???
         mockLocalEventWhiteboard.expects(once()).method("fireResourceClassAttributesChangeEvent").with(same(attributeDefinition), eq(false));
