@@ -28,6 +28,7 @@
 package org.objectledge.coral;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
@@ -69,7 +70,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.15 2005-01-25 02:52:19 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.16 2005-01-25 09:26:08 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore, Startable
@@ -88,7 +89,10 @@ public class CoralCoreImpl
     
     private MutablePicoContainer container;
     
-    private ThreadLocal currentSession = new ThreadLocal();
+    private ThreadLocal<CoralSession> currentSession = new ThreadLocal<CoralSession>();
+    private ThreadLocal<LinkedList<CoralSession>> currentSessionStack = 
+        new ThreadLocal<LinkedList<CoralSession>>();
+    private final Logger log;
 
     /**
      * Constructs a Coral instance.
@@ -103,6 +107,7 @@ public class CoralCoreImpl
         CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log, 
         boolean preload)
     {
+        this.log = log;
         container = new DefaultPicoContainer(parentContainer);
         // register global dependencies
         container.registerComponentInstance(Persistence.class, persistence);
@@ -263,12 +268,65 @@ public class CoralCoreImpl
         return rmlParserFactory;
     }
     
-    /** 
+    /**
+     * {@inheritDoc}
+     */
+    public void pushSession(CoralSession session)
+    {
+        LinkedList<CoralSession> sessionStack = currentSessionStack.get();
+        if(sessionStack == null)
+        {
+            sessionStack = new LinkedList<CoralSession>();
+            currentSessionStack.set(sessionStack);
+        }
+        sessionStack.add(session);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public CoralSession peekSession()
+    {
+        LinkedList<CoralSession> sessionStack = currentSessionStack.get();
+        if(sessionStack == null)
+        {
+            return null;
+        }
+        if(sessionStack.isEmpty())
+        {
+            return null;
+        }
+        return sessionStack.getLast();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void removeSession(CoralSession session)
+        throws IllegalArgumentException
+    {
+        LinkedList<CoralSession> sessionStack = currentSessionStack.get();
+        if(sessionStack == null)
+        {
+            throw new IllegalArgumentException("no sessions are associated with the thread.");
+        }
+        if(!sessionStack.contains(session))
+        {
+            if(log != null && log.isDebugEnabled())
+            {
+                log.debug("session opened at", session.getOpeningStackTrace());
+            }
+            throw new IllegalArgumentException("session is not associated with this thread.");
+        }
+        sessionStack.remove(session);
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public CoralSession getCurrentSession()
     {
-        return (CoralSession)currentSession.get();
+        return currentSession.get();
     }
 
     /** 
@@ -276,7 +334,7 @@ public class CoralCoreImpl
      */
     public CoralSession setCurrentSession(CoralSession session)
     {
-        CoralSession previous = (CoralSession)currentSession.get();
+        CoralSession previous = currentSession.get();
         currentSession.set(session);
         return previous;
     }

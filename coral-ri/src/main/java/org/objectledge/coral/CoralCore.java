@@ -43,7 +43,7 @@ import org.objectledge.coral.store.CoralStore;
  * A bridge between interdependent Coral componentes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCore.java,v 1.7 2004-03-18 15:22:51 fil Exp $
+ * @version $Id: CoralCore.java,v 1.8 2005-01-25 09:26:08 rafal Exp $
  */
 public interface CoralCore
 {
@@ -120,6 +120,31 @@ public interface CoralCore
     public RMLParserFactory getRMLParserFactory();
     
     // session //////////////////////////////////////////////////////////////////////////////////
+    
+    
+    /**
+     * Pushes a session on a Thread's session stack.
+     * 
+     * @param session the session.
+     */
+    public void pushSession(CoralSession session);
+    
+    /**
+     * Returns the topmost session on a Thread's session stack.
+     * 
+     * @return the topmost session on a Thread's session stack, or <code>null</code> if none are 
+     * present.
+     */
+    public CoralSession peekSession();
+    
+    /**
+     * Removes a session from the Thread's session stack.
+     * 
+     * @param session the session to remove.
+     * @throws IllegalArgumentException if session is no present in the stack.
+     */
+    public void removeSession(CoralSession session)
+        throws IllegalArgumentException;
     
     /**
      * Associates a session with the calling thread.

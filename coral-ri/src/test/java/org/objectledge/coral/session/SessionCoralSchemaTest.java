@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSchemaTest.java,v 1.6 2005-01-25 06:31:40 rafal Exp $
+ * @version $Id: SessionCoralSchemaTest.java,v 1.7 2005-01-25 09:26:05 rafal Exp $
  */
 public class SessionCoralSchemaTest extends LedgeTestCase
 {
@@ -64,6 +64,7 @@ public class SessionCoralSchemaTest extends LedgeTestCase
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool, null);
+        mockCoralCore.stubs().method("pushSession").with(same(session)).isVoid();
         mockCoralCore.expects(once()).method("setCurrentSession").with(same(session)).isVoid();
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);

@@ -50,7 +50,7 @@ import org.objectledge.utils.TracingException;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.13 2005-01-25 08:36:36 rafal Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.14 2005-01-25 09:26:15 rafal Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -96,6 +96,7 @@ public class CoralSessionImpl
         this.principal = principal;
         ownerThread = new WeakReference(Thread.currentThread());
         open = true;
+        coral.pushSession(this);
         coral.setCurrentSession(this);
         if(log != null && log.isDebugEnabled())
         {
@@ -163,15 +164,8 @@ public class CoralSessionImpl
     {
         verifyStateAndOwnership();
         // restore previously active session
-        CoralSession current = coral.getCurrentSession();
-        if(current == this)
-        {
-            coral.setCurrentSession(null);
-        }
-        else
-        {
-            coral.setCurrentSession(current);
-        }
+        coral.removeSession(this);
+        coral.setCurrentSession(coral.peekSession());
         // return the session to the pool.
         try
         {

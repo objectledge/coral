@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImplTest.java,v 1.9 2005-01-25 08:36:28 rafal Exp $
+ * @version $Id: CoralSessionImplTest.java,v 1.10 2005-01-25 09:26:05 rafal Exp $
  */
 public class CoralSessionImplTest extends LedgeTestCase
 {
@@ -79,6 +79,7 @@ public class CoralSessionImplTest extends LedgeTestCase
     
     public void testBasicLifecycle()
     {
+        mockCoralCore.stubs().method("pushSession").with(same(coralSession)).isVoid();
         mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(coralSession));
         coralSession.open(principal, subject);
@@ -97,6 +98,8 @@ public class CoralSessionImplTest extends LedgeTestCase
         
         coralSession.getStore();
 
+        mockCoralCore.expects(once()).method("removeSession").with(eq(coralSession)).isVoid();
+        mockCoralCore.expects(once()).method("peekSession").will(returnValue(null));
         mockCoralCore.expects(once()).method("setCurrentSession").with(NULL).isVoid();
         coralSession.close();
         
@@ -113,10 +116,13 @@ public class CoralSessionImplTest extends LedgeTestCase
     
     public void testCrossThreadMischief()
     {
+        mockCoralCore.stubs().method("pushSession").with(same(coralSession)).isVoid();
         mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(coralSession));
         coralSession.open(principal, subject);
         mockKeyedObjectPool.expects(once()).method("returnObject").with(same(principal), same(coralSession)).isVoid();
+        mockCoralCore.expects(once()).method("removeSession").with(eq(coralSession)).isVoid();
+        mockCoralCore.expects(once()).method("peekSession").will(returnValue(null));
         mockCoralCore.expects(once()).method("setCurrentSession").with(NULL).isVoid();
         coralSession.close();
         // session is closed and returned to the pool
@@ -164,11 +170,13 @@ public class CoralSessionImplTest extends LedgeTestCase
     public void testCrossSessionMischief()
         throws Exception
     {
+        mockCoralCore.stubs().method("pushSession").with(same(coralSession)).isVoid();
         mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(coralSession));
         coralSession.open(principal, subject);
         
         CoralSessionImpl coralSession2 = new CoralSessionImpl(coralCore, keyedObjectPool, null);
+        mockCoralCore.stubs().method("pushSession").with(same(coralSession2)).isVoid();
         mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession2)).isVoid();
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(coralSession2));
         coralSession2.open(principal, subject);
