@@ -29,12 +29,13 @@ package org.objectledge.coral.touchstone.level0;
 
 import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.schema.AttributeClass;
+import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.touchstone.CoralTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SchemaServiceTest.java,v 1.1 2004-03-11 17:37:05 fil Exp $
+ * @version $Id: SchemaServiceTest.java,v 1.2 2004-03-12 09:15:50 fil Exp $
  */
 public class SchemaServiceTest
     extends CoralTestCase
@@ -43,6 +44,15 @@ public class SchemaServiceTest
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
         AttributeClass[] classes = session.getSchema().getAttributeClass();
+        session.close();
         assertTrue(classes.length > 0);
     }
+    
+    public void testBuiltinResourceClasses()
+    {
+        CoralSession session = coralSessionFactory.getAnonymousSession();
+        ResourceClass[] classes = session.getSchema().getResourceClass();
+        session.close();
+        assertTrue(classes.length > 0);
+    }    
 }
