@@ -237,7 +237,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		1,
 		7,
 		NULL,
-		'creation_date',
+		'creation_time',
 		1+8);
 
 INSERT INTO coral_attribute_definition VALUES(
@@ -245,7 +245,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		1,
 		7,
 		NULL,
-		'modification_date',
+		'modification_time',
 		8);
 
 -- -- description ------------------------------------------------------------
