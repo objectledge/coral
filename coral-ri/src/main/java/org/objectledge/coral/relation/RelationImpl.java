@@ -43,7 +43,7 @@ import org.objectledge.database.persistence.Persistence;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.9 2004-03-02 17:19:12 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.10 2004-03-03 16:18:26 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -54,10 +54,12 @@ implements Relation
 
     /** Map r1 -&gt; set of r2. */
     private Map rel = new HashMap();
+	/** Sum of sizes of id sets stored in map {@link #rel}. */
 	private float relSetsSizeSum;
 
     /** Map r2 -&gt; set of r1. */
     private Map invRel = new HashMap();
+	/** Sum of sizes of id sets stored in map {@link #invRel}. */
 	private float invRelSetsSizeSum;
 
     // initialization -----------------------------------------------------------------------------
