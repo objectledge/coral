@@ -8,13 +8,14 @@ import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.upload.FileUpload;
 import org.objectledge.upload.UploadContainer;
+import org.objectledge.upload.UploadLimitExceededException;
 import org.objectledge.web.mvc.MVCContext;
 
 /**
  * Upload script.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: UploadScript.java,v 1.3 2005-02-08 20:33:06 rafal Exp $
+ * @version $Id: UploadScript.java,v 1.4 2005-03-14 13:19:26 zwierzem Exp $
  */
 public class UploadScript extends BaseBrowserAction
 {
@@ -41,7 +42,16 @@ public class UploadScript extends BaseBrowserAction
     public void execute(Context context, Parameters parameters, MVCContext mvcContext, TemplatingContext templatingContext, CoralSession coralSession)
     throws ProcessingException
     {
-        UploadContainer script = fileUpload.getContainer("script");
+        UploadContainer script;
+        try
+        {
+            script = fileUpload.getContainer("script");
+        }
+        catch(UploadLimitExceededException e)
+        {
+            // TODO Inform the user abour a problem in file upload
+            throw new ProcessingException(e);
+        }
         if(script != null)
         {
         	templatingContext.put("uploaded", new String(script.getBytes()));
