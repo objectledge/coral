@@ -59,7 +59,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Implmentation of the Coral relation manager component.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.14 2005-03-01 17:26:52 zwierzem Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.15 2005-03-29 08:27:00 rafal Exp $
  */
 public class CoralRelationManagerImpl
     implements CoralRelationManager, PreloadingParticipant
@@ -105,6 +105,7 @@ public class CoralRelationManagerImpl
         this.relationFactory = instantiator.getPersistentFactory(RelationImpl.class);
         this.relationRegistry = new EntityRegistry(persistence, cacheFactory, instantiator, log, 
 			"relation", RelationImpl.class);
+        this.relationRegistry.addSynthetic(new ResourceHierarchyRelationImpl(coral.getStore()));
     }
 
     /**
