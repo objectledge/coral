@@ -72,7 +72,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
+ * @version $Id: RelationImplTest.java,v 1.5 2004-04-15 12:13:35 pablo Exp $
  */
 public class RelationImplTest extends LedgeTestCase
 {
@@ -1652,6 +1652,15 @@ public class RelationImplTest extends LedgeTestCase
         {
 			throw new UnsupportedOperationException();
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean isAncestor(Resource ancestor, Resource descendant)
+        {
+            throw new UnsupportedOperationException();
+        }
+
     }
     
     private class MockResource implements Resource

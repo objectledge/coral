@@ -45,7 +45,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStore.java,v 1.3 2004-03-15 13:44:53 fil Exp $
+ * @version $Id: SessionCoralStore.java,v 1.4 2004-04-15 12:13:14 pablo Exp $
  */
 public class SessionCoralStore implements CoralStore
 {
@@ -257,4 +257,15 @@ public class SessionCoralStore implements CoralStore
         session.verify();
         coral.getStore().copyTree(sourceRoot, destinationParent, destinationName);
     }
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public boolean isAncestor(
+        Resource ancestor,
+        Resource descendant)
+    {
+        session.verify();
+        return coral.getStore().isAncestor(ancestor, descendant);
+    }    
 }

@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.10 2004-03-16 08:50:00 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.11 2004-04-15 12:13:14 pablo Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -1385,4 +1385,25 @@ public class CoralStoreImpl
             }
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */    
+    public boolean isAncestor(Resource ancestor, Resource descendant)
+    {
+        if(ancestor == null || descendant == null)
+        {
+            return false;   
+        }
+        Resource parent = descendant.getParent(); 
+        while(parent != null)
+        {
+            if(parent.equals(ancestor))
+            {
+                return true;
+            }
+            parent = parent.getParent();
+        }
+        return false;
+    } 
 }

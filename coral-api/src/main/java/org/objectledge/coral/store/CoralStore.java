@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStore.java,v 1.3 2004-03-08 09:17:31 fil Exp $
+ * @version $Id: CoralStore.java,v 1.4 2004-04-15 12:12:51 pablo Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralStore
@@ -274,4 +274,13 @@ public interface CoralStore
      */
     public void copyTree(Resource sourceRoot, Resource destinationParent, 
                          String destinationName);
+                         
+    /**
+     * Checks whether the resource is an ancestor of the other.
+     *
+     * @param ancestor the potential ancestor
+     * @param descendant the potential descendant
+     * @return <code>true</code> if resource is an ancestor.
+     */
+    public boolean isAncestor(Resource ancestor, Resource descendant);                         
 }
