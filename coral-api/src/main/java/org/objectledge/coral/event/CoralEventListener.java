@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceOwnership;
 /**
  * Event multiplexer class.
  *
- * @version $Id: CoralEventListener.java,v 1.4 2004-02-27 12:39:42 fil Exp $
+ * @version $Id: CoralEventListener.java,v 1.5 2004-02-27 15:20:18 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class CoralEventListener
@@ -36,6 +36,7 @@ public abstract class CoralEventListener
                ResourceCreationListener,
                ResourceChangeListener,
                ResourceDeletionListener,
+               ResourceTreeDeletionListener,
                ResourceClassChangeListener,
                AttributeClassChangeListener,
                AttributeDefinitionChangeListener
@@ -385,6 +386,20 @@ public abstract class CoralEventListener
 			  -1,
 			  false);
 	}
+
+    /**
+     * Called when <code>Resource</code> is deleted.
+     *
+     * @param item the resource that was deleted.
+     */
+    public void resourceTreeDeleted(Resource item)
+    {
+        event("ResourceTreeDeletion",
+              item.getId(),
+              -1,
+              -1,
+              false);
+    }
 
     /**
      * Called when <code>ResourceClass</code>'s data change.
