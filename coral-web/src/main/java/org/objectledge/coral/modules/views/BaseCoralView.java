@@ -45,7 +45,7 @@ public abstract class BaseCoralView
         MVCContext mvcContext = MVCContext.getMVCContext(context);
     	try
         {
-            process(context, parameters, templatingContext, mvcContext, coralSession);
+            process(parameters, templatingContext, mvcContext, coralSession);
             return super.build(template, embeddedBuildResults);
         }
         catch(ProcessingException e)
@@ -55,14 +55,15 @@ public abstract class BaseCoralView
     }
     
     /**
-     * To be implemented in browser views.
+     * To be implemented in views.
      * 
-     * @param context the context.
      * @param parameters the parameters.
      * @param templatingContext the templating context.
      * @param mvcContext the mvcContext
      * @param coralSession the coral session.
      */    
-    public abstract void process(Context context, Parameters parameters, TemplatingContext templatingContext, MVCContext mvcContext, CoralSession coralSession)
+    public abstract void process(Parameters parameters, TemplatingContext templatingContext, 
+        						 MVCContext mvcContext, 
+        						 CoralSession coralSession)
         throws ProcessingException;
 }
