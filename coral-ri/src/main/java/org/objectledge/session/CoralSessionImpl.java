@@ -27,6 +27,7 @@
 // 
 package org.objectledge.session;
 
+import java.lang.ref.WeakReference;
 import java.security.Principal;
 
 import org.apache.commons.pool.KeyedObjectPool;
@@ -44,7 +45,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.3 2004-03-08 08:06:46 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.4 2004-03-08 08:25:04 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -60,6 +61,7 @@ public class CoralSessionImpl
     
     private KeyedObjectPool pool;
     private boolean open;
+    private WeakReference ownerThread;
 
     CoralSessionImpl(CoralCore coral, KeyedObjectPool pool)
     {
@@ -75,6 +77,7 @@ public class CoralSessionImpl
     {
         this.subject = subject;
         this.principal = principal;
+        ownerThread = new WeakReference(Thread.currentThread());
         open = true;
     }
     
@@ -83,6 +86,11 @@ public class CoralSessionImpl
         if(!open)
         {
             throw new IllegalStateException("session is closed");
+        }
+        Thread owner = (Thread)ownerThread.get();
+        if(owner == null || !Thread.currentThread().equals(owner))
+        {
+            throw new IllegalStateException("attempted to use session from wrong thread");     
         }
     }
 
