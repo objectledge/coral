@@ -11,6 +11,7 @@ import org.objectledge.coral.script.parser.ASTresource;
 import org.objectledge.coral.script.parser.ASTresourceClass;
 import org.objectledge.coral.script.parser.ASTresourceClassList;
 import org.objectledge.coral.script.parser.ASTrole;
+import org.objectledge.coral.script.parser.ASTroleList;
 import org.objectledge.coral.script.parser.ASTsubject;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.Role;
@@ -21,7 +22,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * Resolves RML AST nodes into ARL entities.
  * 
- * @version $Id: RMLEntityResolver.java,v 1.1 2004-03-17 15:45:05 fil Exp $
+ * @version $Id: RMLEntityResolver.java,v 1.2 2004-03-18 08:33:48 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RMLEntityResolver
@@ -103,6 +104,21 @@ public class RMLEntityResolver
             }
             return items[0];
         }
+    }
+
+    Role[] resolve(ASTroleList node)
+        throws EntityDoesNotExistException, AmbigousEntityNameException
+    {
+        if(node == null)
+        {
+            return new Role[0];
+        }
+        Role[] result = new Role[node.jjtGetNumChildren()];
+        for(int i=0; i<result.length; i++)
+        {
+            result[i] = resolve((ASTrole)node.jjtGetChild(i));
+        }
+        return result;
     }
 
     Subject resolve(ASTsubject node)
