@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.2 2004-08-30 08:47:15 rafal Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.3 2004-08-30 08:48:41 rafal Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -117,7 +117,7 @@ public class SQLCoralQueryImpl
         for(int i=0; i<columns.size(); i++)
         {
             query.append(i==0 ? "FROM " : ", ");
-            query.append("arl_resource r").append(i+1);
+            query.append("coral_resource r").append(i+1);
             query.append('\n');
             ResultColumn rcm = (ResultColumn)columns.get(i);
             for(int j=0; j<rcm.attributes.size(); j++)
@@ -125,7 +125,7 @@ public class SQLCoralQueryImpl
                 AttributeDefinition ad = (AttributeDefinition)rcm.attributes.get(j);
                 if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
-                    query.append(", arl_generic_resource ");
+                    query.append(", coral_generic_resource ");
                     query.append("r").append(i+1).append("g").append(j+1);
                     query.append(", ");
                     query.append(ad.getAttributeClass().getDbTable());
