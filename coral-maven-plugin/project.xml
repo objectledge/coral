@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.1 2004-03-22 11:54:50 fil Exp $ -->
+<!-- $Id: project.xml,v 1.2 2004-03-23 11:32:38 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -109,7 +109,7 @@
     <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
