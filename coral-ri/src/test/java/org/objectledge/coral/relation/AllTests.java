@@ -32,7 +32,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: AllTests.java,v 1.1 2004-03-11 13:08:57 zwierzem Exp $
+ * @version $Id: AllTests.java,v 1.2 2004-04-30 13:19:44 zwierzem Exp $
  */
 public class AllTests
 {
@@ -40,7 +40,6 @@ public class AllTests
     {
         TestSuite suite = new TestSuite("Test for org.objectledge.coral.relation");
         //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(MinimalRelationModificationTest.class));
         suite.addTest(new TestSuite(RelationImplTest.class));
         //$JUnit-END$
         return suite;
