@@ -28,7 +28,6 @@
 package org.objectledge.coral.schema;
 
 import org.jmock.Mock;
-import org.jmock.core.Constraint;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
@@ -41,12 +40,11 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.utils.LedgeTestCase;
-import org.objectledge.utils.MapElement;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClassImplTest.java,v 1.6 2004-03-24 14:40:10 fil Exp $
+ * @version $Id: AttributeClassImplTest.java,v 1.7 2004-05-06 13:46:32 pablo Exp $
  */
 public class AttributeClassImplTest extends LedgeTestCase
 {

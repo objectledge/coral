@@ -69,7 +69,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.4 2004-05-06 13:42:47 pablo Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.5 2004-05-06 13:45:49 pablo Exp $
  */
 public class SessionFactoryTag
     extends BaseTagSupport
@@ -217,6 +217,12 @@ public class SessionFactoryTag
         return new Log4JLogger(org.apache.log4j.Logger.getLogger(cl));
     }
 
+    /**
+     * Get the class loader.
+     * 
+     * @return the class loader.
+     * @throws MalformedURLException if url is invalid.
+     */
     public ClassLoader getClassLoader() 
         throws MalformedURLException
     {
@@ -224,7 +230,8 @@ public class SessionFactoryTag
         {
             String dependencyClasspath = getMavenContext().getProject().getDependencyClasspath();
             String buildDest = (String)getMavenContext().getVariable("maven.build.dest");
-            StringTokenizer st = new StringTokenizer(dependencyClasspath, System.getProperty("path.separator"));
+            StringTokenizer st = new StringTokenizer(dependencyClasspath, 
+                System.getProperty("path.separator"));
             List temp = new ArrayList(st.countTokens()+1);
             while(st.hasMoreTokens())
             {
