@@ -33,7 +33,7 @@ import java.io.Reader;
  * An aesthetics wrapper around RML class.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLParser.java,v 1.1 2004-03-18 14:28:12 fil Exp $
+ * @version $Id: RMLParser.java,v 1.2 2004-03-23 11:31:00 fil Exp $
  */
 public class RMLParser extends RML
 {
@@ -45,6 +45,5 @@ public class RMLParser extends RML
     public RMLParser(Reader stream)
     {
         super(stream);
-        // TODO Auto-generated constructor stub
     }
 }
