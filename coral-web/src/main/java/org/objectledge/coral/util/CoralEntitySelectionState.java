@@ -24,7 +24,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: CoralEntitySelectionState.java,v 1.5 2005-02-21 14:04:43 rafal Exp $
+ * @version $Id: CoralEntitySelectionState.java,v 1.6 2005-02-21 16:13:58 zwierzem Exp $
  */
 public abstract class CoralEntitySelectionState
 {
@@ -405,7 +405,7 @@ public abstract class CoralEntitySelectionState
      */
     public String toString()
     {
-        StringBuffer sb = new StringBuffer(getClass().getName());
+        StringBuilder sb = new StringBuilder(getClass().getName());
         for(Iterator i=state.keySet().iterator(); i.hasNext();)
         {
             Long id = (Long)(i.next());
