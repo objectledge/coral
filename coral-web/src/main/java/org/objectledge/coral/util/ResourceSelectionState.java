@@ -19,7 +19,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: ResourceSelectionState.java,v 1.1 2004-07-13 10:43:12 pablo Exp $
+ * @version $Id: ResourceSelectionState.java,v 1.2 2004-08-02 14:06:07 pablo Exp $
  */
 public class ResourceSelectionState 
 	extends CoralEntitySelectionState
@@ -31,7 +31,7 @@ public class ResourceSelectionState
      * @param name the name.
      * @return the selection state.
      */
-    public static ResourceSelectionState getAbstractState(Context context, String name)
+    public static ResourceSelectionState getState(Context context, String name)
     {
         HttpContext httpContext = HttpContext.getHttpContext(context);
         HttpSession session = httpContext.getRequest().getSession();
