@@ -27,7 +27,6 @@
 //
 package org.objectledge.coral.relation.query;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.objectledge.coral.relation.CoralRelationManager;
@@ -46,7 +45,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * operations needed to perform a query.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: QueryComplexityCalculator.java,v 1.2 2004-02-26 14:32:22 zwierzem Exp $
+ * @version $Id: QueryComplexityCalculator.java,v 1.3 2004-02-27 10:51:07 zwierzem Exp $
  */
 public class QueryComplexityCalculator extends AbstractQueryVisitor
 {
@@ -174,22 +173,6 @@ public class QueryComplexityCalculator extends AbstractQueryVisitor
 	private int getMapSetComplexity(SimpleNode node, Object data)
 	{
 		return ((Integer) node.jjtGetChild(1).jjtAccept(this, data)).intValue();
-	}
-
-	private void buildTransitiveSet(Relation relation, Long id, Set mapSet, Set resultSet)
-	{
-		Set localResult = relation.get(id.longValue()); 
-		for (Iterator iter = localResult.iterator(); iter.hasNext();)
-		{
-			Long localId = (Long) iter.next();
-			if(mapSet.contains(localId))
-			{
-				throw new RuntimeException("circular relation '"+relation.getName()
-					+"' encountered in transitive mapping operation");
-			}
-			buildTransitiveSet(relation, localId, mapSet, resultSet);
-		}
-		resultSet.addAll(localResult);
 	}
 
 	private int getSize(String identifier)
