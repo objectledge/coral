@@ -14,10 +14,12 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
+import org.objectledge.utils.StringUtils;
 
 /**
  * This class manages 'by id' 'by name' and 'all' registires for a specific
@@ -208,7 +210,8 @@ public class EntityRegistry
             byName.put(name, es);
             try
             {
-                List items = persistence.load("name = '"+name+"'", factory);
+                List items = persistence.load("name = '"+DatabaseUtils.escapeSqlString(name)+"'", 
+                    factory);
                 resolve(items, es);
             }
             catch(PersistenceException ex)

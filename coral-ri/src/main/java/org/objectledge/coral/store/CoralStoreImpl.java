@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.13 2004-06-29 09:26:26 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.14 2004-07-01 13:19:52 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -273,7 +273,7 @@ public class CoralStoreImpl
                 try
                 {
                     conn = persistence.getDatabase().getConnection();
-                    List list = persistence.load("name = '"+name+"'",
+                    List list = persistence.load("name = '"+DatabaseUtils.escapeSqlString(name)+"'",
                                                      resourceFactory);
                     rs = instantiate(list, conn);
                 }
@@ -342,8 +342,7 @@ public class CoralStoreImpl
                 {
                     conn = persistence.getDatabase().getConnection();
                     List list = persistence.load("parent = "+parent.getId()+
-                                                     " AND name = '"+name+"'",
-                                                     resourceFactory);
+                        " AND name = '"+DatabaseUtils.escapeSqlString(name)+"'", resourceFactory);
                     rs = instantiate(list, conn);
                 }
                 catch(Exception e)
