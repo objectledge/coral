@@ -31,6 +31,7 @@ import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeSe
 import org.objectledge.coral.script.parser.ASTalterResourceClassDeleteAttributeStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassDeletePermissionsStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassDeleteSuperclassStatement;
+import org.objectledge.coral.script.parser.ASTalterResourceClassSetDbTableStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassSetFlagsStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassSetHandlerClassStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassSetJavaClassStatement;
@@ -537,6 +538,24 @@ public class RMLExecutor
         }
         return data;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterResourceClassSetDbTableStatement node, Object data)
+    {
+        try
+        {
+            ResourceClass rc = entities.resolve(node.getResourceClass());
+            coralSession.getSchema().setDbTable(rc, node.getDbTable());
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
 
     /**
      * {@inheritDoc}
@@ -1798,6 +1817,7 @@ public class RMLExecutor
     private void wrap(Throwable t)
     {
         t.printStackTrace(out);
+        out.flush();
     }
 
     /**
