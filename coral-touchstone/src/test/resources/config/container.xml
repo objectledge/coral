@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<container>
+  <adapter-factory class="org.picocontainer.defaults.CachingComponentAdapterFactory">
+    <adapter-factory class="org.objectledge.pico.customization.CustomizingConstructorComponentAdapterFactory"/>
+  </adapter-factory>
+
+  <component class-key="org.nanocontainer.reflection.StringToObjectConverter"
+             class="org.objectledge.pico.LedgeStringToObjectConverter"/>
+    
+  <component class="org.objectledge.xml.XMLValidator"/>
+
+  <component class="org.objectledge.configuration.ConfigurationFactory">
+    <component-parameter/>
+    <component-parameter/>
+    <constant-parameter value="/config"/>
+  </component>
+  <component-adapter class="org.objectledge.pico.customization.CustomizedComponentAdapter">
+    <constant-parameter class="java.lang.Class" value="org.jcontainer.dna.Configuration"/>
+    <component-parameter class-key="org.objectledge.configuration.ConfigurationFactory"/>
+  </component-adapter>
+    
+  <component class="org.objectledge.logging.LoggerFactory"/>
+  <component-adapter class="org.objectledge.pico.customization.CustomizedComponentAdapter">
+    <constant-parameter class="java.lang.Class" value="org.jcontainer.dna.Logger"/>
+    <component-parameter class-key="org.objectledge.logging.LoggerFactory"/>
+  </component-adapter>
+
+  <component class="org.objectledge.logging.LoggingConfigurator"/>
+
+  <!-- basics -->
+  
+  <component class="org.objectledge.context.Context"/>
+
+  <!-- database -->
+
+  <component class-key="org.objectledge.database.Transaction"
+             class="org.objectledge.database.JotmTransaction">
+     <constant-parameter value="0"/>
+     <component-parameter/>
+     <component-parameter/>
+  </component>  
+
+  <component class="org.objectledge.database.XaPoolDataSource"/>
+  
+  <component class="org.objectledge.database.ThreadDataSource">
+    <component-parameter class-key="org.objectledge.database.XaPoolDataSource"/>
+    <constant-parameter value="0"/>
+    <component-parameter/>
+    <component-parameter/>
+  </component>
+  
+  <component class="org.objectledge.database.IdGenerator">
+    <component-parameter class-key="org.objectledge.database.XaPoolDataSource"/>
+  </component>
+  
+  <component class-key="org.objectledge.database.Database"
+             class="org.objectledge.database.DefaultDatabase">
+    <component-parameter class-key="org.objectledge.database.ThreadDataSource"/>
+    <component-parameter/>
+    <component-parameter/>
+  </component>
+  
+  <component class-key="org.objectledge.database.persistence.Persistence"
+            class="org.objectledge.database.persistence.DefaultPersistence"/>
+  
+  <component class="org.objectledge.database.Transaction$GuardValve"/>
+  
+  <component class="org.objectledge.database.ThreadDataSource$GuardValve"/>
+  
+  <component key="database-cleanup" class="org.objectledge.pipeline.SimplePipeline">
+    <sequence-parameter>
+      <component-parameter class-key="org.objectledge.database.Transaction$GuardValve"/>
+      <component-parameter class-key="org.objectledge.database.ThreadDataSource$GuardValve"/>
+    </sequence-parameter>
+  </component>
+  
+  <!-- utility components -->
+  
+  <component class="org.objectledge.threads.ThreadPool">
+    <component-parameter key="database-cleanup"/>
+    <component-parameter/>
+    <component-parameter/>
+    <component-parameter/>
+  </component>
+  
+  <component class="org.objectledge.event.EventWhiteboardFactory"/>
+  
+  <!-- needed by cache factory, but unimplemented ATM -->
+  <component class="org.objectledge.notification.Notification"/>
+  
+  <component class-key="org.objectledge.cache.CacheFactory" 
+             class="org.objectledge.cache.DefaultCacheFactory"/>
+  
+  <!-- coral -->
+  
+  <component class-key="org.objectledge.coral.CoralCore" 
+             class="org.objectledge.coral.CoralCoreImpl"/>
+  <component class-key="org.objectledge.coral.CoralSessionFactory" 
+             class="org.objectledge.coral.session.CoralSessionFactoryImpl"/>
+
+</container>
