@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassTest.java,v 1.3 2004-03-31 13:57:13 fil Exp $
+ * @version $Id: ResourceClassTest.java,v 1.4 2004-03-31 14:18:57 fil Exp $
  */
 public class ResourceClassTest extends LedgeTestCase
 {   
@@ -322,7 +322,6 @@ public class ResourceClassTest extends LedgeTestCase
         }
         catch(Exception e)
         {
-            e.printStackTrace();
             assertEquals(SchemaIntegrityException.class, e.getClass());
         }
     }
