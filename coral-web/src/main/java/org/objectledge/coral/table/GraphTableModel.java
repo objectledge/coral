@@ -1,9 +1,9 @@
 package org.objectledge.coral.table;
 
 import org.jcontainer.dna.Logger;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.relation.Relation;
+import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.table.ExtendedTableModel;
 import org.objectledge.table.TableColumn;
