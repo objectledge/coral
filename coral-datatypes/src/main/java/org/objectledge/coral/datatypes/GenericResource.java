@@ -34,7 +34,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.10 2004-06-29 12:19:19 fil Exp $
+ * @version $Id: GenericResource.java,v 1.11 2004-07-01 09:00:01 fil Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -91,7 +91,7 @@ public class GenericResource
                 else
                 {
                     long aId = ((Long)ids.get(attribute)).longValue();
-                    Object value = attributeOnDemand(attribute, aId);
+                    Object value = loadAttribute(attribute, aId);
                     attributes.put(attribute, value);
                     return value;
                 }
@@ -325,47 +325,6 @@ public class GenericResource
                 stmt.execute("DELETE FROM coral_generic_resource WHERE "+
                              " resource_id = "+delegate.getId()+
                              " AND attribute_definition_id = "+attr.getId());
-            }
-        }
-    }
-
-    // Private ///////////////////////////////////////////////////////////////
-
-    private Object attributeOnDemand(AttributeDefinition attribute, long aId)
-    {
-        Connection conn = null;
-        try
-        {
-            conn = database.getConnection();
-            return attribute.getAttributeClass().getHandler().
-                retrieve(aId, conn);
-        }
-        catch(Exception e)
-        {
-            if(delegate == null)
-            {
-                throw new BackendException("failed to retrieve attribute value " +                    "(attribute definition = "+attribute.getName()+
-                    " , attribute id = "+aId+")", e);
-            }
-            else
-            {
-                throw new BackendException("failed to retrieve attribute value " +
-                    "(attribute definition = "+attribute.getName()+
-                    " , attribute id = "+aId+") for resource: "+delegate.getId() , e);
-            }
-        }
-        finally
-        {
-            if(conn != null)
-            {
-                try
-                {
-                    conn.close();
-                }
-                catch(SQLException ee)
-                {
-                    logger.error("Failed to close connection", ee);
-                }
             }
         }
     }
