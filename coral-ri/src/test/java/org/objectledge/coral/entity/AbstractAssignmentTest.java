@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractAssignmentTest.java,v 1.4 2004-05-28 10:04:12 fil Exp $
+ * @version $Id: AbstractAssignmentTest.java,v 1.5 2004-10-13 11:52:41 rafal Exp $
  */
 public class AbstractAssignmentTest extends LedgeTestCase
 {
@@ -151,7 +151,7 @@ public class AbstractAssignmentTest extends LedgeTestCase
         mockOutputRecord.expects(once()).method("setLong").with(eq("red_id"), eq(1L));
         mockOutputRecord.expects(once()).method("setLong").with(eq("blue_id"), eq(2L));
         mockOutputRecord.expects(once()).method("setLong").with(eq("grantor"), eq(3L));
-        mockOutputRecord.expects(once()).method("setDate").with(eq("grant_time"), eq(date));                
+        mockOutputRecord.expects(once()).method("setTimestamp").with(eq("grant_time"), eq(date));                
         RedBlueAssignment red1blue1 = new RedBlueAssignment(coralCore, persistence, factory, 
             red1, blue2, subject, date);
         red1blue1.getData(outputRecord);
