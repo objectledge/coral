@@ -6,9 +6,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.coral.store.Resource;
-import org.objectledge.coral.table.comparator.*;
+import org.objectledge.coral.table.comparator.CreationTimeComparator;
+import org.objectledge.coral.table.comparator.CreatorNameComparator;
+import org.objectledge.coral.table.comparator.IdComparator;
+import org.objectledge.coral.table.comparator.ModificationTimeComparator;
+import org.objectledge.coral.table.comparator.ModifierNameComparator;
+import org.objectledge.coral.table.comparator.NameComparator;
+import org.objectledge.coral.table.comparator.OwnerNameComparator;
+import org.objectledge.coral.table.comparator.PathComparator;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableException;
 import org.objectledge.table.generic.ListTableModel;
@@ -17,30 +23,25 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.4 2004-06-14 13:55:02 fil Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.5 2004-10-11 09:06:24 zwierzem Exp $
  */
 public class ResourceListTableModel extends ListTableModel
 {
-    /** logging facility */
-    protected Logger logger;
-    
     /** resources keyed by their id */
     private Map resourcesById;
 
-    public ResourceListTableModel(Resource[] array, Locale locale, Logger logger)
+    public ResourceListTableModel(Resource[] array, Locale locale)
         throws TableException
     {
         super(array, null);
         columns = getColumns(locale);
-        this.logger = logger;
     }
         
-    public ResourceListTableModel(List list, Locale locale, Logger logger)
+    public ResourceListTableModel(List list, Locale locale)
         throws TableException
     {
         super(list, null);
         columns = getColumns(locale);
-        this.logger = logger;
     }
 
     protected TableColumn[] getColumns(Locale locale)

@@ -1,6 +1,5 @@
 package org.objectledge.coral.modules.actions;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.parameters.Parameters;
@@ -13,21 +12,15 @@ import org.objectledge.web.mvc.MVCContext;
 /**
  * The base screen for coral application.
  * 
- * @version $Id: BaseCoralAction.java,v 1.2 2004-09-17 08:09:07 rafal Exp $
+ * @version $Id: BaseCoralAction.java,v 1.3 2004-10-11 09:06:07 zwierzem Exp $
  */
 public abstract class BaseCoralAction implements Valve
 {
-    /** logger */
-    protected Logger logger;
-    
     /**
      * The constructor.
-     * 
-     * @param logger the logger.
      */  
-    public BaseCoralAction(Logger logger)
+    public BaseCoralAction()
     {
-        this.logger = logger;
     }
     
     /**

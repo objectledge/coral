@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.table.comparator.IdComparator;
 import org.objectledge.coral.table.comparator.NameComparator;
@@ -18,30 +17,25 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: SubjectListTableModel.java,v 1.1 2004-07-14 17:31:05 pablo Exp $
+ * @version $Id: SubjectListTableModel.java,v 1.2 2004-10-11 09:06:24 zwierzem Exp $
  */
 public class SubjectListTableModel extends ListTableModel
 {
-    /** logging facility */
-    protected Logger logger;
-    
     /** subjects keyed by their id */
     private Map subjectsById;
 
-    public SubjectListTableModel(Subject[] array, Locale locale, Logger logger)
+    public SubjectListTableModel(Subject[] array, Locale locale)
         throws TableException
     {
         super(array, null);
         columns = getColumns(locale);
-        this.logger = logger;
     }
         
-    public SubjectListTableModel(List list, Locale locale, Logger logger)
+    public SubjectListTableModel(List list, Locale locale)
         throws TableException
     {
         super(list, null);
         columns = getColumns(locale);
-        this.logger = logger;
     }
 
     protected TableColumn[] getColumns(Locale locale)
