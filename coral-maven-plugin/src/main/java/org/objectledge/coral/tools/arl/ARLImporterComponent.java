@@ -58,7 +58,7 @@ import org.objectledge.utils.StringUtils;
  * Performs importing data from old style ARL schema database to brand new CORAL scheme.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ARLImporterComponent.java,v 1.14 2005-03-23 10:55:42 pablo Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.15 2005-03-30 11:03:07 rafal Exp $
  */
 public class ARLImporterComponent
 {
@@ -1690,7 +1690,7 @@ public class ARLImporterComponent
         }
 
         Iterator it = xrefToRelation.keySet().iterator();
-        int relationId = 0;
+        int relationId = 1;
         query = "SELECT cr.resource1, cr.resource2, gr.data_key AS grdatakey FROM "
             + "arl_attribute_cross_reference cr, " + "arl_generic_resource gr WHERE "
             + "cr.data_key = gr.data_key AND " + "gr.attribute_definition_id = ";
