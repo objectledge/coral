@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry exported="true" kind="var" path="CLOVER_RUNTIME"/>
-    <classpathentry kind="src" path="src/main/java"/>
-    <classpathentry kind="src" path="src/test/java"/>
-    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry kind="src" path="/ledge-components"/>
-    <classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
-    <classpathentry kind="var" path="MAVEN_REPO/jmock/jars/jmock-20030324-104648.jar"/>
-    <classpathentry kind="var"
-        path="MAVEN_REPO/commons-pool/jars/commons-pool-1.1.jar" sourcepath="MAVEN_REPO/commons-pool/sources/commons-pool-1.1-src.zip"/>
-    <classpathentry kind="var"
-        path="MAVEN_REPO/dna/jars/dna-impl-1.1-rc2.jar" sourcepath="MAVEN_REPO/dna/sources/dna-impl-1.1-rc2-src.zip"/>
-    <classpathentry kind="var"
-        path="MAVEN_REPO/dna/jars/dna-api-1.1-rc2.jar" sourcepath="MAVEN_REPO/dna/sources/dna-api-1.1-rc2-src.zip"/>
-    <classpathentry kind="output" path="bin"/>
+	<classpathentry exported="true" kind="var" path="CLOVER_RUNTIME"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/ledge-components"/>
+	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/jmock/jars/jmock-20030324-104648.jar"/>
+	<classpathentry sourcepath="MAVEN_REPO/commons-pool/sources/commons-pool-1.1-src.zip" kind="var" path="MAVEN_REPO/commons-pool/jars/commons-pool-1.1.jar"/>
+	<classpathentry sourcepath="MAVEN_REPO/dna/sources/dna-impl-1.1-rc2-src.zip" kind="var" path="MAVEN_REPO/dna/jars/dna-impl-1.1-rc2.jar"/>
+	<classpathentry sourcepath="MAVEN_REPO/dna/sources/dna-api-1.1-rc2-src.zip" kind="var" path="MAVEN_REPO/dna/jars/dna-api-1.1-rc2.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
