@@ -4,7 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>coral-api</project>
-		<project>coral-ri</project>
 		<project>ledge-components</project>
 	</projects>
 	<buildSpec>
