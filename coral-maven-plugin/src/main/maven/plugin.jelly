@@ -63,7 +63,7 @@
       baseDir="${basedir}"
       fileEncoding="${generatorFileEncoding}"
       importGroups="${generatorImportGroups}"
-      licensePath="${generatorHeaderFile}"
+      headerFile="${generatorHeaderFile}"
       sourceFiles="${generatorSourcesList}"
       targetDir="${generatorTargetDirectory}"/>
   </goal>

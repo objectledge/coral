@@ -51,7 +51,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.7 2004-03-31 14:58:45 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.8 2004-03-31 15:09:12 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -95,8 +95,8 @@ public class GeneratorComponent
     /** Package prefices used for grouping. */
     private List importGroups = new ArrayList();
     
-    /** License contents. */
-    private String license;
+    /** The file header contents. */
+    private String header;
     
     /** PrintWriter for informational messages.*/
     private PrintStream out;
@@ -108,7 +108,7 @@ public class GeneratorComponent
      * @param sourceFiles the path of source file list.
      * @param targetDir the target directory.
      * @param importGroups the comma separated list of package prefixes, for grouping.
-     * @param licensePath the path to the license.
+     * @param headerFile the path to the header file.
      * @param fileSystem the file system to operate on.
      * @param templating the templating component.
      * @param schema the schema.
@@ -117,7 +117,7 @@ public class GeneratorComponent
      * @throws Exception if the component could not be initialized.
      */
     public GeneratorComponent(String fileEncoding, String sourceFiles, 
-        String targetDir, String importGroups, String licensePath, FileSystem fileSystem,
+        String targetDir, String importGroups, String headerFile, FileSystem fileSystem,
         Templating templating, Schema schema, RMLModelLoader loader, PrintStream out)
         throws Exception
     {
@@ -137,13 +137,13 @@ public class GeneratorComponent
             this.importGroups.add(st.nextToken());
         }
 
-        if(fileSystem.exists(licensePath))
+        if(fileSystem.exists(headerFile))
         {
-            license = fileSystem.read(licensePath, fileEncoding);
+            header = fileSystem.read(headerFile, fileEncoding);
         }
         else
         {
-            license = "";
+            header = "";
         }
         
         initTemplating();
@@ -417,7 +417,7 @@ public class GeneratorComponent
 
         context.put("imports", imports);
         context.put("class", rc);
-        context.put("license", license);
+        context.put("header", header);
         context.put("custom", custom);
 
         String result = template.merge(context);

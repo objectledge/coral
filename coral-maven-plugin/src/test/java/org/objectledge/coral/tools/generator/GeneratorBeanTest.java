@@ -50,7 +50,7 @@ public class GeneratorBeanTest extends LedgeTestCase
         BasicConfigurator.configure();
         generatorBean.setBaseDir("src/test/project/generator");
         generatorBean.setFileEncoding("UTF-8");
-        generatorBean.setLicensePath("/LICENSE.txt");
+        generatorBean.setHeaderFile("/LICENSE.txt");
         generatorBean.setImportGroups("java.,javax.,org.objectledge.");
         generatorBean.setSourceFiles("src/main/rmlSources.lst");
         generatorBean.setTargetDir("src/main/java");
