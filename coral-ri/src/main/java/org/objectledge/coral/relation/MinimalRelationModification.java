@@ -42,7 +42,7 @@ import org.objectledge.coral.relation.RelationModification.RemoveOperation;
  * This class constructs and holds a minimal representation of a {@link RelationModification}
  * for a given {@link Relation}.
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModification.java,v 1.5 2004-03-03 16:19:06 zwierzem Exp $
+ * @version $Id: MinimalRelationModification.java,v 1.6 2004-03-17 14:14:55 zwierzem Exp $
  */
 public class MinimalRelationModification
 {
@@ -156,7 +156,7 @@ public class MinimalRelationModification
 			{
 				removed.remove(oper);
 			}
-			else if(!relation.hasRef(oper.getId1(), oper.getId2()))
+			else if(clear || (!clear && !relation.hasRef(oper.getId1(), oper.getId2())))
 			{
 				Long leftId = new Long(oper.getId1());
 				Set ops = (Set) addsByLeftId.get(leftId);
