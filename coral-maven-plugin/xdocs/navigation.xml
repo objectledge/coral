@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Coral">
+
+  <title>Coral Maven Plugin</title>
+
+  <body>
+    <links>
+      <item name="home" href="../../index.html"/>
+      <item name="wiki" href="http://coral.objectledge.org/wiki.cgi"/>
+      <item name="issues" href="http://objectledge.org/jira/secure/BrowseProject.jspa?id=10030"/>
+      <item name="viewcvs" href="http://coral.objectledge.org/viewcvs.cgi/coral-touchstone"/>
+    </links>
+  </body>
+</project>
