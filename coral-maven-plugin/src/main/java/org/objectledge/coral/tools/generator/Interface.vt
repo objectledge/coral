@@ -17,6 +17,9 @@ $imports.add("org.objectledge.coral.store.Resource")##
 #foreach($attr in $attributes)
 #if(!$attr.primitive)
 $imports.add($attr.getFQJavaType())##
+#if(!$attr.readonly && $attr.required)
+$imports.add("org.objectledge.coral.store.ValueRequiredException")##	
+#end
 #end
 #end
 #foreach($parent in $parents)
