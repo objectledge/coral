@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.10 2005-01-19 07:34:06 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.11 2005-01-20 06:33:48 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -421,48 +421,28 @@ public abstract class AttributeHandlerBase
     {
         if(Comparable.class.isAssignableFrom(attributeType))
         {
-            return new ComparableComparator();
-        }
-        if(Entity.class.isAssignableFrom(attributeType))
-        {
-            return new EntityComparator();   
+            return COMPARABLE_COMPARATOR;
         }
         return null;
     }
 
     /**
      * A comparator for objects that support Comparable interface.
-     *
-     * <p>Silly, but useful.</p>
+     * 
+     * <p>
+     * Silly, but useful.
+     * </p>
      */
-    public static class ComparableComparator
-        implements Comparator
-    {
-        /**
-         * {@inheritDoc}
-         */
-        public int compare(Object o1, Object o2)
+    private static final Comparator COMPARABLE_COMPARATOR = new Comparator()
         {
-            return ((Comparable)o1).compareTo(o2);
-        }
-    }
-
-    /**
-     * Compares Coral entities by name.
-     */
-    public static class EntityComparator
-        implements Comparator
-    {
-        /**
-         * {@inheritDoc}
-         */
-        public int compare(Object o1, Object o2)
-        {
-            Entity e1 = (Entity)o1;
-            Entity e2 = (Entity)o2;
-            return e1.toString().compareTo(e2.toString());
-        }
-    }
+            /**
+             * {@inheritDoc}
+             */
+            public int compare(Object o1, Object o2)
+            {
+                return ((Comparable)o1).compareTo(o2);
+            }
+        };
 
     // attribute id management //////////////////////////////////////////////////////////////////
     

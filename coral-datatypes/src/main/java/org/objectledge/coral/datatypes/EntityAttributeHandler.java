@@ -284,23 +284,23 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      */
     protected Comparator createComparator()
     {
-         return new EntityAttributeHandler.EntityComparator();   
+         return ENTITY_COMPARATOR;   
     }
 
     /**
      * Compares ARL entities by name.
      */
-    public static class EntityComparator
-        implements Comparator
-    {
-        /**
-         * {@inheritDoc}
-         */
-        public int compare(Object o1, Object o2)
+    private static final Comparator ENTITY_COMPARATOR = 
+        new Comparator()
         {
-            Entity e1 = (Entity)o1;
-            Entity e2 = (Entity)o2;
-            return e1.getName().compareTo(e2.getName());
-        }
-    }
+            /**
+             * {@inheritDoc}
+             */
+            public int compare(Object o1, Object o2)
+            {
+                Entity e1 = (Entity)o1;
+                Entity e2 = (Entity)o2;
+                return e1.getName().compareTo(e2.getName());
+            }
+        };
 }
