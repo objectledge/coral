@@ -42,7 +42,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImpl.java,v 1.1 2004-03-08 08:51:24 fil Exp $
+ * @version $Id: CoralSessionFactoryImpl.java,v 1.2 2004-03-09 10:12:40 fil Exp $
  */
 public class CoralSessionFactoryImpl implements CoralSessionFactory
 {
@@ -121,7 +121,7 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
         /** 
          * {@inheritDoc}
          */
-        public void activateObject(Object sessionObject, Object principalObject) throws Exception
+        public void activateObject(Object principalObject, Object sessionObject) throws Exception
         {
             CoralSessionImpl session = (CoralSessionImpl)sessionObject;
             Principal principal = (Principal)principalObject;
