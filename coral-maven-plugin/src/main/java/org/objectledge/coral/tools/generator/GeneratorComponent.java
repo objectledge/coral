@@ -51,7 +51,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.9 2004-04-01 08:04:19 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.10 2004-04-01 08:06:30 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -374,28 +374,28 @@ public class GeneratorComponent
     {
         if(rc.hasFlags(ResourceClassFlags.BUILTIN))
         {
-            out.println("  skipping "+rc.getName()+" (BUILTIN)");
+            out.println("    skipping "+rc.getName()+" (BUILTIN)");
             return;
         }
         if(!matches(rc.getPackageName(), packageIncludes)) 
         {
-            out.println("  skipping "+rc.getName()+" (package "+rc.getPackageName()+
+            out.println("    skipping "+rc.getName()+" (package "+rc.getPackageName()+
                 " not included)");
             return;            
         }
         if(matches(rc.getPackageName(), packageExcludes))
         {
-            out.println("  skipping "+rc.getName()+" (package "+rc.getPackageName()+" excluded)");
+            out.println("   skipping "+rc.getName()+" (package "+rc.getPackageName()+" excluded)");
             return;            
         }
 
         if(generateWrapper(rc, classInterfacePath(rc), interfaceTemplate))
         {
-            out.println("  writing "+rc.getName()+" interface to "+classInterfacePath(rc));
+            out.println("    writing "+rc.getName()+" interface to "+classInterfacePath(rc));
         }
         else
         {
-            out.println("  skipping "+rc.getName()+" interface (not modified)");
+            out.println("    skipping "+rc.getName()+" interface (not modified)");
         }
 
         // when resource metaclass support is added we'll have a bit of logic that selects
@@ -404,7 +404,7 @@ public class GeneratorComponent
 
         if(generateWrapper(rc, classImplPath(rc), implTemplate))
         {
-            out.println("  writing "+rc.getName()+" implementation to "+classImplPath(rc));
+            out.println("    writing "+rc.getName()+" implementation to "+classImplPath(rc));
         }
         else
         {
