@@ -90,7 +90,7 @@ public class ${class.implClassName}
 	// custom injected fields /////////////////////////////////////////////////
 	
 #foreach($field in $fields)
-    /** The ${field.type} */
+    /** The ${field.type}. */
     protected ${field.type} ${field.name};
 
 #end	
