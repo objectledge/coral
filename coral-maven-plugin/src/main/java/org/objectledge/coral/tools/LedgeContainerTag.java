@@ -41,6 +41,7 @@ import org.apache.commons.jelly.MissingAttributeException;
 import org.apache.commons.jelly.XMLOutput;
 import org.apache.maven.jelly.MavenJellyContext;
 import org.apache.maven.jelly.tags.BaseTagSupport;
+import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugin.UnknownPluginException;
 import org.apache.maven.project.Project;
 import org.jcontainer.dna.Logger;
@@ -54,7 +55,7 @@ import org.picocontainer.MutablePicoContainer;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: LedgeContainerTag.java,v 1.1 2004-07-16 23:22:10 pablo Exp $
+ * @version $Id: LedgeContainerTag.java,v 1.2 2004-12-23 06:00:25 rafal Exp $
  */
 public class LedgeContainerTag
     extends BaseTagSupport
@@ -125,14 +126,21 @@ public class LedgeContainerTag
         getContext().setVariable(var, container);
     }
 
-    private MavenJellyContext getPluginContext()
+    /**
+     * Retrieve MavenJellyContext of the coral-maven-plugin.
+     * 
+     * @return the MavenJellyContext.
+     * @throws JellyTagException if the context could not be retrieved.
+     */
+    protected MavenJellyContext getPluginContext()
         throws JellyTagException
     {
         Project project = getMavenContext().getProject();
         String plugin = "coral-maven-plugin";
         try
         {
-            MavenJellyContext context = project.getPluginContext(plugin);
+            PluginManager pluginManager = project.getContext().getMavenSession().getPluginManager();
+            MavenJellyContext context = pluginManager.getPluginContext( plugin );
             if(context == null)
             {
                 throw new JellyTagException("context for plugin '" + plugin + "' in project '" + 
@@ -185,7 +193,13 @@ public class LedgeContainerTag
         return container;
     }
     
-    private Logger getLog(Class cl)
+    /**
+     * Get the logger for the class.
+     * 
+     * @param cl the class.
+     * @return the Logger.
+     */
+    protected Logger getLog(Class cl)
     {
         return new Log4JLogger(org.apache.log4j.Logger.getLogger(cl));
     }
@@ -196,7 +210,7 @@ public class LedgeContainerTag
      * @return the class loader.
      * @throws MalformedURLException if url is invalid.
      */
-    public ClassLoader getClassLoader() 
+    protected ClassLoader getClassLoader() 
         throws MalformedURLException
     {
         if(getMavenContext() != null)
