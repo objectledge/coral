@@ -50,7 +50,7 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.13 2004-03-09 15:46:47 fil Exp $
+ * @version $Id: RelationImpl.java,v 1.14 2004-03-10 16:31:39 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -223,8 +223,7 @@ implements Relation
 	private float calcSetsSizeSum(Map relation)
 	{
 		int totalSize = 0;
-		Set keySet = relation.keySet();
-		for (Iterator iter = keySet.iterator(); iter.hasNext();)
+		for (Iterator iter = relation.values().iterator(); iter.hasNext();)
 		{
 			Set relSet = (Set) iter.next();
 			totalSize += relSet.size();
@@ -316,24 +315,6 @@ implements Relation
     // implementation -----------------------------------------------------------------------------
 
     private static int initialSetCapacity = 128;
-
-    /**
-     * Returns a set for a given id key and relation, maybe creates it
-     */
-    private Set maybeCreateSet(Map relation, long id)
-    {
-        Long idk = new Long(id);
-        return maybeCreateSet(relation, idk, initialSetCapacity);
-    }
-
-    /**
-     * Returns a set for a given id key and relation, maybe creates it
-     */
-    private Set maybeCreateSet(Map relation, long id, int initialCapacity)
-    {
-        Long idk = new Long(id);
-        return maybeCreateSet(relation, idk, initialCapacity);
-    }
 
     /**
      * Returns a set for a given id key and relation, maybe creates it.
