@@ -28,9 +28,11 @@
 package org.objectledge.coral.relation.query;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.objectledge.coral.relation.CoralRelationManager;
+import org.objectledge.coral.relation.Relation;
 import org.objectledge.coral.relation.ResourceIdentifierResolver;
 import org.objectledge.coral.relation.query.parser.ASTIntersectionExpression;
 import org.objectledge.coral.relation.query.parser.ASTRelationMapExpression;
@@ -38,12 +40,13 @@ import org.objectledge.coral.relation.query.parser.ASTResourceIdentifierId;
 import org.objectledge.coral.relation.query.parser.ASTResourceIdentifierPath;
 import org.objectledge.coral.relation.query.parser.ASTSumExpression;
 import org.objectledge.coral.relation.query.parser.ASTTransitiveRelationMapExpression;
+import org.objectledge.coral.relation.query.parser.SimpleNode;
 
 /**
  * Query executor executes a parsed query and returns the set of queried {@link Resource} ids.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: QueryExecutor.java,v 1.1 2004-02-24 13:34:59 zwierzem Exp $
+ * @version $Id: QueryExecutor.java,v 1.2 2004-02-24 14:58:38 zwierzem Exp $
  */
 public class QueryExecutor extends AbstractQueryVisitor
 {
@@ -127,29 +130,81 @@ public class QueryExecutor extends AbstractQueryVisitor
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Visits the relation mapping node and retrieves a set of resource ids from the relation using
+	 * a provided set of resource ids from the subquery. The retrieved {@link IdSet} is returned up
+	 * the tree.
+	 * 
+	 * @param node visited node
+	 * @param data additional data storage
+	 * @return the resulting {@link IdSet} 
 	 */
 	public Object visit(ASTRelationMapExpression node, Object data)
 	{
 		super.visit(node, data);
-		// TODO Auto-generated method stub
-		return null;
+		Relation relation = getRelation(node, data);
+		Set mapSet = getMapSet(node, data).getSet();
+		Set resultSet = new HashSet(mapSet.size());
+		for (Iterator iter = mapSet.iterator(); iter.hasNext();)
+        {
+            Long id = (Long) iter.next();
+			resultSet.addAll(relation.get(id.longValue()));
+        }
+		return new IdSet(resultSet);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Visits the relation mapping node and recursively retrieves a set of resource ids from the 
+	 * relation (by assumin relation is transitive but not circular) using a provided set of
+	 * resource ids from the subquery. The retrieved {@link IdSet} is returned up the tree.
+	 * 
+	 * @param node visited node
+	 * @param data additional data storage
+	 * @return the resulting {@link IdSet} 
 	 */
 	public Object visit(ASTTransitiveRelationMapExpression node, Object data)
 	{
 		super.visit(node, data);
-		// TODO Auto-generated method stub
-		return null;
+		Relation relation = getRelation(node, data);
+		Set mapSet = getMapSet(node, data).getSet();
+		Set resultSet = new HashSet(mapSet.size());
+		for (Iterator iter = mapSet.iterator(); iter.hasNext();)
+		{
+			Long id = (Long) iter.next();
+			buildTransitiveSet(relation, id, mapSet, resultSet);
+		}
+		return new IdSet(resultSet);
 	}
 
 	// implementation -------------------------------------------------------------------------
 
+	private Relation getRelation(SimpleNode node, Object data)
+	{
+		return (Relation) node.jjtGetChild(0).jjtAccept(this, data);
+	}
+
+	private IdSet getMapSet(SimpleNode node, Object data)
+	{
+		return (IdSet) node.jjtGetChild(1).jjtAccept(this, data);
+	}
+
+	private void buildTransitiveSet(Relation relation, Long id, Set mapSet, Set resultSet)
+	{
+		Set localResult = relation.get(id.longValue()); 
+		for (Iterator iter = localResult.iterator(); iter.hasNext();)
+        {
+            Long localId = (Long) iter.next();
+			if(mapSet.contains(localId))
+			{
+				throw new RuntimeException("circular relation '"+relation.getName()
+					+"' encountered in transitive mapping operation");
+			}
+			buildTransitiveSet(relation, localId, mapSet, resultSet);
+        }
+		resultSet.addAll(localResult);
+	}
+
 	/**
-	 * Resoves a given identifier using the resolver.
+	 * Resolves a given identifier using the resolver.
 	 * 
 	 * @param identifier identifier to be resolved.
 	 * @return a set of resolved ids 
