@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.9 2004-07-09 11:44:32 rafal Exp $ -->
+<!-- $Id: maven.xml,v 1.10 2004-07-09 14:41:45 zwierzem Exp $ -->
 <project xmlns:j="jelly:core"
          xmlns:util="jelly:util"
          xmlns:ant="jelly:ant"
@@ -82,7 +82,7 @@
      -->
     <define:tag name="smartCopy">
       <j:set var="srcDir" value="${srcDir.canonicalFile}"/>
-      <j:set var="dstDir"  name="${dstDir.canonicalFile}"/>
+      <j:set var="dstDir" value="${dstDir.canonicalFile}"/>
       <fileScanner var="srcFiles">
         <fileset dir="${srcDir.path}">
           <include name="${srcMask}"/>
