@@ -1,4 +1,5 @@
-#macro(select_attribute attr)
+#macro(select_attribute $attr)
+
   #if($attr.attributeClass.name == 'resource')
     #if($attr.domain)
       <a href="#select_resource_by_domain("id" "add_resource" "attr_$attr.name" $attr.domain)">wybierz</a>
@@ -12,6 +13,7 @@
   #elseif($attr.attributeClass.name == 'permission')
   <a href="#select_permission("name" "add_resource" "attr_$attr.name")">wybierz</a>
   #end
+
 #end
 
 <script type="text/javascript">
@@ -38,8 +40,8 @@ function changeResourceClass()
 <table class="genericItemTree" width="100%" cellpadding="0" cellspacing="0">
   <tr>
     <th>
-      Dodawanie zasobu klasy <input type="text" name="res_class_name" #if($resourceClass) value="$resourceClass.name" #end onchange="changeResourceClass();" onblur="changeResourceClass();">
-      <a href="#select_resource_class("name" "add_resource" "res_class_name")">wybierz</a>
+      Add new resource <input type="text" name="res_class_name" #if($resourceClass) value="$resourceClass.name" #end onchange="changeResourceClass();" onblur="changeResourceClass();">
+      <a href="#select_resource_class("name" "add_resource" "res_class_name")">choose</a>
     </th>
   </tr>
   <tr>
@@ -47,11 +49,11 @@ function changeResourceClass()
       #if($resourceClass)
       <table>
         <tr>
-          <th>Nazwa</th>
+          <th>Name</th>
           <th>Id</th>
-          <th>Klasa implementuj±ca</th>
-          <th>Klasa obs³uguj±ca</th>
-          <th>Flagi</th>
+          <th>Implementing class</th>
+          <th>Handler class</th>
+          <th>Flags</th>
         </tr>
         <tr>
           <td>$resourceClass.name</td>
@@ -62,61 +64,41 @@ function changeResourceClass()
         </tr>
       </table>
       <table>
-        <tr><th colspan="6">Atrybuty</th></tr>
+        <tr><th colspan="6">Attributes</th></tr>
         <tr>
-          <th>Nazwa</th>
-          <th>Typ</th>
-          <th>Zdefiniowany</th>
-          <th>Warto¶æ</th>
+          <th>Name</th>
+          <th>Class</th>
+          <th>Defined</th>
+          <th>Value</th>
         </tr>
         <tr>
           <td>name *</td>
           <td>string</td>
-          <td>tak</td>
-          <td><input type="text" name="name" value="$data.getParameters().get('name').asString('')"></td>
+          <td>true</td>
+          <td><input type="text" name="name" value=""></td>
         </tr>
         <tr>
           <td>parent *</td>
           <td>resource</td>
-          <td>tak</td>
-          <td><input type="text" name="parent" value="$data.getParameters().get('parent').asString('')"> <a href="#select_resource("path" "add_resource" "parent")">wybierz</a></td>
+          <td>true</td>
+          <td><input type="text" name="parent" value=""> <a href="#select_resource("path" "add_resource" "parent")">choose</a></td>
         </tr>
         <tr>
           <td>owner</td>
           <td>subject</td>
-          <td>tak</td>
-          <td><input type="text" name="owner" value="$data.getParameters().get('owner').asString('')">
-          <a href="#select_subject("name" "add_resource" "owner")">wybierz</a>
+          <td>true</td>
+          <td><input type="text" name="owner" value="">
+          <a href="#select_subject("name" "add_resource" "owner")">choose</a>
           </td>
         </tr>
         <tr>
           <td>description</td>
           <td>string</td>
-          <td>tak</td>          
-          <td><input type="text" name="description" value="$data.getParameters().get('description').asString('')"></td>
+          <td>true</td>          
+          <td><input type="text" name="description" value=""></td>
         </tr>
-#*        
-        <tr>
-          <td>creation_time</td>
-          <td>date</td>
-          <td><input type="text" name="creation_time" value="$data.getParameters().get('creation_time').asString('')"></td>
-        </tr>
-        <tr>
-          <td>modification_time</td>
-          <td>date</td>
-          <td><input type="text" name="modification_time" value="$data.getParameters().get('modification_time').asString('')"></td>
-        </tr>
-        <tr>
-          <td>created_by</td>
-          <td>subject</td>
-          <td><input type="text" name="created_by" value="$data.getParameters().get('created_by').asString('')"></td>
-        </tr>
-        <tr>
-          <td>modified_by</td>
-          <td>subject</td>
-          <td><input type="text" name="modified_by" value="$data.getParameters().get('modified_by').asString('')"></td>
-        </tr>
-*#        
+
+
         <tr>
           <td colspan="4"><hr/></td>
         </tr>
@@ -128,7 +110,7 @@ function changeResourceClass()
           <td>$attr.name #if($flags.toString($attr.flags).indexOf('REQUIRED') != -1)*#end</td>
           <td>$attr.attributeClass.name</td>
           <td><input type="checkbox" name="defined_$attr.name" value="true" #if($flags.toString($attr.flags).indexOf('REQUIRED') != -1) checked #end></td>
-          <td><input type="text" name="attr_$attr.name" value="$data.getParameters().get('attr_$attr.name').asString('')">
+          <td><input type="text" name="attr_$attr.name" value="$!parameters.get('attr_$attr.name','')">
           #select_attribute($attr)
           </td>
         </tr>
@@ -136,12 +118,12 @@ function changeResourceClass()
         #end
         <tr>
           <td colspan="4" align="right">
-            <a href="javascript:addResource('$link.view('ResourceView').action('AddResource')')">dodaj</a>
+            <a href="javascript:addResource('$link.view('browser.ResourceView').action('browser.AddResource')')">create</a>
           </td>
         </tr>
       </table>
       #else
-        Wybierz klase zasobu     
+Choose the resource class from list.
       #end 
     </td>
   </tr>

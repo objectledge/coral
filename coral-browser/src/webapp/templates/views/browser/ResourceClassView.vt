@@ -1,10 +1,10 @@
-$page_tool.addCommonScriptLink('js/WinPopup.js')
+$page_tool.addScriptLink('js/WinPopup.js')
 
 <script type="text/javascript">
 <!--
 function deleteAttr(name, url)
 {
-    if(confirm("Czy napewno chcesz usun±æ atrybut '"+name+"'\npamiêtaj ¿e operacja nie mo¿e byæ cofniêta a jej skutki odczuj± wszystkie zasoby tej klasy"))
+    if(confirm("Are you sure you want delete the attribute '"+name+"'\noperation once performed cannot be rolled back!"))
     {
         document.location.href = url;
     }
@@ -12,7 +12,7 @@ function deleteAttr(name, url)
 
 function deleteResourceClass(name, url)
 {
-    if(confirm("Czy napewno chcesz usun±æ klase '"+name+"'\npamiêtaj ¿e operacja nie mo¿e byæ cofniêta!"))
+    if(confirm("Are you sure you want delete the resource class '"+name+"'\noperation once performed cannot be rolled back!"))
     {
         document.location.href = url;
     }
@@ -25,7 +25,7 @@ function addPermission()
 // -->
 </script>
 
-<table class="defaultLayoutTable" border="1" width="100%">
+<table width="100%">
   <tr>
     <td valign="top">
       $component.embed('browser.ResourceClassList') 
@@ -38,20 +38,20 @@ function addPermission()
 <table class="genericItemTree" width="100%" cellpadding="0" cellspacing="0">
   #if($resourceClass)
   <tr>
-    <th>Szczegó³y klasy $resourceClass.name<br/></th>
+    <th>The resource class '$resourceClass.name' information<br/></th>
     <th>
-      <a href="javascript:deleteResourceClass('$resourceClass.name','$link.action('DeleteResourceClass').set('res_class_id',$resourceClass.id)');">usuñ</a>
+      <a href="javascript:deleteResourceClass('$resourceClass.name','$link.action('browser.DeleteResourceClass').set('res_class_id',$resourceClass.id)');">delete</a>
     </th>
   </tr>
   <tr>
     <td colspan="2">
       <table>
         <tr>
-          <th>Nazwa</th>
+          <th>Namae</th>
           <th>Id</th>
-          <th>Klasa implementuj±ca</th>
-          <th>Klasa obs³uguj±ca</th>
-          <th>Flagi</th>
+          <th>Implementing class</th>
+          <th>Handler class</th>
+          <th>Flags</th>
         </tr>
         <tr>
           <td>$resourceClass.name</td>
@@ -62,19 +62,19 @@ function addPermission()
         </tr>
       </table>
       <table>
-        <tr><th colspan="6">Atrybuty</th></tr>
+        <tr><th colspan="6">Attributes</th></tr>
         <tr>
-          <th>Nazwa</th>
-          <th>Zdefiniowany w klasie</th>
-          <th>Klasa</th>
-          <th>Domena</th>
-          <th>Flagi</th>
-          <th>Usuñ</th>
+          <th>Name</th>
+          <th>Definition class</th>
+          <th>Attribute class</th>
+          <th>Domain</th>
+          <th>Flags</th>
+          <th>Delete</th>
         </tr>
       #foreach($attr in $resourceClass.allAttributes)
         <tr>
           <td>$attr.name</td>
-          <td><a href="$link.view('ResourceClassView').set('res_class_id',$attr.declaringClass.id)">$attr.declaringClass.name</a></td>
+          <td><a href="$link.view('browser.ResourceClassView').set('res_class_id',$attr.declaringClass.id)">$attr.declaringClass.name</a></td>
           <td>$attr.attributeClass.name</td>
           <td>
             #if($attr.domain)
@@ -92,7 +92,7 @@ function addPermission()
           </td>
           <td>
             #if($attr.declaringClass.name != 'node')
-            <a href="javascript:deleteAttr('$attr.name','$link.action('DeleteAttribute').set('res_class_id',$resourceClass.id).set('attr_name',$attr.name)');">usuñ</a>
+            <a href="javascript:deleteAttr('$attr.name','$link.action('browser.DeleteAttribute').set('res_class_id',$resourceClass.id).set('attr_name',$attr.name)');">delete</a>
             #else
             -
             #end
@@ -104,13 +104,13 @@ function addPermission()
             &nbsp;
           </td>
           <td>
-<a href="javascript:getWinPopup('browser').open('$link.view('AddAttribute').set('res_class_id',$resourceClass.id)',  500, 550); void(0);">Dodaj atrybut</a>
+			<a href="javascript:getWinPopup('browser').open('$link.view('browser.AddAttribute').set('res_class_id',$resourceClass.id)',  500, 550); void(0);">Add attribute</a>
           </td>
         </tr>
       </table>
       <table>
         <tr>
-          <th colspan="2">Prawa i klasy bazowe</th>
+          <th colspan="2">Associated permissions and base classes</th>
         </tr>
         <tr>
           <td>$resourceClass.name</td>
@@ -119,7 +119,7 @@ function addPermission()
             <table>
             #foreach($association in $resourceClass.permissionAssociations)
             <tr>
-              <td><a href="$link.view('PermissionView').set('perm_id',$association.permission.id)">$association.permission.name</a></td>
+              <td><a href="$link.view('browser.PermissionView').set('perm_id',$association.permission.id)">$association.permission.name</a></td>
             </tr>
             #end
             </table>
@@ -134,7 +134,7 @@ function addPermission()
             #foreach($association in $parent.permissionAssociations)
               <tr>
                 <td> 
-                  <a href="$link.view('PermissionView').set('perm_id',$association.permission.id)">$association.permission.name</a>
+                  <a href="$link.view('browser.PermissionView').set('perm_id',$association.permission.id)">$association.permission.name</a>
                 </td>
               </tr>
             #end
@@ -145,7 +145,7 @@ function addPermission()
       </table>
       <table>
         <tr>
-          <th>Klasy dziedzicz±ce</th>
+          <th>The child classes</th>
         </tr>
         #foreach($child in $resourceClass.childClasses)
         <tr>
@@ -155,13 +155,13 @@ function addPermission()
       </table>
       <table>
         <tr>
-          <th>Dodaj prawo</th>
+          <th>Associate the permission</th>
         </tr>
         <tr>
-          <form name="addpermission" method="post" action='$link.action('AddPermissionToClass')'>
+          <form name="addpermission" method="post" action='$link.action('browser.AddPermissionToClass')'>
           <input type="hidden" name="res_class_id" value="$resourceClass.id">
           <td><input type="text" name="perm_name" value="" maxlength="40">
-            <a href="javascript:addPermission()">dodaj prawo</a>
+            <a href="javascript:addPermission()">add permission</a>
           </td>
           </form>
         </tr>
@@ -169,11 +169,11 @@ function addPermission()
     </td>
   </tr>
   <tr>
-    <td colspan="2"><a href="$link.view('AddResource').set('res_class_name',$resourceClass.name)">Dodaj zasób</a></td>
+    <td colspan="2"><a href="$link.view('browser.AddResource').set('res_class_name',$resourceClass.name)">Add new resource</a></td>
   </tr>
   #else
   <tr>
-    <th>Wybierz klase</th>
+    <th>Choose class</th>
   </tr>
   #end
 </table>

@@ -1,13 +1,12 @@
-App Layout: <br/><br/>
-
-<table class="defaultLayoutTable" border="1" width="100%">
+$page_tool.addStyleLink('style/browser.css')
+<table width="100%">
   <tr>
-    <td valign="top">
+    <td>
       $component.embed('browser.Navigation') 
     </td>
   </tr>
   <tr>
-    <td valign="top">
+    <td>
       $!embedded_placeholder
     </td>
   </tr>

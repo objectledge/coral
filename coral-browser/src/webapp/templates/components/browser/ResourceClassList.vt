@@ -1,7 +1,7 @@
 #set($tableLink = $link.set('table_id', $table.id))
-<table class="genericItemTree" cellpadding="0" cellspacing="0">
+<table class="genericItemTree" cellpadding="0" cellspacing="0" width="100%">
   <tr>
-    <th>Lista klas zasobów</th>
+    <th>The resource class list</th>
   </tr>
 #foreach($row in $table.rows)
   <tr>

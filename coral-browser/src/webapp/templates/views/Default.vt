@@ -1,3 +1,40 @@
-MasterPage: <br/><br/>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Ledge - Coral $page_tool.title</title>
+  <meta http-equiv="Content-Type" content="$data.getContentType()" />
+  <meta http-equiv="pragma" content=" no-cache" />
+  <meta http-equiv="Cache-Control" content=" no-cache" />
+  <meta http-equiv="expires" content=" Mon, 12 May 1998 00:00:00 GMT" />
 
+##  CSS
+#foreach($styleLink in $page_tool.getStyleLinks())
+<link rel="stylesheet" type="text/css" #if($styleLink.media) media="$styleLink.media"#end
+href="$styleLink.href" />
+#end
+
+##  Javascript
+#set($jslink = $link.sessionless())
+<script type="text/javascript" src="$jslink.resource('js/ScriptLoader.js')" ></script>
+<script type="text/javascript">
+<!--
+var scriptLoader = new ScriptLoader('$jslink.resource('js/')', '$jslink.resource('js/')');
+// -->
+</script>
+<script type="text/javascript" src="$jslink.resource('js/BrowserUtil.js')" ></script>
+
+##
+#foreach($scriptLink in $page_tool.getScriptLinks())
+  <script type="text/javascript" src="$scriptLink.src"##
+   #if($scriptLink.charset) charset="$scriptLink.charset"#end></script>
+#end
+
+</head>
+<body>
+##
 $!embedded_placeholder
+##
+</body>
+</html>
+
+
