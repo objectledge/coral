@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.ResourceClassFlags;
 import org.objectledge.coral.tools.BatchLoader;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
@@ -53,7 +54,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.15 2004-05-24 13:05:21 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.16 2004-05-25 09:09:09 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -140,7 +141,10 @@ public class GeneratorComponent
     
     /** packages to not generate wrappers in. */
     private List packageExcludes;
-
+    
+    /** custom fields defined by resource class. */ 
+    private Map fieldMap = new HashMap();
+    
     /**
      * Creates new GeneratorComponent instance.
      * 
@@ -463,6 +467,67 @@ public class GeneratorComponent
             rc.setAttributeOrder(null);
         }
 
+        processExtendsHint(rc, hints);
+
+        List fields = processFieldHint(rc, hints);
+
+        List superFields = new ArrayList();
+        // second part of the condition is there because the generator does not support
+        // generation of primary wrappers
+        if(rc.getImplParentClass() != null && 
+           rc.getImplParentClass().getDeclaredParentClasses().size() > 0)
+        {
+            addSuperFields(rc.getImplParentClass(), superFields);
+        }
+        
+        context.put("imports", imports);
+        context.put("class", rc);
+        context.put("header", header);
+        context.put("custom", custom);
+        context.put("fields", fields);
+        context.put("superFields", superFields);
+
+        String result = template.merge(context);
+        return write(path, result);
+    }
+    
+    /**
+     * @param rc
+     * @param hints
+     * @return
+     * @throws Exception
+     */
+    private List processFieldHint(ResourceClass rc, Map hints) throws Exception
+    {
+        List fieldHint = (List)hints.get("field");
+        ArrayList fields = new ArrayList();
+        if(fieldHint != null)
+        {
+            if(fieldHint.size() % 2 != 0)
+            {
+                throw new Exception("malformed @field hints - expected @field <type> <name> pairs");
+            }
+            fields.ensureCapacity(fieldHint.size()/2);
+            for(int i=0; i<fieldHint.size()/2; i++)
+            {
+                Map entry = new HashMap();
+                entry.put("type", fieldHint.get(i*2));
+                entry.put("name", fieldHint.get(i*2+1));
+                fields.add(entry);
+            }
+        }
+        fieldMap.put(rc, fields);
+        return fields;
+    }
+
+    /**
+     * @param rc
+     * @param hints
+     * @throws Exception
+     * @throws EntityDoesNotExistException
+     */
+    private void processExtendsHint(ResourceClass rc, Map hints) throws Exception, EntityDoesNotExistException
+    {
         List extendsHint = (List)hints.get("extends");
         if(extendsHint != null)
         {
@@ -477,13 +542,29 @@ public class GeneratorComponent
         {
             rc.setImplParentClass(null);
         }
+    }
 
-        context.put("imports", imports);
-        context.put("class", rc);
-        context.put("header", header);
-        context.put("custom", custom);
-
-        String result = template.merge(context);
-        return write(path, result);
+    private void addSuperFields(ResourceClass rc, List fields)
+    	throws Exception
+    {
+        if(!fieldMap.containsKey(rc))
+        {
+            Map hints = new HashMap();
+            read(classImplPath(rc), hints);
+            processExtendsHint(rc, hints);
+            processFieldHint(rc, hints);
+        }
+        // second part of the condition is there because the generator does not support
+        // generation of primary wrappers
+        if(rc.getImplParentClass() != null && 
+           rc.getImplParentClass().getDeclaredParentClasses().size() > 0)
+        {
+            addSuperFields(rc.getImplParentClass(), fields);
+        }
+        List superFields = (List)fieldMap.get(rc);
+        if(superFields != null)
+        {
+            fields.addAll(superFields);            
+        }
     }
 }

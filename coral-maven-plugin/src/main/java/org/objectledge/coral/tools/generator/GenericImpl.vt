@@ -78,6 +78,11 @@ public class ${class.implClassName}
     private AttributeDefinition ${attr.name}Def;
 
 #end
+#foreach($field in $fields)
+    /** The ${field.type} */
+    protected ${field.type} ${field.name};
+
+#end	
 #end
     // initialization /////////////////////////////////////////////////////////
 
@@ -91,10 +96,16 @@ public class ${class.implClassName}
      * @param schema the CoralSchema.
      * @param database the Database.
      * @param logger the Logger.
+#foreach($field in $superFields)
+     * @param ${field.name} the ${field.type}.
+#end
+#foreach($field in $fields)
+     * @param ${field.name} the ${field.type}.
+#end
      */
-    public ${class.implClassName}(CoralSchema schema, Database database, Logger logger)
+    public ${class.implClassName}(CoralSchema schema, Database database, Logger logger#foreach($field in $superFields), ${field.type} ${field.name}#end#foreach($field in $fields), ${field.type} ${field.name}#end)
     {
-        super(schema, database, logger);
+        super(schema, database, logger#foreach($field in $superFields), ${field.name}#end);
 #if($attributes.size() > 0)
         try
         {
@@ -107,6 +118,9 @@ public class ${class.implClassName}
         {
             throw new BackendException("incompatible schema change", e);
         }
+#end
+#foreach($field in $fields)
+        this.${field.name} = ${field.name};
 #end
     }
 
