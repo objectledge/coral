@@ -30,7 +30,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.6 2004-06-29 09:31:50 fil Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.7 2004-06-29 14:49:49 fil Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -139,7 +139,7 @@ public class PersistentResourceHandler
     {
         try
         {
-            super.delete(resource, conn);
+            super.update(resource, conn);
             persistence.save((PersistentResource)resource);
         }
         catch(Exception e)
