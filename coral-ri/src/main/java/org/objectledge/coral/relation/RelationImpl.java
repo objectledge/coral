@@ -50,7 +50,7 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.17 2004-03-17 12:19:58 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.18 2004-03-17 12:27:33 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -192,14 +192,6 @@ implements Relation
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getDataTable()
-	{
-		return "coral_relation_data";
-	}
-    
-	/**
-	 * {@inheritDoc}
-	 */
 	public void setData(InputRecord record) throws PersistenceException
 	{
 		super.setData(record);
@@ -241,6 +233,16 @@ implements Relation
 		}
 	}
 
+	/**
+	 * Returns a name of a database table used for storing relations contents.
+	 * 
+	 * @return name of a database table.  
+	 */
+	String getDataTable()
+	{
+		return "coral_relation_data";
+	}
+    
 	private int calcSetsSizeSum(Map relation)
 	{
 		int totalSize = 0;
