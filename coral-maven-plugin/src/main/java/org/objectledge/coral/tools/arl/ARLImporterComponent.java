@@ -39,10 +39,10 @@ import javax.sql.DataSource;
 import org.objectledge.database.DatabaseUtils;
 
 /**
- * Performs wrapper generation.
+ * Performs importing data from old style ARL schema database to brand new CORAL scheme.
  *
- * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ARLImporterComponent.java,v 1.4 2004-12-21 08:45:28 rafal Exp $
+ * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
+ * @version $Id: ARLImporterComponent.java,v 1.5 2005-01-13 09:49:07 pablo Exp $
  */
 public class ARLImporterComponent
 {
@@ -64,17 +64,22 @@ public class ARLImporterComponent
     /** The target statement */
     private Statement targetStmt;
 
+    /** the base path */
+    private String basePath;
+    
     /**
      * Creates new ARLImporterComponent instance.
      * 
      * @param source the source data source.
      * @param target the target data source.
+     * @param basePath the base path of ledge installation.
      * @throws Exception if the component could not be initialized.
      */
-    public ARLImporterComponent(DataSource source, DataSource target) throws Exception
+    public ARLImporterComponent(DataSource source, DataSource target, String basePath) throws Exception
     {
         this.source = source;
         this.target = target;
+        this.basePath = basePath;
     }
 
     /**
@@ -82,8 +87,9 @@ public class ARLImporterComponent
      * 
      * @throws Exception if the generation fails for some reason.
      */
-    public void execute() throws Exception
+    public boolean execute(String mappingFile) throws Exception
     {
+        System.out.println("ARL Importer started! "+mappingFile);
         setUpConnections();
         importAttributeClass();
         importResourceClass();
@@ -116,6 +122,7 @@ public class ARLImporterComponent
         importAttributeResourceList();
         importAttributeWeakResourceList();
         close();
+        return true;
     }
 
     // implementation ///////////////////////////////////////////////////////////////////////////
