@@ -141,14 +141,14 @@ INSERT INTO coral_attribute_class VALUES(
 INSERT INTO coral_attribute_class VALUES(
 		15, 
 		'resource_list',
-		'org.objectledge.parameters.Parameters', 
+		'org.objectledge.coral.datatypes.ResourceList', 
 		'org.objectledge.coral.datatypes.ResourceListAttributeHandler',
 		'coral_attribute_resource_list');
 
 INSERT INTO coral_attribute_class VALUES(
 		16, 
 		'weak_resource_list',
-		'org.objectledge.parameters.Parameters', 
+		'org.objectledge.coral.datatypes.WeakResourceList', 
 		'org.objectledge.coral.datatypes.WeakResourceListAttributeHandler',
 		'coral_attribute_resource_list');
 		
