@@ -13,7 +13,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a concrete attribute of an resource class.
  *
- * @version $Id: AttributeDefinitionImpl.java,v 1.7 2004-02-25 13:13:32 fil Exp $
+ * @version $Id: AttributeDefinitionImpl.java,v 1.8 2004-02-25 13:24:08 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeDefinitionImpl
@@ -247,7 +247,7 @@ public class AttributeDefinitionImpl
      *
      * @param declaringClass the resource class this attribute belongs to.
      */
-    public void setDeclaringClass(ResourceClass declaringClass)
+    void setDeclaringClass(ResourceClass declaringClass)
     {
         this.declaringClass = declaringClass;
     }
@@ -260,5 +260,25 @@ public class AttributeDefinitionImpl
     void setFlags(int flags)
     {
         this.flags = flags;
-    }    
+    }
+    
+    /** 
+     * Sets the name of this attribute.
+     * 
+     * @param name the new name of the attribute.
+     */
+    void setName(String name)
+    {
+        this.name = name;    
+    }
+    
+    /**
+     * Sets the domain of this attribute.
+     *
+     * @param domain the new domain of the attribute. 
+     */
+    void setDomain(String domain)
+    {
+        this.domain = domain;
+    }
 }
