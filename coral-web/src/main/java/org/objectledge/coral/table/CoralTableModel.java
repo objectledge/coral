@@ -26,11 +26,11 @@ import org.objectledge.table.generic.GenericListRowSet;
 import org.objectledge.table.generic.GenericTreeRowSet;
 
 /**
- * Implementation of Table service based on ARL service
+ * Implementation of Table model for display of Coral resource trees. 
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.7 2004-07-01 11:35:41 zwierzem Exp $
+ * @version $Id: CoralTableModel.java,v 1.8 2004-08-19 12:15:36 zwierzem Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {
@@ -46,7 +46,6 @@ public class CoralTableModel implements ExtendedTableModel
         /**
         TODO: make it using introspectors
         // add columns for a given resource class
-
         if(resClass != null)
         {
             AttributeDefinition[] attrDefs = resClass.getAllAttributes();
@@ -83,7 +82,12 @@ public class CoralTableModel implements ExtendedTableModel
     }
 
     /**
-     * @inheritDoc
+     * Returns a {@link TableRowSet} object initialised by this model
+     * and a given {@link TableState}.
+     *
+     * @param state the parent
+     * @param filters a list of filters to be used while creating the rows set
+     * @return table of children
      */
     public TableRowSet getRowSet(TableState state, TableFilter[] filters)
     {
@@ -98,8 +102,8 @@ public class CoralTableModel implements ExtendedTableModel
     }
 
     /**
-     * Returns array of column definitions. They are created on every call,
-     * because they can get modified durig it's lifecycle.
+     * Returns array of column definitions. They defitinions are created on every call,
+     * because they may be modified during it's lifecycle.
      *
      * @return array of <code>TableColumn</code> objects
      */
