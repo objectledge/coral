@@ -43,7 +43,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.1 2004-02-25 16:05:51 fil Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.2 2004-02-26 09:11:12 fil Exp $
  */
 public class ResourceClassImplTest extends MockObjectTestCase
 {
@@ -329,71 +329,210 @@ public class ResourceClassImplTest extends MockObjectTestCase
     
     // use cases //////////////////////////////////////////////////////////////////////////
     
+    // ( ) resource classes
+    // [ ] attribute definitions
+    // < > permissions
+    
+    // <1>-(1)-[1]
+    private void setupFixture1()
+    {
+        // TODO implement setup
+    }
+    
+    private void assertFixture1()
+    {
+    }
+
+    //         [1]
+    // <1>-(1)<
+    //         [2]
+    //
+    // extends 1
+    private void setupFixture2()
+    {
+        // TODO implement setup
+    }
+    
+    private void assertFixture2()
+    {
+        // TODO implement check
+    }
+
+    //     (2)-[3]
+    //      |
+    // <1>-(1)-[2]
+    //
+    // extends 1
+    private void setupFixture3()
+    {
+        // TODO implement setup
+    }
+    
+    private void assertFixture3()
+    {
+        // TODO implement check
+    }
+    
+    //         [3]        
+    //     (2)<
+    //      |  [4]
+    //      |
+    // <1>-(1)-[2]
+    //
+    // extends 3
+    private void setupFixture4()
+    {
+        // TODO implement setup
+    }
+    
+    private void assertFixture4()
+    {
+        // TODO implement check
+    }
+
+    //     (3)-[5]
+    //      |
+    //     (2)-[3]
+    //      |
+    // <1>-(1)-[2]
+    //
+    // extends 3
+    private void setupFixture5()
+    {
+        // TODO implement setup
+    }
+    
+    private void assertFixture5()
+    {
+        // TODO implement check
+    }
+
+    // <1>-(1)-[2]
+    //      |
+    //     (4)
+    //
+    // extends 1
+    private void setupFixture6()
+    {
+        // TODO implement setup
+    }
+    
+    private void assertFixture6()
+    {
+        // TODO implement check
+    }
+
+    // <1>
+    //    >(1)-[1]
+    // <2>
+    //
+    // extends 1
+    private void setupFixture7()
+    {
+        // TODO implement setup
+    }
+    
+    private void assertFixture7()
+    {
+        // TODO implement check
+    }
+
+    // <3>-(2)-[3]
+    //      |
+    // <1>-(1)-[2]
+    //
+    // extends 3
+    private void setupFixture8()
+    {
+        // TODO implement setup
+    }
+    
+    private void assertFixture8()
+    {
+        // TODO implement check
+    }
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    // case 1, fixture 1 -> 2        
     public void testAttributeAdded()
     {
         // TODO implement test
     }
 
+    // case 2, fixture 2 -> 1
     public void testAttributeRemoved()
     {
         // TODO implement test
     }
 
+    // case 3, fixture 1 -> 3
     public void testParentAdded()
     {
         // TODO implement test
     }
 
+    // case 4, fixture 3 -> 1
     public void testParentRemoved()
     {
         // TODO implement test
     }
 
+    // case 5, fixtutre 3 -> 4
     public void testAttributeAddedToParent()
     {
         // TODO implement test
     }
 
+    // case 6, fixture 4 -> 3
     public void testAttributeRevemovedFromParent()
     {
         // TODO implement test
     }
 
+    // case 7, fixture 3 -> 5
     public void testParentAddedToParent()
     {
         // TODO implement test
     }
 
+    // case 8, fixture 5 -> 3
     public void testParentRevemovedFromParent()
     {
         // TODO implement test
     }
 
+    // case 9, fixture 1 -> 6
     public void testChildAdded()
     {
         // TODO implement test
     }
 
+    // case 10, fixture 6 -> 1
     public void testChildRemoved()
     {
         // TODO implement test
     }
 
+    // case 11, fixture 1 -> 7
     public void testPermissionAdded()
     {
         // TODO implement test
     }
 
+    // case 12, fixture 7 -> 1
     public void testPermissionRemoved()
     {
         // TODO implement test
     }
 
+    // case 13, fixture 3 -> 8
     public void testPermissionAddedToParent()
     {
         // TODO implement test
     }
 
+    // case 14, fixture 8 -> 3
     public void testPermissionRemovedFromParent()
     {
         // TODO implement test
