@@ -52,7 +52,7 @@ import org.objectledge.templating.velocity.VelocityTemplating;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.1 2004-03-30 08:17:51 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.2 2004-03-30 08:34:06 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -80,6 +80,9 @@ public class GeneratorComponent
     
     /** The schema. */
     private Schema schema;
+    
+    /** The RML loader. */
+    private RMLModelLoader loader;
     
     /** The templating component. */
     private Templating templating;
@@ -114,6 +117,7 @@ public class GeneratorComponent
     {
         fileSystem = FileSystem.getStandardFileSystem(baseDir);
         schema = new Schema();
+        loader = new RMLModelLoader(schema);
 
         initTemplating(logger);
         
@@ -145,7 +149,7 @@ public class GeneratorComponent
     public void execute()
         throws Exception
     {
-        loadSources();
+        loadSources(sourceFiles);
         List resourceClasses = schema.getResourceClasses();
         for(Iterator i = resourceClasses.iterator(); i.hasNext();)
         {
@@ -279,18 +283,21 @@ public class GeneratorComponent
         fileSystem.write(path, contents, fileEncoding);
     }
     
-    void loadSources()
+    void loadSources(String path)
         throws Exception
     {
-        RMLModelLoader loader = new RMLModelLoader(schema);
         LineNumberReader lnr = new LineNumberReader(fileSystem.
-            getReader(sourceFiles, fileEncoding));
+            getReader(path, fileEncoding));
         while(lnr.ready())
         {
             String line = lnr.readLine().trim();
             if(line.length() == 0 || line.charAt(0) == '#')
             {
                 continue;
+            }
+            if(line.startsWith("@include "))
+            {
+                loadSources(line.substring(9));
             }
             loader.load(fileSystem.getReader(line, fileEncoding));
         }    
