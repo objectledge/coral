@@ -31,7 +31,7 @@ package org.objectledge.coral.tools.generator.model;
  * Represents a Coral Entity.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Entity.java,v 1.3 2004-03-25 13:31:51 fil Exp $
+ * @version $Id: Entity.java,v 1.4 2004-03-31 10:04:34 fil Exp $
  */
 public class Entity
     implements Comparable
@@ -170,7 +170,7 @@ public class Entity
      */
     public int hashCode()
     {
-        return getClass().hashCode() ^ name.hashCode();
+        return name.hashCode();
     }
     
     // string representation /////////////////////////////////////////////////////////////////////
