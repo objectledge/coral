@@ -29,8 +29,12 @@ package org.objectledge.coral.relation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -41,6 +45,7 @@ import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
+import org.objectledge.coral.PreloadingParticipant;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
@@ -55,15 +60,13 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Implmentation of the Coral relation manager component.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.8 2005-01-18 10:57:52 rafal Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.9 2005-01-26 06:33:54 rafal Exp $
  */
-public class CoralRelationManagerImpl implements CoralRelationManager
+public class CoralRelationManagerImpl
+    implements CoralRelationManager, PreloadingParticipant
 {
     /** The {@link PersistenceService}. */
     private Persistence persistence;
-
-    /** The {@link Database}. */
-    private Database database;
 
     /** The logger. */
     private Logger log;
@@ -81,7 +84,6 @@ public class CoralRelationManagerImpl implements CoralRelationManager
     /**
      * Relation manager manages relation lifecycle.
      * 
-     * @param database used to retrieve and modify relation contents in database.
      * @param persistence used to modify relation metadata
      * @param cacheFactory used to create caches for relation objects
      * @param coralEventHub TODO may be used to clean relations on resource deletions
@@ -91,12 +93,10 @@ public class CoralRelationManagerImpl implements CoralRelationManager
      * 
      * @throws ConfigurationException on problems with configuration values
      */
-    public CoralRelationManagerImpl(Database database, Persistence persistence,
-        CacheFactory cacheFactory, CoralEventHub coralEventHub, CoralCore coral,
-        Instantiator instantiator, Logger log)
+    public CoralRelationManagerImpl(Persistence persistence, CacheFactory cacheFactory, 
+        CoralEventHub coralEventHub, CoralCore coral, Instantiator instantiator, Logger log)
         throws ConfigurationException
     {
-        this.database = database;
         this.persistence = persistence;
         this.coralEventHub = coralEventHub;
         this.coral = coral;
@@ -149,7 +149,7 @@ public class CoralRelationManagerImpl implements CoralRelationManager
     public Relation createRelation(String name) throws EntityExistsException
     {
         RelationImpl relation =
-            new RelationImpl(persistence, coral.getStore(), database, name);
+            new RelationImpl(persistence, coral.getStore(), this, name);
         relationRegistry.addUnique(relation);
         return relation;
     }
@@ -182,9 +182,9 @@ public class CoralRelationManagerImpl implements CoralRelationManager
 			Connection conn = null;
             try
             {
-                shouldCommit = database.beginTransaction();
+                shouldCommit = persistence.getDatabase().beginTransaction();
 
-				conn = database.getConnection();
+				conn = persistence.getDatabase().getConnection();
 
                 // update db and in memory relation representation
                 
@@ -241,13 +241,13 @@ public class CoralRelationManagerImpl implements CoralRelationManager
                     pstmt.executeBatch();
                 }
 
-                database.commitTransaction(shouldCommit);
+                persistence.getDatabase().commitTransaction(shouldCommit);
             }
             catch (BackendException ex)
             {
                 try
                 {
-                    database.rollbackTransaction(shouldCommit);
+                    persistence.getDatabase().rollbackTransaction(shouldCommit);
                 }
                 catch (SQLException ee)
                 {
@@ -259,7 +259,7 @@ public class CoralRelationManagerImpl implements CoralRelationManager
             {
                 try
                 {
-                    database.rollbackTransaction(shouldCommit);
+                    persistence.getDatabase().rollbackTransaction(shouldCommit);
                 }
                 catch (SQLException ee)
                 {
@@ -289,9 +289,9 @@ public class CoralRelationManagerImpl implements CoralRelationManager
         boolean shouldCommit = false;
         try
         {
-            shouldCommit = database.beginTransaction();
+            shouldCommit = persistence.getDatabase().beginTransaction();
 
-			conn = database.getConnection();
+			conn = persistence.getDatabase().getConnection();
 
             // delete relation contents
 			Statement stmt = conn.createStatement();
@@ -302,13 +302,13 @@ public class CoralRelationManagerImpl implements CoralRelationManager
 
             relationRegistry.delete(relation);
 
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(BackendException ex)
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -320,7 +320,7 @@ public class CoralRelationManagerImpl implements CoralRelationManager
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -332,5 +332,121 @@ public class CoralRelationManagerImpl implements CoralRelationManager
 		{
 			DatabaseUtils.close(conn);
 		}
+    }
+    
+    // definitions ///////////////////////////////////////////////////////////////////////////////
+    
+    private Map<Long,long[]> preloadedData = new HashMap<Long,long[]>();
+    
+    private void preloadDefinitions()
+        throws SQLException
+    {
+        Connection conn = persistence.getDatabase().getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(
+            "SELECT relation_id, resource1, resource2 FROM coral_relation_data " +
+            "ORDER BY relation_id"
+        );
+        if(result.next())
+        {
+            List<Long> temp = new ArrayList<Long>();
+            long lastId;
+            do
+            {
+                do
+                {
+                    lastId = result.getLong(1);
+                    temp.add(result.getLong(2));
+                    temp.add(result.getLong(3));
+                }
+                while(result.next() && result.getLong(1) == lastId);
+                long[] longs = new long[temp.size()];
+                int i = 0;
+                for(long item : temp)
+                {
+                    longs[i++] = item;
+                }
+                preloadedData.put(lastId, longs);
+                temp.clear();
+            }
+            while(!result.isAfterLast());
+        }
+    }
+    
+    private long[] loadDefinition(long relationId)
+        throws SQLException
+    {
+        Connection conn = persistence.getDatabase().getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(
+            "SELECT resource1, resource2 FROM coral_relation WHERE relation_id = " + 
+            Long.toString(relationId)
+        );
+        List<Long> temp = new ArrayList<Long>();
+        while(result.next())
+        {
+            temp.add(result.getLong(1));
+            temp.add(result.getLong(1));
+        }
+        long[] longs = new long[temp.size()];
+        int i = 0;
+        for(long item : temp)
+        {
+            longs[i++] = item;
+        }
+        return longs;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long[] getRelationDefinition(Relation relation)
+    {
+        if(preloadedData.containsKey(relation.getIdObject()))
+        {
+             return preloadedData.get(relation.getIdObject());
+        }
+        else
+        {
+            try
+            {
+                return loadDefinition(relation.getId());
+            }
+            catch(SQLException e)
+            {
+                throw new BackendException("failed to load relation data", e);
+            }
+        }
+    }
+
+    // preloading ////////////////////////////////////////////////////////////////////////////////
+
+    private static final int[] PRELOADING_PHASES = { 5 };
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int[] getPhases()
+    {
+        return PRELOADING_PHASES;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void preloadData(int phase)
+        throws Exception
+    {
+        log.info("preloading relation definitions");
+        long time = System.currentTimeMillis();
+        preloadDefinitions();
+        log.info("preloading relation definitions: done in "+
+            (System.currentTimeMillis()-time)+"ms");
+
+        log.info("building relation objects");
+        time = System.currentTimeMillis();
+        relationRegistry.get();
+        log.info("building relation objects: done in "+
+            (System.currentTimeMillis()-time)+"ms");
     }
 }

@@ -53,7 +53,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.22 2005-01-18 10:57:52 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.23 2005-01-26 06:33:54 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -61,13 +61,14 @@ implements Relation
 {
     /** Store is used to retrieve resources. */
     private CoralStore store;
-	/** Database is used to retrieve relation contents. */
-	private Database database;
+    
+    /** RelationManager is used to retrieve relation definitions. */
+    private CoralRelationManager coralRelationManager;
 
     /** Map r1 -&gt; set of r2. */
-    private Map rel = new HashMap();
+    private Map rel;
     /** Map r2 -&gt; set of r1. */
-    private Map invRel = new HashMap();
+    private Map invRel;
 	/** Number of unique resource pairs. */
 	private int resourceIdPairsNum = 0;
 
@@ -78,15 +79,17 @@ implements Relation
      *
      * @param persistence the persistence system
      * @param store used to retrieve resources
-     * @param database used to retrieve relation contents
+     * @param coralRelationManager used to retrieve relation definitions
      * @param name name of the relation
+     * @param definition relation definition
      */
-    public RelationImpl(Persistence persistence, CoralStore store, Database database, String name)
+    public RelationImpl(Persistence persistence, CoralStore store, 
+        CoralRelationManager coralRelationManager, String name)
     {
         super(persistence, name);
 
         this.store = store;
-		this.database = database;
+        this.coralRelationManager = coralRelationManager;
     }
 
     // public api ---------------------------------------------------------------------------------
@@ -198,50 +201,36 @@ implements Relation
 	public void setData(InputRecord record) throws PersistenceException
 	{
 		super.setData(record);
-		
-		// read relation data from database &  prepare data contents
-		Connection conn = null;
-        try
+		long[] def = coralRelationManager.getRelationDefinition(this);
+        
+        
+        Set set1 = new HashSet(def.length/4);
+        Set set2 = new HashSet(def.length/4);
+
+        for(int i=0; i<def.length / 2; i++)
         {
-        	int length = 1024; // number of elements in relation - should be retrieved from db
-        	
-			Set set1 = null;
-			Set set2 = null;
-	
-			rel = new HashMap((int) ((float) length / 2.0 * 1.5));
-			invRel = new HashMap((int) ((float) length / 2.0 * 1.5));
+            set1.add(new Long(def[2 * i]));
+            set2.add(new Long(def[2 * i + 1]));
+        }
 
-			conn = database.getConnection();
-	        Statement stmt = conn.createStatement();
-	        ResultSet rs = stmt.executeQuery(
-				"SELECT resource1,resource2 FROM " + getDataTable() + 
-				" WHERE relation_id = " + getIdString());
-	        while (rs.next())
-	        {
-	            Long r1k = new Long(rs.getLong(1));
-	            Long r2k = new Long(rs.getLong(2));
-	
-	            set1 = maybeCreateSet(rel, r1k);
-	            set2 = maybeCreateSet(invRel, r2k);
-	
-	            set1.add(r2k);
-	            set2.add(r1k);
-	        }
-	
-	        this.resourceIdPairsNum = calcSetsSizeSum(rel);
-		}
-		catch (SQLException e)
-		{
-			throw new PersistenceException("Cannot retrieve relation contents - relation '"+
-				getName() + "'", e);
-		}
-		finally
-		{
-			DatabaseUtils.close(conn);
-		}
-	}
+        rel = new HashMap((int)(set1.size()*1.5));
+        invRel = new HashMap((int)(set2.size()*1.5));
 
-	/**
+        for(int i=0; i<def.length / 2; i++)
+        {
+            Long r1k = new Long(def[i * 2]);
+            Long r2k = new Long(def[2 * i + 1]);
+
+            set1 = maybeCreateSet(rel, r1k);
+            set2 = maybeCreateSet(invRel, r2k);
+
+            set1.add(r2k);
+            set2.add(r1k);
+        }
+        this.resourceIdPairsNum = calcSetsSizeSum(rel);
+    }
+
+    /**
 	 * Returns a name of a database table used for storing relations contents.
 	 * 
 	 * @return name of a database table.  

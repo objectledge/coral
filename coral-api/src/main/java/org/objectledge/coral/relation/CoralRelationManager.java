@@ -35,7 +35,7 @@ import org.objectledge.coral.entity.EntityExistsException;
  * Acts as a management interface for {@link Relation} creation and deletion. 
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManager.java,v 1.3 2004-03-17 11:20:00 zwierzem Exp $
+ * @version $Id: CoralRelationManager.java,v 1.4 2005-01-26 06:34:09 rafal Exp $
  */
 public interface CoralRelationManager
 {
@@ -108,4 +108,19 @@ public interface CoralRelationManager
 	 */
 	public void deleteRelation(Relation relation)
 		throws IllegalArgumentException;
+    
+    /**
+     * Returns the relation definition in a compact form.
+     * 
+     * <p>For a relation <code>r</code> that defines <em>n</em> distict mappings, an array 
+     * <code>d</code> will be returned that fulfills the following: 
+     * <code>d.length = n*2</code>, <code>r.hasRef(d[2*i],d[2*i+1]) == true</code> for each
+     * 0 <= <em>i</em> &lt; <em>n</em>.</p>  
+     * <p>It is guaranteed that no methods except Entity.getId() and Entity.getIdObject() will be 
+     * called on the passed in Reltaion object.</p>
+     * 
+     * @param relation a relation object.
+     * @return array of resource identifiers;
+     */
+    public long[] getRelationDefinition(Relation relation);
 }
