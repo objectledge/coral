@@ -46,6 +46,7 @@ public class SimpleNode implements Node {
   String alias;
   boolean dir;
   ASTresource resource;
+  ASTresource parentResource;
   ASTclassAndAliasSpecifierList from;
   ASTconditionalExpression where;
   ASTselectList select;

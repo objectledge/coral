@@ -3583,7 +3583,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       case STRING:
       case NUMBER:
       case QUOTED_STRING:
-        jjtn000.parent = resource();
+        jjtn000.parentResource = resource();
         break;
       case NONE:
         jj_consume_token(NONE);

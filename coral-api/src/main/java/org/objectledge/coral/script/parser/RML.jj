@@ -3395,7 +3395,7 @@ void createResourceStatement() :
     "RESOURCE" "CLASS" jjtn000.resourceClass = resourceClass()
     "PARENT" 
     ( 
-        jjtn000.parent = resource() | 
+        jjtn000.parentResource = resource() | 
         "NONE" 
     )
     [ "ATTRIBUTES" <LPAREN> 
