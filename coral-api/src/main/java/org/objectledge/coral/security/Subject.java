@@ -8,7 +8,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: Subject.java,v 1.6 2004-03-18 11:32:45 fil Exp $
+ * @version $Id: Subject.java,v 1.7 2004-12-27 02:33:26 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Subject
@@ -91,7 +91,7 @@ public interface Subject
      * Returns all Resources that are owned by this Subject.
      *
      * <p>This method takes Resource parent-child relationships into
-     * consideration, so it can be <em>extremely<em> time and memory
+     * consideration, so it can be <em>extremely</em> time and memory
      * consuming.</p>
      *
      * @return all Resources that are owned by this Subject.

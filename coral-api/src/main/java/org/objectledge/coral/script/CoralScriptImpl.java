@@ -42,9 +42,10 @@ import org.objectledge.coral.script.parser.RMLParserFactory;
 import org.objectledge.coral.session.CoralSession;
 
 /**
+ * An implementation of CoralScript interface using RML language.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralScriptImpl.java,v 1.1 2004-03-18 14:34:48 fil Exp $
+ * @version $Id: CoralScriptImpl.java,v 1.2 2004-12-27 02:33:17 rafal Exp $
  */
 public class CoralScriptImpl
     implements CoralScript

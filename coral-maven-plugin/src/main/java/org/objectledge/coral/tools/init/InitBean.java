@@ -33,10 +33,10 @@ import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
 
 /**
- * 
+ * A Bean that intializes a JDBC database for use as Coral data backend.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: InitBean.java,v 1.4 2004-12-23 07:15:42 rafal Exp $
+ * @version $Id: InitBean.java,v 1.5 2004-12-27 02:33:48 rafal Exp $
  */
 public class InitBean
 {

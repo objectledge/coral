@@ -40,10 +40,10 @@ import org.objectledge.filesystem.FileSystemProvider;
 import org.picocontainer.MutablePicoContainer;
 
 /**
- * 
+ * A tag for instantiating a Ledge Container in a Jelly script.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: LedgeContainerTag.java,v 1.3 2004-12-23 06:15:18 rafal Exp $
+ * @version $Id: LedgeContainerTag.java,v 1.4 2004-12-27 02:34:09 rafal Exp $
  */
 public class LedgeContainerTag
     extends CoralPluginTag

@@ -32,9 +32,10 @@ import java.util.Map;
 import org.objectledge.database.persistence.PersistentFactory;
 
 /**
+ * Access point to class loading and object instantiation for Coral implementation classes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Instantiator.java,v 1.2 2004-03-16 13:33:31 fil Exp $
+ * @version $Id: Instantiator.java,v 1.3 2004-12-27 02:33:22 rafal Exp $
  */
 public interface Instantiator
 {

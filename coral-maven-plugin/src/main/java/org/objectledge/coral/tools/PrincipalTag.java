@@ -34,10 +34,10 @@ import org.apache.commons.jelly.MissingAttributeException;
 import org.apache.commons.jelly.XMLOutput;
 
 /**
- * 
+ * A tag for instatntiating java.security.Principal objects in a Jelly script.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PrincipalTag.java,v 1.3 2004-12-23 06:15:18 rafal Exp $
+ * @version $Id: PrincipalTag.java,v 1.4 2004-12-27 02:34:10 rafal Exp $
  */
 public class PrincipalTag
     extends CoralPluginTag

@@ -57,10 +57,10 @@ import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
 /**
- * 
+ * A tag for opening Coral sessions from within a Jelly script.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.8 2004-12-23 06:15:18 rafal Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.9 2004-12-27 02:34:08 rafal Exp $
  */
 public class SessionFactoryTag
     extends CoralPluginTag

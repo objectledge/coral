@@ -44,10 +44,10 @@ import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.Log4JLogger;
 
 /**
- * 
+ * Common base class for Jelly tags used by the Coral Maven plugin.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralPluginTag.java,v 1.1 2004-12-23 06:15:18 rafal Exp $
+ * @version $Id: CoralPluginTag.java,v 1.2 2004-12-27 02:34:09 rafal Exp $
  */
 public abstract class CoralPluginTag extends BaseTagSupport
 {
