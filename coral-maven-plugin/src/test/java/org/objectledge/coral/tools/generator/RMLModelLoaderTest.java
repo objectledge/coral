@@ -41,7 +41,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoaderTest.java,v 1.8 2004-03-29 09:01:28 fil Exp $
+ * @version $Id: RMLModelLoaderTest.java,v 1.9 2004-03-30 08:18:46 fil Exp $
  */
 public class RMLModelLoaderTest
     extends LedgeTestCase
@@ -285,6 +285,10 @@ public class RMLModelLoaderTest
     {
         FileSystem fs = getFileSystem();
         Reader r = fs.getReader("rml/coral/CoralDatatypesInitial.rml", "UTF-8");
+        if(r == null)
+        {
+            throw new Exception("rml/coral/CoralDatatypesInitial.rml not found in the classpath");
+        }
         modelLoader.load(r);
         ResourceClass rc = schema.getResourceClass("node");
         assertEquals("long", rc.getAttribute("id").getAttributeClass().getName());
