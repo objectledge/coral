@@ -64,10 +64,9 @@ public class PersistentNodeImpl
      * @param logger the Logger.
      * @parma resourceClass the ResourceClass.
      */
-    public PersistentNodeImpl(CoralSchema schema, Database database, Logger logger, 
-        ResourceClass resourceClass)
+    public PersistentNodeImpl(CoralSchema schema, Database database, Logger logger)
     {
-        super(database, logger, resourceClass);
+        super(schema, database, logger);
     }
 
     // static methods ////////////////////////////////////////////////////////
