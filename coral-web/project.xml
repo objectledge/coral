@@ -22,19 +22,19 @@
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-api</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <url>http://coral.objectledge.org/modules/coral-api/</url>
     </dependency>
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-ri</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <url>http://coral.objectledge.org/modules/coral-ri/</url>
     </dependency>    
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-datatypes</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <url>http://coral.objectledge.org/modules/coral-datatypes/</url>
     </dependency>    
     <dependency>
@@ -66,17 +66,17 @@
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3</version>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-container</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3</version>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-web</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3</version>
     </dependency>
     <dependency>
       <groupId>nanocontainer</groupId>

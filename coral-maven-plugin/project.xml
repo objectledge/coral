@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.22 2004-08-20 09:05:01 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.22.2.1 2004-09-09 10:09:22 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -79,31 +79,31 @@
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-api</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <url>http://coral.objectledge.org/modules/coral-api/</url>
     </dependency>
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-ri</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <url>http://coral.objectledge.org/modules/coral-ri/</url>
     </dependency>
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-datatypes</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <url>http://coral.objectledge.org/modules/coral-datatypes/</url>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3</version>
       <url>http://objectledge.org/modules/ledge-components/</url>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-container</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3</version>
       <url>http://objectledge.org/modules/ledge-components/</url>
     </dependency>
     <dependency>

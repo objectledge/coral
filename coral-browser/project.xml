@@ -49,7 +49,7 @@
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-api</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>      
@@ -58,7 +58,7 @@
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-ri</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>      
@@ -67,7 +67,7 @@
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-web</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>      
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-datatypes</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.1</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>      
@@ -157,7 +157,7 @@
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>      
@@ -165,7 +165,7 @@
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-container</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>      
@@ -173,7 +173,7 @@
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-web</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>      
