@@ -31,11 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
+import org.objectledge.coral.entity.EntityDoesNotExistException;
+
 /**
  * Represents a Coral Schema.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Schema.java,v 1.2 2004-03-22 12:14:28 fil Exp $
+ * @version $Id: Schema.java,v 1.3 2004-03-22 14:51:02 fil Exp $
  */
 public class Schema
 {
@@ -59,10 +61,17 @@ public class Schema
      * 
      * @param name the name of the attribute class.
      * @return the attribute class.
+     * @throws EntityDoesNotExistException if the attribute class does not exist.
      */
-    public AttributeClass getAttributeClass(String name)
+    public AttributeClass getAttributeClass(String name) 
+        throws EntityDoesNotExistException
     {
-        return (AttributeClass)attributeClasses.get(name); 
+        AttributeClass result = (AttributeClass)attributeClasses.get(name);
+        if(result == null)
+        {
+            throw new EntityDoesNotExistException("resource class "+name+" not found"); 
+        }
+        return result;
     }
     
     /**
@@ -73,6 +82,16 @@ public class Schema
     public void addAttributeClass(AttributeClass attributeClass)
     {
         attributeClasses.put(attributeClass.getName(), attributeClass);
+    }
+    
+    /**
+     * Deletes the attribute class from the model.
+     * 
+     * @param attributeClass the attribute class.
+     */
+    public void deleteAttributeClass(AttributeClass attributeClass)
+    {
+        attributeClasses.values().remove(attributeClass);
     }
     
     // resource classes /////////////////////////////////////////////////////////////////////////
@@ -92,10 +111,17 @@ public class Schema
      * 
      * @param name the name of the resource class.
      * @return the resource class.
+     * @throws EntityDoesNotExistException if the attribute class does not exist.
      */
-    public ResourceClass getResourceClass(String name)
+    public ResourceClass getResourceClass(String name) 
+        throws EntityDoesNotExistException
     {
-        return (ResourceClass)resourceClasses.get(name); 
+        ResourceClass result = (ResourceClass)resourceClasses.get(name); 
+        if(result == null)
+        {
+            throw new EntityDoesNotExistException("attribute class "+name+" not found"); 
+        }
+        return result;
     }
     
     /**
@@ -106,5 +132,15 @@ public class Schema
     public void addResourceClass(ResourceClass resourceClass)
     {
         resourceClasses.put(resourceClass.getName(), resourceClass);
+    }
+
+    /**
+     * Deletes the resource class from the model.
+     * 
+     * @param resourceClass the resource class.
+     */
+    public void deleteResourceClass(ResourceClass resourceClass)
+    {
+        resourceClasses.values().remove(resourceClass);
     }
 }
