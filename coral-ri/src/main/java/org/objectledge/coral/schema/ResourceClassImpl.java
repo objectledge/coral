@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.7 2004-02-25 14:13:42 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.8 2004-02-25 14:19:03 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -58,6 +58,9 @@ public class ResourceClassImpl
 
     /** The Java class associated with this resource class */
     private Class javaClass;
+    
+    /** The name of the handler class. */
+    private String handlerClassName;
     
     /** The {@link org.objectledge.coral.schema.ResourceHandler} implementation that is responsible
      * for this resource class. */
@@ -178,7 +181,7 @@ public class ResourceClassImpl
     {
         super.getData(record);
         record.setString("java_class_name", javaClassName);
-        record.setString("handler_class_name", handler.getClass().getName());
+        record.setString("handler_class_name", handlerClassName);
         if(dbTable != null)
         {
             record.setString("db_table", dbTable);
@@ -681,6 +684,7 @@ public class ResourceClassImpl
     void setHandlerClass(String className)
         throws JavaClassException
     {
+        this.handlerClassName = className;
         try
         {
             Class handlerClass = instantiator.loadClass(className);
