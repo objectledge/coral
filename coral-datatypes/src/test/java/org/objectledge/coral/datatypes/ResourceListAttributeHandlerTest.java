@@ -84,7 +84,7 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
         database = (Database)mockDatabase.proxy();
 
         mockCoralStore = mock(CoralStore.class);
-        mockCoralStore.stubs().method("getResource").will(returnValue(resource));
+        
         coralStore = (CoralStore)mockCoralStore.proxy();
         mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
@@ -114,6 +114,12 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
         mockResource.stubs().method("getName").will(returnValue("foo"));
         mockResource.stubs().method("getPath").will(returnValue("/foo"));
         resource = (Resource)mockResource.proxy();
+
+        Resource[] resourceArray = new Resource[1];
+        resourceArray[0] = resource;
+        mockCoralStore.stubs().method("getResource").with(eq(new Long(1))).will(returnValue(resource));
+        mockCoralStore.stubs().method("getResourceByPath").with(eq("/foo")).will(returnValue(resourceArray));
+        mockCoralStore.stubs().method("getResourceByPath").with(eq("/missing")).will(returnValue(new Resource[0]));
         
         ArrayList list = new ArrayList();
         list.add(resource);
@@ -178,7 +184,7 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
     {
         try
         {
-            handler.toAttributeValue("bar");
+            handler.toAttributeValue("/missing");
             fail("should throw the exception");
         }
         catch (IllegalArgumentException e)
