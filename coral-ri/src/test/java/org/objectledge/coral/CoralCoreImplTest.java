@@ -36,6 +36,7 @@ import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.context.Context;
+import org.objectledge.coral.security.Subject;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
 import org.objectledge.threads.ThreadPool;
@@ -43,7 +44,7 @@ import org.objectledge.threads.ThreadPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImplTest.java,v 1.1 2004-03-05 13:00:52 fil Exp $
+ * @version $Id: CoralCoreImplTest.java,v 1.2 2004-03-09 10:58:11 fil Exp $
  */
 public class CoralCoreImplTest extends MockObjectTestCase
 {
@@ -54,6 +55,13 @@ public class CoralCoreImplTest extends MockObjectTestCase
     private ThreadPool threadPool;
     private EventWhiteboardFactory eventWhiteboardFactory;
     private Logger logger;
+    
+    private CoralCore coralCore;
+    
+    private Mock mockCoralSession;
+    private CoralSession coralSession;
+    private Mock mockSubject;
+    private Subject subject;
 
     public void setUp()
     {
@@ -67,6 +75,13 @@ public class CoralCoreImplTest extends MockObjectTestCase
         logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));        
         threadPool = new ThreadPool(null, new Context(), null, logger);
         eventWhiteboardFactory = new EventWhiteboardFactory(null, logger, threadPool);
+        
+        coralCore = new CoralCoreImpl(persistence, cacheFactory, eventWhiteboardFactory, logger);
+
+        mockCoralSession = new Mock(CoralSession.class);
+        coralSession = (CoralSession)mockCoralSession.proxy();
+        mockSubject = new Mock(Subject.class);
+        subject = (Subject)mockSubject.proxy();               
     }
     
     public void tearDown()
@@ -74,9 +89,40 @@ public class CoralCoreImplTest extends MockObjectTestCase
         threadPool.stop();
     }
     
-    public void testStartup()
+    public void testBasics()
     {
-        CoralCore coral = new CoralCoreImpl(persistence, cacheFactory, eventWhiteboardFactory, logger);
-        coral.getSchema();
+        coralCore.getSchema();
+        coralCore.getSecurity();
+        coralCore.getStore();
+        coralCore.getRegistry();
+        coralCore.getEventWhiteboard();
+        coralCore.getQuery();
+    }
+    
+    public void testSessionTracking()
+    {
+        assertNull(coralCore.getCurrentSession());
+        try
+        {
+            coralCore.getCurrentSubject();
+            fail("exception expected");
+        }
+        catch(Exception e)
+        {
+            assertEquals(IllegalStateException.class, e.getClass());
+            assertEquals("thread is not associated with a Subject", e.getMessage());
+        }
+        
+        coralCore.setCurrentSession(coralSession);
+        assertSame(coralSession, coralCore.getCurrentSession());
+        
+        Runnable runnable = new Runnable() 
+        {
+            public void run()
+            {
+                assertNull(coralCore.getCurrentSession());
+            }
+        };
+        new Thread(runnable).start();
     }
 }
