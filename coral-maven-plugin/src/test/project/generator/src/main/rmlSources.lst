@@ -7,3 +7,6 @@ src/main/rml/test/Derived.rml
 src/main/rml/test/DerivedMultiple.rml
 src/main/rml/test/Excluded1.rml
 src/main/rml/test/Excluded2.rml
+
+src/main/rml/test/GenericNode.rml
+src/main/rml/test/PersistentNode.rml

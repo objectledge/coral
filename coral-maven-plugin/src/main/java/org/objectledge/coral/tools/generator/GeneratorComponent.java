@@ -54,7 +54,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.19 2004-05-25 10:34:39 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.20 2004-07-08 13:48:23 rafal Exp $
  */
 public class GeneratorComponent
 {
@@ -126,7 +126,7 @@ public class GeneratorComponent
     private Template interfaceTemplate;
     
     /** Implementation template. */
-    private Template genericImplTemplate;
+    private Template implementationTemplate;
     
     /** Package prefices used for grouping. */
     private List importGroups = new ArrayList();
@@ -231,8 +231,8 @@ public class GeneratorComponent
     {
         interfaceTemplate = templating.
             getTemplate("org/objectledge/coral/tools/generator/Interface");
-        genericImplTemplate = templating.
-            getTemplate("org/objectledge/coral/tools/generator/GenericImpl");
+        implementationTemplate = templating.
+            getTemplate("org/objectledge/coral/tools/generator/Implementation");
     }
     
     /**
@@ -421,11 +421,7 @@ public class GeneratorComponent
             out.println("    skipping "+rc.getName()+" interface (not modified)");
         }
 
-        // when resource metaclass support is added we'll have a bit of logic that selects
-        // apropriate implementation here.
-        Template implTemplate = genericImplTemplate;
-
-        if(generateWrapper(rc, classImplPath(rc), implTemplate))
+        if(generateWrapper(rc, classImplPath(rc), implementationTemplate))
         {
             out.println("    writing "+rc.getName()+" implementation to "+classImplPath(rc));
         }
@@ -435,6 +431,17 @@ public class GeneratorComponent
         }
     }
 
+    String resolvePrimaryParentClass(ResourceClass rc, ImportTool imports)
+    {
+        String handler = rc.getHandlerClassName();
+        int pos = handler.indexOf("Handler");
+        String impl = handler.substring(0, pos);
+        int dot = impl.lastIndexOf('.');
+        String unqImpl = impl.substring(dot+1);
+        imports.add(impl);
+        return unqImpl;
+    }
+    
     /**
      * @param rc
      * @param path
@@ -473,12 +480,14 @@ public class GeneratorComponent
         List fields = processFieldHint(rc, hints);
 
         List superFields = new ArrayList();
-        // second part of the condition is there because the generator does not support
-        // generation of primary wrappers
-        if(rc.getImplParentClass() != null && 
-           rc.getImplParentClass().getDeclaredParentClasses().size() > 0)
+        if(rc.getImplParentClass() != null)
         {
             addSuperFields(rc.getImplParentClass(), superFields);
+            context.put("implParentClass", rc.getImplParentClass().getImplClassName());
+        }
+        else
+        {
+            context.put("implParentClass", resolvePrimaryParentClass(rc, imports));
         }
         
         context.put("imports", imports);
@@ -556,10 +565,7 @@ public class GeneratorComponent
             processExtendsHint(rc, hints);
             processFieldHint(rc, hints);
         }
-        // second part of the condition is there because the generator does not support
-        // generation of primary wrappers
-        if(rc.getImplParentClass() != null && 
-           rc.getImplParentClass().getDeclaredParentClasses().size() > 0)
+        if(rc.getImplParentClass() != null )
         {
             addSuperFields(rc.getImplParentClass(), fields);
         }

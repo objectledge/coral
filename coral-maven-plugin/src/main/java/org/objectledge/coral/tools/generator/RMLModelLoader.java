@@ -73,7 +73,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.8 2004-03-31 10:03:19 fil Exp $
+ * @version $Id: RMLModelLoader.java,v 1.9 2004-07-08 13:48:23 rafal Exp $
  */
 public class RMLModelLoader
 {
@@ -143,7 +143,7 @@ public class RMLModelLoader
     /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.8 2004-03-31 10:03:19 fil Exp $
+     * @version $Id: RMLModelLoader.java,v 1.9 2004-07-08 13:48:23 rafal Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {
@@ -225,7 +225,7 @@ public class RMLModelLoader
             try
             {
                 ResourceClass rc = new ResourceClass(node.getName(), node.getJavaClass(), 
-                    node.getDbTable(), parseFlags(node.getFlags()));
+                    node.getHandlerClass(), node.getDbTable(), parseFlags(node.getFlags()));
                 ResourceClass[] parents = resolve(node.getParents());
                 for(int i=0; i<parents.length; i++)
                 {

@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassTest.java,v 1.5 2004-05-28 10:04:20 fil Exp $
+ * @version $Id: ResourceClassTest.java,v 1.6 2004-07-08 13:48:24 rafal Exp $
  */
 public class ResourceClassTest extends LedgeTestCase
 {   
@@ -62,7 +62,8 @@ public class ResourceClassTest extends LedgeTestCase
     public void setUp()
         throws Exception
     {
-        resourceClass = new ResourceClass("RC", "org.objectledge.datatypes.Node", "node", 0);
+        resourceClass = new ResourceClass("RC", "org.objectledge.coral.datatypes.Node", 
+            "org.objectledge.coral.datatypes.GenericResourceHandler", "node", 0);
         
         mockParentResourceClass = mock(ResourceClass.class, "mockParentResourceClass");
         mockParentResourceClass.stubs().method("getName").will(returnValue("ParentRC"));
@@ -345,15 +346,7 @@ public class ResourceClassTest extends LedgeTestCase
     public void testImplParentClass()
         throws Exception
     {
-        try
-        {
-            resourceClass.getImplParentClass();
-            fail("should throw");
-        }
-        catch(Exception e)
-        {
-            assertEquals("primary wrapper generation not supported", e.getMessage());
-        }
+        assertNull(resourceClass.getImplParentClass());
         try
         {
             resourceClass.setImplParentClass(parentResourceClass);

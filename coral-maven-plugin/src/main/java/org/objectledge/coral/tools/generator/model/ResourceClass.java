@@ -47,7 +47,7 @@ import org.objectledge.coral.schema.SchemaIntegrityException;
  * Represents a Coral ResourceClass.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClass.java,v 1.9 2004-03-31 10:12:00 fil Exp $
+ * @version $Id: ResourceClass.java,v 1.10 2004-07-08 13:48:24 rafal Exp $
  */
 public class ResourceClass
     extends Entity
@@ -57,6 +57,7 @@ public class ResourceClass
     private String packageName;
     private String implClassName;
     private String interfaceClassName;
+    private String handlerClassName;
     
     private String dbTable;
     
@@ -80,13 +81,15 @@ public class ResourceClass
      * 
      * @param name the name of the resource class.
      * @param javaClassName the name of the Java class for this resource class.
+     * @param handlerClassName the name of the handler class for this resource class.
      * @param dbTable the database table for this resource class.
      * @param flags the flags for this resource class.
      */
-    public ResourceClass(String name, String javaClassName, String dbTable, int flags)
+    public ResourceClass(String name, String javaClassName, String handlerClassName, String dbTable, int flags)
     {
         super(name, flags);
         setJavaClassName(javaClassName);
+        setHandlerClassName(handlerClassName);
         setDbTable(dbTable);
     }
     
@@ -167,6 +170,16 @@ public class ResourceClass
     }
     
     /**
+     * Sets the handler class name for this resource class.
+     * 
+     * @param handlerClassName the handler class name.
+     */
+    public String getHandlerClassName()
+    {
+        return handlerClassName;
+    }
+
+    /**
      * Returns the attributes of this resource class.
      * 
      * @return the attributes of this resource class.
@@ -232,7 +245,10 @@ public class ResourceClass
     public List getConcreteImplAttributes()
     {
         List all = getAllAttributes();
-        all.removeAll(getImplParentClass().getAllAttributes());
+        if(getImplParentClass() != null)
+        {
+            all.removeAll(getImplParentClass().getAllAttributes());
+        }
         List result = new ArrayList();
         for(Iterator i = all.iterator(); i.hasNext();)
         {
@@ -349,7 +365,8 @@ public class ResourceClass
         {
             return (ResourceClass)parentClasses.values().toArray()[0];
         }
-        throw new IllegalStateException("primary wrapper generation not supported");
+
+        return null;
     }
     
     /**
@@ -401,6 +418,16 @@ public class ResourceClass
     public void setDbTable(String dbTable)
     {
         this.dbTable = dbTable;
+    }
+    
+    /**
+     * Sets the handler class name for this resource class.
+     * 
+     * @param handlerClassName the handler class name.
+     */
+    public void setHandlerClassName(String handlerClassName)
+    {
+        this.handlerClassName = handlerClassName;
     }
 
     /**

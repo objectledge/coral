@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jmock.Mock;
+import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.templating.Template;
@@ -44,7 +45,7 @@ import org.objectledge.utils.LedgeTestCase;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponentTest.java,v 1.6 2004-05-28 10:04:20 fil Exp $
+ * @version $Id: GeneratorComponentTest.java,v 1.7 2004-07-08 13:48:21 rafal Exp $
  */
 public class GeneratorComponentTest
     extends LedgeTestCase
@@ -68,6 +69,10 @@ public class GeneratorComponentTest
     private Reader reader1;
     private Mock mockReader2;
     private Reader reader2;
+    private Mock mockResourceClass;
+    private ResourceClass resourceClass;
+    private Mock mockImportTool;
+    private ImportTool importTool;
     
     private FileSystem testFileSystem; 
 
@@ -92,6 +97,11 @@ public class GeneratorComponentTest
         reader1 = (Reader)mockReader1.proxy();
         mockReader2 = mock(Reader.class, "mockReader2");
         reader2 = (Reader)mockReader2.proxy();
+        
+        mockImportTool = mock(ImportTool.class);
+        importTool = (ImportTool)mockImportTool.proxy();
+        mockResourceClass = mock(ResourceClass.class);
+        resourceClass = (ResourceClass)mockResourceClass.proxy();
         
         mockFileSystem.stubs().method("exists").with(eq("LICENSE.txt")).will(returnValue(true));
         mockFileSystem.stubs().method("read").with(eq("LICENSE.txt"),eq("UTF-8")).will(returnValue("//license"));
@@ -260,6 +270,16 @@ public class GeneratorComponentTest
         assertTrue(generatorComponent.matches("org.objectledge.coral.test.sub", prefices));
         assertFalse(generatorComponent.matches("org.objectledge.coral.testother", prefices));
         assertFalse(generatorComponent.matches("org.objectledge.coral.other", prefices));
+    }
+    
+    public void testResolvePrimaryParentClass()
+    {
+        mockResourceClass.expects(once()).method("getHandlerClassName").will(returnValue("org.objectledge.datatypes.GenericResourceHandler"));
+        mockImportTool.expects(once()).method("add").with(eq("org.objectledge.datatypes.GenericResource")).isVoid();
+        assertEquals("GenericResource", generatorComponent.resolvePrimaryParentClass(resourceClass, importTool));
+        mockResourceClass.expects(once()).method("getHandlerClassName").will(returnValue("org.objectledge.datatypes.PersistentResourceHandler"));
+        mockImportTool.expects(once()).method("add").with(eq("org.objectledge.datatypes.PersistentResource")).isVoid();
+        assertEquals("PersistentResource", generatorComponent.resolvePrimaryParentClass(resourceClass, importTool));
     }
 
     // implementation ///////////////////////////////////////////////////////////////////////////

@@ -43,7 +43,9 @@ $imports.add("org.jcontainer.dna.Logger")##
 $imports.add("java.util.Map")##
 $imports.add("java.util.HashMap")##
 ##
+#if($class.implParentClass)
 $imports.add($class.implParentClass.getFQImplClassName())##
+#end
 #foreach($attr in $attributes)
 #if(!$attr.primitive)
 $imports.add($attr.getFQJavaType())##
@@ -69,7 +71,7 @@ $imports##
  * @author Coral Maven plugin
  */
 public class ${class.implClassName}
-    extends ${class.implParentClass.implClassName}
+    extends ${implParentClass}
     implements ${class.interfaceClassName}
 {
 #if($attributes.size() > 0)
