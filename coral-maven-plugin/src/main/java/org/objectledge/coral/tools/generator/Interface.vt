@@ -1,0 +1,106 @@
+#*
+ * Objects in context: 
+ * $class: ResourceClass
+ * $importGroups: List of List of String
+ * $custom: String
+ * 
+ * Import prequisites:
+ * org.objectledge.coral.store.Resource
+ * 
+ *###
+package $class.packageName;
+
+#if($importsGroups.size() > 0)
+#foreach($importGroup in $importGroups)
+#if($importGroups.size() > 0)
+#foreach($import in $importGroup)
+import ${import};
+#end
+
+#end
+#end
+#end
+/**
+ * Defines the accessor methods of <code>$class.name</code> Coral resource class.
+ *
+ * @author Coral Maven plugin
+ */
+public interface ${class.interfaceClassName}
+#if($class.declaredParentClasses.size() > 0)
+    extends Resource, #foreach($parent in $class.declaredParentClasses)${parent.interfaceClassName}#if($velocityCount != $class.declaredParentClasses.size()), #end#end
+
+#else
+    extends Resource
+#end
+{
+    // constants /////////////////////////////////////////////////////////////
+
+    /** The name of the ARL resource class. */    
+    public static final String CLASS_NAME = "${class.name}";
+#if($class.declaredAttributes.size() > 0)
+
+    // public interface //////////////////////////////////////////////////////
+#foreach($attr in $class.declaredAttributes)
+#if($attr.primitive)
+
+    /**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @return the value of the the <code>${attr.name}</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public ${attr.javaType} get${attr.javaName}();
+#if(!$attr.readonly)
+
+    /**
+     * Sets the value of the <code>${attr.name}</code> attribute.
+     *
+     * @param value the value of the <code>${attr.name}</code> attribute.
+     */
+    public void set${attr.javaName}($attr.javaType value);
+#if(!$attr.required)
+
+    /**
+     * Removes the value of the <code>${attr.name}</code> attribute.
+     */
+    public void unset${attr.javaName}();
+#end ## !$attr.required
+#end ## !$attr.readonly
+#else ## !$attr.java_primitive
+
+    /**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @return the value of the the <code>${attr.name}</code> attribute.
+     */
+    public $attr.javaType get${attr.javaName}();
+#if(!$attr.readonly)
+#if(!$attr.required)
+
+    /**
+     * Sets the value of the <code>${attr.name}</code> attribute.
+     *
+     * @param value the value of the <code>${attr.name}</code> attribute,
+     *        or <code>null</code> to remove value.
+     */
+    public void set${attr.javaName}(${attr.javaType} value);   
+#else ## $attr.required
+
+    /**
+     * Sets the value of the <code>${attr.name}</code> attribute.
+     *
+     * @param value the value of the <code>${attr.name}</code> attribute.
+     * @throws ValueRequiredException if you attempt to set a <code>null</code> 
+     *         value.
+     */
+    public void set${attr.javaName}($attr.javaType value)
+        throws ValueRequiredException;
+#end ## $attr.required
+#end ## !$attr.readonly   
+#end ## !$attr.java_primitive
+#end ## #foreach $attr
+#end ## $attributes.size() > 0
+
+    // @custom methods ///////////////////////////////////////////////////////
+$!{custom}}
