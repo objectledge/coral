@@ -37,66 +37,10 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractEntityTestCase.java,v 1.1 2004-02-24 13:39:15 fil Exp $
+ * @version $Id: AbstractEntityTest.java,v 1.1 2004-02-24 14:39:24 fil Exp $
  */
-public class AbstractEntityTestCase extends MockObjectTestCase
+public class AbstractEntityTest extends MockObjectTestCase
 {
-    private static class BlueEntity
-        extends AbstractEntity
-    {
-        private static String[] KEY_COLUMNS = { "blue_entity_id" };
-        
-        private static String TABLE = "blue_entity";
-     
-        public BlueEntity(Persistence persistence)
-        {
-            super(persistence);
-        }
-
-        public BlueEntity(Persistence persistence, String name)
-        {
-            super(persistence, name);
-        }
-        
-        public String[] getKeyColumns()
-        {
-            return KEY_COLUMNS;
-        }
-
-        public String getTable()
-        {
-            return TABLE;
-        }
-    }
-
-    private static class RedEntity
-        extends AbstractEntity
-    {
-        private static String[] KEY_COLUMNS = { "red_entity_id" };
-        
-        private static String TABLE = "red_entity";
-     
-        public RedEntity(Persistence persistence)
-        {
-            super(persistence);
-        }
-
-        public RedEntity(Persistence persistence, String name)
-        {
-            super(persistence, name);
-        }
-        
-        public String[] getKeyColumns()
-        {
-            return KEY_COLUMNS;
-        }
-
-        public String getTable()
-        {
-            return TABLE;
-        }
-    }
-    
     private Mock mockPersistence;
     
     private Mock mockInputRecord;
@@ -187,6 +131,8 @@ public class AbstractEntityTestCase extends MockObjectTestCase
         mockOutputRecord.expect(once()).method("setLong").with(eq("blue_entity_id"), eq(-1L));
         mockOutputRecord.expect(once()).method("setString").with(eq("name"), eq("<blue 1>"));
         blue.getData((OutputRecord)mockOutputRecord.proxy());
+        blue.getKeyColumns();
+        blue.getTable();
     }
     
     public void testLoading() throws PersistenceException
