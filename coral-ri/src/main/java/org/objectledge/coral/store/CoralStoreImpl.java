@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.9 2004-03-12 09:38:39 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.10 2004-03-16 08:50:00 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -141,37 +141,14 @@ public class CoralStoreImpl
             if(rs == null)
             {
                 Connection conn = null;
-                boolean shouldCommit = false;
                 try
                 {
-                    shouldCommit = persistence.getDatabase().beginTransaction();
                     conn = persistence.getDatabase().getConnection();
                     List list = persistence.load(" true ORDER BY resource_id", resourceFactory);
                     rs = instantiate(list, conn);
-                    persistence.getDatabase().commitTransaction(shouldCommit);
-                }
-                catch(BackendException ex)
-                {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
-                    throw ex;
                 }
                 catch(Exception e)
                 {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
                     throw new BackendException("failed to load resource objects", e);
                 }
                 finally
@@ -201,10 +178,8 @@ public class CoralStoreImpl
             if(rs == null)
             {
                 Connection conn = null;
-                boolean shouldCommit = false;
                 try
                 {
-                    shouldCommit = persistence.getDatabase().beginTransaction();
                     conn = persistence.getDatabase().getConnection();
                     List list;
                     if(parent != null)
@@ -219,30 +194,9 @@ public class CoralStoreImpl
                     }
                     
                     rs = instantiate(list, conn);
-                    persistence.getDatabase().commitTransaction(shouldCommit);
-                }
-                catch(BackendException ex)
-                {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
-                    throw ex;
                 }
                 catch(Exception e)
                 {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
                     throw new BackendException("failed to load resource objects", e);
                 }
                 finally
@@ -275,10 +229,8 @@ public class CoralStoreImpl
             if(res == null)
             {
                 Connection conn = null;
-                boolean shouldCommit = false;
                 try
                 {
-                    shouldCommit = persistence.getDatabase().beginTransaction();
                     conn = persistence.getDatabase().getConnection();
                     res = (Resource)persistence.load(id,resourceFactory);
                     if(res != null)
@@ -290,42 +242,9 @@ public class CoralStoreImpl
                     {
                         throw new EntityDoesNotExistException("resource #"+id+" does not exist");
                     }
-                    persistence.getDatabase().commitTransaction(shouldCommit);
-                }
-                catch(BackendException ex)
-                {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
-                    throw ex;
-                }
-                catch(EntityDoesNotExistException ex)
-                {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
-                    throw ex;
                 }
                 catch(Exception e)
                 {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
                     throw new BackendException("failed to load resource #"+id, e);
                 }
                 finally
@@ -352,38 +271,15 @@ public class CoralStoreImpl
             if(rs == null)
             {
                 Connection conn = null;
-                boolean shouldCommit = false;
                 try
                 {
-                    shouldCommit = persistence.getDatabase().beginTransaction();
                     conn = persistence.getDatabase().getConnection();
                     List list = persistence.load("name = '"+name+"'",
                                                      resourceFactory);
                     rs = instantiate(list, conn);
-                    persistence.getDatabase().commitTransaction(shouldCommit);
-                }
-                catch(BackendException ex)
-                {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
-                    throw ex;
                 }
                 catch(Exception e)
                 {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
                     throw new BackendException("failed to load resource objects", e);
                 }
                 finally
@@ -443,39 +339,16 @@ public class CoralStoreImpl
             if(rs == null)
             {
                 Connection conn = null;
-                boolean shouldCommit = false;
                 try
                 {
-                    shouldCommit = persistence.getDatabase().beginTransaction();
                     conn = persistence.getDatabase().getConnection();
                     List list = persistence.load("parent = "+parent.getId()+
                                                      " AND name = '"+name+"'",
                                                      resourceFactory);
                     rs = instantiate(list, conn);
-                    persistence.getDatabase().commitTransaction(shouldCommit);
-                }
-                catch(BackendException ex)
-                {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
-                    throw ex;
                 }
                 catch(Exception e)
                 {
-                    try
-                    {
-                        persistence.getDatabase().rollbackTransaction(shouldCommit);
-                    }
-                    catch(SQLException ee)
-                    {
-                        log.error("rollback failed", ee);
-                    }
                     throw new BackendException("failed to load resource objects", e);
                 }
                 finally
