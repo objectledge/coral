@@ -40,6 +40,7 @@ import org.objectledge.coral.schema.CoralSchemaImpl;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.CoralSecurityImpl;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.CoralStoreImpl;
 import org.objectledge.database.Database;
@@ -52,7 +53,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.6 2004-03-11 17:35:04 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.7 2004-03-16 13:43:26 fil Exp $
  */
 public class CoralCoreImpl
     implements CoralCore

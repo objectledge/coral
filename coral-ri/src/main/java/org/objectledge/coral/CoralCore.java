@@ -33,13 +33,14 @@ import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.CoralStore;
 
 /**
  * A bridge between interdependent Coral componentes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCore.java,v 1.4 2004-03-08 08:33:04 fil Exp $
+ * @version $Id: CoralCore.java,v 1.5 2004-03-16 13:43:26 fil Exp $
  */
 public interface CoralCore
 {

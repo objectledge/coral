@@ -37,6 +37,7 @@ import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.context.Context;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.coral.session.CoralSession;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
@@ -47,7 +48,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImplTest.java,v 1.4 2004-03-12 09:14:43 fil Exp $
+ * @version $Id: CoralCoreImplTest.java,v 1.5 2004-03-16 13:43:26 fil Exp $
  */
 public class CoralCoreImplTest extends MockObjectTestCase
 {
