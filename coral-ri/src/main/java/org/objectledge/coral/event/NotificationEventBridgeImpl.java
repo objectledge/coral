@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -37,11 +38,9 @@ import org.objectledge.coral.store.ResourceOwnershipImpl;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.PersistentFactory;
-import org.objectledge.database.persistence.PicoPersistentFactory;
 import org.objectledge.event.EventWhiteboard;
 import org.objectledge.notification.Notification;
 import org.objectledge.notification.NotificationReceiver;
-import org.picocontainer.PicoContainer;
 
 /**
  * The bridge between Notification service and ARLEventService
@@ -62,8 +61,8 @@ public class NotificationEventBridgeImpl
     /** The Persistence subsystem. */
     private Persistence persistence;
     
-    /** The dependency container for factories. */
-    private PicoContainer dependencyContainer;
+    /** The component instantiator. */
+    private Instantiator instantiator;
     
     /** The CoralSchema. */
     private CoralSchema coralSchema;
@@ -109,30 +108,29 @@ public class NotificationEventBridgeImpl
      * 
      * @param persistence the Peristence substem.
      * @param notification the Notification subsystem.
-     * @param dependencyContainer the container of dependencies for the factories.
+     * @param instantiator the component instantiator.
      * @param coralSchema the CoralSchema.
      * @param coralSecurity the CoralSecurity.
      * @param coralStore the CoralStore.
      * @param log the logger.
      */
     public NotificationEventBridgeImpl(Persistence persistence, Notification notification, 
-        PicoContainer dependencyContainer, CoralSchema coralSchema, CoralSecurity coralSecurity,
+        Instantiator instantiator, CoralSchema coralSchema, CoralSecurity coralSecurity,
         CoralStore coralStore, Logger log)
     {
         this.persistence = persistence;   
         this.notification = notification;
-        this.dependencyContainer = dependencyContainer;
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
         this.coralStore = coralStore;
         this.log = log;
         
-        this.attributeDefinitionFactory = new PicoPersistentFactory(dependencyContainer, 
-            AttributeDefinitionImpl.class); 
-        this.roleAssignmentFactory = 
-            new PicoPersistentFactory(dependencyContainer, RoleAssignmentImpl.class);
-        this.permissionAssignmentFactory = new PicoPersistentFactory(dependencyContainer, 
-            PermissionAssignmentImpl.class);    
+        this.attributeDefinitionFactory = instantiator.
+            getPersistentFactory(AttributeDefinitionImpl.class); 
+        this.roleAssignmentFactory = instantiator.
+            getPersistentFactory(RoleAssignmentImpl.class);
+        this.permissionAssignmentFactory = instantiator.
+            getPersistentFactory(PermissionAssignmentImpl.class);    
         // TODO make this configurable 
         channel = CHANNEL_DEFAULT;
     }

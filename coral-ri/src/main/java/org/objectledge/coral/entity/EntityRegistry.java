@@ -13,13 +13,12 @@ import org.jcontainer.dna.ConfigurationException;
 import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
-import org.objectledge.database.persistence.PicoPersistentFactory;
-import org.picocontainer.PicoContainer;
 
 /**
  * This class manages 'by id' 'by name' and 'all' registires for a specific
@@ -70,14 +69,14 @@ public class EntityRegistry
      * @param persistence the Persistence subsystem.
      * @param cacheFactory the CacheFactory.
      * @param database the Database to operate on.
-     * @param dependencyContainer the container of object dependencies.
+     * @param instantiator the component instantiator.
      * @param log the Logger to use.
      * @param kind the semantic name of the entity type.
      * @param type the entity implementation class.
      * @throws ConfigurationException if the cache is not configured properly.
      */
     public EntityRegistry(Persistence persistence, CacheFactory cacheFactory, Database database, 
-        PicoContainer dependencyContainer, Logger log, 
+        Instantiator instantiator, Logger log, 
         String kind, final Class type)
         throws ConfigurationException
     {
@@ -99,7 +98,7 @@ public class EntityRegistry
                 " does not implement Persistent intreface");
         }
         
-        this.factory = new PicoPersistentFactory(dependencyContainer, type);
+        this.factory = instantiator.getPersistentFactory(type);
 
         Class cl = type;
         if(AbstractEntity.class.isAssignableFrom(type))

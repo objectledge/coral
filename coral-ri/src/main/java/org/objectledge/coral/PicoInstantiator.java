@@ -27,14 +27,17 @@
 // 
 package org.objectledge.coral;
 
+import org.objectledge.database.persistence.PersistentFactory;
+import org.objectledge.database.persistence.PicoPersistentFactory;
 import org.objectledge.pico.customization.CustomizingConstructorComponentAdapter;
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.PicoContainer;
 
 /**
+ * An implemention of the Instantiator interface using the PicoContainer.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PicoInstantiator.java,v 1.1 2004-02-26 10:33:23 fil Exp $
+ * @version $Id: PicoInstantiator.java,v 1.2 2004-03-05 10:18:17 fil Exp $
  */
 public class PicoInstantiator 
     implements Instantiator
@@ -73,5 +76,13 @@ public class PicoInstantiator
         ComponentAdapter adapter = new CustomizingConstructorComponentAdapter(clazz, clazz, null);
         adapter.setContainer(container);
         return adapter.getComponentInstance(); 
+    }
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public PersistentFactory getPersistentFactory(Class clazz)
+    {
+        return new PicoPersistentFactory(container, clazz);
     }
 }

@@ -15,6 +15,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.PermissionAssociationChangeListener;
@@ -50,14 +51,12 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
-import org.objectledge.database.persistence.PicoPersistentFactory;
-import org.picocontainer.PicoContainer;
 
 /**
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.3 2004-03-05 08:24:27 fil Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.4 2004-03-05 10:18:17 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -80,9 +79,6 @@ public class CoralRegistryImpl
     /** The {@link Database}. */
     private Database database;
 
-    /** Dependencies to be used by entity factories. */
-    private PicoContainer dependencyContainer;
-    
     /** The logger. */
     private Logger log;
     
@@ -95,33 +91,26 @@ public class CoralRegistryImpl
     // Factory classes
 
     /** The <code>PersistentFactory</code> for <code>ResourceClassInheritance</code> objects. */
-    private PersistentFactory resourceClassInheritanceFactory =
-        new PicoPersistentFactory(dependencyContainer, ResourceClassInheritanceImpl.class); 
+    private PersistentFactory resourceClassInheritanceFactory ; 
 
     /** The <code>PersistentFactory</code> for <code>AttributeDefinition</code> objects. */
-    private PersistentFactory attributeDefinitionFactory =
-        new PicoPersistentFactory(dependencyContainer, AttributeDefinitionImpl.class); 
+    private PersistentFactory attributeDefinitionFactory; 
 
     /** The <code>PersistentFactory</code> for <code>RoleImplication</code> objects. */
-    private PersistentFactory roleImplicationFactory = 
-        new PicoPersistentFactory(dependencyContainer, RoleImplicationImpl.class); 
+    private PersistentFactory roleImplicationFactory; 
 
     /** The <code>PersistentFactory</code> for <code>RoleAssignment</code> objects. */
-    private PersistentFactory roleAssignmentFactory =
-        new PicoPersistentFactory(dependencyContainer, RoleAssignmentImpl.class);      
+    private PersistentFactory roleAssignmentFactory;      
 
     /** The <code>PersistentFactory</code> for <code>PermissionAssociation</code> objects. */
-    private PersistentFactory permissionAssociationFactory = 
-        new PicoPersistentFactory(dependencyContainer, PermissionAssociationImpl.class);      
+    private PersistentFactory permissionAssociationFactory;      
 
     /** The <code>PersistentFactory</code> for <code>PermissionAssignment</code> objects. */
-    private PersistentFactory permissionAssignmentFactory = 
-        new PicoPersistentFactory(dependencyContainer, PermissionAssignmentImpl.class);      
+    private PersistentFactory permissionAssignmentFactory;      
 
     /** The <code>PersistentFactory</code> for <code>Subject</code> objects. Used by 
      *  {@link #getSubordinates(Subject)} method only.*/
-    private PersistentFactory subjectFactory = 
-        new PicoPersistentFactory(dependencyContainer, SubjectImpl.class);      
+    private PersistentFactory subjectFactory;      
 
     // caches
 
@@ -201,12 +190,13 @@ public class CoralRegistryImpl
      * @param cacheFactory the cache factory.
      * @param coralEventHub the event hub.
      * @param coral the component hub.
+     * @param instantiator component instantiator.
      * @param log the logger.
      * @throws ConfigurationException if the configuration is invalid.
      */
     public CoralRegistryImpl(Database database, Persistence persistence, 
-        CacheFactory cacheFactory, CoralEventHub coralEventHub, 
-        CoralCore coral, Logger log)
+        CacheFactory cacheFactory, CoralEventHub coralEventHub, CoralCore coral, 
+        Instantiator instantiator, Logger log)
         throws ConfigurationException
     {
         this.database = database;
@@ -216,7 +206,8 @@ public class CoralRegistryImpl
         this.log = log;
         
         setupCaches();
-        setupRegistries(cacheFactory);
+        setupFactories(instantiator);
+        setupRegistries(cacheFactory, instantiator);
         setupListener();
     }
 
@@ -239,25 +230,49 @@ public class CoralRegistryImpl
         permissionAssignmentByRole = new WeakHashMap();
         permissionAssignmentByResource = new WeakHashMap();
     }
+
+    private void setupFactories(Instantiator instantiator)
+    {
+        resourceClassInheritanceFactory = 
+            instantiator.getPersistentFactory(ResourceClassInheritanceImpl.class); 
+
+        attributeDefinitionFactory =
+            instantiator.getPersistentFactory(AttributeDefinitionImpl.class); 
+
+        roleImplicationFactory = 
+            instantiator.getPersistentFactory(RoleImplicationImpl.class); 
+
+        roleAssignmentFactory =
+            instantiator.getPersistentFactory(RoleAssignmentImpl.class);      
+
+        permissionAssociationFactory = 
+            instantiator.getPersistentFactory(PermissionAssociationImpl.class);      
+
+        permissionAssignmentFactory = 
+            instantiator.getPersistentFactory(PermissionAssignmentImpl.class);      
+
+        subjectFactory = 
+            instantiator.getPersistentFactory(SubjectImpl.class);      
+    }
     
     /**
      * Setup the entity registry.
      */
-    private void setupRegistries(CacheFactory cacheFactory)
+    private void setupRegistries(CacheFactory cacheFactory, Instantiator instantiator)
         throws ConfigurationException
     {
         resourceClassRegistry = new EntityRegistry(persistence, cacheFactory, database, 
-            dependencyContainer, log, "resource class", ResourceClassImpl.class);
+            instantiator, log, "resource class", ResourceClassImpl.class);
         attributeClassRegistry = new EntityRegistry(persistence, cacheFactory, database, 
-            dependencyContainer, log, "attribute class", AttributeClassImpl.class);
+            instantiator, log, "attribute class", AttributeClassImpl.class);
         attributeDefinitionRegistry = new EntityRegistry(persistence, cacheFactory, database, 
-            dependencyContainer, log, "attribute definition", AttributeDefinitionImpl.class);
+            instantiator, log, "attribute definition", AttributeDefinitionImpl.class);
         permissionRegistry = new EntityRegistry(persistence, cacheFactory, database, 
-            dependencyContainer, log, "permission", PermissionImpl.class);
+            instantiator, log, "permission", PermissionImpl.class);
         roleRegistry = new EntityRegistry(persistence, cacheFactory, database, 
-            dependencyContainer, log, "role", RoleImpl.class);
+            instantiator, log, "role", RoleImpl.class);
         subjectRegistry = new EntityRegistry(persistence, cacheFactory, database, 
-            dependencyContainer, log,  "subject", SubjectImpl.class);
+            instantiator, log,  "subject", SubjectImpl.class);
     }   
 
     /**
