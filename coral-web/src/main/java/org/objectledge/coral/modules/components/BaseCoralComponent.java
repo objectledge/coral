@@ -55,13 +55,16 @@ public abstract class BaseCoralComponent
     }    
 
     /**
-     * To be implemented in particular views.
+     * To be implemented in particular components.
+     * 
      * @param context the context.
      * @param parameters the parameters
      * @param templatingContext the templating context.
      * @param mvcContext the mvc context.
-     * @param coralSession TODO
+     * @param coralSession the coral session.
      */    
-    public abstract void process(Context context, Parameters parameters, TemplatingContext templatingContext, MVCContext mvcContext, CoralSession coralSession)
+    public abstract void process(Context context, Parameters parameters, 
+        						 TemplatingContext templatingContext,
+        						 MVCContext mvcContext, CoralSession coralSession)
         throws ProcessingException;    
 }
