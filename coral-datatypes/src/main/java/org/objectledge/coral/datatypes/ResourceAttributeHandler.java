@@ -1,10 +1,6 @@
 package org.objectledge.coral.datatypes;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
@@ -19,10 +15,10 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link Resource} references.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceAttributeHandler.java,v 1.4 2005-01-18 10:08:41 rafal Exp $
+ * @version $Id: ResourceAttributeHandler.java,v 1.5 2005-01-18 12:39:12 rafal Exp $
  */
 public class ResourceAttributeHandler
-    extends AttributeHandlerBase
+    extends EntityAttributeHandler
 {
     /**
      * The constructor.
@@ -40,110 +36,26 @@ public class ResourceAttributeHandler
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }
     
-    // AttributeHandler interface ////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc}
-     */
-    public long create(Object value, Connection conn)
-        throws SQLException
-    {
-        long id = database.getNextId(getTable());
-        Statement stmt = conn.createStatement();
-        stmt.execute(
-            "INSERT INTO "+getTable()+"(data_key, ref) VALUES ("+
-            id+", "+((Resource)value).getIdString()+")"
-        );
-        return id;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object retrieve(long id, Connection conn)
-        throws EntityDoesNotExistException, SQLException
-    {
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT ref FROM "+getTable()+" WHERE data_key = "+id
-        );
-        if(!rs.next())
-        {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
-                getTable());
-        }
-        return coralStore.getResource(rs.getLong(1));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void update(long id, Object value, Connection conn)
-        throws EntityDoesNotExistException, SQLException
-    {
-        Statement stmt = conn.createStatement();
-        checkExists(id, stmt);
-        stmt.execute(
-            "UPDATE "+getTable()+" SET ref = "+
-            ((Resource)value).getIdString()+
-            " WHERE data_key = "+id
-        );
-    }
-
-    // meta information //////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
     
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} 
      */
-    public int getSupportedConditions()
+    protected Entity instantiate(long id)
+        throws EntityDoesNotExistException
     {
-        return CONDITION_EQUALITY;
+        return coralStore.getResource(id);
     }
-
-    // protected /////////////////////////////////////////////////////////////
-
+    
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} 
      */
-    protected Object fromString(String string)
+    protected Entity[] instantiate(String name)
     {
-        if(Character.isDigit(string.charAt(0)))
-        {
-            long id = Long.parseLong(string);
-            try
-            {
-                return coralStore.getResource(id);
-            }
-            catch(EntityDoesNotExistException e)
-            {
-                throw new IllegalArgumentException("resource #"+id+" not found");
-            }
-        }
-        else
-        {
-            Resource[] res = coralStore.getResourceByPath(string);
-            if(res.length == 0)
-            {
-                throw new IllegalArgumentException("resource '"+string+"' not found");
-            }
-            if(res.length > 1)
-            {
-                throw new IllegalArgumentException("resource name '"+string+"' is ambigous");
-            }
-            return res[0];
-        }
+        return coralStore.getResourceByPath(name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String toPrintableString(Object value)
-    {
-        checkValue(value);
-        return ((Resource)value).getPath();
-    }
-
-    // value domain //////////////////////////////////////////////////////////
+    // value domain /////////////////////////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc}
@@ -198,7 +110,7 @@ public class ResourceAttributeHandler
         }
     }
 
-    // integrity constraints ////////////////////////////////////////////////    
+    // integrity constraints ////////////////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc}

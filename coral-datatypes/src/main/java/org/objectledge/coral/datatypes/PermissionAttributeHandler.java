@@ -1,15 +1,10 @@
 package org.objectledge.coral.datatypes;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
-import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
 
@@ -17,10 +12,10 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link Permission} references.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionAttributeHandler.java,v 1.3 2005-01-18 10:08:40 rafal Exp $
+ * @version $Id: PermissionAttributeHandler.java,v 1.4 2005-01-18 12:39:12 rafal Exp $
  */
 public class PermissionAttributeHandler
-    extends AttributeHandlerBase
+    extends EntityAttributeHandler
 {
     /**
      * The constructor.
@@ -39,98 +34,19 @@ public class PermissionAttributeHandler
     }
     
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} 
      */
-    public long create(Object value, Connection conn)
-        throws SQLException
+    protected Entity instantiate(long id)
+        throws EntityDoesNotExistException
     {
-        long id = database.getNextId(getTable());
-        Statement stmt = conn.createStatement();
-        stmt.execute(
-            "INSERT INTO "+getTable()+"(data_key, ref) VALUES ("+
-            id+", "+((Permission)value).getIdString()+")"
-        );
-        return id;
+        return coralSecurity.getPermission(id);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object retrieve(long id, Connection conn)
-        throws EntityDoesNotExistException, SQLException
-    {
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT ref FROM "+getTable()+" WHERE data_key = "+id
-        );
-        if(!rs.next())
-        {
-            throw new EntityDoesNotExistException("Item #"+id+
-                                                  " does not exist in table "+
-                                                  getTable());
-        }
-        return coralSecurity.getPermission(rs.getLong(1));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void update(long id, Object value, Connection conn)
-        throws EntityDoesNotExistException, SQLException
-    {
-        Statement stmt = conn.createStatement();
-        checkExists(id, stmt);
-        stmt.execute(
-            "UPDATE "+getTable()+" SET ref = "+
-            ((Permission)value).getIdString()+
-            " WHERE data_key = "+id
-        );
-    }
-
-    // meta information //////////////////////////////////////////////////////
     
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} 
      */
-    public int getSupportedConditions()
+    protected Entity[] instantiate(String name)
     {
-        return CONDITION_EQUALITY;
-    }
-
-    // protected /////////////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc}
-     */
-    protected Object fromString(String string)
-    {
-        if(Character.isDigit(string.charAt(0)))
-        {
-            long id = Long.parseLong(string);
-            try
-            {
-                return coralSecurity.getPermission(id);
-            }
-            catch(EntityDoesNotExistException e)
-            {
-                throw new IllegalArgumentException("permission #"+id+
-                                                   " not found");
-            }
-        }
-        else
-        {
-            Permission[] permissions = coralSecurity.getPermission(string);
-            if(permissions.length == 0)
-            {
-                throw new IllegalArgumentException("permission '"+string+
-                                                   "' not found");
-            }
-            if(permissions.length > 1)
-            {
-                throw new IllegalArgumentException("permission name '"+string+
-                                                   "' is ambigous");
-            }
-            return permissions[0];
-        }
+        return coralSecurity.getPermission(name);
     }
 }
