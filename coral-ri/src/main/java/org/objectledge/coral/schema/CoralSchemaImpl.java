@@ -22,7 +22,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.2 2004-03-02 12:20:21 fil Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.3 2004-03-02 12:22:16 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -283,6 +283,8 @@ public class CoralSchemaImpl
 
     /**
      * Changes the domain of the attribute.
+     *
+     * TODO check if existing attribute values meet the requested domain constraint.
      *
      * @param attribute the attribute to modify.
      * @param domain the new domain of the attirbute.
