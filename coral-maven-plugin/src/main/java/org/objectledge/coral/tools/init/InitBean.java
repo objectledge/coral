@@ -33,7 +33,7 @@ import javax.sql.DataSource;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: InitBean.java,v 1.1 2004-04-23 13:04:00 fil Exp $
+ * @version $Id: InitBean.java,v 1.2 2004-04-29 12:19:04 fil Exp $
  */
 public class InitBean
 {
@@ -44,7 +44,7 @@ public class InitBean
         this.dataSource = dataSource;
     }
     
-    public void execute()
+    public void run()
         throws Exception
     {
         InitComponent initComponent = new InitComponent(dataSource);

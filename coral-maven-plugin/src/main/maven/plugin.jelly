@@ -39,12 +39,10 @@
 
     <define:jellybean
        name="generator"
-       method="execute"
        className="org.objectledge.coral.tools.generator.GeneratorBean"/>
 
     <define:jellybean
        name="init"
-       method="execute"
        className="org.objectledge.coral.tools.init.InitBean"/>
        
     <!-- // Embedding Coral in Maven //////////////////////////////////////////////////////// -->

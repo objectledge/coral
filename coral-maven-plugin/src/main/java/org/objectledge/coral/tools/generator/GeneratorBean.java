@@ -40,7 +40,7 @@ import org.objectledge.templating.velocity.VelocityTemplating;
  * An interface between GeneratorComponent and Maven.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorBean.java,v 1.6 2004-04-01 08:04:19 fil Exp $
+ * @version $Id: GeneratorBean.java,v 1.7 2004-04-29 12:19:05 fil Exp $
  */
 public class GeneratorBean
 {
@@ -65,7 +65,7 @@ public class GeneratorBean
      * 
      * @throws Exception if the generation failed for some reason.
      */
-    public void execute()
+    public void run()
         throws Exception
     {
         Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
