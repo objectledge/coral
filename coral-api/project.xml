@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.1 2004-02-19 10:55:27 fil Exp $ -->
+<!-- $Id: project.xml,v 1.2 2004-02-19 15:27:23 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -49,6 +49,12 @@
   
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
+    <unitTestSourceDirectory>src/test/java</unitTestSourceDirectory>
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+      </includes>
+    </unitTest>
   </build>
   
   <dependencies>
