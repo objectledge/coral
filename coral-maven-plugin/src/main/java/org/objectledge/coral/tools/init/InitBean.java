@@ -29,25 +29,65 @@ package org.objectledge.coral.tools.init;
 
 import javax.sql.DataSource;
 
+import org.objectledge.database.DatabaseUtils;
+import org.objectledge.filesystem.FileSystem;
+
 /**
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: InitBean.java,v 1.2 2004-04-29 12:19:04 fil Exp $
+ * @version $Id: InitBean.java,v 1.3 2004-04-29 12:22:11 fil Exp $
  */
 public class InitBean
 {
     private DataSource dataSource;
     
+    /**
+     * Sets the dataSource
+     * 
+     * @param dataSource the dataSource.
+     */
     public void setDataSource(DataSource dataSource)
     {
         this.dataSource = dataSource;
     }
     
+    /**
+     * Initializes the database for coral use.
+     * 
+     * @throws Exception if the initialization failed.
+     */
     public void run()
         throws Exception
     {
-        InitComponent initComponent = new InitComponent(dataSource);
-        initComponent.execute();
+        FileSystem fs = FileSystem.getClasspathFileSystem();
+        if(!DatabaseUtils.hasTable(dataSource, "ledge_id_table"))
+        {
+            DatabaseUtils.runScript(dataSource, 
+                fs.getReader("sql/database/IdGenerator.sql", "UTF-8"));   
+        }
+        if(!DatabaseUtils.hasTable(dataSource, "ledge_parameters"))
+        {
+            DatabaseUtils.runScript(dataSource, 
+                fs.getReader("sql/parameters/db/DBParameters.sql", "UTF-8"));   
+        }
+        if(!DatabaseUtils.hasTable(dataSource, "coral_resource_class"))
+        {        
+            DatabaseUtils.runScript(dataSource, 
+                fs.getReader("sql/coral/CoralRITables.sql", "UTF-8"));   
+            DatabaseUtils.runScript(dataSource, 
+                fs.getReader("sql/coral/CoralDatatypesTables.sql", "UTF-8"));               
+        }
+        else
+        {
+            DatabaseUtils.runScript(dataSource, 
+                fs.getReader("sql/coral/CoralDatatypesCleanup.sql", "UTF-8"));               
+            DatabaseUtils.runScript(dataSource, 
+                fs.getReader("sql/coral/CoralRICleanup.sql", "UTF-8"));   
+        }
+        DatabaseUtils.runScript(dataSource, 
+            fs.getReader("sql/coral/CoralRIInitial.sql", "UTF-8"));   
+        DatabaseUtils.runScript(dataSource, 
+            fs.getReader("sql/coral/CoralDatatypesInitial.sql", "UTF-8"));        
     }
 }
