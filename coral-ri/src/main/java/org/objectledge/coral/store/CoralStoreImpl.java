@@ -42,7 +42,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.25 2005-01-25 03:12:09 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.26 2005-01-26 03:30:57 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -1510,9 +1510,11 @@ public class CoralStoreImpl
                                                 "data for "+handler.getClass().getName());
                                         data = handler.getData(conn);
                                         handlerData.put(handler.getClass(), data);
-                                        log.info("preloading resource store: done preloading handler " +
-                                            "data for "+handler.getClass().getName()+" in "+
-                                            (System.currentTimeMillis()-handlerDataTime)+"ms");
+                                        log.info("preloading resource store: done "
+                                                + "preloading handler data for "
+                                                + handler.getClass().getName() + " in "
+                                                + (System.currentTimeMillis() - handlerDataTime)
+                                                + "ms");
                                     }
                                     res = handler.retrieve(res, conn, data);
                 
