@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * A common base class for {@link QueryService} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.5 2004-08-30 07:06:06 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.6 2004-08-30 08:48:55 rafal Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery
@@ -227,7 +227,7 @@ public abstract class AbstractCoralQueryImpl
         {
             try
             {
-                rc = coral.getSchema().getResourceClass("coarl.Node");
+                rc = coral.getSchema().getResourceClass("coral.Node");
                 ad = rc.getAttribute(an);
                 if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
