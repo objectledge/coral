@@ -39,7 +39,6 @@ import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
-import org.objectledge.coral.security.SubjectImpl;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
 
