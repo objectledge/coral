@@ -29,7 +29,6 @@ package org.objectledge.coral.tools;
 
 import java.security.Principal;
 
-import org.apache.commons.jelly.DynaTag;
 import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.MissingAttributeException;
 import org.apache.commons.jelly.XMLOutput;
@@ -39,7 +38,7 @@ import org.apache.maven.jelly.tags.BaseTagSupport;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PrincipalTag.java,v 1.1 2004-04-28 14:02:11 fil Exp $
+ * @version $Id: PrincipalTag.java,v 1.2 2004-04-30 07:02:51 fil Exp $
  */
 public class PrincipalTag
     extends BaseTagSupport
@@ -69,20 +68,31 @@ public class PrincipalTag
     }
     
     /**
+     * Retruns Principal instance with the specified name.
+     * 
+     * @return Principal instance with the specified name.
+     * @throws MissingAttributeException if the name attrbiute has not been set.
+     */
+    public Principal getPrincipal()
+        throws MissingAttributeException
+    {
+        checkAttribute(name, "name");
+        return new Principal()
+        {
+            public String getName()
+            {
+                return name;
+            }
+        };
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public void doTag(XMLOutput out) 
         throws MissingAttributeException, JellyTagException
     {
-        checkAttribute(var, "var");
-        checkAttribute(name, "name");
-        final String principalName = name;
-        getContext().setVariable(var, new Principal()
-            {
-                public String getName()
-                {
-                    return principalName;
-                }
-            });
+        checkAttribute(var, "variable");
+        getContext().setVariable(var, getPrincipal());
     }
 }
