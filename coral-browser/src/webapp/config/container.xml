@@ -136,10 +136,12 @@
   <component class="org.objectledge.i18n.WebI18nToolFactory"/>
   <component class="org.objectledge.web.mvc.tools.LinkToolFactory"/>
   <component class="org.objectledge.web.mvc.components.ComponentToolFactory"/>
+  <component class="org.objectledge.web.mvc.tools.PageToolFactory"/>
   <component class="org.objectledge.templating.tools.ContextTools">
     <sequence-parameter>
       <component-parameter class-key="org.objectledge.i18n.WebI18nToolFactory"/>
       <component-parameter class-key="org.objectledge.web.mvc.tools.LinkToolFactory"/>
+      <component-parameter class-key="org.objectledge.web.mvc.tools.PageToolFactory"/>            
       <component-parameter class-key="org.objectledge.web.mvc.components.ComponentToolFactory"/>
     </sequence-parameter>
   </component>      
