@@ -488,7 +488,7 @@ static final long[] jjtoToken = {
 static final long[] jjtoSkip = {
    0x1eL, 
 };
-protected JavaCharStream input_stream;
+private JavaCharStream input_stream;
 private final int[] jjrounds = new int[6];
 private final int[] jjstateSet = new int[12];
 protected char curChar;
@@ -530,7 +530,7 @@ public void SwitchTo(int lexState)
       curLexState = lexState;
 }
 
-protected Token jjFillToken()
+private final Token jjFillToken()
 {
    Token t = Token.newToken(jjmatchedKind);
    t.kind = jjmatchedKind;
@@ -550,7 +550,7 @@ int jjround;
 int jjmatchedPos;
 int jjmatchedKind;
 
-public Token getNextToken() 
+public final Token getNextToken() 
 {
   int kind;
   Token specialToken = null;
