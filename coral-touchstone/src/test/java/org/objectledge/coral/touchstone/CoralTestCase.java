@@ -27,16 +27,20 @@
 // 
 package org.objectledge.coral.touchstone;
 
+import javax.sql.DataSource;
+
 import junit.framework.TestCase;
 
 import org.objectledge.container.LedgeContainer;
 import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.database.DatabaseUtils;
+import org.objectledge.database.ThreadDataSource;
 import org.objectledge.filesystem.FileSystem;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralTestCase.java,v 1.1 2004-03-09 14:45:50 fil Exp $
+ * @version $Id: CoralTestCase.java,v 1.2 2004-03-11 15:27:54 fil Exp $
  */
 public abstract class CoralTestCase extends TestCase
 {
@@ -49,15 +53,37 @@ public abstract class CoralTestCase extends TestCase
     public void setUp()
         throws Exception
     {
+        System.out.println("setUp");
         super.setUp();
         FileSystem fs = FileSystem.getStandardFileSystem("src/test/resources");
         container = new LedgeContainer(fs, "/config", getClass().getClassLoader()); 
         coralSessionFactory = (CoralSessionFactory)container.getContainer().
-            getComponentInstance(CoralSessionFactory.class);   
+            getComponentInstance(CoralSessionFactory.class);
+        DataSource ds = (DataSource)container.getContainer().
+            getComponentInstanceOfType(ThreadDataSource.class);
+        if(!DatabaseUtils.hasTable(ds, "ledge_id_table"))
+        {
+            DatabaseUtils.runScript(ds, fs.getReader("sql/database/IdGenerator.sql", "UTF-8"));   
+        }
+        if(!DatabaseUtils.hasTable(ds, "ledge_parameters"))
+        {
+            DatabaseUtils.runScript(ds, fs.getReader("sql/parameters/db/DBParameters.sql", "UTF-8"));   
+        }
+        if(!DatabaseUtils.hasTable(ds, "coral_resource_class"))
+        {        
+            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRITables.sql", "UTF-8"));   
+            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesTables.sql", "UTF-8"));               
+        }
+        else
+        {
+            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesCleanup.sql", "UTF-8"));               
+            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRICleanup.sql", "UTF-8"));   
+        }
     }
     
     public void tearDown()
     {
+        System.out.println("tearDown");
         container.killContainer();
     }
 }
