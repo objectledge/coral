@@ -49,7 +49,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityImplTest.java,v 1.7 2005-01-18 10:57:55 rafal Exp $
+ * @version $Id: CoralSecurityImplTest.java,v 1.8 2005-02-10 17:47:16 rafal Exp $
  */
 public class CoralSecurityImplTest 
     extends LedgeTestCase
@@ -148,6 +148,7 @@ public class CoralSecurityImplTest
     
     public void testCreation()
     {    
+        // just run setUp()
     }
     
     // subjects /////////////////////////////////////////////////////////////////////////////////

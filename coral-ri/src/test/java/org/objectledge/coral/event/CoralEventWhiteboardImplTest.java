@@ -39,7 +39,7 @@ import org.objectledge.threads.ThreadPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventWhiteboardImplTest.java,v 1.6 2004-05-28 10:04:11 fil Exp $
+ * @version $Id: CoralEventWhiteboardImplTest.java,v 1.7 2005-02-10 17:47:15 rafal Exp $
  */
 public class CoralEventWhiteboardImplTest extends CoralEventTestCase
 {
@@ -75,6 +75,7 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
     
     public void testCreation()
     {
+        // just run setUp()
     }
     
     public void testAddPermissionAssociationChangeListener()

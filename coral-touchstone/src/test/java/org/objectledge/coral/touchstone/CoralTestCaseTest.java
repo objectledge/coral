@@ -30,19 +30,22 @@ package org.objectledge.coral.touchstone;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralTestCaseTest.java,v 1.2 2004-03-11 15:28:18 fil Exp $
+ * @version $Id: CoralTestCaseTest.java,v 1.3 2005-02-10 17:47:10 rafal Exp $
  */
 public class CoralTestCaseTest extends CoralTestCase
 {
     public void testA()
     {
+        // a test
     }
 
     public void testB()
     {
+        // a test
     }
 
     public void testC()
     {
+        // a test
     }
 }

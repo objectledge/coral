@@ -43,7 +43,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PicoInstantiatorTest.java,v 1.2 2004-06-25 12:55:38 fil Exp $
+ * @version $Id: PicoInstantiatorTest.java,v 1.3 2005-02-10 17:47:16 rafal Exp $
  */
 public class PicoInstantiatorTest
     extends TestCase
@@ -95,6 +95,7 @@ public class PicoInstantiatorTest
     {
         public Red()
         {
+            // a default ctor
         }
     }
     
@@ -102,6 +103,7 @@ public class PicoInstantiatorTest
     {
         public Blue(Red red)
         {
+            // a ctor that requires a component
         }
     }
     
@@ -109,6 +111,7 @@ public class PicoInstantiatorTest
     {
         public Green(Logger logger)
         {
+            // a ctor that requires a customized component
         }
     }
     

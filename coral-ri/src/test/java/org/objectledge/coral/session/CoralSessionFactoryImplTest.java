@@ -38,7 +38,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImplTest.java,v 1.10 2005-01-25 09:26:05 rafal Exp $
+ * @version $Id: CoralSessionFactoryImplTest.java,v 1.11 2005-02-10 17:47:12 rafal Exp $
  */
 public class CoralSessionFactoryImplTest extends LedgeTestCase
 {
@@ -100,6 +100,7 @@ public class CoralSessionFactoryImplTest extends LedgeTestCase
     
     public void testCreation()
     {
+        // just run setUp()
     }
     
     public void testNormalSession()

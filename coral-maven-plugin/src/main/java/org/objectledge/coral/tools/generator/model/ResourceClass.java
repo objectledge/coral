@@ -47,7 +47,7 @@ import org.objectledge.coral.schema.SchemaIntegrityException;
  * Represents a Coral ResourceClass.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClass.java,v 1.11 2004-12-21 08:45:30 rafal Exp $
+ * @version $Id: ResourceClass.java,v 1.12 2005-02-10 17:46:42 rafal Exp $
  */
 public class ResourceClass
     extends Entity
@@ -74,6 +74,7 @@ public class ResourceClass
      */
     protected ResourceClass()
     {
+        // needed by jMock
     }
     
     /**

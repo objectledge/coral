@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * Represents a Coral AttributeDefinition.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Attribute.java,v 1.8 2004-03-31 13:55:53 fil Exp $
+ * @version $Id: Attribute.java,v 1.9 2005-02-10 17:46:42 rafal Exp $
  */
 public class Attribute
     extends Entity
@@ -54,6 +54,7 @@ public class Attribute
      */
     protected Attribute()
     {
+        // needed by jMock
     }
     
     /**

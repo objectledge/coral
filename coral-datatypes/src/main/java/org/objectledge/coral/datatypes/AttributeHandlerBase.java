@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.12 2005-01-20 10:48:26 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.13 2005-02-10 17:46:01 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -111,7 +111,7 @@ public abstract class AttributeHandlerBase
     public void preload(Connection conn)
         throws SQLException
     {
-
+        // default implementation does noting
     }
 
     // meta information //////////////////////////////////////////////////////

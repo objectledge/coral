@@ -31,7 +31,7 @@ package org.objectledge.coral.tools.generator.model;
  * Represents a Coral Entity.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Entity.java,v 1.5 2004-03-31 13:55:53 fil Exp $
+ * @version $Id: Entity.java,v 1.6 2005-02-10 17:46:42 rafal Exp $
  */
 public class Entity
     implements Comparable
@@ -51,6 +51,7 @@ public class Entity
      */
     protected Entity()
     {
+        // needed by jMock
     }
 
     /**

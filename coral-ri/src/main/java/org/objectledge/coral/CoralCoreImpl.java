@@ -70,7 +70,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.18 2005-02-04 02:30:34 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.19 2005-02-10 17:48:38 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore, Startable
@@ -192,7 +192,7 @@ public class CoralCoreImpl
      */
     public void stop()
     {
-        
+        // I wish Startable iterface was split back into Startable/Stoppable        
     }
 
     /** 

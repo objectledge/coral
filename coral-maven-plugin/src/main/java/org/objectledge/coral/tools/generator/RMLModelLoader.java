@@ -74,7 +74,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
  * Fills generator Schema with Coral class information using RML scripts.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.10 2004-12-27 04:43:27 rafal Exp $
+ * @version $Id: RMLModelLoader.java,v 1.11 2005-02-10 17:46:41 rafal Exp $
  */
 public class RMLModelLoader
 {
@@ -88,7 +88,7 @@ public class RMLModelLoader
      */
     protected RMLModelLoader()
     {
-        
+        // needed by jMock
     }
 
     /**
@@ -144,7 +144,7 @@ public class RMLModelLoader
     /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.10 2004-12-27 04:43:27 rafal Exp $
+     * @version $Id: RMLModelLoader.java,v 1.11 2005-02-10 17:46:41 rafal Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {

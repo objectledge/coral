@@ -47,7 +47,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.13 2004-12-23 02:22:29 rafal Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.14 2005-02-10 17:47:13 rafal Exp $
  */
 public class ResourceClassImplTest extends LedgeTestCase
 {
@@ -358,6 +358,7 @@ public class ResourceClassImplTest extends LedgeTestCase
     
     private void assertFixture1()
     {
+        // TODO implement
     }
 
     //         [1]

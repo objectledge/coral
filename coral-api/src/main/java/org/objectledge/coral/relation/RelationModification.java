@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * A class representing a batch of {@link Relation} modifications.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModification.java,v 1.9 2005-01-18 09:31:44 rafal Exp $
+ * @version $Id: RelationModification.java,v 1.10 2005-02-10 17:46:02 rafal Exp $
  */
 public class RelationModification
 {
@@ -178,6 +178,7 @@ public class RelationModification
 		 */
 		public ModificationOperation()
 		{
+            // default constructor
 		}
 		
 		/**

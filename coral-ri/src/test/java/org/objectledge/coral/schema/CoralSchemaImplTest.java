@@ -50,7 +50,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.13 2005-01-19 08:10:05 rafal Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.14 2005-02-10 17:47:13 rafal Exp $
  */
 public class CoralSchemaImplTest extends LedgeTestCase
 {
@@ -98,8 +98,17 @@ public class CoralSchemaImplTest extends LedgeTestCase
     private Mock mockOtherResourceHandler;
     private ResourceHandler otherResourceHandler;
     
-    private interface OtherAttributeHandler extends AttributeHandler { }
-    private interface OtherResourceHandler extends ResourceHandler { }
+    private interface OtherAttributeHandler
+        extends AttributeHandler
+    {
+        // AttributeHandler derived type for mocking
+    }
+
+    private interface OtherResourceHandler
+        extends ResourceHandler
+    {
+        // ResourceHandler derived type for mocking
+    }
     
     public void setUp()
         throws Exception
@@ -165,6 +174,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
     
     public void testCreation()
     {
+        // just run setUp()
     }
     
     // attribute classes /////////////////////////////////////////////////////////////////////////

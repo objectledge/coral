@@ -38,7 +38,7 @@ import java.util.TreeSet;
  * A tool for generating pretty-printed import lists in Java source files.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ImportTool.java,v 1.4 2004-07-08 13:48:23 rafal Exp $
+ * @version $Id: ImportTool.java,v 1.5 2005-02-10 17:46:41 rafal Exp $
  */
 public class ImportTool
 {
@@ -51,6 +51,7 @@ public class ImportTool
      */
     protected ImportTool()
     {
+        // needed by jMock
     }
     
     /**
