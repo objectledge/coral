@@ -13,7 +13,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a concrete attribute of an resource class.
  *
- * @version $Id: AttributeDefinitionImpl.java,v 1.5 2004-02-25 13:06:50 fil Exp $
+ * @version $Id: AttributeDefinitionImpl.java,v 1.6 2004-02-25 13:07:20 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeDefinitionImpl
@@ -185,7 +185,7 @@ public class AttributeDefinitionImpl
      */
     public void attributeDefinitionChanged(AttributeDefinition attributeDefinition)
     {
-        if(attributeDefinition.equals(this))
+        if(this.equals(attributeDefinition))
         {
             try
             {
