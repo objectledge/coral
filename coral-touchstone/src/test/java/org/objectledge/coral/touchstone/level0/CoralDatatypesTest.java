@@ -29,7 +29,9 @@ package org.objectledge.coral.touchstone.level0;
 
 import java.math.BigDecimal;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTable;
@@ -52,7 +54,7 @@ import org.objectledge.parameters.Parameters;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralDatatypesTest.java,v 1.5 2004-08-30 07:49:25 rafal Exp $
+ * @version $Id: CoralDatatypesTest.java,v 1.6 2004-12-23 03:51:30 rafal Exp $
  */
 public class CoralDatatypesTest extends CoralTestCase
 {
@@ -464,7 +466,7 @@ public class CoralDatatypesTest extends CoralTestCase
     {
         AttributeDefinition attr = resource.getResourceClass().getAttribute("date_attr");
         Date value = (Date)resource.get(attr);
-        value = new Date("January 1 2001");
+        value = createDate(2001, Calendar.JANUARY, 1);
         resource.set(attr, value);
         resource.update();
         DefaultTable expectedTable = new DefaultTable("coral_attribute_nubmer",
@@ -490,6 +492,24 @@ public class CoralDatatypesTest extends CoralTestCase
         actualTable = databaseConnection.createQueryTable("coral_attribute_date", "SELECT * FROM coral_attribute_date");            
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
+    }
+
+    /**
+     * @return
+     */
+    private Date createDate(int year, int month, int day)
+    {
+        Date value;
+        Calendar cal = new GregorianCalendar();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        value = cal.getTime();
+        return value;
     }
 
     public void testResourceClassAttribute()
@@ -672,7 +692,7 @@ public class CoralDatatypesTest extends CoralTestCase
     {
         AttributeDefinition attr = resource.getResourceClass().getAttribute("date_range_attr");
         DateRange value = (DateRange)resource.get(attr);
-        value = new DateRange(new Date("January 1 2001"), new Date("January 1 2002"));
+        value = new DateRange(createDate(2001, Calendar.JANUARY, 1), createDate(2002, Calendar.JANUARY, 1));
         resource.set(attr, value);
         resource.update();
         DefaultTable expectedTable = new DefaultTable("coral_attribute_date_range",
