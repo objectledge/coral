@@ -31,7 +31,7 @@ package org.objectledge.coral.tools.generator.model;
  * Represents a Coral Entity.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Entity.java,v 1.2 2004-03-24 14:40:07 fil Exp $
+ * @version $Id: Entity.java,v 1.3 2004-03-25 13:31:51 fil Exp $
  */
 public class Entity
     implements Comparable
@@ -133,7 +133,7 @@ public class Entity
      */
     public int compareTo(Object o)
     {
-        if(!getClass().equals(o.getClass()))
+        if(!getClass().isAssignableFrom(o.getClass()))
         {
             throw new ClassCastException("expected "+getClass());
         }
@@ -152,7 +152,7 @@ public class Entity
      */
     public boolean equals(Object o)
     {
-        if(!getClass().equals(o.getClass()))
+        if(!getClass().isAssignableFrom(o.getClass()))
         {
             throw new ClassCastException("expected "+getClass());
         }
