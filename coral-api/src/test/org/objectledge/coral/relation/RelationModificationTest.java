@@ -36,7 +36,7 @@ import org.objectledge.coral.store.Resource;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModificationTest.java,v 1.1 2004-03-01 15:58:25 zwierzem Exp $
+ * @version $Id: RelationModificationTest.java,v 1.2 2004-03-01 16:41:56 zwierzem Exp $
  */
 public class RelationModificationTest  extends MockObjectTestCase
 {
@@ -88,6 +88,57 @@ public class RelationModificationTest  extends MockObjectTestCase
 		
 		Visitor1 v1 = new Visitor1();
 		modification.visit(v1);
+		
+		modification.clear();
+		Visitor2 v2 = new Visitor2();
+		modification.visit(v2);
+		
+		modification.reset();
+		Visitor3 v3 = new Visitor3();
+		modification.visit(v3);
+	}
+
+	public void testModificationOperation()
+	{
+		RelationModification.AddOperation addOper1 =
+			new RelationModification.AddOperation(new Long(1L), new Long(2L));
+		RelationModification.AddOperation addOper2 =
+			new RelationModification.AddOperation(new Long(1L), new Long(2L));
+		assertEquals(addOper1, addOper2);
+		assertEquals(addOper1.hashCode(), addOper2.hashCode());
+
+		RelationModification.ClearOperation clearOper1 = new RelationModification.ClearOperation();
+		RelationModification.ClearOperation  clearOper2 = new RelationModification.ClearOperation();
+		assertEquals(clearOper1, clearOper2);
+		assertEquals(clearOper1.hashCode(), clearOper2.hashCode());
+
+		RelationModification.RemoveOperation remOper1 =
+			new RelationModification.RemoveOperation(new Long(1L), new Long(2L));
+		RelationModification.RemoveOperation remOper2 =
+			new RelationModification.RemoveOperation(new Long(1L), new Long(2L));
+		assertEquals(remOper1, remOper2);
+		assertEquals(remOper1.hashCode(), remOper2.hashCode());
+		
+		assertFalse(remOper1.equals(addOper2));
+		
+		remOper1 = new RelationModification.RemoveOperation(new Long(1L), null);
+		remOper2 = new RelationModification.RemoveOperation(new Long(1L), null);
+		assertEquals(remOper1, remOper2);
+		assertEquals(remOper1.hashCode(), remOper2.hashCode());
+
+		remOper2 = new RelationModification.RemoveOperation(null, new Long(1L));
+		assertFalse(remOper1.equals(remOper2));
+		assertFalse(remOper1.hashCode() == remOper2.hashCode());
+		
+		try
+		{
+			remOper2 = new RelationModification.RemoveOperation(null, null);
+			fail("NP exception expected");
+		}
+		catch(NullPointerException e)
+		{
+			// ok!
+		}
 	}
 	
 	private class Visitor1 implements RelationModification.ModificationOperationVisitor
@@ -137,6 +188,10 @@ public class RelationModificationTest  extends MockObjectTestCase
 			{
 				case 3: assertEquals(oper.getId1(), 1L);            
 						assertEquals(oper.getId2(), 2L);
+						
+						oper.invert();
+						assertEquals(oper.getId1(), 2L);            
+						assertEquals(oper.getId2(), 1L);
 						break;
 				case 6: assertEquals(oper.getId1(), 3L);            
 						assertFalse(oper.hasId2());
@@ -147,5 +202,70 @@ public class RelationModificationTest  extends MockObjectTestCase
 				default: fail("too many remove operations");
 			}
         }
+	}
+
+	private class Visitor2 implements RelationModification.ModificationOperationVisitor
+	{
+		private int count = 0; 
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(ClearOperation oper)
+		{
+			count++;
+			assertEquals(count, 1);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(AddOperation oper)
+		{
+			count++;
+			fail("should not be called");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(RemoveOperation oper)
+		{
+			count++;
+			fail("should not be called");
+		}
+	}
+
+
+	private class Visitor3 implements RelationModification.ModificationOperationVisitor
+	{
+		private int count = 0; 
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(ClearOperation oper)
+		{
+			count++;
+			fail("should not be called");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(AddOperation oper)
+		{
+			count++;
+			fail("should not be called");
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(RemoveOperation oper)
+		{
+			count++;
+			fail("should not be called");
+		}
 	}
 }
