@@ -45,7 +45,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.1 2004-03-08 08:51:24 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.2 2004-03-08 16:13:57 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -99,6 +99,7 @@ public class CoralSessionImpl
      */
     public void close()
     {
+        checkOpen();
         open = false;
         ownerThread = null;
         try
