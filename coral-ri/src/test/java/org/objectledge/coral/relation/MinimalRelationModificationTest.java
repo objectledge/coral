@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModificationTest.java,v 1.2 2004-03-03 16:19:28 zwierzem Exp $
+ * @version $Id: MinimalRelationModificationTest.java,v 1.3 2004-03-17 14:15:32 zwierzem Exp $
  */
 public class MinimalRelationModificationTest extends MockObjectTestCase
 {
@@ -109,6 +109,11 @@ public class MinimalRelationModificationTest extends MockObjectTestCase
 		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
+		// add 1:5 - add existant but cleared
+		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(1L));
+		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(5L));
+		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
+
 		// rem 1:4 - remove existant (but cleared)
 		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(1L));
 		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
@@ -126,9 +131,20 @@ public class MinimalRelationModificationTest extends MockObjectTestCase
 		
 		long[][] added = minMod.getAdded();
 		// 0:4
-		assertEquals(added.length, 1);
-		assertEquals(added[0][0], 0);
-		assertEquals(added[0][1], 4);
+		// 1:5
+		assertEquals(added.length, 2);
+		if(added[0][0] == 0)
+		{
+			assertEquals(added[0][1], 4);
+			assertEquals(added[1][0], 1);
+			assertEquals(added[1][1], 5);
+		}
+		if(added[0][0] == 1)
+		{
+			assertEquals(added[0][1], 5);
+			assertEquals(added[1][0], 0);
+			assertEquals(added[1][1], 4);
+		} 
 
 		long[][] removed = minMod.getRemoved();
 		// empty - was cleared
