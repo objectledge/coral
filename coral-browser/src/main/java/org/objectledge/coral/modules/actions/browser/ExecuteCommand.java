@@ -4,12 +4,13 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.pipeline.ProcessingException;
+import org.objectledge.utils.StackTrace;
 
 /**
  * Add attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ExecuteCommand.java,v 1.4 2004-08-02 13:56:44 zwierzem Exp $
+ * @version $Id: ExecuteCommand.java,v 1.5 2004-08-30 09:04:25 rafal Exp $
  */
 public class ExecuteCommand extends BaseBrowserAction
 {
@@ -42,11 +43,19 @@ public class ExecuteCommand extends BaseBrowserAction
                 templatingContext.put("commandResult", result);
             }
         }
-        catch (Exception e)
+        catch(VirtualMachineError e)
+        {
+            throw e;
+        }
+        catch(ThreadDeath e)
+        {
+            throw e;
+        }
+        catch(Throwable e)
         {
             logger.error("ARLException: ", e);
             templatingContext.put("result", "exception");
-            templatingContext.put("commandResult", e);
+            templatingContext.put("commandResult", new StackTrace(e));
             return;
         }
         finally
