@@ -22,7 +22,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.1 2004-03-01 16:41:24 fil Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.2 2004-03-02 12:20:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -264,7 +264,10 @@ public class CoralSchemaImpl
     public void setName(AttributeDefinition attribute, String name)
         throws SchemaIntegrityException
     {
-        checkName(attribute.getDeclaringClass(), name);
+        if(attribute.getDeclaringClass() != null)
+        {
+            checkName(attribute.getDeclaringClass(), name);
+        }
         String oldName = attribute.getName();
         try
         {
@@ -276,6 +279,28 @@ public class CoralSchemaImpl
             ((AttributeDefinitionImpl)attribute).setName(oldName);
             throw new BackendException("failed to update attribute's persitent image", e);
         }
+    }
+
+    /**
+     * Changes the domain of the attribute.
+     *
+     * @param attribute the attribute to modify.
+     * @param domain the new domain of the attirbute.
+     */
+    public void setDomain(AttributeDefinition attribute, String domain)
+    {
+        // check domain specified for well-formedness
+        attribute.getAttributeClass().getHandler().checkDomain(domain);
+        ((AttributeDefinitionImpl)attribute).setDomain(domain);
+        try
+        {
+            persistence.save((Persistent)attribute);
+        }
+        catch(PersistenceException e)
+        {
+            throw new BackendException("Failed to update Attribute", e);
+        }
+        coralEventHub.getOutbound().fireAttributeDefinitionChangeEvent(attribute);
     }
 
     /**
