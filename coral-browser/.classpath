@@ -11,5 +11,11 @@
     <classpathentry kind="var" path="MAVEN_REPO/coral/jars/coral-ri-SNAPSHOT.jar"/>
     <classpathentry kind="src" path="/coral-datatypes"/>
     <classpathentry kind="src" path="/coral-web"/>
+    <classpathentry kind="src" path="/ledge-container"/>
+    <classpathentry kind="var"
+        path="MAVEN_REPO/picocontainer/jars/picocontainer-1.0-RC-1-SNAPSHOT.jar" sourcepath="MAVEN_REPO/picocontainer/sources/picocontainer-1.0-RC-1-SNAPSHOT-src.zip"/>
+    <classpathentry kind="var"
+        path="MAVEN_REPO/nanocontainer/jars/nanocontainer-1.0-beta-1-SNAPSHOT.jar" sourcepath="MAVEN_REPO/nanocontainer/sources/nanocontainer-1.0-beta-1-SNAPSHOT-src.zip"/>
+    <classpathentry kind="var" path="MAVEN_REPO/postgresql/jars/postgresql-7.2.jar"/>
     <classpathentry kind="output" path="target/classes"/>
 </classpath>
