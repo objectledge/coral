@@ -43,7 +43,7 @@ import org.objectledge.database.persistence.Persistence;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.8 2004-02-25 11:51:23 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.9 2004-03-02 17:19:12 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -115,14 +115,14 @@ implements Relation
 
     // public api ---------------------------------------------------------------------------------
 
-    private InvertedRelation reverseRelation = new InvertedRelation();
+    private InvertedRelation invertedRelation = new InvertedRelation();
 
     /**
      * {@inheritDoc}
      */
     public Relation getInverted()
     {
-        return reverseRelation;
+        return invertedRelation;
     }
 
     /**
