@@ -47,12 +47,13 @@ import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityRegistry;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistentFactory;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.4 2004-03-17 12:19:58 zwierzem Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.5 2004-03-17 14:14:21 zwierzem Exp $
  */
 public class CoralRelationManagerImpl implements CoralRelationManager
 {
@@ -176,11 +177,12 @@ public class CoralRelationManagerImpl implements CoralRelationManager
             RelationImpl relationImpl = (RelationImpl) relation;
 
             boolean shouldCommit = false;
+			Connection conn = null;
             try
             {
                 shouldCommit = database.beginTransaction();
 
-				Connection conn = database.getConnection();
+				conn = database.getConnection();
 
                 // update db and in memory relation representation
                 
@@ -262,6 +264,10 @@ public class CoralRelationManagerImpl implements CoralRelationManager
                     log.error("rollback failed", ee);
                 }
                 throw new BackendException("failed to update relation", e);
+            }
+            finally
+            {
+            	DatabaseUtils.close(conn);
             }
         }
     }
