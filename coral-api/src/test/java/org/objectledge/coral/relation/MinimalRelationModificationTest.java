@@ -40,7 +40,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModificationTest.java,v 1.4 2005-01-18 09:31:38 rafal Exp $
+ * @version $Id: MinimalRelationModificationTest.java,v 1.5 2005-02-09 22:02:20 rafal Exp $
  */
 public class MinimalRelationModificationTest extends LedgeTestCase
 {
@@ -385,7 +385,7 @@ public class MinimalRelationModificationTest extends LedgeTestCase
             return null;
         }
         
-        private Set getSet(Map relation, long id)
+        Set getSet(Map relation, long id)
         {
 			Set set = (Set) relation.get(new Long(id));
 			if(set != null)

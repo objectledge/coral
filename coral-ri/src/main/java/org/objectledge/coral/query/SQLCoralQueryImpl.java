@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.7 2005-01-19 06:31:58 rafal Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.8 2005-02-09 22:02:15 rafal Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -300,7 +300,7 @@ public class SQLCoralQueryImpl
      *        alias.
      * @param out the buffer to write expresion to.
      */
-    private void appendAttribute(String attribute, 
+    void appendAttribute(String attribute, 
                                  final Map columnMap,
                                  final StringBuffer out)
         throws MalformedQueryException

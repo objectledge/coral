@@ -47,7 +47,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.25 2005-02-04 02:29:03 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.26 2005-02-09 22:02:17 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -166,7 +166,7 @@ implements Relation
 		return getAvgMappingSize(rel);
 	}
 
-	private float getAvgMappingSize(Map relation)
+	float getAvgMappingSize(Map relation)
 	{
 		int numSets = relation.keySet().size();
 		if(numSets != 0)
@@ -375,7 +375,7 @@ implements Relation
     /**
      * Returns resources referenced by a given resource in the relation.
      */
-    private Resource[] get(Map relation, Resource r)
+    Resource[] get(Map relation, Resource r)
     {
         Set set = (Set)relation.get(r.getIdObject());
         if(set != null)
@@ -391,7 +391,7 @@ implements Relation
     /**
      * Return an array of ids contained in the map under given id.
      */
-    private Set get(Map relation, long id)
+    Set get(Map relation, long id)
     {
         Set set = (Set)relation.get(new Long(id));
         if(set != null)
