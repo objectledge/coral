@@ -48,7 +48,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImplTest.java,v 1.7 2004-05-28 10:04:12 fil Exp $
+ * @version $Id: CoralCoreImplTest.java,v 1.8 2005-01-21 06:33:04 rafal Exp $
  */
 public class CoralCoreImplTest extends LedgeTestCase
 {
@@ -86,7 +86,7 @@ public class CoralCoreImplTest extends LedgeTestCase
         eventWhiteboardFactory = new EventWhiteboardFactory(null, logger, threadPool);
         PicoContainer emptyContainer = new DefaultPicoContainer();
         
-        coralCore = new CoralCoreImpl(emptyContainer, persistence, cacheFactory, eventWhiteboardFactory, logger);
+        coralCore = new CoralCoreImpl(emptyContainer, persistence, cacheFactory, eventWhiteboardFactory, logger, false);
 
         mockCoralSession = mock(CoralSession.class);
         coralSession = (CoralSession)mockCoralSession.proxy();

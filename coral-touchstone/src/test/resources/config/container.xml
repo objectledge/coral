@@ -100,7 +100,14 @@
   <!-- coral -->
   
   <component class-key="org.objectledge.coral.CoralCore" 
-             class="org.objectledge.coral.CoralCoreImpl"/>
+             class="org.objectledge.coral.CoralCoreImpl">
+    <component-parameter/>
+    <component-parameter/>
+    <component-parameter/>
+    <component-parameter/>
+    <component-parameter/>
+    <constant-parameter class="java.lang.Boolean" value="false"/>
+  </component>           
   <component class-key="org.objectledge.coral.session.CoralSessionFactory" 
              class="org.objectledge.coral.session.CoralSessionFactoryImpl"/>
 

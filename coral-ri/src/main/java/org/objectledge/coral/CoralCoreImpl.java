@@ -27,7 +27,14 @@
 // 
 package org.objectledge.coral;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.jcontainer.dna.Logger;
+import org.objectledge.ComponentInitializationError;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.entity.CoralRegistryImpl;
@@ -52,6 +59,7 @@ import org.objectledge.coral.store.CoralStoreImpl;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
+import org.picocontainer.ComponentAdapter;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
@@ -60,7 +68,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.12 2004-12-27 03:06:21 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.13 2005-01-21 06:33:13 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -82,15 +90,16 @@ public class CoralCoreImpl
 
     /**
      * Constructs a Coral instance.
-     * 
      * @param parentContainer the container where Coral is deployed.
      * @param persistence the persitence subsystem.
      * @param cacheFactory the cache factory.
      * @param eventWhiteboardFactory the event whiteboard factory.
      * @param log the logger.
+     * @param preload attempt to preload data from database.
      */
     public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence, 
-        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log)
+        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log, 
+        boolean preload)
     {
         container = new DefaultPicoContainer(parentContainer);
         // register global dependencies
@@ -141,6 +150,26 @@ public class CoralCoreImpl
         coralRelationQuery = (CoralRelationQuery)container.
             getComponentInstance(CoralRelationQuery.class);
         coralQuery = (CoralQuery)container.getComponentInstance(CoralQuery.class);
+
+        if(preload)
+        {
+            List startupAdapters = container.getComponentAdaptersOfType(StartupParticipant.class);
+            Set<StartupParticipant> participants = 
+                new HashSet<StartupParticipant>(startupAdapters.size());
+            for(Object adapter : startupAdapters)
+            {
+                participants.add((StartupParticipant)((ComponentAdapter)adapter)
+                    .getComponentInstance());
+            }
+            try
+            {
+                performStartup(participants);
+            }
+            catch(Exception e)
+            {
+                throw new ComponentInitializationError("startup failed", e);
+            }
+        }
     }
 
     /** 
@@ -254,6 +283,25 @@ public class CoralCoreImpl
         else
         {
             return session.getUserSubject();
+        }
+    }
+    
+    // startup //////////////////////////////////////////////////////////////////////////////////
+    
+    private void performStartup(Set<StartupParticipant> participants)
+        throws Exception
+    {
+        SortedMap<Integer, StartupParticipant> order = new TreeMap();
+        for (StartupParticipant participant : participants)
+        {
+            for (int phase : participant.getPhases())
+            {
+                order.put(phase, participant);
+            }
+        }
+        for (int phase : order.keySet())
+        {
+            order.get(phase).startup(phase);
         }
     }
 }
