@@ -28,8 +28,9 @@
 --> 
 
 <config>
-  <!--
-  <localization-directory>/locale</localization-directory>
-   -->
+  <context name="people" initial_factory="org.objectledge.naming.db.DatabaseInitialDirContextFactory">
+    <component-property name="org.objectledge.database.persistence.Persistence"
+    					class-key="org.objectledge.database.persistence.Persistence"/>
+    <property name="java.naming.provider.url" value="ou=people,dc=objectledge,dc=org"/>
+  </context>    
 </config>
-

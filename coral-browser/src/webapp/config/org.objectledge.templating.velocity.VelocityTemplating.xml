@@ -28,8 +28,13 @@
 --> 
 
 <config>
-  <!--
-  <localization-directory>/locale</localization-directory>
-   -->
+  <extension>.vt</extension>
+  <encoding>ISO-8859-2</encoding>
+  <paths>
+    <path>/templates/</path>
+  </paths>
+  <properties>
+    <property name="file.resource.loader.cache" value="true"/>
+    <property name="velocimacro.library.autoreload">false</property>
+  </properties>  
 </config>
-

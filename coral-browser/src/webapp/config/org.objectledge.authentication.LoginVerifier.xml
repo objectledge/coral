@@ -28,8 +28,5 @@
 --> 
 
 <config>
-  <!--
-  <localization-directory>/locale</localization-directory>
-   -->
+  <reserved>root ledge</reserved>
 </config>
-

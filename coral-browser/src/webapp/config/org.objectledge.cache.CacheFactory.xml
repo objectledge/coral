@@ -28,8 +28,15 @@
 --> 
 
 <config>
-  <!--
-  <localization-directory>/locale</localization-directory>
-   -->
+  <implementation type="foo" class="java.util.HashMap"/>
+  <implementation type="CustomMap" class="org.objectledge.cache.impl.LRUMapImpl"/>
+  <alias name="coral.byName">
+    <config>HashMap()</config>    
+  </alias>
+  <alias name="coral.byId">
+    <config>HashMap()</config>    
+  </alias>
+  <alias name="coral.all">
+    <config>HashMap()</config>    
+  </alias>
 </config>
-

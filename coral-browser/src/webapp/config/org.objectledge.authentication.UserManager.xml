@@ -28,8 +28,6 @@
 --> 
 
 <config>
-  <!--
-  <localization-directory>/locale</localization-directory>
-   -->
+  <anonymousName>uid=anonymous,ou=people,dc=objectledge,dc=org</anonymousName>
+  <superuserName>uid=root,ou=people,dc=objectledge,dc=org</superuserName>
 </config>
-
