@@ -8,26 +8,32 @@
  * org.objectledge.coral.store.Resource
  * 
  *###
+## 
+#set($attributes = $class.concreteDeclaredAttributes)
+#set($parents = $class.declaredParentClasses)
+##
+$imports.add("org.objectledge.coral.store.Resource")##
+##
+#foreach($attr in $attributes)
+#if(!$attr.primitive)
+$imports.add($attr.getFQJavaType())##
+#end
+#end
+#foreach($parent in $parents)
+$imports.add($parent.getFQInterfaceClassName())##
+#end
+##
 package $class.packageName;
 
-#if($importsGroups.size() > 0)
-#foreach($importGroup in $importGroups)
-#if($importGroups.size() > 0)
-#foreach($import in $importGroup)
-import ${import};
-#end
-
-#end
-#end
-#end
+$imports##
 /**
  * Defines the accessor methods of <code>$class.name</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
 public interface ${class.interfaceClassName}
-#if($class.declaredParentClasses.size() > 0)
-    extends Resource, #foreach($parent in $class.declaredParentClasses)${parent.interfaceClassName}#if($velocityCount != $class.declaredParentClasses.size()), #end#end
+#if($parents.size() > 0)
+    extends Resource, #foreach($parent in $parents)${parent.interfaceClassName}#if($velocityCount != $parents.size()), #end#end
 
 #else
     extends Resource
@@ -37,10 +43,10 @@ public interface ${class.interfaceClassName}
 
     /** The name of the ARL resource class. */    
     public static final String CLASS_NAME = "${class.name}";
-#if($class.declaredAttributes.size() > 0)
+#if($attributes.size() > 0)
 
     // public interface //////////////////////////////////////////////////////
-#foreach($attr in $class.declaredAttributes)
+#foreach($attr in $attributes)
 #if($attr.primitive)
 
     /**
