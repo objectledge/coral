@@ -9,11 +9,11 @@ import java.util.Map;
 import org.jcontainer.dna.Logger;
 import org.objectledge.ComponentInitializationError;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.CoralSecurity;
-import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
@@ -26,7 +26,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.2 2004-03-08 09:17:28 fil Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.3 2004-03-12 09:37:58 fil Exp $
  */
 public class PersistentResourceHandler
     extends ResourceHandlerBase
@@ -49,10 +49,9 @@ public class PersistentResourceHandler
      * 
      */
     public PersistentResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
-                                      ResourceClass resourceClass, 
-                                      Persistence persistence, Logger logger)
+         ResourceClass resourceClass, Persistence persistence, Logger logger, Instantiator instantiator)
     {
-        super(coralSchema, coralSecurity, resourceClass);
+        super(coralSchema, coralSecurity, instantiator, resourceClass);
         this.persistence = persistence;
         if(resourceClass.getDbTable() == null ||
            resourceClass.getDbTable().length() == 0)
@@ -60,15 +59,7 @@ public class PersistentResourceHandler
             throw new ComponentInitializationError("resource class "+ resourceClass.getName()+
                                                     " has no DB TABLE set");
         }
-        try
-        {
-            factory = new PersistentResourceFactory(persistence.getDatabase(),logger, resourceClass);
-        }
-        catch(Exception e)
-        {
-            throw new ComponentInitializationError("failed to create factory for "+
-                                                    resourceClass.getJavaClassName(), e);
-        }
+        factory = instantiator.getPersistentFactory(resourceClass.getJavaClass());
     }
 
     /**
@@ -311,56 +302,6 @@ public class PersistentResourceHandler
         {
             throw new ClassCastException("PersistenceResourceHanler won't operate on "+
                                          resource.getClass().getName());
-        }
-    }
-
-    protected static class PersistentResourceFactory
-        implements PersistentFactory
-    {
-        private ResourceClass resourceClass;
-        
-        private Database database;
-        
-        private Logger logger;
-        
-        private boolean checked = false;
-
-        public PersistentResourceFactory(Database database, Logger logger,
-                                          ResourceClass resourceClass)
-            throws Exception
-        {
-            this.resourceClass = resourceClass;
-            this.database = database;
-            this.logger = logger;
-        }
-
-        public Persistent newInstance()
-            throws Exception
-        {
-            if(!checked)
-            {
-                Class theClass = resourceClass.getJavaClass();
-                
-                if((theClass.getModifiers() & 
-                    (Modifier.INTERFACE  | Modifier.ABSTRACT)) != 0)
-                {
-                    throw new BackendException(theClass.getName()+" is "+
-                                               " an abstract class or interface");
-                }
-                if(!Persistent.class.isAssignableFrom(theClass))
-                {
-                    throw new BackendException(theClass.getName()+" is not"+
-                                               " an implementation of Persistent interface");
-                }
-                if(!Resource.class.isAssignableFrom(theClass))
-                {
-                    throw new BackendException(theClass.getName()+" is not"+
-                                               " an implementation of Resource interface");
-                }
-                checked = true;
-            }
-            PersistentResource resource = new PersistentResource(database, logger, resourceClass);
-            return resource;
         }
     }
 }

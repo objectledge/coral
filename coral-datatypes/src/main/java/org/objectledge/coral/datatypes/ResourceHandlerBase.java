@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.objectledge.ComponentInitializationError;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
@@ -20,7 +21,7 @@ import org.objectledge.coral.store.Resource;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceHandlerBase.java,v 1.2 2004-03-08 09:17:28 fil Exp $
+ * @version $Id: ResourceHandlerBase.java,v 1.3 2004-03-12 09:37:40 fil Exp $
  */
 public abstract class ResourceHandlerBase 
     implements ResourceHandler
@@ -37,6 +38,9 @@ public abstract class ResourceHandlerBase
     /** The schema */
     protected CoralSchema coralSchema;
     
+    /** The instnatiator */
+    protected Instantiator instantiator;
+    
     /**
      * The base constructor.
      * 
@@ -44,10 +48,11 @@ public abstract class ResourceHandlerBase
      * @param resourceClass
      */
     public ResourceHandlerBase(CoralSchema coralSchema, CoralSecurity coralSecurity,
-                                ResourceClass resourceClass)
+        Instantiator instantiator, ResourceClass resourceClass)
     {
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
+        this.instantiator = instantiator;
         try
         {
             rootSubject = coralSecurity.getSubject(Subject.ROOT);
@@ -120,5 +125,35 @@ public abstract class ResourceHandlerBase
             }
         }
         resource.update();
+    }
+
+    /**
+     * Instantiate an implementation object.
+     *
+     * @param rClass the resource class to be instantiated
+     * @return implementation object.
+     */
+    protected GenericResource instantiate(ResourceClass rClass)
+        throws BackendException
+    {
+        GenericResource res;
+        try
+        {
+            res = (GenericResource)instantiator.newInstance(rClass.getJavaClass());
+        }
+        catch(VirtualMachineError e)
+        {
+            throw e;
+        }
+        catch(ThreadDeath e)
+        {
+            throw e;
+        }
+        catch(Throwable e)
+        {
+            throw new BackendException("failed to instantiate "+
+                                        rClass.getName(), e);
+        }
+        return res;
     }
 }

@@ -35,6 +35,7 @@ import java.util.Map;
 import org.jcontainer.dna.Logger;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
@@ -70,6 +71,8 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
     private CoralSecurity coralSecurity;
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
+    private Mock mockInstantiator;
+    private Instantiator instantiator;
     private Mock mockResourceClass;
     private ResourceClass resourceClass;
     private Mock mockAttributeDefinition;
@@ -117,6 +120,8 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
         mockCoralSchema.stub().method("getResourceClass").will(returnValue(resourceClass));
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         
+        mockInstantiator = new Mock(Instantiator.class);
+        instantiator = (Instantiator)mockInstantiator.proxy();
         
         mockResource = new Mock(Resource.class);
         mockResource.stub().method("getResourceClass").will(returnValue(resourceClass));
@@ -125,11 +130,10 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
 
         mockConnection = new Mock(Connection.class);
         //mockConnection.stub().method("createStatement").will(returnValue(statement));
-        connection = (Connection)mockConnection.proxy();
-              
+        connection = (Connection)mockConnection.proxy();              
               
         node = new NodeResourceImpl(database, logger, coralSchema);
-        handler = new GenericResourceHandler(coralSchema, coralSecurity, resourceClass);
+        handler = new GenericResourceHandler(coralSchema, coralSecurity, instantiator, resourceClass);
                                              
     }
     

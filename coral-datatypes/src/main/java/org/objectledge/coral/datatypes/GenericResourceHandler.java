@@ -12,13 +12,13 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.CoralSecurity;
-import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -27,7 +27,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.3 2004-03-09 15:46:49 fil Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.4 2004-03-12 09:37:58 fil Exp $
  */
 public class GenericResourceHandler
     extends ResourceHandlerBase
@@ -44,10 +44,10 @@ public class GenericResourceHandler
      * @param coralSecurity the coralSecurity.
      * @param resourceClass the resource class.
      */
-    public GenericResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
-                                   ResourceClass resourceClass)
+    public GenericResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity, 
+        Instantiator instantiator, ResourceClass resourceClass)
     {
-        super(coralSchema, coralSecurity, resourceClass);
+        super(coralSchema, coralSecurity, instantiator, resourceClass);
     }
 
     // Resource handler interface ////////////////////////////////////////////
@@ -302,36 +302,6 @@ public class GenericResourceHandler
             throw new ClassCastException("GenericResourceHanler won't operate on "+
                                          resource.getClass().getName());
         }
-    }
-
-    /**
-     * Instantiate an implementation object.
-     *
-     * @param rClass the resource class to be instantiated
-     * @return implementation object.
-     */
-    private GenericResource instantiate(ResourceClass rClass)
-        throws BackendException
-    {
-        GenericResource res;
-        try
-        {
-            res = (GenericResource)rClass.getJavaClass().newInstance();
-        }
-        catch(VirtualMachineError e)
-        {
-            throw e;
-        }
-        catch(ThreadDeath e)
-        {
-            throw e;
-        }
-        catch(Throwable e)
-        {
-            throw new BackendException("failed to instantiate "+
-                                        rClass.getName(), e);
-        }
-        return res;
     }
 
     /**
