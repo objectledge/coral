@@ -190,8 +190,9 @@ public class ${class.implClassName}
     // public interface //////////////////////////////////////////////////////
 #foreach($attr in $attributes)
 #if($attr.primitive)
+#if(!$attr.required)
 
-    /**
+	/**
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
      * @return the value of the <code>${attr.name}</code> attribute.
@@ -210,6 +211,47 @@ public class ${class.implClassName}
             throw new IllegalStateException("attribute value is undefined");
         }
     }
+
+	/**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+	 * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>${attr.name}</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public ${attr.javaType} get${attr.javaName}(${attr.javaType} defaultValue)
+    {
+        if(isDefined(${attr.name}Def))
+        {
+            return (($attr.primitiveWrapper)get(${attr.name}Def)).${attr.javaType}Value();
+        }
+        else
+        {
+			return defaultValue;
+        }
+    }
+#else ## $attr.required
+
+	/**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @return the value of the <code>${attr.name}</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public ${attr.javaType} get${attr.javaName}()
+    {
+        if(isDefined(${attr.name}Def))
+        {
+            return (($attr.primitiveWrapper)get(${attr.name}Def)).${attr.javaType}Value();
+        }
+        else
+        {
+            throw new BackendException("incompatible schema change");
+        }
+    }	
+#end
 #if(!$attr.readonly)
 
     /**
@@ -252,7 +294,7 @@ public class ${class.implClassName}
 #end ## $attr.readonly
 #else ## $!attr.java_primitive
 
-    /**
+	/**
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
      * @return the value of the <code>${attr.name}</code> attribute.
@@ -261,6 +303,26 @@ public class ${class.implClassName}
     {
         return ($attr.javaType)get(${attr.name}Def);
     }
+#if(!$attr.required)
+	
+	/**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+	 * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>${attr.name}</code> attribute.
+     */
+    public $attr.javaType get${attr.javaName}(${attr.javaType} defaultValue)
+    {
+		if(isDefined(${attr.name}Def))
+		{
+            return ($attr.javaType)get(${attr.name}Def);
+	    }
+		else
+		{
+			return defaultValue;
+		}
+    }	
+#end
 #if(!$attr.readonly)
 #if(!$attr.required)
 
