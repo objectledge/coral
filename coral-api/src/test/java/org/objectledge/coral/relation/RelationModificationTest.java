@@ -36,7 +36,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModificationTest.java,v 1.2 2004-03-24 14:40:18 fil Exp $
+ * @version $Id: RelationModificationTest.java,v 1.3 2004-04-30 13:18:17 zwierzem Exp $
  */
 public class RelationModificationTest  extends LedgeTestCase
 {
@@ -119,7 +119,7 @@ public class RelationModificationTest  extends LedgeTestCase
 		assertEquals(remOper1, remOper2);
 		assertEquals(remOper1.hashCode(), remOper2.hashCode());
 		
-		assertFalse(remOper1.equals(addOper2));
+		assertTrue(remOper1.equals(addOper2));
 		
 		remOper1 = new RelationModification.RemoveOperation(new Long(1L), null);
 		remOper2 = new RelationModification.RemoveOperation(new Long(1L), null);
