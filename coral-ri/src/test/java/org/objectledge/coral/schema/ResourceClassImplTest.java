@@ -45,7 +45,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.5 2004-03-12 09:15:18 fil Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.6 2004-03-12 12:01:25 fil Exp $
  */
 public class ResourceClassImplTest extends MockObjectTestCase
 {
@@ -218,7 +218,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         mockOutputRecord.expect(once()).method("setString").with(eq("name"),eq("<resource class>"));
         mockOutputRecord.expect(once()).method("setString").with(eq("java_class_name"),eq("<java class>"));
         mockOutputRecord.expect(once()).method("setString").with(eq("handler_class_name"),eq("<handler class>"));
-        mockOutputRecord.expect(once()).method("setString").with(eq("db_table"),eq("<db table>"));
+        mockOutputRecord.expect(once()).method("setString").with(eq("db_table_name"),eq("<db table>"));
         mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"),eq(303));
         rc.getData(outputRecord);
         assertEquals("coral_resource_class", rc.getTable());
@@ -232,7 +232,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         mockOutputRecord.expect(once()).method("setString").with(eq("name"),eq("<resource class>"));
         mockOutputRecord.expect(once()).method("setString").with(eq("java_class_name"),eq("<java class>"));
         mockOutputRecord.expect(once()).method("setString").with(eq("handler_class_name"),eq("<handler class>"));
-        mockOutputRecord.expect(once()).method("setNull").with(eq("db_table"));
+        mockOutputRecord.expect(once()).method("setNull").with(eq("db_table_name"));
         mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"),eq(303));
         rc.getData(outputRecord);
         assertEquals("coral_resource_class", rc.getTable());
@@ -249,8 +249,8 @@ public class ResourceClassImplTest extends MockObjectTestCase
         mockInputRecord.expect(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
         mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, same(rc))).will(returnValue(resourceHandler));
-        mockInputRecord.expect(once()).method("isNull").with(eq("db_table")).will(returnValue(false));
-        mockInputRecord.expect(once()).method("getString").with(eq("db_table")).will(returnValue("<db table>"));
+        mockInputRecord.expect(once()).method("isNull").with(eq("db_table_name")).will(returnValue(false));
+        mockInputRecord.expect(once()).method("getString").with(eq("db_table_name")).will(returnValue("<db table>"));
         mockInputRecord.expect(once()).method("getInteger").with(eq("flags")).will(returnValue(303));    
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addResourceClassChangeListener");        
@@ -275,7 +275,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         mockInputRecord.expect(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
         mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
-        mockInputRecord.expect(once()).method("isNull").with(eq("db_table")).will(returnValue(true));
+        mockInputRecord.expect(once()).method("isNull").with(eq("db_table_name")).will(returnValue(true));
         mockInputRecord.expect(once()).method("getInteger").with(eq("flags")).will(returnValue(303));    
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addResourceClassChangeListener");        

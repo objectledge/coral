@@ -48,7 +48,7 @@ CREATE TABLE coral_resource_class (
         name VARCHAR(255) NOT NULL,
         java_class_name VARCHAR(255) NOT NULL,
         handler_class_name VARCHAR(255),
-        db_table VARCHAR(255),
+        db_table_name VARCHAR(255),
         flags INTEGER DEFAULT 0 NOT NULL,
         PRIMARY KEY (resource_class_id)
 );

@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.16 2004-03-12 09:13:51 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.17 2004-03-12 12:00:47 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -185,11 +185,11 @@ public class ResourceClassImpl
         record.setString("handler_class_name", handlerClassName);
         if(dbTable != null)
         {
-            record.setString("db_table", dbTable);
+            record.setString("db_table_name", dbTable);
         }
         else
         {
-            record.setNull("db_table");
+            record.setNull("db_table_name");
         }
         record.setInteger("flags", flags);
     }
@@ -210,9 +210,9 @@ public class ResourceClassImpl
         try
         {
             setJavaClass(record.getString("java_class_name"));
-            if(!record.isNull("db_table"))
+            if(!record.isNull("db_table_name"))
             {
-                setDbTable(record.getString("db_table"));
+                setDbTable(record.getString("db_table_name"));
             }
             setHandlerClass(record.getString("handler_class_name"));
             setFlags(record.getInteger("flags"));
