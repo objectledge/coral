@@ -38,7 +38,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.5 2004-02-23 13:50:27 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.6 2004-03-03 14:46:12 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -111,7 +111,7 @@ public class ResourceImpl
      * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      */
-    public ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
+    ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
         CoralSecurity coralSecurity, CoralRegistry coralRegistry, CoralEventHub coralEventHub)
     {
         super(persistence);
@@ -653,6 +653,14 @@ public class ResourceImpl
     void setOwner(Subject owner)
     {
         this.owner = owner;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    void setName(String name)
+    {
+        this.name = name;
     }
 
     /**
