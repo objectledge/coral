@@ -40,13 +40,17 @@ import org.objectledge.i18n.WebI18nToolFactory;
  */
 public class CoralWebI18nToolFactory extends WebI18nToolFactory
 {
+    /** coral I18n helper */
+    protected CoralI18nHelper coralI18nHelper;
+    
     /**
      * @param context
      * @param i18n
      */
-    public CoralWebI18nToolFactory(Context context, I18n i18n)
+    public CoralWebI18nToolFactory(Context context, I18n i18n, CoralI18nHelper coralI18nHelper)
     {
         super(context, i18n);
+        this.coralI18nHelper = coralI18nHelper;
     }
 
     /**
@@ -55,6 +59,6 @@ public class CoralWebI18nToolFactory extends WebI18nToolFactory
     public Object getTool()
     {
 		I18nContext i18nContext = I18nContext.getI18nContext(context);
-		return new CoralI18nTool(i18n, i18nContext.getLocale(), null);
+		return new CoralI18nTool(i18n, coralI18nHelper, i18nContext.getLocale(), null);
     }
 }

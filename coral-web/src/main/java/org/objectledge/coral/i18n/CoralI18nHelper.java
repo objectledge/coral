@@ -34,62 +34,73 @@ import java.util.Locale;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.i18n.I18n;
-import org.objectledge.i18n.I18nTool;
 
 /**
- * The I18n contex tool.
+ * The I18n coral entities name resolver.
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.11 2005-02-14 18:13:59 pablo Exp $
+ * @version $Id: CoralI18nHelper.java,v 1.1 2005-02-14 18:14:00 pablo Exp $
  */
-public class CoralI18nTool extends I18nTool
+public class CoralI18nHelper
 {
-    /** the coral i18n helper */
-    protected CoralI18nHelper coralI18nHelper;
+    /** i18n compoennt */    
+    protected I18n i18n;
     
     /**
      * @param i18n the i18n component.
-     * @param helper the i18n coral helper.
-     * @param locale the locale.
-     * @param prefix the prefix.
      */
-    public CoralI18nTool(I18n i18n, CoralI18nHelper coralI18nHelper,
-        Locale locale, String prefix)
+    public CoralI18nHelper(I18n i18n)
     {
-        super(i18n, locale, prefix);
-        this.coralI18nHelper = coralI18nHelper;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected I18nTool createInstance(I18nTool source)
-    {
-        CoralI18nTool s = (CoralI18nTool)source;
-        return new CoralI18nTool( s.i18n, s.coralI18nHelper, s.locale, s.prefixBuf.toString());
+        this.i18n = i18n;
     }
 
     /**
      * Get the localized name of the resource class.
-     * 
+     *
+     * @param locale the locale.
      * @param resourceClass the resource class.
      * @return the localized name of the resource class.
      */
-    public String getName(ResourceClass resourceClass)
+    public String getName(Locale locale, ResourceClass resourceClass)
     {
-        return get(coralI18nHelper.getNameKey(resourceClass), resourceClass.getName());
+        return i18n.get(locale, getNameKey(resourceClass), resourceClass.getName());
     }
 
     /**
      * Get the localized name of the resource.
      * 
+     * @param locale the locale.
      * @param resource the resource.
      * @return the name of the resource.
      */
-    public String getName(Resource resource)
+    public String getName(Locale locale, Resource resource)
     {
-        return get(coralI18nHelper.getNameKey(resource), resource.getName());
+        return i18n.get(locale, getNameKey(resource), resource.getName());
     }
-   
+    
+    /**
+     * Get the localization key for the name of the resource class.
+     * 
+     * @param resourceClass the resource class.
+     * @return the key for the name of the resource class.
+     */
+    protected String getNameKey(ResourceClass resourceClass)
+    {
+        StringBuilder nameBuf = new StringBuilder();
+        return nameBuf.append("resource.").append(resourceClass.getName()).toString();
+    }
+
+    /**
+     * Get the localization key for the name of the resource.
+     * 
+     * @param resource the resource.
+     * @return the key for the name of the resource.
+     */
+    protected String getNameKey(Resource resource)
+    {
+        StringBuilder nameBuf = new StringBuilder();
+        return nameBuf.append("resource.").append(resource.getResourceClass().getName())
+            .append(".resource-name.").append(resource.getName()).toString();
+    }
 }
