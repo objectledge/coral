@@ -2003,7 +2003,7 @@ public class RMLExecutor
     
     private int parseFlags(ASTresourceClassFlagList flags)
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         int count = flags.jjtGetNumChildren();
         for(int i=0; i<count; i++)
         {
@@ -2020,7 +2020,7 @@ public class RMLExecutor
 
     private int parseFlags(ASTattributeFlagList flags)
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         int count = flags.jjtGetNumChildren();
         for(int i=0; i<count; i++)
         {

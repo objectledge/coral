@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.8 2005-02-09 22:02:15 rafal Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.9 2005-02-21 15:48:31 zwierzem Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -101,7 +101,7 @@ public class SQLCoralQueryImpl
             columnMap.put(null, columns.get(0));
         }
 
-        StringBuffer query = new StringBuffer();
+        StringBuilder query = new StringBuilder();
         // SELECT
         query.append("SELECT ");
         for(int i=0; i<columns.size(); i++)
@@ -302,7 +302,7 @@ public class SQLCoralQueryImpl
      */
     void appendAttribute(String attribute, 
                                  final Map columnMap,
-                                 final StringBuffer out)
+                                 final StringBuilder out)
         throws MalformedQueryException
     {
         ResultColumnAttribute rca = (ResultColumnAttribute)
@@ -345,7 +345,7 @@ public class SQLCoralQueryImpl
      */
     private void appendCondition(ASTconditionalExpression expr, 
                                  final Map columnMap,
-                                 final StringBuffer out)
+                                 final StringBuilder out)
         throws MalformedQueryException
     {
         RMLVisitor visitor = new DefaultRMLVisitor()

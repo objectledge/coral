@@ -121,7 +121,7 @@ public class EntityRegistry
         if(kind.indexOf(' ') > 0)
         {
             StringTokenizer st = new StringTokenizer(kind, " ");
-            StringBuffer buff = new StringBuffer();
+            StringBuilder buff = new StringBuilder();
             buff.append(st.nextToken());
             while(st.hasMoreTokens())
             {

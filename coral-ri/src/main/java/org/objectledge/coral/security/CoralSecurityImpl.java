@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.Persistence;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurityImpl.java,v 1.8 2005-02-08 20:34:45 rafal Exp $
+ * @version $Id: CoralSecurityImpl.java,v 1.9 2005-02-21 15:48:35 zwierzem Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSecurityImpl
@@ -267,7 +267,7 @@ public class CoralSecurityImpl
             Role role = (Role)stack.remove(stack.size()-1);
             if(role.equals(superRole))
             {
-                StringBuffer buff = new StringBuffer();
+                StringBuilder buff = new StringBuilder();
                 buff.append("circular dependency: ");
                 buff.append(superRole.getName());
                 buff.append('>');

@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
  * Contains resource class flag constants and methods for coverting them to
  * printable strings and back.
  *
- * @version $Id: ResourceClassFlags.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: ResourceClassFlags.java,v 1.3 2005-02-21 15:43:36 zwierzem Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassFlags
@@ -87,7 +87,7 @@ public class ResourceClassFlags
      */
     public static String toString(int flags)
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         for(int i=0; i<FLAG_NAMES.length; i++)
         {
             int f = 1<<i;

@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.19 2005-01-20 06:00:24 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.20 2005-02-21 15:44:16 zwierzem Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -161,7 +161,7 @@ public abstract class AbstractResource implements Resource
      */
     public String toString()
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         buff.append(getClass().getName());
         buff.append(' ');
         buff.append(getPath());

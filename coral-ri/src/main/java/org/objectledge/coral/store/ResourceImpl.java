@@ -37,7 +37,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * and {@link org.objectledge.coral.schema.ResourceHandler#retrieve(Resource,
  * java.sql.Connection,Object)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.20 2005-02-08 20:34:43 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.21 2005-02-21 15:48:36 zwierzem Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -197,7 +197,7 @@ public class ResourceImpl
      */
     public String toString()
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         buff.append(getClass().getName());
         buff.append(" delegate for ");
         buff.append(getPath());
@@ -315,7 +315,7 @@ public class ResourceImpl
      */
     public String getPath()
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         Resource r = this;
         while(r != null)
         {

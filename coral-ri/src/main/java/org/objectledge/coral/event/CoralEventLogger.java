@@ -5,7 +5,7 @@ import org.jcontainer.dna.Logger;
 /**
  * Logs incoming Coral events.
  *
- * @version $Id: CoralEventLogger.java,v 1.4 2005-02-08 20:35:02 rafal Exp $
+ * @version $Id: CoralEventLogger.java,v 1.5 2005-02-21 15:48:08 zwierzem Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralEventLogger
@@ -48,7 +48,7 @@ public class CoralEventLogger
     protected void event(String type, long entity1, long entity2,
                                   long entity3, boolean added)
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         buff.append("Coral event: ");
         buff.append(type);
         buff.append("(#");

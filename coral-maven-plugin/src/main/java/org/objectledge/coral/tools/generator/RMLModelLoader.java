@@ -74,7 +74,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
  * Fills generator Schema with Coral class information using RML scripts.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.11 2005-02-10 17:46:41 rafal Exp $
+ * @version $Id: RMLModelLoader.java,v 1.12 2005-02-21 15:44:54 zwierzem Exp $
  */
 public class RMLModelLoader
 {
@@ -144,7 +144,7 @@ public class RMLModelLoader
     /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.11 2005-02-10 17:46:41 rafal Exp $
+     * @version $Id: RMLModelLoader.java,v 1.12 2005-02-21 15:44:54 zwierzem Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {
@@ -474,7 +474,7 @@ public class RMLModelLoader
 
         private int parseFlags(ASTresourceClassFlagList flags)
         {
-            StringBuffer buff = new StringBuffer();
+            StringBuilder buff = new StringBuilder();
             int count = flags.jjtGetNumChildren();
             for(int i=0; i<count; i++)
             {
@@ -491,7 +491,7 @@ public class RMLModelLoader
 
         private int parseFlags(ASTattributeFlagList flags)
         {
-            StringBuffer buff = new StringBuffer();
+            StringBuilder buff = new StringBuilder();
             int count = flags.jjtGetNumChildren();
             for(int i=0; i<count; i++)
             {

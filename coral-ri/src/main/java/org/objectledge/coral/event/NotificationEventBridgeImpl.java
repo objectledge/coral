@@ -237,7 +237,7 @@ public class NotificationEventBridgeImpl
                         long entity3, boolean added)
     {
         // log
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         buff.append("Remote Coral event: ");
         buff.append(type);
         buff.append("(#");

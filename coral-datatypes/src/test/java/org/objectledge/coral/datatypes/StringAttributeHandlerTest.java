@@ -96,7 +96,7 @@ public class StringAttributeHandlerTest extends LedgeTestCase
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 26; i++)
         {
             sb.append("1234567890");

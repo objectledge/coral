@@ -35,7 +35,7 @@ import org.objectledge.utils.StringUtils;
  * Simple string tool for usage inside class templates.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: StringTool.java,v 1.2 2004-12-27 04:43:27 rafal Exp $
+ * @version $Id: StringTool.java,v 1.3 2005-02-21 15:44:54 zwierzem Exp $
  */
 public class StringTool
 {
@@ -61,7 +61,7 @@ public class StringTool
     {
         String w = StringUtils.wrap(s, width - 8);
         StringTokenizer wt = new StringTokenizer(w, "\n");
-        StringBuffer buff = new StringBuffer(w.length()+wt.countTokens()*4+4);
+        StringBuilder buff = new StringBuilder(w.length()+wt.countTokens()*4+4);
         String l = wt.nextToken();
         buff.append("    ").append(l);
         if(wt.hasMoreTokens())

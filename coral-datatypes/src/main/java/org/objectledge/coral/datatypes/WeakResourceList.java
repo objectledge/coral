@@ -15,7 +15,7 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: WeakResourceList.java,v 1.4 2005-02-21 11:52:20 rafal Exp $
+ * @version $Id: WeakResourceList.java,v 1.5 2005-02-21 15:44:16 zwierzem Exp $
  */
 public class WeakResourceList
     extends ResourceList
@@ -145,7 +145,7 @@ public class WeakResourceList
      */
     public String toString()
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         buff.append('[');
         for(int i = 0; i < size; i++)
         {

@@ -19,7 +19,7 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>  
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceList.java,v 1.5 2005-02-21 11:52:20 rafal Exp $
+ * @version $Id: ResourceList.java,v 1.6 2005-02-21 15:44:16 zwierzem Exp $
  */
 public class ResourceList
     extends AbstractList
@@ -36,7 +36,7 @@ public class ResourceList
 
     /** The session factory. */
     protected CoralSessionFactory coralSessionFactory;
-    
+
     /** The resource ids. */
 	protected long[] ids = new long[CAPACITY_INITIAL];
 
@@ -310,7 +310,7 @@ public class ResourceList
      */
     public String toString()
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         buff.append('[');
         for(int i = 0; i < size; i++)
         {

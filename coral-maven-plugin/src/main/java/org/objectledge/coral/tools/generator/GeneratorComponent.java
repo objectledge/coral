@@ -55,7 +55,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.29 2005-02-08 20:34:04 rafal Exp $
+ * @version $Id: GeneratorComponent.java,v 1.30 2005-02-21 15:44:54 zwierzem Exp $
  */
 public class GeneratorComponent
 {
@@ -298,7 +298,7 @@ public class GeneratorComponent
         }
         
         LineNumberReader lnr = new LineNumberReader(fileSystem.getReader(path, fileEncoding));
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         int last=0;
         boolean inCustom = false;
         String in;
@@ -606,7 +606,7 @@ public class GeneratorComponent
     
     String generateSQLList()
     {
-    	StringBuffer buff = new StringBuffer();
+    	StringBuilder buff = new StringBuilder();
         List resourceClasses = schema.getResourceClasses();
         for(Iterator i = resourceClasses.iterator(); i.hasNext();)
         {
