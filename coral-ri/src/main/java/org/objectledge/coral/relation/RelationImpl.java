@@ -27,6 +27,11 @@
 //
 package org.objectledge.coral.relation;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,11 +44,14 @@ import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.database.Database;
+import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
+import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.10 2004-03-03 16:18:26 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.11 2004-03-09 14:34:17 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -51,69 +59,36 @@ implements Relation
 {
     /** Store is used to retrieve resources. */
     private CoralStore store;
+	/** Database is used to retrieve relation contents. */
+	private Database database;
 
     /** Map r1 -&gt; set of r2. */
     private Map rel = new HashMap();
 	/** Sum of sizes of id sets stored in map {@link #rel}. */
-	private float relSetsSizeSum;
+	private float relSetsSizeSum = 0F;
 
     /** Map r2 -&gt; set of r1. */
     private Map invRel = new HashMap();
 	/** Sum of sizes of id sets stored in map {@link #invRel}. */
-	private float invRelSetsSizeSum;
+	private float invRelSetsSizeSum = 0F;
 
     // initialization -----------------------------------------------------------------------------
 
     /**
      * Creates a relationship from provided definition.
      *
-     * <p>An array of two element arrays is expected, each element containting
-     * a single definition entry.</p>
-     *
      * @param persistence the persistence system
      * @param store used to retrieve resources
+     * @param database used to retrieve relation contents
      * @param name name of the relation
-     * @param def the relationship definition
      */
-    public RelationImpl(Persistence persistence, CoralStore store, String name, long[][] def)
+    public RelationImpl(Persistence persistence, CoralStore store, Database database, String name)
     {
         super(persistence, name);
 
         this.store = store;
-
-        Set set1 = null;
-        Set set2 = null;
-
-        rel = new HashMap((int)((float)def.length/2.0*1.5));
-        invRel = new HashMap((int)((float)def.length/2.0*1.5));
-
-        for(int i=0; i<def.length; i++)
-        {
-            Long r1k = new Long(def[i][0]);
-            Long r2k = new Long(def[i][1]);
-
-            set1 = maybeCreateSet(rel, r1k);
-            set2 = maybeCreateSet(invRel, r2k);
-
-            set1.add(r2k);
-            set2.add(r1k);
-        }
-        
-		this.relSetsSizeSum = calcSetsSizeSum(rel);
-		this.invRelSetsSizeSum = calcSetsSizeSum(invRel);
+		this.database = database;
     }
-
-	private float calcSetsSizeSum(Map relation)
-	{
-		int totalSize = 0;
-		Set keySet = relation.keySet();
-		for (Iterator iter = keySet.iterator(); iter.hasNext();)
-		{
-			Set relSet = (Set) iter.next();
-			totalSize += relSet.size();
-		}
-		return (float) totalSize;
-	}
 
     // public api ---------------------------------------------------------------------------------
 
@@ -200,6 +175,63 @@ implements Relation
     {
         return KEY_COLUMNS;
     }
+
+    
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setData(InputRecord record) throws PersistenceException
+	{
+		super.setData(record);
+		
+		// read relation data from database &  prepare data contents
+        try
+        {
+        	int length = 1024; // number of elements in relation - should be retrieved from db
+        	
+			Set set1 = null;
+			Set set2 = null;
+	
+			rel = new HashMap((int) ((float) length / 2.0 * 1.5));
+			invRel = new HashMap((int) ((float) length / 2.0 * 1.5));
+
+			Connection conn = database.getConnection();
+	        Statement stmt = conn.createStatement();
+	        ResultSet rs = stmt.executeQuery(
+				"SELECT resource1,resource2 FROM " + getTable() + " WHERE data_key = " + getId());
+	        while (rs.next())
+	        {
+	            Long r1k = new Long(rs.getLong(1));
+	            Long r2k = new Long(rs.getLong(2));
+	
+	            set1 = maybeCreateSet(rel, r1k);
+	            set2 = maybeCreateSet(invRel, r2k);
+	
+	            set1.add(r2k);
+	            set2.add(r1k);
+	        }
+	
+	        this.relSetsSizeSum = calcSetsSizeSum(rel);
+	        this.invRelSetsSizeSum = calcSetsSizeSum(invRel);
+		}
+		catch (SQLException e)
+		{
+			throw new PersistenceException("Cannot retrieve relation contents - relation '"+
+				getName() + "'", e);
+		}
+	}
+
+	private float calcSetsSizeSum(Map relation)
+	{
+		int totalSize = 0;
+		Set keySet = relation.keySet();
+		for (Iterator iter = keySet.iterator(); iter.hasNext();)
+		{
+			Set relSet = (Set) iter.next();
+			totalSize += relSet.size();
+		}
+		return (float) totalSize;
+	}
 
     // implementation api -------------------------------------------------------------------------
 
@@ -382,6 +414,8 @@ implements Relation
         }
         return res;
     }
+
+	// relation invertion -------------------------------------------------------------------------
 
     /** Represents a reversed relation. */
     private class InvertedRelation implements Relation
