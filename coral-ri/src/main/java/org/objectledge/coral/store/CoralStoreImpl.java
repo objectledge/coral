@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.14 2004-07-01 13:19:52 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.15 2004-08-10 10:33:51 zwierzem Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -593,6 +593,10 @@ public class CoralStoreImpl
         throws UnknownAttributeException,
                ValueRequiredException
     {
+        if(name == null || name.equals(""))
+        {
+            throw new ValueRequiredException("resource name cannot be NULL or empty");
+        }
         Subject creator = coral.getCurrentSubject();
         if((resourceClass.getFlags() & ResourceClassFlags.ABSTRACT) != 0)
         {
