@@ -27,22 +27,26 @@
 // 
 package org.objectledge.coral;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
-import org.objectledge.database.persistence.PicoPersistentFactory;
 import org.objectledge.pico.customization.CustomizingConstructorComponentAdapter;
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoContainer;
+import org.picocontainer.defaults.AssignabilityRegistrationException;
 import org.picocontainer.defaults.DefaultPicoContainer;
+import org.picocontainer.defaults.NotConcreteRegistrationException;
 
 /**
  * An implemention of the Instantiator interface using the PicoContainer.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PicoInstantiator.java,v 1.6 2005-02-04 02:30:34 rafal Exp $
+ * @version $Id: PicoInstantiator.java,v 1.7 2005-02-06 23:04:32 rafal Exp $
  */
 public class PicoInstantiator 
     implements Instantiator
@@ -86,7 +90,7 @@ public class PicoInstantiator
      */
     public Object newInstance(Class clazz) throws InstantiationException
     {
-        ComponentAdapter adapter = new CustomizingConstructorComponentAdapter(clazz, clazz, null);
+        ComponentAdapter adapter = new ArgumentCachingComponentAdapter(clazz);
         return adapter.getComponentInstance(container); 
     }
 
@@ -108,8 +112,60 @@ public class PicoInstantiator
     /** 
      * {@inheritDoc}
      */
-    public PersistentFactory getPersistentFactory(Class clazz)
+    public PersistentFactory getPersistentFactory(final Class clazz)
     {
-        return new PicoPersistentFactory(container, clazz);
+        if(!Persistent.class.isAssignableFrom(clazz))
+        {
+            throw new IllegalArgumentException(clazz.getName()+
+                " does not implmement Persistent interface");
+        }
+        return new PersistentFactory()
+        {
+            public Persistent newInstance()
+                throws Exception
+            {
+                return (Persistent)PicoInstantiator.this.newInstance(clazz);
+            }
+        };
+    }
+
+    private final Map<Class<?>,Object[]> argsCache = new HashMap<Class<?>,Object[]>();
+    
+    /**
+     * Adapter that caches constructor arguments per implementation class.
+     *
+     * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
+     * @version $Id: PicoInstantiator.java,v 1.7 2005-02-06 23:04:32 rafal Exp $
+     */
+    private class ArgumentCachingComponentAdapter
+        extends CustomizingConstructorComponentAdapter
+    {
+        /**
+         * Creates new ArgumentCachingComponentAdapter instance.
+         * 
+         * @param componentImplementation the component implementation class.
+         * @throws AssignabilityRegistrationException if the class does not implement required 
+         * interface.
+         * @throws NotConcreteRegistrationException if the implementation class is not concrete.
+         */
+        public ArgumentCachingComponentAdapter(Class componentImplementation)
+            throws AssignabilityRegistrationException, NotConcreteRegistrationException
+        {
+            super(componentImplementation, componentImplementation);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        protected Object[] getConstructorArguments(PicoContainer container, Constructor ctor)
+        {
+            Object[] args = argsCache.get(getComponentImplementation());
+            if(args == null)
+            {
+                args = super.getConstructorArguments(container, ctor);
+                argsCache.put(getComponentImplementation(), args);
+            }
+            return args;
+        }
     }
 }
