@@ -2,9 +2,9 @@ package org.objectledge.coral.modules.components.browser;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.table.comparator.ClassNameComparator;
+import org.objectledge.coral.session.CoralSessionFactory;
+import org.objectledge.coral.table.ClassNameComparator;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableException;
@@ -14,7 +14,6 @@ import org.objectledge.table.TableStateManager;
 import org.objectledge.table.TableTool;
 import org.objectledge.table.generic.ListTableModel;
 import org.objectledge.web.mvc.MVCContext;
-
 
 /**
  * The base browse component class.

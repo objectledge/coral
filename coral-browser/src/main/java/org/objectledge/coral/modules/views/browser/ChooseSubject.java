@@ -2,9 +2,9 @@ package org.objectledge.coral.modules.views.browser;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.security.Subject;
-import org.objectledge.coral.table.comparator.SubjectNameComparator;
+import org.objectledge.coral.session.CoralSessionFactory;
+import org.objectledge.coral.table.SubjectNameComparator;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableModel;
