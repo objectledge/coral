@@ -35,6 +35,7 @@ import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.AttributeClassChangeListener;
+import org.objectledge.coral.event.AttributeDefinitionChangeListener;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.database.Database;
@@ -44,7 +45,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.1 2004-03-02 11:08:40 fil Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.2 2004-03-02 12:20:38 fil Exp $
  */
 public class CoralSchemaImplTest extends MockObjectTestCase
 {
@@ -76,6 +77,8 @@ public class CoralSchemaImplTest extends MockObjectTestCase
     private AttributeHandler attributeHandler;
     private Mock mockOtherAttributeHandler;
     private AttributeHandler otherAttributeHandler;
+    private Mock mockAttributeDefinition;
+    private AttributeDefinition attributeDefinition;
     private Mock mockResourceClass;
     private ResourceClass resourceClass;
     
@@ -121,11 +124,16 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         attributeHandler = (AttributeHandler)mockAttributeHandler.proxy();
         mockOtherAttributeHandler = new Mock(OtherAttributeHandler.class);
         otherAttributeHandler = (AttributeHandler)mockOtherAttributeHandler.proxy();
+        mockAttributeClass.stub().method("getHandler").will(returnValue(attributeHandler));
+        mockAttributeDefinition = new Mock(AttributeDefinition.class);
+        attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
     }
     
     public void testCreation()
     {
     }
+    
+    // attribute classes /////////////////////////////////////////////////////////////////////////
     
     public void testGetAttributeClass()
     {
@@ -231,5 +239,57 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         mockOutboundEventWhiteboard.expect(once()).method("fireAttributeClassChangeEvent").with(same(realAttributeClass));
         coralSchema.setDbTable(realAttributeClass, "<new db table>");
         assertEquals("<new db table>", realAttributeClass.getDbTable());
+    }
+    
+    // attribute definitions /////////////////////////////////////////////////////////////////////
+    
+    public void testCreateAttributeDefinition()
+    {
+        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<domain>"));
+        mockInboundEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
+        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
+        assertEquals("<attribute>", realAttributeDefinition.getName());
+        assertEquals(attributeClass, realAttributeDefinition.getAttributeClass());
+        assertEquals("<domain>", realAttributeDefinition.getDomain());
+        assertEquals(303, realAttributeDefinition.getFlags());
+    }
+    
+    public void testRenameAttributeDefinition()
+        throws Exception
+    {
+        mockAttributeDefinition.stub().method("getDeclaringClass").will(returnValue(null));
+        mockAttributeDefinition.stub().method("getName").will(returnValue("<old name>"));
+        mockCoralRegistry.expect(once()).method("renameAttributeDefinition").with(same(attributeDefinition), eq("<new name>"));
+        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeDefinitionChangeEvent").with(same(attributeDefinition));
+        coralSchema.setName(attributeDefinition, "<new name>");
+    }
+    
+    public void testAttributeDefinitionSetFlags()
+        throws Exception
+    {
+        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<domain>"));
+        mockInboundEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
+        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
+        assertEquals(303, realAttributeDefinition.getFlags());
+        
+        mockPersistence.expect(once()).method("save").with(same(realAttributeDefinition));
+        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
+        coralSchema.setFlags(realAttributeDefinition, 121);
+        assertEquals(121, realAttributeDefinition.getFlags());
+    }
+
+    public void testAttributeDefinitionSetDomain()
+        throws Exception
+    {
+        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<domain>"));
+        mockInboundEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
+        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
+        assertEquals("<domain>", realAttributeDefinition.getDomain());
+        
+        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<new domain>"));
+        mockPersistence.expect(once()).method("save").with(same(realAttributeDefinition));
+        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
+        coralSchema.setDomain(realAttributeDefinition, "<new domain>");
+        assertEquals("<new domain>", realAttributeDefinition.getDomain());
     }
 }
