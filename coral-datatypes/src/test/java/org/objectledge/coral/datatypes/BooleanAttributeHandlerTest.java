@@ -167,7 +167,7 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
     public void testGetComparator()
     {
         Object comp = booleanHandler.getComparator();
-        assertNull(comp);
+        assertNotNull(comp);
     }
 
     public void testSupportsExternalString()
