@@ -31,5 +31,19 @@
     <driver>org.hsqldb.jdbcDriver</driver>
     <url>jdbc:hsqldb:.</url>
     <user>sa</user>
+
+    <!--
+    <driver>org.postgresql.Driver</driver>
+    <url>jdbc:postgresql://localhost/coraltest</url>
+    <user>coraltest</user>
+    <password>coraltest</password>
+    -->
+
+    <!--
+    <driver>com.mysql.jdbc.Driver</driver>
+    <url>jdbc:mysql://localhost/coraltest</url>    
+    <user>coraltest</user>
+    <password>coraltest</password>
+    -->
   </connection>
 </config>
