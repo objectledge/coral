@@ -49,7 +49,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.6 2004-03-05 11:52:14 fil Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.7 2004-03-05 12:09:19 fil Exp $
  */
 public class CoralSchemaImplTest extends MockObjectTestCase
 {
@@ -110,6 +110,7 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         connection = (Connection)mockConnection.proxy();
         mockPersistence = new Mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
+        mockPersistence.stub().method("getDatabase").will(returnValue(database));        
         mockInstantiator = new Mock(Instantiator.class);
         instantiator = (Instantiator)mockInstantiator.proxy();
         mockCoralRegistry = new Mock(CoralRegistry.class);
@@ -128,7 +129,7 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         mockLogger = new Mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
         
-        coralSchema = new CoralSchemaImpl(database, persistence, instantiator, coralCore, 
+        coralSchema = new CoralSchemaImpl(persistence, instantiator, coralCore, 
             coralEventHub, logger);
         
         mockDatabase.stub().method("getConnection").will(returnValue(connection));

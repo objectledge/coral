@@ -46,7 +46,6 @@ import org.objectledge.coral.security.RoleImplicationImpl;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.security.SubjectImpl;
 import org.objectledge.coral.store.Resource;
-import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
@@ -56,7 +55,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.4 2004-03-05 10:18:17 fil Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.5 2004-03-05 12:09:19 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -76,9 +75,6 @@ public class CoralRegistryImpl
     /** The {@link PersistenceService}. */
     private Persistence persistence;
     
-    /** The {@link Database}. */
-    private Database database;
-
     /** The logger. */
     private Logger log;
     
@@ -185,7 +181,6 @@ public class CoralRegistryImpl
     /**
      * Constructs the {@link RegistryService} implementation.
      * 
-     * @param database the database to use.
      * @param persistence the persistence subsystem
      * @param cacheFactory the cache factory.
      * @param coralEventHub the event hub.
@@ -194,12 +189,11 @@ public class CoralRegistryImpl
      * @param log the logger.
      * @throws ConfigurationException if the configuration is invalid.
      */
-    public CoralRegistryImpl(Database database, Persistence persistence, 
+    public CoralRegistryImpl(Persistence persistence, 
         CacheFactory cacheFactory, CoralEventHub coralEventHub, CoralCore coral, 
         Instantiator instantiator, Logger log)
         throws ConfigurationException
     {
-        this.database = database;
         this.persistence = persistence;
         this.coralEventHub = coralEventHub;
         this.coral = coral;
@@ -261,17 +255,17 @@ public class CoralRegistryImpl
     private void setupRegistries(CacheFactory cacheFactory, Instantiator instantiator)
         throws ConfigurationException
     {
-        resourceClassRegistry = new EntityRegistry(persistence, cacheFactory, database, 
+        resourceClassRegistry = new EntityRegistry(persistence, cacheFactory, 
             instantiator, log, "resource class", ResourceClassImpl.class);
-        attributeClassRegistry = new EntityRegistry(persistence, cacheFactory, database, 
+        attributeClassRegistry = new EntityRegistry(persistence, cacheFactory, 
             instantiator, log, "attribute class", AttributeClassImpl.class);
-        attributeDefinitionRegistry = new EntityRegistry(persistence, cacheFactory, database, 
+        attributeDefinitionRegistry = new EntityRegistry(persistence, cacheFactory, 
             instantiator, log, "attribute definition", AttributeDefinitionImpl.class);
-        permissionRegistry = new EntityRegistry(persistence, cacheFactory, database, 
+        permissionRegistry = new EntityRegistry(persistence, cacheFactory, 
             instantiator, log, "permission", PermissionImpl.class);
-        roleRegistry = new EntityRegistry(persistence, cacheFactory, database, 
+        roleRegistry = new EntityRegistry(persistence, cacheFactory, 
             instantiator, log, "role", RoleImpl.class);
-        subjectRegistry = new EntityRegistry(persistence, cacheFactory, database, 
+        subjectRegistry = new EntityRegistry(persistence, cacheFactory, 
             instantiator, log,  "subject", SubjectImpl.class);
     }   
 
@@ -353,7 +347,7 @@ public class CoralRegistryImpl
         boolean shouldCommit = false;
         try
         {
-            shouldCommit = database.beginTransaction();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             int attrs = persistence.count("arl_attribute_definition", 
                                               "attribute_class_id = "+item.getId());
             if(attrs > 0)
@@ -364,13 +358,13 @@ public class CoralRegistryImpl
             
             attributeClassRegistry.delete(item);
             
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException e)
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -382,7 +376,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -394,7 +388,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -460,7 +454,7 @@ public class CoralRegistryImpl
         boolean shouldCommit = false;
         try
         {
-            shouldCommit = database.beginTransaction();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             // Check for resources
             int resources = persistence.count("arl_resource", 
                                                   "resource_class_id = "+item.getId());
@@ -497,13 +491,13 @@ public class CoralRegistryImpl
                 coral.getSecurity().deletePermission(item, perms[i]);
             }
             resourceClassRegistry.delete(item);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException e)
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -515,7 +509,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -527,7 +521,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -811,7 +805,7 @@ public class CoralRegistryImpl
         boolean shouldCommit = false;
         try
         {
-            shouldCommit = database.beginTransaction();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             // check for subordinates
             int subordinates = persistence.count("arl_subject", 
                                        "supervisor = "+item.getId());
@@ -862,13 +856,13 @@ public class CoralRegistryImpl
             }
                 
             subjectRegistry.delete(item);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException e)
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -880,7 +874,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -892,7 +886,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -981,7 +975,7 @@ public class CoralRegistryImpl
         boolean shouldCommit = false;
         try
         {
-            shouldCommit = database.beginTransaction();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             // check for sub roles
             int subRoles = persistence.count("arl_role_implication", 
                                                  "super_role = "+item.getId());
@@ -1008,13 +1002,13 @@ public class CoralRegistryImpl
             }
 
             roleRegistry.delete(item);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException e)
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -1026,7 +1020,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -1038,7 +1032,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -1126,7 +1120,7 @@ public class CoralRegistryImpl
         boolean shouldCommit = false;
         try
         {
-            shouldCommit = database.beginTransaction();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             // check for assignments
             int assignments = persistence.count("arl_permission_assignment", 
                                                     "permission_id = "+item.getId());
@@ -1145,13 +1139,13 @@ public class CoralRegistryImpl
             }
             
             permissionRegistry.delete(item);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException e)
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -1163,7 +1157,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -1175,7 +1169,7 @@ public class CoralRegistryImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {

@@ -13,7 +13,6 @@ import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
@@ -22,15 +21,13 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.6 2004-03-05 11:52:16 fil Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.7 2004-03-05 12:09:19 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
     implements CoralSchema
 {
     // Instance variables ////////////////////////////////////////////////////////////////////////
-
-    private Database database;
 
     private Persistence persistence;
     
@@ -47,17 +44,15 @@ public class CoralSchemaImpl
     /**
      * Constructs the {@link SchemaService} implementation.
      * 
-     * @param database the database.
      * @param persistence the persistence subsystem.
      * @param instantiator the instantiator.
      * @param coral the component hub.
      * @param coralEventHub the event hub.
      * @param log the logger.
      */
-    public CoralSchemaImpl(Database database, Persistence persistence, Instantiator instantiator,
+    public CoralSchemaImpl(Persistence persistence, Instantiator instantiator,
         CoralCore coral, CoralEventHub coralEventHub, Logger log)
     {
-        this.database = database;
         this.persistence = persistence;
         this.instantiator = instantiator;
         this.coral= coral;
@@ -534,13 +529,13 @@ public class CoralSchemaImpl
         boolean shouldCommit = false;
         try
         {
-            shouldCommit = database.beginTransaction();
-            conn = database.getConnection();
+            shouldCommit = persistence.getDatabase().beginTransaction();
+            conn = persistence.getDatabase().getConnection();
             ((AttributeDefinitionImpl)attribute).setDeclaringClass(resourceClass);
             coral.getRegistry().addAttributeDefinition(attribute);
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, true);
             resourceClass.getHandler().addAttribute(attribute, value, conn);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
             coralEventHub.getOutbound().fireResourceClassAttributesChangeEvent(attribute, true);
         }
         catch(SQLException e)
@@ -549,7 +544,7 @@ public class CoralSchemaImpl
             ((AttributeDefinitionImpl)attribute).setDeclaringClass(null);
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -586,13 +581,13 @@ public class CoralSchemaImpl
         boolean shouldCommit = false;
         try
         {
-            conn = database.getConnection();
-            shouldCommit = database.beginTransaction();
+            conn = persistence.getDatabase().getConnection();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, false);
             attribute.getDeclaringClass().getHandler().
                 deleteAttribute(attribute, conn);
             coral.getRegistry().deleteAttributeDefinition(attribute);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
             coralEventHub.getOutbound().fireResourceClassAttributesChangeEvent(attribute, false);
         }
         catch(BackendException ex)
@@ -600,7 +595,7 @@ public class CoralSchemaImpl
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, true);
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -613,7 +608,7 @@ public class CoralSchemaImpl
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, true);
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -681,14 +676,14 @@ public class CoralSchemaImpl
         ResourceClassInheritance relationship = null;
         try
         {
-            conn = database.getConnection();
-            shouldCommit = database.beginTransaction();
+            conn = persistence.getDatabase().getConnection();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             relationship = new ResourceClassInheritanceImpl(coral,
                 parent, child);
             coral.getRegistry().addResourceClassInheritance(relationship);
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, true);
             child.getHandler().addParentClass(parent, attributes, conn);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
             coralEventHub.getOutbound().fireResourceClassInheritanceChangeEvent(relationship, true);
         }
         catch(BackendException ex)
@@ -696,7 +691,7 @@ public class CoralSchemaImpl
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, false);
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -709,7 +704,7 @@ public class CoralSchemaImpl
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, false);
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -747,14 +742,14 @@ public class CoralSchemaImpl
         ResourceClassInheritance relationship = null;
         try
         {
-            conn = database.getConnection();
-            shouldCommit = database.beginTransaction();
+            conn = persistence.getDatabase().getConnection();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             relationship = new ResourceClassInheritanceImpl(coral, 
                 parent, child);
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, false);
             child.getHandler().deleteParentClass(parent, conn);
             coral.getRegistry().deleteResourceClassInheritance(relationship);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
             coralEventHub.getOutbound().fireResourceClassInheritanceChangeEvent(relationship, 
                 false);
         }
@@ -763,7 +758,7 @@ public class CoralSchemaImpl
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, true);
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -776,7 +771,7 @@ public class CoralSchemaImpl
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, true);
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {

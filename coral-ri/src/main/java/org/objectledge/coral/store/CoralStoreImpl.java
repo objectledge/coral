@@ -31,7 +31,6 @@ import org.objectledge.coral.schema.ResourceHandler;
 import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.security.PermissionAssignment;
 import org.objectledge.coral.security.Subject;
-import org.objectledge.database.Database;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
@@ -41,7 +40,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.3 2004-03-05 11:52:17 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.4 2004-03-05 12:09:18 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -49,8 +48,6 @@ public class CoralStoreImpl
 {
     // Instance variables ////////////////////////////////////////////////////////////////////////
 
-    private Database database;
-    
     private Persistence persistence;
     
     private CoralEventHub coralEventHub;
@@ -85,18 +82,16 @@ public class CoralStoreImpl
      * Constructs the {@link StoreService} implementation.
      * 
      * @param cacheFactory the cache factory.
-     * @param database the database.
      * @param persistence the persistence subsystem.
      * @param coralEventHub the event hub.
      * @param coral the component hub.
      * @param log the logger.
      * @throws ConfigurationException if the cache is not configured properly.
      */
-    public CoralStoreImpl(CacheFactory cacheFactory, Database database, Persistence persistence,
+    public CoralStoreImpl(CacheFactory cacheFactory, Persistence persistence,
         CoralEventHub coralEventHub, CoralCore coral, Logger log)
         throws ConfigurationException
     {
-        this.database = database;
         this.persistence = persistence;
         this.coral = coral;
         this.log = log;
@@ -145,17 +140,17 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = database.getConnection();
-                    shouldCommit = database.beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
+                    shouldCommit = persistence.getDatabase().beginTransaction();
                     List list = persistence.load(" true ORDER BY resource_id", resourceFactory);
                     rs = instantiate(list, conn);
-                    database.commitTransaction(shouldCommit);
+                    persistence.getDatabase().commitTransaction(shouldCommit);
                 }
                 catch(BackendException ex)
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -167,7 +162,7 @@ public class CoralStoreImpl
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -205,8 +200,8 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = database.getConnection();
-                    shouldCommit = database.beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
+                    shouldCommit = persistence.getDatabase().beginTransaction();
                     List list;
                     if(parent != null)
                     {
@@ -220,13 +215,13 @@ public class CoralStoreImpl
                     }
                     
                     rs = instantiate(list, conn);
-                    database.commitTransaction(shouldCommit);
+                    persistence.getDatabase().commitTransaction(shouldCommit);
                 }
                 catch(BackendException ex)
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -238,7 +233,7 @@ public class CoralStoreImpl
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -279,8 +274,8 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = database.getConnection();
-                    shouldCommit = database.beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
+                    shouldCommit = persistence.getDatabase().beginTransaction();
                     res = (Resource)persistence.load(id,resourceFactory);
                     if(res != null)
                     {
@@ -291,13 +286,13 @@ public class CoralStoreImpl
                     {
                         throw new EntityDoesNotExistException("resource #"+id+" does not exist");
                     }
-                    database.commitTransaction(shouldCommit);
+                    persistence.getDatabase().commitTransaction(shouldCommit);
                 }
                 catch(BackendException ex)
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -309,7 +304,7 @@ public class CoralStoreImpl
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -321,7 +316,7 @@ public class CoralStoreImpl
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -356,18 +351,18 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = database.getConnection();
-                    shouldCommit = database.beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
+                    shouldCommit = persistence.getDatabase().beginTransaction();
                     List list = persistence.load("name = '"+name+"'",
                                                      resourceFactory);
                     rs = instantiate(list, conn);
-                    database.commitTransaction(shouldCommit);
+                    persistence.getDatabase().commitTransaction(shouldCommit);
                 }
                 catch(BackendException ex)
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -379,7 +374,7 @@ public class CoralStoreImpl
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -447,19 +442,19 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = database.getConnection();
-                    shouldCommit = database.beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
+                    shouldCommit = persistence.getDatabase().beginTransaction();
                     List list = persistence.load("parent = "+parent.getId()+
                                                      " AND name = '"+name+"'",
                                                      resourceFactory);
                     rs = instantiate(list, conn);
-                    database.commitTransaction(shouldCommit);
+                    persistence.getDatabase().commitTransaction(shouldCommit);
                 }
                 catch(BackendException ex)
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -471,7 +466,7 @@ public class CoralStoreImpl
                 {
                     try
                     {
-                        database.rollbackTransaction(shouldCommit);
+                        persistence.getDatabase().rollbackTransaction(shouldCommit);
                     }
                     catch(SQLException ee)
                     {
@@ -734,20 +729,20 @@ public class CoralStoreImpl
         Resource res = null;
         try
         {
-            conn = database.getConnection();
-            shouldCommit = database.beginTransaction();
+            conn = persistence.getDatabase().getConnection();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             Resource delegate = new ResourceImpl(persistence, coral, coralEventHub, 
                 name, resourceClass, parent, creator);
             persistence.save((Persistent)delegate);
             res = delegate.getResourceClass().getHandler().
                 create(delegate, attributes, conn);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(BackendException ex)
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -759,7 +754,7 @@ public class CoralStoreImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -771,7 +766,7 @@ public class CoralStoreImpl
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -859,8 +854,8 @@ public class CoralStoreImpl
                             boolean shouldCommit = false;
                             try
                             {
-                                conn = database.getConnection();
-                                shouldCommit = database.beginTransaction();
+                                conn = persistence.getDatabase().getConnection();
+                                shouldCommit = persistence.getDatabase().beginTransaction();
                                 int count;
                                 Set children = (Set)resourceByParent.get(resource);
                                 if(children != null)
@@ -914,13 +909,13 @@ public class CoralStoreImpl
                                 {
                                     all.remove(resource);
                                 }
-                                database.commitTransaction(shouldCommit);
+                                persistence.getDatabase().commitTransaction(shouldCommit);
                             }
                             catch(BackendException ex)
                             {
                                 try
                                 {
-                                    database.rollbackTransaction(shouldCommit);
+                                    persistence.getDatabase().rollbackTransaction(shouldCommit);
                                 }
                                 catch(SQLException ee)
                                 {
@@ -932,7 +927,7 @@ public class CoralStoreImpl
                             {
                                 try
                                 {
-                                    database.rollbackTransaction(shouldCommit);
+                                    persistence.getDatabase().rollbackTransaction(shouldCommit);
                                 }
                                 catch(SQLException ee)
                                 {
@@ -944,7 +939,7 @@ public class CoralStoreImpl
                             {
                                 try
                                 {
-                                    database.rollbackTransaction(shouldCommit);
+                                    persistence.getDatabase().rollbackTransaction(shouldCommit);
                                 }
                                 catch(SQLException ee)
                                 {

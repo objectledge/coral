@@ -58,7 +58,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralRegistryTest.java,v 1.4 2004-03-05 11:52:17 fil Exp $
+ * @version $Id: CoralRegistryTest.java,v 1.5 2004-03-05 12:09:19 fil Exp $
  */
 public class CoralRegistryTest extends MockObjectTestCase
 {
@@ -102,6 +102,7 @@ public class CoralRegistryTest extends MockObjectTestCase
         database = (Database)mockDatabase.proxy();
         mockPersistence = new Mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
+        mockPersistence.stub().method("getDatabase").will(returnValue(database));
         mockCacheFactory = new Mock(CacheFactory.class);
         cacheFactory = (CacheFactory)mockCacheFactory.proxy();
         mockCoralEventHub = new Mock(CoralEventHub.class);
@@ -198,7 +199,7 @@ public class CoralRegistryTest extends MockObjectTestCase
         mockCoralEventWhiteboard.expect(once()).method("addRoleImplicationChangeListener").with(ANYTHING, NULL);
         mockCoralEventWhiteboard.expect(once()).method("addResourceClassInheritanceChangeListener").with(ANYTHING, NULL);
         mockCoralEventWhiteboard.expect(once()).method("addResourceClassAttributesChangeListener").with(ANYTHING, NULL);
-        return new CoralRegistryImpl(database, persistence, cacheFactory, coralEventHub, coralCore, 
+        return new CoralRegistryImpl(persistence, cacheFactory, coralEventHub, coralCore, 
             instantiator, logger);
     }
     

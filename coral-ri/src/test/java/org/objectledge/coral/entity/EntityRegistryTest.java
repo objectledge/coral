@@ -45,17 +45,17 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: EntityRegistryTest.java,v 1.2 2004-03-05 10:18:17 fil Exp $
+ * @version $Id: EntityRegistryTest.java,v 1.3 2004-03-05 12:09:19 fil Exp $
  */
 public class EntityRegistryTest
     extends MockObjectTestCase
 {
+    private Mock mockDatabase;
+    private Database database;
     private Mock mockPersistence;
     private Persistence persistence;
     private Mock mockCacheFactory;
     private CacheFactory cacheFactory;
-    private Mock mockDatabase;
-    private Database database;
     private Mock mockInstantiator;
     private Instantiator instantiator;
     private Mock mockRedEntityPersistentFactory;
@@ -66,19 +66,20 @@ public class EntityRegistryTest
     
     public void setUp()
     {
+        mockDatabase = new Mock(Database.class);
+        database = (Database)mockDatabase.proxy();
         mockPersistence = new Mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
+        mockPersistence.stub().method("getDatabase").will(returnValue(database));
         mockCacheFactory = new Mock(CacheFactory.class);
         mockCacheFactory.stub().method("getInstance").will(returnValue(new HashMap()));
         cacheFactory = (CacheFactory)mockCacheFactory.proxy();
-        mockDatabase = new Mock(Database.class);
         mockInstantiator = new Mock(Instantiator.class);
         instantiator = (Instantiator)mockInstantiator.proxy();
         mockRedEntityPersistentFactory = new Mock(PersistentFactory.class, "mockRedEntityPersistentFactory");
         redEntityPersistentFactory = (PersistentFactory)mockRedEntityPersistentFactory.proxy();
         mockInstantiator.stub().method("getPersistentFactory").with(eq(RedEntity.class)).will(returnValue(redEntityPersistentFactory));
         mockRedEntityPersistentFactory.stub().method("newInstance").will(returnValue(new RedEntity(persistence)));
-        database = (Database)mockDatabase.proxy();
         mockLogger = new Mock(Logger.class);
         log = (Logger)mockLogger.proxy();
         redEntity = new RedEntity(persistence);
@@ -87,7 +88,7 @@ public class EntityRegistryTest
     private EntityRegistry createRegistry()
         throws Exception
     {
-        return new EntityRegistry(persistence, cacheFactory, database, instantiator, log, 
+        return new EntityRegistry(persistence, cacheFactory, instantiator, log, 
             "redEntity", RedEntity.class);
     }
     

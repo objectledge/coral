@@ -14,7 +14,6 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
-import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
@@ -28,9 +27,6 @@ public class EntityRegistry
 {
     /** The persistence service. */
     private Persistence persistence;
-    
-    /** The database. */
-    private Database database;
     
     /** The logger. */
     private Logger log;
@@ -68,20 +64,18 @@ public class EntityRegistry
      *
      * @param persistence the Persistence subsystem.
      * @param cacheFactory the CacheFactory.
-     * @param database the Database to operate on.
      * @param instantiator the component instantiator.
      * @param log the Logger to use.
      * @param kind the semantic name of the entity type.
      * @param type the entity implementation class.
      * @throws ConfigurationException if the cache is not configured properly.
      */
-    public EntityRegistry(Persistence persistence, CacheFactory cacheFactory, Database database, 
+    public EntityRegistry(Persistence persistence, CacheFactory cacheFactory, 
         Instantiator instantiator, Logger log, 
         String kind, final Class type)
         throws ConfigurationException
     {
         this.persistence = persistence;
-        this.database = database;
         this.log = log;
         this.kind = kind;
         this.kindPlural = (kind.charAt(kind.length()-1) == 's') ? kind+"s" : kind+"es";
@@ -291,7 +285,7 @@ public class EntityRegistry
         boolean shouldCommit = false;
         try
         {
-            shouldCommit = database.beginTransaction();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             if(persistence.exists(((Persistent)entity).getTable(),
                    "name = '"+entity.getName()+"'"))
             {
@@ -299,13 +293,13 @@ public class EntityRegistry
                     "' already exists");
             }
             add(entity); 
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException ex)
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -317,7 +311,7 @@ public class EntityRegistry
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -329,7 +323,7 @@ public class EntityRegistry
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -424,7 +418,7 @@ public class EntityRegistry
         boolean shouldCommit = false;
         try
         {
-            shouldCommit = database.beginTransaction();
+            shouldCommit = persistence.getDatabase().beginTransaction();
             if(persistence.exists(((Persistent)entity).getTable(),
                    "name = '"+name+"'"))
             {
@@ -432,13 +426,13 @@ public class EntityRegistry
                     "' already exists");
             }
             rename(entity, name);
-            database.commitTransaction(shouldCommit);
+            persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException ex)
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -450,7 +444,7 @@ public class EntityRegistry
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
@@ -462,7 +456,7 @@ public class EntityRegistry
         {
             try
             {
-                database.rollbackTransaction(shouldCommit);
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
             }
             catch(SQLException ee)
             {
