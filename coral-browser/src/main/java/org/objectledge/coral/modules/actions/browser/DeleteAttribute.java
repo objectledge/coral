@@ -2,36 +2,34 @@ package org.objectledge.coral.modules.actions.browser;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.session.CoralSession;
+import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
+import org.objectledge.templating.TemplatingContext;
+import org.objectledge.web.mvc.MVCContext;
 
 /**
  * Delete attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: DeleteAttribute.java,v 1.1 2004-03-26 14:07:06 pablo Exp $
+ * @version $Id: DeleteAttribute.java,v 1.2 2005-02-06 22:30:48 pablo Exp $
  */
 public class DeleteAttribute extends BaseBrowserAction
 {
-    /**
-     * Action constructor.
-     * 
-     * @param logger the logger.
-     * @param coralSessionFactory the coral session factory.
-     */
-    public DeleteAttribute(Logger logger, CoralSessionFactory coralSessionFactory)
-    {
-        super(logger, coralSessionFactory);
-    }
 
+
+    public DeleteAttribute(Logger logger)
+    {
+        super(logger);
+    }
     /**
      * Performs the action.
      */
-    public void process(Context context) throws ProcessingException
+    public void execute(Context context, Parameters parameters, MVCContext mvcContext, TemplatingContext templatingContext, CoralSession coralSession)
+    throws ProcessingException
     {
-        prepare(context);
         try
         {
             long resClassId = parameters.getLong("res_class_id", -1L);
@@ -53,10 +51,6 @@ public class DeleteAttribute extends BaseBrowserAction
             templatingContext.put("result", "exception");
             //context.put("trace",StringUtils.stackTrace(e));
             return;
-        }
-        finally
-        {
-            coralSession.close();
         }
         templatingContext.put("result", "deleted_successfully");
     }

@@ -4,40 +4,38 @@ import java.util.HashMap;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
+import org.objectledge.templating.TemplatingContext;
+import org.objectledge.web.mvc.MVCContext;
 
 /**
  * Add resource action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddResource.java,v 1.3 2004-04-22 18:00:25 zwierzem Exp $
+ * @version $Id: AddResource.java,v 1.4 2005-02-06 22:30:48 pablo Exp $
  */
 public class AddResource extends BaseBrowserAction
 {
-    /**
-     * Action constructor.
-     * 
-     * @param logger the logger.
-     * @param coralSessionFactory the coral session factory.
-     */
-    public AddResource(Logger logger, CoralSessionFactory coralSessionFactory)
-    {
-        super(logger, coralSessionFactory);
-    }
 
+    
+    public AddResource(Logger logger)
+    {
+        super(logger);
+    }
     /**
      * Performs the action.
      */
-    public void process(Context context) throws ProcessingException
+    public void execute(Context context, Parameters parameters, MVCContext mvcContext, TemplatingContext templatingContext, CoralSession coralSession)
+    throws ProcessingException
     {
         try
         {
-            prepare(context);
             String resClassName = parameters.get("res_class_name", "");
             if (resClassName.length() == 0)
             {
@@ -121,10 +119,6 @@ public class AddResource extends BaseBrowserAction
             templatingContext.put("result", "exception");
             templatingContext.put("exception",e);
             return;
-        }
-        finally
-        {
-            coralSession.close();
         }
         templatingContext.put("result", "added_successfully");
     }

@@ -2,38 +2,34 @@ package org.objectledge.coral.modules.actions.browser;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.security.Role;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.coral.session.CoralSession;
+import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
+import org.objectledge.templating.TemplatingContext;
+import org.objectledge.web.mvc.MVCContext;
 
 /**
  * Grant role action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: GrantRole.java,v 1.1 2004-03-26 14:07:06 pablo Exp $
+ * @version $Id: GrantRole.java,v 1.2 2005-02-06 22:30:48 pablo Exp $
  */
 public class GrantRole
     extends BaseBrowserAction
 {
-    /**
-     * Action constructor.
-     * 
-     * @param logger the logger.
-     * @param coralSessionFactory the coral session factory.
-     */
-    public GrantRole(Logger logger, CoralSessionFactory coralSessionFactory)
+    public GrantRole(Logger logger)
     {
-        super(logger, coralSessionFactory);
-    }    
+        super(logger);
+    }
     
     /**
      * Performs the action.
      */
-    public void process(Context context)
-            throws ProcessingException    
+    public void execute(Context context, Parameters parameters, MVCContext mvcContext, TemplatingContext templatingContext, CoralSession coralSession)
+        throws ProcessingException    
     {
-        prepare(context);
         long roleId = parameters.getLong("role_id",-1);
         String subjectName = parameters.get("sub_name","");
         boolean allowGranting = parameters.getBoolean("granting_allowed",false);
@@ -49,10 +45,6 @@ public class GrantRole
             //templatingContext.put("trace",StringUtils.stackTrace(e));
             templatingContext.put("result","exception");
             return;
-        }
-        finally
-        {
-            coralSession.close();
         }
         templatingContext.put("result","granted_successfully");
     }

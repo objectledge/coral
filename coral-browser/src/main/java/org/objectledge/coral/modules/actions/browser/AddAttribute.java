@@ -2,30 +2,27 @@ package org.objectledge.coral.modules.actions.browser;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.session.CoralSession;
+import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
+import org.objectledge.templating.TemplatingContext;
+import org.objectledge.web.mvc.MVCContext;
 
 /**
  * Add attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddAttribute.java,v 1.1 2004-03-26 14:07:06 pablo Exp $
+ * @version $Id: AddAttribute.java,v 1.2 2005-02-06 22:30:48 pablo Exp $
  */
 public class AddAttribute extends BaseBrowserAction
 {
-    /**
-     * Action constructor.
-     * 
-     * @param logger the logger.
-     * @param coralSessionFactory the coral session factory.
-     */
-    public AddAttribute(Logger logger, CoralSessionFactory coralSessionFactory)
+    public AddAttribute(Logger logger)
     {
-        super(logger, coralSessionFactory);
+        super(logger);
     }
 
     /**
@@ -33,11 +30,11 @@ public class AddAttribute extends BaseBrowserAction
      *   
      * @param context the context.
      */
-    public void process(Context context) throws ProcessingException
+    public void execute(Context context, Parameters parameters, MVCContext mvcContext, TemplatingContext templatingContext, CoralSession coralSession)
+        throws ProcessingException
     {
         try
         {
-            prepare(context);
             String attrName = parameters.get("attr_name", "");
             if (attrName.length() == 0)
             {
@@ -85,13 +82,7 @@ public class AddAttribute extends BaseBrowserAction
         {
             logger.error("ARLException: ", e);
             templatingContext.put("result", "exception");
-            //context.put("trace",StringUtils.stackTrace(e));
-            //route(data, "AddAttribute", "exception");
             return;
-        }
-        finally
-        {
-            coralSession.close();
         }
         templatingContext.put("result", "added_successfully");
     }

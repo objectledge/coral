@@ -2,27 +2,24 @@ package org.objectledge.coral.modules.actions.browser;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.session.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSession;
+import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
+import org.objectledge.templating.TemplatingContext;
 import org.objectledge.utils.StackTrace;
+import org.objectledge.web.mvc.MVCContext;
 
 /**
  * Add attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ExecuteCommand.java,v 1.5 2004-08-30 09:04:25 rafal Exp $
+ * @version $Id: ExecuteCommand.java,v 1.6 2005-02-06 22:30:48 pablo Exp $
  */
 public class ExecuteCommand extends BaseBrowserAction
 {
-    /**
-     * Action constructor.
-     * 
-     * @param logger the logger.
-     * @param coralSessionFactory the coral session factory.
-     */
-    public ExecuteCommand(Logger logger, CoralSessionFactory coralSessionFactory)
+    public ExecuteCommand(Logger logger)
     {
-        super(logger, coralSessionFactory);
+        super(logger);
     }
 
     /**
@@ -30,11 +27,11 @@ public class ExecuteCommand extends BaseBrowserAction
      *   
      * @param context the context.
      */
-    public void process(Context context) throws ProcessingException
+    public void execute(Context context, Parameters parameters, MVCContext mvcContext, TemplatingContext templatingContext, CoralSession coralSession)
+    throws ProcessingException
     {
         try
         {
-            prepare(context);
             String command = parameters.get("command","");
             if(command.length()>0)
             {
@@ -57,10 +54,6 @@ public class ExecuteCommand extends BaseBrowserAction
             templatingContext.put("result", "exception");
             templatingContext.put("commandResult", new StackTrace(e));
             return;
-        }
-        finally
-        {
-            coralSession.close();
         }
         templatingContext.put("result", "executed_successfully");
     }

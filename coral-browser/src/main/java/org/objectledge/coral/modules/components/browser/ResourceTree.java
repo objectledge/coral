@@ -2,14 +2,17 @@ package org.objectledge.coral.modules.components.browser;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.session.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.table.CoralTableModel;
 import org.objectledge.i18n.I18nContext;
+import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.table.TableModel;
 import org.objectledge.table.TableState;
 import org.objectledge.table.TableStateManager;
 import org.objectledge.table.TableTool;
+import org.objectledge.templating.TemplatingContext;
+import org.objectledge.web.mvc.MVCContext;
 
 /**
  * The base browse component class.
@@ -17,13 +20,14 @@ import org.objectledge.table.TableTool;
 public class ResourceTree
     extends BaseBrowserComponent
 {
-    public ResourceTree(Context context, Logger logger, CoralSessionFactory sessionFactory,
-                         TableStateManager tableStateManager)
+    public ResourceTree(Context context, Logger logger, TableStateManager tableStateManager)
     {
-        super(context, logger, sessionFactory, tableStateManager);
+        super(context, logger, tableStateManager);
     }
     
-    public void process(Context context) throws ProcessingException
+    public void process(Parameters parameters, TemplatingContext templatingContext, 
+        MVCContext mvcContext, CoralSession coralSession)
+        throws ProcessingException
     {
         try
         {
