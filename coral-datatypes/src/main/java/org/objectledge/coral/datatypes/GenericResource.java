@@ -34,7 +34,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.8 2004-06-29 10:40:25 fil Exp $
+ * @version $Id: GenericResource.java,v 1.9 2004-06-29 11:15:23 fil Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -140,7 +140,7 @@ public class GenericResource
     
     // Package private ///////////////////////////////////////////////////////
 
-    protected synchronized void retrieve(Resource delegate, ResourceClass rClass, 
+    synchronized void retrieve(Resource delegate, ResourceClass rClass, 
                                  Connection conn, Object data)
         throws SQLException
     {
@@ -183,7 +183,7 @@ public class GenericResource
         }
     }
 
-    protected synchronized void create(Resource delegate, ResourceClass rClass, 
+    synchronized void create(Resource delegate, ResourceClass rClass, 
                                Map attributes, Connection conn)
         throws SQLException, ValueRequiredException, ConstraintViolationException
     {
@@ -234,6 +234,7 @@ public class GenericResource
     synchronized void update(Connection conn)
         throws SQLException
     {
+        super.update(conn);
         Statement stmt = conn.createStatement();
         Iterator i = modified.iterator();
         while(i.hasNext())
@@ -323,11 +324,6 @@ public class GenericResource
                              " AND attribute_definition_id = "+attr.getId());
             }
         }
-    }
-
-    ResourceClass getResourceClass0()
-    {
-        return componentResourceClass;
     }
 
     // Private ///////////////////////////////////////////////////////////////
