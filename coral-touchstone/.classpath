@@ -14,5 +14,6 @@
 	<classpathentry sourcepath="MAVEN_REPO/nanocontainer/sources/nanocontainer-1.0-beta-1.pico-1.0-src.zip" kind="var" path="MAVEN_REPO/nanocontainer/jars/nanocontainer-1.0-beta-1.pico-1.0.jar"/>
 	<classpathentry sourcepath="MAVEN_REPO/picocontainer/sources/picocontainer-1.0-ledge-1-src.zip" kind="var" path="MAVEN_REPO/picocontainer/jars/picocontainer-1.0-ledge-1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/dbunit/jars/dbunit-2.0.jar"/>
+	<classpathentry kind="src" path="/ledge-lgpl"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
