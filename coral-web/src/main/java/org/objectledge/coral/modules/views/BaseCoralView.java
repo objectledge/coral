@@ -40,6 +40,7 @@ public abstract class BaseCoralView
         MVCContext mvcContext = MVCContext.getMVCContext(context);
         I18nContext i18nContext = I18nContext.getI18nContext(context);
         templatingContext.put("mvcContext", mvcContext);
+        templatingContext.put("parameters", parameters);
     	try
         {
             process(parameters, templatingContext, mvcContext, i18nContext, coralSession);
