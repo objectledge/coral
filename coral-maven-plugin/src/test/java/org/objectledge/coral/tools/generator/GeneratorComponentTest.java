@@ -28,6 +28,7 @@
 package org.objectledge.coral.tools.generator;
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ import org.objectledge.utils.LedgeTestCase;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponentTest.java,v 1.4 2004-04-01 08:04:18 fil Exp $
+ * @version $Id: GeneratorComponentTest.java,v 1.5 2004-05-07 11:41:40 fil Exp $
  */
 public class GeneratorComponentTest
     extends LedgeTestCase
@@ -248,6 +249,17 @@ public class GeneratorComponentTest
             assertEquals("missing include file missingMasterSources.lst in " +
                     "sourcesMissingInclude.lst at line 3", e.getMessage());
         }
+    }
+    
+    public void testMatches()
+    {
+        List prefices = new ArrayList(2);
+        prefices.add("org.objectledge.coral.test");
+        prefices.add("org.objectledge.coral.test.*");
+        assertTrue(generatorComponent.matches("org.objectledge.coral.test", prefices));
+        assertTrue(generatorComponent.matches("org.objectledge.coral.test.sub", prefices));
+        assertFalse(generatorComponent.matches("org.objectledge.coral.testother", prefices));
+        assertFalse(generatorComponent.matches("org.objectledge.coral.other", prefices));
     }
 
     // implementation ///////////////////////////////////////////////////////////////////////////
