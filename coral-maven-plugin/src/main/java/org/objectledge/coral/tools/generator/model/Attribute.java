@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * Represents a Coral AttributeDefinition.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Attribute.java,v 1.5 2004-03-25 15:57:47 fil Exp $
+ * @version $Id: Attribute.java,v 1.6 2004-03-28 08:52:05 fil Exp $
  */
 public class Attribute
     extends Entity
@@ -129,6 +129,32 @@ public class Attribute
         {
             return false;
         }
+    }
+
+    /**
+     * Returns unqualified name of the primitive wrapper type.
+     * 
+     * @return unqualified name of the primitive wrapper type.
+     * @throws IllegalStateException if the attribute class is not primitive.
+     */    
+    public String getPrimitiveWrapper()
+        throws IllegalStateException
+    {
+        String className = attributeClass.getJavaClassName();
+        if(className.startsWith("java.lang"))
+        {
+            try
+            {
+                Field f = attributeClass.getJavaClass().getField("TYPE");
+                int lastDot = className.lastIndexOf('.'); 
+                return className.substring(lastDot+1);
+            }
+            catch(NoSuchFieldException e)
+            {
+                // not primitive
+            }
+        }
+        throw new IllegalStateException(className+" is not a primitive type");        
     }
     
     /**
