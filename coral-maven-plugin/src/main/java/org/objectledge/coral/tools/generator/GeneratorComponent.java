@@ -46,6 +46,7 @@ import org.objectledge.coral.tools.BatchLoader;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
+import org.objectledge.filesystem.UnsupportedCharactersInFilePathException;
 import org.objectledge.templating.Template;
 import org.objectledge.templating.Templating;
 import org.objectledge.templating.TemplatingContext;
@@ -54,7 +55,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.23 2004-08-24 14:08:32 rafal Exp $
+ * @version $Id: GeneratorComponent.java,v 1.24 2004-09-24 11:26:25 zwierzem Exp $
  */
 public class GeneratorComponent
 {
@@ -370,10 +371,11 @@ public class GeneratorComponent
      * @param path the path of the file to process.
      * @param contents the new contents of the file.
      * @return <code>true</code> if the file was actually modified.
-     * @throws IOException if the file could not be written.
+     * @throws IOException
+     * @throws UnsupportedCharactersInFilePathException
      */
     boolean write(String path, String contents)
-        throws IOException
+        throws IOException, UnsupportedCharactersInFilePathException
     {
         if(!fileSystem.exists(path))
         {
