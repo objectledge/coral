@@ -19,8 +19,8 @@ public class ASTalterResourceClassAlterAttributeSetFlagsStatement extends ASTalt
   
   ///////////////////////////////////////////////////////////////////////////////////////////////
   
-  public ASTresourceClassFlagList getFlags()
+  public ASTattributeFlagList getFlags()
   {
-      return resourceClassFlags;
+      return attributeFlags;
   }
 }
