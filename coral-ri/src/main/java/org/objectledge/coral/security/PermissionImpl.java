@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.AbstractEntity;
-import org.objectledge.coral.entity.CoralEntityRegistry;
+import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.EventHub;
 import org.objectledge.coral.event.PermissionAssociationChangeListener;
 import org.objectledge.coral.event.PermissionChangeListener;
@@ -20,7 +20,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * Each {@link ResourceClass} has an associated set of <code>Permission</code>s
  * that can be granted upon it's instances.
  *
- * @version $Id: PermissionImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
+ * @version $Id: PermissionImpl.java,v 1.3 2004-02-23 10:24:55 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionImpl
@@ -34,8 +34,8 @@ public class PermissionImpl
     /** The Event Hub. */
     private EventHub eventHub;
     
-    /** The registry. */
-    private CoralEntityRegistry registry;
+    /** The CoralRegistry. */
+    private CoralRegistry coralRegistry;
 
     /** Set of PermissionAssociations. */
     private Set permissionAssociations;
@@ -50,13 +50,13 @@ public class PermissionImpl
      * 
      * @param persistence the Persistence subsystem.
      * @param eventHub the EventHub.
-     * @param registry the CoralRegistry.
+     * @param coralRegistry the CoralRegistry.
      */
-    PermissionImpl(Persistence persistence, EventHub eventHub, CoralEntityRegistry registry)
+    PermissionImpl(Persistence persistence, EventHub eventHub, CoralRegistry coralRegistry)
     {
         super(persistence);
         this.eventHub = eventHub;
-        this.registry = registry;
+        this.coralRegistry = coralRegistry;
     }
 
     /**
@@ -64,16 +64,16 @@ public class PermissionImpl
      *
      * @param persistence the Persistence subsystem.
      * @param eventHub the EventHub.
-     * @param registry the CoralRegistry.
+     * @param coralRegistry the CoralRegistry.
      *
      * @param name the name of the permission.
      */
-    PermissionImpl(Persistence persistence,  EventHub eventHub, CoralEntityRegistry registry, 
+    PermissionImpl(Persistence persistence,  EventHub eventHub, CoralRegistry coralRegistry, 
         String name)
     {
         super(persistence, name);
         this.eventHub = eventHub;
-        this.registry = registry;
+        this.coralRegistry = coralRegistry;
     }
 
     // Persistent interface /////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ public class PermissionImpl
     {
         if(permissionAssociations == null)
         {
-            permissionAssociations = registry.getPermissionAssociations(this);
+            permissionAssociations = coralRegistry.getPermissionAssociations(this);
             eventHub.getGlobal().addPermissionAssociationChangeListener(this, this);
         }
     }

@@ -11,7 +11,7 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralInstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.AbstractEntity;
-import org.objectledge.coral.entity.CoralEntityRegistry;
+import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.EventHub;
 import org.objectledge.coral.event.PermissionAssociationChangeListener;
 import org.objectledge.coral.event.ResourceClassAttributesChangeListener;
@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.3 2004-02-23 10:24:56 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -50,8 +50,8 @@ public class ResourceClassImpl
     /** Instantiator. */
     private Instantiator instantiator;
     
-    /** Registry. */
-    private CoralEntityRegistry registry;
+    /** The CoralRegistry. */
+    private CoralRegistry coralRegistry;
     
     /** The name of the Java class associated with this resource class */
     private String javaClassName;
@@ -97,14 +97,14 @@ public class ResourceClassImpl
      * 
      * @param peristence the Peristence subsystem.
      * @param instantiator the Instantiator.
-     * @param registry the CoralRegistry.
+     * @param coralRegistry the CoralRegistry.
      */
     ResourceClassImpl(Persistence persistence, Instantiator instantiator, 
-        CoralEntityRegistry registry)
+        CoralRegistry coralRegistry)
     {
         super(persistence);
         this.instantiator = instantiator;
-        this.registry = registry;
+        this.coralRegistry = coralRegistry;
     }
     
     /**
@@ -112,7 +112,7 @@ public class ResourceClassImpl
      *
      * @param peristence the Peristence subsystem.
      * @param instantiator the Instantiator.
-     * @param registry the CoralRegistry.
+     * @param coralRegistry the CoralRegistry.
      * 
      * @param id the identifier of the resource class.
      * @param name the name of the resource class.
@@ -123,13 +123,13 @@ public class ResourceClassImpl
      * @param flags resource class flags.
      */
     ResourceClassImpl(Persistence persistence, Instantiator instantiator, 
-        CoralEntityRegistry registry,
+        CoralRegistry coralRegistry,
         String name, String javaClass, String handlerClass, String dbTable, int flags)
         throws JavaClassException
     {
         super(persistence, name);
         this.instantiator = instantiator;
-        this.registry = registry;
+        this.coralRegistry = coralRegistry;
         setJavaClass(javaClass);
         setDbTable(dbTable);
         setHandlerClass(handlerClass);
@@ -721,7 +721,7 @@ public class ResourceClassImpl
     {
         if(inheritance == null)
         {
-            inheritance = registry.getResourceClassInheritance(this);
+            inheritance = coralRegistry.getResourceClassInheritance(this);
             eventHub.getGlobal().addResourceClassInheritanceChangeListener(this, this);
         }
     }
@@ -749,7 +749,7 @@ public class ResourceClassImpl
                 else
                 {
                     pc.add(rc);
-                    rcis = registry.getResourceClassInheritance(rc);
+                    rcis = coralRegistry.getResourceClassInheritance(rc);
                     eventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
                     eventHub.getGlobal().addResourceClassAttributesChangeListener(this, rc);
                     eventHub.getGlobal().addPermissionAssociationChangeListener(this, rc);
@@ -793,7 +793,7 @@ public class ResourceClassImpl
                 else
                 {
                     cc.add(rc);
-                    rcis = registry.getResourceClassInheritance(rc);
+                    rcis = coralRegistry.getResourceClassInheritance(rc);
                     eventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
                 }
                 Iterator i = rcis.iterator();
@@ -818,7 +818,7 @@ public class ResourceClassImpl
     {
         if(declaredAttributes == null)
         {
-            declaredAttributes = registry.getDeclaredAttributes(this);
+            declaredAttributes = coralRegistry.getDeclaredAttributes(this);
             eventHub.getGlobal().addResourceClassAttributesChangeListener(this, this);
         }   
     }
@@ -858,7 +858,7 @@ public class ResourceClassImpl
     {
         if(permissionAssociations == null)
         {
-            permissionAssociations = registry.getPermissionAssociations(this);
+            permissionAssociations = coralRegistry.getPermissionAssociations(this);
             eventHub.getGlobal().addPermissionAssociationChangeListener(this, this);
         }
     }

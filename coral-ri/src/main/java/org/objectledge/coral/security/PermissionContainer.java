@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.objectledge.coral.entity.CoralEntityRegistry;
+import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.EventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.ResourceTreeChangeListener;
@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceInheritance;
  * A helper class for managing a set of permissions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionContainer.java,v 1.2 2004-02-23 10:13:31 fil Exp $
+ * @version $Id: PermissionContainer.java,v 1.3 2004-02-23 10:24:55 fil Exp $
  */
 public class PermissionContainer
     implements PermissionAssignmentChangeListener,
@@ -29,8 +29,8 @@ public class PermissionContainer
     /** The event hub. */
     private EventHub eventHub;
     
-    /** The registry. */
-    private CoralEntityRegistry registry;
+    /** The CoralRegistry. */
+    private CoralRegistry coralRegistry;
 
     /** The role container. */
     private RoleContainer roles;
@@ -53,15 +53,15 @@ public class PermissionContainer
      * Constructs a permission container.
      *
      * @param eventHub the EventHub.
-     * @param retistry the CoralRegistry.
+     * @param coralRegistry the CoralRegistry.
      * 
      * @param roles a RoleContainer.
      */
-    PermissionContainer(EventHub eventHub, CoralEntityRegistry registry, 
+    PermissionContainer(EventHub eventHub, CoralRegistry coralRegistry, 
         RoleContainer roles)
     {
         this.eventHub = eventHub;
-        this.registry = registry;
+        this.coralRegistry = coralRegistry;
         this.roles = roles;
         roles.setPermissionContainer(this);
     }
@@ -233,7 +233,7 @@ public class PermissionContainer
             Set roleSet = roles.getMatchingRoles();
             while(r != null)
             {
-                Set pas = registry.getPermissionAssignments(r);
+                Set pas = coralRegistry.getPermissionAssignments(r);
                 Iterator i = pas.iterator();
                 while(i.hasNext())
                 {

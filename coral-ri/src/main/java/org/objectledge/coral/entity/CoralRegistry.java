@@ -19,10 +19,10 @@ import org.objectledge.coral.store.Resource;
  * Manages persistency of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralEntityRegistry.java,v 1.1 2004-02-20 14:38:40 fil Exp $
+ * @version $Id: CoralRegistry.java,v 1.1 2004-02-23 10:24:57 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
-public interface CoralEntityRegistry
+public interface CoralRegistry
 {
     // Schema - AttributeClass ///////////////////////////////////////////////
 

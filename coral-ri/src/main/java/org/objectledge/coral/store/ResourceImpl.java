@@ -11,7 +11,7 @@ import java.util.WeakHashMap;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.AbstractEntity;
-import org.objectledge.coral.entity.CoralEntityRegistry;
+import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.event.EventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
@@ -38,7 +38,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * ResourceHandler#create(Resource,Map,Connection)} and
  * ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.2 2004-02-23 10:13:32 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.3 2004-02-23 10:24:57 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -58,7 +58,7 @@ public class ResourceImpl
     private CoralSecurity coralSecurity;
 
     /** The CoralRegistry. */
-    private CoralEntityRegistry coralRegistry;
+    private CoralRegistry coralRegistry;
 
     /** The event hub. */
     private EventHub eventHub;
@@ -112,7 +112,7 @@ public class ResourceImpl
      * @param coralRegistry the CoralRegistry.
      */
     public ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
-        CoralSecurity coralSecurity, CoralEntityRegistry coralRegistry, EventHub eventHub)
+        CoralSecurity coralSecurity, CoralRegistry coralRegistry, EventHub eventHub)
     {
         super(persistence);
         this.coralSchema = coralSchema;
@@ -139,7 +139,7 @@ public class ResourceImpl
      * @param creator the Subject that creates the resource.
      */
     public ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
-        CoralSecurity coralSecurity, CoralEntityRegistry coralRegistry, EventHub eventHub,
+        CoralSecurity coralSecurity, CoralRegistry coralRegistry, EventHub eventHub,
         String name, ResourceClass resourceClass, Resource parent, Subject creator)
     {
         super(persistence, name);

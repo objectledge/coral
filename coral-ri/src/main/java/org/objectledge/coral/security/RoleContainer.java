@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.objectledge.coral.entity.CoralEntityRegistry;
+import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.EventHub;
 import org.objectledge.coral.event.RoleImplicationChangeListener;
 
@@ -13,7 +13,7 @@ import org.objectledge.coral.event.RoleImplicationChangeListener;
  * A helper class for managing a set of roles.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RoleContainer.java,v 1.2 2004-02-23 10:13:31 fil Exp $
+ * @version $Id: RoleContainer.java,v 1.3 2004-02-23 10:24:55 fil Exp $
  */
 public class RoleContainer
     implements RoleImplicationChangeListener
@@ -23,8 +23,8 @@ public class RoleContainer
     /** The event hub. */
     private EventHub eventHub;
     
-    /** The registry. */
-    private CoralEntityRegistry registry;
+    /** The CoralRegistry. */
+    private CoralRegistry coralRegistry;
 
     /** Expliclitly assigned roles. */
     private Set explicitRoles = new HashSet();
@@ -48,18 +48,18 @@ public class RoleContainer
      * Creates a new role container.
      *
      * @param eventHub the event hub.
-     * @param registry the registry.
+     * @param coralRegistry the CoralRegistry.
      * 
      * @param data the initial roles
      * @param roles <code>true</code> if data set contains {@link Role}
      *        objects, <code>false</code> if it contains {@link
      *        RoleAssignment} objects. 
      */
-    public RoleContainer(EventHub eventHub, CoralEntityRegistry registry, 
+    public RoleContainer(EventHub eventHub, CoralRegistry coralRegistry, 
         Set data, boolean roles)
     {
         this.eventHub = eventHub;
-        this.registry = registry;
+        this.coralRegistry = coralRegistry;
         if(roles)
         {
             Iterator i = data.iterator();
@@ -232,7 +232,7 @@ public class RoleContainer
                     sup.add(r);
                     eventHub.getGlobal().addRoleImplicationChangeListener(this, r);
                 }
-                Set ris = registry.getRoleImplications(r);
+                Set ris = coralRegistry.getRoleImplications(r);
                 Iterator i = ris.iterator();
                 while(i.hasNext())
                 {
@@ -264,7 +264,7 @@ public class RoleContainer
                     sub.add(r);
                     eventHub.getGlobal().addRoleImplicationChangeListener(this, r);
                 }
-                Set ris = registry.getRoleImplications(r);
+                Set ris = coralRegistry.getRoleImplications(r);
                 Iterator i = ris.iterator();
                 while(i.hasNext())
                 {
