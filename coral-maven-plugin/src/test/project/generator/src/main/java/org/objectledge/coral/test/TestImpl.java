@@ -38,6 +38,7 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -74,6 +75,9 @@ public class TestImpl
     /** The AttributeDefinition object for the <code>s3</code> attribute. */
     private AttributeDefinition s3Def;
 
+    /** The CoralStore */
+    protected CoralStore coralStore;
+
     // initialization /////////////////////////////////////////////////////////
 
     /**
@@ -86,8 +90,9 @@ public class TestImpl
      * @param schema the CoralSchema.
      * @param database the Database.
      * @param logger the Logger.
+     * @param coralStore the CoralStore.
      */
-    public TestImpl(CoralSchema schema, Database database, Logger logger)
+    public TestImpl(CoralSchema schema, Database database, Logger logger, CoralStore coralStore)
     {
         super(schema, database, logger);
         try
@@ -104,6 +109,7 @@ public class TestImpl
         {
             throw new BackendException("incompatible schema change", e);
         }
+        this.coralStore = coralStore;
     }
 
     // static methods ////////////////////////////////////////////////////////
@@ -449,15 +455,7 @@ public class TestImpl
     }    
     
     // @custom methods ///////////////////////////////////////////////////////
-
-    /**
-     * A custom method.
-     * 
-     * @param f a foating point number.
-     * @return the square of the f parameter.
-     */
-    public float square(float f)
-    {
-        return f*f;
-    }
+    
+    // @import org.objectledge.coral.store.CoralStore
+    // @field CoralStore coralStore
 }

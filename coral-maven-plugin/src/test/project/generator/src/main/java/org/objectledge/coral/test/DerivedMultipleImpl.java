@@ -50,16 +50,28 @@ import org.jcontainer.dna.Logger;
  * @author Coral Maven plugin
  */
 public class DerivedMultipleImpl
-    extends TestImpl
+    extends NoRequiredImpl
     implements DerivedMultiple
 {
     // instance variables ////////////////////////////////////////////////////
 
-    /** The AttributeDefinition object for the <code>i4</code> attribute. */
-    private AttributeDefinition i4Def;
+    /** The AttributeDefinition object for the <code>i1</code> attribute. */
+    private AttributeDefinition i1Def;
 
-    /** The AttributeDefinition object for the <code>s4</code> attribute. */
-    private AttributeDefinition s4Def;
+    /** The AttributeDefinition object for the <code>i2</code> attribute. */
+    private AttributeDefinition i2Def;
+
+    /** The AttributeDefinition object for the <code>i3</code> attribute. */
+    private AttributeDefinition i3Def;
+
+    /** The AttributeDefinition object for the <code>s1</code> attribute. */
+    private AttributeDefinition s1Def;
+
+    /** The AttributeDefinition object for the <code>s2</code> attribute. */
+    private AttributeDefinition s2Def;
+
+    /** The AttributeDefinition object for the <code>s3</code> attribute. */
+    private AttributeDefinition s3Def;
 
     /** The AttributeDefinition object for the <code>s6</code> attribute. */
     private AttributeDefinition s6Def;
@@ -83,8 +95,12 @@ public class DerivedMultipleImpl
         try
         {
             ResourceClass rc = schema.getResourceClass("coral.test.DerivedMultiple");
-            i4Def = rc.getAttribute("i4");
-            s4Def = rc.getAttribute("s4");
+            i1Def = rc.getAttribute("i1");
+            i2Def = rc.getAttribute("i2");
+            i3Def = rc.getAttribute("i3");
+            s1Def = rc.getAttribute("s1");
+            s2Def = rc.getAttribute("s2");
+            s3Def = rc.getAttribute("s3");
             s6Def = rc.getAttribute("s6");
         }
         catch(EntityDoesNotExistException e)
@@ -157,18 +173,18 @@ public class DerivedMultipleImpl
     // public interface //////////////////////////////////////////////////////
 
     /**
-     * Returns the value of the <code>i4</code> attribute.
+     * Returns the value of the <code>i1</code> attribute.
      *
-     * @return the value of the <code>i4</code> attribute.
+     * @return the value of the <code>i1</code> attribute.
      * @throws IllegalStateException if the value of the attribute is 
      *         undefined.
      */
-    public int getI4()
+    public int getI1()
         throws IllegalStateException
     {
-        if(isDefined(i4Def))
+        if(isDefined(i1Def))
         {
-            return ((Integer)get(i4Def)).intValue();
+            return ((Integer)get(i1Def)).intValue();
         }
         else
         {
@@ -177,18 +193,18 @@ public class DerivedMultipleImpl
     }
 
     /**
-     * Returns the value of the <code>i4</code> attribute.
+     * Returns the value of the <code>i1</code> attribute.
      *
      * @param defaultValue the value to return if the attribute is undefined.
-     * @return the value of the <code>i4</code> attribute.
+     * @return the value of the <code>i1</code> attribute.
      * @throws IllegalStateException if the value of the attribute is 
      *         undefined.
      */
-    public int getI4(int defaultValue)
+    public int getI1(int defaultValue)
     {
-        if(isDefined(i4Def))
+        if(isDefined(i1Def))
         {
-            return ((Integer)get(i4Def)).intValue();
+            return ((Integer)get(i1Def)).intValue();
         }
         else
         {
@@ -197,15 +213,15 @@ public class DerivedMultipleImpl
     }
 
     /**
-     * Sets the value of the <code>i4</code> attribute.
+     * Sets the value of the <code>i1</code> attribute.
      *
-     * @param value the value of the <code>i4</code> attribute.
+     * @param value the value of the <code>i1</code> attribute.
      */
-    public void setI4(int value)
+    public void setI1(int value)
     {
         try
         {
-            set(i4Def, new Integer(value));
+            set(i1Def, new Integer(value));
         }
         catch(ModificationNotPermitedException e)
         {
@@ -218,13 +234,13 @@ public class DerivedMultipleImpl
     }
 
     /**
-     * Removes the value of the <code>i4</code> attribute.
+     * Removes the value of the <code>i1</code> attribute.
      */
-    public void unsetI4()
+    public void unsetI1()
     {
         try
         {
-            unset(i4Def);
+            unset(i1Def);
         }
         catch(ValueRequiredException e)
         {
@@ -233,26 +249,106 @@ public class DerivedMultipleImpl
     } 
     
     /**
-     * Returns the value of the <code>s4</code> attribute.
+     * Returns the value of the <code>i2</code> attribute.
      *
-     * @return the value of the <code>s4</code> attribute.
+     * @return the value of the <code>i2</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
      */
-    public String getS4()
+    public int getI2()
     {
-        return (String)get(s4Def);
+        if(isDefined(i2Def))
+        {
+            return ((Integer)get(i2Def)).intValue();
+        }
+        else
+        {
+            throw new BackendException("incompatible schema change");
+        }
+    }    
+
+    /**
+     * Sets the value of the <code>i2</code> attribute.
+     *
+     * @param value the value of the <code>i2</code> attribute.
+     */
+    public void setI2(int value)
+    {
+        try
+        {
+            set(i2Def, new Integer(value));
+        }
+        catch(ModificationNotPermitedException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+        catch(ValueRequiredException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+    }
+   
+    /**
+     * Returns the value of the <code>i3</code> attribute.
+     *
+     * @return the value of the <code>i3</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public int getI3()
+        throws IllegalStateException
+    {
+        if(isDefined(i3Def))
+        {
+            return ((Integer)get(i3Def)).intValue();
+        }
+        else
+        {
+            throw new IllegalStateException("attribute value is undefined");
+        }
+    }
+
+    /**
+     * Returns the value of the <code>i3</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>i3</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public int getI3(int defaultValue)
+    {
+        if(isDefined(i3Def))
+        {
+            return ((Integer)get(i3Def)).intValue();
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
+   
+    /**
+     * Returns the value of the <code>s1</code> attribute.
+     *
+     * @return the value of the <code>s1</code> attribute.
+     */
+    public String getS1()
+    {
+        return (String)get(s1Def);
     }
     
     /**
-     * Returns the value of the <code>s4</code> attribute.
+     * Returns the value of the <code>s1</code> attribute.
      *
      * @param defaultValue the value to return if the attribute is undefined.
-     * @return the value of the <code>s4</code> attribute.
+     * @return the value of the <code>s1</code> attribute.
      */
-    public String getS4(String defaultValue)
+    public String getS1(String defaultValue)
     {
-        if(isDefined(s4Def))
+        if(isDefined(s1Def))
         {
-            return (String)get(s4Def);
+            return (String)get(s1Def);
         }
         else
         {
@@ -261,22 +357,22 @@ public class DerivedMultipleImpl
     }    
 
     /**
-     * Sets the value of the <code>s4</code> attribute.
+     * Sets the value of the <code>s1</code> attribute.
      *
-     * @param value the value of the <code>s4</code> attribute,
+     * @param value the value of the <code>s1</code> attribute,
      *        or <code>null</code> to remove value.
      */
-    public void setS4(String value)
+    public void setS1(String value)
     {
         try
         {
             if(value != null)
             {
-                set(s4Def, value);
+                set(s1Def, value);
             }
             else
             {
-                unset(s4Def);
+                unset(s1Def);
             }
         }
         catch(ModificationNotPermitedException e)
@@ -289,6 +385,72 @@ public class DerivedMultipleImpl
         }
     }
     
+    /**
+     * Returns the value of the <code>s2</code> attribute.
+     *
+     * @return the value of the <code>s2</code> attribute.
+     */
+    public String getS2()
+    {
+        return (String)get(s2Def);
+    }
+ 
+    /**
+     * Sets the value of the <code>s2</code> attribute.
+     *
+     * @param value the value of the <code>s2</code> attribute.
+     * @throws ValueRequiredException if you attempt to set a <code>null</code> 
+     *         value.
+     */
+    public void setS2(String value)
+        throws ValueRequiredException
+    {
+        try
+        {
+            if(value != null)
+            {
+                set(s2Def, value);
+            }
+            else
+            {
+                throw new ValueRequiredException("attribute s2 "+
+                                                 "is declared as REQUIRED");
+            }
+        }
+        catch(ModificationNotPermitedException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+    }
+    
+    /**
+     * Returns the value of the <code>s3</code> attribute.
+     *
+     * @return the value of the <code>s3</code> attribute.
+     */
+    public String getS3()
+    {
+        return (String)get(s3Def);
+    }
+    
+    /**
+     * Returns the value of the <code>s3</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>s3</code> attribute.
+     */
+    public String getS3(String defaultValue)
+    {
+        if(isDefined(s3Def))
+        {
+            return (String)get(s3Def);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }    
+   
     /**
      * Returns the value of the <code>s6</code> attribute.
      *
@@ -347,6 +509,4 @@ public class DerivedMultipleImpl
     }
      
     // @custom methods ///////////////////////////////////////////////////////
-    
-    // @extends coral.test.Test
 }

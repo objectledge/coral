@@ -136,12 +136,4 @@ public interface Test
     public String getS3();
     
     // @custom methods ///////////////////////////////////////////////////////
-    
-    /**
-     * A custom method.
-     * 
-     * @param f a foating point number.
-     * @return the square of the f parameter.
-     */
-    public float square(float f);
 }

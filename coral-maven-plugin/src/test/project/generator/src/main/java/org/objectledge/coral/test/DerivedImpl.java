@@ -58,9 +58,6 @@ public class DerivedImpl
     /** The AttributeDefinition object for the <code>s5</code> attribute. */
     private AttributeDefinition s5Def;
 
-    /** The CoralSchema */
-    protected CoralSchema coralSchema;
-
     // initialization /////////////////////////////////////////////////////////
 
     /**
@@ -73,12 +70,10 @@ public class DerivedImpl
      * @param schema the CoralSchema.
      * @param database the Database.
      * @param logger the Logger.
-     * @param store the CoralStore.
-     * @param coralSchema the CoralSchema.
      */
-    public DerivedImpl(CoralSchema schema, Database database, Logger logger, CoralStore store, CoralSchema coralSchema)
+    public DerivedImpl(CoralSchema schema, Database database, Logger logger)
     {
-        super(schema, database, logger, store);
+        super(schema, database, logger);
         try
         {
             ResourceClass rc = schema.getResourceClass("coral.test.Derived");
@@ -88,7 +83,6 @@ public class DerivedImpl
         {
             throw new BackendException("incompatible schema change", e);
         }
-        this.coralSchema = coralSchema;
     }
 
     // static methods ////////////////////////////////////////////////////////
@@ -209,7 +203,4 @@ public class DerivedImpl
     }
      
     // @custom methods ///////////////////////////////////////////////////////
-
-    // @import org.objectledge.coral.schema.CoralSchema
-    // @field CoralSchema coralSchema
 }

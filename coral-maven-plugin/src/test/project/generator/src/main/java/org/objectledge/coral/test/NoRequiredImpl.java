@@ -38,7 +38,6 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
-import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -63,9 +62,6 @@ public class NoRequiredImpl
     /** The AttributeDefinition object for the <code>s4</code> attribute. */
     private AttributeDefinition s4Def;
 
-    /** The CoralStore */
-    protected CoralStore store;
-
     // initialization /////////////////////////////////////////////////////////
 
     /**
@@ -78,9 +74,8 @@ public class NoRequiredImpl
      * @param schema the CoralSchema.
      * @param database the Database.
      * @param logger the Logger.
-     * @param store the CoralStore.
      */
-    public NoRequiredImpl(CoralSchema schema, Database database, Logger logger, CoralStore store)
+    public NoRequiredImpl(CoralSchema schema, Database database, Logger logger)
     {
         super(schema, database, logger);
         try
@@ -93,7 +88,6 @@ public class NoRequiredImpl
         {
             throw new BackendException("incompatible schema change", e);
         }
-        this.store = store;
     }
 
     // static methods ////////////////////////////////////////////////////////
@@ -290,8 +284,4 @@ public class NoRequiredImpl
     }
      
     // @custom methods ///////////////////////////////////////////////////////
-    
-    // @import org.objectledge.coral.store.CoralStore
-    // @field CoralStore store
-
 }
