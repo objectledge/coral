@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Represents a resource.
  *
- * @version $Id: Resource.java,v 1.3 2004-03-08 09:17:31 fil Exp $
+ * @version $Id: Resource.java,v 1.4 2005-01-19 06:09:27 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Resource
@@ -100,6 +100,16 @@ public interface Resource
      * @return the parent resource.
      */
     public Resource getParent();
+
+    /**
+     * Returns the parent resource's identifier.
+     * 
+     * <p>This method can be used to avoid lazy loading the parent resource in certain 
+     * situations.</p>
+     * 
+     * @return the identifier of the parent resource or -1 if undefined.
+     */
+    public long getParentId();
 
     /** 
      * Checks if the specified attribute of the resource is defined.

@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.18 2005-01-18 10:46:16 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.19 2005-01-19 06:09:19 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -449,6 +449,19 @@ public class ResourceImpl
             }
         }
         return parent;
+    }
+
+    /**
+     * Returns the parent resource's identifier.
+     * 
+     * <p>This method can be used to avoid lazy loading the parent resource in certain 
+     * situations.</p>
+     * 
+     * @return the identifier of the parent resource or -1 if undefined.
+     */
+    public long getParentId()
+    {
+        return parentId;
     }
 
     /** 
