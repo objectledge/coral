@@ -32,7 +32,7 @@ import org.jmock.builder.Mock;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventRedirectorTest.java,v 1.1 2004-02-27 15:21:31 fil Exp $
+ * @version $Id: CoralEventRedirectorTest.java,v 1.2 2004-03-01 15:34:53 fil Exp $
  */
 public class CoralEventRedirectorTest extends CoralEventTestCase
 {
@@ -46,6 +46,7 @@ public class CoralEventRedirectorTest extends CoralEventTestCase
     private Object anchor = new Object();   
 
     public void setUp()
+        throws Exception
     {
         super.setUp();
         mockInboundCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);

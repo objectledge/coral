@@ -39,7 +39,7 @@ import org.objectledge.threads.ThreadPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventWhiteboardImplTest.java,v 1.3 2004-03-01 13:41:50 fil Exp $
+ * @version $Id: CoralEventWhiteboardImplTest.java,v 1.4 2004-03-01 15:34:53 fil Exp $
  */
 public class CoralEventWhiteboardImplTest extends CoralEventTestCase
 {
@@ -51,6 +51,7 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
     private CoralEventWhiteboard realCoralEventWhiteboard;
     
     public void setUp()
+        throws Exception
     {
         super.setUp();
         mockEventWhiteboard = new Mock(EventWhiteboard.class);

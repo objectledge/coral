@@ -48,7 +48,7 @@ import org.objectledge.coral.store.ResourceOwnership;
  * An abstract test case that mocks a full set of objects used by event related classes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventTestCase.java,v 1.2 2004-02-27 15:20:56 fil Exp $
+ * @version $Id: CoralEventTestCase.java,v 1.3 2004-03-01 15:34:53 fil Exp $
  */
 public abstract class CoralEventTestCase
     extends MockObjectTestCase
@@ -145,6 +145,7 @@ public abstract class CoralEventTestCase
     protected AttributeDefinitionChangeListener attributeDefinitionChangeListener;
     
     public void setUp()
+        throws Exception
     {
         mockPermissionAssociationChangeListener = new Mock(PermissionAssociationChangeListener.class);
         permissionAssoicationChangeListener = (PermissionAssociationChangeListener)mockPermissionAssociationChangeListener.proxy();
