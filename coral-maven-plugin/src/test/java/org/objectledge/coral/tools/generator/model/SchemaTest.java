@@ -28,29 +28,163 @@
 package org.objectledge.coral.tools.generator.model;
 
 import org.jmock.Mock;
+import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SchemaTest.java,v 1.1 2004-03-24 14:40:06 fil Exp $
+ * @version $Id: SchemaTest.java,v 1.2 2004-03-24 15:40:02 fil Exp $
  */
 public class SchemaTest extends LedgeTestCase
 {
     private Schema schema;
     private Mock mockResourceClassRC1;
+    private ResourceClass resourceClassRC1;
     private Mock mockResourceClassRC2;
+    private ResourceClass resourceClassRC2;
     private Mock mockAttributeClassAC1;
+    private AttributeClass attributeClassAC1;
     private Mock mockAttributeClassAC2;
+    private AttributeClass attributeClassAC2;
     
     public void setUp()
     {
         schema = new Schema();
         mockResourceClassRC1 = mock(ResourceClass.class, "RC1");
+        mockResourceClassRC1.stub().method("getName").will(returnValue("RC1"));
+        resourceClassRC1 = (ResourceClass)mockResourceClassRC1.proxy();
         mockResourceClassRC2 = mock(ResourceClass.class, "RC2");
+        mockResourceClassRC2.stub().method("getName").will(returnValue("RC2"));
+        resourceClassRC2 = (ResourceClass)mockResourceClassRC2.proxy();
+        mockAttributeClassAC1 = mock(AttributeClass.class, "RC1");
+        mockAttributeClassAC1.stub().method("getName").will(returnValue("AC1"));
+        attributeClassAC1 = (AttributeClass)mockAttributeClassAC1.proxy();
+        mockAttributeClassAC2 = mock(AttributeClass.class, "RC2");
+        mockAttributeClassAC1.stub().method("getName").will(returnValue("AC1"));
+        attributeClassAC2 = (AttributeClass)mockAttributeClassAC2.proxy();
     }
     
-    public void testCreation()
+    public void testGetResourceClassNonexistent()
+        throws Exception
     {
+        try
+        {
+            schema.getResourceClass("RC1");
+            fail("should throw exception");
+        }
+        catch(Exception e)
+        {
+            assertEquals(EntityDoesNotExistException.class, e.getClass());
+        }        
     }
+    
+    public void testAddResourceClass()
+        throws Exception
+    {
+        assertTrue(schema.getResourceClasses().isEmpty());
+        schema.addResourceClass(resourceClassRC1);
+        assertFalse(schema.getResourceClasses().isEmpty());
+        assertSame(resourceClassRC1, schema.getResourceClass("RC1"));        
+    }
+    
+    public void testAddResourceClassDuplicate()
+        throws Exception
+    {
+        schema.addResourceClass(resourceClassRC1);
+        try
+        {
+            schema.addResourceClass(resourceClassRC1);
+            fail("should throw exception");
+        }
+        catch(Exception e)
+        {
+            assertEquals(EntityExistsException.class, e.getClass());
+        }
+    }
+    
+    public void testDeleteResourceClass()
+        throws Exception
+    {
+        schema.addResourceClass(resourceClassRC1);
+        assertSame(resourceClassRC1, schema.getResourceClass("RC1"));
+        schema.deleteResourceClass(resourceClassRC1);        
+        assertTrue(schema.getResourceClasses().isEmpty());
+    }
+
+    public void testDeleteResourceClassNonExistent()
+        throws Exception
+    {
+        try
+        {
+            schema.deleteResourceClass(resourceClassRC1);        
+        }
+        catch(Exception e)
+        {
+            assertEquals(EntityDoesNotExistException.class, e.getClass());
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void testGetAttributeClassNonexistent()
+        throws Exception
+    {
+        try
+        {
+            schema.getAttributeClass("AC1");
+            fail("should throw exception");
+        }
+        catch(Exception e)
+        {
+            assertEquals(EntityDoesNotExistException.class, e.getClass());
+        }        
+    }
+    
+    public void testAddAttributeClass()
+        throws Exception
+    {
+        assertTrue(schema.getAttributeClasses().isEmpty());
+        schema.addAttributeClass(attributeClassAC1);
+        assertFalse(schema.getAttributeClasses().isEmpty());
+        assertSame(attributeClassAC1, schema.getAttributeClass("AC1"));        
+    }
+    
+    public void testAddAttributeClassDuplicate()
+        throws Exception
+    {
+        schema.addAttributeClass(attributeClassAC1);
+        try
+        {
+            schema.addAttributeClass(attributeClassAC1);
+            fail("should throw exception");
+        }
+        catch(Exception e)
+        {
+            assertEquals(EntityExistsException.class, e.getClass());
+        }
+    }
+    
+    public void testDeleteAttributeClass()
+        throws Exception
+    {
+        schema.addAttributeClass(attributeClassAC1);
+        assertSame(attributeClassAC1, schema.getAttributeClass("AC1"));
+        schema.deleteAttributeClass(attributeClassAC1);        
+        assertTrue(schema.getAttributeClasses().isEmpty());
+    }
+
+    public void testDeleteAttributeClassNonExistent()
+        throws Exception
+    {
+        try
+        {
+            schema.deleteAttributeClass(attributeClassAC1);        
+        }
+        catch(Exception e)
+        {
+            assertEquals(EntityDoesNotExistException.class, e.getClass());
+        }
+    }    
 }
