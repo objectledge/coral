@@ -40,7 +40,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.7 2004-03-09 15:46:46 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.8 2004-03-12 09:22:42 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -141,8 +141,8 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = persistence.getDatabase().getConnection();
                     shouldCommit = persistence.getDatabase().beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
                     List list = persistence.load(" true ORDER BY resource_id", resourceFactory);
                     rs = instantiate(list, conn);
                     persistence.getDatabase().commitTransaction(shouldCommit);
@@ -201,8 +201,8 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = persistence.getDatabase().getConnection();
                     shouldCommit = persistence.getDatabase().beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
                     List list;
                     if(parent != null)
                     {
@@ -275,8 +275,8 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = persistence.getDatabase().getConnection();
                     shouldCommit = persistence.getDatabase().beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
                     res = (Resource)persistence.load(id,resourceFactory);
                     if(res != null)
                     {
@@ -352,8 +352,8 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = persistence.getDatabase().getConnection();
                     shouldCommit = persistence.getDatabase().beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
                     List list = persistence.load("name = '"+name+"'",
                                                      resourceFactory);
                     rs = instantiate(list, conn);
@@ -443,8 +443,8 @@ public class CoralStoreImpl
                 boolean shouldCommit = false;
                 try
                 {
-                    conn = persistence.getDatabase().getConnection();
                     shouldCommit = persistence.getDatabase().beginTransaction();
+                    conn = persistence.getDatabase().getConnection();
                     List list = persistence.load("parent = "+parent.getId()+
                                                      " AND name = '"+name+"'",
                                                      resourceFactory);
@@ -730,8 +730,8 @@ public class CoralStoreImpl
         Resource res = null;
         try
         {
-            conn = persistence.getDatabase().getConnection();
             shouldCommit = persistence.getDatabase().beginTransaction();
+            conn = persistence.getDatabase().getConnection();
             Resource delegate = new ResourceImpl(persistence, coral, coralEventHub, 
                 name, resourceClass, parent, creator);
             persistence.save((Persistent)delegate);
@@ -855,8 +855,8 @@ public class CoralStoreImpl
                             boolean shouldCommit = false;
                             try
                             {
-                                conn = persistence.getDatabase().getConnection();
                                 shouldCommit = persistence.getDatabase().beginTransaction();
+                                conn = persistence.getDatabase().getConnection();
                                 int count;
                                 Set children = (Set)resourceByParent.get(resource);
                                 if(children != null)

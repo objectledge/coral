@@ -34,7 +34,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.3 2004-03-09 15:46:49 fil Exp $
+ * @version $Id: GenericResource.java,v 1.4 2004-03-12 09:22:43 fil Exp $
  */
 public class GenericResource
     implements Resource
@@ -481,8 +481,8 @@ public class GenericResource
         boolean controler = false;
         try
         {
-            conn = database.getConnection();
             controler = database.beginTransaction();
+            conn = database.getConnection();
             update(conn);
             database.commitTransaction(controler);
         }
@@ -525,8 +525,8 @@ public class GenericResource
         boolean controler = false;
         try
         {
-            conn = database.getConnection();
             controler = database.beginTransaction();
+            conn = database.getConnection();
             GenericResourceHandler handler = (GenericResourceHandler)delegate.
                 getResourceClass().getHandler();
             Map dataKeyMap = handler.getDataKeys(delegate, conn); 

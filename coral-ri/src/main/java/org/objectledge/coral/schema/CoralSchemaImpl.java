@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.7 2004-03-05 12:09:19 fil Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.8 2004-03-12 09:22:42 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -581,8 +581,8 @@ public class CoralSchemaImpl
         boolean shouldCommit = false;
         try
         {
-            conn = persistence.getDatabase().getConnection();
             shouldCommit = persistence.getDatabase().beginTransaction();
+            conn = persistence.getDatabase().getConnection();
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, false);
             attribute.getDeclaringClass().getHandler().
                 deleteAttribute(attribute, conn);
@@ -676,8 +676,8 @@ public class CoralSchemaImpl
         ResourceClassInheritance relationship = null;
         try
         {
-            conn = persistence.getDatabase().getConnection();
             shouldCommit = persistence.getDatabase().beginTransaction();
+            conn = persistence.getDatabase().getConnection();
             relationship = new ResourceClassInheritanceImpl(coral,
                 parent, child);
             coral.getRegistry().addResourceClassInheritance(relationship);
@@ -742,8 +742,8 @@ public class CoralSchemaImpl
         ResourceClassInheritance relationship = null;
         try
         {
-            conn = persistence.getDatabase().getConnection();
             shouldCommit = persistence.getDatabase().beginTransaction();
+            conn = persistence.getDatabase().getConnection();
             relationship = new ResourceClassInheritanceImpl(coral, 
                 parent, child);
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, false);
