@@ -62,7 +62,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.1 2004-04-28 14:02:31 fil Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.2 2004-04-30 07:02:34 fil Exp $
  */
 public class SessionFactoryTag
     extends BaseTagSupport
@@ -109,7 +109,7 @@ public class SessionFactoryTag
         {
             try
             {
-                factory = getStandardSessionFactory();
+                factory = getSessionFactory();
             }
             catch(Exception e)
             {
@@ -147,9 +147,16 @@ public class SessionFactoryTag
     
     }
     
-    private CoralSessionFactory getStandardSessionFactory()
+    /**
+     * Returns a session factory instance.
+     * 
+     * @return a session factory instance.
+     * @throws Exception if the factory could not be initialized.
+     */
+    public CoralSessionFactory getSessionFactory()
         throws Exception
     {
+        checkAttribute(dataSource, "dataSource");
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         
         MutablePicoContainer container = new DefaultPicoContainer();
@@ -189,7 +196,9 @@ public class SessionFactoryTag
             getLog(EventWhiteboardFactory.class), threadPool);
         CoralCore coralCore = new CoralCoreImpl(container, persistence, cacheFactory, 
             eventWhiteboardFactory, getLog(CoralCore.class));
-        return new CoralSessionFactoryImpl(coralCore);
+        CoralSessionFactory factory = new CoralSessionFactoryImpl(coralCore);
+        container.registerComponentInstance(CoralSessionFactory.class, factory);
+        return factory;
     }
     
     private Logger getLog(Class cl)
