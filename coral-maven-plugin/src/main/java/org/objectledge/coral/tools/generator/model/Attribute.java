@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * Represents a Coral AttributeDefinition.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Attribute.java,v 1.6 2004-03-28 08:52:05 fil Exp $
+ * @version $Id: Attribute.java,v 1.7 2004-03-31 10:04:54 fil Exp $
  */
 public class Attribute
     extends Entity
@@ -74,6 +74,31 @@ public class Attribute
         setDomain(domain);
     }
         
+    // equality and hashing /////////////////////////////////////////////////////////////////////
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object o)
+    {
+        if(!getClass().isAssignableFrom(o.getClass()))
+        {
+            throw new ClassCastException("expected "+getClass());
+        }
+        Attribute a = (Attribute)o;
+        return name.equals(a.getName()) && 
+            ( declaringClass == null && a.getDeclaringClass() == null ||
+            declaringClass.equals(a.getDeclaringClass()) );           
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode()
+    {
+        return getName().hashCode() ^ (declaringClass != null ? declaringClass.hashCode() : 0 );
+    }    
+    
     // accessors ////////////////////////////////////////////////////////////////////////////////
 
     /**
