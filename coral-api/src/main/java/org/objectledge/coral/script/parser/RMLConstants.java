@@ -24,73 +24,74 @@ public interface RMLConstants {
   int DESC = 22;
   int DESCRIPTIVE = 23;
   int DIRECT = 24;
-  int ECHO = 25;
-  int FINAL = 26;
-  int FIND = 27;
-  int FLAGS = 28;
-  int FOR = 29;
-  int FROM = 30;
-  int GRANT = 31;
-  int GRANTS = 32;
-  int HANDLER = 33;
-  int ID = 34;
-  int IMPERSONATE = 35;
-  int INDEXABLE = 36;
-  int JAVA = 37;
-  int LIKE = 38;
-  int NAME = 39;
-  int NONE = 40;
-  int NOT = 41;
-  int OF = 42;
-  int ON = 43;
-  int OR = 44;
-  int OPTION = 45;
-  int ORDER = 46;
-  int OWNER = 47;
-  int PARENT = 48;
-  int PERMISSION = 49;
-  int PERMISSIONS = 50;
-  int READONLY = 51;
-  int RECURSIVE = 52;
-  int RESOURCE = 53;
-  int REQUIRED = 54;
-  int REVOKE = 55;
-  int ROLE = 56;
-  int ROLES = 57;
-  int SELECT = 58;
-  int SELF = 59;
-  int SET = 60;
-  int SIBLINGS_UNIQUE = 61;
-  int SUBJECT = 62;
-  int SUBROLES = 63;
-  int SUPERCLASS = 64;
-  int SUPERCLASSES = 65;
-  int SUPERROLES = 66;
-  int SYNTHETIC = 67;
-  int TABLE = 68;
-  int TO = 69;
-  int VALUE = 70;
-  int VALUES = 71;
-  int WITH = 72;
-  int WHERE = 73;
-  int WHOAMI = 74;
-  int DIGIT = 75;
-  int LETTER = 76;
-  int PATHMETA = 77;
-  int STRING = 78;
-  int NUMBER = 79;
-  int QUOTED_STRING = 80;
-  int LPAREN = 81;
-  int RPAREN = 82;
-  int COMMA = 83;
-  int LESS = 84;
-  int LESS_EQUALS = 85;
-  int GREATER = 86;
-  int GREATER_EQUALS = 87;
-  int EQUALS = 88;
-  int DOUBLE_EQUALS = 89;
-  int NOT_EQUALS = 90;
-  int SQL_NOT_EQUALS = 91;
+  int DOMAIN = 25;
+  int ECHO = 26;
+  int FINAL = 27;
+  int FIND = 28;
+  int FLAGS = 29;
+  int FOR = 30;
+  int FROM = 31;
+  int GRANT = 32;
+  int GRANTS = 33;
+  int HANDLER = 34;
+  int ID = 35;
+  int IMPERSONATE = 36;
+  int INDEXABLE = 37;
+  int JAVA = 38;
+  int LIKE = 39;
+  int NAME = 40;
+  int NONE = 41;
+  int NOT = 42;
+  int OF = 43;
+  int ON = 44;
+  int OR = 45;
+  int OPTION = 46;
+  int ORDER = 47;
+  int OWNER = 48;
+  int PARENT = 49;
+  int PERMISSION = 50;
+  int PERMISSIONS = 51;
+  int READONLY = 52;
+  int RECURSIVE = 53;
+  int RESOURCE = 54;
+  int REQUIRED = 55;
+  int REVOKE = 56;
+  int ROLE = 57;
+  int ROLES = 58;
+  int SELECT = 59;
+  int SELF = 60;
+  int SET = 61;
+  int SIBLINGS_UNIQUE = 62;
+  int SUBJECT = 63;
+  int SUBROLES = 64;
+  int SUPERCLASS = 65;
+  int SUPERCLASSES = 66;
+  int SUPERROLES = 67;
+  int SYNTHETIC = 68;
+  int TABLE = 69;
+  int TO = 70;
+  int VALUE = 71;
+  int VALUES = 72;
+  int WITH = 73;
+  int WHERE = 74;
+  int WHOAMI = 75;
+  int DIGIT = 76;
+  int LETTER = 77;
+  int PATHMETA = 78;
+  int STRING = 79;
+  int NUMBER = 80;
+  int QUOTED_STRING = 81;
+  int LPAREN = 82;
+  int RPAREN = 83;
+  int COMMA = 84;
+  int LESS = 85;
+  int LESS_EQUALS = 86;
+  int GREATER = 87;
+  int GREATER_EQUALS = 88;
+  int EQUALS = 89;
+  int DOUBLE_EQUALS = 90;
+  int NOT_EQUALS = 91;
+  int SQL_NOT_EQUALS = 92;
 
   int DEFAULT = 0;
 
@@ -120,6 +121,7 @@ public interface RMLConstants {
     "\"DESC\"",
     "\"DESCRIPTIVE\"",
     "\"DIRECT\"",
+    "\"DOMAIN\"",
     "\"ECHO\"",
     "\"FINAL\"",
     "\"FIND\"",
@@ -188,7 +190,6 @@ public interface RMLConstants {
     "\"!=\"",
     "\"<>\"",
     "\";\"",
-    "\"DOMAIN\"",
   };
 
 }

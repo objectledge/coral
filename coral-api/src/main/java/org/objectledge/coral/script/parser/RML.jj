@@ -89,6 +89,7 @@ TOKEN:
     <DESC : "DESC"> |
     <DESCRIPTIVE : "DESCRIPTIVE"> |
     <DIRECT : "DIRECT"> |     
+    <DOMAIN : "DOMAIN"> |
     <ECHO : "ECHO"> |
     <FINAL : "FINAL"> |
     <FIND : "FIND"> |
