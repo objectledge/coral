@@ -23,8 +23,8 @@ function fSub(action)
       <td align="right"><b>Type:</b></td>
       <td>
         <select name="attr_class_id">
-        #foreach($attr_class in $attr_classes)
-        <option value="$attr_class.id" #if($attr_class.name == 'string')selected#end>$attr_class.name</option>
+        #foreach($attrClass in $attrClasses)
+        <option value="$attrClass.id" #if($attrClass.name == 'string')selected#end>$attrClass.name</option>
         #end
       </select></td>
     </tr>

@@ -7,7 +7,7 @@ $pageTool.addStyleLink('style/browser.css')
   </tr>
   <tr>
     <td>
-      $!embedded_placeholder
+      $!embeddedPlaceholder
     </td>
   </tr>
 </table>

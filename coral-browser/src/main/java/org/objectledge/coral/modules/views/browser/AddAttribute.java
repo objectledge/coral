@@ -25,7 +25,7 @@ public class AddAttribute extends BaseBrowserView
         try
         {
             AttributeClass[] attributeClass = coralSession.getSchema().getAttributeClass();
-            templatingContext.put("attr_classes", attributeClass);
+            templatingContext.put("attrClasses", attributeClass);
             templatingContext.put("flags", new AttributeFlags());
             long resClassId = parameters.getLong("res_class_id",-1);
             ResourceClass resourceClass = coralSession.getSchema().getResourceClass(resClassId);

@@ -33,7 +33,7 @@ public class AttributeDetails extends BaseBrowserView
             Resource resource = coralSession.getStore().getResource(resId);
             templatingContext.put("resource", resource);
             AttributeDefinition attrDefinition = resource.getResourceClass().getAttribute(attrName);
-            templatingContext.put("attr_def", attrDefinition);
+            templatingContext.put("attrDef", attrDefinition);
         }
         catch (EntityDoesNotExistException e)
         {

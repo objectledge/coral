@@ -3,8 +3,8 @@
 #if($command)
 <pre class="command">$!command</pre>
 #end
-#if($command_result)
-<pre class="result">$!command_result</pre>
+#if($commandResult)
+<pre class="result">$!commandResult</pre>
 #end
 <div>
 <textarea cols="" rows="25" style="width: 100%;" name="command">$!uploaded</textarea>
