@@ -33,14 +33,37 @@
   xmlns:sql="jelly:sql"
   xmlns:coral="coral">
 
+  <!--
+   | :::: Taglib ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+   -->
+
   <define:taglib uri="coral">  
   
     <!-- // wrapper generator /////////////////////////////////////////////////////////////// -->
 
+    <!--
+     | Generates Java wrapper files from Coral resource classes.
+     |
+     | @param baseDir the base directory.
+     | @param fileEncoding the character encoding for loading files.
+     | @param importGroups comma separated list of package grouping prefices.
+     | @param packageIncludes comma separated list of package include prefices.
+     | @param packageExcludes comma separated list of package include prefices.
+     | @param headerFile path of the file to use as file header.
+     | @param sourceFiles path of the source files listing file.
+     | @param targetDir the output directory.
+     -->
     <define:jellybean
        name="generator"
        className="org.objectledge.coral.tools.generator.GeneratorBean"/>
 
+    <!-- // initializer ///////////////////////////////////////////////////////////////////// -->
+
+	<!--
+	 | Initializes a database for Coral use.
+	 |
+	 | @param dataSource dataSource to process.
+	 -->
     <define:jellybean
        name="init"
        className="org.objectledge.coral.tools.init.InitBean"/>
@@ -97,12 +120,22 @@
     <define:bean name="principal"
       className="org.objectledge.coral.tools.PrincipalTag">
     </define:bean>
+    
+    <!-- // RML runner ////////////////////////////////////////////////////////////////////// -->
+    
+    <define:jellybean name="rmlRunner"
+      className="org.objectledge.coral.tools.rml.RmlRunnerBean"/>
            
   </define:taglib>
+
+  <!--
+   | :::: Goals :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+   -->
   
   <!-- // wrapper generator ///////////////////////////////////////////////////////////////// -->
+
   <goal name="coral:generator"
-    description="Generates Java wrapper types for Coral resource classes">
+    description="Generates wrappers for Coral resource classes">
     <m:pluginVar plugin="coral-maven-plugin" var="generatorFileEncoding" property="coral.generator.file.encoding"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorImportGroups" property="coral.generator.import.groups"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageIncludes" property="coral.generator.package.includes"/>
@@ -134,6 +167,7 @@
   </goal>
 
   <!-- // database initializer ////////////////////////////////////////////////////////////// -->
+
   <goal name="coral:init"
     description="Initializes a relational database for Coral usage">
     <coral:dataSource var="initDataSource"/>
