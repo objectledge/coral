@@ -29,6 +29,7 @@ package org.objectledge.coral.tools.generator;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,7 +51,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.5 2004-03-31 13:56:36 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.6 2004-03-31 14:23:08 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -96,6 +97,9 @@ public class GeneratorComponent
     
     /** License contents. */
     private String license;
+    
+    /** PrintWriter for informational messages.*/
+    private PrintStream out;
 
     /**
      * Creates new GeneratorComponent instance.
@@ -109,17 +113,19 @@ public class GeneratorComponent
      * @param templating the templating component.
      * @param schema the schema.
      * @param loader the loader.
+     * @param out the PrintStream to write informational messages to.
      * @throws Exception if the component could not be initialized.
      */
     public GeneratorComponent(String fileEncoding, String sourceFiles, 
         String targetDir, String packagePrefices, String licensePath, FileSystem fileSystem,
-        Templating templating, Schema schema, RMLModelLoader loader)
+        Templating templating, Schema schema, RMLModelLoader loader, PrintStream out)
         throws Exception
     {
         this.fileSystem = fileSystem;
         this.templating = templating;
         this.schema = schema;
         this.loader = loader;
+        this.out = out;
         
         this.fileEncoding = fileEncoding;
         this.sourceFiles = sourceFiles;
@@ -193,7 +199,7 @@ public class GeneratorComponent
         }
         
         LineNumberReader lnr = new LineNumberReader(fileSystem.getReader(path, fileEncoding));
-        StringBuffer out = new StringBuffer();
+        StringBuffer buff = new StringBuffer();
         int last=0;
         boolean inCustom = false;
         String in;
@@ -211,7 +217,7 @@ public class GeneratorComponent
             }
             if(inCustom && in.trim().equals("}"))
             {
-                last = out.length();
+                last = buff.length();
             }
             if(inCustom)
             {
@@ -248,11 +254,11 @@ public class GeneratorComponent
                             " at line "+lnr.getLineNumber()+" - value expected");   
                     }
                 }
-                out.append(in).append('\n');
+                buff.append(in).append('\n');
             }
         }
-        out.setLength(last);
-        return out.toString();        
+        buff.setLength(last);
+        return buff.toString();        
     }
     
     /**
@@ -334,12 +340,31 @@ public class GeneratorComponent
     {
         if(rc.hasFlags(ResourceClassFlags.BUILTIN))
         {
+            out.println("  skipping "+rc.getName()+" (BUILTIN)");
             return;
         }
-        generateWrapper(rc, classInterfacePath(rc), interfaceTemplate);
+
+        if(generateWrapper(rc, classInterfacePath(rc), interfaceTemplate))
+        {
+            out.println("  writing "+rc.getName()+" interface to "+classInterfacePath(rc));
+        }
+        else
+        {
+            out.println("  skipping "+rc.getName()+" interface (not modified)");
+        }
+
         // when resource metaclass support is added we'll have a bit of logic that selects
         // apropriate implementation here.
-        generateWrapper(rc, classImplPath(rc), genericImplTemplate);
+        Template implTemplate = genericImplTemplate;
+
+        if(generateWrapper(rc, classImplPath(rc), implTemplate))
+        {
+            out.println("  writing "+rc.getName()+" implementation to "+classImplPath(rc));
+        }
+        else
+        {
+            out.println("  skipping "+rc.getName()+" implementation (not modified)");
+        }
     }
 
     /**
@@ -348,7 +373,7 @@ public class GeneratorComponent
      * @param template
      * @throws Exception
      */
-    void generateWrapper(ResourceClass rc, String path, Template template) 
+    boolean generateWrapper(ResourceClass rc, String path, Template template) 
         throws Exception
     {
         TemplatingContext context = templating.createContext();
@@ -396,6 +421,6 @@ public class GeneratorComponent
         context.put("custom", custom);
 
         String result = template.merge(context);
-        write(path, result);
+        return write(path, result);
     }
 }
