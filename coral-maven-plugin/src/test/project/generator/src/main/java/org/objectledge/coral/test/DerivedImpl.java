@@ -1,0 +1,215 @@
+// 
+// Copyright (c) 2003, Caltha - Gajda, Krzewski, Mach, Potempski Sp.J. 
+// All rights reserved. 
+// 
+// Redistribution and use in source and binary forms, with or without modification,  
+// are permitted provided that the following conditions are met: 
+// 
+// * Redistributions of source code must retain the above copyright notice,  
+//       this list of conditions and the following disclaimer. 
+// * Redistributions in binary form must reproduce the above copyright notice,  
+//       this list of conditions and the following disclaimer in the documentation  
+//       and/or other materials provided with the distribution. 
+// * Neither the name of the Caltha - Gajda, Krzewski, Mach, Potempski Sp.J.  
+//       nor the names of its contributors may be used to endorse or promote products  
+//       derived from this software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED  
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+// IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,  
+// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,  
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+// OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,  
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)  
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  
+// POSSIBILITY OF SUCH DAMAGE. 
+// 
+ 
+package org.objectledge.coral.test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.objectledge.coral.BackendException;
+import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.schema.AttributeDefinition;
+import org.objectledge.coral.schema.CoralSchema;
+import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.store.ModificationNotPermitedException;
+import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.store.ValueRequiredException;
+import org.objectledge.database.Database;
+
+import org.jcontainer.dna.Logger;
+
+/**
+ * An implementation of <code>coral.test.Derived</code> Coral resource class.
+ *
+ * @author Coral Maven plugin
+ */
+public class DerivedImpl
+    extends NoRequiredImpl
+    implements Derived
+{
+    // instance variables ////////////////////////////////////////////////////
+
+    /** The AttributeDefinition object for the <code>s5</code> attribute. */
+    private AttributeDefinition s5Def;
+
+    /** The CoralSchema */
+    protected CoralSchema coralSchema;
+
+    // initialization /////////////////////////////////////////////////////////
+
+    /**
+     * Creates a blank <code>coral.test.Derived</code> resource wrapper.
+     *
+     * <p>This constructor should be used by the handler class only. Use 
+     * <code>load()</code> and <code>create()</code> methods to create
+     * instances of the wrapper in your application code.</p>
+     *
+     * @param schema the CoralSchema.
+     * @param database the Database.
+     * @param logger the Logger.
+     * @param store the CoralStore.
+     * @param coralSchema the CoralSchema.
+     */
+    public DerivedImpl(CoralSchema schema, Database database, Logger logger, CoralStore store, CoralSchema coralSchema)
+    {
+        super(schema, database, logger, store);
+        try
+        {
+            ResourceClass rc = schema.getResourceClass("coral.test.Derived");
+            s5Def = rc.getAttribute("s5");
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new BackendException("incompatible schema change", e);
+        }
+        this.coralSchema = coralSchema;
+    }
+
+    // static methods ////////////////////////////////////////////////////////
+
+    /**
+     * Retrieves a <code>coral.test.Derived</code> resource instance from the store.
+     *
+     * <p>This is a simple wrapper of StoreService.getResource() method plus
+     * the typecast.</p>
+     *
+     * @param session the CoralSession
+     * @param id the id of the object to be retrieved
+     * @return a resource instance.
+     * @throws EntityDoesNotExistException if the resource with the given id does not exist.
+     */
+    public static Derived getDerived(CoralSession session, long id)
+        throws EntityDoesNotExistException
+    {
+        Resource res = session.getStore().getResource(id);
+        if(!(res instanceof Derived))
+        {
+            throw new IllegalArgumentException("resource #"+id+" is "+
+                                               res.getResourceClass().getName()+
+                                               " not coral.test.Derived");
+        }
+        return (Derived)res;
+    }
+
+    /**
+     * Creates a new <code>coral.test.Derived</code> resource instance.
+     *
+     * @param session the CoralSession
+     * @param name the name of the new resource
+     * @param parent the parent resource.
+     * @return a new Derived instance.
+     */
+    public static Derived createDerived(CoralSession session, String name, Resource parent)
+    {
+        try
+        {
+            ResourceClass rc = session.getSchema().getResourceClass("coral.test.Derived");
+            Map attrs = new HashMap();
+            Resource res = session.getStore().createResource(name, parent, rc, attrs);
+            if(!(res instanceof Derived))
+            {
+                throw new BackendException("incosistent schema: created object is "+
+                                           res.getClass().getName());
+            }
+            return (Derived)res;
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new BackendException("incompatible schema change", e);
+        }
+        catch(ValueRequiredException e)
+        {
+            throw new BackendException("incompatible schema change", e);
+        }
+    }
+
+    // public interface //////////////////////////////////////////////////////
+ 
+    /**
+     * Returns the value of the <code>s5</code> attribute.
+     *
+     * @return the value of the <code>s5</code> attribute.
+     */
+    public String getS5()
+    {
+        return (String)get(s5Def);
+    }
+    
+    /**
+     * Returns the value of the <code>s5</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>s5</code> attribute.
+     */
+    public String getS5(String defaultValue)
+    {
+        if(isDefined(s5Def))
+        {
+            return (String)get(s5Def);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }    
+
+    /**
+     * Sets the value of the <code>s5</code> attribute.
+     *
+     * @param value the value of the <code>s5</code> attribute,
+     *        or <code>null</code> to remove value.
+     */
+    public void setS5(String value)
+    {
+        try
+        {
+            if(value != null)
+            {
+                set(s5Def, value);
+            }
+            else
+            {
+                unset(s5Def);
+            }
+        }
+        catch(ModificationNotPermitedException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+        catch(ValueRequiredException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+    }
+     
+    // @custom methods ///////////////////////////////////////////////////////
+
+    // @import org.objectledge.coral.schema.CoralSchema
+    // @field CoralSchema coralSchema
+}
