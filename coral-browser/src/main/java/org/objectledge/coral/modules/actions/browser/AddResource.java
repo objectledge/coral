@@ -15,7 +15,7 @@ import org.objectledge.pipeline.ProcessingException;
  * Add resource action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddResource.java,v 1.1 2004-03-26 14:07:06 pablo Exp $
+ * @version $Id: AddResource.java,v 1.2 2004-03-28 09:30:53 pablo Exp $
  */
 public class AddResource extends BaseBrowserAction
 {
@@ -52,11 +52,6 @@ public class AddResource extends BaseBrowserAction
                 return;
             }
             String parentPath = parameters.get("parent", "");
-            if (parentPath.length() == 0)
-            {
-                //route(data, "AddResource", "parent_empty");
-                return;
-            }
 
             /*
             String value = data.getParameters().get("value").asString("");
@@ -72,7 +67,16 @@ public class AddResource extends BaseBrowserAction
             }
             */
             ResourceClass resourceClass = coralSession.getSchema().getResourceClass(resClassName);
-            Resource parent = coralSession.getStore().getUniqueResourceByPath(parentPath);
+            
+            Resource parent = null;
+            if(parentPath.equals("") || parentPath.equals("/"))
+            {
+                parent = coralSession.getStore().getResource(1);   
+            }
+            else
+            {
+                parent = coralSession.getStore().getUniqueResourceByPath(parentPath);
+            }
             HashMap attr = new HashMap();
 
             AttributeDefinition[] attrDef = resourceClass.getAllAttributes();
@@ -114,8 +118,8 @@ public class AddResource extends BaseBrowserAction
         catch (Exception e)
         {
             logger.error("ARLException: ", e);
-            //templatingContext.put("trace", StringUtils.stackTrace(e));
-            //route(data, "AddResource", "exception");
+            templatingContext.put("result", "exception");
+            templatingContext.put("exception",e);
             return;
         }
         finally
