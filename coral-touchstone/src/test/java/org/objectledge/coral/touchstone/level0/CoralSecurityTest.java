@@ -45,7 +45,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityTest.java,v 1.3 2004-03-15 11:10:31 fil Exp $
+ * @version $Id: CoralSecurityTest.java,v 1.4 2004-03-15 11:26:18 fil Exp $
  */
 public class CoralSecurityTest
     extends CoralTestCase
@@ -309,7 +309,9 @@ public class CoralSecurityTest
         stmt.execute("INSERT INTO coral_permission VALUES(1,'permission')");
         stmt.execute("INSERT INTO coral_permission_association VALUES(1,1)");
         stmt.execute("INSERT INTO coral_resource VALUES(2,2,1,'resource',1,NOW(),1,1,NOW())");
-        stmt.execute("INSERT INTO coral_permission_assignment VALUES(2,1,1,'1',1,NOW())");
+        stmt.execute("INSERT INTO coral_role VALUES(3, 'role')");
+        stmt.execute("INSERT INTO coral_role_implication VALUES(1,3)");
+        stmt.execute("INSERT INTO coral_permission_assignment VALUES(2,3,1,'1',1,NOW())");
         DatabaseUtils.close(stmt);
         databaseConnection.close();
         CoralSession session = coralSessionFactory.getRootSession();
@@ -321,11 +323,16 @@ public class CoralSecurityTest
         ResourceClass nodeClass = session.getSchema().getResourceClass("node");
         assertTrue(nodeClass.isAssociatedWith(permission));
         ResourceClass altNodeClass = session.getSchema().getResourceClass("alt_node");
+        Role role = session.getSecurity().getUniqueRole("role");
         assertTrue(nodeClass.isParent(altNodeClass));
         assertTrue(altNodeClass.isAssociatedWith(permission));
         assertTrue(resource.getResourceClass().equals(altNodeClass));
         assertTrue(resource.getPermissionAssignments().length == 1);
-        assertTrue(rootRole.getPermissionAssignments().length == 1);
+        assertTrue(role.getPermissionAssignments().length == 1);
+        assertTrue(rootRole.isSubRole(role));
+        
+        assertTrue(role.hasPermission(resource, permission));
+        assertTrue(rootRole.hasPermission(resource, permission));
         assertTrue(root.hasPermission(resource, permission));
         assertFalse(anonymous.hasPermission(resource, permission));
         session.close();
