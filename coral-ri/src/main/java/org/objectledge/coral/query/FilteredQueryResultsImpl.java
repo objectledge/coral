@@ -21,7 +21,7 @@ import org.objectledge.coral.store.Resource;
  * QueryResults implementation}
  * 
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: FilteredQueryResultsImpl.java,v 1.1 2004-08-27 11:31:23 rafal Exp $
+ * @version $Id: FilteredQueryResultsImpl.java,v 1.2 2004-08-30 09:12:48 rafal Exp $
  */
 public class FilteredQueryResultsImpl
     implements FilteredQueryResults
@@ -98,12 +98,15 @@ public class FilteredQueryResultsImpl
                 {
                 	columnAttribute[i] = builtins.getAttribute(a);
                 }
-                columnAttribute[i] = rc.getAttribute(a);
+                else
+                {
+                    columnAttribute[i] = rc.getAttribute(a);
+                }
             }
             catch(UnknownAttributeException e)
             {
-                throw new IllegalStateException(rc.getName()+" does not have "+
-                                                a+" attribute");
+                throw (IllegalStateException)new IllegalStateException("unknown attribute").
+                	initCause(e);
             }
         }   
     }
