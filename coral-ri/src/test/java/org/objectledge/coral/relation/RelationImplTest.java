@@ -72,7 +72,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.5 2004-04-15 12:13:35 pablo Exp $
+ * @version $Id: RelationImplTest.java,v 1.6 2004-05-28 10:04:12 fil Exp $
  */
 public class RelationImplTest extends LedgeTestCase
 {
@@ -110,25 +110,25 @@ public class RelationImplTest extends LedgeTestCase
         coralStore = new MockCoralStore();
 
         mockInputRecord = mock(InputRecord.class);
-        mockInputRecord.stub().method("getLong").will(returnValue(10L));
-        mockInputRecord.stub().method("getString").will(returnValue("relation name2"));
+        mockInputRecord.stubs().method("getLong").will(returnValue(10L));
+        mockInputRecord.stubs().method("getString").will(returnValue("relation name2"));
         inputRecord = (InputRecord)mockInputRecord.proxy();
 
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
 
         mockConnection = mock(Connection.class);
-        mockConnection.stub().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
 
         mockDatabase = mock(Database.class);
-        mockDatabase.stub().method("getNextId").will(returnValue(1L));
-        mockDatabase.stub().method("getConnection").will(returnValue(connection));
+        mockDatabase.stubs().method("getNextId").will(returnValue(1L));
+        mockDatabase.stubs().method("getConnection").will(returnValue(connection));
         database = (Database)mockDatabase.proxy();
 
         resultSet = new RelationContentsResultSet(); 
 
-        mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
 
         relation = new RelationImpl(persistence, coralStore, database, "relation name");
     }
@@ -139,7 +139,7 @@ public class RelationImplTest extends LedgeTestCase
         assertEquals(relation.getId(), -1L);
         assertEquals(relation.getName(), "relation name");
 
-        mockConnection.expect(once()).method("close").isVoid();
+        mockConnection.expects(once()).method("close").isVoid();
         try
         {
             relation.setData(inputRecord);
@@ -175,7 +175,7 @@ public class RelationImplTest extends LedgeTestCase
 		
 		assertEquals("avg mapping size", relation.getAvgMappingSize(), 2F, 0.5F);
 
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(1L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
 		Resource[] resRelatedTo1 = relation.get(resource1);
 		assertEquals(resRelatedTo1.length, 3);
 		if(resRelatedTo1[0].getId() == 4L)
@@ -194,16 +194,16 @@ public class RelationImplTest extends LedgeTestCase
 			if(resRelatedTo1[2].getId() == 4L) assertEquals(resRelatedTo1[1].getId(), 5L);
 		} 
 
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(100L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(100L));
 		Resource[] resRelatedTo100 = relation.get(resource1);
 		assertEquals(resRelatedTo100.length, 0);
 
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(1L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
 		assertTrue(relation.hasRef(resource1, resource2));
 
 		assertFalse(relation.hasRef(resource1, resource1));
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(8L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(8L));
 		assertFalse(relation.hasRef(resource1, resource1));
 
 		// inverted
@@ -238,7 +238,7 @@ public class RelationImplTest extends LedgeTestCase
 
 		assertEquals("avg mapping size", invRelation.getAvgMappingSize(), 2F, 0.5F);
 
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(6L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(6L));
 		Resource[] resRelatedTo6 = invRelation.get(resource1);
 		assertEquals(resRelatedTo6.length, 3);
 		if(resRelatedTo6[0].getId() == 1L)
@@ -257,16 +257,16 @@ public class RelationImplTest extends LedgeTestCase
 			if(resRelatedTo6[2].getId() == 2L) assertEquals(resRelatedTo6[1].getId(), 1L);
 		} 
 
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(100L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(100L));
 		resRelatedTo100 = invRelation.get(resource1);
 		assertEquals(resRelatedTo100.length, 0);
 
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(4L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(1L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(1L));
 		assertTrue(invRelation.hasRef(resource1, resource2));
 
 		assertFalse(invRelation.hasRef(resource1, resource1));
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(8L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(8L));
 		assertFalse(invRelation.hasRef(resource1, resource1));
 		
 		// modifications --------------------------------------------------------------------------

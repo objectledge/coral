@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSchemaTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
+ * @version $Id: SessionCoralSchemaTest.java,v 1.5 2004-05-28 10:04:10 fil Exp $
  */
 public class SessionCoralSchemaTest extends LedgeTestCase
 {
@@ -57,15 +57,15 @@ public class SessionCoralSchemaTest extends LedgeTestCase
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
-        mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
-        mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
-        mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
+        mockCoralCore.stubs().method("getSchema").will(returnValue(coralSchema));
+        mockCoralCore.stubs().method("getInstantiator").will(returnValue(null));
+        mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));        
         mockKeyedObjectPool = mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
-        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
+        mockCoralCore.expects(once()).method("setCurrentSession").with(same(session)).isVoid();
+        mockCoralCore.stubs().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);
         sessionCoralSchema = new SessionCoralSchema(coralCore, session);
     }
@@ -76,7 +76,7 @@ public class SessionCoralSchemaTest extends LedgeTestCase
     
     public void testGetAttributeClass()
     {
-        mockCoralSchema.expect(once()).method("getAttributeClass").will(returnValue(new AttributeClass[0]));
+        mockCoralSchema.expects(once()).method("getAttributeClass").will(returnValue(new AttributeClass[0]));
         sessionCoralSchema.getAttributeClass();
     }
 }

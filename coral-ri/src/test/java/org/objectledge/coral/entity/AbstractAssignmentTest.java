@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractAssignmentTest.java,v 1.3 2004-03-24 14:40:13 fil Exp $
+ * @version $Id: AbstractAssignmentTest.java,v 1.4 2004-05-28 10:04:12 fil Exp $
  */
 public class AbstractAssignmentTest extends LedgeTestCase
 {
@@ -74,7 +74,7 @@ public class AbstractAssignmentTest extends LedgeTestCase
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
-        mockCoralCore.stub().method("getSecurity").will(returnValue(coralSecurity));
+        mockCoralCore.stubs().method("getSecurity").will(returnValue(coralSecurity));
         factory = new RedBlueEntityFactory(persistence);
         mockSubject = mock(Subject.class);
         subject = (Subject)mockSubject.proxy();
@@ -147,11 +147,11 @@ public class AbstractAssignmentTest extends LedgeTestCase
         RedEntity red1 = factory.getRed(1);
         BlueEntity blue2 = factory.getBlue(2);
         Date date = new Date();
-        mockSubject.expect(once()).method("getId").will(returnValue(3L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("red_id"), eq(1L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("blue_id"), eq(2L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("grantor"), eq(3L));
-        mockOutputRecord.expect(once()).method("setDate").with(eq("grant_time"), eq(date));                
+        mockSubject.expects(once()).method("getId").will(returnValue(3L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("red_id"), eq(1L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("blue_id"), eq(2L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("grantor"), eq(3L));
+        mockOutputRecord.expects(once()).method("setDate").with(eq("grant_time"), eq(date));                
         RedBlueAssignment red1blue1 = new RedBlueAssignment(coralCore, persistence, factory, 
             red1, blue2, subject, date);
         red1blue1.getData(outputRecord);
@@ -164,11 +164,11 @@ public class AbstractAssignmentTest extends LedgeTestCase
     {
         RedBlueAssignment rb = new RedBlueAssignment(coralCore, persistence, factory);
         Date date = new Date();
-        mockInputRecord.expect(once()).method("getLong").with(eq("red_id")).will(returnValue(1L));
-        mockInputRecord.expect(once()).method("getLong").with(eq("blue_id")).will(returnValue(2L));
-        mockInputRecord.expect(once()).method("getLong").with(eq("grantor")).will(returnValue(3L));
-        mockInputRecord.expect(once()).method("getDate").with(eq("grant_time")).will(returnValue(date));                
-        mockCoralSecurity.expect(once()).method("getSubject").with(eq(3L)).will(returnValue(subject));
+        mockInputRecord.expects(once()).method("getLong").with(eq("red_id")).will(returnValue(1L));
+        mockInputRecord.expects(once()).method("getLong").with(eq("blue_id")).will(returnValue(2L));
+        mockInputRecord.expects(once()).method("getLong").with(eq("grantor")).will(returnValue(3L));
+        mockInputRecord.expects(once()).method("getDate").with(eq("grant_time")).will(returnValue(date));                
+        mockCoralSecurity.expects(once()).method("getSubject").with(eq(3L)).will(returnValue(subject));
         rb.setData(inputRecord);
         assertEquals(1L, rb.getRed().getId());
         assertEquals(2L, rb.getBlue().getId());
@@ -180,8 +180,8 @@ public class AbstractAssignmentTest extends LedgeTestCase
         throws Exception
     {
         RedBlueAssignment rb = new RedBlueAssignment(coralCore, persistence, factory);
-        mockInputRecord.expect(once()).method("getLong").with(eq("grantor")).will(returnValue(3L));
-        mockCoralSecurity.expect(once()).method("getSubject").with(eq(3L)).will(throwException(new EntityDoesNotExistException("subject not found")));
+        mockInputRecord.expects(once()).method("getLong").with(eq("grantor")).will(returnValue(3L));
+        mockCoralSecurity.expects(once()).method("getSubject").with(eq(3L)).will(throwException(new EntityDoesNotExistException("subject not found")));
         try
         {
             rb.setData(inputRecord);

@@ -36,7 +36,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractAssociationTest.java,v 1.2 2004-03-24 14:40:13 fil Exp $
+ * @version $Id: AbstractAssociationTest.java,v 1.3 2004-05-28 10:04:12 fil Exp $
  */
 public class AbstractAssociationTest extends LedgeTestCase
 {
@@ -105,8 +105,8 @@ public class AbstractAssociationTest extends LedgeTestCase
         BlueEntity blue1 = factory.getBlue(1);
         RedBlueAssociation red1blue1 = new RedBlueAssociation((Persistence)mockPersistence.proxy(), factory, 
             red1, blue1);
-        mockOutputRecord.expect(once()).method("setLong").with(eq("blue_id"), eq(1L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("red_id"), eq(1L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("blue_id"), eq(1L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("red_id"), eq(1L));
         red1blue1.getData((OutputRecord)mockOutputRecord.proxy());
         red1blue1.getTable();
         red1blue1.getKeyColumns();
@@ -116,8 +116,8 @@ public class AbstractAssociationTest extends LedgeTestCase
         throws Exception
     {
         RedBlueAssociation rb = new RedBlueAssociation((Persistence)mockPersistence.proxy(), factory);
-        mockInputRecord.expect(once()).method("getLong").with(eq("blue_id")).will(returnValue(1L));
-        mockInputRecord.expect(once()).method("getLong").with(eq("red_id")).will(returnValue(1L));
+        mockInputRecord.expects(once()).method("getLong").with(eq("blue_id")).will(returnValue(1L));
+        mockInputRecord.expects(once()).method("getLong").with(eq("red_id")).will(returnValue(1L));
         rb.setData((InputRecord)mockInputRecord.proxy());
         assertEquals(1L, rb.getRed().getId());
         assertEquals(1L, rb.getBlue().getId());

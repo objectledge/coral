@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralEventWhiteboardTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
+ * @version $Id: SessionCoralEventWhiteboardTest.java,v 1.5 2004-05-28 10:04:10 fil Exp $
  */
 public class SessionCoralEventWhiteboardTest extends LedgeTestCase
 {
@@ -62,15 +62,15 @@ public class SessionCoralEventWhiteboardTest extends LedgeTestCase
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralEventWhiteboard = mock(CoralEventWhiteboard.class);
         coralEventWhiteboard = (CoralEventWhiteboard)mockCoralEventWhiteboard.proxy();
-        mockCoralCore.stub().method("getEventWhiteboard").will(returnValue(coralEventWhiteboard));
+        mockCoralCore.stubs().method("getEventWhiteboard").will(returnValue(coralEventWhiteboard));
         mockKeyedObjectPool = mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
-        mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
-        mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
+        mockCoralCore.stubs().method("getInstantiator").will(returnValue(null));
+        mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));        
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
-        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
+        mockCoralCore.expects(once()).method("setCurrentSession").with(same(session)).isVoid();
+        mockCoralCore.stubs().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);
         sessionCoralEventWhiteboard = new SessionCoralEventWhiteboard(coralCore, session);
         
@@ -84,14 +84,14 @@ public class SessionCoralEventWhiteboardTest extends LedgeTestCase
     
     public void testAddPermissionAssignmentChangeListener()
     {
-        mockCoralEventWhiteboard.expect(once()).method("addPermissionAssignmentChangeListener").with(same(permissionAssignmentChangeListener), same(anchor)).isVoid();
+        mockCoralEventWhiteboard.expects(once()).method("addPermissionAssignmentChangeListener").with(same(permissionAssignmentChangeListener), same(anchor)).isVoid();
      
         sessionCoralEventWhiteboard.addPermissionAssignmentChangeListener(permissionAssignmentChangeListener, anchor);   
     }
 
     public void testRemovePermissionAssignmentChangeListener()
     {
-        mockCoralEventWhiteboard.expect(once()).method("removePermissionAssignmentChangeListener").with(same(permissionAssignmentChangeListener), same(anchor)).isVoid();
+        mockCoralEventWhiteboard.expects(once()).method("removePermissionAssignmentChangeListener").with(same(permissionAssignmentChangeListener), same(anchor)).isVoid();
      
         sessionCoralEventWhiteboard.removePermissionAssignmentChangeListener(permissionAssignmentChangeListener, anchor);   
     }

@@ -27,8 +27,9 @@
 // 
 package org.objectledge.coral.schema;
 
+import java.sql.Connection;
+
 import org.jmock.Mock;
-import org.jmock.core.Constraint;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.InstantiationException;
@@ -36,17 +37,17 @@ import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.CoralEventWhiteboard;
+import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.utils.LedgeTestCase;
-import org.objectledge.utils.MapElement;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.9 2004-03-24 14:40:10 fil Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.10 2004-05-28 10:04:09 fil Exp $
  */
 public class ResourceClassImplTest extends LedgeTestCase
 {
@@ -68,6 +69,10 @@ public class ResourceClassImplTest extends LedgeTestCase
     private CoralCore coralCore;
     private Mock mockResourceHandler;
     private ResourceHandler resourceHandler;
+    private Mock mockResource;
+    private Resource resource;
+    private Mock mockConnection;
+    private Connection connection;
 
     public void setUp()
     {
@@ -87,19 +92,23 @@ public class ResourceClassImplTest extends LedgeTestCase
         coralRegistry = (CoralRegistry)mockCoralRegistry.proxy();
         mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
-        mockCoralCore.stub().method("getRegistry").will(returnValue(coralRegistry));
+        mockCoralCore.stubs().method("getRegistry").will(returnValue(coralRegistry));
         mockResourceHandler = mock(ResourceHandler.class);
         resourceHandler = (ResourceHandler)mockResourceHandler.proxy();
+        mockResource = mock(Resource.class);
+        resource = (Resource)mockResource.proxy();
+        mockConnection = mock(Connection.class);
+        connection = (Connection)mockConnection.proxy();
     }
     
     private ResourceClassImpl createResourceClass(String dbTable)
         throws JavaClassException
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addResourceClassChangeListener");
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addResourceClassChangeListener");
         return new ResourceClassImpl(persistence, instantiator, coralEventHub,
             coralCore, "<resource class>", "<java class>", "<handler class>", dbTable, 303);
     }
@@ -114,8 +123,8 @@ public class ResourceClassImplTest extends LedgeTestCase
         assertEquals("<resource class>", rc.getName());
         assertEquals(Object.class, rc.getJavaClass());
         assertEquals("<java class>", rc.getJavaClassName());
-        mockResourceHandler.expect(once()).method("hashCode").will(returnValue(0));
-        rc.getHandler().hashCode();
+        mockResourceHandler.expects(once()).method("retrieve").with(eq(resource), eq(connection)).isVoid();
+        rc.getHandler().retrieve(resource, connection);
         assertEquals("<db table>", rc.getDbTable());
         assertEquals(303, rc.getFlags());
     }
@@ -123,8 +132,8 @@ public class ResourceClassImplTest extends LedgeTestCase
     public void testMissingHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(throwException(new ClassNotFoundException("<handler class>")));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(throwException(new ClassNotFoundException("<handler class>")));
         try
         {
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
@@ -142,9 +151,9 @@ public class ResourceClassImplTest extends LedgeTestCase
     public void testUninstantiableHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(throwException(new InstantiationException("<handler class>", new Exception("unavailable"))));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(throwException(new InstantiationException("<handler class>", new Exception("unavailable"))));
         try
         {
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
@@ -162,9 +171,9 @@ public class ResourceClassImplTest extends LedgeTestCase
     public void testNotImplementingHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(new Object()));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(new Object()));
         try
         {        
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
@@ -187,7 +196,7 @@ public class ResourceClassImplTest extends LedgeTestCase
         rc.setName("<other resource class>");
         assertEquals("<other resource class>", rc.getName());
         assertEquals(Object.class, rc.getJavaClass());
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<missing class>")).will(throwException(new ClassNotFoundException("<missing class>")));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<missing class>")).will(throwException(new ClassNotFoundException("<missing class>")));
         try
         {
             rc.setJavaClass("<missing class>");
@@ -215,12 +224,12 @@ public class ResourceClassImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassImpl rc = createResourceClass("<db table>");
-        mockOutputRecord.expect(once()).method("setLong").with(eq("resource_class_id"),eq(-1L));
-        mockOutputRecord.expect(once()).method("setString").with(eq("name"),eq("<resource class>"));
-        mockOutputRecord.expect(once()).method("setString").with(eq("java_class_name"),eq("<java class>"));
-        mockOutputRecord.expect(once()).method("setString").with(eq("handler_class_name"),eq("<handler class>"));
-        mockOutputRecord.expect(once()).method("setString").with(eq("db_table_name"),eq("<db table>"));
-        mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"),eq(303));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("resource_class_id"),eq(-1L));
+        mockOutputRecord.expects(once()).method("setString").with(eq("name"),eq("<resource class>"));
+        mockOutputRecord.expects(once()).method("setString").with(eq("java_class_name"),eq("<java class>"));
+        mockOutputRecord.expects(once()).method("setString").with(eq("handler_class_name"),eq("<handler class>"));
+        mockOutputRecord.expects(once()).method("setString").with(eq("db_table_name"),eq("<db table>"));
+        mockOutputRecord.expects(once()).method("setInteger").with(eq("flags"),eq(303));
         rc.getData(outputRecord);
         assertEquals("coral_resource_class", rc.getTable());
     }
@@ -229,12 +238,12 @@ public class ResourceClassImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassImpl rc = createResourceClass(null);
-        mockOutputRecord.expect(once()).method("setLong").with(eq("resource_class_id"),eq(-1L));
-        mockOutputRecord.expect(once()).method("setString").with(eq("name"),eq("<resource class>"));
-        mockOutputRecord.expect(once()).method("setString").with(eq("java_class_name"),eq("<java class>"));
-        mockOutputRecord.expect(once()).method("setString").with(eq("handler_class_name"),eq("<handler class>"));
-        mockOutputRecord.expect(once()).method("setNull").with(eq("db_table_name"));
-        mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"),eq(303));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("resource_class_id"),eq(-1L));
+        mockOutputRecord.expects(once()).method("setString").with(eq("name"),eq("<resource class>"));
+        mockOutputRecord.expects(once()).method("setString").with(eq("java_class_name"),eq("<java class>"));
+        mockOutputRecord.expects(once()).method("setString").with(eq("handler_class_name"),eq("<handler class>"));
+        mockOutputRecord.expects(once()).method("setNull").with(eq("db_table_name"));
+        mockOutputRecord.expects(once()).method("setInteger").with(eq("flags"),eq(303));
         rc.getData(outputRecord);
         assertEquals("coral_resource_class", rc.getTable());
     }
@@ -243,24 +252,24 @@ public class ResourceClassImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralCore);
-        mockInputRecord.expect(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
-        mockInputRecord.expect(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInputRecord.expect(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, same(rc))).will(returnValue(resourceHandler));
-        mockInputRecord.expect(once()).method("isNull").with(eq("db_table_name")).will(returnValue(false));
-        mockInputRecord.expect(once()).method("getString").with(eq("db_table_name")).will(returnValue("<db table>"));
-        mockInputRecord.expect(once()).method("getInteger").with(eq("flags")).will(returnValue(303));    
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addResourceClassChangeListener");        
+        mockInputRecord.expects(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
+        mockInputRecord.expects(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInputRecord.expects(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, same(rc))).will(returnValue(resourceHandler));
+        mockInputRecord.expects(once()).method("isNull").with(eq("db_table_name")).will(returnValue(false));
+        mockInputRecord.expects(once()).method("getString").with(eq("db_table_name")).will(returnValue("<db table>"));
+        mockInputRecord.expects(once()).method("getInteger").with(eq("flags")).will(returnValue(303));    
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addResourceClassChangeListener");        
         rc.setData(inputRecord);
         assertEquals(-1, rc.getId());
         assertEquals("<resource class>", rc.getName());
         assertEquals(Object.class, rc.getJavaClass());
-        mockResourceHandler.expect(once()).method("hashCode").will(returnValue(0));
-        rc.getHandler().hashCode();
+        mockResourceHandler.expects(once()).method("retrieve").with(eq(resource), eq(connection)).isVoid();
+        rc.getHandler().retrieve(resource, connection);
         assertEquals("<db table>", rc.getDbTable());
         assertEquals(303, rc.getFlags());
     }
@@ -269,23 +278,23 @@ public class ResourceClassImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralCore);
-        mockInputRecord.expect(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
-        mockInputRecord.expect(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInputRecord.expect(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
-        mockInputRecord.expect(once()).method("isNull").with(eq("db_table_name")).will(returnValue(true));
-        mockInputRecord.expect(once()).method("getInteger").with(eq("flags")).will(returnValue(303));    
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addResourceClassChangeListener");        
+        mockInputRecord.expects(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
+        mockInputRecord.expects(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInputRecord.expects(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
+        mockInputRecord.expects(once()).method("isNull").with(eq("db_table_name")).will(returnValue(true));
+        mockInputRecord.expects(once()).method("getInteger").with(eq("flags")).will(returnValue(303));    
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addResourceClassChangeListener");        
         rc.setData(inputRecord);
         assertEquals(-1, rc.getId());
         assertEquals("<resource class>", rc.getName());
         assertEquals(Object.class, rc.getJavaClass());
-        mockResourceHandler.expect(once()).method("hashCode").will(returnValue(0));
-        rc.getHandler().hashCode();
+        mockResourceHandler.expects(once()).method("retrieve").with(eq(resource), eq(connection)).isVoid();
+        rc.getHandler().retrieve(resource, connection);
         assertNull(rc.getDbTable());
         assertEquals(303, rc.getFlags());
     }
@@ -293,10 +302,10 @@ public class ResourceClassImplTest extends LedgeTestCase
     public void testLoadingJavaClassException()
     {
         ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralCore);
-        mockInputRecord.expect(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
-        mockInputRecord.expect(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(throwException(new ClassNotFoundException("<java class>")));
+        mockInputRecord.expects(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
+        mockInputRecord.expects(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(throwException(new ClassNotFoundException("<java class>")));
         try
         {
             rc.setData(inputRecord);
@@ -316,7 +325,7 @@ public class ResourceClassImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassImpl rc = createResourceClass("<db table>");
-        mockPersistence.expect(once()).method("revert").with(same(rc));
+        mockPersistence.expects(once()).method("revert").with(same(rc));
         rc.resourceClassChanged(rc);
     }
 

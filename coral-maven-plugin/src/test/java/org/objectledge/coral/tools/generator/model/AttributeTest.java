@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeTest.java,v 1.3 2004-03-28 08:52:06 fil Exp $
+ * @version $Id: AttributeTest.java,v 1.4 2004-05-28 10:04:20 fil Exp $
  */
 public class AttributeTest extends LedgeTestCase
 {
@@ -79,8 +79,8 @@ public class AttributeTest extends LedgeTestCase
     public void testJavaClassInteger()
         throws Exception
     {
-        mockAttributeClass.stub().method("getJavaClassName").will(returnValue("java.lang.Integer"));
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(Integer.class));
+        mockAttributeClass.stubs().method("getJavaClassName").will(returnValue("java.lang.Integer"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Integer.class));
         assertTrue(attribute.isPrimitive());
         assertEquals("int", attribute.getJavaType());
         assertEquals("int", attribute.getFQJavaType());
@@ -90,8 +90,8 @@ public class AttributeTest extends LedgeTestCase
     public void testJavaClassString()
         throws Exception
     {
-        mockAttributeClass.stub().method("getJavaClassName").will(returnValue("java.lang.String"));
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(String.class));
+        mockAttributeClass.stubs().method("getJavaClassName").will(returnValue("java.lang.String"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(String.class));
         assertFalse(attribute.isPrimitive());
         assertEquals("String", attribute.getJavaType());
         assertEquals("java.lang.String", attribute.getFQJavaType());
@@ -108,8 +108,8 @@ public class AttributeTest extends LedgeTestCase
     public void testJavaClassDate()
         throws Exception
     {
-        mockAttributeClass.stub().method("getJavaClassName").will(returnValue("java.util.Date"));
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(Date.class));
+        mockAttributeClass.stubs().method("getJavaClassName").will(returnValue("java.util.Date"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Date.class));
         assertFalse(attribute.isPrimitive());
         assertEquals("Date", attribute.getJavaType());
         assertEquals("java.util.Date", attribute.getFQJavaType());
@@ -126,9 +126,9 @@ public class AttributeTest extends LedgeTestCase
     public void testJavaClassResource()
         throws Exception
     {
-        mockAttributeClass.stub().method("getJavaClassName").
+        mockAttributeClass.stubs().method("getJavaClassName").
             will(returnValue("org.objectledge.coral.store.Resource"));
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(Resource.class));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Resource.class));
         assertFalse(attribute.isPrimitive());
         assertEquals("Resource", attribute.getJavaType());
         assertEquals("org.objectledge.coral.store.Resource", attribute.getFQJavaType());
@@ -138,10 +138,10 @@ public class AttributeTest extends LedgeTestCase
         throws Exception
     {
         attribute.setDomain("RC");
-        mockSchema.stub().method("getResourceClass").with(eq("RC")).will(returnValue(resourceClass));
-        mockAttributeClass.stub().method("getJavaClassName").will(returnValue("org.objectledge.coral.store.Resource"));
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(Resource.class));
-        mockResourceClass.stub().method("getFQInterfaceClassName").will(returnValue("org.objectledge.coral.datatypes.Node"));
+        mockSchema.stubs().method("getResourceClass").with(eq("RC")).will(returnValue(resourceClass));
+        mockAttributeClass.stubs().method("getJavaClassName").will(returnValue("org.objectledge.coral.store.Resource"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Resource.class));
+        mockResourceClass.stubs().method("getFQInterfaceClassName").will(returnValue("org.objectledge.coral.datatypes.Node"));
         assertFalse(attribute.isPrimitive());
         assertEquals("Node", attribute.getJavaType());
         assertEquals("org.objectledge.coral.datatypes.Node", attribute.getFQJavaType());

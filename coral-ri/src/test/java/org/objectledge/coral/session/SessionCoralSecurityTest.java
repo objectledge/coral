@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSecurityTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
+ * @version $Id: SessionCoralSecurityTest.java,v 1.5 2004-05-28 10:04:10 fil Exp $
  */
 public class SessionCoralSecurityTest extends LedgeTestCase
 {
@@ -57,15 +57,15 @@ public class SessionCoralSecurityTest extends LedgeTestCase
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
-        mockCoralCore.stub().method("getStore").will(returnValue(coralStore));
-        mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
-        mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
+        mockCoralCore.stubs().method("getStore").will(returnValue(coralStore));
+        mockCoralCore.stubs().method("getInstantiator").will(returnValue(null));
+        mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));        
         mockKeyedObjectPool = mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
-        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
+        mockCoralCore.expects(once()).method("setCurrentSession").with(same(session)).isVoid();
+        mockCoralCore.stubs().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);
         sessionCoralStore = new SessionCoralStore(coralCore, session);
     }
@@ -76,7 +76,7 @@ public class SessionCoralSecurityTest extends LedgeTestCase
     
     public void testGetResource()
     {
-        mockCoralStore.expect(once()).method("getResource").will(returnValue(new Resource[0]));
+        mockCoralStore.expects(once()).method("getResource").will(returnValue(new Resource[0]));
         sessionCoralStore.getResource();
     }
 }

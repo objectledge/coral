@@ -36,7 +36,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralQueryTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
+ * @version $Id: SessionCoralQueryTest.java,v 1.5 2004-05-28 10:04:10 fil Exp $
  */
 public class SessionCoralQueryTest extends LedgeTestCase
 {
@@ -56,15 +56,15 @@ public class SessionCoralQueryTest extends LedgeTestCase
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralQuery = mock(CoralQuery.class);
         coralQuery = (CoralQuery)mockCoralQuery.proxy();
-        mockCoralCore.stub().method("getQuery").will(returnValue(coralQuery));
-        mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
-        mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
+        mockCoralCore.stubs().method("getQuery").will(returnValue(coralQuery));
+        mockCoralCore.stubs().method("getInstantiator").will(returnValue(null));
+        mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));        
         mockKeyedObjectPool = mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
-        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
+        mockCoralCore.expects(once()).method("setCurrentSession").with(same(session)).isVoid();
+        mockCoralCore.stubs().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);
         sessionCoralQuery = new SessionCoralQuery(coralCore, session);
     }
@@ -76,14 +76,14 @@ public class SessionCoralQueryTest extends LedgeTestCase
     public void testExecuteQuery()
         throws Exception
     {
-        mockCoralQuery.expect(once()).method("executeQuery").will(returnValue(null));
+        mockCoralQuery.expects(once()).method("executeQuery").will(returnValue(null));
         sessionCoralQuery.executeQuery("<query>");
     }
 
     public void testPrepareQuery()
         throws Exception
     {
-        mockCoralQuery.expect(once()).method("prepareQuery").will(returnValue(null));
+        mockCoralQuery.expects(once()).method("prepareQuery").will(returnValue(null));
         sessionCoralQuery.prepareQuery("<query>");
     }
 }

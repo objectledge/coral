@@ -35,7 +35,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SchemaTest.java,v 1.3 2004-03-24 15:45:36 fil Exp $
+ * @version $Id: SchemaTest.java,v 1.4 2004-05-28 10:04:20 fil Exp $
  */
 public class SchemaTest extends LedgeTestCase
 {
@@ -49,10 +49,10 @@ public class SchemaTest extends LedgeTestCase
     {
         schema = new Schema();
         mockResourceClassRC1 = mock(ResourceClass.class, "RC1");
-        mockResourceClassRC1.stub().method("getName").will(returnValue("RC1"));
+        mockResourceClassRC1.stubs().method("getName").will(returnValue("RC1"));
         resourceClassRC1 = (ResourceClass)mockResourceClassRC1.proxy();
         mockAttributeClassAC1 = mock(AttributeClass.class, "RC1");
-        mockAttributeClassAC1.stub().method("getName").will(returnValue("AC1"));
+        mockAttributeClassAC1.stubs().method("getName").will(returnValue("AC1"));
         attributeClassAC1 = (AttributeClass)mockAttributeClassAC1.proxy();
     }
     

@@ -80,11 +80,11 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
     {
         super.setUp();
         mockDatabase = mock(Database.class);
-        mockDatabase.stub().method("getNextId").will(returnValue(1L));
+        mockDatabase.stubs().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
 
         mockCoralStore = mock(CoralStore.class);
-        mockCoralStore.stub().method("getResource").will(returnValue(resource));
+        mockCoralStore.stubs().method("getResource").will(returnValue(resource));
         coralStore = (CoralStore)mockCoralStore.proxy();
         mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
@@ -92,27 +92,27 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(ResourceList.class));
-        mockAttributeClass.stub().method("getName").will(returnValue("resource_list"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_resource_list"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(ResourceList.class));
+        mockAttributeClass.stubs().method("getName").will(returnValue("resource_list"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("arl_attribute_resource_list"));
         handler = new ResourceListAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement = mock(Statement.class);
-        mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
         statement = (Statement)mockStatement.proxy();
         mockPreparedStatement = mock(PreparedStatement.class);
-        //mockPreparedStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        //mockPreparedStatement.stubs().method("executeQuery").will(returnValue(resultSet));
         preparedStatement = (PreparedStatement)mockPreparedStatement.proxy();
         
         mockConnection = mock(Connection.class);
-        mockConnection.stub().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
         
         mockResource = mock(Resource.class);
-        mockResource.stub().method("getId").will(returnValue(1L));
-        mockResource.stub().method("getName").will(returnValue("foo"));
-        mockResource.stub().method("getPath").will(returnValue("/foo"));
+        mockResource.stubs().method("getId").will(returnValue(1L));
+        mockResource.stubs().method("getName").will(returnValue("foo"));
+        mockResource.stubs().method("getPath").will(returnValue("/foo"));
         resource = (Resource)mockResource.proxy();
         
         ArrayList list = new ArrayList();
@@ -128,13 +128,13 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
     public void testCreate() throws Exception
     {
         String stmt = "INSERT INTO " + "arl_attribute_resource_list" + "(data_key, pos, ref) VALUES (1, ?, ?)";
-        mockConnection.expect(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
-        mockPreparedStatement.expect(once()).method("setInt");
-        mockPreparedStatement.expect(once()).method("setLong");
-        mockPreparedStatement.expect(once()).method("addBatch");
-        mockPreparedStatement.expect(once()).method("executeBatch").will(returnValue(new int[]{1}));
+        mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expects(once()).method("setInt");
+        mockPreparedStatement.expects(once()).method("setLong");
+        mockPreparedStatement.expects(once()).method("addBatch");
+        mockPreparedStatement.expects(once()).method("executeBatch").will(returnValue(new int[]{1}));
         
-        //mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        //mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(resourceList, connection);
     }
 
@@ -142,19 +142,19 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
     {
         String stmt = "INSERT INTO " + "arl_attribute_resource_list" + "(data_key, pos, ref) VALUES (1, ?, ?)";
         String deleteStmt = "DELETE FROM arl_attribute_resource_list WHERE data_key = 1";
-        mockStatement.expect(once()).method("execute").with(eq(deleteStmt)).will(returnValue(true));
-        mockConnection.expect(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
-        mockPreparedStatement.expect(once()).method("setInt");
-        mockPreparedStatement.expect(once()).method("setLong");
-        mockPreparedStatement.expect(once()).method("addBatch");
-        mockPreparedStatement.expect(once()).method("executeBatch").will(returnValue(new int[]{1}));
+        mockStatement.expects(once()).method("execute").with(eq(deleteStmt)).will(returnValue(true));
+        mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expects(once()).method("setInt");
+        mockPreparedStatement.expects(once()).method("setLong");
+        mockPreparedStatement.expects(once()).method("addBatch");
+        mockPreparedStatement.expects(once()).method("executeBatch").will(returnValue(new int[]{1}));
         handler.update(1, resourceList, connection);
     }
 
     public void testRetrieveCreate() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
-        //mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
+        //mockResultSet.expects(once()).method("getLong").will(returnValue(1L));
         handler.retrieve(1, connection);
     }
 

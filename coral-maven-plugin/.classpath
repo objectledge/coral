@@ -7,7 +7,7 @@
 	<classpathentry kind="src" path="/coral-datatypes"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="/ledge-components"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jmock/jars/jmock-20040324-104648.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/jmock/jars/jmock-1.0.0.RC1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
 	<classpathentry sourcepath="MAVEN_REPO/dna/sources/dna-api-1.1-rc2-src.zip" kind="var" path="MAVEN_REPO/dna/jars/dna-api-1.1-rc2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/cglib/jars/cglib-full-2.0.jar"/>
@@ -22,5 +22,6 @@
 	<classpathentry sourcepath="MAVEN_REPO/hsqldb/sources/hsqldb-1.7.2-rc6a-src.zip" kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.7.2-rc6a-jdk1.4.jar"/>
 	<classpathentry kind="src" path="/ledge-container"/>
 	<classpathentry kind="var" path="MAVEN_REPO/nanocontainer/jars/nanocontainer-cheddar.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/jmock/jars/jmock-cglib-1.0.0.RC1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeDefinitionImplTest.java,v 1.4 2004-03-24 14:40:10 fil Exp $
+ * @version $Id: AttributeDefinitionImplTest.java,v 1.5 2004-05-28 10:04:09 fil Exp $
  */
 public class AttributeDefinitionImplTest extends LedgeTestCase
 {
@@ -85,13 +85,13 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
         coralEventWhiteboard = (CoralEventWhiteboard)mockCoralEventWhiteboard.proxy();
         mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
-        mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
+        mockCoralCore.stubs().method("getSchema").will(returnValue(coralSchema));
     }
     
     public void testCreation()
     {
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         def.setDeclaringClass(resourceClass);
@@ -106,19 +106,19 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
     public void testStoring()
         throws Exception
     {
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         def.setDeclaringClass(resourceClass);
-        mockOutputRecord.expect(once()).method("setLong").with(eq("attribute_definition_id"), eq(-1L));
-        mockOutputRecord.expect(once()).method("setString").with(eq("name"), eq("<attribute>"));
-        mockAttributeClass.expect(once()).method("getId").will(returnValue(1L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("attribute_class_id"), eq(1L));
-        mockResourceClass.expect(once()).method("getId").will(returnValue(2L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("resource_class_id"), eq(2L));
-        mockOutputRecord.expect(once()).method("setString").with(eq("domain"), eq("<domain>"));
-        mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"), eq(303));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_definition_id"), eq(-1L));
+        mockOutputRecord.expects(once()).method("setString").with(eq("name"), eq("<attribute>"));
+        mockAttributeClass.expects(once()).method("getId").will(returnValue(1L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_class_id"), eq(1L));
+        mockResourceClass.expects(once()).method("getId").will(returnValue(2L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("resource_class_id"), eq(2L));
+        mockOutputRecord.expects(once()).method("setString").with(eq("domain"), eq("<domain>"));
+        mockOutputRecord.expects(once()).method("setInteger").with(eq("flags"), eq(303));
         def.getData(outputRecord);
         assertEquals("coral_attribute_definition", def.getTable());
     }
@@ -126,19 +126,19 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
     public void testStoringNullDomain()
         throws Exception
     {
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, null, 303);
         def.setDeclaringClass(resourceClass);
-        mockOutputRecord.expect(once()).method("setLong").with(eq("attribute_definition_id"), eq(-1L));
-        mockOutputRecord.expect(once()).method("setString").with(eq("name"), eq("<attribute>"));
-        mockAttributeClass.expect(once()).method("getId").will(returnValue(1L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("attribute_class_id"), eq(1L));
-        mockResourceClass.expect(once()).method("getId").will(returnValue(2L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("resource_class_id"), eq(2L));
-        mockOutputRecord.expect(once()).method("setNull").with(eq("domain"));
-        mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"), eq(303));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_definition_id"), eq(-1L));
+        mockOutputRecord.expects(once()).method("setString").with(eq("name"), eq("<attribute>"));
+        mockAttributeClass.expects(once()).method("getId").will(returnValue(1L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_class_id"), eq(1L));
+        mockResourceClass.expects(once()).method("getId").will(returnValue(2L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("resource_class_id"), eq(2L));
+        mockOutputRecord.expects(once()).method("setNull").with(eq("domain"));
+        mockOutputRecord.expects(once()).method("setInteger").with(eq("flags"), eq(303));
         def.getData(outputRecord);
         assertEquals("coral_attribute_definition", def.getTable());
     }
@@ -148,17 +148,17 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
     {
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore);
 
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(1L));
-        mockCoralSchema.expect(once()).method("getAttributeClass").with(eq(1L)).will(returnValue(attributeClass));
-        mockInputRecord.expect(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(2L));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(2L)).will(returnValue(resourceClass));
-        mockInputRecord.expect(once()).method("isNull").with(eq("domain")).will(returnValue(false));
-        mockInputRecord.expect(once()).method("getString").with(eq("domain")).will(returnValue("<domain>"));
-        mockInputRecord.expect(once()).method("getInteger").with(eq("flags")).will(returnValue(303));
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(1L));
+        mockCoralSchema.expects(once()).method("getAttributeClass").with(eq(1L)).will(returnValue(attributeClass));
+        mockInputRecord.expects(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(2L));
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(2L)).will(returnValue(resourceClass));
+        mockInputRecord.expects(once()).method("isNull").with(eq("domain")).will(returnValue(false));
+        mockInputRecord.expects(once()).method("getString").with(eq("domain")).will(returnValue("<domain>"));
+        mockInputRecord.expects(once()).method("getInteger").with(eq("flags")).will(returnValue(303));
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         def.setData(inputRecord);        
         assertEquals(-1L, def.getId());
         assertEquals("<attribute>", def.getName());
@@ -173,16 +173,16 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
     {
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore);
 
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(1L));
-        mockCoralSchema.expect(once()).method("getAttributeClass").with(eq(1L)).will(returnValue(attributeClass));
-        mockInputRecord.expect(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(2L));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(2L)).will(returnValue(resourceClass));
-        mockInputRecord.expect(once()).method("isNull").with(eq("domain")).will(returnValue(true));
-        mockInputRecord.expect(once()).method("getInteger").with(eq("flags")).will(returnValue(303));
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(1L));
+        mockCoralSchema.expects(once()).method("getAttributeClass").with(eq(1L)).will(returnValue(attributeClass));
+        mockInputRecord.expects(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(2L));
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(2L)).will(returnValue(resourceClass));
+        mockInputRecord.expects(once()).method("isNull").with(eq("domain")).will(returnValue(true));
+        mockInputRecord.expects(once()).method("getInteger").with(eq("flags")).will(returnValue(303));
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         def.setData(inputRecord);        
         assertEquals(-1L, def.getId());
         assertEquals("<attribute>", def.getName());
@@ -197,10 +197,10 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
     {
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore);
 
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(1L));
-        mockCoralSchema.expect(once()).method("getAttributeClass").with(eq(1L)).will(throwException(new EntityDoesNotExistException("missing attribute class")));
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(1L));
+        mockCoralSchema.expects(once()).method("getAttributeClass").with(eq(1L)).will(throwException(new EntityDoesNotExistException("missing attribute class")));
         try
         {
             def.setData(inputRecord);        
@@ -219,12 +219,12 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
     {
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore);
 
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(1L));
-        mockCoralSchema.expect(once()).method("getAttributeClass").with(eq(1L)).will(returnValue(attributeClass));
-        mockInputRecord.expect(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(2L));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(2L)).will(throwException(new EntityDoesNotExistException("missing resource class")));
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(1L));
+        mockCoralSchema.expects(once()).method("getAttributeClass").with(eq(1L)).will(returnValue(attributeClass));
+        mockInputRecord.expects(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(2L));
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(2L)).will(throwException(new EntityDoesNotExistException("missing resource class")));
         try
         {
             def.setData(inputRecord);        
@@ -240,18 +240,18 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
     
     public void testAttributeDefinitionChanged()
     {
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
-        mockPersistence.expect(once()).method("revert").with(same(def));
+        mockPersistence.expects(once()).method("revert").with(same(def));
         def.attributeDefinitionChanged(def);
     }
 
     public void testAttributeDefinitionChangedOther()
     {
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         def.attributeDefinitionChanged(null);
@@ -259,11 +259,11 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
 
     public void testAttributeDefinitionChangedRevertFailed()
     {
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
-        mockPersistence.expect(once()).method("revert").with(same(def)).will(throwException(new PersistenceException("revert failed")));
+        mockPersistence.expects(once()).method("revert").with(same(def)).will(throwException(new PersistenceException("revert failed")));
         try
         {
             def.attributeDefinitionChanged(def);
@@ -279,8 +279,8 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
     
     public void testSetters()
     {
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         assertEquals(303, def.getFlags());

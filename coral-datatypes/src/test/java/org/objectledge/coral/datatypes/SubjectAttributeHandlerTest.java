@@ -75,11 +75,11 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
     {
         super.setUp();
         mockDatabase = mock(Database.class);
-        mockDatabase.stub().method("getNextId").will(returnValue(1L));
+        mockDatabase.stubs().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
         mockSubject = mock(Subject.class);
-        mockSubject.stub().method("getId").will(returnValue(1L));
-        mockSubject.stub().method("getName").will(returnValue("foo"));
+        mockSubject.stubs().method("getId").will(returnValue(1L));
+        mockSubject.stubs().method("getName").will(returnValue("foo"));
         subject = (Subject)mockSubject.proxy();
 
         mockCoralStore = mock(CoralStore.class);
@@ -87,23 +87,23 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
         mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         mockCoralSecurity = mock(CoralSecurity.class);
-        mockCoralSecurity.stub().method("getSubject").with(or(eq(1L),eq("foo"))).will(returnValue(subject));
-        mockCoralSecurity.stub().method("getSubject").with(not(or(eq(1L),eq("foo")))).will(throwException(new EntityDoesNotExistException("foo")));
+        mockCoralSecurity.stubs().method("getSubject").with(or(eq(1L),eq("foo"))).will(returnValue(subject));
+        mockCoralSecurity.stubs().method("getSubject").with(not(or(eq(1L),eq("foo")))).will(throwException(new EntityDoesNotExistException("foo")));
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(Subject.class));
-        mockAttributeClass.stub().method("getName").will(returnValue("subject"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_subject"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Subject.class));
+        mockAttributeClass.stubs().method("getName").will(returnValue("subject"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("arl_attribute_subject"));
         handler = new SubjectAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
         mockConnection = mock(Connection.class);
-        mockConnection.stub().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
-        mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
 
     }
 
@@ -115,17 +115,17 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
     public void testCreate() throws Exception
     {
         String stmt = "INSERT INTO " + "arl_attribute_subject" + "(data_key, ref) VALUES (1, " + subject.getId() + ")";
-        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(subject, connection);
     }
 
     public void testUpdate() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
         String stmt2 = "UPDATE arl_attribute_subject SET ref = " + subject.getId() + " WHERE data_key = 1";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, subject, connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             handler.update(1, subject, connection);
@@ -139,10 +139,10 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
 
     public void testRetrieveCreate() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
-        mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("getLong").will(returnValue(1L));
         handler.retrieve(1, connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             handler.retrieve(1, connection);

@@ -48,7 +48,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImplTest.java,v 1.6 2004-03-24 14:40:13 fil Exp $
+ * @version $Id: CoralCoreImplTest.java,v 1.7 2004-05-28 10:04:12 fil Exp $
  */
 public class CoralCoreImplTest extends LedgeTestCase
 {
@@ -77,10 +77,10 @@ public class CoralCoreImplTest extends LedgeTestCase
         database = (Database)mockDatabase.proxy();
         mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
-        mockPersistence.stub().method("getDatabase").will(returnValue(database));
+        mockPersistence.stubs().method("getDatabase").will(returnValue(database));
         mockCacheFactory = mock(CacheFactory.class);
         cacheFactory = (CacheFactory)mockCacheFactory.proxy();
-        mockCacheFactory.stub().method("getInstance").will(returnValue(new HashMap()));
+        mockCacheFactory.stubs().method("getInstance").will(returnValue(new HashMap()));
         logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));        
         threadPool = new ThreadPool(null, new Context(), null, logger);
         eventWhiteboardFactory = new EventWhiteboardFactory(null, logger, threadPool);

@@ -49,7 +49,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.10 2004-03-24 14:40:10 fil Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.11 2004-05-28 10:04:09 fil Exp $
  */
 public class CoralSchemaImplTest extends LedgeTestCase
 {
@@ -110,14 +110,14 @@ public class CoralSchemaImplTest extends LedgeTestCase
         connection = (Connection)mockConnection.proxy();
         mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
-        mockPersistence.stub().method("getDatabase").will(returnValue(database));        
+        mockPersistence.stubs().method("getDatabase").will(returnValue(database));        
         mockInstantiator = mock(Instantiator.class);
         instantiator = (Instantiator)mockInstantiator.proxy();
         mockCoralRegistry = mock(CoralRegistry.class);
         coralRegistry = (CoralRegistry)mockCoralRegistry.proxy();
         mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
-        mockCoralCore.stub().method("getRegistry").will(returnValue(coralRegistry));
+        mockCoralCore.stubs().method("getRegistry").will(returnValue(coralRegistry));
         mockCoralEventHub = mock(CoralEventHub.class);
         coralEventHub = (CoralEventHub)mockCoralEventHub.proxy();
         mockLocalEventWhiteboard = mock(CoralEventWhiteboard.class, "localEventWhiteboard");
@@ -132,10 +132,10 @@ public class CoralSchemaImplTest extends LedgeTestCase
         coralSchema = new CoralSchemaImpl(persistence, instantiator, coralCore, 
             coralEventHub, logger);
         
-        mockDatabase.stub().method("getConnection").will(returnValue(connection));
-        mockCoralEventHub.stub().method("getLocal").will(returnValue(localEventWhiteboard));
-        mockCoralEventHub.stub().method("getOutbound").will(returnValue(outboundEventWhiteboard));
-        mockCoralEventHub.stub().method("getInbound").will(returnValue(inboundEventWhiteboard));
+        mockDatabase.stubs().method("getConnection").will(returnValue(connection));
+        mockCoralEventHub.stubs().method("getLocal").will(returnValue(localEventWhiteboard));
+        mockCoralEventHub.stubs().method("getOutbound").will(returnValue(outboundEventWhiteboard));
+        mockCoralEventHub.stubs().method("getInbound").will(returnValue(inboundEventWhiteboard));
         
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
@@ -143,7 +143,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
         attributeHandler = (AttributeHandler)mockAttributeHandler.proxy();
         mockOtherAttributeHandler = mock(OtherAttributeHandler.class);
         otherAttributeHandler = (AttributeHandler)mockOtherAttributeHandler.proxy();
-        mockAttributeClass.stub().method("getHandler").will(returnValue(attributeHandler));
+        mockAttributeClass.stubs().method("getHandler").will(returnValue(attributeHandler));
         mockAttributeDefinition = mock(AttributeDefinition.class);
         attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
         mockResourceClass = mock(ResourceClass.class);
@@ -167,32 +167,32 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testGetAttributeClass()
     {
         AttributeClass[] ac = new AttributeClass[0];
-        mockCoralRegistry.expect(once()).method("getAttributeClass").will(returnValue(ac));
+        mockCoralRegistry.expects(once()).method("getAttributeClass").will(returnValue(ac));
         assertSame(ac, coralSchema.getAttributeClass());
     }
     
     public void testGetAttributeClassById()
         throws Exception
     {
-        mockCoralRegistry.expect(once()).method("getAttributeClass").with(eq(1L)).will(returnValue(attributeClass));
+        mockCoralRegistry.expects(once()).method("getAttributeClass").with(eq(1L)).will(returnValue(attributeClass));
         assertSame(attributeClass, coralSchema.getAttributeClass(1L));       
     }
 
     public void testGetAttributeClassByName()
         throws Exception
     {
-        mockCoralRegistry.expect(once()).method("getAttributeClass").with(eq("<attribute class>")).will(returnValue(attributeClass));
+        mockCoralRegistry.expects(once()).method("getAttributeClass").with(eq("<attribute class>")).will(returnValue(attributeClass));
         assertSame(attributeClass, coralSchema.getAttributeClass("<attribute class>"));       
     }
     
     public void testCreateAttributeClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(attributeHandler));
-        mockInboundEventWhiteboard.expect(once()).method("addAttributeClassChangeListener").with(isA(AttributeClassChangeListener.class), isA(AttributeClass.class));
-        mockCoralRegistry.expect(once()).method("addAttributeClass").with(and(isA(AttributeClass.class), isA(Persistent.class))).will(returnValue(attributeClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(attributeHandler));
+        mockInboundEventWhiteboard.expects(once()).method("addAttributeClassChangeListener").with(isA(AttributeClassChangeListener.class), isA(AttributeClass.class));
+        mockCoralRegistry.expects(once()).method("addAttributeClass").with(and(isA(AttributeClass.class), isA(Persistent.class))).isVoid();
         AttributeClass realAttributeClass = coralSchema.createAttributeClass("<attribute class>", "<java class>", "<handler class>", "<db table>");
         assertEquals("<attribute class>", realAttributeClass.getName());
         assertEquals(Object.class, realAttributeClass.getJavaClass());
@@ -203,32 +203,32 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testDeleteAttributeClass()
         throws Exception
     {
-        mockCoralRegistry.expect(once()).method("deleteAttributeClass").with(same(attributeClass));
+        mockCoralRegistry.expects(once()).method("deleteAttributeClass").with(same(attributeClass));
         coralSchema.deleteAttributeClass(attributeClass);
     }
 
     public void testRenameAttributeClass()
         throws Exception
     {
-        mockCoralRegistry.expect(once()).method("renameAttributeClass").with(same(attributeClass), eq("<new name>"));
-        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeClassChangeEvent").with(same(attributeClass));
+        mockCoralRegistry.expects(once()).method("renameAttributeClass").with(same(attributeClass), eq("<new name>"));
+        mockOutboundEventWhiteboard.expects(once()).method("fireAttributeClassChangeEvent").with(same(attributeClass));
         coralSchema.setName(attributeClass, "<new name>");
     }
     
     public void testAttributeClassSetJavaClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(attributeHandler));
-        mockInboundEventWhiteboard.expect(once()).method("addAttributeClassChangeListener").with(isA(AttributeClassChangeListener.class), isA(AttributeClass.class));
-        mockCoralRegistry.expect(once()).method("addAttributeClass").with(and(isA(AttributeClass.class), isA(Persistent.class))).will(returnValue(attributeClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(attributeHandler));
+        mockInboundEventWhiteboard.expects(once()).method("addAttributeClassChangeListener").with(isA(AttributeClassChangeListener.class), isA(AttributeClass.class));
+        mockCoralRegistry.expects(once()).method("addAttributeClass").with(and(isA(AttributeClass.class), isA(Persistent.class))).isVoid();
         AttributeClass realAttributeClass = coralSchema.createAttributeClass("<attribute class>", "<java class>", "<handler class>", "<db table>");
         assertEquals(Object.class, realAttributeClass.getJavaClass());
 
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<new java class>")).will(returnValue(Number.class));
-        mockPersistence.expect(once()).method("save").with(same(realAttributeClass));
-        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeClassChangeEvent").with(same(realAttributeClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<new java class>")).will(returnValue(Number.class));
+        mockPersistence.expects(once()).method("save").with(same(realAttributeClass));
+        mockOutboundEventWhiteboard.expects(once()).method("fireAttributeClassChangeEvent").with(same(realAttributeClass));
         coralSchema.setJavaClass(realAttributeClass, "<new java class>");
         assertEquals(Number.class, realAttributeClass.getJavaClass());
     }
@@ -236,18 +236,18 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testAttributeClassSetHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(attributeHandler));
-        mockInboundEventWhiteboard.expect(once()).method("addAttributeClassChangeListener").with(isA(AttributeClassChangeListener.class), isA(AttributeClass.class));
-        mockCoralRegistry.expect(once()).method("addAttributeClass").with(and(isA(AttributeClass.class), isA(Persistent.class))).will(returnValue(attributeClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(attributeHandler));
+        mockInboundEventWhiteboard.expects(once()).method("addAttributeClassChangeListener").with(isA(AttributeClassChangeListener.class), isA(AttributeClass.class));
+        mockCoralRegistry.expects(once()).method("addAttributeClass").with(and(isA(AttributeClass.class), isA(Persistent.class))).isVoid();
         AttributeClass realAttributeClass = coralSchema.createAttributeClass("<attribute class>", "<java class>", "<handler class>", "<db table>");
         assertEquals(Object.class, realAttributeClass.getJavaClass());
 
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<new handler class>")).will(returnValue(OtherAttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(OtherAttributeHandler.class), mapElement(AttributeClass.class, same(realAttributeClass))).will(returnValue(otherAttributeHandler));
-        mockPersistence.expect(once()).method("save").with(same(realAttributeClass));
-        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeClassChangeEvent").with(same(realAttributeClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<new handler class>")).will(returnValue(OtherAttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(OtherAttributeHandler.class), mapElement(AttributeClass.class, same(realAttributeClass))).will(returnValue(otherAttributeHandler));
+        mockPersistence.expects(once()).method("save").with(same(realAttributeClass));
+        mockOutboundEventWhiteboard.expects(once()).method("fireAttributeClassChangeEvent").with(same(realAttributeClass));
         coralSchema.setHandlerClass(realAttributeClass, "<new handler class>");
         assertSame(otherAttributeHandler, realAttributeClass.getHandler());
     }
@@ -256,16 +256,16 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testAttributeClassSetDbTable()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(attributeHandler));
-        mockInboundEventWhiteboard.expect(once()).method("addAttributeClassChangeListener").with(isA(AttributeClassChangeListener.class), isA(AttributeClass.class));
-        mockCoralRegistry.expect(once()).method("addAttributeClass").with(and(isA(AttributeClass.class), isA(Persistent.class))).will(returnValue(attributeClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(attributeHandler));
+        mockInboundEventWhiteboard.expects(once()).method("addAttributeClassChangeListener").with(isA(AttributeClassChangeListener.class), isA(AttributeClass.class));
+        mockCoralRegistry.expects(once()).method("addAttributeClass").with(and(isA(AttributeClass.class), isA(Persistent.class))).isVoid();
         AttributeClass realAttributeClass = coralSchema.createAttributeClass("<attribute class>", "<java class>", "<handler class>", "<db table>");
         assertEquals(Object.class, realAttributeClass.getJavaClass());
 
-        mockPersistence.expect(once()).method("save").with(same(realAttributeClass));
-        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeClassChangeEvent").with(same(realAttributeClass));
+        mockPersistence.expects(once()).method("save").with(same(realAttributeClass));
+        mockOutboundEventWhiteboard.expects(once()).method("fireAttributeClassChangeEvent").with(same(realAttributeClass));
         coralSchema.setDbTable(realAttributeClass, "<new db table>");
         assertEquals("<new db table>", realAttributeClass.getDbTable());
     }
@@ -275,21 +275,21 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testGetAttributeDefinition()
     {
         AttributeDefinition[] ad = new AttributeDefinition[0];
-        mockCoralRegistry.expect(once()).method("getAttributeDefinition").will(returnValue(ad));
+        mockCoralRegistry.expects(once()).method("getAttributeDefinition").will(returnValue(ad));
         assertSame(ad, coralSchema.getAttribute());
     }
     
     public void testGetAttributeDefinitionById() 
         throws Exception
     {
-        mockCoralRegistry.expect(once()).method("getAttributeDefinition").with(eq(1L)).will(returnValue(attributeDefinition));        
+        mockCoralRegistry.expects(once()).method("getAttributeDefinition").with(eq(1L)).will(returnValue(attributeDefinition));        
         assertSame(attributeDefinition, coralSchema.getAttribute(1L));
     }
     
     public void testCreateAttributeDefinition()
     {
-        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<domain>"));
-        mockInboundEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
+        mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<domain>"));
+        mockInboundEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
         AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
         assertEquals("<attribute>", realAttributeDefinition.getName());
         assertEquals(attributeClass, realAttributeDefinition.getAttributeClass());
@@ -300,23 +300,23 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testRenameAttributeDefinition()
         throws Exception
     {
-        mockAttributeDefinition.stub().method("getDeclaringClass").will(returnValue(null));
-        mockAttributeDefinition.stub().method("getName").will(returnValue("<old name>"));
-        mockCoralRegistry.expect(once()).method("renameAttributeDefinition").with(same(attributeDefinition), eq("<new name>"));
-        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeDefinitionChangeEvent").with(same(attributeDefinition));
+        mockAttributeDefinition.stubs().method("getDeclaringClass").will(returnValue(null));
+        mockAttributeDefinition.stubs().method("getName").will(returnValue("<old name>"));
+        mockCoralRegistry.expects(once()).method("renameAttributeDefinition").with(same(attributeDefinition), eq("<new name>"));
+        mockOutboundEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").with(same(attributeDefinition));
         coralSchema.setName(attributeDefinition, "<new name>");
     }
     
     public void testAttributeDefinitionSetFlags()
         throws Exception
     {
-        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<domain>"));
-        mockInboundEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
+        mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<domain>"));
+        mockInboundEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
         AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
         assertEquals(303, realAttributeDefinition.getFlags());
         
-        mockPersistence.expect(once()).method("save").with(same(realAttributeDefinition));
-        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
+        mockPersistence.expects(once()).method("save").with(same(realAttributeDefinition));
+        mockOutboundEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
         coralSchema.setFlags(realAttributeDefinition, 121);
         assertEquals(121, realAttributeDefinition.getFlags());
     }
@@ -324,14 +324,14 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testAttributeDefinitionSetDomain()
         throws Exception
     {
-        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<domain>"));
-        mockInboundEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
+        mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<domain>"));
+        mockInboundEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
         AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
         assertEquals("<domain>", realAttributeDefinition.getDomain());
         
-        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<new domain>"));
-        mockPersistence.expect(once()).method("save").with(same(realAttributeDefinition));
-        mockOutboundEventWhiteboard.expect(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
+        mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<new domain>"));
+        mockPersistence.expects(once()).method("save").with(same(realAttributeDefinition));
+        mockOutboundEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
         coralSchema.setDomain(realAttributeDefinition, "<new domain>");
         assertEquals("<new domain>", realAttributeDefinition.getDomain());
     }
@@ -341,32 +341,32 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testGetResourceClass()
     {
         ResourceClass[] rc = new ResourceClass[0];
-        mockCoralRegistry.expect(once()).method("getResourceClass").will(returnValue(rc));
+        mockCoralRegistry.expects(once()).method("getResourceClass").will(returnValue(rc));
         assertSame(rc, coralSchema.getResourceClass());
     }
     
     public void testGetResourceById()
         throws Exception
     {
-        mockCoralRegistry.expect(once()).method("getResourceClass").with(eq(1L)).will(returnValue(resourceClass));
+        mockCoralRegistry.expects(once()).method("getResourceClass").with(eq(1L)).will(returnValue(resourceClass));
         assertSame(resourceClass, coralSchema.getResourceClass(1L));
     }   
 
     public void testGetResourceByName()
         throws Exception
     {
-        mockCoralRegistry.expect(once()).method("getResourceClass").with(eq("<resource class>")).will(returnValue(resourceClass));
+        mockCoralRegistry.expects(once()).method("getResourceClass").with(eq("<resource class>")).will(returnValue(resourceClass));
         assertSame(resourceClass, coralSchema.getResourceClass("<resource class>"));
     }   
 
     public void testCreateResourceClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
-        mockInboundEventWhiteboard.expect(once()).method("addResourceClassChangeListener").with(isA(ResourceClassChangeListener.class), isA(ResourceClass.class));
-        mockCoralRegistry.expect(once()).method("addResourceClass").with(and(isA(ResourceClass.class), isA(Persistent.class))).will(returnValue(resourceClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
+        mockInboundEventWhiteboard.expects(once()).method("addResourceClassChangeListener").with(isA(ResourceClassChangeListener.class), isA(ResourceClass.class));
+        mockCoralRegistry.expects(once()).method("addResourceClass").with(and(isA(ResourceClass.class), isA(Persistent.class))).isVoid();
         ResourceClass realResourceClass = coralSchema.createResourceClass("<attribute class>", "<java class>", "<handler class>", "<db table>", 303);
         assertEquals("<attribute class>", realResourceClass.getName());
         assertEquals(Object.class, realResourceClass.getJavaClass());
@@ -378,32 +378,32 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testDeleteResourceClass()
         throws Exception
     {
-        mockCoralRegistry.expect(once()).method("deleteResourceClass").with(same(resourceClass));
+        mockCoralRegistry.expects(once()).method("deleteResourceClass").with(same(resourceClass));
         coralSchema.deleteResourceClass(resourceClass);
     }
     
     public void testRenameResourceClass()
         throws Exception
     {
-        mockCoralRegistry.expect(once()).method("renameResourceClass").with(same(resourceClass), eq("<new name>"));
-        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassChangeEvent").with(same(resourceClass));
+        mockCoralRegistry.expects(once()).method("renameResourceClass").with(same(resourceClass), eq("<new name>"));
+        mockOutboundEventWhiteboard.expects(once()).method("fireResourceClassChangeEvent").with(same(resourceClass));
         coralSchema.setName(resourceClass, "<new name>");
     }
 
     public void testResourceClassSetJavaClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
-        mockInboundEventWhiteboard.expect(once()).method("addResourceClassChangeListener").with(isA(ResourceClassChangeListener.class), isA(ResourceClass.class));
-        mockCoralRegistry.expect(once()).method("addResourceClass").with(and(isA(ResourceClass.class), isA(Persistent.class))).will(returnValue(resourceClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
+        mockInboundEventWhiteboard.expects(once()).method("addResourceClassChangeListener").with(isA(ResourceClassChangeListener.class), isA(ResourceClass.class));
+        mockCoralRegistry.expects(once()).method("addResourceClass").with(and(isA(ResourceClass.class), isA(Persistent.class))).isVoid();
         ResourceClass realResourceClass = coralSchema.createResourceClass("<attribute class>", "<java class>", "<handler class>", "<db table>", 303);
         assertEquals(Object.class, realResourceClass.getJavaClass());
 
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<new java class>")).will(returnValue(Number.class));
-        mockPersistence.expect(once()).method("save").with(same(realResourceClass));
-        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassChangeEvent").with(same(realResourceClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<new java class>")).will(returnValue(Number.class));
+        mockPersistence.expects(once()).method("save").with(same(realResourceClass));
+        mockOutboundEventWhiteboard.expects(once()).method("fireResourceClassChangeEvent").with(same(realResourceClass));
         coralSchema.setJavaClass(realResourceClass, "<new java class>");
         assertEquals(Number.class, realResourceClass.getJavaClass());        
     }
@@ -411,18 +411,18 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testResourceClassSetHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
-        mockInboundEventWhiteboard.expect(once()).method("addResourceClassChangeListener").with(isA(ResourceClassChangeListener.class), isA(ResourceClass.class));
-        mockCoralRegistry.expect(once()).method("addResourceClass").with(and(isA(ResourceClass.class), isA(Persistent.class))).will(returnValue(resourceClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
+        mockInboundEventWhiteboard.expects(once()).method("addResourceClassChangeListener").with(isA(ResourceClassChangeListener.class), isA(ResourceClass.class));
+        mockCoralRegistry.expects(once()).method("addResourceClass").with(and(isA(ResourceClass.class), isA(Persistent.class))).isVoid();
         ResourceClass realResourceClass = coralSchema.createResourceClass("<attribute class>", "<java class>", "<handler class>", "<db table>", 303);
         assertEquals(Object.class, realResourceClass.getJavaClass());
 
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<new handler class>")).will(returnValue(OtherResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(OtherResourceHandler.class), mapElement(ResourceClass.class, same(realResourceClass))).will(returnValue(otherResourceHandler));
-        mockPersistence.expect(once()).method("save").with(same(realResourceClass));
-        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassChangeEvent").with(same(realResourceClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<new handler class>")).will(returnValue(OtherResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(OtherResourceHandler.class), mapElement(ResourceClass.class, same(realResourceClass))).will(returnValue(otherResourceHandler));
+        mockPersistence.expects(once()).method("save").with(same(realResourceClass));
+        mockOutboundEventWhiteboard.expects(once()).method("fireResourceClassChangeEvent").with(same(realResourceClass));
         coralSchema.setHandlerClass(realResourceClass, "<new handler class>");
         assertSame(otherResourceHandler, realResourceClass.getHandler());
     }
@@ -430,16 +430,16 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testResourceClassSetFlags()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
-        mockInboundEventWhiteboard.expect(once()).method("addResourceClassChangeListener").with(isA(ResourceClassChangeListener.class), isA(ResourceClass.class));
-        mockCoralRegistry.expect(once()).method("addResourceClass").with(and(isA(ResourceClass.class), isA(Persistent.class))).will(returnValue(resourceClass));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
+        mockInboundEventWhiteboard.expects(once()).method("addResourceClassChangeListener").with(isA(ResourceClassChangeListener.class), isA(ResourceClass.class));
+        mockCoralRegistry.expects(once()).method("addResourceClass").with(and(isA(ResourceClass.class), isA(Persistent.class))).isVoid();
         ResourceClass realResourceClass = coralSchema.createResourceClass("<attribute class>", "<java class>", "<handler class>", "<db table>", 303);
         assertEquals(303, realResourceClass.getFlags());
         
-        mockPersistence.expect(once()).method("save").with(same(realResourceClass));
-        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassChangeEvent").with(same(realResourceClass));
+        mockPersistence.expects(once()).method("save").with(same(realResourceClass));
+        mockOutboundEventWhiteboard.expects(once()).method("fireResourceClassChangeEvent").with(same(realResourceClass));
         coralSchema.setFlags(realResourceClass, 121);
         assertEquals(121, realResourceClass.getFlags());        
     }
@@ -447,22 +447,22 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testAddAttribute()
         throws Exception
     {
-        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<domain>"));
-        mockInboundEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
+        mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<domain>"));
+        mockInboundEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
         AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
 
         Object value = new Object();
-        mockResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
-        mockResourceClass.expect(once()).method("hasAttribute").with(eq("<attribute>")).will(returnValue(false));
-        mockResourceClass.expect(once()).method("getChildClasses").will(returnValue(new ResourceClass[0]));
-        mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
-        mockCoralRegistry.expect(once()).method("addAttributeDefinition").with(same(realAttributeDefinition));
+        mockResourceClass.stubs().method("getHandler").will(returnValue(resourceHandler));
+        mockResourceClass.expects(once()).method("hasAttribute").with(eq("<attribute>")).will(returnValue(false));
+        mockResourceClass.expects(once()).method("getChildClasses").will(returnValue(new ResourceClass[0]));
+        mockDatabase.expects(once()).method("beginTransaction").will(returnValue(true));
+        mockCoralRegistry.expects(once()).method("addAttributeDefinition").with(same(realAttributeDefinition));
         // TODO ???
-        mockLocalEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").with(same(realAttributeDefinition), eq(true));
-        mockResourceHandler.expect(once()).method("addAttribute").with(same(realAttributeDefinition), same(value), same(connection));
-        mockDatabase.expect(once()).method("commitTransaction").with(eq(true));
-        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").with(same(realAttributeDefinition), eq(true));        
-        mockConnection.expect(once()).method("close");
+        mockLocalEventWhiteboard.expects(once()).method("fireResourceClassAttributesChangeEvent").with(same(realAttributeDefinition), eq(true));
+        mockResourceHandler.expects(once()).method("addAttribute").with(same(realAttributeDefinition), same(value), same(connection));
+        mockDatabase.expects(once()).method("commitTransaction").with(eq(true));
+        mockOutboundEventWhiteboard.expects(once()).method("fireResourceClassAttributesChangeEvent").with(same(realAttributeDefinition), eq(true));        
+        mockConnection.expects(once()).method("close");
         coralSchema.addAttribute(resourceClass, realAttributeDefinition, value);
         assertEquals(resourceClass, realAttributeDefinition.getDeclaringClass());
     }
@@ -470,16 +470,16 @@ public class CoralSchemaImplTest extends LedgeTestCase
     public void testDeleteAttribute()
         throws Exception
     {
-        mockResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
-        mockAttributeDefinition.stub().method("getDeclaringClass").will(returnValue(resourceClass));
-        mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
+        mockResourceClass.stubs().method("getHandler").will(returnValue(resourceHandler));
+        mockAttributeDefinition.stubs().method("getDeclaringClass").will(returnValue(resourceClass));
+        mockDatabase.expects(once()).method("beginTransaction").will(returnValue(true));
         // TODO ???
-        mockLocalEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").with(same(attributeDefinition), eq(false));
-        mockResourceHandler.expect(once()).method("deleteAttribute").with(same(attributeDefinition), same(connection));
-        mockCoralRegistry.expect(once()).method("deleteAttributeDefinition").with(same(attributeDefinition));
-        mockDatabase.expect(once()).method("commitTransaction").with(eq(true));
-        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").with(same(attributeDefinition), eq(false));        
-        mockConnection.expect(once()).method("close");
+        mockLocalEventWhiteboard.expects(once()).method("fireResourceClassAttributesChangeEvent").with(same(attributeDefinition), eq(false));
+        mockResourceHandler.expects(once()).method("deleteAttribute").with(same(attributeDefinition), same(connection));
+        mockCoralRegistry.expects(once()).method("deleteAttributeDefinition").with(same(attributeDefinition));
+        mockDatabase.expects(once()).method("commitTransaction").with(eq(true));
+        mockOutboundEventWhiteboard.expects(once()).method("fireResourceClassAttributesChangeEvent").with(same(attributeDefinition), eq(false));        
+        mockConnection.expects(once()).method("close");
         coralSchema.deleteAttribute(resourceClass, attributeDefinition);
     }
     
@@ -488,38 +488,38 @@ public class CoralSchemaImplTest extends LedgeTestCase
     {
         Map values = new HashMap();
         
-        mockParentResourceClass.stub().method("isParent").with(same(childResourceClass)).will(returnValue(false));
-        mockChildResourceClass.stub().method("isParent").with(same(parentResourceClass)).will(returnValue(false));
-        mockParentResourceClass.stub().method("getFlags").will(returnValue(0));
-        mockParentResourceClass.stub().method("getAllAttributes").will(returnValue(new AttributeDefinition[0]));
-        mockParentResourceClass.stub().method("getId").will(returnValue(1L));
-        mockChildResourceClass.stub().method("getId").will(returnValue(2L));
-        mockChildResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
-        mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
+        mockParentResourceClass.stubs().method("isParent").with(same(childResourceClass)).will(returnValue(false));
+        mockChildResourceClass.stubs().method("isParent").with(same(parentResourceClass)).will(returnValue(false));
+        mockParentResourceClass.stubs().method("getFlags").will(returnValue(0));
+        mockParentResourceClass.stubs().method("getAllAttributes").will(returnValue(new AttributeDefinition[0]));
+        mockParentResourceClass.stubs().method("getId").will(returnValue(1L));
+        mockChildResourceClass.stubs().method("getId").will(returnValue(2L));
+        mockChildResourceClass.stubs().method("getHandler").will(returnValue(resourceHandler));
+        mockDatabase.expects(once()).method("beginTransaction").will(returnValue(true));
         ResourceClassInheritance rci = new ResourceClassInheritanceImpl(coralCore, parentResourceClass, childResourceClass);
-        mockCoralRegistry.expect(once()).method("addResourceClassInheritance").with(eq(rci));
+        mockCoralRegistry.expects(once()).method("addResourceClassInheritance").with(eq(rci));
         // TODO ???
-        mockLocalEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(true));
-        mockResourceHandler.expect(once()).method("addParentClass").with(same(parentResourceClass), same(values), same(connection));
-        mockDatabase.expect(once()).method("commitTransaction").with(eq(true));
-        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(true));
-        mockConnection.expect(once()).method("close");       
+        mockLocalEventWhiteboard.expects(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(true));
+        mockResourceHandler.expects(once()).method("addParentClass").with(same(parentResourceClass), same(values), same(connection));
+        mockDatabase.expects(once()).method("commitTransaction").with(eq(true));
+        mockOutboundEventWhiteboard.expects(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(true));
+        mockConnection.expects(once()).method("close");       
         coralSchema.addParentClass(childResourceClass, parentResourceClass, values);
     }
     
     public void testDeleteParentClass()
     {
-        mockParentResourceClass.stub().method("isParent").with(same(childResourceClass)).will(returnValue(true));
-        mockChildResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
-        mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
+        mockParentResourceClass.stubs().method("isParent").with(same(childResourceClass)).will(returnValue(true));
+        mockChildResourceClass.stubs().method("getHandler").will(returnValue(resourceHandler));
+        mockDatabase.expects(once()).method("beginTransaction").will(returnValue(true));
         ResourceClassInheritance rci = new ResourceClassInheritanceImpl(coralCore, parentResourceClass, childResourceClass);
         // TODO ???
-        mockLocalEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(false));
-        mockResourceHandler.expect(once()).method("deleteParentClass").with(same(parentResourceClass), same(connection));
-        mockCoralRegistry.expect(once()).method("deleteResourceClassInheritance").with(eq(rci));
-        mockDatabase.expect(once()).method("commitTransaction").with(eq(true));
-        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(false));
-        mockConnection.expect(once()).method("close");       
+        mockLocalEventWhiteboard.expects(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(false));
+        mockResourceHandler.expects(once()).method("deleteParentClass").with(same(parentResourceClass), same(connection));
+        mockCoralRegistry.expects(once()).method("deleteResourceClassInheritance").with(eq(rci));
+        mockDatabase.expects(once()).method("commitTransaction").with(eq(true));
+        mockOutboundEventWhiteboard.expects(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(false));
+        mockConnection.expects(once()).method("close");       
         coralSchema.deleteParentClass(childResourceClass, parentResourceClass);
     }
 }

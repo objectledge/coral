@@ -40,7 +40,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModificationTest.java,v 1.1 2004-04-30 13:18:17 zwierzem Exp $
+ * @version $Id: MinimalRelationModificationTest.java,v 1.2 2004-05-28 10:04:04 fil Exp $
  */
 public class MinimalRelationModificationTest extends LedgeTestCase
 {
@@ -100,28 +100,28 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 		modification.clear();
 
 		// add 3:4
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(3L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(3L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// add 0:4
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(0L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(0L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// add 1:5 - add existant but cleared
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(1L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(5L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(5L));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// rem 1:4 - remove existant (but cleared)
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(1L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
 		modification.remove((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// rem 3:4 - remove added after clear
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(3L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(3L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
 		modification.remove((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		MinimalRelationModification minMod = 
@@ -198,40 +198,40 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 		RelationModification modification = new RelationModification();
 		
 		// add 1:2
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(1L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(2L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(2L));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// add 3:6 - existing add
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(3L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(6L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(3L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(6L));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// add 2:4
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(2L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(2L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// rem 1:2 - remove added
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(1L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(2L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(2L));
 		modification.remove((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// rem 1:8 - remove non existiant
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(1L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(8L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(1L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(8L));
 		modification.remove((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// add 3:[4]
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(3L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(3L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
 		Resource[] ress = new Resource[1];
 		ress[0] = (Resource) mockResource2.proxy();
 		modification.add((Resource) mockResource1.proxy(), ress);
 
 		// add [0]:4
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(0L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(4L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(0L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(4L));
 		ress = new Resource[1];
 		ress[0] = (Resource) mockResource1.proxy();
 		modification.add(ress, (Resource) mockResource2.proxy());
@@ -240,16 +240,16 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		// rem 2:[] - remove many including added
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(2L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(2L));
 		modification.remove((Resource) mockResource1.proxy());
 
 		// rem []:6
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(6L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(6L));
 		modification.removeInv((Resource) mockResource1.proxy());
 
 		// add 2:5 - add removed
-		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(2L));
-		mockResource2.expect(atLeastOnce()).method("getId").will(returnValue(5L));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(2L));
+		mockResource2.expects(atLeastOnce()).method("getId").will(returnValue(5L));
 		modification.add((Resource) mockResource1.proxy(), (Resource) mockResource2.proxy());
 
 		return modification;		

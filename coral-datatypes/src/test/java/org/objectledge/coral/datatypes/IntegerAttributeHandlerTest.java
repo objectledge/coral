@@ -71,7 +71,7 @@ public class IntegerAttributeHandlerTest extends LedgeTestCase
     {
         super.setUp();
         mockDatabase = mock(Database.class);
-        mockDatabase.stub().method("getNextId").will(returnValue(1L));
+        mockDatabase.stubs().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
 
         mockCoralStore = mock(CoralStore.class);
@@ -82,18 +82,18 @@ public class IntegerAttributeHandlerTest extends LedgeTestCase
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(Integer.class));
-        mockAttributeClass.stub().method("getName").will(returnValue("long"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("coral_attribute_integer"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Integer.class));
+        mockAttributeClass.stubs().method("getName").will(returnValue("long"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_integer"));
         handler = new IntegerAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
         mockConnection = mock(Connection.class);
-        mockConnection.stub().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
-        mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
     }
 
     public void testAttributeHandlerBase()
@@ -104,20 +104,20 @@ public class IntegerAttributeHandlerTest extends LedgeTestCase
     public void testCreate() throws Exception
     {
         String stmt = "INSERT INTO " + "coral_attribute_integer" + "(data_key, data) VALUES (1, 1000)";
-        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(new Integer(1000), connection);
         String stmt2 = "INSERT INTO coral_attribute_integer(data_key, data) VALUES (1, 1000)";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.create(new Integer(1000), connection);
     }
 
     public void testUpdate() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
         String stmt2 = "UPDATE coral_attribute_integer SET data = 1000 WHERE data_key = 1";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1,new Integer(1000),connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             handler.update(1,new Integer(1000),connection);
@@ -131,10 +131,10 @@ public class IntegerAttributeHandlerTest extends LedgeTestCase
 
     public void testRetrieve() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
-        mockResultSet.expect(once()).method("getInt").will(returnValue(1000));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("getInt").will(returnValue(1000));
         handler.retrieve(1, connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             handler.retrieve(1, connection);

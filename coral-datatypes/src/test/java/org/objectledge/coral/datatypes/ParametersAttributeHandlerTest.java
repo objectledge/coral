@@ -88,21 +88,21 @@ public class ParametersAttributeHandlerTest extends LedgeTestCase
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement = mock(Statement.class);
-        mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
         statement = (Statement)mockStatement.proxy();
         mockPreparedStatement = mock(PreparedStatement.class);
-        mockPreparedStatement.stub().method("executeBatch").will(returnValue(new int[0]));
-        //mockPreparedStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        mockPreparedStatement.stubs().method("executeBatch").will(returnValue(new int[0]));
+        //mockPreparedStatement.stubs().method("executeQuery").will(returnValue(resultSet));
         preparedStatement = (PreparedStatement)mockPreparedStatement.proxy();
 
         mockConnection = mock(Connection.class);
-        mockConnection.stub().method("createStatement").will(returnValue(statement));
-        mockConnection.stub().method("prepareStatement").will(returnValue(preparedStatement));
-        mockConnection.stub().method("close");
+        mockConnection.stubs().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("prepareStatement").will(returnValue(preparedStatement));
+        mockConnection.stubs().method("close");
         connection = (Connection)mockConnection.proxy();
 
         mockDatabase = mock(Database.class);
-        mockDatabase.stub().method("getConnection").will(returnValue(connection));
+        mockDatabase.stubs().method("getConnection").will(returnValue(connection));
         database = (Database)mockDatabase.proxy();
         mockLogger = mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
@@ -118,10 +118,10 @@ public class ParametersAttributeHandlerTest extends LedgeTestCase
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(Parameters.class));
-        mockAttributeClass.stub().method("getName").will(returnValue("parameters"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Parameters.class));
+        mockAttributeClass.stubs().method("getName").will(returnValue("parameters"));
 /*
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_parameters"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("arl_attribute_parameters"));
         */
         handler = new ParametersAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass, parametersManager);
 
@@ -137,26 +137,26 @@ public class ParametersAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        mockParametersManager.expect(once()).method("createContainer").will(returnValue(dbParameters));
+        mockParametersManager.expects(once()).method("createContainer").will(returnValue(dbParameters));
         handler.create(parameters, connection);
     }
 
     public void testUpdate() throws Exception
     {
-        mockParametersManager.expect(once()).method("getParameters").will(returnValue(dbParameters));
+        mockParametersManager.expects(once()).method("getParameters").will(returnValue(dbParameters));
         handler.update(1, parameters, connection);
     }
     
     public void testDelete() throws Exception
     {
-        mockParametersManager.expect(once()).method("deleteParameters");
+        mockParametersManager.expects(once()).method("deleteParameters");
         handler.delete(1, connection);
     }
         
 
     public void testRetrieve() throws Exception
     {
-        mockParametersManager.expect(once()).method("getParameters").will(returnValue(dbParameters));
+        mockParametersManager.expects(once()).method("getParameters").will(returnValue(dbParameters));
         handler.retrieve(1, connection);
     }
 

@@ -111,62 +111,62 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         subject = (Subject)mockSubject.proxy();
         
         mockAttributeHandler = mock(AttributeHandler.class);
-        mockAttributeHandler.stub().method("toAttributeValue").will(returnValue("foo"));
-        mockAttributeHandler.stub().method("checkDomain");
-        mockAttributeHandler.stub().method("shouldRetrieveAfterCreate").will(returnValue(false));
+        mockAttributeHandler.stubs().method("toAttributeValue").will(returnValue("foo"));
+        mockAttributeHandler.stubs().method("checkDomain");
+        mockAttributeHandler.stubs().method("shouldRetrieveAfterCreate").will(returnValue(false));
         attributeHandler = (AttributeHandler)mockAttributeHandler.proxy();        
         
         mockAttributeClass = mock(AttributeClass.class);
-        mockAttributeClass.stub().method("getHandler").will(returnValue(attributeHandler));
+        mockAttributeClass.stubs().method("getHandler").will(returnValue(attributeHandler));
         attributeClass = (AttributeClass)mockAttributeClass.proxy();        
         
         mockAttributeDefinition = mock(AttributeDefinition.class);
-        mockAttributeDefinition.stub().method("getFlags").will(returnValue(1));
-        mockAttributeDefinition.stub().method("getName").will(returnValue("description"));
-        mockAttributeDefinition.stub().method("getAttributeClass").will(returnValue(attributeClass));
-        mockAttributeDefinition.stub().method("getDomain").will(returnValue(""));
-        mockAttributeDefinition.stub().method("getId").will(returnValue(1L));
+        mockAttributeDefinition.stubs().method("getFlags").will(returnValue(1));
+        mockAttributeDefinition.stubs().method("getName").will(returnValue("description"));
+        mockAttributeDefinition.stubs().method("getAttributeClass").will(returnValue(attributeClass));
+        mockAttributeDefinition.stubs().method("getDomain").will(returnValue(""));
+        mockAttributeDefinition.stubs().method("getId").will(returnValue(1L));
         attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
         
         mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
         mockCoralSecurity = mock(CoralSecurity.class);
-        mockCoralSecurity.stub().method("getSubject").will(returnValue(subject));
+        mockCoralSecurity.stubs().method("getSubject").will(returnValue(subject));
         
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockResourceClass = mock(ResourceClass.class);
-        mockResourceClass.stub().method("getJavaClass").will(returnValue(NodeImpl.class));
-        mockResourceClass.stub().method("getName").will(returnValue("coral.Node"));
-        mockResourceClass.stub().method("getAttribute").will(returnValue(attributeDefinition));
-        mockResourceClass.stub().method("getInheritance").will(returnValue(new ResourceClassInheritance[0]));
-        mockResourceClass.stub().method("getDeclaredAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
+        mockResourceClass.stubs().method("getJavaClass").will(returnValue(NodeImpl.class));
+        mockResourceClass.stubs().method("getName").will(returnValue("coral.Node"));
+        mockResourceClass.stubs().method("getAttribute").will(returnValue(attributeDefinition));
+        mockResourceClass.stubs().method("getInheritance").will(returnValue(new ResourceClassInheritance[0]));
+        mockResourceClass.stubs().method("getDeclaredAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
         resourceClass = (ResourceClass)mockResourceClass.proxy();
         
         mockCoralSchema = mock(CoralSchema.class);
-        mockCoralSchema.stub().method("getResourceClass").will(returnValue(resourceClass));
-        mockCoralSchema.stub().method("getAttribute").with(eq(1L)).will(returnValue(attributeDefinition));
+        mockCoralSchema.stubs().method("getResourceClass").will(returnValue(resourceClass));
+        mockCoralSchema.stubs().method("getAttribute").with(eq(1L)).will(returnValue(attributeDefinition));
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         
         node = new NodeImpl(coralSchema, database, logger);
         
         mockInstantiator = mock(Instantiator.class);
-        mockInstantiator.stub().method("newInstance").will(returnValue(node));
+        mockInstantiator.stubs().method("newInstance").will(returnValue(node));
         instantiator = (Instantiator)mockInstantiator.proxy();
         
         mockResource = mock(Resource.class);
-        mockResource.stub().method("getResourceClass").will(returnValue(resourceClass));
-        mockResource.stub().method("getId").will(returnValue(1L));
+        mockResource.stubs().method("getResourceClass").will(returnValue(resourceClass));
+        mockResource.stubs().method("getId").will(returnValue(1L));
         resource = (Resource)mockResource.proxy();
 
         mockResultSet = mock(ResultSet.class);
-        mockResultSet.stub().method("close");
+        mockResultSet.stubs().method("close");
         resultSet = (ResultSet)mockResultSet.proxy();
         
         mockStatement = mock(Statement.class);
-        mockStatement.stub().method("close");
+        mockStatement.stubs().method("close");
         statement = (Statement)mockStatement.proxy();
         mockConnection = mock(Connection.class);
-        mockConnection.stub().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();              
                 
         
@@ -186,17 +186,17 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         String stmt = "INSERT INTO coral_generic_resource (resource_id, attribute_definition_id, data_key) VALUES (1, 1, 1)";
         Map attributes = new HashMap();
         attributes.put(attributeDefinition, "foo");
-        mockAttributeHandler.expect(once()).method("create").with(eq("foo"),ANYTHING).will(returnValue(1L));
-        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        mockAttributeHandler.expects(once()).method("create").with(eq("foo"),ANYTHING).will(returnValue(1L));
+        mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         Node newResource = (Node)handler.create(resource, attributes, connection);
         assertEquals(newResource.getDescription(),"foo");
         handler.update(newResource, connection);
         newResource.setDescription("bar");
-        mockAttributeHandler.expect(once()).method("update").with(eq(1L),eq("foo"),ANYTHING).will(returnValue(1L));
+        mockAttributeHandler.expects(once()).method("update").with(eq(1L),eq("foo"),ANYTHING).isVoid();
         handler.update(newResource, connection);
-        mockAttributeHandler.expect(once()).method("delete").with(eq(newResource.getId()),ANYTHING).will(returnValue(1L));
+        mockAttributeHandler.expects(once()).method("delete").with(eq(newResource.getId()),ANYTHING).isVoid();
         stmt = "DELETE FROM coral_generic_resource WHERE  resource_id = 1 AND attribute_definition_id = 1";
-        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         
         
         
@@ -217,13 +217,13 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         throws Exception
     {
         String stmt = "SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE resource_id = 1";
-        //mockResultSet.expect(once()).method("next").will(returnValue(true));
-        //mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
-        //mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
-        //mockCoralSchema.expect(once()).method("getAttribute").will(returnValue(attributeClass));
+        //mockResultSet.expects(once()).method("next").will(returnValue(true));
+        //mockResultSet.expects(once()).method("getLong").will(returnValue(1L));
+        //mockResultSet.expects(once()).method("getLong").will(returnValue(1L));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
+        //mockCoralSchema.expects(once()).method("getAttribute").will(returnValue(attributeClass));
         
-        mockStatement.expect(once()).method("executeQuery").with(eq(stmt)).will(returnValue(resultSet));
+        mockStatement.expects(once()).method("executeQuery").with(eq(stmt)).will(returnValue(resultSet));
                 
         handler.retrieve(resource, connection);
     }

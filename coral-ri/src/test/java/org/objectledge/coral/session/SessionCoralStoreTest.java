@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStoreTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
+ * @version $Id: SessionCoralStoreTest.java,v 1.5 2004-05-28 10:04:10 fil Exp $
  */
 public class SessionCoralStoreTest extends LedgeTestCase
 {
@@ -57,15 +57,15 @@ public class SessionCoralStoreTest extends LedgeTestCase
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
-        mockCoralCore.stub().method("getSecurity").will(returnValue(coralSecurity));
-        mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
-        mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
+        mockCoralCore.stubs().method("getSecurity").will(returnValue(coralSecurity));
+        mockCoralCore.stubs().method("getInstantiator").will(returnValue(null));
+        mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));        
         mockKeyedObjectPool = mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
-        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
+        mockCoralCore.expects(once()).method("setCurrentSession").with(same(session)).isVoid();
+        mockCoralCore.stubs().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);
         sessionCoralSecurity = new SessionCoralSecurity(coralCore, session);
     }
@@ -76,7 +76,7 @@ public class SessionCoralStoreTest extends LedgeTestCase
     
     public void testGetRole()
     {
-        mockCoralSecurity.expect(once()).method("getRole").will(returnValue(new Role[0]));
+        mockCoralSecurity.expects(once()).method("getRole").will(returnValue(new Role[0]));
         sessionCoralSecurity.getRole();
     }
 }

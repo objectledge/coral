@@ -32,7 +32,7 @@ import org.jmock.Mock;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventRedirectorTest.java,v 1.3 2004-03-24 14:40:12 fil Exp $
+ * @version $Id: CoralEventRedirectorTest.java,v 1.4 2004-05-28 10:04:11 fil Exp $
  */
 public class CoralEventRedirectorTest extends CoralEventTestCase
 {
@@ -62,486 +62,486 @@ public class CoralEventRedirectorTest extends CoralEventTestCase
     
     public void testAddPermissionAssociationChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addPermissionAssociationChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addPermissionAssociationChangeListener").
             with(same(permissionAssoicationChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addPermissionAssociationChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addPermissionAssociationChangeListener").
             with(same(permissionAssoicationChangeListener), same(anchor));
         coralEventRedirector.addPermissionAssociationChangeListener(permissionAssoicationChangeListener, anchor);    
     }
 
     public void testRemovePermissionAssociationChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removePermissionAssociationChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removePermissionAssociationChangeListener").
             with(same(permissionAssoicationChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removePermissionAssociationChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removePermissionAssociationChangeListener").
             with(same(permissionAssoicationChangeListener), same(anchor));
         coralEventRedirector.removePermissionAssociationChangeListener(permissionAssoicationChangeListener, anchor);    
     }
 
     public void testFirePermissionAssociationChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("firePermissionAssociationChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("firePermissionAssociationChangeEvent").
             with(same(permissionAssociation), eq(false));
-        mockLocalCoralEventWhiteboard.expect(once()).method("firePermissionAssociationChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("firePermissionAssociationChangeEvent").
             with(same(permissionAssociation), eq(false));
         coralEventRedirector.firePermissionAssociationChangeEvent(permissionAssociation, false);            
     }
     
     public void testAddPermissionAssignmentChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addPermissionAssignmentChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addPermissionAssignmentChangeListener").
             with(same(permissionAssignmentChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addPermissionAssignmentChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addPermissionAssignmentChangeListener").
             with(same(permissionAssignmentChangeListener), same(anchor));
         coralEventRedirector.addPermissionAssignmentChangeListener(permissionAssignmentChangeListener, anchor);    
     }
 
     public void testRemovePermissionAssignmentChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removePermissionAssignmentChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removePermissionAssignmentChangeListener").
             with(same(permissionAssignmentChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removePermissionAssignmentChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removePermissionAssignmentChangeListener").
             with(same(permissionAssignmentChangeListener), same(anchor));
         coralEventRedirector.removePermissionAssignmentChangeListener(permissionAssignmentChangeListener, anchor);    
     }
 
     public void testFirePermissionAssignmentChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("firePermissionAssignmentChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("firePermissionAssignmentChangeEvent").
             with(same(permissionAssignment), eq(false));
-        mockLocalCoralEventWhiteboard.expect(once()).method("firePermissionAssignmentChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("firePermissionAssignmentChangeEvent").
             with(same(permissionAssignment), eq(false));
         coralEventRedirector.firePermissionAssignmentChangeEvent(permissionAssignment, false);            
     }
 
     public void testAddRoleAssignmentChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addRoleAssignmentChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addRoleAssignmentChangeListener").
             with(same(roleAssignmentChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addRoleAssignmentChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addRoleAssignmentChangeListener").
             with(same(roleAssignmentChangeListener), same(anchor));
         coralEventRedirector.addRoleAssignmentChangeListener(roleAssignmentChangeListener, anchor);    
     }
 
     public void testRemoveRoleAssignmentChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeRoleAssignmentChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeRoleAssignmentChangeListener").
             with(same(roleAssignmentChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeRoleAssignmentChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeRoleAssignmentChangeListener").
             with(same(roleAssignmentChangeListener), same(anchor));
         coralEventRedirector.removeRoleAssignmentChangeListener(roleAssignmentChangeListener, anchor);    
     }
 
     public void testFireRoleAssignmentChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireRoleAssignmentChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireRoleAssignmentChangeEvent").
             with(same(roleAssignment), eq(false));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireRoleAssignmentChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireRoleAssignmentChangeEvent").
             with(same(roleAssignment), eq(false));
         coralEventRedirector.fireRoleAssignmentChangeEvent(roleAssignment, false);            
     }
     
     public void testAddRoleImplicationChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addRoleImplicationChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addRoleImplicationChangeListener").
             with(same(roleImplicationChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addRoleImplicationChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addRoleImplicationChangeListener").
             with(same(roleImplicationChangeListener), same(anchor));
         coralEventRedirector.addRoleImplicationChangeListener(roleImplicationChangeListener, anchor);    
     }
 
     public void testRemoveRoleImplicationChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeRoleImplicationChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeRoleImplicationChangeListener").
             with(same(roleImplicationChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeRoleImplicationChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeRoleImplicationChangeListener").
             with(same(roleImplicationChangeListener), same(anchor));
         coralEventRedirector.removeRoleImplicationChangeListener(roleImplicationChangeListener, anchor);    
     }
 
     public void testFireRoleImplicationChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireRoleImplicationChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireRoleImplicationChangeEvent").
             with(same(roleImplication), eq(false));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireRoleImplicationChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireRoleImplicationChangeEvent").
             with(same(roleImplication), eq(false));
         coralEventRedirector.fireRoleImplicationChangeEvent(roleImplication, false);            
     }
 
     public void testAddResourceClassInheritanceChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addResourceClassInheritanceChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addResourceClassInheritanceChangeListener").
             with(same(resourceClassInheritanceChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addResourceClassInheritanceChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addResourceClassInheritanceChangeListener").
             with(same(resourceClassInheritanceChangeListener), same(anchor));
         coralEventRedirector.addResourceClassInheritanceChangeListener(resourceClassInheritanceChangeListener, anchor);    
     }
 
     public void testRemoveResourceClassInheritanceChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeResourceClassInheritanceChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeResourceClassInheritanceChangeListener").
             with(same(resourceClassInheritanceChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeResourceClassInheritanceChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeResourceClassInheritanceChangeListener").
             with(same(resourceClassInheritanceChangeListener), same(anchor));
         coralEventRedirector.removeResourceClassInheritanceChangeListener(resourceClassInheritanceChangeListener, anchor);    
     }
 
     public void testFireResourceClassInheritanceChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireResourceClassInheritanceChangeEvent").
             with(same(resourceClassInheritance), eq(false));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireResourceClassInheritanceChangeEvent").
             with(same(resourceClassInheritance), eq(false));
         coralEventRedirector.fireResourceClassInheritanceChangeEvent(resourceClassInheritance, false);            
     }
 
     public void testAddResourceClassAttributesChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addResourceClassAttributesChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addResourceClassAttributesChangeListener").
             with(same(resourceClassAttributesChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addResourceClassAttributesChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addResourceClassAttributesChangeListener").
             with(same(resourceClassAttributesChangeListener), same(anchor));
         coralEventRedirector.addResourceClassAttributesChangeListener(resourceClassAttributesChangeListener, anchor);    
     }
 
     public void testRemoveResourceClassAttributesChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeResourceClassAttributesChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeResourceClassAttributesChangeListener").
             with(same(resourceClassAttributesChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeResourceClassAttributesChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeResourceClassAttributesChangeListener").
             with(same(resourceClassAttributesChangeListener), same(anchor));
         coralEventRedirector.removeResourceClassAttributesChangeListener(resourceClassAttributesChangeListener, anchor);    
     }
 
     public void testFireResourceClassAttributesChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireResourceClassAttributesChangeEvent").
             with(same(attributeDefinition), eq(false));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireResourceClassAttributesChangeEvent").
             with(same(attributeDefinition), eq(false));
         coralEventRedirector.fireResourceClassAttributesChangeEvent(attributeDefinition, false);            
     }
 
     public void testAddResourceTreeChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addResourceTreeChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addResourceTreeChangeListener").
             with(same(resourceTreeChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addResourceTreeChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addResourceTreeChangeListener").
             with(same(resourceTreeChangeListener), same(anchor));
         coralEventRedirector.addResourceTreeChangeListener(resourceTreeChangeListener, anchor);    
     }
 
     public void testRemoveResourceTreeChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeResourceTreeChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeResourceTreeChangeListener").
             with(same(resourceTreeChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeResourceTreeChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeResourceTreeChangeListener").
             with(same(resourceTreeChangeListener), same(anchor));
         coralEventRedirector.removeResourceTreeChangeListener(resourceTreeChangeListener, anchor);    
     }
 
     public void testFireResourceTreeChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireResourceTreeChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireResourceTreeChangeEvent").
             with(same(resourceInheritance), eq(false));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireResourceTreeChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireResourceTreeChangeEvent").
             with(same(resourceInheritance), eq(false));
         coralEventRedirector.fireResourceTreeChangeEvent(resourceInheritance, false);            
     }
 
     public void testAddResourceOwnershipChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addResourceOwnershipChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addResourceOwnershipChangeListener").
             with(same(resourceOwnershipChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addResourceOwnershipChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addResourceOwnershipChangeListener").
             with(same(resourceOwnershipChangeListener), same(anchor));
         coralEventRedirector.addResourceOwnershipChangeListener(resourceOwnershipChangeListener, anchor);    
     }
 
     public void testRemoveResourceOwnershipChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeResourceOwnershipChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeResourceOwnershipChangeListener").
             with(same(resourceOwnershipChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeResourceOwnershipChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeResourceOwnershipChangeListener").
             with(same(resourceOwnershipChangeListener), same(anchor));
         coralEventRedirector.removeResourceOwnershipChangeListener(resourceOwnershipChangeListener, anchor);    
     }
 
     public void testFireResourceOwnershipChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireResourceOwnershipChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireResourceOwnershipChangeEvent").
             with(same(resourceOwnership), eq(false));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireResourceOwnershipChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireResourceOwnershipChangeEvent").
             with(same(resourceOwnership), eq(false));
         coralEventRedirector.fireResourceOwnershipChangeEvent(resourceOwnership, false);            
     }
     
     public void testAddResourceClassChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addResourceClassChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addResourceClassChangeListener").
             with(same(resourceClassChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addResourceClassChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addResourceClassChangeListener").
             with(same(resourceClassChangeListener), same(anchor));
         coralEventRedirector.addResourceClassChangeListener(resourceClassChangeListener, anchor);    
     }
 
     public void testRemoveResourceClassChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeResourceClassChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeResourceClassChangeListener").
             with(same(resourceClassChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeResourceClassChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeResourceClassChangeListener").
             with(same(resourceClassChangeListener), same(anchor));
         coralEventRedirector.removeResourceClassChangeListener(resourceClassChangeListener, anchor);    
     }
 
     public void testFireResourceClassChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireResourceClassChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireResourceClassChangeEvent").
             with(same(resourceClass));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireResourceClassChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireResourceClassChangeEvent").
             with(same(resourceClass));
         coralEventRedirector.fireResourceClassChangeEvent(resourceClass);            
     }    
     
     public void testAddAttributeClassChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addAttributeClassChangeListener").
             with(same(attributeClassChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addAttributeClassChangeListener").
             with(same(attributeClassChangeListener), same(anchor));
         coralEventRedirector.addAttributeClassChangeListener(attributeClassChangeListener, anchor);    
     }
 
     public void testRemoveAttributeClassChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeAttributeClassChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeAttributeClassChangeListener").
             with(same(attributeClassChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeAttributeClassChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeAttributeClassChangeListener").
             with(same(attributeClassChangeListener), same(anchor));
         coralEventRedirector.removeAttributeClassChangeListener(attributeClassChangeListener, anchor);    
     }
 
     public void testFireAttributeClassChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireAttributeClassChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireAttributeClassChangeEvent").
             with(same(attributeClass));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireAttributeClassChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireAttributeClassChangeEvent").
             with(same(attributeClass));
         coralEventRedirector.fireAttributeClassChangeEvent(attributeClass);            
     }    
 
     public void testAddAttributeDefinitionChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").
             with(same(attributeDefinitionChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").
             with(same(attributeDefinitionChangeListener), same(anchor));
         coralEventRedirector.addAttributeDefinitionChangeListener(attributeDefinitionChangeListener, anchor);    
     }
 
     public void testRemoveAttributeDefinitionChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeAttributeDefinitionChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeAttributeDefinitionChangeListener").
             with(same(attributeDefinitionChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeAttributeDefinitionChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeAttributeDefinitionChangeListener").
             with(same(attributeDefinitionChangeListener), same(anchor));
         coralEventRedirector.removeAttributeDefinitionChangeListener(attributeDefinitionChangeListener, anchor);    
     }
 
     public void testFireAttributeDefinitionChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireAttributeDefinitionChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").
             with(same(attributeDefinition));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireAttributeDefinitionChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").
             with(same(attributeDefinition));
         coralEventRedirector.fireAttributeDefinitionChangeEvent(attributeDefinition);            
     }    
 
     public void testAddResourceCreationListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addResourceCreationListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addResourceCreationListener").
             with(same(resourceCreationListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addResourceCreationListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addResourceCreationListener").
             with(same(resourceCreationListener), same(anchor));
         coralEventRedirector.addResourceCreationListener(resourceCreationListener, anchor);    
     }
 
     public void testRemoveResourceCreationListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeResourceCreationListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeResourceCreationListener").
             with(same(resourceCreationListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeResourceCreationListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeResourceCreationListener").
             with(same(resourceCreationListener), same(anchor));
         coralEventRedirector.removeResourceCreationListener(resourceCreationListener, anchor);    
     }
 
     public void testFireResourceCreationEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireResourceCreationEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireResourceCreationEvent").
             with(same(resource));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireResourceCreationEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireResourceCreationEvent").
             with(same(resource));
         coralEventRedirector.fireResourceCreationEvent(resource);            
     }    
 
     public void testAddResourceChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addResourceChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addResourceChangeListener").
             with(same(resourceChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addResourceChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addResourceChangeListener").
             with(same(resourceChangeListener), same(anchor));
         coralEventRedirector.addResourceChangeListener(resourceChangeListener, anchor);    
     }
 
     public void testRemoveResourceChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeResourceChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeResourceChangeListener").
             with(same(resourceChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeResourceChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeResourceChangeListener").
             with(same(resourceChangeListener), same(anchor));
         coralEventRedirector.removeResourceChangeListener(resourceChangeListener, anchor);    
     }
 
     public void testFireResourceChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireResourceChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireResourceChangeEvent").
             with(same(resource), same(subject));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireResourceChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireResourceChangeEvent").
             with(same(resource), same(subject));
         coralEventRedirector.fireResourceChangeEvent(resource, subject);            
     }    
 
     public void testAddResourceDeletionListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addResourceDeletionListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addResourceDeletionListener").
             with(same(resourceDeletionListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addResourceDeletionListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addResourceDeletionListener").
             with(same(resourceDeletionListener), same(anchor));
         coralEventRedirector.addResourceDeletionListener(resourceDeletionListener, anchor);    
     }
 
     public void testRemoveResourceDeletionListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeResourceDeletionListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeResourceDeletionListener").
             with(same(resourceDeletionListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeResourceDeletionListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeResourceDeletionListener").
             with(same(resourceDeletionListener), same(anchor));
         coralEventRedirector.removeResourceDeletionListener(resourceDeletionListener, anchor);    
     }
 
     public void testFireResourceDeletionEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireResourceDeletionEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireResourceDeletionEvent").
             with(same(resource));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireResourceDeletionEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireResourceDeletionEvent").
             with(same(resource));
         coralEventRedirector.fireResourceDeletionEvent(resource);            
     }    
 
     public void testAddResourceTreeDeletionListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addResourceTreeDeletionListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addResourceTreeDeletionListener").
             with(same(resourceTreeDeletionListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addResourceTreeDeletionListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addResourceTreeDeletionListener").
             with(same(resourceTreeDeletionListener), same(anchor));
         coralEventRedirector.addResourceTreeDeletionListener(resourceTreeDeletionListener, anchor);    
     }
 
     public void testRemoveResourceTreeDeletionListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeResourceTreeDeletionListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeResourceTreeDeletionListener").
             with(same(resourceTreeDeletionListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeResourceTreeDeletionListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeResourceTreeDeletionListener").
             with(same(resourceTreeDeletionListener), same(anchor));
         coralEventRedirector.removeResourceTreeDeletionListener(resourceTreeDeletionListener, anchor);    
     }
 
     public void testFireResourceTreeDeletionEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireResourceTreeDeletionEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireResourceTreeDeletionEvent").
             with(same(resource));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireResourceTreeDeletionEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireResourceTreeDeletionEvent").
             with(same(resource));
         coralEventRedirector.fireResourceTreeDeletionEvent(resource);            
     }    
 
     public void testAddSubjectChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addSubjectChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addSubjectChangeListener").
             with(same(subjectChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addSubjectChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addSubjectChangeListener").
             with(same(subjectChangeListener), same(anchor));
         coralEventRedirector.addSubjectChangeListener(subjectChangeListener, anchor);    
     }
 
     public void testRemoveSubjectChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeSubjectChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeSubjectChangeListener").
             with(same(subjectChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeSubjectChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeSubjectChangeListener").
             with(same(subjectChangeListener), same(anchor));
         coralEventRedirector.removeSubjectChangeListener(subjectChangeListener, anchor);    
     }
 
     public void testFireSubjectChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireSubjectChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireSubjectChangeEvent").
             with(same(subject));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireSubjectChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireSubjectChangeEvent").
             with(same(subject));
         coralEventRedirector.fireSubjectChangeEvent(subject);            
     }    
 
     public void testAddRoleChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addRoleChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addRoleChangeListener").
             with(same(roleChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addRoleChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addRoleChangeListener").
             with(same(roleChangeListener), same(anchor));
         coralEventRedirector.addRoleChangeListener(roleChangeListener, anchor);    
     }
 
     public void testRemoveRoleChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removeRoleChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removeRoleChangeListener").
             with(same(roleChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removeRoleChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removeRoleChangeListener").
             with(same(roleChangeListener), same(anchor));
         coralEventRedirector.removeRoleChangeListener(roleChangeListener, anchor);    
     }
 
     public void testFireRoleChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("fireRoleChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("fireRoleChangeEvent").
             with(same(role));
-        mockLocalCoralEventWhiteboard.expect(once()).method("fireRoleChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("fireRoleChangeEvent").
             with(same(role));
         coralEventRedirector.fireRoleChangeEvent(role);            
     }    
 
     public void testAddPermissionChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("addPermissionChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("addPermissionChangeListener").
             with(same(permissionChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("addPermissionChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("addPermissionChangeListener").
             with(same(permissionChangeListener), same(anchor));
         coralEventRedirector.addPermissionChangeListener(permissionChangeListener, anchor);    
     }
 
     public void testRemovePermissionChangeListener()
     {
-        mockInboundCoralEventWhiteboard.expect(once()).method("removePermissionChangeListener").
+        mockInboundCoralEventWhiteboard.expects(once()).method("removePermissionChangeListener").
             with(same(permissionChangeListener), same(anchor));
-        mockLocalCoralEventWhiteboard.expect(once()).method("removePermissionChangeListener").
+        mockLocalCoralEventWhiteboard.expects(once()).method("removePermissionChangeListener").
             with(same(permissionChangeListener), same(anchor));
         coralEventRedirector.removePermissionChangeListener(permissionChangeListener, anchor);    
     }
 
     public void testFirePermissoinChangeEvent()
     {
-        mockOutboundCoralEventWhiteboard.expect(once()).method("firePermissionChangeEvent").
+        mockOutboundCoralEventWhiteboard.expects(once()).method("firePermissionChangeEvent").
             with(same(permission));
-        mockLocalCoralEventWhiteboard.expect(once()).method("firePermissionChangeEvent").
+        mockLocalCoralEventWhiteboard.expects(once()).method("firePermissionChangeEvent").
             with(same(permission));
         coralEventRedirector.firePermissionChangeEvent(permission);            
     }    

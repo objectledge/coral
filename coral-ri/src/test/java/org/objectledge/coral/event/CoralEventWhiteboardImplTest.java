@@ -39,7 +39,7 @@ import org.objectledge.threads.ThreadPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventWhiteboardImplTest.java,v 1.5 2004-03-24 14:40:12 fil Exp $
+ * @version $Id: CoralEventWhiteboardImplTest.java,v 1.6 2004-05-28 10:04:11 fil Exp $
  */
 public class CoralEventWhiteboardImplTest extends CoralEventTestCase
 {
@@ -79,14 +79,14 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
     
     public void testAddPermissionAssociationChangeListener()
     {
-        mockEventWhiteboard.expect(once()).method("addListener").with(eq(PermissionAssociationChangeListener.class), 
+        mockEventWhiteboard.expects(once()).method("addListener").with(eq(PermissionAssociationChangeListener.class), 
             same(permissionAssoicationChangeListener), same(anchor));
         coralEventWhiteboard.addPermissionAssociationChangeListener(permissionAssoicationChangeListener, anchor);
     }
 
     public void testRemovePermissionAssociationChangeListener()
     {
-        mockEventWhiteboard.expect(once()).method("removeListener").with(eq(PermissionAssociationChangeListener.class), 
+        mockEventWhiteboard.expects(once()).method("removeListener").with(eq(PermissionAssociationChangeListener.class), 
             same(permissionAssoicationChangeListener), same(anchor));
         coralEventWhiteboard.removePermissionAssociationChangeListener(permissionAssoicationChangeListener, anchor);
     }
@@ -96,11 +96,11 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
         realCoralEventWhiteboard.addPermissionAssociationChangeListener(permissionAssoicationChangeListener, permission);
         realCoralEventWhiteboard.addPermissionAssociationChangeListener(permissionAssoicationChangeListener, resourceClass);
         realCoralEventWhiteboard.addPermissionAssociationChangeListener(permissionAssoicationChangeListener, null);
-        mockPermissionAssociation.expect(once()).method("getResourceClass").will(returnValue(resourceClass));
-        mockPermissionAssociation.expect(once()).method("getPermission").will(returnValue(permission));
-        mockPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
-        mockPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
-        mockPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockPermissionAssociation.expects(once()).method("getResourceClass").will(returnValue(resourceClass));
+        mockPermissionAssociation.expects(once()).method("getPermission").will(returnValue(permission));
+        mockPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
         realCoralEventWhiteboard.firePermissionAssociationChangeEvent(permissionAssociation, true);
     }
 }

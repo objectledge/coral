@@ -77,7 +77,7 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
     {
         super.setUp();
         mockDatabase = mock(Database.class);
-        mockDatabase.stub().method("getNextId").will(returnValue(1L));
+        mockDatabase.stubs().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
 
         mockCoralStore = mock(CoralStore.class);
@@ -88,20 +88,20 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(DateRange.class));
-        mockAttributeClass.stub().method("getName").will(returnValue("date_range"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("coral_attribute_date_range"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(DateRange.class));
+        mockAttributeClass.stubs().method("getName").will(returnValue("date_range"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_date_range"));
         handler = new DateRangeAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
         mockPreparedStatement = mock(PreparedStatement.class);
         preparedStatement = (PreparedStatement)mockPreparedStatement.proxy();
         mockConnection = mock(Connection.class);
-        mockConnection.stub().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
-        mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
         Date d1 = new Date();
         Date d2 = new Date(d1.getTime()+60000);
         range = new DateRange(d1, d2);
@@ -118,29 +118,29 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
     {
         String stmt = "INSERT INTO " + "coral_attribute_date_range" + 
             "(data_key, start_date, end_date) VALUES (?, ?, ?)";        
-        mockConnection.expect(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
-        mockPreparedStatement.expect(once()).method("setLong").with(eq(1), eq(1L)).isVoid();
-        mockPreparedStatement.expect(once()).method("setDate").with(eq(2), eq(rangeStart)).isVoid();        
-        mockPreparedStatement.expect(once()).method("setDate").with(eq(3), eq(rangeEnd)).isVoid();        
-        mockPreparedStatement.expect(once()).method("execute").will(returnValue(true));
-        mockPreparedStatement.expect(once()).method("close").isVoid();
+        mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expects(once()).method("setLong").with(eq(1), eq(1L)).isVoid();
+        mockPreparedStatement.expects(once()).method("setDate").with(eq(2), eq(rangeStart)).isVoid();        
+        mockPreparedStatement.expects(once()).method("setDate").with(eq(3), eq(rangeEnd)).isVoid();        
+        mockPreparedStatement.expects(once()).method("execute").will(returnValue(true));
+        mockPreparedStatement.expects(once()).method("close").isVoid();
         handler.create(range, connection);
     }
 
     public void testUpdate() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
-        mockStatement.expect(once()).method("close").isVoid();
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
+        mockStatement.expects(once()).method("close").isVoid();
         String stmt = "UPDATE coral_attribute_date_range SET"+
             " start_date = ?, end_date = ? WHERE data_key = ?";
-        mockConnection.expect(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
-        mockPreparedStatement.expect(once()).method("setDate").with(eq(1), eq(rangeStart)).isVoid();        
-        mockPreparedStatement.expect(once()).method("setDate").with(eq(2), eq(rangeEnd)).isVoid();        
-        mockPreparedStatement.expect(once()).method("setLong").with(eq(3), eq(1L)).isVoid();
-        mockPreparedStatement.expect(once()).method("execute").will(returnValue(true));
-        mockPreparedStatement.expect(once()).method("close").isVoid();
+        mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expects(once()).method("setDate").with(eq(1), eq(rangeStart)).isVoid();        
+        mockPreparedStatement.expects(once()).method("setDate").with(eq(2), eq(rangeEnd)).isVoid();        
+        mockPreparedStatement.expects(once()).method("setLong").with(eq(3), eq(1L)).isVoid();
+        mockPreparedStatement.expects(once()).method("execute").will(returnValue(true));
+        mockPreparedStatement.expects(once()).method("close").isVoid();
         handler.update(1, range, connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             handler.update(1, range, connection);
@@ -154,11 +154,11 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
 
     public void testRetrieveCreate() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
-        mockResultSet.expect(once()).method("getTimestamp").will(returnValue(null));
-        mockResultSet.expect(once()).method("getTimestamp").will(returnValue(null));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("getTimestamp").will(returnValue(null));
+        mockResultSet.expects(once()).method("getTimestamp").will(returnValue(null));
         handler.retrieve(1, connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             handler.retrieve(1, connection);

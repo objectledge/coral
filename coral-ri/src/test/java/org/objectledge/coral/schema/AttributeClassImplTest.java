@@ -44,7 +44,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClassImplTest.java,v 1.7 2004-05-06 13:46:32 pablo Exp $
+ * @version $Id: AttributeClassImplTest.java,v 1.8 2004-05-28 10:04:09 fil Exp $
  */
 public class AttributeClassImplTest extends LedgeTestCase
 {
@@ -76,12 +76,12 @@ public class AttributeClassImplTest extends LedgeTestCase
     public void testCreation()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
-        mockAttributeHandler.expect(once()).method("getComparator").will(returnValue(null));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
+        mockAttributeHandler.expects(once()).method("getComparator").will(returnValue(null));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy(), 
             "<class name>", "<java class>", "<handler class>", "<db table>");
@@ -95,7 +95,7 @@ public class AttributeClassImplTest extends LedgeTestCase
     public void testMissingJavaClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(throwException(new ClassNotFoundException("<java class>")));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(throwException(new ClassNotFoundException("<java class>")));
         try
         {
             new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -114,8 +114,8 @@ public class AttributeClassImplTest extends LedgeTestCase
     public void testMissingHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(throwException(new ClassNotFoundException("<handler class>")));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(throwException(new ClassNotFoundException("<handler class>")));
         try
         {
             new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -134,9 +134,9 @@ public class AttributeClassImplTest extends LedgeTestCase
     public void testUninstantiableHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(throwException(new InstantiationException("<handler class>", new Exception("unavailable"))));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(throwException(new InstantiationException("<handler class>", new Exception("unavailable"))));
         try
         {
             new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -155,9 +155,9 @@ public class AttributeClassImplTest extends LedgeTestCase
     public void testNotImplementingHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(new Object()));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(new Object()));
         try
         {        
             new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -175,41 +175,41 @@ public class AttributeClassImplTest extends LedgeTestCase
     public void testStoring()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy(), 
             "<class name>", "<java class>", "<handler class>", "<db table>");
         Persistent p = (Persistent)ac;    
         assertEquals("coral_attribute_class", p.getTable());
-        mockOutputRecord.expect(once()).method("setLong").with(eq("attribute_class_id"), eq(-1L));
-        mockOutputRecord.expect(once()).method("setString").with(eq("name"), eq("<class name>"));        
-        mockOutputRecord.expect(once()).method("setString").with(eq("db_table_name"), eq("<db table>"));
-        mockOutputRecord.expect(once()).method("setString").with(eq("java_class_name"), eq("<java class>"));
-        mockOutputRecord.expect(once()).method("setString").with(eq("handler_class_name"), eq("<handler class>"));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_class_id"), eq(-1L));
+        mockOutputRecord.expects(once()).method("setString").with(eq("name"), eq("<class name>"));        
+        mockOutputRecord.expects(once()).method("setString").with(eq("db_table_name"), eq("<db table>"));
+        mockOutputRecord.expects(once()).method("setString").with(eq("java_class_name"), eq("<java class>"));
+        mockOutputRecord.expects(once()).method("setString").with(eq("handler_class_name"), eq("<handler class>"));
         p.getData((OutputRecord)mockOutputRecord.proxy());
     }
     
     public void testLoading()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
-        mockAttributeHandler.expect(once()).method("getComparator").will(returnValue(null));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
+        mockAttributeHandler.expects(once()).method("getComparator").will(returnValue(null));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy()); 
         Persistent p = (Persistent)ac;
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(-1L));   
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<class name>"));        
-        mockInputRecord.expect(once()).method("getString").with(eq("db_table_name")).will(returnValue("<db table>"));
-        mockInputRecord.expect(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
-        mockInputRecord.expect(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(-1L));   
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<class name>"));        
+        mockInputRecord.expects(once()).method("getString").with(eq("db_table_name")).will(returnValue("<db table>"));
+        mockInputRecord.expects(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
+        mockInputRecord.expects(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
         p.setData((InputRecord)mockInputRecord.proxy());
         assertEquals(-1L, ac.getId());
         assertEquals("<class name>", ac.getName());
@@ -221,14 +221,14 @@ public class AttributeClassImplTest extends LedgeTestCase
     public void testLoadingJavaClassException()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(throwException(new ClassNotFoundException("<java class>")));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(throwException(new ClassNotFoundException("<java class>")));
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy()); 
         Persistent p = (Persistent)ac;
-        mockInputRecord.expect(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(-1L));   
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<class name>"));        
-        mockInputRecord.expect(once()).method("getString").with(eq("db_table_name")).will(returnValue("<db table>"));
-        mockInputRecord.expect(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(-1L));   
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<class name>"));        
+        mockInputRecord.expects(once()).method("getString").with(eq("db_table_name")).will(returnValue("<db table>"));
+        mockInputRecord.expects(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
         try
         {
             p.setData((InputRecord)mockInputRecord.proxy());
@@ -246,15 +246,15 @@ public class AttributeClassImplTest extends LedgeTestCase
     public void testAttributeClassChanged()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")). will(returnValue(AttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")). will(returnValue(AttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy(), 
             "<class name>", "<java class>", "<handler class>", "<db table>");
-        mockPersistence.expect(once()).method("revert").with(eq(ac));
+        mockPersistence.expects(once()).method("revert").with(eq(ac));
         AttributeClassChangeListener listener = (AttributeClassChangeListener)ac;
         listener.attributeClassChanged(ac);
         listener.attributeClassChanged(null);
@@ -263,15 +263,15 @@ public class AttributeClassImplTest extends LedgeTestCase
     public void testAttributeClassChangedFailedRevert()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")). will(returnValue(AttributeHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
-        mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
-        mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")). will(returnValue(AttributeHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
+        mockCoralEventWhiteboard.expects(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy(), 
             "<class name>", "<java class>", "<handler class>", "<db table>");
-        mockPersistence.expect(once()).method("revert").with(eq(ac)).will(throwException(new PersistenceException("revert failed")));
+        mockPersistence.expects(once()).method("revert").with(eq(ac)).will(throwException(new PersistenceException("revert failed")));
         AttributeClassChangeListener listener = (AttributeClassChangeListener)ac;
         try
         {

@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractEntityTest.java,v 1.3 2004-03-24 14:40:13 fil Exp $
+ * @version $Id: AbstractEntityTest.java,v 1.4 2004-05-28 10:04:12 fil Exp $
  */
 public class AbstractEntityTest extends LedgeTestCase
 {
@@ -128,8 +128,8 @@ public class AbstractEntityTest extends LedgeTestCase
     public void testStoring() throws PersistenceException
     {
         BlueEntity blue = new BlueEntity((Persistence)mockPersistence.proxy(), "<blue 1>");
-        mockOutputRecord.expect(once()).method("setLong").with(eq("blue_entity_id"), eq(-1L));
-        mockOutputRecord.expect(once()).method("setString").with(eq("name"), eq("<blue 1>"));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("blue_entity_id"), eq(-1L));
+        mockOutputRecord.expects(once()).method("setString").with(eq("name"), eq("<blue 1>"));
         blue.getData((OutputRecord)mockOutputRecord.proxy());
         blue.getKeyColumns();
         blue.getTable();
@@ -138,8 +138,8 @@ public class AbstractEntityTest extends LedgeTestCase
     public void testLoading() throws PersistenceException
     {
         BlueEntity blue = new BlueEntity((Persistence)mockPersistence.proxy());
-        mockInputRecord.expect(once()).method("getLong").with(eq("blue_entity_id")).will(returnValue(1L));
-        mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<blue 1>"));
+        mockInputRecord.expects(once()).method("getLong").with(eq("blue_entity_id")).will(returnValue(1L));
+        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<blue 1>"));
         blue.setData((InputRecord)mockInputRecord.proxy());
         assertEquals(1L, blue.getId());
         assertEquals("<blue 1>", blue.getName());        

@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.9 2004-05-27 15:55:55 fil Exp $ -->
+<!-- $Id: project.xml,v 1.10 2004-05-28 10:04:27 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -95,8 +95,13 @@
     <dependency>
       <groupId>jmock</groupId>
       <artifactId>jmock</artifactId>
-      <version>20040324-104648</version>
+      <version>1.0.0.RC1</version>
     </dependency>
+    <dependency>
+      <groupId>jmock</groupId>
+      <artifactId>jmock-cglib</artifactId>
+      <version>1.0.0.RC1</version>
+    </dependency>    
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>

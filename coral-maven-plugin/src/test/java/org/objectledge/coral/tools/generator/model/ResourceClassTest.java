@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassTest.java,v 1.4 2004-03-31 14:18:57 fil Exp $
+ * @version $Id: ResourceClassTest.java,v 1.5 2004-05-28 10:04:20 fil Exp $
  */
 public class ResourceClassTest extends LedgeTestCase
 {   
@@ -65,23 +65,23 @@ public class ResourceClassTest extends LedgeTestCase
         resourceClass = new ResourceClass("RC", "org.objectledge.datatypes.Node", "node", 0);
         
         mockParentResourceClass = mock(ResourceClass.class, "mockParentResourceClass");
-        mockParentResourceClass.stub().method("getName").will(returnValue("ParentRC"));
+        mockParentResourceClass.stubs().method("getName").will(returnValue("ParentRC"));
         parentResourceClass = (ResourceClass)mockParentResourceClass.proxy();
         mockGrandParentResourceClass = mock(ResourceClass.class, "mockGrandParentResourceClass");
-        mockGrandParentResourceClass.stub().method("getName").will(returnValue("GrandParentRC"));
-        mockGrandParentResourceClass.stub().method("compareTo").with(eq(parentResourceClass)).will(returnValue(-1));
+        mockGrandParentResourceClass.stubs().method("getName").will(returnValue("GrandParentRC"));
+        mockGrandParentResourceClass.stubs().method("compareTo").with(eq(parentResourceClass)).will(returnValue(-1));
         grandParentResourceClass = (ResourceClass)mockGrandParentResourceClass.proxy();
         mockAttribute1 = mock(Attribute.class, "mockAttribute1");
-        mockAttribute1.stub().method("getName").will(returnValue("attribute1"));
+        mockAttribute1.stubs().method("getName").will(returnValue("attribute1"));
         attribute1 = (Attribute)mockAttribute1.proxy();
         mockAttribute2 = mock(Attribute.class, "mockAttribute2");
-        mockAttribute2.stub().method("getName").will(returnValue("attribute2"));
-        mockAttribute2.stub().method("compareTo").with(same(attribute1)).will(returnValue(1));
+        mockAttribute2.stubs().method("getName").will(returnValue("attribute2"));
+        mockAttribute2.stubs().method("compareTo").with(same(attribute1)).will(returnValue(1));
         attribute2 = (Attribute)mockAttribute2.proxy();
         mockAttribute3 = mock(Attribute.class, "mockAttribute3");
-        mockAttribute3.stub().method("getName").will(returnValue("attribute3"));
-        mockAttribute3.stub().method("compareTo").with(same(attribute1)).will(returnValue(1));
-        mockAttribute3.stub().method("compareTo").with(same(attribute2)).will(returnValue(1));
+        mockAttribute3.stubs().method("getName").will(returnValue("attribute3"));
+        mockAttribute3.stubs().method("compareTo").with(same(attribute1)).will(returnValue(1));
+        mockAttribute3.stubs().method("compareTo").with(same(attribute2)).will(returnValue(1));
         attribute3 = (Attribute)mockAttribute3.proxy();
     }
     
@@ -149,7 +149,7 @@ public class ResourceClassTest extends LedgeTestCase
         throws Exception
     {
         assertTrue(resourceClass.getDeclaredAttributes().isEmpty());
-        mockAttribute1.expect(once()).method("setDeclaringClass").with(same(resourceClass)).isVoid();
+        mockAttribute1.expects(once()).method("setDeclaringClass").with(same(resourceClass)).isVoid();
         resourceClass.addAttribute(attribute1);
         try
         {
@@ -163,7 +163,7 @@ public class ResourceClassTest extends LedgeTestCase
         assertSame(attribute1, resourceClass.getDeclaredAttribute("attribute1"));
         assertEquals(1, resourceClass.getDeclaredAttributes().size());
         assertSame(attribute1, resourceClass.getDeclaredAttributes().get(0));
-        mockAttribute1.expect(once()).method("setDeclaringClass").with(NULL).isVoid();
+        mockAttribute1.expects(once()).method("setDeclaringClass").with(NULL).isVoid();
         resourceClass.deleteAttribute(attribute1);
         assertTrue(resourceClass.getDeclaredAttributes().isEmpty());
         try
@@ -190,18 +190,18 @@ public class ResourceClassTest extends LedgeTestCase
         throws Exception
     {
         assertTrue(resourceClass.getAllAttributes().isEmpty());
-        mockAttribute1.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute1.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute1);
-        mockGrandParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockGrandParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockGrandParentResourceClass.stub().method("getDeclaredAttributes").will(returnValue(Collections.singletonList(attribute2)));
-        mockGrandParentResourceClass.stub().method("getDeclaredAttribute").with(eq("attribute2")).will(returnValue(attribute2));
-        mockGrandParentResourceClass.stub().method("getDeclaredAttribute").with(eq("attribute3")).will(throwException(new EntityDoesNotExistException("not found")));
-        mockParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.singletonList(grandParentResourceClass)));
-        mockParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.singletonList(grandParentResourceClass)));
-        mockParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.singletonList(attribute2)));
-        mockParentResourceClass.stub().method("getDeclaredAttributes").will(returnValue(Collections.EMPTY_LIST));
-        mockParentResourceClass.stub().method("getDeclaredAttribute").with(eq("attribute3")).will(throwException(new EntityDoesNotExistException("not found")));
+        mockGrandParentResourceClass.stubs().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockGrandParentResourceClass.stubs().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockGrandParentResourceClass.stubs().method("getDeclaredAttributes").will(returnValue(Collections.singletonList(attribute2)));
+        mockGrandParentResourceClass.stubs().method("getDeclaredAttribute").with(eq("attribute2")).will(returnValue(attribute2));
+        mockGrandParentResourceClass.stubs().method("getDeclaredAttribute").with(eq("attribute3")).will(throwException(new EntityDoesNotExistException("not found")));
+        mockParentResourceClass.stubs().method("getAllParentClasses").will(returnValue(Collections.singletonList(grandParentResourceClass)));
+        mockParentResourceClass.stubs().method("getDeclaredParentClasses").will(returnValue(Collections.singletonList(grandParentResourceClass)));
+        mockParentResourceClass.stubs().method("getAllAttributes").will(returnValue(Collections.singletonList(attribute2)));
+        mockParentResourceClass.stubs().method("getDeclaredAttributes").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getDeclaredAttribute").with(eq("attribute3")).will(throwException(new EntityDoesNotExistException("not found")));
         resourceClass.addParentClass(parentResourceClass);
         assertEquals(2, resourceClass.getAllAttributes().size());
         // entities are sorted alphabetically
@@ -232,17 +232,17 @@ public class ResourceClassTest extends LedgeTestCase
     public void testConcreteImplAttributes()
         throws Exception
     { 
-        mockAttribute1.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute1.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute1);
-        mockAttribute2.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute2.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute2);
-        mockParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockParentResourceClass.stub().method("getDeclaredAttributes").will(returnValue(Collections.singletonList(attribute3)));
-        mockParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.singletonList(attribute3)));
+        mockParentResourceClass.stubs().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getDeclaredAttributes").will(returnValue(Collections.singletonList(attribute3)));
+        mockParentResourceClass.stubs().method("getAllAttributes").will(returnValue(Collections.singletonList(attribute3)));
         resourceClass.addParentClass(parentResourceClass);
-        mockAttribute1.stub().method("isConcrete").will(returnValue(true));
-        mockAttribute2.stub().method("isConcrete").will(returnValue(false));
+        mockAttribute1.stubs().method("isConcrete").will(returnValue(true));
+        mockAttribute2.stubs().method("isConcrete").will(returnValue(false));
         assertEquals(3, resourceClass.getAllAttributes().size());
         assertEquals(2, resourceClass.getDeclaredAttributes().size());
         assertEquals(1, resourceClass.getConcreteImplAttributes().size());
@@ -252,18 +252,18 @@ public class ResourceClassTest extends LedgeTestCase
     public void testConcreteAttributes()
         throws Exception
     { 
-        mockAttribute1.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute1.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute1);
-        mockAttribute2.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute2.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute2);
-        mockAttribute3.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute3.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute3);
-        mockAttribute1.stub().method("isConcrete").will(returnValue(true));
-        mockAttribute2.stub().method("isConcrete").will(returnValue(true));
-        mockAttribute3.stub().method("isConcrete").will(returnValue(false));
-        mockAttribute1.stub().method("isRequired").will(returnValue(true));
-        mockAttribute2.stub().method("isRequired").will(returnValue(false));
-        mockAttribute3.stub().method("isRequired").will(returnValue(false));
+        mockAttribute1.stubs().method("isConcrete").will(returnValue(true));
+        mockAttribute2.stubs().method("isConcrete").will(returnValue(true));
+        mockAttribute3.stubs().method("isConcrete").will(returnValue(false));
+        mockAttribute1.stubs().method("isRequired").will(returnValue(true));
+        mockAttribute2.stubs().method("isRequired").will(returnValue(false));
+        mockAttribute3.stubs().method("isRequired").will(returnValue(false));
         assertEquals(3, resourceClass.getDeclaredAttributes().size());
         assertEquals(2, resourceClass.getConcreteDeclaredAttributes().size());
         assertSame(attribute1, resourceClass.getConcreteDeclaredAttributes().get(0));        
@@ -275,11 +275,11 @@ public class ResourceClassTest extends LedgeTestCase
     public void testSortAttributes()
         throws Exception
     {  
-        mockAttribute1.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute1.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute1);
-        mockAttribute2.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute2.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute2);
-        mockAttribute3.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute3.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute3);
         List order = new ArrayList();
         order.add("attribute3");
@@ -296,9 +296,9 @@ public class ResourceClassTest extends LedgeTestCase
     {
         assertTrue(resourceClass.getDeclaredParentClasses().isEmpty());
         assertTrue(resourceClass.getAllParentClasses().isEmpty());
-        mockParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.EMPTY_LIST));
-        mockParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getAllAttributes").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
         resourceClass.addParentClass(parentResourceClass);
         assertEquals(1, resourceClass.getDeclaredParentClasses().size());
         assertEquals(1, resourceClass.getAllParentClasses().size());
@@ -306,15 +306,15 @@ public class ResourceClassTest extends LedgeTestCase
         assertTrue(resourceClass.getDeclaredParentClasses().isEmpty());
         assertTrue(resourceClass.getAllParentClasses().isEmpty());
         
-        mockAttribute1.expect(once()).method("setDeclaringClass").with(same(resourceClass));
-        mockAttribute1.stub().method("getDeclaringClass").will(returnValue(resourceClass));
-        mockAttribute1.stub().method("getName").will(returnValue("attribute"));
+        mockAttribute1.expects(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute1.stubs().method("getDeclaringClass").will(returnValue(resourceClass));
+        mockAttribute1.stubs().method("getName").will(returnValue("attribute"));
         resourceClass.addAttribute(attribute1);
-        mockAttribute2.stub().method("getDeclaringClass").will(returnValue(grandParentResourceClass));
-        mockAttribute2.stub().method("getName").will(returnValue("attribute"));
-        mockGrandParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.singletonList(attribute2)));
-        mockGrandParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockGrandParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockAttribute2.stubs().method("getDeclaringClass").will(returnValue(grandParentResourceClass));
+        mockAttribute2.stubs().method("getName").will(returnValue("attribute"));
+        mockGrandParentResourceClass.stubs().method("getAllAttributes").will(returnValue(Collections.singletonList(attribute2)));
+        mockGrandParentResourceClass.stubs().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockGrandParentResourceClass.stubs().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
         try
         {
             resourceClass.addParentClass(grandParentResourceClass);
@@ -328,9 +328,9 @@ public class ResourceClassTest extends LedgeTestCase
     
     public void testParentClassesCircularity()
     {
-        mockParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.EMPTY_LIST));
-        mockParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.singletonList(resourceClass)));
-        mockParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.singletonList(resourceClass)));
+        mockParentResourceClass.stubs().method("getAllAttributes").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getDeclaredParentClasses").will(returnValue(Collections.singletonList(resourceClass)));
+        mockParentResourceClass.stubs().method("getAllParentClasses").will(returnValue(Collections.singletonList(resourceClass)));
         try
         {
             resourceClass.addParentClass(parentResourceClass);
@@ -363,16 +363,16 @@ public class ResourceClassTest extends LedgeTestCase
         {
             assertEquals("ParentRC is not a direct parent class of RC", e.getMessage());
         }
-        mockParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockParentResourceClass.stub().method("getDeclaredAttributes").will(returnValue(Collections.EMPTY_LIST));
-        mockParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getDeclaredAttributes").will(returnValue(Collections.EMPTY_LIST));
+        mockParentResourceClass.stubs().method("getAllAttributes").will(returnValue(Collections.EMPTY_LIST));
         resourceClass.addParentClass(parentResourceClass);
         assertEquals(parentResourceClass, resourceClass.getImplParentClass());
-        mockGrandParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockGrandParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
-        mockGrandParentResourceClass.stub().method("getDeclaredAttributes").will(returnValue(Collections.EMPTY_LIST));
-        mockGrandParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.EMPTY_LIST));
+        mockGrandParentResourceClass.stubs().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockGrandParentResourceClass.stubs().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockGrandParentResourceClass.stubs().method("getDeclaredAttributes").will(returnValue(Collections.EMPTY_LIST));
+        mockGrandParentResourceClass.stubs().method("getAllAttributes").will(returnValue(Collections.EMPTY_LIST));
         resourceClass.addParentClass(grandParentResourceClass);
         
         assertEquals(grandParentResourceClass, resourceClass.getImplParentClass());

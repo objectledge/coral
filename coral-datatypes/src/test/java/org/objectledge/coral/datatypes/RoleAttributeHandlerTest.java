@@ -75,11 +75,11 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
     {
         super.setUp();
         mockDatabase = mock(Database.class);
-        mockDatabase.stub().method("getNextId").will(returnValue(1L));
+        mockDatabase.stubs().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
         mockRole = mock(Role.class);
-        mockRole.stub().method("getId").will(returnValue(1L));
-        mockRole.stub().method("getName").will(returnValue("foo"));
+        mockRole.stubs().method("getId").will(returnValue(1L));
+        mockRole.stubs().method("getName").will(returnValue("foo"));
         role = (Role)mockRole.proxy();
 
         mockCoralStore = mock(CoralStore.class);
@@ -87,27 +87,27 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
         mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         mockCoralSecurity = mock(CoralSecurity.class);
-        mockCoralSecurity.stub().method("getRole").with(eq("foo")).will(returnValue(new Role[]{role}));
-        mockCoralSecurity.stub().method("getRole").with(eq(1L)).will(returnValue(role));
-        mockCoralSecurity.stub().method("getRole").with(eq(2L)).will(throwException(new EntityDoesNotExistException("foo")));
-        mockCoralSecurity.stub().method("getRole").with(eq("bar")).will(throwException(new IllegalArgumentException("foo")));
-        mockCoralSecurity.stub().method("getRole").with(eq("foo0")).will(returnValue(new Role[0]));
-        mockCoralSecurity.stub().method("getRole").with(eq("foo2")).will(returnValue(new Role[2]));
+        mockCoralSecurity.stubs().method("getRole").with(eq("foo")).will(returnValue(new Role[]{role}));
+        mockCoralSecurity.stubs().method("getRole").with(eq(1L)).will(returnValue(role));
+        mockCoralSecurity.stubs().method("getRole").with(eq(2L)).will(throwException(new EntityDoesNotExistException("foo")));
+        mockCoralSecurity.stubs().method("getRole").with(eq("bar")).will(throwException(new IllegalArgumentException("foo")));
+        mockCoralSecurity.stubs().method("getRole").with(eq("foo0")).will(returnValue(new Role[0]));
+        mockCoralSecurity.stubs().method("getRole").with(eq("foo2")).will(returnValue(new Role[2]));
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(Role.class));
-        mockAttributeClass.stub().method("getName").will(returnValue("role"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_role"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Role.class));
+        mockAttributeClass.stubs().method("getName").will(returnValue("role"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("arl_attribute_role"));
         handler = new RoleAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
         mockConnection = mock(Connection.class);
-        mockConnection.stub().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
-        mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
 
     }
 
@@ -119,17 +119,17 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
     public void testCreate() throws Exception
     {
         String stmt = "INSERT INTO " + "arl_attribute_role" + "(data_key, ref) VALUES (1, " + role.getId() + ")";
-        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(role, connection);
     }
 
     public void testUpdate() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
         String stmt2 = "UPDATE arl_attribute_role SET ref = " + role.getId() + " WHERE data_key = 1";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, role, connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             handler.update(1, role, connection);
@@ -143,10 +143,10 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
 
     public void testRetrieveCreate() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
-        mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("getLong").will(returnValue(1L));
         handler.retrieve(1, connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             handler.retrieve(1, connection);

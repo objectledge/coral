@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassInheritanceImplTest.java,v 1.3 2004-03-24 14:40:10 fil Exp $
+ * @version $Id: ResourceClassInheritanceImplTest.java,v 1.4 2004-05-28 10:04:09 fil Exp $
  */
 public class ResourceClassInheritanceImplTest extends LedgeTestCase
 {
@@ -72,7 +72,7 @@ public class ResourceClassInheritanceImplTest extends LedgeTestCase
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
-        mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
+        mockCoralCore.stubs().method("getSchema").will(returnValue(coralSchema));
         mockParentClass = mock(ResourceClass.class, "parent");
         parentClass = (ResourceClass)mockParentClass.proxy();
         mockChildClass = mock(ResourceClass.class, "child");
@@ -97,9 +97,9 @@ public class ResourceClassInheritanceImplTest extends LedgeTestCase
             parentClass, childClass2);
         ResourceClassInheritanceImpl inheritanceCopy = new ResourceClassInheritanceImpl(coralCore, 
             parentClass, childClass);
-        mockParentClass.expect(atLeastOnce()).method("getId").will(returnValue(1L));
-        mockChildClass.expect(atLeastOnce()).method("getId").will(returnValue(2L));
-        mockChildClass2.expect(atLeastOnce()).method("getId").will(returnValue(3L));
+        mockParentClass.expects(atLeastOnce()).method("getId").will(returnValue(1L));
+        mockChildClass.expects(atLeastOnce()).method("getId").will(returnValue(2L));
+        mockChildClass2.expects(atLeastOnce()).method("getId").will(returnValue(3L));
         assertFalse(inheritance.hashCode() == inheritance2.hashCode());
         assertTrue(inheritance.hashCode() == inheritanceCopy.hashCode());                
     }
@@ -123,10 +123,10 @@ public class ResourceClassInheritanceImplTest extends LedgeTestCase
     {
         ResourceClassInheritanceImpl inheritance = new ResourceClassInheritanceImpl(coralCore, 
             parentClass, childClass);
-        mockParentClass.expect(once()).method("getId").will(returnValue(1L));
-        mockChildClass.expect(once()).method("getId").will(returnValue(2L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("parent"), eq(1L));
-        mockOutputRecord.expect(once()).method("setLong").with(eq("child"), eq(2L));
+        mockParentClass.expects(once()).method("getId").will(returnValue(1L));
+        mockChildClass.expects(once()).method("getId").will(returnValue(2L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("parent"), eq(1L));
+        mockOutputRecord.expects(once()).method("setLong").with(eq("child"), eq(2L));
         inheritance.getData(outputRecord);
         inheritance.getTable();
         inheritance.getKeyColumns();
@@ -136,10 +136,10 @@ public class ResourceClassInheritanceImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassInheritanceImpl rb = new ResourceClassInheritanceImpl(coralCore);
-        mockInputRecord.expect(once()).method("getLong").with(eq("parent")).will(returnValue(1L));
-        mockInputRecord.expect(once()).method("getLong").with(eq("child")).will(returnValue(2L));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).will(returnValue(parentClass));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(2L)).will(returnValue(childClass));
+        mockInputRecord.expects(once()).method("getLong").with(eq("parent")).will(returnValue(1L));
+        mockInputRecord.expects(once()).method("getLong").with(eq("child")).will(returnValue(2L));
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(1L)).will(returnValue(parentClass));
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(2L)).will(returnValue(childClass));
         rb.setData(inputRecord);
         assertSame(parentClass, rb.getParent());
         assertSame(childClass, rb.getChild());
@@ -149,8 +149,8 @@ public class ResourceClassInheritanceImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassInheritanceImpl rb = new ResourceClassInheritanceImpl(coralCore);
-        mockInputRecord.expect(once()).method("getLong").with(eq("parent")).will(returnValue(1L));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).will(throwException(new EntityDoesNotExistException("missing resource class")));
+        mockInputRecord.expects(once()).method("getLong").with(eq("parent")).will(returnValue(1L));
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(1L)).will(throwException(new EntityDoesNotExistException("missing resource class")));
         try
         {
             rb.setData(inputRecord);
@@ -168,10 +168,10 @@ public class ResourceClassInheritanceImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassInheritanceImpl rb = new ResourceClassInheritanceImpl(coralCore);
-        mockInputRecord.expect(once()).method("getLong").with(eq("parent")).will(returnValue(1L));
-        mockInputRecord.expect(once()).method("getLong").with(eq("child")).will(returnValue(2L));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).will(returnValue(parentClass));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(2L)).will(throwException(new EntityDoesNotExistException("missing resource class")));
+        mockInputRecord.expects(once()).method("getLong").with(eq("parent")).will(returnValue(1L));
+        mockInputRecord.expects(once()).method("getLong").with(eq("child")).will(returnValue(2L));
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(1L)).will(returnValue(parentClass));
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(2L)).will(throwException(new EntityDoesNotExistException("missing resource class")));
         try
         {
             rb.setData(inputRecord);

@@ -71,7 +71,7 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
     {
         super.setUp();
         mockDatabase = mock(Database.class);
-        mockDatabase.stub().method("getNextId").will(returnValue(1L));
+        mockDatabase.stubs().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
 
         mockCoralStore = mock(CoralStore.class);
@@ -82,18 +82,18 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockAttributeClass.stub().method("getJavaClass").will(returnValue(Boolean.class));
-        mockAttributeClass.stub().method("getName").will(returnValue("boolean"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("coral_attribute_boolean"));
+        mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Boolean.class));
+        mockAttributeClass.stubs().method("getName").will(returnValue("boolean"));
+        mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_boolean"));
         booleanHandler = new BooleanAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
         mockConnection = mock(Connection.class);
-        mockConnection.stub().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
-        mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
+        mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
     }
 
     public void testAttributeHandlerBase()
@@ -103,9 +103,9 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
 
     public void testDelete() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
         String stmt = "DELETE FROM coral_attribute_boolean WHERE data_key = 1";
-        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         booleanHandler.delete(1, connection);
     }
 
@@ -113,24 +113,24 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
     public void testCreate() throws Exception
     {
         String stmt = "INSERT INTO " + "coral_attribute_boolean" + "(data_key, data) VALUES (" + 1 + ", " + 1 + ")";
-        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         booleanHandler.create(new Boolean(true), connection);
         String stmt2 = "INSERT INTO coral_attribute_boolean(data_key, data) VALUES (1, 0)";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         booleanHandler.create(new Boolean(false), connection);
     }
 
     public void testUpdate() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
         String stmt2 = "UPDATE coral_attribute_boolean SET data = 1 WHERE data_key = 1";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         booleanHandler.update(1,Boolean.TRUE,connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
         stmt2 = "UPDATE coral_attribute_boolean SET data = 0 WHERE data_key = 1";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         booleanHandler.update(1,Boolean.FALSE,connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             booleanHandler.update(1,Boolean.FALSE,connection);
@@ -144,10 +144,10 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
 
     public void testRetrieve() throws Exception
     {
-        mockResultSet.expect(once()).method("next").will(returnValue(true));
-        mockResultSet.expect(once()).method("getBoolean").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(true));
+        mockResultSet.expects(once()).method("getBoolean").will(returnValue(false));
         booleanHandler.retrieve(1, connection);
-        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
         {
             booleanHandler.retrieve(1, connection);

@@ -44,7 +44,7 @@ import org.objectledge.utils.LedgeTestCase;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponentTest.java,v 1.5 2004-05-07 11:41:40 fil Exp $
+ * @version $Id: GeneratorComponentTest.java,v 1.6 2004-05-28 10:04:20 fil Exp $
  */
 public class GeneratorComponentTest
     extends LedgeTestCase
@@ -93,10 +93,10 @@ public class GeneratorComponentTest
         mockReader2 = mock(Reader.class, "mockReader2");
         reader2 = (Reader)mockReader2.proxy();
         
-        mockFileSystem.stub().method("exists").with(eq("LICENSE.txt")).will(returnValue(true));
-        mockFileSystem.stub().method("read").with(eq("LICENSE.txt"),eq("UTF-8")).will(returnValue("//license"));
-        mockTemplating.stub().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Interface")).will(returnValue(interfaceTemplate));
-        mockTemplating.stub().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/GenericImpl")).will(returnValue(genericImplTemplate));
+        mockFileSystem.stubs().method("exists").with(eq("LICENSE.txt")).will(returnValue(true));
+        mockFileSystem.stubs().method("read").with(eq("LICENSE.txt"),eq("UTF-8")).will(returnValue("//license"));
+        mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Interface")).will(returnValue(interfaceTemplate));
+        mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/GenericImpl")).will(returnValue(genericImplTemplate));
         generatorComponent = new GeneratorComponent("UTF-8", "src/main/rml/files.lst",
             "src/main/java", "java.,javax.,org.objectledge.", "*", 
             "", "LICENSE.txt", fileSystem, templating, schema, rmlModelLoader, System.out);
@@ -159,7 +159,7 @@ public class GeneratorComponentTest
     public void testReadMissing()
         throws Exception
     {
-        mockFileSystem.stub().method("exists").with(eq("Custom4.java")).will(returnValue(false));
+        mockFileSystem.stubs().method("exists").with(eq("Custom4.java")).will(returnValue(false));
         Map hints = new HashMap();
         String custom = generatorComponent.read("Custom4.java", hints);
         assertEquals("", custom);
@@ -168,26 +168,26 @@ public class GeneratorComponentTest
     public void testWriteMissing()
         throws Exception
     {
-        mockFileSystem.stub().method("exists").with(eq("foo/Out.java")).will(returnValue(false));
-        mockFileSystem.expect(once()).method("mkdirs").with(eq("/foo")).isVoid();
-        mockFileSystem.expect(once()).method("write").with(eq("foo/Out.java"), eq("content"), eq("UTF-8")).isVoid();
+        mockFileSystem.stubs().method("exists").with(eq("foo/Out.java")).will(returnValue(false));
+        mockFileSystem.expects(once()).method("mkdirs").with(eq("/foo")).isVoid();
+        mockFileSystem.expects(once()).method("write").with(eq("foo/Out.java"), eq("content"), eq("UTF-8")).isVoid();
         assertTrue(generatorComponent.write("foo/Out.java", "content"));
     }
 
     public void testWriteChanged()
         throws Exception
     {
-        mockFileSystem.stub().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
-        mockFileSystem.expect(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue("other content"));
-        mockFileSystem.expect(once()).method("write").with(eq("foo/Out.java"), eq("content"), eq("UTF-8")).isVoid();
+        mockFileSystem.stubs().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
+        mockFileSystem.expects(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue("other content"));
+        mockFileSystem.expects(once()).method("write").with(eq("foo/Out.java"), eq("content"), eq("UTF-8")).isVoid();
         assertTrue(generatorComponent.write("foo/Out.java", "content"));
     }
 
     public void testWriteNotChanged()
         throws Exception
     {
-        mockFileSystem.stub().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
-        mockFileSystem.expect(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue("content"));
+        mockFileSystem.stubs().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
+        mockFileSystem.expects(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue("content"));
         assertFalse(generatorComponent.write("foo/Out.java", "content"));
     }
     
@@ -198,8 +198,8 @@ public class GeneratorComponentTest
         provideFile("masterSources.lst");
         provideFile("masterSchema.rml", reader1);
         provideFile("schema.rml", reader2);
-        mockRMLModelLoader.expect(once()).method("load").with(same(reader1)).isVoid().id("c1");
-        mockRMLModelLoader.expect(once()).method("load").with(same(reader2)).isVoid().id("c2");
+        mockRMLModelLoader.expects(once()).method("load").with(same(reader1)).isVoid().id("c1");
+        mockRMLModelLoader.expects(once()).method("load").with(same(reader2)).isVoid().id("c2");
         generatorComponent.loadSources("sources.lst");
     }
     
@@ -267,21 +267,21 @@ public class GeneratorComponentTest
     private void provideFile(String path)
         throws Exception
     {
-        mockFileSystem.stub().method("exists").with(eq(path)).will(returnValue(true));
-        mockFileSystem.stub().method("getReader").with(eq(path), eq("UTF-8")).
+        mockFileSystem.stubs().method("exists").with(eq(path)).will(returnValue(true));
+        mockFileSystem.stubs().method("getReader").with(eq(path), eq("UTF-8")).
             will(returnValue(testFileSystem.getReader(path, "UTF-8")));        
     }
 
     private void provideFile(String path, Reader reader)
         throws Exception
     {
-        mockFileSystem.stub().method("exists").with(eq(path)).will(returnValue(true));
-        mockFileSystem.stub().method("getReader").with(eq(path), eq("UTF-8")).
+        mockFileSystem.stubs().method("exists").with(eq(path)).will(returnValue(true));
+        mockFileSystem.stubs().method("getReader").with(eq(path), eq("UTF-8")).
             will(returnValue(reader));        
     }
     
     private void dontProvideFile(String path)
     {
-        mockFileSystem.stub().method("exists").with(eq(path)).will(returnValue(false));        
+        mockFileSystem.stubs().method("exists").with(eq(path)).will(returnValue(false));        
     }
 }
