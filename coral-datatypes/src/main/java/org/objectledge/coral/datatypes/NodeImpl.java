@@ -19,20 +19,12 @@ import org.objectledge.database.Database;
  * An implementation of <code>coral.Node</code> Coral resource class.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: NodeImpl.java,v 1.2 2004-05-06 11:17:13 pablo Exp $
+ * @version $Id: NodeImpl.java,v 1.3 2004-07-09 12:26:07 rafal Exp $
  */
 public class NodeImpl
     extends GenericResource
     implements Node
 {
-    // instance variables ////////////////////////////////////////////////////
-
-    /** The schema */
-    protected CoralSchema coralSchema;
-
-    /** The AttributeDefinition object for the <code>description</code> attribute. */
-    private AttributeDefinition descriptionDef;
-
     // initialization /////////////////////////////////////////////////////////
 
     /**
@@ -49,16 +41,6 @@ public class NodeImpl
     public NodeImpl(CoralSchema coralSchema, Database database, Logger logger)
     {
         super(database, logger);
-        this.coralSchema = coralSchema;
-        try
-        {
-            ResourceClass rc = coralSchema.getResourceClass("coral.Node");
-            descriptionDef = rc.getAttribute("description");
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
     }
 
     // static methods ////////////////////////////////////////////////////////
@@ -120,46 +102,5 @@ public class NodeImpl
         }
     }
 
-    // public interface //////////////////////////////////////////////////////
- 
-    /**
-     * Returns the value of the <code>description</code> attribute.
-     *
-     * @return the value of the <code>description</code> attribute.
-     */
-    public String getDescription()
-    {
-        return (String)get(descriptionDef);
-    }
-
-    /**
-     * Sets the value of the <code>description</code> attribute.
-     *
-     * @param value the value of the <code>description</code> attribute,
-     *        or <code>null</code> to remove value.
-     */
-    public void setDescription(String value)
-    {
-        try
-        {
-            if(value != null)
-            {
-                set(descriptionDef, value);
-            }
-            else
-            {
-                unset(descriptionDef);
-            }
-        }
-        catch(ModificationNotPermitedException e)
-        {
-            throw new BackendException("incompatible schema change",e);
-        }
-        catch(ValueRequiredException e)
-        {
-            throw new BackendException("incompatible schema change",e);
-        }
-    }
-     
     // @custom methods ///////////////////////////////////////////////////////
 }
