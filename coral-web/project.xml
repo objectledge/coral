@@ -64,15 +64,6 @@
       <url>http://dna.codehaus.org</url>
     </dependency>
     <dependency>
-      <groupId>jing</groupId>
-      <artifactId>jing</artifactId>
-      <version>20030619</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>
-      <url>http://www.thaiopensource.com/relaxng/jing.html</url>
-    </dependency>
-    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.8</version>
