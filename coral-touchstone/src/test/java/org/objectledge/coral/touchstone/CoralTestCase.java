@@ -40,7 +40,7 @@ import org.objectledge.filesystem.FileSystem;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralTestCase.java,v 1.2 2004-03-11 15:27:54 fil Exp $
+ * @version $Id: CoralTestCase.java,v 1.3 2004-03-11 15:29:27 fil Exp $
  */
 public abstract class CoralTestCase extends TestCase
 {
@@ -53,7 +53,6 @@ public abstract class CoralTestCase extends TestCase
     public void setUp()
         throws Exception
     {
-        System.out.println("setUp");
         super.setUp();
         FileSystem fs = FileSystem.getStandardFileSystem("src/test/resources");
         container = new LedgeContainer(fs, "/config", getClass().getClassLoader()); 
@@ -79,11 +78,12 @@ public abstract class CoralTestCase extends TestCase
             DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesCleanup.sql", "UTF-8"));               
             DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRICleanup.sql", "UTF-8"));   
         }
+        DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRIInitial.sql", "UTF-8"));   
+        DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesInitial.sql", "UTF-8"));               
     }
     
     public void tearDown()
     {
-        System.out.println("tearDown");
         container.killContainer();
     }
 }
