@@ -1,0 +1,16 @@
+App Layout: <br/><br/>
+
+<table class="defaultLayoutTable" border="1" width="100%">
+  <tr>
+    <td valign="top">
+      $component.embed('browser.Navigation') 
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      $!embedded_placeholder
+    </td>
+  </tr>
+</table>
+
+

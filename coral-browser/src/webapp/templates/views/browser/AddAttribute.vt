@@ -1,0 +1,71 @@
+#####
+## NAME: Simple close popup screen
+## AUTHOR: <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
+## VER: $Id: AddAttribute.vt,v 1.1 2004-03-26 14:08:02 pablo Exp $
+## DESCR:
+## STATUS: final
+#####
+<script type="text/javascript">
+<!--
+function fSub(action)
+{
+  document.form1.action = action;
+  document.form1.submit();
+}
+// -->
+</script>
+
+#result_inline_message("results.arlbrowser")
+<form name="form1" method="post" action=''>
+  <input type="hidden" name="res_class_id" value="$data.getParameters().get('res_class_id').asString('-1')" maxlength="10">
+  <table width="100%" class="genericScreen" cellspacing="0">
+    <tr>
+      <th colspan="2"><b>Dodawanie atrybutu do klasy zasobu: $resourceClass.name</b></td>
+    </tr>
+    <tr>
+      <td align="right"><b>Nazwa:</b></td>
+      <td width="95%"><input type="text" name="attr_name" value=""></td>
+    </tr>
+    <tr>
+      <td align="right"><b>Typ:</b></td>
+      <td>
+        <select name="attr_class_id">
+        #foreach($attr_class in $attr_classes)
+        <option value="$attr_class.id" #if($attr_class.name == 'string')selected#end>$attr_class.name</option>
+        #end
+      </select></td>
+    </tr>
+    <tr>
+      <td align="right"><b>Domena:</b></td>
+      <td width="95%">
+        <input type="checkbox" name="set_domain" value="true">
+        <input type="text" name="domain" value="" maxlength="40">
+      </td>
+    </tr>
+    <tr>
+      <td align="right"><b>Warto¶æ domy¶lna:</b></td>
+      <td width="95%">
+        <input type="checkbox" name="set_value" value="true">
+        <input type="text" name="value" value="" maxlength="40">
+      </td>
+    </tr>   
+    <tr>
+      <td align="right"><b>Flagi:</b></td>
+      <td align="right">
+        <table>
+          #foreach($flag in $flags.getFlagNames())
+          <tr>
+            <td align="right">$flag:</td>
+            <td width="95%"><input type="checkbox" name="flag_$flag"></td>
+          </tr>
+          #end
+        </table>
+      </td>
+    </tr>   
+    <tr>
+      <td colspan="2" align="right">
+        <a href="javascript:fSub('$link.view('ClosePopup').action('AddAttribute').set('reload','true')')">dodaj</a>
+      </td>
+    </tr>
+  </table>
+</form>

@@ -1,0 +1,183 @@
+$page_tool.addCommonScriptLink('js/WinPopup.js')
+
+<script type="text/javascript">
+<!--
+function deleteAttr(name, url)
+{
+    if(confirm("Czy napewno chcesz usun±æ atrybut '"+name+"'\npamiêtaj ¿e operacja nie mo¿e byæ cofniêta a jej skutki odczuj± wszystkie zasoby tej klasy"))
+    {
+        document.location.href = url;
+    }
+}
+
+function deleteResourceClass(name, url)
+{
+    if(confirm("Czy napewno chcesz usun±æ klase '"+name+"'\npamiêtaj ¿e operacja nie mo¿e byæ cofniêta!"))
+    {
+        document.location.href = url;
+    }
+}
+
+function addPermission()
+{
+  document.addpermission.submit();
+}
+// -->
+</script>
+
+<table class="defaultLayoutTable" border="1" width="100%">
+  <tr>
+    <td valign="top">
+      $component.embed('browser.ResourceClassList') 
+    </td>
+    <td valign="top">
+## MAIN SCREEN
+
+
+#result_inline_message("results.arlbrowser")
+<table class="genericItemTree" width="100%" cellpadding="0" cellspacing="0">
+  #if($resourceClass)
+  <tr>
+    <th>Szczegó³y klasy $resourceClass.name<br/></th>
+    <th>
+      <a href="javascript:deleteResourceClass('$resourceClass.name','$link.action('DeleteResourceClass').set('res_class_id',$resourceClass.id)');">usuñ</a>
+    </th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <table>
+        <tr>
+          <th>Nazwa</th>
+          <th>Id</th>
+          <th>Klasa implementuj±ca</th>
+          <th>Klasa obs³uguj±ca</th>
+          <th>Flagi</th>
+        </tr>
+        <tr>
+          <td>$resourceClass.name</td>
+          <td>$resourceClass.id</td>
+          <td>$resourceClass.javaClassName</td>
+          <td>$resourceClass.handler.class.name</td>
+          <td>$resourceClass.flags</td>
+        </tr>
+      </table>
+      <table>
+        <tr><th colspan="6">Atrybuty</th></tr>
+        <tr>
+          <th>Nazwa</th>
+          <th>Zdefiniowany w klasie</th>
+          <th>Klasa</th>
+          <th>Domena</th>
+          <th>Flagi</th>
+          <th>Usuñ</th>
+        </tr>
+      #foreach($attr in $resourceClass.allAttributes)
+        <tr>
+          <td>$attr.name</td>
+          <td><a href="$link.view('ResourceClassView').set('res_class_id',$attr.declaringClass.id)">$attr.declaringClass.name</a></td>
+          <td>$attr.attributeClass.name</td>
+          <td>
+            #if($attr.domain)
+             $attr.domain
+            #else
+             -
+            #end
+          </td>
+          <td>
+            #if($flags.toString($attr.flags) == '')
+              &nbsp; 
+            #else
+              $flags.toString($attr.flags)
+            #end
+          </td>
+          <td>
+            #if($attr.declaringClass.name != 'node')
+            <a href="javascript:deleteAttr('$attr.name','$link.action('DeleteAttribute').set('res_class_id',$resourceClass.id).set('attr_name',$attr.name)');">usuñ</a>
+            #else
+            -
+            #end
+          </td>
+        </tr>
+      #end
+        <tr>
+          <td colspan="5">
+            &nbsp;
+          </td>
+          <td>
+<a href="javascript:getWinPopup('browser').open('$link.view('AddAttribute').set('res_class_id',$resourceClass.id)',  500, 550); void(0);">Dodaj atrybut</a>
+          </td>
+        </tr>
+      </table>
+      <table>
+        <tr>
+          <th colspan="2">Prawa i klasy bazowe</th>
+        </tr>
+        <tr>
+          <td>$resourceClass.name</td>
+          <td>
+            &nbsp;
+            <table>
+            #foreach($association in $resourceClass.permissionAssociations)
+            <tr>
+              <td><a href="$link.view('PermissionView').set('perm_id',$association.permission.id)">$association.permission.name</a></td>
+            </tr>
+            #end
+            </table>
+          </td>
+        </tr>
+        #foreach($parent in $resourceClass.parentClasses)
+        <tr>
+          <td><a href="$link.set('res_class_id',$parent.id)">$parent.name</a></td>
+          <td>
+            &nbsp;
+            <table>
+            #foreach($association in $parent.permissionAssociations)
+              <tr>
+                <td> 
+                  <a href="$link.view('PermissionView').set('perm_id',$association.permission.id)">$association.permission.name</a>
+                </td>
+              </tr>
+            #end
+            </table>
+          </td>
+        </tr>
+        #end
+      </table>
+      <table>
+        <tr>
+          <th>Klasy dziedzicz±ce</th>
+        </tr>
+        #foreach($child in $resourceClass.childClasses)
+        <tr>
+          <td><a href="$link.set('res_class_id',$child.id)">$child.name</a></td>
+        </tr>
+        #end
+      </table>
+      <table>
+        <tr>
+          <th>Dodaj prawo</th>
+        </tr>
+        <tr>
+          <form name="addpermission" method="post" action='$link.action('AddPermissionToClass')'>
+          <input type="hidden" name="res_class_id" value="$resourceClass.id">
+          <td><input type="text" name="perm_name" value="" maxlength="40">
+            <a href="javascript:addPermission()">dodaj prawo</a>
+          </td>
+          </form>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><a href="$link.view('AddResource').set('res_class_name',$resourceClass.name)">Dodaj zasób</a></td>
+  </tr>
+  #else
+  <tr>
+    <th>Wybierz klase</th>
+  </tr>
+  #end
+</table>
+
+    </td>
+  </tr>
+</table>
