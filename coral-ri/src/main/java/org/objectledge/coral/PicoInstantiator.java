@@ -38,6 +38,7 @@ import org.objectledge.pico.customization.CustomizingConstructorComponentAdapter
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoContainer;
+import org.picocontainer.PicoInitializationException;
 import org.picocontainer.defaults.AssignabilityRegistrationException;
 import org.picocontainer.defaults.DefaultPicoContainer;
 import org.picocontainer.defaults.NotConcreteRegistrationException;
@@ -46,7 +47,7 @@ import org.picocontainer.defaults.NotConcreteRegistrationException;
  * An implemention of the Instantiator interface using the PicoContainer.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PicoInstantiator.java,v 1.7 2005-02-06 23:04:32 rafal Exp $
+ * @version $Id: PicoInstantiator.java,v 1.8 2005-02-07 00:35:42 rafal Exp $
  */
 public class PicoInstantiator 
     implements Instantiator
@@ -90,7 +91,7 @@ public class PicoInstantiator
      */
     public Object newInstance(Class clazz) throws InstantiationException
     {
-        ComponentAdapter adapter = new ArgumentCachingComponentAdapter(clazz);
+        ComponentAdapter adapter = getAdapter(clazz);
         return adapter.getComponentInstance(container); 
     }
 
@@ -129,17 +130,32 @@ public class PicoInstantiator
         };
     }
 
-    private final Map<Class<?>,Object[]> argsCache = new HashMap<Class<?>,Object[]>();
+    private final Map<Class<?>,ComponentAdapter> adapterMap = 
+        new HashMap<Class<?>,ComponentAdapter>();
+    
+    private ComponentAdapter getAdapter(Class clazz)
+    {
+        ComponentAdapter adapter = adapterMap.get(clazz);
+        if(adapter == null)
+        {
+            adapter = new ArgumentCachingComponentAdapter(clazz);
+            adapterMap.put(clazz, adapter);
+        }
+        return adapter;
+    }
     
     /**
      * Adapter that caches constructor arguments per implementation class.
      *
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: PicoInstantiator.java,v 1.7 2005-02-06 23:04:32 rafal Exp $
+     * @version $Id: PicoInstantiator.java,v 1.8 2005-02-07 00:35:42 rafal Exp $
      */
     private class ArgumentCachingComponentAdapter
         extends CustomizingConstructorComponentAdapter
     {
+        private Constructor ctor;
+        private Object[] args;
+        
         /**
          * Creates new ArgumentCachingComponentAdapter instance.
          * 
@@ -159,13 +175,45 @@ public class PicoInstantiator
          */
         protected Object[] getConstructorArguments(PicoContainer container, Constructor ctor)
         {
-            Object[] args = argsCache.get(getComponentImplementation());
             if(args == null)
             {
                 args = super.getConstructorArguments(container, ctor);
-                argsCache.put(getComponentImplementation(), args);
             }
             return args;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        protected Constructor getGreediestSatisfiableConstructor(PicoContainer container)
+        {
+           if(ctor == null)
+           {
+               ctor = super.getGreediestSatisfiableConstructor(container);
+           }
+           return ctor;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Object getComponentInstance(PicoContainer container)
+        {
+            if(ctor != null)
+            {
+                try
+                {
+                    return ctor.newInstance(args);
+                }
+                catch(Exception e)
+                {
+                    throw new PicoInitializationException("unexpected exception", e);
+                }
+            }
+            else
+            {
+                return super.getComponentInstance(container);
+            }
         }
     }
 }
