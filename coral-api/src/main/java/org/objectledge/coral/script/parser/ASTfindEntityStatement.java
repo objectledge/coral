@@ -2,12 +2,12 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTfindStatement extends SimpleNode {
-  public ASTfindStatement(int id) {
+public class ASTfindEntityStatement extends SimpleNode {
+  public ASTfindEntityStatement(int id) {
     super(id);
   }
 
-  public ASTfindStatement(RML p, int id) {
+  public ASTfindEntityStatement(RML p, int id) {
     super(p, id);
   }
 
