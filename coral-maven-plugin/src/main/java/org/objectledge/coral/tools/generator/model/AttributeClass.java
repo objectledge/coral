@@ -31,7 +31,7 @@ package org.objectledge.coral.tools.generator.model;
  * Represents a Coral AttributeClass
  *  
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClass.java,v 1.2 2004-03-23 16:16:39 fil Exp $
+ * @version $Id: AttributeClass.java,v 1.3 2004-03-24 15:19:14 fil Exp $
  */
 public class AttributeClass
     extends Entity
@@ -45,6 +45,13 @@ public class AttributeClass
     private Class javaClass;
     
     // constructors /////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Protected no-arg constructor, to allow mocking.
+     */
+    protected AttributeClass()
+    {
+    }
     
     /** Creates an attribute class instance. 
      *
