@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.6 2004-02-25 13:47:00 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.7 2004-02-25 14:13:42 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -642,6 +642,16 @@ public class ResourceClassImpl
     // Package private setter methods ///////////////////////////////////////////////////////////
 
     /**
+     * Sets the name of the class.
+     * 
+     * @param name the new name of the class.
+     */
+    void setName(String name)
+    {
+        this.name = name;
+    }
+
+    /**
      * Sets the Java class that is associated with this resource class.
      *
      * @param className the Java class that is associated with this resource
@@ -698,7 +708,7 @@ public class ResourceClassImpl
      * @param dbTable the name of a database table that holds the data of the
      * resource of that type, or <code>null</code> if not used.
      */
-    public void setDbTable(String dbTable)
+    void setDbTable(String dbTable)
     {
         this.dbTable = dbTable;
     }
