@@ -28,15 +28,11 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.2 2004-04-26 13:20:29 fil Exp $ -->
+<!-- $Id: maven.xml,v 1.3 2004-04-28 14:03:09 fil Exp $ -->
 <project
   xmlns:j="jelly:core"
   xmlns:sql="jelly:sql"
   xmlns:coral="coral">
-
-  <preGoal name="java:compile">
-    <attainGoal name="coral:generator"/>
-  </preGoal>
   
   <goal name="plugin:testPluginFeature">
     <attainGoal name="coral:init"/>
