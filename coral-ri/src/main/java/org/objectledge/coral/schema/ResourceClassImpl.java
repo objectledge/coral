@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.10 2004-02-25 15:42:49 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.11 2004-02-25 15:57:11 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -41,9 +41,6 @@ public class ResourceClassImpl
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The Persistence subsystem. */
-    private Persistence persistence;
-    
     /** The CoralEventHub. */
     private CoralEventHub coralEventHub;
 
@@ -232,7 +229,7 @@ public class ResourceClassImpl
      */
     public void resourceClassChanged(ResourceClass resourceClass)
     {
-        if(resourceClass.equals(this))
+        if(this.equals(resourceClass))
         {
             try
             {
