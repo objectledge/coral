@@ -62,15 +62,15 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.8 2004-07-01 09:48:21 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.9 2004-07-01 11:24:54 fil Exp $
  */
 public abstract class AbstractResource implements Resource
 {
     /** The database service. */
-    protected Database database;
+    private Database database;
 
     /** The logging facility. */
-    protected Logger logger;
+    private Logger logger;
 
     /** Security delegate object. */
     protected Resource delegate;
@@ -89,7 +89,6 @@ public abstract class AbstractResource implements Resource
     
     /** ResourceClass -> parent class instance. */
     private Map parents = new HashMap();
-
     
     /**
      * Constructor.
