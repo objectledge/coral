@@ -47,11 +47,19 @@ public class AllTests
         suite.addTest(new TestSuite(BooleanAttributeHandlerTest.class));
         suite.addTest(new TestSuite(DateAttributeHandlerTest.class));
         suite.addTest(new TestSuite(DateRangeAttributeHandlerTest.class));
+        suite.addTest(new TestSuite(GenericResourceHandlerTest.class));
+        suite.addTest(new TestSuite(IntegerAttributeHandlerTest.class));        
         suite.addTest(new TestSuite(LongAttributeHandlerTest.class));
-        suite.addTest(new TestSuite(IntegerAttributeHandlerTest.class));
         suite.addTest(new TestSuite(NumberAttributeHandlerTest.class));
+        suite.addTest(new TestSuite(ParametersAttributeHandlerTest.class));
+        suite.addTest(new TestSuite(PermissionAttributeHandlerTest.class));
+        suite.addTest(new TestSuite(ResourceAttributeHandlerTest.class));
+        suite.addTest(new TestSuite(ResourceListAttributeHandlerTest.class));
+        suite.addTest(new TestSuite(RoleAttributeHandlerTest.class));
         suite.addTest(new TestSuite(StringAttributeHandlerTest.class));
+        suite.addTest(new TestSuite(SubjectAttributeHandlerTest.class));
         suite.addTest(new TestSuite(TextAttributeHandlerTest.class));
+        suite.addTest(new TestSuite(WeakResourceListAttributeHandlerTest.class));
         //$JUnit-END$
         return suite;
     }
