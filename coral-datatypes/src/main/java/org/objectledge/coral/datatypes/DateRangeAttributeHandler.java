@@ -18,7 +18,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link DateRange} objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateRangeAttributeHandler.java,v 1.3 2004-03-15 15:47:10 fil Exp $
+ * @version $Id: DateRangeAttributeHandler.java,v 1.4 2004-04-29 14:10:43 fil Exp $
  */
 public class DateRangeAttributeHandler
     extends AttributeHandlerBase
@@ -109,7 +109,7 @@ public class DateRangeAttributeHandler
         checkExists(id, stmt);
         stmt.close();
         PreparedStatement pstmt = conn.prepareStatement("UPDATE "+getTable()+
-            " SET start_date = ? , end_date = ? WHERE data_key = ?");
+            " SET start_date = ?, end_date = ? WHERE data_key = ?");
         pstmt.setDate(1, new java.sql.Date(((DateRange)value).getStart().getTime()));
         pstmt.setDate(2, new java.sql.Date(((DateRange)value).getEnd().getTime()));
         pstmt.setLong(3, id);
