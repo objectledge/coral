@@ -40,7 +40,7 @@ import org.objectledge.coral.relation.RelationModification.RemoveOperation;
  * This class holds a minimal representation of a {@link RelationModification}
  * for a given {@link Relation}.
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModification.java,v 1.2 2004-02-20 16:55:11 zwierzem Exp $
+ * @version $Id: MinimalRelationModification.java,v 1.3 2004-02-24 12:23:23 zwierzem Exp $
  */
 public class MinimalRelationModification
 {
@@ -50,20 +50,23 @@ public class MinimalRelationModification
 	
 	/**
 	 * Constructs a minimal representation of a {@link RelationModification}
-	 * for a given {@link Relation}.
+	 * for a given {@link Relation}, the representation is preapred for a non inverted relation.
 	 * 
 	 * @param modification relation modification data
 	 * @param relation modified relation
 	 */
 	public MinimalRelationModification(RelationModification modification, Relation relation)
 	{
-		ConstructingVisitor visitor = new ConstructingVisitor(relation);
-		for (Iterator iter = modification.getOperations().iterator(); iter.hasNext();)
+		ConstructingVisitor visitor = null;
+		if(relation.isInverted())
 		{
-			RelationModification.ModificationOperation operation =
-				(RelationModification.ModificationOperation) iter.next();
-			operation.visit(visitor);
+			visitor = new InvertingConstructingVisitor(relation.getInverted());
 		}
+		else
+		{
+			visitor = new ConstructingVisitor(relation);
+		}
+		modification.visit(visitor);
 	}
 	
 	// data retrieval api ---------------------------------------------------------------------
@@ -131,7 +134,8 @@ public class MinimalRelationModification
 	 */
 	private class ConstructingVisitor implements RelationModification.ModificationOperationVisitor
 	{
-		private Relation relation;
+		/** Relation is used in batch remove operations. */
+		protected Relation relation;
 		
 		public ConstructingVisitor(Relation relation)
 		{
@@ -190,6 +194,36 @@ public class MinimalRelationModification
 					remove(new RelationModification.RemoveOperation(new Long(id1set[i]), id2));
 				}
 			}
+		}
+	}
+
+	/**
+	 * Class used during Minimal representation construction.
+	 */
+	private class InvertingConstructingVisitor
+		extends ConstructingVisitor
+	{
+		public InvertingConstructingVisitor(Relation relation)
+		{
+			super(relation);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(AddOperation oper)
+		{
+			oper.invert();
+			super.visit(oper);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(RemoveOperation oper)
+		{
+			oper.invert();
+			super.visit(oper);
 		}
 	}
 }
