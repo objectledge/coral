@@ -39,6 +39,7 @@ import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.AttributeClassChangeListener;
 import org.objectledge.coral.event.AttributeDefinitionChangeListener;
 import org.objectledge.coral.event.CoralEventHub;
+import org.objectledge.coral.event.CoralEventRedirector;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.event.ResourceClassChangeListener;
 import org.objectledge.database.Database;
@@ -49,7 +50,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.12 2005-01-18 10:57:53 rafal Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.13 2005-01-19 08:10:05 rafal Exp $
  */
 public class CoralSchemaImplTest extends LedgeTestCase
 {
@@ -73,6 +74,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
     private CoralEventWhiteboard outboundEventWhiteboard;
     private Mock mockInboundEventWhiteboard;
     private CoralEventWhiteboard inboundEventWhiteboard;
+    private CoralEventWhiteboard globalEventWhiteboard;
     private Mock mockLogger;
     private Logger logger;
     private CoralSchema coralSchema;
@@ -133,9 +135,12 @@ public class CoralSchemaImplTest extends LedgeTestCase
             coralEventHub, logger);
         
         mockDatabase.stubs().method("getConnection").will(returnValue(connection));
+        globalEventWhiteboard = new CoralEventRedirector(inboundEventWhiteboard, 
+            localEventWhiteboard, outboundEventWhiteboard);
         mockCoralEventHub.stubs().method("getLocal").will(returnValue(localEventWhiteboard));
         mockCoralEventHub.stubs().method("getOutbound").will(returnValue(outboundEventWhiteboard));
         mockCoralEventHub.stubs().method("getInbound").will(returnValue(inboundEventWhiteboard));
+        mockCoralEventHub.stubs().method("getGlobal").will(returnValue(globalEventWhiteboard));
         
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
@@ -304,6 +309,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
         mockAttributeDefinition.stubs().method("getName").will(returnValue("<old name>"));
         mockCoralRegistry.expects(once()).method("renameAttributeDefinition").with(same(attributeDefinition), eq("<new name>"));
         mockOutboundEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").with(same(attributeDefinition));
+        mockLocalEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").with(same(attributeDefinition));
         coralSchema.setName(attributeDefinition, "<new name>");
     }
     
@@ -317,6 +323,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
         
         mockPersistence.expects(once()).method("save").with(same(realAttributeDefinition));
         mockOutboundEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
+        mockLocalEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
         coralSchema.setFlags(realAttributeDefinition, 121);
         assertEquals(121, realAttributeDefinition.getFlags());
     }
@@ -332,6 +339,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
         mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<new domain>"));
         mockPersistence.expects(once()).method("save").with(same(realAttributeDefinition));
         mockOutboundEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
+        mockLocalEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent").with(same(realAttributeDefinition));
         coralSchema.setDomain(realAttributeDefinition, "<new domain>");
         assertEquals("<new domain>", realAttributeDefinition.getDomain());
     }
