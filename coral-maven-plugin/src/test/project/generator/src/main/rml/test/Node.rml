@@ -1,5 +1,5 @@
-CREATE RESOURCE CLASS coral.test.GenericNode
-	JAVA CLASS org.objectledge.coral.test.GenericNodeImpl
+CREATE RESOURCE CLASS coral.test.Node
+	JAVA CLASS org.objectledge.coral.test.NodeImpl
 	HANDLER CLASS org.objectledge.coral.datatypes.GenericResourceHandler
 	ATTRIBUTES 	(
 		REQUIRED BUILTIN long id,
@@ -11,7 +11,6 @@ CREATE RESOURCE CLASS coral.test.GenericNode
 		REQUIRED BUILTIN subject created_by,
 		BUILTIN subject modified_by,
 		REQUIRED BUILTIN date creation_time,
-		BUILTIN date modification_time,
-		string description
+		BUILTIN date modification_time
 	);
 	

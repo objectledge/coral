@@ -31,41 +31,17 @@ package org.objectledge.coral.test;
 import org.objectledge.coral.store.Resource;
 
 /**
- * Defines the accessor methods of <code>coral.test.GenericNode</code> Coral resource class.
+ * Defines the accessor methods of <code>coral.test.Node</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
-public interface GenericNode
+public interface Node
     extends Resource
 {
     // constants /////////////////////////////////////////////////////////////
 
     /** The name of the ARL resource class. */    
-    public static final String CLASS_NAME = "coral.test.GenericNode";
-
-    // public interface //////////////////////////////////////////////////////
+    public static final String CLASS_NAME = "coral.test.Node";
  
-    /**
-     * Returns the value of the <code>description</code> attribute.
-     *
-     * @return the value of the the <code>description</code> attribute.
-     */
-    public String getDescription();
-
-    /**
-     * Sets the value of the <code>description</code> attribute.
-     *
-     * @param value the value of the <code>description</code> attribute,
-     *        or <code>null</code> to remove value.
-     */
-    public void setDescription(String value);   
-   
-	/**
-	 * Checks if the value of the <code>description</code> attribute is defined.
-	 *
-	 * @return <code>true</code> if the value of the <code>description</code> attribute is defined.
-	 */
-    public boolean isDescriptionDefined();
-  
     // @custom methods ///////////////////////////////////////////////////////
 }

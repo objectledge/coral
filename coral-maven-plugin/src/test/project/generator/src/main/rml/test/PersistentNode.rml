@@ -11,7 +11,6 @@ CREATE RESOURCE CLASS coral.test.PersistentNode
 		REQUIRED BUILTIN subject created_by,
 		BUILTIN subject modified_by,
 		REQUIRED BUILTIN date creation_time,
-		BUILTIN date modification_time,
-		string description
+		BUILTIN date modification_time
 	);
 	

@@ -33,11 +33,9 @@ import java.util.Map;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
-import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
@@ -45,23 +43,18 @@ import org.objectledge.database.Database;
 import org.jcontainer.dna.Logger;
 
 /**
- * An implementation of <code>coral.test.GenericNode</code> Coral resource class.
+ * An implementation of <code>coral.test.Node</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
-public class GenericNodeImpl
+public class NodeImpl
     extends GenericResource
-    implements GenericNode
+    implements Node
 {
-    // instance variables ////////////////////////////////////////////////////
-
-    /** The AttributeDefinition object for the <code>description</code> attribute. */
-    private AttributeDefinition descriptionDef;
-
     // initialization /////////////////////////////////////////////////////////
 
     /**
-     * Creates a blank <code>coral.test.GenericNode</code> resource wrapper.
+     * Creates a blank <code>coral.test.Node</code> resource wrapper.
      *
      * <p>This constructor should be used by the handler class only. Use 
      * <code>load()</code> and <code>create()</code> methods to create
@@ -71,24 +64,15 @@ public class GenericNodeImpl
      * @param database the Database.
      * @param logger the Logger.
      */
-    public GenericNodeImpl(CoralSchema schema, Database database, Logger logger)
+    public NodeImpl(CoralSchema schema, Database database, Logger logger)
     {
         super(schema, database, logger);
-        try
-        {
-            ResourceClass rc = schema.getResourceClass("coral.test.GenericNode");
-            descriptionDef = rc.getAttribute("description");
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
     }
 
     // static methods ////////////////////////////////////////////////////////
 
     /**
-     * Retrieves a <code>coral.test.GenericNode</code> resource instance from the store.
+     * Retrieves a <code>coral.test.Node</code> resource instance from the store.
      *
      * <p>This is a simple wrapper of StoreService.getResource() method plus
      * the typecast.</p>
@@ -98,41 +82,40 @@ public class GenericNodeImpl
      * @return a resource instance.
      * @throws EntityDoesNotExistException if the resource with the given id does not exist.
      */
-    public static GenericNode getGenericNode(CoralSession session, long id)
+    public static Node getNode(CoralSession session, long id)
         throws EntityDoesNotExistException
     {
         Resource res = session.getStore().getResource(id);
-        if(!(res instanceof GenericNode))
+        if(!(res instanceof Node))
         {
             throw new IllegalArgumentException("resource #"+id+" is "+
                                                res.getResourceClass().getName()+
-                                               " not coral.test.GenericNode");
+                                               " not coral.test.Node");
         }
-        return (GenericNode)res;
+        return (Node)res;
     }
 
     /**
-     * Creates a new <code>coral.test.GenericNode</code> resource instance.
+     * Creates a new <code>coral.test.Node</code> resource instance.
      *
      * @param session the CoralSession
      * @param name the name of the new resource
      * @param parent the parent resource.
-     * @return a new GenericNode instance.
+     * @return a new Node instance.
      */
-    public static GenericNode createGenericNode(CoralSession session, String name, Resource
-        parent)
+    public static Node createNode(CoralSession session, String name, Resource parent)
     {
         try
         {
-            ResourceClass rc = session.getSchema().getResourceClass("coral.test.GenericNode");
+            ResourceClass rc = session.getSchema().getResourceClass("coral.test.Node");
             Map attrs = new HashMap();
             Resource res = session.getStore().createResource(name, parent, rc, attrs);
-            if(!(res instanceof GenericNode))
+            if(!(res instanceof Node))
             {
                 throw new BackendException("incosistent schema: created object is "+
                                            res.getClass().getName());
             }
-            return (GenericNode)res;
+            return (Node)res;
         }
         catch(EntityDoesNotExistException e)
         {
@@ -143,75 +126,6 @@ public class GenericNodeImpl
             throw new BackendException("incompatible schema change", e);
         }
     }
-
-    // public interface //////////////////////////////////////////////////////
  
-    /**
-     * Returns the value of the <code>description</code> attribute.
-     *
-     * @return the value of the <code>description</code> attribute.
-     */
-    public String getDescription()
-    {
-        return (String)get(descriptionDef);
-    }
-    
-    /**
-     * Returns the value of the <code>description</code> attribute.
-     *
-     * @param defaultValue the value to return if the attribute is undefined.
-     * @return the value of the <code>description</code> attribute.
-     */
-    public String getDescription(String defaultValue)
-    {
-        if(isDefined(descriptionDef))
-        {
-            return (String)get(descriptionDef);
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }    
-
-    /**
-     * Sets the value of the <code>description</code> attribute.
-     *
-     * @param value the value of the <code>description</code> attribute,
-     *        or <code>null</code> to remove value.
-     */
-    public void setDescription(String value)
-    {
-        try
-        {
-            if(value != null)
-            {
-                set(descriptionDef, value);
-            }
-            else
-            {
-                unset(descriptionDef);
-            }
-        }
-        catch(ModificationNotPermitedException e)
-        {
-            throw new BackendException("incompatible schema change",e);
-        }
-        catch(ValueRequiredException e)
-        {
-            throw new BackendException("incompatible schema change",e);
-        }
-    }
-   
-	/**
-	 * Checks if the value of the <code>description</code> attribute is defined.
-	 *
-	 * @return <code>true</code> if the value of the <code>description</code> attribute is defined.
-	 */
-    public boolean isDescriptionDefined()
-	{
-	    return isDefined(descriptionDef);
-	}
-  
     // @custom methods ///////////////////////////////////////////////////////
 }

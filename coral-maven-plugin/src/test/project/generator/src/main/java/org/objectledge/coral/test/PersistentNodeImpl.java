@@ -33,11 +33,9 @@ import java.util.Map;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
-import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
@@ -53,11 +51,6 @@ public class PersistentNodeImpl
     extends PersistentResource
     implements PersistentNode
 {
-    // instance variables ////////////////////////////////////////////////////
-
-    /** The AttributeDefinition object for the <code>description</code> attribute. */
-    private AttributeDefinition descriptionDef;
-
     // initialization /////////////////////////////////////////////////////////
 
     /**
@@ -74,15 +67,6 @@ public class PersistentNodeImpl
     public PersistentNodeImpl(CoralSchema schema, Database database, Logger logger)
     {
         super(schema, database, logger);
-        try
-        {
-            ResourceClass rc = schema.getResourceClass("coral.test.PersistentNode");
-            descriptionDef = rc.getAttribute("description");
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
     }
 
     // static methods ////////////////////////////////////////////////////////
@@ -143,75 +127,6 @@ public class PersistentNodeImpl
             throw new BackendException("incompatible schema change", e);
         }
     }
-
-    // public interface //////////////////////////////////////////////////////
  
-    /**
-     * Returns the value of the <code>description</code> attribute.
-     *
-     * @return the value of the <code>description</code> attribute.
-     */
-    public String getDescription()
-    {
-        return (String)get(descriptionDef);
-    }
-    
-    /**
-     * Returns the value of the <code>description</code> attribute.
-     *
-     * @param defaultValue the value to return if the attribute is undefined.
-     * @return the value of the <code>description</code> attribute.
-     */
-    public String getDescription(String defaultValue)
-    {
-        if(isDefined(descriptionDef))
-        {
-            return (String)get(descriptionDef);
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }    
-
-    /**
-     * Sets the value of the <code>description</code> attribute.
-     *
-     * @param value the value of the <code>description</code> attribute,
-     *        or <code>null</code> to remove value.
-     */
-    public void setDescription(String value)
-    {
-        try
-        {
-            if(value != null)
-            {
-                set(descriptionDef, value);
-            }
-            else
-            {
-                unset(descriptionDef);
-            }
-        }
-        catch(ModificationNotPermitedException e)
-        {
-            throw new BackendException("incompatible schema change",e);
-        }
-        catch(ValueRequiredException e)
-        {
-            throw new BackendException("incompatible schema change",e);
-        }
-    }
-   
-	/**
-	 * Checks if the value of the <code>description</code> attribute is defined.
-	 *
-	 * @return <code>true</code> if the value of the <code>description</code> attribute is defined.
-	 */
-    public boolean isDescriptionDefined()
-	{
-	    return isDefined(descriptionDef);
-	}
-  
     // @custom methods ///////////////////////////////////////////////////////
 }
