@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-2"?>
 <project>
   <pomVersion>3</pomVersion>
-  <extend>../coral-common/project.xml</extend>
+  <extend>${coralCommon}/project.xml</extend>
 
   <name>Coral web</name>
   <id>coral-web</id>
