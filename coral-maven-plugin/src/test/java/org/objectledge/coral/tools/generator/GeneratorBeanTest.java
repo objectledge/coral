@@ -28,10 +28,6 @@
 package org.objectledge.coral.tools.generator;
 
 import org.apache.log4j.BasicConfigurator;
-import org.jcontainer.dna.Logger;
-import org.jcontainer.dna.impl.Log4JLogger;
-import org.objectledge.filesystem.FileSystem;
-import org.objectledge.templating.Templating;
 import org.objectledge.utils.LedgeTestCase;
 
 public class GeneratorBeanTest extends LedgeTestCase
