@@ -50,8 +50,10 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
+ * An implementation of the Relation interface.
+ * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.19 2004-03-17 15:34:30 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.20 2004-12-27 03:06:15 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity

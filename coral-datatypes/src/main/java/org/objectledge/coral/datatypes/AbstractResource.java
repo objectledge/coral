@@ -57,10 +57,10 @@ import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
 
 /**
- * 
+ * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.13 2004-12-21 08:31:55 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.14 2004-12-27 03:05:44 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {

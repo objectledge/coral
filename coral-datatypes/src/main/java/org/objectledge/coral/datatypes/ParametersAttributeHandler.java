@@ -21,11 +21,11 @@ import org.objectledge.parameters.db.DBParametersManager;
  * <code>labeo.util.configuration.ParameterContainer</code>.
  * 
  * <p>This implementation depends on
- * <coded>PersistentParameterContainerService</code>, currenty in
+ * <code>PersistentParameterContainerService</code>, currenty in
  * labeo-experimental.</p>
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParametersAttributeHandler.java,v 1.3 2004-05-06 13:01:24 pablo Exp $
+ * @version $Id: ParametersAttributeHandler.java,v 1.4 2004-12-27 03:05:44 rafal Exp $
  */
 public class ParametersAttributeHandler
     extends AttributeHandlerBase

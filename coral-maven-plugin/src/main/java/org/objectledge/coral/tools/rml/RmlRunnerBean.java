@@ -34,10 +34,10 @@ import org.objectledge.coral.tools.BatchLoader;
 import org.objectledge.filesystem.FileSystem;
 
 /**
- * 
+ * A Bean that executes RML scripts on a Coral database.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RmlRunnerBean.java,v 1.2 2004-04-30 12:37:32 fil Exp $
+ * @version $Id: RmlRunnerBean.java,v 1.3 2004-12-27 03:06:32 rafal Exp $
  */
 public class RmlRunnerBean
 {

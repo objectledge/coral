@@ -33,9 +33,10 @@ import org.objectledge.event.InboundEventWhiteboard;
 import org.objectledge.event.OutboundEventWhiteboard;
 
 /**
+ * Implementation of the Coral Event Hub component.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventHubImpl.java,v 1.3 2004-03-01 13:41:50 fil Exp $
+ * @version $Id: CoralEventHubImpl.java,v 1.4 2004-12-27 03:06:18 rafal Exp $
  */
 public class CoralEventHubImpl
     implements CoralEventHub

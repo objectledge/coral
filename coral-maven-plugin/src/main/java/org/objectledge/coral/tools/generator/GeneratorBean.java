@@ -41,7 +41,7 @@ import org.objectledge.templating.velocity.VelocityTemplating;
  * An interface between GeneratorComponent and Maven.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorBean.java,v 1.9 2004-10-14 11:26:01 rafal Exp $
+ * @version $Id: GeneratorBean.java,v 1.10 2004-12-27 03:06:28 rafal Exp $
  */
 public class GeneratorBean
 {
@@ -181,6 +181,8 @@ public class GeneratorBean
 
     
 	/**
+     * Sets sqlInfoFile attribute.
+     * 
 	 * @param sqlAttributeInfoFile The sqlAttributeInfoFile to set.
 	 */
 	public void setSqlAttributeInfoFile(String sqlAttributeInfoFile) 
@@ -189,6 +191,8 @@ public class GeneratorBean
 	}
 	
 	/**
+     * Sets sqlListPath attribute.
+     * 
 	 * @param sqlListPath The sqlListPath to set.
 	 */
 	public void setSqlListPath(String sqlListPath) 
@@ -197,6 +201,8 @@ public class GeneratorBean
 	}
 	
 	/**
+     * Sets sqlTargetDir attribute.
+     * 
 	 * @param sqlTargetDir The sqlTargetDir to set.
 	 */
 	public void setSqlTargetDir(String sqlTargetDir) 
@@ -205,6 +211,8 @@ public class GeneratorBean
 	}
 	
 	/**
+     * Sets sqlTargetPrefix attribute.
+     * 
 	 * @param sqlTargetPrefix The sqlTargetPrefix to set.
 	 */
 	public void setSqlTargetPrefix(String sqlTargetPrefix) 

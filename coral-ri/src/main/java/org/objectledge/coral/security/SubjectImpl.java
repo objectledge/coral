@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: SubjectImpl.java,v 1.11 2004-03-18 11:32:44 fil Exp $
+ * @version $Id: SubjectImpl.java,v 1.12 2004-12-27 03:06:13 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SubjectImpl
@@ -251,7 +251,7 @@ public class SubjectImpl
      * Returns all Resources that are owned by this Subject.
      *
      * <p>This method takes Resource parent-child relationships into
-     * consideration, so it can be <em>extremely<em> time and memory
+     * consideration, so it can be <em>extremely</em> time and memory
      * consuming.</p>
      *
      * @return all Resources that are owned by this Subject.

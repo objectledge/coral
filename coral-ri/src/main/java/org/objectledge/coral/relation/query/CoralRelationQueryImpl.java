@@ -42,8 +42,10 @@ import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 
 /**
+ * An implementation of the relation query.
+ * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationQueryImpl.java,v 1.1 2004-02-25 10:57:20 zwierzem Exp $
+ * @version $Id: CoralRelationQueryImpl.java,v 1.2 2004-12-27 03:06:06 rafal Exp $
  */
 public class CoralRelationQueryImpl implements CoralRelationQuery
 {

@@ -52,8 +52,10 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistentFactory;
 
 /**
+ * Implmentation of the Coral relation manager component.
+ * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.6 2004-03-17 15:34:15 zwierzem Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.7 2004-12-27 03:06:15 rafal Exp $
  */
 public class CoralRelationManagerImpl implements CoralRelationManager
 {

@@ -36,10 +36,10 @@ import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
 
 /**
- * 
+ * A Bean that runns SQL scripts on a JDBC database.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SqlRunnerBean.java,v 1.1 2004-05-04 13:56:23 fil Exp $
+ * @version $Id: SqlRunnerBean.java,v 1.2 2004-12-27 03:06:25 rafal Exp $
  */
 public class SqlRunnerBean
 {

@@ -38,9 +38,10 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.security.Subject;
 
 /**
+ * An implementation of the Coral session factory.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImpl.java,v 1.5 2004-06-28 07:58:35 fil Exp $
+ * @version $Id: CoralSessionFactoryImpl.java,v 1.6 2004-12-27 03:06:02 rafal Exp $
  */
 public class CoralSessionFactoryImpl implements CoralSessionFactory
 {

@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * A common base class for {@link QueryService} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.8 2004-12-23 02:04:58 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.9 2004-12-27 03:05:59 rafal Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery
@@ -97,7 +97,7 @@ public abstract class AbstractCoralQueryImpl
      * Prepares a query.
      *
      * <p>Query may contain a number of <em>positional parameters</em>. The
-     * parameters have form of "$"<NUMBER>, with no intervening
+     * parameters have form of $&lt;NUMBER&gt;, with no intervening
      * whitespace. The nuber must be greater or equal to 1. The positional
      * parameters can only be used on the right hand side of binary operators.
      * When the query is executed, all positional parameters must be set to

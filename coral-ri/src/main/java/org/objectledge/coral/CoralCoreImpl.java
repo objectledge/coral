@@ -57,9 +57,10 @@ import org.picocontainer.PicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
 /**
+ * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.11 2004-08-30 07:52:33 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.12 2004-12-27 03:06:21 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore

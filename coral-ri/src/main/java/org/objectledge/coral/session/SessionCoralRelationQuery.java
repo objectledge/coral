@@ -37,9 +37,10 @@ import org.objectledge.coral.relation.ResourceIdentifierResolver;
 import org.objectledge.coral.store.Resource;
 
 /**
+ * Session private wrapper for the Coral relation query component.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralRelationQuery.java,v 1.1 2004-03-16 14:16:18 fil Exp $
+ * @version $Id: SessionCoralRelationQuery.java,v 1.2 2004-12-27 03:06:02 rafal Exp $
  */
 public class SessionCoralRelationQuery implements CoralRelationQuery
 {

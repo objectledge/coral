@@ -36,9 +36,10 @@ import org.objectledge.coral.relation.Relation;
 import org.objectledge.coral.relation.RelationModification;
 
 /**
+ * Session private wrapper for the Coral relation manger component.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralRelationManager.java,v 1.1 2004-03-16 14:16:18 fil Exp $
+ * @version $Id: SessionCoralRelationManager.java,v 1.2 2004-12-27 03:06:02 rafal Exp $
  */
 public class SessionCoralRelationManager implements CoralRelationManager
 {

@@ -37,10 +37,11 @@ import org.objectledge.coral.tools.generator.model.AttributeSQLInfo;
 import org.objectledge.coral.tools.generator.model.Schema;
 
 /**
- * 
+ * An utility class that loads Coral to SQL attribute binding information from a text file into the 
+ * generator's schema.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeSQLInfoLoader.java,v 1.3 2004-12-21 08:45:31 rafal Exp $
+ * @version $Id: AttributeSQLInfoLoader.java,v 1.4 2004-12-27 03:06:28 rafal Exp $
  */
 public class AttributeSQLInfoLoader
 {
