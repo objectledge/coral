@@ -31,7 +31,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,7 +50,7 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.11 2004-03-09 14:34:17 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.12 2004-03-09 14:49:57 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity

@@ -52,7 +52,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.2 2004-03-09 14:34:17 zwierzem Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.3 2004-03-09 14:49:57 zwierzem Exp $
  */
 public class CoralRelationManagerImpl implements CoralRelationManager
 {
@@ -76,7 +76,17 @@ public class CoralRelationManagerImpl implements CoralRelationManager
     private EntityRegistry relationRegistry;
 
     /**
-     *
+     * Relation manager manages relation lifecycle.
+     * 
+     * @param database used to retrieve and modify relation contents in database.
+     * @param persistence used to modify relation metadata
+     * @param cacheFactory used to create caches for relation objects
+     * @param coralEventHub TODO may be used to clean relations on resource deletions
+     * @param coral used to get coral facilities
+     * @param instantiator used to instantiate relation objects
+     * @param log for loggin errors and alike
+     * 
+     * @throws ConfigurationException on problems with configuration values
      */
     public CoralRelationManagerImpl(Database database, Persistence persistence,
         CacheFactory cacheFactory, CoralEventHub coralEventHub, CoralCore coral,
