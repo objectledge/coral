@@ -1,0 +1,433 @@
+package org.objectledge.coral.event;
+
+import org.objectledge.coral.schema.AttributeClass;
+import org.objectledge.coral.schema.AttributeDefinition;
+import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.schema.ResourceClassInheritance;
+import org.objectledge.coral.security.Permission;
+import org.objectledge.coral.security.PermissionAssignment;
+import org.objectledge.coral.security.PermissionAssociation;
+import org.objectledge.coral.security.Role;
+import org.objectledge.coral.security.RoleAssignment;
+import org.objectledge.coral.security.RoleImplication;
+import org.objectledge.coral.security.Subject;
+import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.store.ResourceInheritance;
+import org.objectledge.coral.store.ResourceOwnership;
+
+/**
+ * Event multiplexer class.
+ *
+ * @version $Id: CoralEventListener.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
+ */
+public abstract class CoralEventListener
+    implements PermissionAssociationChangeListener,
+               PermissionAssignmentChangeListener,
+               RoleAssignmentChangeListener,
+               RoleImplicationChangeListener,
+               ResourceClassInheritanceChangeListener,
+               ResourceClassAttributesChangeListener,
+               ResourceTreeChangeListener,
+               ResourceOwnershipChangeListener,
+               SubjectChangeListener,
+               RoleChangeListener,
+               PermissionChangeListener,
+               ResourceCreationListener,
+               ResourceChangeListener,
+               ResourceDeletionListener,
+               ResourceClassChangeListener,
+               AttributeClassChangeListener,
+               AttributeDefinitionChangeListener
+{
+    // Memeber objects ///////////////////////////////////////////////////////
+    
+    /** The {@link CoralEventWhiteboard}. */
+    private CoralEventWiteboard service;
+
+    // initialization ////////////////////////////////////////////////////////
+
+    /**
+     * Register the multiplexer with an <code>EventService</code>.
+     *
+     * @param service the event service.
+     */
+    public void register(CoralEventWiteboard service)
+    {
+        service.addPermissionAssignmentChangeListener( 
+            this, null);
+        service.addPermissionAssociationChangeListener(
+            this, null);
+        service.addRoleAssignmentChangeListener(
+            this, null);
+        service.addRoleImplicationChangeListener(
+            this, null);
+        service.addResourceClassInheritanceChangeListener(
+            this, null);
+        service.addResourceClassAttributesChangeListener(
+            this, null);
+        service.addResourceTreeChangeListener(
+            this, null);
+        service.addResourceOwnershipChangeListener(
+            this, null);
+        service.addSubjectChangeListener(
+            this, null);
+        service.addRoleChangeListener(
+            this, null);
+        service.addPermissionChangeListener(
+            this, null);
+        service.addResourceCreationListener(
+            this, null);
+        service.addResourceChangeListener(
+            this, null);
+		service.addResourceDeletionListener(
+			this, null);
+        service.addResourceClassChangeListener(
+            this, null);
+        service.addAttributeClassChangeListener(
+            this, null);
+        service.addAttributeDefinitionChangeListener(
+            this, null);
+        this.service = service;
+    }
+    
+    /**
+     * Unregister the multiplexer from an <code>EventService</code>.
+     */
+    public void unregister()
+    {
+        if(service != null)
+        {   
+            service.removePermissionAssignmentChangeListener( 
+                this, null);
+            service.removePermissionAssociationChangeListener(
+                this, null);
+            service.removeRoleAssignmentChangeListener(
+                this, null);
+            service.removeRoleImplicationChangeListener(
+                this, null);
+            service.removeResourceClassInheritanceChangeListener(
+                this, null);
+            service.removeResourceClassAttributesChangeListener(
+                this, null);
+            service.removeResourceTreeChangeListener(
+                this, null);
+            service.removeResourceOwnershipChangeListener(
+                this, null);
+            service.removeSubjectChangeListener(
+                this, null);
+            service.removeRoleChangeListener(
+                this, null);
+            service.removePermissionChangeListener(
+                this, null);
+            service.removeResourceCreationListener(
+                this, null);
+            service.removeResourceChangeListener(
+                this, null);
+			service.removeResourceDeletionListener(
+				this, null);
+            service.removeResourceClassChangeListener(
+                this, null);
+            service.removeAttributeClassChangeListener(
+                this, null);
+            service.removeAttributeDefinitionChangeListener(
+                this, null);
+            service = null;
+        }
+    }    
+
+    // processing method to be implemented by descendants ////////////////////
+    
+    /**
+     * The event processing method to be implemented by concrete multiplexer
+     * classess. 
+     *
+     * @param type the type of the event (same as the name of the interface
+     *        with 'Listener' suffix removed).
+     * @param entity1 the identifier of the first entity involved.
+     * @param entity2 the identifier of the second entity involved or
+     *        <code>1</code>.
+     * @param entity3 the identifier of the third entity involved or
+     *        <code>-1</code>
+     * @param added the 'added' argument of the event methods
+     */
+    protected abstract void event(String type, long entity1, long entity2,
+                                  long entity3, boolean added);
+    
+    // PermissionAssociationChangeListener interface /////////////////////////
+
+    /**
+     * Called when permission associations on a resource class / perimission
+     * change. 
+     *
+     * @param resource the resource.
+     * @param pa the permission association.
+     * @param added <code>true</code> if the permission was added,
+     *        <code>false</code> if removed.
+     */
+    public void permissionsChanged(PermissionAssociation association, boolean added)
+    {
+        event("PermissionAssociationChange",
+              association.getResourceClass().getId(),
+              association.getPermission().getId(),
+              -1,
+              added);
+    }
+    
+    // PermissionAssignmentChangeListener interface //////////////////////////
+
+    /**
+     * Called when permission assignemts on the <code>resource</code> change.
+     *
+     * @param resource the resource.
+     * @param pa the permission assignment.
+     * @param added <code>true</code> if the permission was added,
+     *        <code>false</code> if removed.
+     */
+    public void permissionsChanged(PermissionAssignment assignment, boolean added)
+    {
+        event("PermissionAssignmentChange",
+              assignment.getResource().getId(),
+              assignment.getRole().getId(),
+              assignment.getPermission().getId(),
+              added
+        );
+    }
+    
+    // RoleAssignmentChangeListener inteface /////////////////////////////////
+    
+    /**
+     * Called when role assignemts on the <code>subject</code> change.
+     *
+     * @param ra the role assignment.
+     * @param added <code>true</code> if the role assignment was added,
+     *        <code>false</code> if removed.
+     */
+    public void rolesChanged(RoleAssignment ra, boolean added)
+    {
+        event("RoleAssignmentChange", 
+              ra.getSubject().getId(),
+              ra.getRole().getId(),
+              -1,
+              added
+        );
+    }
+
+    // RoleImplicationChangeListener interface ///////////////////////////////
+    
+    /**
+     * Called when role implications change.
+     *
+     * @param implication the {@link RoleImplication}.
+     * @param added <code>true</code> if the implication was added,
+     *        <code>false</code> if removed.
+     */
+    public void roleChanged(RoleImplication implication, boolean added)
+    {
+        event("RoleImplicationChange",
+              implication.getSuperRole().getId(),
+              implication.getSubRole().getId(),
+              -1,
+              added
+        );
+    }
+
+    // ResourceClassInheritanceChangeListener inteface ///////////////////////
+
+    /**
+     * Called when resource class inheritance relationships change.
+     *
+     * @param inheritance the {@link ResourceClassInheritance}.
+     * @param added <code>true</code> if the relationship was added,
+     *        <code>false</code> if removed.
+     */
+    public void inheritanceChanged(ResourceClassInheritance inheritance, boolean added)
+    {
+        event("ResourceClassInheritanceChange", 
+              inheritance.getParent().getId(),
+              inheritance.getChild().getId(),
+              -1,
+              added
+        );
+    }
+
+    // ResourceClassAttributesChangeListener interface ///////////////////////
+
+    /**
+     * Called when resource class attribute declarations change.
+     *
+     * @param attribute the {@link AttributeDefinition}.
+     * @param added <code>true</code> if the attribute was added,
+     *        <code>false</code> if removed.
+     */
+    public void attributesChanged(AttributeDefinition attribute, boolean added)
+    {
+        event("ResourceClassAttributesChange",
+              attribute.getId(),
+              -1,
+              -1,
+              added);
+    }
+    
+    // ResourceTreeChangeListener interface //////////////////////////////////
+    
+    /**
+     * Called when the parent of the <code>resource</code> changes.
+     *
+     * @param resource the resource.
+     * @param oldParent the former parent of the resource.
+     */
+    public void resourceTreeChanged(ResourceInheritance item, boolean added)
+    {
+        event("ResourceTreeChange",
+              item.getParent().getId(),
+              item.getChild().getId(),
+              -1,
+              added);
+    }
+
+    /**
+     * Called when resource ownership changes.
+     *
+     * @param item the ownership information
+     * @param added <code>true</code> if the relationship was added,
+     *        <code>false</code> if removed.
+     */
+    public void resourceOwnershipChanged(ResourceOwnership item, boolean added)
+    {
+        event("ResourceOwnershipChange",
+              item.getOwner().getId(),
+              item.getResource().getId(),
+              -1,
+              added);
+    }
+
+    /**
+     * Called when <code>Subject</code>'s data change.
+     *
+     * @param Subject the subject that changed.
+     */
+    public void subjectChanged(Subject item)
+    {
+        event("SubjectChange",
+              item.getId(),
+              -1,
+              -1,
+              false);
+    }
+    
+    /**
+     * Called when <code>Role</code>'s data change.
+     *
+     * @param Role the role that changed.
+     */
+    public void roleChanged(Role item)
+    {
+        event("RoleChange",
+              item.getId(),
+              -1,
+              -1,
+              false);
+    }
+
+    /**
+     * Called when <code>Permission</code>'s data change.
+     *
+     * @param Permission the permission that changed.
+     */
+    public void permissionChanged(Permission item)
+    {
+        event("PermissionChange",
+              item.getId(),
+              -1,
+              -1,
+              false);
+    }
+
+    /**
+     * Called when <code>Resource</code> is being created.
+     *
+     * @param the newly created resorce.
+     */
+    public void resourceCreated(Resource resource)
+    {
+        event("ResourceCreation",
+              resource.getId(),
+              -1,
+              -1,
+              false);
+    }
+
+    /**
+     * Called when <code>Resource</code>'s data change.
+     *
+     * @param Resource the resource that changed.
+     * @param Subject the subject that performed the change.
+     */
+    public void resourceChanged(Resource item, Subject subject)
+    {
+        event("ResourceChange",
+              item.getId(),
+              subject != null ? subject.getId() : -1,
+              -1,
+              false);
+    }
+
+	/**
+	 * Called when <code>Resource</code> is deleted.
+	 *
+	 * @param Resource the resource that changed.
+	 * @param Subject the subject that performed the change.
+	 */
+	public void resourceDeleted(Resource item)
+	{
+		event("ResourceDeletion",
+			  item.getId(),
+			  -1,
+			  -1,
+			  false);
+	}
+
+    /**
+     * Called when <code>ResourceClass</code>'s data change.
+     *
+     * @param ResourceClass the resourceClass that changed.
+     */
+    public void resourceClassChanged(ResourceClass item)
+    {
+        event("ResourceClassChange",
+              item.getId(),
+              -1,
+              -1,
+              false);
+    }
+
+    /**
+     * Called when <code>AttributeClass</code>'s data change.
+     *
+     * @param AttributeClass the attributeClass that changed.
+     */
+    public void attributeClassChanged(AttributeClass item)
+    {
+        event("AttributeClassChange",
+              item.getId(),
+              -1,
+              -1,
+              false);
+    }
+
+    /**
+     * Called when <code>AttributeDefinition</code>'s data change.
+     *
+     * @param AttributeDefinition the attributeDefinition that changed.
+     */
+    public void attributeDefinitionChanged(AttributeDefinition item)
+    {
+        event("AttributeDefinitionChange",
+              item.getId(),
+              -1,
+              -1,
+              false);
+    }
+}
+
