@@ -72,7 +72,7 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.1 2004-03-10 16:31:53 zwierzem Exp $
+ * @version $Id: RelationImplTest.java,v 1.2 2004-03-11 12:55:21 zwierzem Exp $
  */
 public class RelationImplTest extends MockObjectTestCase
 {
@@ -267,6 +267,86 @@ public class RelationImplTest extends MockObjectTestCase
 		assertFalse(invRelation.hasRef(resource1, resource1));
 		mockResource1.expect(atLeastOnce()).method("getId").will(returnValue(8L));
 		assertFalse(invRelation.hasRef(resource1, resource1));
+		
+		// modifications --------------------------------------------------------------------------
+		
+		// add
+		// add to one that has rels
+		relation.add(1L, 8L);
+		assertTrue(relation.hasRef(1L, 8L));
+		assertTrue(relation.getInverted().hasRef(8L, 1L));
+
+		assertEquals("avg mapping size", relation.getAvgMappingSize(), 7F/3F, 0.01F);
+		assertEquals("avg mapping size", relation.getInverted().getAvgMappingSize(), 7F/4F, 0.01F);
+
+		// add non existant rel
+		relation.add(5L, 8L);
+		assertTrue(relation.hasRef(5L, 8L));
+		assertTrue(relation.getInverted().hasRef(8L, 5L));
+
+		assertEquals("avg mapping size", relation.getAvgMappingSize(), 8F/4F, 0.01F);
+		assertEquals("avg mapping size", relation.getInverted().getAvgMappingSize(), 8F/4F, 0.01F);
+
+		// add already existant rel
+		relation.add(5L, 8L);
+		assertTrue(relation.hasRef(5L, 8L));
+		assertTrue(relation.getInverted().hasRef(8L, 5L));
+
+		assertEquals("avg mapping size", relation.getAvgMappingSize(), 8F/4F, 0.01F);
+		assertEquals("avg mapping size", relation.getInverted().getAvgMappingSize(), 8F/4F, 0.01F);
+
+		// add non existant rel
+		relation.add(9L, 11L);
+		assertTrue(relation.hasRef(9L, 11L));
+		assertTrue(relation.getInverted().hasRef(11L, 9L));
+
+		assertEquals("avg mapping size", relation.getAvgMappingSize(), 9F/5F, 0.01F);
+		assertEquals("avg mapping size", relation.getInverted().getAvgMappingSize(), 9F/5F, 0.01F);
+
+		assertFalse(relation.hasRef(9L, 1L));
+		assertFalse(relation.getInverted().hasRef(1L, 9L));
+
+		//remove
+		// remove from one that has many rels
+		relation.remove(1L, 8L);
+		assertFalse(relation.hasRef(1L, 8L));
+		assertFalse(relation.getInverted().hasRef(8L, 1L));
+
+		assertEquals("avg mapping size", relation.getAvgMappingSize(), 8F/5F, 0.01F);
+		assertEquals("avg mapping size", relation.getInverted().getAvgMappingSize(), 8F/5F, 0.01F);
+
+		// remove one to one rel
+		relation.remove(3L, 6L);
+		assertFalse(relation.hasRef(3L, 6L));
+		assertFalse(relation.getInverted().hasRef(6L, 3L));
+
+		assertEquals("avg mapping size", relation.getAvgMappingSize(), 7F/4F, 0.01F);
+		assertEquals("avg mapping size", relation.getInverted().getAvgMappingSize(), 7F/5F, 0.01F);
+
+		// remove not existing rel
+		assertFalse(relation.hasRef(15L, 12L));
+		assertFalse(relation.getInverted().hasRef(12L, 15L));
+		relation.remove(15L, 12L);
+		assertFalse(relation.hasRef(15L, 12L));
+		assertFalse(relation.getInverted().hasRef(12L, 15L));
+
+		assertEquals("avg mapping size", relation.getAvgMappingSize(), 7F/4F, 0.01F);
+		assertEquals("avg mapping size", relation.getInverted().getAvgMappingSize(), 7F/5F, 0.01F);
+
+		// remove one to one rel
+		relation.remove(9L, 11L);
+		assertFalse(relation.hasRef(9L, 11L));
+		assertFalse(relation.getInverted().hasRef(11L, 9L));
+
+		assertEquals("avg mapping size", relation.getAvgMappingSize(), 6F/3F, 0.01F);
+		assertEquals("avg mapping size", relation.getInverted().getAvgMappingSize(), 6F/4F, 0.01F);
+		
+		// clear
+		relation.clear();
+		assertEquals("avg mapping size", relation.getAvgMappingSize(), 0F, 0.01F);
+		assertEquals("avg mapping size", relation.getInverted().getAvgMappingSize(), 0F, 0.01F);
+		assertFalse(relation.hasRef(1L, 4L));
+		assertFalse(relation.getInverted().hasRef(4L, 1L));
     }
 
     private class RelationContentsResultSet implements ResultSet
