@@ -81,13 +81,13 @@
     <dependency>
       <groupId>nanocontainer</groupId>
       <artifactId>nanocontainer</artifactId>
-      <version>cheddar</version>
+      <version>1.0-beta-1.pico-1.0</version>
       <url>http://nanocontainer.org/</url>
     </dependency>
     <dependency>
       <groupId>picocontainer</groupId>
       <artifactId>picocontainer</artifactId>
-      <version>1.0-RC-1</version>
+      <version>1.0-ledge-1</version>
        <url>http://picocontainer.org/</url>
     </dependency>
     <dependency>
