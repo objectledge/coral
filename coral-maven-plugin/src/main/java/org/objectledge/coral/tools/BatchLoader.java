@@ -37,7 +37,7 @@ import org.objectledge.filesystem.FileSystem;
  * A component for loading a batch of sourcefiles specified by a list file.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski </a>
- * @version $Id: BatchLoader.java,v 1.1 2004-04-29 10:05:41 fil Exp $
+ * @version $Id: BatchLoader.java,v 1.2 2004-04-29 15:52:30 fil Exp $
  */
 public abstract class BatchLoader
 {
@@ -97,6 +97,7 @@ public abstract class BatchLoader
             }
             try
             {
+                System.out.println("    loading "+line);
                 load(fileSystem.getReader(line, fileEncoding));
             }
             catch(Exception e)
