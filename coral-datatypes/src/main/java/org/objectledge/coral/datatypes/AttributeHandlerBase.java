@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.7 2004-12-23 04:39:15 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.8 2004-12-23 04:44:51 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -406,8 +406,8 @@ public abstract class AttributeHandlerBase
         }
         catch(ParseException e)
         {
-            throw new IllegalArgumentException(string+" does not conform to "+pattern+" pattern",
-                e);
+            throw (IllegalArgumentException)new IllegalArgumentException(string+
+                " does not conform to "+pattern+" pattern").initCause(e);
         }
     }
 
