@@ -1,6 +1,7 @@
 package org.objectledge.coral.script;
 
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -133,12 +134,12 @@ public class RMLExecutor
      * @throws EntityDoesNotExistException if no subject corresponing to the
      *         <code>principal</code> exists in the system.
      */
-    public RMLExecutor(CoralSession coralSession, PrintWriter out, 
+    public RMLExecutor(CoralSession coralSession, Writer out, 
         CoralSessionFactory coralSessionFactory)
         throws EntityDoesNotExistException
     {
         this.coralSession = coralSession;
-        this.out = out;
+        this.out = new PrintWriter(out);
         this.coralSessionFactory = coralSessionFactory;
         entities = new RMLEntityResolver(coralSession);
         rootRole = coralSession.getSecurity().getRole(Role.ROOT);
