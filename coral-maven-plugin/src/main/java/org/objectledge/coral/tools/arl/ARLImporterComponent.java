@@ -58,7 +58,7 @@ import org.objectledge.utils.StringUtils;
  * Performs importing data from old style ARL schema database to brand new CORAL scheme.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ARLImporterComponent.java,v 1.11 2005-02-01 23:50:08 pablo Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.12 2005-02-06 22:58:18 pablo Exp $
  */
 public class ARLImporterComponent
 {
@@ -1237,7 +1237,7 @@ public class ARLImporterComponent
             }
             String data = rs.getString("data");
             data = unescape(data);
-            String escapedData = escape(data);
+            String escapedData = data; //escape(data);
             stmt.setLong(1, dataKey);
             stmt.setString(2, escapedData);
             if(data.length() > 255 || escapedData.length() > 255)
@@ -1294,7 +1294,7 @@ public class ARLImporterComponent
             }
             String data = rs.getString("data");
             data = unescape(data);
-            String escapedData = escape(data);
+            String escapedData = data; //escape(data);
             stmt.setLong(1, dataKey);
             stmt.setString(2, escapedData);
             stmt.addBatch();
@@ -1817,8 +1817,10 @@ public class ARLImporterComponent
             String pname = rs.getString("pname");
             String value = rs.getString("value");
             stmt.setLong(1, containerId);
-            stmt.setString(2, escape(unescape(pname)));
-            stmt.setString(3, escape(unescape(value)));
+            stmt.setString(2, unescape(pname));
+            stmt.setString(3, unescape(value));
+            //stmt.setString(2, escape(unescape(pname)));
+            //stmt.setString(3, escape(unescape(value)));
             stmt.addBatch();
             size++;
         }
