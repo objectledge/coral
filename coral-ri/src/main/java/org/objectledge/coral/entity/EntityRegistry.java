@@ -1,7 +1,6 @@
 package org.objectledge.coral.entity;
 
 import java.lang.reflect.Method;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +18,8 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
+import org.objectledge.database.persistence.PicoPersistentFactory;
+import org.picocontainer.PicoContainer;
 
 /**
  * This class manages 'by id' 'by name' and 'all' registires for a specific
@@ -69,13 +70,14 @@ public class EntityRegistry
      * @param persistence the Persistence subsystem.
      * @param cacheFactory the CacheFactory.
      * @param database the Database to operate on.
+     * @param dependencyContainer the container of object dependencies.
      * @param log the Logger to use.
      * @param kind the semantic name of the entity type.
      * @param type the entity implementation class.
      * @throws ConfigurationException if the cache is not configured properly.
      */
     public EntityRegistry(Persistence persistence, Caching cacheFactory, Database database, 
-        Logger log, 
+        PicoContainer dependencyContainer, Logger log, 
         String kind, final Class type)
         throws ConfigurationException
     {
@@ -97,11 +99,14 @@ public class EntityRegistry
                 " does not implement net.labeo.services.persietence.Persistent");
         }
         
-        // TODO initialize PersistentFactory
+        this.factory = new PicoPersistentFactory(dependencyContainer, type);
 
-        // TODO lookup AbstractEntity.setName, it's in our package
-                
         Class cl = type;
+        if(AbstractEntity.class.isAssignableFrom(type))
+        {
+            // AbstractEntity has setName() that is local to our package
+            cl = AbstractEntity.class;
+        }
         while(setName == null && cl != null)
         {
             try
@@ -112,6 +117,11 @@ public class EntityRegistry
             {
                 cl = cl.getSuperclass();
             }       
+        }
+        if(setName == null || !setName.isAccessible())
+        {
+            throw new IllegalArgumentException(type.getName()+
+                " does not have an accessible setName(String) method");
         }
         setupCache(cacheFactory, kind);
     }
