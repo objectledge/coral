@@ -50,6 +50,11 @@ $imports.add($attr.getFQJavaType())##
 $imports.add("org.objectledge.coral.store.ModificationNotPermitedException")##
 #end    
 #end
+#foreach($attr in $requiredAttributes)
+#if(!$attr.primitive)
+$imports.add($attr.getFQJavaType())##
+#end
+#end
 ##
 $header##
 
