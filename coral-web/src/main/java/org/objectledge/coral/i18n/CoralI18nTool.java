@@ -40,7 +40,7 @@ import org.objectledge.templating.tools.ContextToolFactory;
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.1 2004-07-07 13:09:05 pablo Exp $
+ * @version $Id: CoralI18nTool.java,v 1.2 2004-07-08 08:31:03 pablo Exp $
  */
 public class CoralI18nTool extends I18nTool
 {
@@ -63,6 +63,6 @@ public class CoralI18nTool extends I18nTool
      */
     public String getName(Resource resource)
     {
-        return get(resource.getResourceClass().getName()+"."+resource.getName(), resource.getName());
+        return get("resource."+resource.getResourceClass().getName()+"."+resource.getName(), resource.getName());
     }
 }
