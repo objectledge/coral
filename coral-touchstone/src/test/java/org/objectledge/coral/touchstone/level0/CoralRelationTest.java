@@ -33,6 +33,7 @@ import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
+import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.relation.Relation;
 import org.objectledge.coral.relation.RelationModification;
@@ -44,7 +45,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationTest.java,v 1.1 2004-03-17 14:55:08 zwierzem Exp $
+ * @version $Id: CoralRelationTest.java,v 1.2 2004-03-17 15:35:01 zwierzem Exp $
  */
 public class CoralRelationTest extends CoralTestCase
 {
@@ -88,7 +89,7 @@ public class CoralRelationTest extends CoralTestCase
 		//stmt.execute("INSERT INTO coral_resource VALUES(9,1,1,'resource8',1,NOW(),1,1,NOW())");
     }
     
-	public void testCreateRelation()
+	public void testCreateGetDeleteRelation()
 		throws Exception
 	{
 		Relation relation2 = null;
@@ -117,6 +118,32 @@ public class CoralRelationTest extends CoralTestCase
 		expectedTable.addRow(new Object[] { new Long(relation2.getId()), "relation2" });
 
 		ITable actualTable = databaseConnection.createQueryTable("coral_relation",
+			"SELECT * FROM coral_relation ORDER BY name");            
+		databaseConnection.close();
+		assertEquals(expectedTable, actualTable);
+		
+		Relation relation3 = session.getRelationManager().getRelation("relation2");
+		assertEquals(relation2, relation3);
+
+		Relation relation4 = session.getRelationManager().getRelation(relation2.getId());
+		assertEquals(relation2, relation4);
+
+		try
+		{
+			Relation relation5 = session.getRelationManager().getRelation("does not exist");
+			fail("should throw exception");
+		}
+		catch (EntityDoesNotExistException e)
+		{
+			// ok
+		}
+		
+		session.getRelationManager().deleteRelation(relation2);
+		expectedTable = new DefaultTable("coral_relation",
+			coralRelationColumns);
+		expectedTable.addRow(new Object[] { new Long(relation.getId()), "relation" });
+
+		actualTable = databaseConnection.createQueryTable("coral_relation",
 			"SELECT * FROM coral_relation ORDER BY name");            
 		databaseConnection.close();
 		assertEquals(expectedTable, actualTable);
@@ -235,6 +262,4 @@ public class CoralRelationTest extends CoralTestCase
 		databaseConnection.close();
 		assertEquals(expectedTable, actualTable);
     }
-    
-    
 }
