@@ -45,7 +45,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityTest.java,v 1.6 2004-04-22 18:03:16 zwierzem Exp $
+ * @version $Id: CoralSecurityTest.java,v 1.7 2004-08-30 07:49:26 rafal Exp $
  */
 public class CoralSecurityTest
     extends CoralTestCase
@@ -302,13 +302,13 @@ public class CoralSecurityTest
         throws Exception
     {
         Statement stmt = databaseConnection.getConnection().createStatement();
-        stmt.execute("INSERT INTO coral_resource_class VALUES(2, "+
+        stmt.execute("INSERT INTO coral_resource_class VALUES(3, "+
             "'alt_node', 'org.objectledge.coral.datatypes.NodeImpl',"+ 
             "'org.objectledge.coral.datatypes.GenericResourceHandler', '', 4)");
-        stmt.execute("INSERT INTO coral_resource_class_inheritance VALUES(1,2)");
+        stmt.execute("INSERT INTO coral_resource_class_inheritance VALUES(1,3)");
         stmt.execute("INSERT INTO coral_permission VALUES(1,'permission')");
         stmt.execute("INSERT INTO coral_permission_association VALUES(1,1)");
-        stmt.execute("INSERT INTO coral_resource VALUES(2,2,1,'resource',1,NOW(),1,1,NOW())");
+        stmt.execute("INSERT INTO coral_resource VALUES(2,3,1,'resource',1,NOW(),1,1,NOW())");
         stmt.execute("INSERT INTO coral_role VALUES(3, 'role')");
         stmt.execute("INSERT INTO coral_role_implication VALUES(1,3)");
         stmt.execute("INSERT INTO coral_permission_assignment VALUES(2,3,1,'1',1,NOW())");

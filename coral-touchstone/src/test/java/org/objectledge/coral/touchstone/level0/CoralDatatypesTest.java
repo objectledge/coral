@@ -52,7 +52,7 @@ import org.objectledge.parameters.Parameters;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralDatatypesTest.java,v 1.4 2004-04-22 18:03:16 zwierzem Exp $
+ * @version $Id: CoralDatatypesTest.java,v 1.5 2004-08-30 07:49:25 rafal Exp $
  */
 public class CoralDatatypesTest extends CoralTestCase
 {
@@ -164,93 +164,93 @@ public class CoralDatatypesTest extends CoralTestCase
     {
         super.setUp();
         Statement stmt = databaseConnection.getConnection().createStatement();
-        stmt.execute("INSERT INTO coral_resource_class VALUES(2, "+
+        stmt.execute("INSERT INTO coral_resource_class VALUES(3, "+
             "'test', 'org.objectledge.coral.datatypes.NodeImpl',"+ 
             "'org.objectledge.coral.datatypes.GenericResourceHandler', '', 0)");
         
-        stmt.execute("INSERT INTO coral_resource VALUES(2,2,1,'resource',1,NOW(),1,1,NOW())");
+        stmt.execute("INSERT INTO coral_resource VALUES(2,3,1,'resource',1,NOW(),1,1,NOW())");
 
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(12, 2, 1,  NULL, 'string_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 12, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(21, 3, 1,  NULL, 'string_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 21, 1)");
         stmt.execute("INSERT INTO coral_attribute_string VALUES(1, 'value')");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_string')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(13, 2, 2,  NULL, 'text_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 13, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(22, 3, 2,  NULL, 'text_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 22, 1)");
         stmt.execute("INSERT INTO coral_attribute_text VALUES(1, 'value')");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_text')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(14, 2, 3,  NULL, 'boolean_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 14, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(23, 3, 3,  NULL, 'boolean_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 23, 1)");
         stmt.execute("INSERT INTO coral_attribute_boolean VALUES(1, '1')");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_boolean')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(15, 2, 4,  NULL, 'integer_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 15, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(24, 3, 4,  NULL, 'integer_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 24, 1)");
         stmt.execute("INSERT INTO coral_attribute_integer VALUES(1, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_integer')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(16, 2, 5,  NULL, 'long_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 16, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(25, 3, 5,  NULL, 'long_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 25, 1)");
         stmt.execute("INSERT INTO coral_attribute_long VALUES(1, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_long')");
 
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(17, 2, 6,  NULL, 'number_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 17, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(26, 3, 6,  NULL, 'number_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 26, 1)");
         stmt.execute("INSERT INTO coral_attribute_number VALUES(1, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_number')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(18, 2, 7,  NULL, 'date_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 18, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(27, 3, 7,  NULL, 'date_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 27, 1)");
         stmt.execute("INSERT INTO coral_attribute_date VALUES(1, NOW())");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_date')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(19, 2, 8,  NULL, 'resource_class_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 19, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(28, 3, 8,  NULL, 'resource_class_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 28, 1)");
         stmt.execute("INSERT INTO coral_attribute_resource_class VALUES(1, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_resource_class')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(20, 2, 9,  NULL, 'resource_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 20, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(29, 3, 9,  NULL, 'resource_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 29, 1)");
         stmt.execute("INSERT INTO coral_attribute_resource VALUES(1, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_resource')");
 
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(21, 2, 10, NULL, 'subject_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 21, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(30, 3, 10, NULL, 'subject_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 30, 1)");
         stmt.execute("INSERT INTO coral_attribute_subject VALUES(1, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_subject')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(22, 2, 11, NULL, 'role_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 22, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(31, 3, 11, NULL, 'role_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 31, 1)");
         stmt.execute("INSERT INTO coral_attribute_role VALUES(1, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_role')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(23, 2, 12, NULL, 'permission_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 23, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(32, 3, 12, NULL, 'permission_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 32, 1)");
         stmt.execute("INSERT INTO coral_permission VALUES(1,'permission')");
         stmt.execute("INSERT INTO coral_permission VALUES(2,'permission2')");
         stmt.execute("INSERT INTO coral_attribute_permission VALUES(1, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_permission')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(24, 2, 13, NULL, 'date_range_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 24, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(33, 3, 13, NULL, 'date_range_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 33, 1)");
         stmt.execute("INSERT INTO coral_attribute_date_range VALUES(1, NOW(), NOW())");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_date_range')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(25, 2, 14, NULL, 'parameters_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 25, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(34, 3, 14, NULL, 'parameters_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 34, 1)");
         stmt.execute("DELETE FROM ledge_parameters");
         stmt.execute("INSERT INTO ledge_parameters VALUES(1, 'key', 'value')");
         stmt.execute("DELETE FROM ledge_id_table WHERE table_name = 'ledge_parameters'");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'ledge_parameters')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(26, 2, 15, NULL, 'resource_list_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 26, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(35, 3, 15, NULL, 'resource_list_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 35, 1)");
         stmt.execute("INSERT INTO coral_attribute_resource_list VALUES(1, 0, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_resource_list')");
         
-        stmt.execute("INSERT INTO coral_attribute_definition VALUES(27, 2, 16, NULL, 'weak_resource_list_attr', 0)");
-        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 27, 1)");
+        stmt.execute("INSERT INTO coral_attribute_definition VALUES(36, 3, 16, NULL, 'weak_resource_list_attr', 0)");
+        stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 36, 1)");
         stmt.execute("INSERT INTO coral_attribute_weak_resource_list VALUES(1, 0, 1)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_weak_resource_list')");
 
