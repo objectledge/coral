@@ -43,7 +43,7 @@ import org.objectledge.database.Database;
 import org.jcontainer.dna.Logger;
 
 /**
- * An implementation of <code>coral.test.Node</code> Coral resource class.
+ * An implementation of <code>coral.Node</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
@@ -54,7 +54,7 @@ public class NodeImpl
     // initialization /////////////////////////////////////////////////////////
 
     /**
-     * Creates a blank <code>coral.test.Node</code> resource wrapper.
+     * Creates a blank <code>coral.Node</code> resource wrapper.
      *
      * <p>This constructor should be used by the handler class only. Use 
      * <code>load()</code> and <code>create()</code> methods to create
@@ -72,7 +72,7 @@ public class NodeImpl
     // static methods ////////////////////////////////////////////////////////
 
     /**
-     * Retrieves a <code>coral.test.Node</code> resource instance from the store.
+     * Retrieves a <code>coral.Node</code> resource instance from the store.
      *
      * <p>This is a simple wrapper of StoreService.getResource() method plus
      * the typecast.</p>
@@ -90,13 +90,13 @@ public class NodeImpl
         {
             throw new IllegalArgumentException("resource #"+id+" is "+
                                                res.getResourceClass().getName()+
-                                               " not coral.test.Node");
+                                               " not coral.Node");
         }
         return (Node)res;
     }
 
     /**
-     * Creates a new <code>coral.test.Node</code> resource instance.
+     * Creates a new <code>coral.Node</code> resource instance.
      *
      * @param session the CoralSession
      * @param name the name of the new resource
@@ -107,7 +107,7 @@ public class NodeImpl
     {
         try
         {
-            ResourceClass rc = session.getSchema().getResourceClass("coral.test.Node");
+            ResourceClass rc = session.getSchema().getResourceClass("coral.Node");
             Map attrs = new HashMap();
             Resource res = session.getStore().createResource(name, parent, rc, attrs);
             if(!(res instanceof Node))
