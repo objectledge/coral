@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * A common base class for {@link QueryService} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.4 2004-08-30 07:02:32 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.5 2004-08-30 07:06:06 rafal Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery
@@ -270,26 +270,22 @@ public abstract class AbstractCoralQueryImpl
     protected ASTclassAndAliasSpecifier[] getItems(ASTclassAndAliasSpecifierList list)
     {
         int count = list.jjtGetNumChildren();
-        List items = new ArrayList(count);
+        ASTclassAndAliasSpecifier[] result = new ASTclassAndAliasSpecifier[count];
         for(int i=0; i<count; i++)
         {
-            items.add(list.jjtGetChild(i));
+            result[i] = (ASTclassAndAliasSpecifier)list.jjtGetChild(i);
         }
-        ASTclassAndAliasSpecifier[] result = new ASTclassAndAliasSpecifier[items.size()];
-        items.toArray(result);
         return result;
     }
     
     protected ASTorderBySpecifier[] getItems(ASTorderByList list)
     {
         int count = list.jjtGetNumChildren();
-        List items = new ArrayList(count);
+        ASTorderBySpecifier[] result = new ASTorderBySpecifier[count];
         for(int i=0; i<count; i++)
         {
-            items.add(list.jjtGetChild(i));
+        	result[i] = (ASTorderBySpecifier)list.jjtGetChild(i);
         }
-        ASTorderBySpecifier[] result = new ASTorderBySpecifier[items.size()];
-        items.toArray(result);
         return result;
     }
     
