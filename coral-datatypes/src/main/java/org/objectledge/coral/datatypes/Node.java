@@ -45,7 +45,7 @@ public interface Node
     // constants /////////////////////////////////////////////////////////////
 
     /** The name of the ARL resource class. */    
-    public static final String CLASS_NAME = "coral.Node";
+    public static final String CLASS_NAME = "coral.test.Node";
      /**
      * Returns the path name of the resource.
      *
@@ -112,6 +112,6 @@ public interface Node
      * @return the last modification time for this resource.
      */
     public Date getModificationTime();
-    
+
     // @custom methods ///////////////////////////////////////////////////////
 }
