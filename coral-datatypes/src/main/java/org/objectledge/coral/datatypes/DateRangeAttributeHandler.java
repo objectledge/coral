@@ -1,6 +1,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,7 +18,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link DateRange} objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateRangeAttributeHandler.java,v 1.2 2004-03-09 15:40:43 pablo Exp $
+ * @version $Id: DateRangeAttributeHandler.java,v 1.3 2004-03-15 15:47:10 fil Exp $
  */
 public class DateRangeAttributeHandler
     extends AttributeHandlerBase
@@ -54,12 +55,13 @@ public class DateRangeAttributeHandler
         throws SQLException
     {
         long id = database.getNextId(getTable());
-        Statement stmt = conn.createStatement();
-        stmt.execute(
-            "INSERT INTO "+getTable()+"(data_key, start_date, end_date) VALUES ("+id+", '"+
-            ((DateRange)value).getStart().toString()+"', '"+
-            ((DateRange)value).getEnd().toString()+"')"
-        );
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO "+getTable()+
+            "(data_key, start_date, end_date) VALUES (?, ?, ?)");
+        stmt.setLong(1, id);
+        stmt.setDate(2, new java.sql.Date(((DateRange)value).getStart().getTime()));
+        stmt.setDate(3, new java.sql.Date(((DateRange)value).getEnd().getTime()));
+        stmt.execute();
+        stmt.close();
         return id;
     }
 
@@ -105,12 +107,14 @@ public class DateRangeAttributeHandler
     {
         Statement stmt = conn.createStatement();
         checkExists(id, stmt);
-        stmt.execute(
-            "UPDATE "+getTable()+" SET start_date = '"+
-            ((DateRange)value).getStart().toString()+", end_date = '"+
-            ((DateRange)value).getEnd().toString()+
-            "' WHERE data_key = "+id
-        );
+        stmt.close();
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE "+getTable()+
+            " SET start_date = ? , end_date = ? WHERE data_key = ?");
+        pstmt.setDate(1, new java.sql.Date(((DateRange)value).getStart().getTime()));
+        pstmt.setDate(2, new java.sql.Date(((DateRange)value).getEnd().getTime()));
+        pstmt.setLong(3, id);
+        pstmt.execute();
+        pstmt.close();
     }
     
     /**

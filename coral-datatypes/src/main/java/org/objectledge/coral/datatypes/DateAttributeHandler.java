@@ -1,6 +1,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,12 +13,13 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * Handles persistency of <code>java.util.Date</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateAttributeHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: DateAttributeHandler.java,v 1.2 2004-03-15 15:47:10 fil Exp $
  */
 public class DateAttributeHandler
     extends AttributeHandlerBase
@@ -54,11 +56,11 @@ public class DateAttributeHandler
         throws SQLException
     {
         long id = database.getNextId(getTable());
-        Statement stmt = conn.createStatement();
-        stmt.execute(
-            "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-            id+", '"+((Date)value).toString()+"')"
-        );
+        PreparedStatement stmt = conn.prepareStatement("INSERT INTO "+getTable()+
+            "(data_key, data) VALUES (?, ?)");
+        stmt.setLong(1, id);
+        stmt.setDate(2, new java.sql.Date(((Date)value).getTime()));
+        stmt.execute();
         return id;
     }
 
@@ -100,13 +102,23 @@ public class DateAttributeHandler
     public void update(long id, Object value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
-        Statement stmt = conn.createStatement();
-        checkExists(id, stmt);
-        stmt.execute(
-            "UPDATE "+getTable()+" SET data = '"+
-            ((Date)value).toString()+
-            "' WHERE data_key = "+id
-        );
+        Statement stmt = null;
+        PreparedStatement pstmt = null;
+        try
+        {
+            stmt = conn.createStatement();
+            checkExists(id, stmt);
+            pstmt = conn.prepareStatement("UPDATE "+getTable()+" SET data = ?"+
+                " WHERE data_key = ?");
+            pstmt.setDate(1, new java.sql.Date(((Date)value).getTime()));
+            pstmt.setLong(2, id);
+            pstmt.execute();
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+            DatabaseUtils.close(pstmt);
+        }
     }
 
     // meta information //////////////////////////////////////////////////////
