@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.9 2004-08-23 11:46:30 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.10 2004-08-23 12:01:29 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -310,7 +310,6 @@ public class PersistentResource
     protected void initAttributeMap(Resource delegate, ResourceClass resourceClass)
     {
     	super.initAttributeMap(delegate, resourceClass);
-    	System.out.println("initAttributeMap "+resourceClass.getName()+" DB TABLE "+resourceClass.getDbTable());
     	dbTable = resourceClass.getDbTable();
     	keyColumns = new String[1];
     	keyColumns[0] = dbTable+"_id";
