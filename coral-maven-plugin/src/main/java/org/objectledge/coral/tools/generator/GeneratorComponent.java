@@ -53,7 +53,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.13 2004-04-29 15:53:15 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.14 2004-05-07 11:41:56 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -342,11 +342,17 @@ public class GeneratorComponent
             String prefix = (String)i.next();
             if(prefix.charAt(prefix.length()-1) == '*')
             {
-                return name.startsWith(prefix.substring(0, prefix.length()-1));
+                if(name.startsWith(prefix.substring(0, prefix.length()-1)))
+                {
+                    return true;
+                }
             }
             else
             {
-                return name.equals(prefix);
+                if(name.equals(prefix))
+                {
+                    return true;
+                }
             }
         }
         return false;
