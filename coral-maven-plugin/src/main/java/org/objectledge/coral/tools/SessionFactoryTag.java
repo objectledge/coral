@@ -27,6 +27,13 @@
 // 
 package org.objectledge.coral.tools;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.jelly.JellyTagException;
@@ -62,7 +69,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.2 2004-04-30 07:02:34 fil Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.3 2004-05-04 12:46:45 fil Exp $
  */
 public class SessionFactoryTag
     extends BaseTagSupport
@@ -157,9 +164,12 @@ public class SessionFactoryTag
         throws Exception
     {
         checkAttribute(dataSource, "dataSource");
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        ClassLoader cl = getClassLoader(); 
         
         MutablePicoContainer container = new DefaultPicoContainer();
+        Thread.currentThread().setContextClassLoader(cl);
+        container.registerComponentInstance(ClassLoader.class, cl);
+
         IdGenerator idGenerator = new IdGenerator(dataSource);
         Context context = new Context();
         Transaction transaction = new JotmTransaction(0, context, getLog(Transaction.class));
@@ -204,5 +214,33 @@ public class SessionFactoryTag
     private Logger getLog(Class cl)
     {
         return new Log4JLogger(org.apache.log4j.Logger.getLogger(cl));
+    }
+
+    public ClassLoader getClassLoader() 
+        throws MalformedURLException
+    {
+        if(getMavenContext() != null)
+        {
+            String dependencyClasspath = getMavenContext().getProject().getDependencyClasspath();
+            String buildDest = (String)getMavenContext().getVariable("maven.build.dest");
+            StringTokenizer st = new StringTokenizer(dependencyClasspath, System.getProperty("path.separator"));
+            List temp = new ArrayList(st.countTokens()+1);
+            while(st.hasMoreTokens())
+            {
+                temp.add(st.nextToken());
+            }
+            temp.add(buildDest+"/");
+            URL[] urls = new URL[temp.size()];
+            for(int i = 0; i<temp.size(); i++)
+            {
+                String element = (String)temp.get(i);
+                urls[i] = new URL("file://"+element);
+            }
+            return new URLClassLoader(urls, getClass().getClassLoader());
+        }
+        else
+        {
+            return getClass().getClassLoader();
+        }
     }
 }
