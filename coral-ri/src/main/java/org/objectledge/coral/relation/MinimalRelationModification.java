@@ -40,7 +40,7 @@ import org.objectledge.coral.relation.RelationModification.RemoveOperation;
  * This class holds a minimal representation of a {@link RelationModification}
  * for a given {@link Relation}.
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModification.java,v 1.2 2004-02-25 11:51:00 zwierzem Exp $
+ * @version $Id: MinimalRelationModification.java,v 1.3 2004-03-02 10:04:01 zwierzem Exp $
  */
 public class MinimalRelationModification
 {
@@ -66,7 +66,7 @@ public class MinimalRelationModification
 		{
 			visitor = new ConstructingVisitor(relation);
 		}
-		modification.visit(visitor);
+		modification.accept(visitor);
 	}
 	
 	// data retrieval api ---------------------------------------------------------------------

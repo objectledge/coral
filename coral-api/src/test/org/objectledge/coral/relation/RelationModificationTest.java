@@ -36,7 +36,7 @@ import org.objectledge.coral.store.Resource;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModificationTest.java,v 1.3 2004-03-01 16:44:23 zwierzem Exp $
+ * @version $Id: RelationModificationTest.java,v 1.4 2004-03-02 10:03:49 zwierzem Exp $
  */
 public class RelationModificationTest  extends MockObjectTestCase
 {
@@ -87,15 +87,15 @@ public class RelationModificationTest  extends MockObjectTestCase
 		modification.removeInv((Resource) mockResource1.proxy());
 		
 		Visitor1 v1 = new Visitor1();
-		modification.visit(v1);
+		modification.accept(v1);
 		
 		modification.clear();
 		Visitor2 v2 = new Visitor2();
-		modification.visit(v2);
+		modification.accept(v2);
 		
 		modification.reset();
 		Visitor3 v3 = new Visitor3();
-		modification.visit(v3);
+		modification.accept(v3);
 	}
 
 	public void testModificationOperation()
