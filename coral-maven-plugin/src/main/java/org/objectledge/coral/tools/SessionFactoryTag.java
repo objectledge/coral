@@ -69,7 +69,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.3 2004-05-04 12:46:45 fil Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.4 2004-05-06 13:42:47 pablo Exp $
  */
 public class SessionFactoryTag
     extends BaseTagSupport
@@ -111,7 +111,8 @@ public class SessionFactoryTag
             throw new MissingAttributeException("dataSource attribute undefined");
         }
         MavenJellyContext context = getPluginContext();
-        CoralSessionFactory factory = (CoralSessionFactory)context.getVariable(pluginContextVariable);
+        CoralSessionFactory factory = (CoralSessionFactory)context.
+            getVariable(pluginContextVariable);
         if(factory == null)
         {
             try

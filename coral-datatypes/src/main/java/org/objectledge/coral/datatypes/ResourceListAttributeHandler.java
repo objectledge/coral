@@ -21,7 +21,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceListAttributeHandler.java,v 1.4 2004-04-01 08:54:27 fil Exp $
+ * @version $Id: ResourceListAttributeHandler.java,v 1.5 2004-05-06 13:38:43 pablo Exp $
  */
 public class ResourceListAttributeHandler
     extends AttributeHandlerBase
@@ -45,14 +45,7 @@ public class ResourceListAttributeHandler
     // AttributeHandler interface ////////////////////////////////////////////
 
     /**
-     * Creates a new attribute instance.
-     *
-     * @param value the value of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @return the identifier of the new attribute.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public long create(Object value, Connection conn)
         throws SQLException
@@ -103,13 +96,7 @@ public class ResourceListAttributeHandler
     }
 
     /**
-     * Retrieves an attribute value.
-     *
-     * @param id the identifier of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -128,16 +115,7 @@ public class ResourceListAttributeHandler
     }
 
     /**
-     * Modifies an existing attribute.
-     *
-     * @param id the identifier of the attribute.
-     * @param value the value of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws EntityDoesNotExistException if the attribute with specified id
-     *         does not exist. 
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void update(long id, Object value, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -197,18 +175,7 @@ public class ResourceListAttributeHandler
     }
 
     /**
-     * Removes an existing attribute.
-     *
-     * <p>This method is implemented here because it is identical for all
-     * generic attributes.</p>
-     *
-     * @param id the identifier of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     * @throws EntityDoesNotExistException if the attribute with specified id
-     *         does not exist. 
+     * {@inheritDoc}
      */
     public void delete(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -222,7 +189,7 @@ public class ResourceListAttributeHandler
     // integrity constraints ////////////////////////////////////////////////    
 
     /**
-     * Is a composite attribute (wraps the actual values iside an object).
+     * {@inheritDoc}
      */
     public boolean isComposite()
     {
@@ -230,11 +197,7 @@ public class ResourceListAttributeHandler
     }
 
     /**
-     * Checks if the attributes of this type can impose integrity constraints 
-     * on the data store.
-     * 
-     * @return <code>true</code> if the attribute can impose constraints on the
-     * data store. 
+     * {@inheritDoc}
      */
     public boolean containsResourceReferences()
     {
@@ -242,11 +205,8 @@ public class ResourceListAttributeHandler
     }
     
     /**
-     * Returns the resources referenced by this attribute.
-     * 
-     * @param value the attribute value.
-     * @return resources referenced by this attribute.
-     * */
+     * {@inheritDoc}
+     */
     public Resource[] getResourceReferences(Object value)
     {
         List list = (List)value;
@@ -259,14 +219,7 @@ public class ResourceListAttributeHandler
     }
     
     /**
-     * Removes all resource attributes from the attribute value.
-     * 
-     * <p>This method may be called during deletion of a group of 
-     * interdependant resources.</p>
-     * 
-     * @param value attribute value.
-     * @return <code>true</code> if the attribute value should be
-     *         removed form the resource.
+     * {@inheritDoc}
      */
     public boolean clearResourceReferences(Object value)
     {
@@ -277,14 +230,7 @@ public class ResourceListAttributeHandler
     // protected /////////////////////////////////////////////////////////////
 
     /**
-     * Converts a string into an attribute object.
-     *
-     * <p>This implementation convers the string <code>@empty</code> into a
-     * new, empty ParameterContainer implementation.
-     * 
-     * @param string the string to convert.
-     * @return the attribute object, or <code>null</code> if conversion not
-     *         supported. 
+     * {@inheritDoc}
      */
     protected Object fromString(String string)
     {

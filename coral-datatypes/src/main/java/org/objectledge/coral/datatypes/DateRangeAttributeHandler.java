@@ -18,7 +18,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link DateRange} objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateRangeAttributeHandler.java,v 1.4 2004-04-29 14:10:43 fil Exp $
+ * @version $Id: DateRangeAttributeHandler.java,v 1.5 2004-05-06 13:41:12 pablo Exp $
  */
 public class DateRangeAttributeHandler
     extends AttributeHandlerBase
@@ -42,14 +42,7 @@ public class DateRangeAttributeHandler
     // AttributeHandler interface ////////////////////////////////////////////
 
     /**
-     * Creates a new attribute instance.
-     *
-     * @param value the value of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @return the identifier of the new attribute.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public long create(Object value, Connection conn)
         throws SQLException
@@ -66,14 +59,7 @@ public class DateRangeAttributeHandler
     }
 
     /**
-     * Retrieves an attribute value.
-     *
-     * @param id the identifier of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     * @throws EntityDoesNotExistException when failed to retireve data.
+     * {@inheritDoc}
      */
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -91,16 +77,7 @@ public class DateRangeAttributeHandler
     }
 
     /**
-     * Modifies an existing attribute.
-     *
-     * @param id the identifier of the attribute.
-     * @param value the value of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws EntityDoesNotExistException if the attribute with specified id
-     *         does not exist. 
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void update(long id, Object value, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -118,7 +95,7 @@ public class DateRangeAttributeHandler
     }
     
     /**
-     * Is a composite attribute (wraps the actual values iside an object).
+     * {@inheritDoc}
      */
     public boolean isComposite()
     {
@@ -128,15 +105,7 @@ public class DateRangeAttributeHandler
     // protected /////////////////////////////////////////////////////////////
 
     /**
-     * Converts a string into an attribute object.
-     *
-     * <p>The string should be composed of two date represtntations in format
-     * described in <code>java.util.Date.parse(String)</code> method
-     * documentation, separated by :: (two consequtive colon characters).</p>
-     * 
-     * @param string the string to convert.
-     * @return the attribute object, or <code>null</code> if conversion not
-     *         supported. 
+     * {@inheritDoc}
      */
     protected Object fromString(String string)
     {
@@ -151,10 +120,7 @@ public class DateRangeAttributeHandler
     }
 
     /**
-     * Converts an attribute value into a human readable string.
-     *
-     * @param value the value to convert.
-     * @return a human readable string.
+     * {@inheritDoc}
      */
     public String toPrintableString(Object value)
     {

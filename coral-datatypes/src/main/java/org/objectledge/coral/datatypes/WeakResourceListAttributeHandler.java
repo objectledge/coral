@@ -19,7 +19,7 @@ import org.objectledge.database.Database;
  * objects containing weak reference to resources.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: WeakResourceListAttributeHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: WeakResourceListAttributeHandler.java,v 1.2 2004-05-06 13:38:43 pablo Exp $
  */
 public class WeakResourceListAttributeHandler
     extends ResourceListAttributeHandler
@@ -43,13 +43,7 @@ public class WeakResourceListAttributeHandler
     // AttributeHandler interface ////////////////////////////////////////////
 
     /**
-     * Retrieves an attribute value.
-     *
-     * @param id the identifier of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -70,11 +64,7 @@ public class WeakResourceListAttributeHandler
     // integrity constraints ////////////////////////////////////////////////    
 
     /**
-     * Checks if the attributes of this type can impose integrity constraints 
-     * on the data store.
-     * 
-     * @return <code>true</code> if the attribute can impose constraints on the
-     * data store. 
+     * {@inheritDoc}
      */
     public boolean containsResourceReferences()
     {
@@ -82,11 +72,8 @@ public class WeakResourceListAttributeHandler
     }
     
     /**
-     * Returns the resources referenced by this attribute.
-     * 
-     * @param value the attribute value.
-     * @return resources referenced by this attribute.
-     * */
+     * {@inheritDoc}
+     */
     public Resource[] getResourceReferences(Object value)
     {
         return new Resource[0];
@@ -95,14 +82,7 @@ public class WeakResourceListAttributeHandler
     // protected /////////////////////////////////////////////////////////////
 
     /**
-     * Converts a string into an attribute object.
-     *
-     * <p>This implementation convers the string <code>@empty</code> into a
-     * new, empty ParameterContainer implementation.
-     * 
-     * @param string the string to convert.
-     * @return the attribute object, or <code>null</code> if conversion not
-     *         supported. 
+     * {@inheritDoc}
      */
     protected Object fromString(String string)
     {

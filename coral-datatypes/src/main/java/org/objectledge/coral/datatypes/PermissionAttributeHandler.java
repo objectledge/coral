@@ -17,7 +17,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link Permission} references.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionAttributeHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: PermissionAttributeHandler.java,v 1.2 2004-05-06 13:38:43 pablo Exp $
  */
 public class PermissionAttributeHandler
     extends AttributeHandlerBase
@@ -39,14 +39,7 @@ public class PermissionAttributeHandler
     }
     
     /**
-     * Creates a new attribute instance.
-     *
-     * @param value the value of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @return the identifier of the new attribute.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public long create(Object value, Connection conn)
         throws SQLException
@@ -61,13 +54,7 @@ public class PermissionAttributeHandler
     }
 
     /**
-     * Retrieves an attribute value.
-     *
-     * @param id the identifier of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -86,16 +73,7 @@ public class PermissionAttributeHandler
     }
 
     /**
-     * Modifies an existing attribute.
-     *
-     * @param id the identifier of the attribute.
-     * @param value the value of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws EntityDoesNotExistException if the attribute with specified id
-     *         does not exist. 
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void update(long id, Object value, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -112,13 +90,7 @@ public class PermissionAttributeHandler
     // meta information //////////////////////////////////////////////////////
     
     /**
-     * Provides information about comparison operations supported by the
-     * attribute type.
-     *
-     * <p>The returned value is a bitwise sum of the CONDITION_*
-     * constants.</p>
-     * @return information about comparison operations supported by the
-     * attribute type.
+     * {@inheritDoc}
      */
     public int getSupportedConditions()
     {
@@ -128,15 +100,7 @@ public class PermissionAttributeHandler
     // protected /////////////////////////////////////////////////////////////
 
     /**
-     * Converts a string into an attribute object.
-     *
-     * <p>If the string starts with a number, it is considered to be permission
-     * id. Otherwise it is considered permission name. If the name is ambigous,
-     * an exception will be thrown.</p>
-     * 
-     * @param string the string to convert.
-     * @return the attribute object, or <code>null</code> if conversion not
-     *         supported. 
+     * {@inheritDoc}
      */
     protected Object fromString(String string)
     {
