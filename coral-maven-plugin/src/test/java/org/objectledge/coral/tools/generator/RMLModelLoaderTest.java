@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoaderTest.java,v 1.6 2004-03-23 16:16:41 fil Exp $
+ * @version $Id: RMLModelLoaderTest.java,v 1.7 2004-03-28 09:01:01 fil Exp $
  */
 public class RMLModelLoaderTest
     extends LedgeTestCase
@@ -248,5 +248,31 @@ public class RMLModelLoaderTest
         assertEquals(0, a1.getFlags());
         modelLoader.execute("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET FLAGS REQUIRED;");
         assertEquals(AttributeFlags.REQUIRED, a1.getFlags());
+    }
+    
+    // border cases
+    
+    public void testNumericIds()
+    {
+        try
+        {
+            modelLoader.execute("ALTER RESOURCE CLASS 1 SET NAME foo;");
+            fail("should throw");
+        }
+        catch(Exception e)
+        {
+            assertEquals("there were exceptions running the script", e.getMessage());
+            assertEquals("numeric ids are not supported", e.getCause().getMessage());
+        }
+        try
+        {
+            modelLoader.execute("ALTER ATTRIBUTE CLASS 1 SET NAME foo;");
+            fail("should throw");
+        }
+        catch(Exception e)
+        {
+            assertEquals("there were exceptions running the script", e.getMessage());
+            assertEquals("numeric ids are not supported", e.getCause().getMessage());
+        }
     }
 }
