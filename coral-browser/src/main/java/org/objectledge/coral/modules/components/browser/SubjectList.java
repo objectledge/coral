@@ -5,6 +5,7 @@ import org.objectledge.context.Context;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.table.comparator.SubjectNameComparator;
+import org.objectledge.i18n.I18nContext;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableException;
@@ -13,7 +14,6 @@ import org.objectledge.table.TableState;
 import org.objectledge.table.TableStateManager;
 import org.objectledge.table.TableTool;
 import org.objectledge.table.generic.ListTableModel;
-import org.objectledge.web.mvc.MVCContext;
 
 /**
  * The base browse component class.
@@ -31,9 +31,9 @@ public class SubjectList
     {
         try
         {
-            MVCContext mvcContext = MVCContext.getMVCContext(context);            
+            I18nContext i18nContext = I18nContext.getI18nContext(context);
 			TableColumn[] columns = new TableColumn[1];
-			columns[0] = new TableColumn("name", new SubjectNameComparator(mvcContext.getLocale()));
+			columns[0] = new TableColumn("name", new SubjectNameComparator(i18nContext.getLocale()));
 			TableState state = tableStateManager.getState(context, "coral:components:subject_list");
 			if (state.isNew())
 			{

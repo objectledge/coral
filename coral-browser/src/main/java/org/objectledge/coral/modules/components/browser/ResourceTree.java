@@ -4,12 +4,12 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.table.CoralTableModel;
+import org.objectledge.i18n.I18nContext;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.table.TableModel;
 import org.objectledge.table.TableState;
 import org.objectledge.table.TableStateManager;
 import org.objectledge.table.TableTool;
-import org.objectledge.web.mvc.MVCContext;
 
 /**
  * The base browse component class.
@@ -27,7 +27,7 @@ public class ResourceTree
     {
         try
         {
-            MVCContext mvcContext = MVCContext.getMVCContext(context);
+            I18nContext i18nContext = I18nContext.getI18nContext(context);
             TableState state = tableStateManager.getState(context, "coral:components:resource_tree");
             if(state.isNew())
             {
@@ -41,7 +41,7 @@ public class ResourceTree
                 state.setPageSize(0);
                 state.setSortColumnName("name");
             }
-            TableModel model = new CoralTableModel(coralSession, mvcContext.getLocale());
+            TableModel model = new CoralTableModel(coralSession, i18nContext.getLocale());
             TableTool helper = new TableTool(state, model);
             templatingContext.put("table", helper);
         }
