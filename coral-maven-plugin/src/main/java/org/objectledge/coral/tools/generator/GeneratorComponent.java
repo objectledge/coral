@@ -51,7 +51,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.6 2004-03-31 14:23:08 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.7 2004-03-31 14:58:45 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -93,7 +93,7 @@ public class GeneratorComponent
     private Template genericImplTemplate;
     
     /** Package prefices used for grouping. */
-    private List packagePrefices = new ArrayList();
+    private List importGroups = new ArrayList();
     
     /** License contents. */
     private String license;
@@ -107,7 +107,7 @@ public class GeneratorComponent
      * @param fileEncoding the character encoding to use for reading and writing files.
      * @param sourceFiles the path of source file list.
      * @param targetDir the target directory.
-     * @param packagePrefices the comma separated list of package prefixes, for grouping.
+     * @param importGroups the comma separated list of package prefixes, for grouping.
      * @param licensePath the path to the license.
      * @param fileSystem the file system to operate on.
      * @param templating the templating component.
@@ -117,7 +117,7 @@ public class GeneratorComponent
      * @throws Exception if the component could not be initialized.
      */
     public GeneratorComponent(String fileEncoding, String sourceFiles, 
-        String targetDir, String packagePrefices, String licensePath, FileSystem fileSystem,
+        String targetDir, String importGroups, String licensePath, FileSystem fileSystem,
         Templating templating, Schema schema, RMLModelLoader loader, PrintStream out)
         throws Exception
     {
@@ -131,10 +131,10 @@ public class GeneratorComponent
         this.sourceFiles = sourceFiles;
         this.targetDir = targetDir;
         
-        StringTokenizer st = new StringTokenizer(packagePrefices, ",");
+        StringTokenizer st = new StringTokenizer(importGroups, ",");
         while(st.hasMoreTokens())
         {
-            this.packagePrefices.add(st.nextToken());
+            this.importGroups.add(st.nextToken());
         }
 
         if(fileSystem.exists(licensePath))
@@ -379,7 +379,7 @@ public class GeneratorComponent
         TemplatingContext context = templating.createContext();
         Map hints = new HashMap();
         String custom = read(path, hints);
-        ImportTool imports = new ImportTool(rc.getPackageName(), packagePrefices);
+        ImportTool imports = new ImportTool(rc.getPackageName(), importGroups);
 
         List importHint = (List)hints.get("import");
         if(importHint != null)

@@ -45,15 +45,15 @@
   <!-- // wrapper generator ///////////////////////////////////////////////////////////////// -->
   <goal name="coral:generator">
     <m:pluginVar plugin="coral-maven-plugin" var="generatorFileEncoding" property="coral.generator.file.encoding"/>
-    <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageGroups" property="coral.generator.package.groups"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorImportGroups" property="coral.generator.import.groups"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorHeaderFile" property="coral.generator.header.file"/>
-    <m:set var="generatorSourcesList" value="${coral.generator.sources.list}"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSourcesList" property="coral.generator.sources.list"/>
     <j:set var="generatorTargetDirectory" value="${pom.build.sourceDirectory.substring(basedir.length())}"/>
     <m:paramCheck value="${generatorSourcesList}" message="coral.generator.sources.list undefined" fail="true"/>
     <j:if test="${maven.debugOn}">
       <echo>
         coral.generator.file.encoding=${generatorFileEncoding}
-	    coral.generator.package.groups=${generatorPackageGroups}
+	    coral.generator.import.groups=${generatorImportGroups}
 	    coral.generator.header.file=${generatorHeaderFile}
 	    coral.generator.sources.list=${generatorSourcesList}
 	    coral.generator.target.directory=${generatorTargetDirectory}
@@ -62,7 +62,7 @@
     <coral:generator
       baseDir="${basedir}"
       fileEncoding="${generatorFileEncoding}"
-      packagePrefices="${generatorPackageGroups}"
+      importGroups="${generatorImportGroups}"
       licensePath="${generatorHeaderFile}"
       sourceFiles="${generatorSourcesList}"
       targetDir="${generatorTargetDirectory}"/>

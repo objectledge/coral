@@ -40,7 +40,7 @@ import org.objectledge.templating.velocity.VelocityTemplating;
  * An interface between GeneratorComponent and Maven.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorBean.java,v 1.3 2004-03-31 14:21:22 fil Exp $
+ * @version $Id: GeneratorBean.java,v 1.4 2004-03-31 14:58:45 fil Exp $
  */
 public class GeneratorBean
 {
@@ -48,7 +48,7 @@ public class GeneratorBean
     private String fileEncoding;
     private String sourceFiles;
     private String targetDir;
-    private String packagePrefices;
+    private String importGroups;
     private String licensePath;
 
     /**
@@ -77,7 +77,7 @@ public class GeneratorBean
         RMLModelLoader loader = new RMLModelLoader(schema);
 
         GeneratorComponent generator = new GeneratorComponent(fileEncoding, sourceFiles, 
-            targetDir, packagePrefices, licensePath, fileSystem, templating, schema, loader,
+            targetDir, importGroups, licensePath, fileSystem, templating, schema, loader,
             System.out);
         generator.execute();
     }
@@ -117,11 +117,11 @@ public class GeneratorBean
     /**
      * Sets the packagePrefices.
      *
-     * @param packagePrefices The packagePrefices to set.
+     * @param importGroups The packagePrefices to set.
      */
-    public void setPackagePrefices(String packagePrefices)
+    public void setImportGroups(String importGroups)
     {
-        this.packagePrefices = packagePrefices;
+        this.importGroups = importGroups;
     }
     
     /**
