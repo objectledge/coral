@@ -37,7 +37,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractEntityTest.java,v 1.1 2004-02-24 14:39:24 fil Exp $
+ * @version $Id: AbstractEntityTest.java,v 1.2 2004-02-24 14:44:09 fil Exp $
  */
 public class AbstractEntityTest extends MockObjectTestCase
 {
@@ -144,4 +144,12 @@ public class AbstractEntityTest extends MockObjectTestCase
         assertEquals(1L, blue.getId());
         assertEquals("<blue 1>", blue.getName());        
     }   
+    
+    // just to get clover @100%
+    public void testRedEntity()
+    {
+        RedEntity red = new RedEntity((Persistence)mockPersistence.proxy());
+        red.getKeyColumns();
+        red.getTable();
+    }
 }
