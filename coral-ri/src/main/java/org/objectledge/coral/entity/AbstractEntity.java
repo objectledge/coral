@@ -9,7 +9,7 @@ import org.objectledge.database.persistence.PersistentObject;
 /**
  * A base of all Coral entitity implementations.
  *
- * @version $Id: AbstractEntity.java,v 1.6 2005-01-17 10:46:17 rafal Exp $
+ * @version $Id: AbstractEntity.java,v 1.7 2005-01-17 11:18:37 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractEntity
@@ -69,7 +69,7 @@ public abstract class AbstractEntity
      *
      * @return the hashcode of the object.
      */
-    public int hashCode()
+    public final int hashCode()
     {
         return hashCode;
     }
