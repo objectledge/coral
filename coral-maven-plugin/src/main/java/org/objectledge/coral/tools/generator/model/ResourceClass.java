@@ -38,13 +38,16 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClassFlags;
+import org.objectledge.coral.schema.SchemaIntegrityException;
 
 /**
  * Represents a Coral ResourceClass.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClass.java,v 1.7 2004-03-24 14:40:07 fil Exp $
+ * @version $Id: ResourceClass.java,v 1.8 2004-03-25 13:33:10 fil Exp $
  */
 public class ResourceClass
     extends Entity
@@ -116,7 +119,14 @@ public class ResourceClass
      */    
     public String getFQImplClassName()
     {
-        return packageName+"."+implClassName;
+        if(packageName.length() > 0)
+        {
+            return packageName+"."+implClassName;
+        }
+        else
+        {
+            return implClassName;
+        }
     }    
     
     /**
@@ -136,7 +146,14 @@ public class ResourceClass
      */    
     public String getFQInterfaceClassName()
     {
-        return packageName+"."+interfaceClassName;
+        if(packageName.length() > 0)
+        {
+            return packageName+"."+interfaceClassName;
+        }
+        else
+        {
+            return interfaceClassName;
+        }
     }
     
     /**
@@ -156,7 +173,7 @@ public class ResourceClass
      */    
     public List getDeclaredAttributes()
     {
-        return new ArrayList(attributes.values());
+        return sortAttributes(new ArrayList(attributes.values()));
     }
 
     /**
@@ -174,7 +191,37 @@ public class ResourceClass
             ResourceClass rc = (ResourceClass)i.next();
             result.addAll(rc.getDeclaredAttributes());
         }
-        return new ArrayList(result);
+        return sortAttributes(result);
+    }
+    
+    /**
+     * Retrns an attribute delcared by this class or it's ancestor.
+     * 
+     * @param name name of the attribute.
+     * @return the attribute.
+     * @throws EntityDoesNotExistException if the attribute is not found.
+     */
+    public Attribute getAttribute(String name)
+        throws EntityDoesNotExistException
+    {
+        if(attributes.containsKey(name))
+        {
+            return getDeclaredAttribute(name);
+        }
+        List parents = getAllParentClasses();
+        for(Iterator i = parents.iterator(); i.hasNext();)
+        {
+            ResourceClass rc = (ResourceClass)i.next();
+            try
+            {
+                return rc.getDeclaredAttribute(name);
+            }
+            catch(EntityDoesNotExistException e)
+            {
+                continue;
+            }
+        }
+        throw new EntityDoesNotExistException("attribute "+name+" not found");
     }
 
     /**
@@ -276,9 +323,10 @@ public class ResourceClass
         Set result = new TreeSet();
         LinkedList stack = new LinkedList();
         stack.addLast(this);
+        ResourceClass rc;
         while(!stack.isEmpty())
         {
-            ResourceClass rc = (ResourceClass)stack.removeLast();
+            rc = (ResourceClass)stack.removeLast();
             result.addAll(rc.getDeclaredParentClasses());
             stack.addAll(rc.getDeclaredParentClasses());
         }
@@ -299,6 +347,10 @@ public class ResourceClass
         if(parentClasses.size() == 1)
         {
             return (ResourceClass)parentClasses.values().toArray()[0];
+        }
+        if(parentClasses.size() > 1)
+        {
+            throw new IllegalStateException("unable to determine implementaion parent class, " +                "use @extend");
         }
         throw new IllegalStateException("primary wrapper generation not supported");
     }
@@ -358,9 +410,21 @@ public class ResourceClass
      * Adds an attribute to this resource class.
      * 
      * @param attr an attribute.
+     * @throws EntityExistsException if the class already delcares an attribute by that name.
      */    
     public void addAttribute(Attribute attr)
+        throws EntityExistsException
     {
+        if(attributes.containsKey(attr.getName()))
+        {
+            throw new EntityExistsException("class "+getName()+" already declares attribute named "+
+                attr.getName());
+        }
+        if(getAllAttributes().contains(attr))
+        {
+            throw new EntityExistsException("class "+getName()+" already inherits attribute named "+
+                attr.getName());            
+        }
         attributes.put(attr.getName(), attr);
         attr.setDeclaringClass(this);
     }
@@ -369,9 +433,16 @@ public class ResourceClass
      * Removes an attribute from this resource class.
      * 
      * @param attr an attribute.
+     * @throws EntityDoesNotExistException if the class does not declare the attribute. 
      */
     public void deleteAttribute(Attribute attr)
+        throws EntityDoesNotExistException
     {
+        if(!attributes.containsKey(attr.getName()))
+        {
+            throw new EntityDoesNotExistException("class "+getName()+" does not declare attribute "+
+                "named "+attr.getName());
+        }
         attributes.remove(attr.getName());
         attr.setDeclaringClass(null);
     }
@@ -380,9 +451,24 @@ public class ResourceClass
      * Adds an parent class to this resource class.
      * 
      * @param parentClass a parent class.
+     * @throws SchemaIntegrityException if parentClass contains conflicting attributes.
+     * @throws CircularDependencyException if parentClass is a descendant of this class.
      */
     public void addParentClass(ResourceClass parentClass)
+        throws SchemaIntegrityException, CircularDependencyException
     {
+        List intersection = getAllAttributes();
+        intersection.retainAll(parentClass.getAllAttributes()); 
+        if(!intersection.isEmpty())
+        {
+            throw new SchemaIntegrityException("class "+parentClass.getName()+
+                " contains attributes with conficting names");
+        }
+        if(parentClass.getAllParentClasses().contains(this))
+        {
+            throw new CircularDependencyException(parentClass.getName()+" is a descendant of "+
+                getName());
+        }
         parentClasses.put(parentClass.getName(), parentClass);
     }
     
@@ -403,7 +489,7 @@ public class ResourceClass
      */
     public void setImplParentClass(ResourceClass implParentClass)
     {
-        if(getDeclaredParentClasses().contains(implParentClass))
+        if(!getDeclaredParentClasses().contains(implParentClass))
         {
             throw new IllegalArgumentException(implParentClass.getName()+
                 " is not a direct parent class of "+getName());
@@ -411,25 +497,50 @@ public class ResourceClass
         this.implParentClass = implParentClass;
     }
     
+    /**
+     * Sets the order in which the attributes should be returned.
+     * 
+     * @param order the desired order.
+     * @throws EntityDoesNotExistException if any of the names in the list does not denote a valid 
+     *         attribute.
+     */
+    public void setAttributeOrder(List order)
+        throws EntityDoesNotExistException
+    {
+        for(Iterator i = order.iterator(); i.hasNext(); )
+        {
+            String name = (String)i.next();
+            getAttribute(name);
+        }
+        attributeOrder = order;
+    }
+    
     /////////////////////////////////////////////////////////////////////////////////////////////
     
     private List sortAttributes(Collection attributes)
     {
-        List result = new ArrayList(attributes.size());
-        for(Iterator i = attributeOrder.iterator(); i.hasNext();)
+        if(attributeOrder != null && attributeOrder.size() > 0)
         {
-            String name = (String)i.next();
-            for(Iterator j=attributes.iterator(); j.hasNext();)
+            List result = new ArrayList(attributes.size());
+            for(Iterator i = attributeOrder.iterator(); i.hasNext();)
             {
-                Attribute attr = (Attribute)j.next();
-                if(attr.getName().equals(name))
+                String name = (String)i.next();
+                for(Iterator j=attributes.iterator(); j.hasNext();)
                 {
-                    j.remove();
-                    result.add(attr);
+                    Attribute attr = (Attribute)j.next();
+                    if(attr.getName().equals(name))
+                    {
+                        j.remove();
+                        result.add(attr);
+                    }
                 }
             }
+            result.addAll(attributes);
+            return result;
         }
-        result.addAll(attributes);
-        return result;
+        else
+        {
+            return new ArrayList(attributes);
+        }
     }
 }
