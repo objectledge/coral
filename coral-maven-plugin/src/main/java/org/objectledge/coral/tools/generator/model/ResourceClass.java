@@ -32,11 +32,13 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.objectledge.coral.entity.EntityDoesNotExistException;
+
 /**
  * Represents a Coral ResourceClass.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClass.java,v 1.1 2004-03-22 11:54:49 fil Exp $
+ * @version $Id: ResourceClass.java,v 1.2 2004-03-22 14:51:51 fil Exp $
  */
 public class ResourceClass
     extends Entity
@@ -107,6 +109,22 @@ public class ResourceClass
     public List getAttributes()
     {
         return new ArrayList(attributes.values());
+    }
+
+
+    /**
+     * @param attributeName the name of the attribute.
+     * @return
+     */
+    public Attribute getAttribute(String attributeName)
+        throws EntityDoesNotExistException
+    {
+        Attribute result = (Attribute)attributes.get(attributeName);
+        if(result == null)
+        {
+            throw new EntityDoesNotExistException("attribute "+attributeName+" not found");
+        }
+        return result;
     }
     
     /**
