@@ -3,9 +3,9 @@
   <pomVersion>3</pomVersion>
   <extend>../ledge-reactor/shared/project.xml</extend>
 
-  <name>Ledge tutorial webapp</name>
-  <id>ledge-tutorial-webapp</id>
-  <groupId>objectledge</groupId>
+  <name>Coral web</name>
+  <id>coral-web</id>
+  <groupId>coral</groupId>
   <currentVersion>0.3-dev</currentVersion>
   
   <dependencies>
@@ -27,18 +27,6 @@
       <version>SNAPSHOT</version>
       <url>http://coral.objectledge.org/modules/coral-ri/</url>
     </dependency>    
-    <dependency>
-      <groupId>coral</groupId>
-      <artifactId>coral-web</artifactId>
-      <version>SNAPSHOT</version>
-      <url>http://coral.objectledge.org/modules/coral-web/</url>
-    </dependency>
-    <dependency>
-      <groupId>coral</groupId>
-      <artifactId>coral-datatypes</artifactId>
-      <version>SNAPSHOT</version>
-      <url>http://coral.objectledge.org/modules/coral-datatypes/</url>
-    </dependency>
     <dependency>
       <groupId>dna</groupId>
       <artifactId>dna-api</artifactId>

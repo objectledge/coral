@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.2 2004-03-23 12:49:10 pablo Exp $ -->
+<!-- $Id: maven.xml,v 1.1 2004-03-23 12:49:00 pablo Exp $ -->
 <project xmlns:j="jelly:core"
          xmlns:ant="jelly:ant">
   <postGoal name="xdoc:register-reports">
