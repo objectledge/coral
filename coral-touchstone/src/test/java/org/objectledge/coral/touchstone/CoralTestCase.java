@@ -31,6 +31,11 @@ import javax.sql.DataSource;
 
 import junit.framework.TestCase;
 
+import org.dbunit.Assertion;
+import org.dbunit.database.DatabaseDataSourceConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
 import org.objectledge.container.LedgeContainer;
 import org.objectledge.coral.CoralSessionFactory;
 import org.objectledge.database.DatabaseUtils;
@@ -41,13 +46,15 @@ import org.objectledge.filesystem.FileSystem;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralTestCase.java,v 1.4 2004-03-12 10:52:12 fil Exp $
+ * @version $Id: CoralTestCase.java,v 1.5 2004-03-12 11:45:57 fil Exp $
  */
 public abstract class CoralTestCase extends TestCase
 {
     protected CoralSessionFactory coralSessionFactory;
     
     protected LedgeContainer container;
+    
+    protected IDatabaseConnection databaseConnection;
     
     private long t;
     
@@ -83,11 +90,26 @@ public abstract class CoralTestCase extends TestCase
         DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesInitial.sql", "UTF-8")); 
         IdGenerator idGenerator = (IdGenerator)container.getContainer().
             getComponentInstanceOfType(IdGenerator.class);
-        idGenerator.getNextId("global_transaction_hack");              
+        idGenerator.getNextId("global_transaction_hack");
+        databaseConnection = new DatabaseDataSourceConnection(ds);
     }
     
     public void tearDown()
     {
         container.killContainer();
+    }
+    
+    // DbUnit assertions
+    
+    public void assertEquals(IDataSet expected, IDataSet actual)
+        throws Exception
+    {
+        Assertion.assertEquals(expected, actual);
+    }
+
+    public void assertEquals(ITable expected, ITable actual)
+        throws Exception
+    {
+        Assertion.assertEquals(expected, actual);
     }
 }
