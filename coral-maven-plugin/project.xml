@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.12 2004-05-26 11:23:30 fil Exp $ -->
+<!-- $Id: project.xml,v 1.13 2004-05-27 10:10:13 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -144,7 +144,7 @@
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>2.1</version>
+      <version>3.0</version>
       <url>http://jakarta.apache.org/commons/collections</url>
     </dependency>
     <dependency>
