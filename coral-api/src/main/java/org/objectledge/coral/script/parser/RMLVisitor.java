@@ -38,6 +38,7 @@ public interface RMLVisitor
   public Object visit(ASTalterResourceClassSetNameStatement node, Object data);
   public Object visit(ASTalterResourceClassSetJavaClassStatement node, Object data);
   public Object visit(ASTalterResourceClassSetHandlerClassStatement node, Object data);
+  public Object visit(ASTalterResourceClassSetDbTableStatement node, Object data);
   public Object visit(ASTalterResourceClassSetFlagsStatement node, Object data);
   public Object visit(ASTalterResourceClassAlterAttributeSetNameStatement node, Object data);
   public Object visit(ASTalterResourceClassAlterAttributeSetFlagsStatement node, Object data);

@@ -1262,6 +1262,11 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(CLASS);
         alterResourceClassSetHandlerClassStatement(rc);
         break;
+      case DB:
+        jj_consume_token(DB);
+        jj_consume_token(TABLE);
+        alterResourceClassSetDbTableStatement(rc);
+        break;
       case FLAGS:
         jj_consume_token(FLAGS);
         alterResourceClassSetFlagsStatement(rc);
@@ -2014,6 +2019,48 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     }
   }
 
+  final public void alterResourceClassSetDbTableStatement(ASTresourceClass resourceClass) throws ParseException {
+ /*@bgen(jjtree) alterResourceClassSetDbTableStatement */
+    ASTalterResourceClassSetDbTableStatement jjtn000 = new ASTalterResourceClassSetDbTableStatement(this, JJTALTERRESOURCECLASSSETDBTABLESTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
+    try {
+      switch (jj_nt.kind) {
+      case STRING:
+      case QUOTED_STRING:
+        jjtn000.dbTable = name();
+        break;
+      case NONE:
+        jj_consume_token(NONE);
+        break;
+      default:
+        jj_la1[49] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+  }
+
   final public void alterResourceClassSetFlagsStatement(ASTresourceClass resourceClass) throws ParseException {
  /*@bgen(jjtree) alterResourceClassSetFlagsStatement */
     ASTalterResourceClassSetFlagsStatement jjtn000 = new ASTalterResourceClassSetFlagsStatement(this, JJTALTERRESOURCECLASSSETFLAGSSTATEMENT);
@@ -2120,7 +2167,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.value = value();
         break;
       default:
-        jj_la1[49] = jj_gen;
+        jj_la1[50] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2191,7 +2238,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[50] = jj_gen;
+        jj_la1[51] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2291,7 +2338,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         entitySpecifier(jjtn000);
         break;
       default:
-        jj_la1[51] = jj_gen;
+        jj_la1[52] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2393,7 +2440,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[52] = jj_gen;
+        jj_la1[53] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2432,7 +2479,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         entitySpecifier(jjtn000);
         break;
       default:
-        jj_la1[53] = jj_gen;
+        jj_la1[54] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2658,7 +2705,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[54] = jj_gen;
+        jj_la1[55] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2697,7 +2744,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         entitySpecifier(jjtn000);
         break;
       default:
-        jj_la1[55] = jj_gen;
+        jj_la1[56] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2834,7 +2881,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           ;
           break;
         default:
-          jj_la1[56] = jj_gen;
+          jj_la1[57] = jj_gen;
           break label_9;
         }
         jj_consume_token(OR);
@@ -2876,7 +2923,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           ;
           break;
         default:
-          jj_la1[57] = jj_gen;
+          jj_la1[58] = jj_gen;
           break label_10;
         }
         jj_consume_token(AND);
@@ -2916,7 +2963,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       primaryExpression();
       break;
     default:
-      jj_la1[58] = jj_gen;
+      jj_la1[59] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -2966,7 +3013,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       jj_consume_token(RPAREN);
       break;
     default:
-      jj_la1[59] = jj_gen;
+      jj_la1[60] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -2998,13 +3045,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         approximationCondition(lhs);
         break;
       default:
-        jj_la1[60] = jj_gen;
+        jj_la1[61] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[61] = jj_gen;
+      jj_la1[62] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3038,7 +3085,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           t = jj_consume_token(STRING);
           break;
         default:
-          jj_la1[62] = jj_gen;
+          jj_la1[63] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3048,7 +3095,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.rhs = t.image;
         break;
       default:
-        jj_la1[63] = jj_gen;
+        jj_la1[64] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3086,7 +3133,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(DOUBLE_EQUALS);
         break;
       default:
-        jj_la1[64] = jj_gen;
+        jj_la1[65] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3102,14 +3149,14 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(SQL_NOT_EQUALS);
         break;
       default:
-        jj_la1[65] = jj_gen;
+        jj_la1[66] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
         {if (true) return RMLOperator.NOT_EQUALS;}
       break;
     default:
-      jj_la1[66] = jj_gen;
+      jj_la1[67] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3144,7 +3191,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           t = jj_consume_token(STRING);
           break;
         default:
-          jj_la1[67] = jj_gen;
+          jj_la1[68] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3154,7 +3201,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.rhs = t.image;
         break;
       default:
-        jj_la1[68] = jj_gen;
+        jj_la1[69] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3199,7 +3246,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         {if (true) return RMLOperator.GREATER_EQUALS;}
       break;
     default:
-      jj_la1[69] = jj_gen;
+      jj_la1[70] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3234,7 +3281,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           t = jj_consume_token(STRING);
           break;
         default:
-          jj_la1[70] = jj_gen;
+          jj_la1[71] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3244,7 +3291,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.rhs = t.image;
         break;
       default:
-        jj_la1[71] = jj_gen;
+        jj_la1[72] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3301,7 +3348,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.alias = name();
         break;
       default:
-        jj_la1[72] = jj_gen;
+        jj_la1[73] = jj_gen;
         ;
       }
       jjtree.closeNodeScope(jjtn000, true);
@@ -3346,7 +3393,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           ;
           break;
         default:
-          jj_la1[73] = jj_gen;
+          jj_la1[74] = jj_gen;
           break label_11;
         }
         jj_consume_token(COMMA);
@@ -3399,13 +3446,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.dir = false;
           break;
         default:
-          jj_la1[74] = jj_gen;
+          jj_la1[75] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
         break;
       default:
-        jj_la1[75] = jj_gen;
+        jj_la1[76] = jj_gen;
         ;
       }
       jjtree.closeNodeScope(jjtn000, true);
@@ -3450,7 +3497,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           ;
           break;
         default:
-          jj_la1[76] = jj_gen;
+          jj_la1[77] = jj_gen;
           break label_12;
         }
         jj_consume_token(COMMA);
@@ -3533,7 +3580,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           ;
           break;
         default:
-          jj_la1[77] = jj_gen;
+          jj_la1[78] = jj_gen;
           break label_13;
         }
         jj_consume_token(COMMA);
@@ -3589,7 +3636,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(NONE);
         break;
       default:
-        jj_la1[78] = jj_gen;
+        jj_la1[79] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3601,7 +3648,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[79] = jj_gen;
+        jj_la1[80] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -3640,14 +3687,14 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.resource = resource();
         break;
       default:
-        jj_la1[84] = jj_gen;
+        jj_la1[85] = jj_gen;
         switch (jj_nt.kind) {
         case FROM:
           jj_consume_token(FROM);
           jjtn000.from = classAndAliasSpecifierList();
           break;
         default:
-          jj_la1[80] = jj_gen;
+          jj_la1[81] = jj_gen;
           ;
         }
         switch (jj_nt.kind) {
@@ -3656,7 +3703,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jjtn000.where = conditionalExpression();
           break;
         default:
-          jj_la1[81] = jj_gen;
+          jj_la1[82] = jj_gen;
           ;
         }
         switch (jj_nt.kind) {
@@ -3666,7 +3713,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jjtn000.orderBy = orderByList();
           break;
         default:
-          jj_la1[82] = jj_gen;
+          jj_la1[83] = jj_gen;
           ;
         }
         switch (jj_nt.kind) {
@@ -3675,7 +3722,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jjtn000.select = selectList();
           break;
         default:
-          jj_la1[83] = jj_gen;
+          jj_la1[84] = jj_gen;
           ;
         }
       jjtree.closeNodeScope(jjtn000, true);
@@ -3720,7 +3767,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.recursive = true;
         break;
       default:
-        jj_la1[85] = jj_gen;
+        jj_la1[86] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -3792,7 +3839,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(NONE);
         break;
       default:
-        jj_la1[86] = jj_gen;
+        jj_la1[87] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -4022,7 +4069,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.canGrant = true;
         break;
       default:
-        jj_la1[87] = jj_gen;
+        jj_la1[88] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -4123,7 +4170,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.resource = resource();
         break;
       default:
-        jj_la1[88] = jj_gen;
+        jj_la1[89] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -4162,7 +4209,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.resource = resource();
         break;
       default:
-        jj_la1[89] = jj_gen;
+        jj_la1[90] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -4204,7 +4251,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.recursive = true;
         break;
       default:
-        jj_la1[90] = jj_gen;
+        jj_la1[91] = jj_gen;
         ;
       }
       jj_consume_token(TO);
@@ -4315,7 +4362,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(SELF);
         break;
       default:
-        jj_la1[91] = jj_gen;
+        jj_la1[92] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -4376,10 +4423,10 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   JavaCharStream jj_input_stream;
   public Token token, jj_nt;
   private int jj_gen;
-  final private int[] jj_la1 = new int[92];
-  final private int[] jj_la1_0 = {0x0,0x0,0x0,0x4004040,0x824000,0x0,0x0,0x0,0x0,0x824000,0x4004040,0x0,0x0,0x8a240100,0x8a240100,0x0,0x8a240100,0x10000,0x1000,0x10000,0x1001000,0x10000,0x0,0x0,0x10000,0x1000,0x80000,0x10000000,0x1000,0x1000,0x10000000,0x200180,0x200080,0x1000,0x200000,0x10000,0x1000,0x0,0x0,0x0,0x80000,0x0,0x0,0x0,0x80000,0x0,0x2000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x200,0x100000,0x100000,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400,0x0,0x400800,0x400800,0x0,0x0,0x0,0x2000,0x40000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
-  final private int[] jj_la1_1 = {0x0,0x0,0x0,0x0,0x20480010,0x0,0x0,0x0,0x0,0x20480010,0x0,0x0,0x0,0x800008,0x800008,0x0,0x800008,0x0,0x41220000,0x0,0xc3220001,0x0,0x41200000,0x82000000,0x0,0x41220000,0xa2,0xa2,0x40000,0x40000,0x80,0x10000000,0x10000000,0x18080,0x10000000,0x0,0x41220000,0x1020000,0x1020000,0x100,0x0,0x0,0x100,0x100,0x0,0x0,0x0,0x40000,0x0,0x0,0x0,0x0,0x80000000,0x0,0x1000000,0x0,0x1000,0x0,0x200,0x0,0x40,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x0,0x4000,0x4000000,0x0,0x100000,0x100,0x0,0x800,0x800,0x100000,0x8000000,};
-  final private int[] jj_la1_2 = {0x14000,0x1c000,0x1c000,0x0,0x8,0x20000,0x80000,0x80000,0x80000,0x8,0x0,0x80000,0x80000,0x10000400,0x400,0x10000000,0x400,0x14000,0x0,0x0,0x4,0x1c000,0x0,0x4,0x1c000,0x0,0x0,0x0,0x1,0x1,0x0,0x0,0x0,0x0,0x0,0x1c000,0x0,0x0,0x0,0x14000,0x0,0x1c000,0x14000,0x14000,0x0,0x2,0x0,0x0,0x1c000,0x40,0x80,0x1c000,0x0,0x1c000,0x0,0x1c000,0x0,0x0,0x34000,0x34000,0xff00000,0x14000,0xc000,0x1c000,0x3000000,0xc000000,0xf000000,0xc000,0x1c000,0xf00000,0xc000,0x1c000,0x0,0x80000,0x0,0x0,0x80000,0x80000,0x1c000,0x0,0x0,0x200,0x0,0x0,0x1c000,0x0,0x1c000,0x100,0x0,0x0,0x0,0x1c000,};
+  final private int[] jj_la1 = new int[93];
+  final private int[] jj_la1_0 = {0x0,0x0,0x0,0x4004040,0x824000,0x0,0x0,0x0,0x0,0x824000,0x4004040,0x0,0x0,0x8a240100,0x8a240100,0x0,0x8a240100,0x10000,0x1000,0x10000,0x1001000,0x10000,0x0,0x0,0x10000,0x1000,0x80000,0x10080000,0x1000,0x1000,0x10000000,0x200180,0x200080,0x1000,0x200000,0x10000,0x1000,0x0,0x0,0x0,0x80000,0x0,0x0,0x0,0x80000,0x0,0x2000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x200,0x100000,0x100000,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400,0x0,0x400800,0x400800,0x0,0x0,0x0,0x2000,0x40000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+  final private int[] jj_la1_1 = {0x0,0x0,0x0,0x0,0x20480010,0x0,0x0,0x0,0x0,0x20480010,0x0,0x0,0x0,0x800008,0x800008,0x0,0x800008,0x0,0x41220000,0x0,0xc3220001,0x0,0x41200000,0x82000000,0x0,0x41220000,0xa2,0xa2,0x40000,0x40000,0x80,0x10000000,0x10000000,0x18080,0x10000000,0x0,0x41220000,0x1020000,0x1020000,0x100,0x0,0x0,0x100,0x100,0x0,0x0,0x0,0x40000,0x0,0x100,0x0,0x0,0x0,0x80000000,0x0,0x1000000,0x0,0x1000,0x0,0x200,0x0,0x40,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x0,0x4000,0x4000000,0x0,0x100000,0x100,0x0,0x800,0x800,0x100000,0x8000000,};
+  final private int[] jj_la1_2 = {0x14000,0x1c000,0x1c000,0x0,0x8,0x20000,0x80000,0x80000,0x80000,0x8,0x0,0x80000,0x80000,0x10000400,0x400,0x10000000,0x400,0x14000,0x0,0x0,0x4,0x1c000,0x0,0x4,0x1c000,0x0,0x0,0x0,0x1,0x1,0x0,0x0,0x0,0x0,0x0,0x1c000,0x0,0x0,0x0,0x14000,0x0,0x1c000,0x14000,0x14000,0x0,0x2,0x0,0x0,0x1c000,0x14000,0x40,0x80,0x1c000,0x0,0x1c000,0x0,0x1c000,0x0,0x0,0x34000,0x34000,0xff00000,0x14000,0xc000,0x1c000,0x3000000,0xc000000,0xf000000,0xc000,0x1c000,0xf00000,0xc000,0x1c000,0x0,0x80000,0x0,0x0,0x80000,0x80000,0x1c000,0x0,0x0,0x200,0x0,0x0,0x1c000,0x0,0x1c000,0x100,0x0,0x0,0x0,0x1c000,};
 
   public RML(java.io.InputStream stream) {
     jj_input_stream = new JavaCharStream(stream, 1, 1);
@@ -4387,7 +4434,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 92; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
   }
 
   public void ReInit(java.io.InputStream stream) {
@@ -4397,7 +4444,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token.next = jj_nt = token_source.getNextToken();
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 92; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
   }
 
   public RML(java.io.Reader stream) {
@@ -4406,7 +4453,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 92; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
   }
 
   public void ReInit(java.io.Reader stream) {
@@ -4416,7 +4463,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token.next = jj_nt = token_source.getNextToken();
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 92; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
   }
 
   public RML(RMLTokenManager tm) {
@@ -4424,7 +4471,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 92; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
   }
 
   public void ReInit(RMLTokenManager tm) {
@@ -4433,7 +4480,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token.next = jj_nt = token_source.getNextToken();
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 92; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
   }
 
   final private Token jj_consume_token(int kind) throws ParseException {
@@ -4480,7 +4527,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 92; i++) {
+    for (int i = 0; i < 93; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

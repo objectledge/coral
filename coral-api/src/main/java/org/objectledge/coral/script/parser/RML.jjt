@@ -587,6 +587,7 @@ void alterResourceClassStatement() #void :
             ( "NAME" alterResourceClassSetNameStatement(rc) ) |
             ( "JAVA" "CLASS" alterResourceClassSetJavaClassStatement(rc) ) |
             ( "HANDLER" "CLASS" alterResourceClassSetHandlerClassStatement(rc) ) |
+            ( "DB" "TABLE" alterResourceClassSetDbTableStatement(rc) ) |
             ( "FLAGS" alterResourceClassSetFlagsStatement(rc) )
         ) |
         "ADD" 
@@ -819,6 +820,17 @@ void alterResourceClassSetHandlerClassStatement(ASTresourceClass resourceClass) 
 }
 {
     jjtThis.handlerClass = name()
+}
+
+void alterResourceClassSetDbTableStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    ( 
+        jjtThis.dbTable = name() | 
+        "NONE" 
+    )
 }
 
 void alterResourceClassSetFlagsStatement(ASTresourceClass resourceClass) :
