@@ -38,7 +38,7 @@ public abstract class BaseBrowserComponent extends BaseCoralComponent
     public String build(Template template) 
         throws BuildException
     {
-        coralSession = coralSessionFactory.getRootSession();
+        coralSession = (CoralSession)context.getAttribute(CoralSession.class);
         parameters = RequestParameters.getRequestParameters(context);
         templatingContext = TemplatingContext.getTemplatingContext(context);
         try
@@ -49,10 +49,6 @@ public abstract class BaseBrowserComponent extends BaseCoralComponent
         catch(Exception e)
         {
             throw new BuildException("Failed to build the view",e);
-        }
-        finally
-        {
-            coralSession.close();
         }
     }    
 

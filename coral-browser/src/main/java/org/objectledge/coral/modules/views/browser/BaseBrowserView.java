@@ -39,7 +39,7 @@ public abstract class BaseBrowserView
     public String build(Template template, String embeddedBuildResults) 
         throws BuildException
     {
-        coralSession = coralSessionFactory.getRootSession();
+        coralSession = (CoralSession)context.getAttribute(CoralSession.class);
         parameters = RequestParameters.getRequestParameters(context);
         templatingContext = TemplatingContext.getTemplatingContext(context);
         try
@@ -50,10 +50,6 @@ public abstract class BaseBrowserView
         catch(ProcessingException e)
         {
             throw new BuildException("Failed to build the view",e);
-        }
-        finally
-        {
-            coralSession.close();
         }
     }
 
