@@ -13,7 +13,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a concrete attribute of an resource class.
  *
- * @version $Id: AttributeDefinitionImpl.java,v 1.8 2004-02-25 13:24:08 fil Exp $
+ * @version $Id: AttributeDefinitionImpl.java,v 1.9 2004-03-01 16:41:10 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeDefinitionImpl
@@ -48,6 +48,7 @@ public class AttributeDefinitionImpl
      *
      * @param persistence the Peristence subsystem.
      * @param coralEventHub the CoralEventHub.
+     * @param coralSchema the CoralSchema.
      */
     AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub, 
         CoralSchema coralSchema)
@@ -63,12 +64,16 @@ public class AttributeDefinitionImpl
      * @param persistence the Peristence subsystem.
      * @param coralEventHub the CoralEventHub.
      * 
+     * @param persistence the persistence subsystem.
+     * @param coralEventHub the event hub.
+     * @param coralSchema the CoralSchema.
+     * 
      * @param name the name of this attribute.
      * @param attributeClass the class of this attribute.
      * @param domain the value domain constraint.
      * @param flags the flags of this attribute.
      */
-    AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub, 
+    public AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub, 
         CoralSchema coralSchema,
         String name, AttributeClass attributeClass, String domain, int flags)
     {

@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.11 2004-02-25 15:57:11 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.12 2004-03-01 16:41:10 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -113,6 +113,7 @@ public class ResourceClassImpl
      *
      * @param persistence the Peristence subsystem.
      * @param instantiator the Instantiator.
+     * @param coralEventHub the event hub.
      * @param coralRegistry the CoralRegistry.
      * 
      * @param name the name of the resource class.
@@ -120,9 +121,11 @@ public class ResourceClassImpl
      *        resource class.
      * @param handlerClass the name of the ResourceHandler implementation
      *        responsible for this resource class.
+     * @param dbTable the database table name.
      * @param flags resource class flags.
+     * @throws JavaClassException if javaClass or handlerClass could not be loaded or instantiated.
      */
-    ResourceClassImpl(Persistence persistence, Instantiator instantiator, 
+    public ResourceClassImpl(Persistence persistence, Instantiator instantiator, 
         CoralEventHub coralEventHub, CoralRegistry coralRegistry,
         String name, String javaClass, String handlerClass, String dbTable, int flags)
         throws JavaClassException
