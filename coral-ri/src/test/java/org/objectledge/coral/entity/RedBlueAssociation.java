@@ -76,7 +76,7 @@ class RedBlueAssociation
      */
     public boolean equals(Object obj)
     {
-        if(obj == null || !RedBlueAssociation.class.isAssignableFrom(obj.getClass()))
+        if(obj == null || !getClass().isAssignableFrom(obj.getClass()))
         {
             return false;
         }
