@@ -31,7 +31,7 @@ package org.objectledge.coral.event;
  * A hub for events routed throughout Coral instance.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: EventHub.java,v 1.1 2004-02-20 12:53:50 fil Exp $
+ * @version $Id: EventHub.java,v 1.2 2004-02-20 14:38:21 fil Exp $
  */
 public interface EventHub
 {
@@ -55,4 +55,11 @@ public interface EventHub
      * @return the whiteboard for local events.
      */
     public CoralEventWhiteboard getLocal();
+    
+    /**
+     * Returns the whiteboard for global events.
+     * 
+     * @return the whiteboard for global events.
+     */
+    public CoralEventWhiteboard getGlobal();
 }
