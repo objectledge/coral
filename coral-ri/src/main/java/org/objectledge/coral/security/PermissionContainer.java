@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceInheritance;
  * A helper class for managing a set of permissions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionContainer.java,v 1.5 2004-03-05 11:52:15 fil Exp $
+ * @version $Id: PermissionContainer.java,v 1.6 2005-01-17 11:30:09 rafal Exp $
  */
 public class PermissionContainer
     implements PermissionAssignmentChangeListener,
@@ -38,9 +38,6 @@ public class PermissionContainer
     /** Resource -> Set of Permissions */
     private Map pCache = new WeakHashMap();
     
-    /** Read-only threadsafe view of {@link #pCache} */
-    private Map cpCache = new WeakHashMap();
-
     /** Respource -> Array of PermissionAssignments */
     private Map paCache = new WeakHashMap();
 
@@ -134,7 +131,6 @@ public class PermissionContainer
                 stack.addAll(children);
             }
         }
-        cpCache = new WeakHashMap(pCache);
     }
 
     // ResourceTreeChangeListener interface /////////////////////////////////////////////////////
@@ -191,29 +187,20 @@ public class PermissionContainer
      * @param res the resource
      * @return the set of permissions
      */
-    private Set buildPermissions(Resource res)
+    private synchronized Set buildPermissions(Resource res)
     {
-        Set ps = (Set)cpCache.get(res);
-        if(ps != null)
+        Set ps = (Set)pCache.get(res);
+        if(ps == null)
         {
-            return ps;
-        }
-        synchronized(this)
-        {
-            ps = (Set)pCache.get(res);
-            if(ps == null)
+            ps = new HashSet();
+            pCache.put(res, ps);
+            PermissionAssignment[] paa = buildPermissionAssignments(res);
+            for(int i=0; i<paa.length; i++)
             {
-                ps = new HashSet();
-                pCache.put(res, ps);
-                PermissionAssignment[] paa = buildPermissionAssignments(res);
-                for(int i=0; i<paa.length; i++)
-                {
-                    ps.add(paa[i].getPermission());
-                }
+                ps.add(paa[i].getPermission());
             }
-            cpCache = new WeakHashMap(pCache);
-            return ps;
         }
+        return ps;
     }
 
     /**
@@ -276,7 +263,6 @@ public class PermissionContainer
     {
         pCache.clear();
         paCache.clear();
-        cpCache = new WeakHashMap();
     }
 
     /**
@@ -288,6 +274,5 @@ public class PermissionContainer
     {
         pCache.remove(r);
         paCache.remove(r);
-        cpCache = new WeakHashMap(cpCache);
     }
 }
