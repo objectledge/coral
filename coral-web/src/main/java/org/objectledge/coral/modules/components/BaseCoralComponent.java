@@ -1,6 +1,5 @@
 package org.objectledge.coral.modules.components;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.parameters.Parameters;
@@ -18,19 +17,13 @@ import org.objectledge.web.mvc.components.DefaultComponent;
 public abstract class BaseCoralComponent
     extends DefaultComponent
 {
-    /** logger */
-    protected Logger logger;
-    
     /**
      * Constructor.
-     * 
      * @param context the context.
-     * @param logger the logger.
      */
-    public BaseCoralComponent(Context context, Logger logger)
+    public BaseCoralComponent(Context context)
     {
         super(context);
-        this.logger = logger;
     }
 
     /**
