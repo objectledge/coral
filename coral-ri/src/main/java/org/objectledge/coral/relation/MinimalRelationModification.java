@@ -32,15 +32,19 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.objectledge.coral.relation.Relation;
+import org.objectledge.coral.relation.RelationModification;
 import org.objectledge.coral.relation.RelationModification.AddOperation;
 import org.objectledge.coral.relation.RelationModification.ClearOperation;
+import org.objectledge.coral.relation.RelationModification.ModificationOperation;
+import org.objectledge.coral.relation.RelationModification.ModificationOperationVisitor;
 import org.objectledge.coral.relation.RelationModification.RemoveOperation;
 
 /**
  * This class holds a minimal representation of a {@link RelationModification}
  * for a given {@link Relation}.
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModification.java,v 1.4 2004-02-24 14:54:09 zwierzem Exp $
+ * @version $Id: MinimalRelationModification.java,v 1.1 2004-02-24 15:36:58 zwierzem Exp $
  */
 public class MinimalRelationModification
 {
