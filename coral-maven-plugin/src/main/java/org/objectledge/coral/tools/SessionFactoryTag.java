@@ -72,7 +72,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.6 2004-05-26 17:23:46 pablo Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.7 2004-06-25 11:21:53 fil Exp $
  */
 public class SessionFactoryTag
     extends BaseTagSupport
@@ -208,7 +208,7 @@ public class SessionFactoryTag
         }       
         IdGenerator idGenerator = new IdGenerator(dataSource);
         Context context = new Context();
-        Transaction transaction = new JotmTransaction(0, context, getLog(Transaction.class));
+        Transaction transaction = new JotmTransaction(0, context, getLog(Transaction.class), null);
         Database database = new DefaultDatabase(dataSource, idGenerator, transaction); 
         Persistence persistence = new DefaultPersistence(database, getLog(Persistence.class));
         ThreadPool threadPool = new ThreadPool(null, context, null, getLog(ThreadPool.class));
