@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.14 2005-04-01 09:25:35 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.15 2005-04-04 11:35:03 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -67,6 +67,9 @@ public abstract class AttributeHandlerBase
      *  otherwise DATE_FORMAT will be used. */
     public static final String DATE_TIME_INDICATOR = ":";
     
+    /** call checkExists() on delete() */
+    protected boolean deleteConsistencyCheck = false;
+    
     /**
      * The base constructor.
      * 
@@ -98,7 +101,10 @@ public abstract class AttributeHandlerBase
         try
         {
             stmt = conn.createStatement();
-            checkExists(id, stmt);
+            if(deleteConsistencyCheck)
+            {
+                checkExists(id, stmt);
+            }
             stmt.execute("DELETE FROM " + getTable() + " WHERE data_key = " + id);
         }
         finally
