@@ -35,7 +35,7 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 
 /**
- * Defines the accessor methods of <code>coral.test.Node</code> Coral resource class.
+ * Defines the accessor methods of <code>coral.Node</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
@@ -45,7 +45,7 @@ public interface Node
     // constants /////////////////////////////////////////////////////////////
 
     /** The name of the ARL resource class. */    
-    public static final String CLASS_NAME = "coral.test.Node";
+    public static final String CLASS_NAME = "coral.Node";
      /**
      * Returns the path name of the resource.
      *
