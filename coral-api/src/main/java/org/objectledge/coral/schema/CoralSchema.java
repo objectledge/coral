@@ -10,7 +10,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchema.java,v 1.3 2004-03-02 12:18:19 fil Exp $
+ * @version $Id: CoralSchema.java,v 1.4 2004-03-19 12:16:23 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSchema
@@ -304,6 +304,17 @@ public interface CoralSchema
     public void setHandlerClass(ResourceClass resourceClass, 
                                 String handlerClass)
         throws JavaClassException;
+
+    /**
+     * Sets the database table that will hold the data for the resource of
+     * that class. 
+     *
+     * @param resourceClass the {@link ResourceClass}.
+     * @param dbTable the database table that will hold the data for the
+     *        resources of that class (allows sharing handler classes betweeen
+     *        resource types).
+     */
+    public void setDbTable(ResourceClass resourceClass, String dbTable);
 
     /**
      * Adds an attribute to a {@link ResourceClass}.

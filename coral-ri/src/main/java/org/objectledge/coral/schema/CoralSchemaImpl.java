@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.8 2004-03-12 09:22:42 fil Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.9 2004-03-19 12:16:24 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -487,6 +487,29 @@ public class CoralSchemaImpl
             throw new BackendException("Failed to save ResourceClass", e);
         }
         coralEventHub.getOutbound().fireResourceClassChangeEvent(resourceClass);
+    }
+
+    /**
+     * Sets the database table that will hold the data for the resoureces of
+     * that class. 
+     *
+     * @param resoureceClass the {@link ResoureceClass}.
+     * @param dbTable the database table that will hold the data for the
+     *        resoureces of that class (allows sharing handler classes betweeen
+     *        resourece types).
+     */
+    public void setDbTable(ResourceClass resoureceClass, String dbTable)
+    {
+        ((ResourceClassImpl)resoureceClass).setDbTable(dbTable);
+        try
+        {
+            persistence.save((Persistent)resoureceClass);
+        }
+        catch(PersistenceException e)
+        {
+            throw new BackendException("Failed to update ResourceClass", e);
+        }
+        coralEventHub.getOutbound().fireResourceClassChangeEvent(resoureceClass);
     }
 
     /**

@@ -46,7 +46,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralSchema wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSchema.java,v 1.2 2004-03-15 13:44:53 fil Exp $
+ * @version $Id: SessionCoralSchema.java,v 1.3 2004-03-19 12:16:24 fil Exp $
  */
 public class SessionCoralSchema implements CoralSchema
 {
@@ -309,6 +309,15 @@ public class SessionCoralSchema implements CoralSchema
     {
         session.verify();
         coral.getSchema().setHandlerClass(resourceClass, handlerClass);
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public void setDbTable(ResourceClass resourceClass, String dbTable)
+    {
+        session.verify();
+        coral.getSchema().setDbTable(resourceClass, dbTable);
     }
 
     /** 
