@@ -36,7 +36,7 @@ import org.objectledge.coral.query.CoralQuery;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralQueryTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
+ * @version $Id: SessionCoralQueryTest.java,v 1.3 2004-03-18 15:24:16 fil Exp $
  */
 public class SessionCoralQueryTest extends MockObjectTestCase
 {
@@ -57,6 +57,8 @@ public class SessionCoralQueryTest extends MockObjectTestCase
         mockCoralQuery = new Mock(CoralQuery.class);
         coralQuery = (CoralQuery)mockCoralQuery.proxy();
         mockCoralCore.stub().method("getQuery").will(returnValue(coralQuery));
+        mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
+        mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
         mockKeyedObjectPool = new Mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 

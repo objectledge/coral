@@ -31,13 +31,15 @@ import org.apache.commons.pool.KeyedObjectPool;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.CoralCore;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
+import org.objectledge.coral.script.parser.RMLParserFactory;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralEventWhiteboardTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
+ * @version $Id: SessionCoralEventWhiteboardTest.java,v 1.3 2004-03-18 15:24:16 fil Exp $
  */
 public class SessionCoralEventWhiteboardTest extends MockObjectTestCase
 {
@@ -65,6 +67,8 @@ public class SessionCoralEventWhiteboardTest extends MockObjectTestCase
         mockCoralCore.stub().method("getEventWhiteboard").will(returnValue(coralEventWhiteboard));
         mockKeyedObjectPool = new Mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
+        mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
+        mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
         mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();

@@ -37,7 +37,7 @@ import org.objectledge.coral.schema.CoralSchema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSchemaTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
+ * @version $Id: SessionCoralSchemaTest.java,v 1.3 2004-03-18 15:24:16 fil Exp $
  */
 public class SessionCoralSchemaTest extends MockObjectTestCase
 {
@@ -58,6 +58,8 @@ public class SessionCoralSchemaTest extends MockObjectTestCase
         mockCoralSchema = new Mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
+        mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
+        mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
         mockKeyedObjectPool = new Mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 

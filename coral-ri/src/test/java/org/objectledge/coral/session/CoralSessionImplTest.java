@@ -39,7 +39,7 @@ import org.objectledge.coral.store.CoralStore;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImplTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
+ * @version $Id: CoralSessionImplTest.java,v 1.3 2004-03-18 15:24:16 fil Exp $
  */
 public class CoralSessionImplTest extends MockObjectTestCase
 {
@@ -64,6 +64,8 @@ public class CoralSessionImplTest extends MockObjectTestCase
         mockCoralStore = new Mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
         mockCoralCore.stub().method("getStore").will(returnValue(coralStore));
+        mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
+        mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
         mockKeyedObjectPool = new Mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
         
