@@ -42,9 +42,9 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SecurityServiceTest.java,v 1.2 2004-03-15 09:15:07 fil Exp $
+ * @version $Id: CoralSecurityTest.java,v 1.1 2004-03-15 09:18:56 fil Exp $
  */
-public class SecurityServiceTest
+public class CoralSecurityTest
     extends CoralTestCase
 {
     private Column[] coralRoleColumns = new Column[] 

@@ -42,9 +42,9 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SchemaServiceTest.java,v 1.6 2004-03-12 13:42:04 fil Exp $
+ * @version $Id: CoralSchemaTest.java,v 1.1 2004-03-15 09:18:56 fil Exp $
  */
-public class SchemaServiceTest
+public class CoralSchemaTest
     extends CoralTestCase
 {
     private Column[] coralAttributeClassColumns = new Column[] 
