@@ -45,7 +45,7 @@ public interface Node
     // constants /////////////////////////////////////////////////////////////
 
     /** The name of the ARL resource class. */    
-    public static final String CLASS_NAME = "coral.test.Node";
+    public static final String CLASS_NAME = "coral.Node";
      /**
      * Returns the path name of the resource.
      *
