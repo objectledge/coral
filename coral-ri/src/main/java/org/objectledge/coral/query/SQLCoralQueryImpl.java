@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.6 2005-01-18 10:45:40 rafal Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.7 2005-01-19 06:31:58 rafal Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -112,13 +112,11 @@ public class SQLCoralQueryImpl
                 query.append(", ");
             }
         }
-        query.append('\n');
         // FROM
         for(int i=0; i<columns.size(); i++)
         {
-            query.append(i==0 ? "FROM " : ", ");
+            query.append(i==0 ? "\nFROM " : "\n  , ");
             query.append("coral_resource r").append(i+1);
-            query.append('\n');
             ResultColumn rcm = (ResultColumn)columns.get(i);
             for(int j=0; j<rcm.getAttributes().size(); j++)
             {
@@ -131,7 +129,6 @@ public class SQLCoralQueryImpl
                     query.append(ad.getAttributeClass().getDbTable());
                     query.append(" ");
                     query.append("r").append(i+1).append("a").append(j+1);
-                    query.append('\n');
                 } 
             }
         }
@@ -144,11 +141,11 @@ public class SQLCoralQueryImpl
             {
                 if(whereStarted)
                 {
-                    query.append("AND ");
+                    query.append("\n  AND ");
                 }
                 else
                 {
-                    query.append("WHERE ");
+                    query.append("\nWHERE ");
                     whereStarted = true;
                 }
                 ResourceClass[] children = rcm.getRClass().getChildClasses();
@@ -173,7 +170,6 @@ public class SQLCoralQueryImpl
                     query.append(" = ");
                     query.append(rcm.getRClass().getIdString());
                 }
-                query.append('\n');
             }
         }
         // WHERE - attribute glue
@@ -187,11 +183,11 @@ public class SQLCoralQueryImpl
                 {
                     if(whereStarted)
                     {
-                        query.append("AND ");
+                        query.append("\n  AND ");
                     }
                     else
                     {
-                        query.append("WHERE ");
+                        query.append("\nWHERE ");
                         whereStarted = true;
                     }
                     query.append("r").append(i+1).append("g").append(j+1);
@@ -203,7 +199,6 @@ public class SQLCoralQueryImpl
                     query.append(" AND ");
                     query.append("r").append(i+1).append("a").append(j+1).append(".data_key = ");
                     query.append("r").append(i+1).append("g").append(j+1).append(".data_key");
-                    query.append('\n');
                 }
             }
         }
@@ -212,20 +207,19 @@ public class SQLCoralQueryImpl
         {
             if(whereStarted)
             {
-                query.append("AND ");
+                query.append("\n  AND ");
             }
             else
             {
-                query.append("WHERE ");
+                query.append("\nWHERE ");
             }
             appendCondition(statement.getWhere(), columnMap, query);
-            query.append('\n');
         }
         // ORDER BY
         if(statement.getOrderBy() != null)
         {
             ASTorderBySpecifier[] items = getItems(statement.getOrderBy());
-            query.append("ORDER BY ");
+            query.append("\nORDER BY ");
             for(int i=0; i<items.length; i++)
             {
                 appendAttribute(items[i].getAttribute(), columnMap, query);
