@@ -9,10 +9,10 @@ import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
- * Represents an association between a {@link Permission} and a {@link
- * ResourceClass}. 
+ * Represents an association between a {@link org.objectledge.coral.security.Permission} and a 
+ * {@link org.objectledge.coral.schema.ResourceClass}. 
  *
- * @version $Id: PermissionAssociationImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
+ * @version $Id: PermissionAssociationImpl.java,v 1.3 2004-02-23 13:50:26 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssociationImpl
@@ -27,10 +27,10 @@ public class PermissionAssociationImpl
     /** The CoralSecurity. */
     private CoralSecurity coralSecurity;
 
-    /** The {@link ResourceClass}. */
+    /** The {@link org.objectledge.coral.schema.ResourceClass}. */
     private ResourceClass resourceClass;
 
-    /** The {@link Permission}. */
+    /** The {@link org.objectledge.coral.security.Permission}. */
     private Permission permission;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
@@ -53,8 +53,8 @@ public class PermissionAssociationImpl
      * @param coralSchema the CoralSchema.
      * @param coralSecurity the CoralSecurity.
      *
-     * @param resourceClass the involved {@link ResourceClass}.
-     * @param permission the involved {@link Permission}.
+     * @param resourceClass the involved {@link org.objectledge.coral.schema.ResourceClass}.
+     * @param permission the involved {@link org.objectledge.coral.security.Permission}.
      */
     PermissionAssociationImpl(CoralSchema coralSchema, CoralSecurity coralSecurity,
          ResourceClass resourceClass, Permission permission)
@@ -169,9 +169,9 @@ public class PermissionAssociationImpl
     // PermissionAssociation interface //////////////////////////////////////////////////////////
 
     /**
-     * Returns the involved {@link ResourceClass}.
+     * Returns the involved {@link org.objectledge.coral.schema.ResourceClass}.
      *
-     * @return the involved {@link ResourceClass}.
+     * @return the involved {@link org.objectledge.coral.schema.ResourceClass}.
      */
     public ResourceClass getResourceClass()
     {
@@ -180,9 +180,9 @@ public class PermissionAssociationImpl
     
 
     /**
-     * Returns the involved {@link Permission}.
+     * Returns the involved {@link  org.objectledge.security.Permission}.
      *
-     * @return the involved {@link Permission}.
+     * @return the involved {@link  org.objectledge.security.Permission}.
      */
     public Permission getPermission()
     {

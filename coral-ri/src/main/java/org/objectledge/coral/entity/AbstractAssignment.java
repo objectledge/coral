@@ -9,9 +9,9 @@ import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
- * Base of {@link Assignment} implementations.
+ * Base of {@link org.objectledge.coral.entity.Assignment} implementations.
  *
- * @version $Id: AbstractAssignment.java,v 1.3 2004-02-23 09:15:20 fil Exp $
+ * @version $Id: AbstractAssignment.java,v 1.4 2004-02-23 13:50:27 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractAssignment

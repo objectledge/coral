@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.4 2004-02-23 10:42:12 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.5 2004-02-23 13:50:27 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -33,7 +33,7 @@ public class AttributeClassImpl
     /** The associated Java class. */
     private Class javaClass;
     
-    /** The associated {@link AttributeHandler}. */
+    /** The associated {@link org.objectledge.coral.schema.AttributeHandler}. */
     private AttributeHandler handler;
 
     /** The associated database table. */
@@ -44,7 +44,7 @@ public class AttributeClassImpl
     /**
      * Constructs a {@link AttributeClassImpl}.
      *
-     * @param peristence the Peristence subsystem.
+     * @param persistence the Peristence subsystem.
      * @param instantiator the Instantiator.
      * @param coralEventHub the CoralEventHub.
      */
@@ -59,7 +59,7 @@ public class AttributeClassImpl
     /**
      * Constructs a {@link AttributeClassImpl}.
      *
-     * @param peristence the Peristence subsystem.
+     * @param persistence the Peristence subsystem.
      * @param instantiator the Instantiator.
      * @param coralEventHub the CoralEventHub.
      * 
@@ -218,7 +218,7 @@ public class AttributeClassImpl
      * Sets the Java class that is associated with this resource attribute
      * type.
      *
-     * @parm className the Java class that is associated with this resource
+     * @param className the Java class that is associated with this resource
      * attribute type.
      */
     void setJavaClass(String className)
@@ -238,7 +238,7 @@ public class AttributeClassImpl
      * Sets the AttributeHandler implementaion that will manage the attributes
      * of that class. 
      *
-     * @param clas name the name of an <code>AttributeHandler</code>
+     * @param className the name of an <code>AttributeHandler</code>
      * implementation. 
      */
     void setHandlerClass(String className)

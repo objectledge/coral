@@ -11,15 +11,14 @@ import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
- * Represents assigment of a {@link Permission} on a {@link Resource} to a
- * {@link Role}.
+ * Represents assigment of a {@link org.objectledge.coral.security.Permission} on a 
+ * {@link org.objectledge.store.Resource} to a {@link org.objectledge.coral.security.Role}.
  *
  * <p><code>PermissionAssignment</code> objects are returned from {@link
- * Resource#getPermissionAssignments()} method. They experss security
- * constraints placed upon a specific resource (and optionally it's
- * sub-resources). </p> 
+ * org.objectledge.store.Resource#getPermissionAssignments()} method. They experss security
+ * constraints placed upon a specific resource (and optionally it's sub-resources). </p> 
  *
- * @version $Id: PermissionAssignmentImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
+ * @version $Id: PermissionAssignmentImpl.java,v 1.3 2004-02-23 13:50:26 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssignmentImpl
@@ -31,13 +30,13 @@ public class PermissionAssignmentImpl
     /** The CoralStore. */
     private CoralStore coralStore;
     
-    /** The {@link Resource}. */
+    /** The {@link org.objectledge.coral.store.Resource}. */
     private Resource resource;
     
-    /** The {@link Role}. */
+    /** The {@link org.objectledge.coral.security.Role}. */
     private Role role;
     
-    /** The {@link Permission}. */
+    /** The {@link org.objectledge.coral.security.Permission}. */
     private Permission permission;
     
     /** The <code>inherited</code> flag. */
@@ -46,7 +45,7 @@ public class PermissionAssignmentImpl
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Constructs a {@link RoleImpl}.
+     * Constructs a {@link PermissionAssignmentImpl}.
      *
      * @param coralSecurity the CoralSecurity.
      * @param coralStore the CoralStore.
@@ -58,12 +57,12 @@ public class PermissionAssignmentImpl
     }
 
     /**
-     * Constructs a {@link RoleImpl}.
+     * Constructs a {@link PermissionAssignmentImpl}.
      *
      * @param coralSecurity the CoralSecurity.
      * @param coralStore the CoralStore.
      * 
-     * @param garntor the grantor of the permission.
+     * @param grantor the grantor of the permission.
      * @param resource the resource.
      * @param role the role.
      * @param permission the permission.
@@ -196,9 +195,9 @@ public class PermissionAssignmentImpl
     }
     
     /**
-     * Returns the {@link Role} involved in this security constraint.
+     * Returns the {@link org.objectledge.coral.security.Role} involved in this security constraint.
      *
-     * @return the {@link Role} involved in this security constraint.
+     * @return the {@link org.objectledge.coral.security.Role} involved in this security constraint.
      */
     public Role getRole()
     {
@@ -206,9 +205,11 @@ public class PermissionAssignmentImpl
     }
 
     /**
-     * Returns the {@link Permission} involved in this security constraint.
+     * Returns the {@link org.objectledge.coral.security.Permission} involved in this security 
+     * constraint.
      *
-     * @return the {@link Permission} involved in this security constraint.
+     * @return the {@link org.objectledge.coral.security.Permission} involved in this security 
+     * constraint.
      */
     public Permission getPermission()
     {

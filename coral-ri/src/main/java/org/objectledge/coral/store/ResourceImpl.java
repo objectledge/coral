@@ -34,11 +34,11 @@ import org.objectledge.database.persistence.PersistenceException;
  * <p>This class deals with identity, parent-child relationships and security
  * aspects of the <code>Resource</code> interface. Attribute-related methods
  * of this class throw <code>UnsupportedOperationException</code>. Instances
- * of this class are passed to {@link
- * ResourceHandler#create(Resource,Map,Connection)} and
- * ResourceHandler#retrieve(Resource,Connection)}.</p>
+ * of this class are passed to 
+ * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
+ * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.4 2004-02-23 10:42:12 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.5 2004-02-23 13:50:27 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl

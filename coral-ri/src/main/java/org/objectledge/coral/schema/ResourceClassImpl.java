@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.4 2004-02-23 10:42:12 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.5 2004-02-23 13:50:27 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -59,8 +59,8 @@ public class ResourceClassImpl
     /** The Java class associated with this resource class */
     private Class javaClass;
     
-    /** The {@link ResourceHandler} implementation that is responsible for this
-     * resource class. */
+    /** The {@link org.objectledge.coral.schema.ResourceHandler} implementation that is responsible
+     * for this resource class. */
     private ResourceHandler handler;
 
     /** class flags. */
@@ -95,7 +95,7 @@ public class ResourceClassImpl
     /**
      * Constructs a {@link ResourceClassImpl}.
      * 
-     * @param peristence the Peristence subsystem.
+     * @param persistence the Peristence subsystem.
      * @param instantiator the Instantiator.
      * @param coralRegistry the CoralRegistry.
      */
@@ -111,11 +111,10 @@ public class ResourceClassImpl
     /**
      * Constructs a {@link ResourceClassImpl}.
      *
-     * @param peristence the Peristence subsystem.
+     * @param persistence the Peristence subsystem.
      * @param instantiator the Instantiator.
      * @param coralRegistry the CoralRegistry.
      * 
-     * @param id the identifier of the resource class.
      * @param name the name of the resource class.
      * @param javaClass the name of the Java class associated with this
      *        resource class.
@@ -301,7 +300,7 @@ public class ResourceClassImpl
     /**
      * Returns the resource class flags.
      *
-     * <p>Use {@link ResourceClassFlags} to decode flag values.
+     * <p>Use {@link org.objectledge.coral.schema.ResourceClassFlags} to decode flag values.
      *
      * @return resource class flags.
      */
@@ -504,7 +503,7 @@ public class ResourceClassImpl
     /**
      * Called when resource class inheritance relationships change.
      *
-     * @param item the {@link ResourceClassInheritance}.
+     * @param item the {@link org.objectledge.coral.schema.ResourceClassInheritance}.
      * @param added <code>true</code> if the relationship was added,
      *        <code>false</code> if removed.
      */
@@ -566,7 +565,7 @@ public class ResourceClassImpl
     /**
      * Called when resource class attribute declarations change.
      *
-     * @param attribute the {@link AttributeDefinition}.
+     * @param attribute the {@link org.objectledge.coral.schema.AttributeDefinition}.
      * @param added <code>true</code> if the attribute was added,
      *        <code>false</code> if removed.
      */
@@ -643,7 +642,7 @@ public class ResourceClassImpl
     /**
      * Sets the Java class that is associated with this resource class.
      *
-     * @parm className the Java class that is associated with this resource
+     * @param className the Java class that is associated with this resource
      * class.
      */
     void setJavaClass(String className)
@@ -664,7 +663,7 @@ public class ResourceClassImpl
      * Sets the ResourceHandler implementaion that will manage the resources
      * of that class. 
      *
-     * @param clas name the name of an <code>ResourceHandler</code>
+     * @param className the name of an <code>ResourceHandler</code>
      * implementation. 
      */
     void setHandlerClass(String className)
@@ -705,7 +704,7 @@ public class ResourceClassImpl
     /**
      * Sets the resource class flags.
      *
-     * <p>Use {@link ResourceClassFlags} to decode flag values.
+     * <p>Use {@link org.objectledge.coral.schema.ResourceClassFlags} to decode flag values.
      *
      * @param flags the resource class flags.
      */

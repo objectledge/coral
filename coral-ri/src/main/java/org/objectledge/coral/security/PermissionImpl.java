@@ -20,7 +20,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * Each {@link ResourceClass} has an associated set of <code>Permission</code>s
  * that can be granted upon it's instances.
  *
- * @version $Id: PermissionImpl.java,v 1.4 2004-02-23 10:42:11 fil Exp $
+ * @version $Id: PermissionImpl.java,v 1.5 2004-02-23 13:50:26 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionImpl
@@ -226,13 +226,13 @@ public class PermissionImpl
     // private //////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Builds the set of {@link PermissionAssociation} objects pointing to this
-     * permission. 
+     * Builds the set of {@link org.objectledge.coral.security.PermissionAssociation} objects 
+     * pointing to this permission. 
      *
      * <p>Upon the first invocation, {@link
-     * RegistryService#getPermissionAssociations(Permission)} is called to
-     * obtain the initial set, and the object is registered as a listener for
-     * association changes.</p>
+     * CoralRegistry#getPermissionAssociations(org.objectledge.coral.security.Permission)} is 
+     * called to obtain the initial set, and the object is registered as a listener for association 
+     * changes.</p>
      */
     private void buildAssociationSet()
     {
@@ -244,8 +244,8 @@ public class PermissionImpl
     }
 
     /**
-     * Extracts a set of {@link ResourceClass} objects out of {@link
-     * PermissionAssociation} set.
+     * Extracts a set of {@link org.objectledge.coral.schema.ResourceClass} objects out of {@link
+     * org.objectledge.coral.security.PermissionAssociation} set.
      */
     private void buildResourceClassSet()
     {

@@ -23,7 +23,7 @@ public class ResourceInheritanceImpl
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Constructs a {@link RoleImplicationImpl}.
+     * Constructs a {@link ResourceInheritanceImpl}.
      *
      * @param parent the parent resource.
      * @param child the child resource.

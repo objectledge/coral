@@ -6,7 +6,7 @@ import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.PersistentObject;
 
 /**
- * Common base class of {@link Association} implementations.
+ * Common base class of {@link org.objectledge.coral.entity.Association} implementations.
  *
  */
 public abstract class AbstractAssociation

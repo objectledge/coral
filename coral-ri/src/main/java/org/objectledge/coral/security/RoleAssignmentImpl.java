@@ -9,9 +9,9 @@ import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
- * An implementation of {@link RoleAssignment} interface.
+ * An implementation of {@link org.objectledge.security.RoleAssignment} interface.
  *
- * @version $Id: RoleAssignmentImpl.java,v 1.2 2004-02-23 10:13:31 fil Exp $
+ * @version $Id: RoleAssignmentImpl.java,v 1.3 2004-02-23 13:50:26 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleAssignmentImpl
@@ -32,7 +32,7 @@ public class RoleAssignmentImpl
     // initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Creates a {@link RoleAssignment}.
+     * Creates a {@link RoleAssignmentImpl}.
      *
      * @param coralSecurity the CoralSecurity.
      */
@@ -42,14 +42,14 @@ public class RoleAssignmentImpl
     }
     
     /**
-     * Creates a {@link RoleAssignment}.
+     * Creates a {@link RoleAssignmentImpl}.
      * 
      * @param coralSecurity the CoralSecurity.
      *
      * @param grantor the subject that created this assignment.
      * @param subject the involved subject.
      * @param role the involved role.
-     * @param grantingAllowd is delagating of role allowed.
+     * @param grantingAllowed is delagating of role allowed.
      */
     RoleAssignmentImpl(CoralSecurity coralSecurity, 
         Subject grantor, Subject subject, Role role, boolean grantingAllowed)

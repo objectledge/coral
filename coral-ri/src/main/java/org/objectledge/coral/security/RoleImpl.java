@@ -19,9 +19,9 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
- * An implementaion of {@link Role} interface.
+ * An implementaion of {@link org.objectledge.coral.security.Role} interface.
  *
- * @version $Id: RoleImpl.java,v 1.5 2004-02-23 11:09:00 fil Exp $
+ * @version $Id: RoleImpl.java,v 1.6 2004-02-23 13:50:26 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImpl
@@ -178,14 +178,14 @@ public class RoleImpl
     // Role interafce ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns all {@link RoleImplication} relationships that this role is
-     * involved in.
+     * Returns all {@link org.objectledge.coral.security.RoleImplication} relationships that this 
+     * role is involved in.
      *
      * <p>Use this method to discover direrct super and sub roles of a
      * role.</p>
      *
-     * @return all {@link RoleImplication} relationships that this role is
-     * involved in.
+     * @return all {@link org.objectledge.coral.security.RoleImplication} relationships that this 
+     * role is involved in.
      */
     public RoleImplication[] getImplications()
     {
@@ -274,8 +274,8 @@ public class RoleImpl
      * Returns all subjects that were assigned this role.
      *
      * <p>This method takes Role impications into account, thus all Subjects
-     * that pass {@link Subject#hasRole(Role)} check for this Role are
-     * returned.</p> 
+     * that pass {@link org.objectledge.coral.security.Subject#hasRole(Role)} check for this
+     * Role are returned.</p> 
      * 
      * @return all subjects that were assigned this role.
      */

@@ -16,10 +16,11 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 
 /**
- * Manages persistency of {@link Entity}, {@link Assignment} and {@link
- * Association} objects.
+ * Manages persistency of {@link org.objectledge.coral.entity.Entity}, 
+ * {@link org.objectledge.coral.entity.Assignment} and 
+ * {@link org.objectledge.coral.entity.Association} objects.
  * 
- * @version $Id: CoralRegistry.java,v 1.1 2004-02-23 10:24:57 fil Exp $
+ * @version $Id: CoralRegistry.java,v 1.2 2004-02-23 13:50:27 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralRegistry

@@ -13,7 +13,7 @@ import org.objectledge.coral.event.RoleImplicationChangeListener;
  * A helper class for managing a set of roles.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RoleContainer.java,v 1.5 2004-02-23 11:07:08 fil Exp $
+ * @version $Id: RoleContainer.java,v 1.6 2004-02-23 13:50:26 fil Exp $
  */
 public class RoleContainer
     implements RoleImplicationChangeListener
@@ -51,9 +51,9 @@ public class RoleContainer
      * @param coralRegistry the CoralRegistry.
      * 
      * @param data the initial roles
-     * @param roles <code>true</code> if data set contains {@link Role}
-     *        objects, <code>false</code> if it contains {@link
-     *        RoleAssignment} objects. 
+     * @param roles <code>true</code> if data set contains 
+     *        {@link org.objectledge.coral.security.Role} objects, <code>false</code> if it 
+     *        contains {@link org.objectledge.coral.security.RoleAssignment} objects. 
      */
     public RoleContainer(CoralEventHub coralEventHub, CoralRegistry coralRegistry, 
         Set data, boolean roles)
@@ -187,7 +187,7 @@ public class RoleContainer
     /**
      * Called when role implications change.
      *
-     * @param implication the {@link RoleImplication}.
+     * @param implication the {@link org.objectledge.coral.security.RoleImplication}.
      * @param added <code>true</code> if the implication was added,
      *        <code>false</code> if removed.
      */

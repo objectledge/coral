@@ -26,7 +26,6 @@ public class ResourceOwnershipImpl
     /**
      * Constructs a {@link ResourceOwnershipImpl}.
      *
-     * @param arl the {@link ResourceServiceImpl}.
      * @param owner the owner.
      * @param resource the resource.
      */
