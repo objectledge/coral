@@ -27,7 +27,7 @@
 // 
 package org.objectledge.coral.tools.rml;
 
-import org.hsqldb.jdbcDataSource;
+import org.hsqldb.jdbc.jdbcDataSource;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.tools.SessionFactoryTag;
@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
  * {@link RmlRunnerBean}.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RmlRunnerBeanTest.java,v 1.4 2004-05-26 17:23:47 pablo Exp $
+ * @version $Id: RmlRunnerBeanTest.java,v 1.5 2004-05-27 11:39:26 fil Exp $
  */
 public class RmlRunnerBeanTest 
     extends LedgeTestCase
