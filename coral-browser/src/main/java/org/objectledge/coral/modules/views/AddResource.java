@@ -2,7 +2,7 @@ package org.objectledge.coral.modules.views;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.ResourceClass;
@@ -14,17 +14,17 @@ import org.objectledge.table.TableStateManager;
  */
 public class AddResource extends BaseBrowserView
 {
-    public AddResource(Logger logger, CoralSessionFactory sessionFactory,
+    public AddResource(Context context, Logger logger, CoralSessionFactory sessionFactory, 
                         TableStateManager tableStateManager)
     {
-        super(logger, sessionFactory, tableStateManager);
+        super(context, logger, sessionFactory, tableStateManager);
     }
 
     public void process(Context context) throws ProcessingException
     {
         try
         {
-            String resClassName = parameters.get("res_class_name","");
+            String resClassName = parameters.get("res_class_name", "");
             if (resClassName.length() > 0)
             {
                 ResourceClass resourceClass = coralSession.getSchema().getResourceClass(resClassName);

@@ -2,7 +2,7 @@ package org.objectledge.coral.modules.components;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.table.PermissionNameComparator;
 import org.objectledge.pipeline.ProcessingException;

@@ -1,14 +1,15 @@
 package org.objectledge.coral.modules.views;
 
 import org.jcontainer.dna.Logger;
-import org.objectledge.coral.CoralSessionFactory;
-import org.objectledge.pipeline.Valve;
+import org.objectledge.context.Context;
+import org.objectledge.coral.session.CoralSessionFactory;
+import org.objectledge.web.mvc.builders.DefaultBuilder;
 
 /**
  * The base screen for alr browser application.
  */
 public abstract class BaseCoralView
-    implements Valve
+    extends DefaultBuilder
 {
     /** logger */
     protected Logger logger;
@@ -16,8 +17,9 @@ public abstract class BaseCoralView
     /** sessionFactory */
     protected CoralSessionFactory coralSessionFactory;
   
-    public BaseCoralView(Logger logger, CoralSessionFactory coralSessionFactory)
+    public BaseCoralView(Context context, Logger logger, CoralSessionFactory coralSessionFactory)
     {
+        super(context);
         this.logger = logger;
         this.coralSessionFactory = coralSessionFactory;
     }

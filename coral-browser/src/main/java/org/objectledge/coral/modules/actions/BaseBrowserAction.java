@@ -2,8 +2,8 @@ package org.objectledge.coral.modules.actions;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSession;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.parameters.Parameters;
 import org.objectledge.parameters.RequestParameters;
 import org.objectledge.templating.TemplatingContext;

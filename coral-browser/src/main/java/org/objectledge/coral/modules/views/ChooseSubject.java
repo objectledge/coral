@@ -2,7 +2,7 @@ package org.objectledge.coral.modules.views;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.table.SubjectNameComparator;
 import org.objectledge.pipeline.ProcessingException;
@@ -19,10 +19,10 @@ import org.objectledge.web.mvc.MVCContext;
  */
 public class ChooseSubject extends BaseBrowserView
 {
-    public ChooseSubject(Logger logger, CoralSessionFactory sessionFactory, 
+    public ChooseSubject(Context context, Logger logger, CoralSessionFactory sessionFactory,
                           TableStateManager tableStateManager)
     {
-        super(logger, sessionFactory, tableStateManager);
+        super(context, logger, sessionFactory, tableStateManager);
     }
 
     public void process(Context context) throws ProcessingException

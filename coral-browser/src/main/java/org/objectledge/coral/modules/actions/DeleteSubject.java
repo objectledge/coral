@@ -2,7 +2,7 @@ package org.objectledge.coral.modules.actions;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.security.Subject;
@@ -12,7 +12,7 @@ import org.objectledge.pipeline.ProcessingException;
  * Delete subject action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: DeleteSubject.java,v 1.1 2004-03-22 20:21:35 pablo Exp $
+ * @version $Id: DeleteSubject.java,v 1.2 2004-03-25 23:35:27 pablo Exp $
  */
 public class DeleteSubject
     extends BaseBrowserAction

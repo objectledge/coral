@@ -1,7 +1,7 @@
 package org.objectledge.coral.modules.components;
 
 import org.jcontainer.dna.Logger;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.pipeline.Valve;
 
 /**

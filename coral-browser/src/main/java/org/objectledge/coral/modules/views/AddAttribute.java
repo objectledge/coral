@@ -2,7 +2,7 @@ package org.objectledge.coral.modules.views;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.ResourceClass;
@@ -14,9 +14,10 @@ import org.objectledge.table.TableStateManager;
  */
 public class AddAttribute extends BaseBrowserView
 {
-    public AddAttribute(Logger logger, CoralSessionFactory sessionFactory, TableStateManager tableStateManager)
+    public AddAttribute(Context context, Logger logger, CoralSessionFactory sessionFactory,
+                        TableStateManager tableStateManager)
     {
-        super(logger, sessionFactory, tableStateManager);
+        super(context, logger, sessionFactory, tableStateManager);
     }
 
     public void process(Context context) throws ProcessingException

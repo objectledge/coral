@@ -2,16 +2,15 @@ package org.objectledge.coral.modules.actions;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
 import org.objectledge.coral.security.Role;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.pipeline.ProcessingException;
-import org.objectledge.utils.StringUtils;
 
 /**
  * Grant role action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddSubRole.java,v 1.1 2004-03-22 20:21:35 pablo Exp $
+ * @version $Id: AddSubRole.java,v 1.2 2004-03-25 23:35:27 pablo Exp $
  */
 public class AddSubRole
     extends BaseBrowserAction

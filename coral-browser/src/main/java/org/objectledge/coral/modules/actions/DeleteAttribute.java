@@ -2,7 +2,7 @@ package org.objectledge.coral.modules.actions;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.pipeline.ProcessingException;
@@ -11,7 +11,7 @@ import org.objectledge.pipeline.ProcessingException;
  * Delete attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: DeleteAttribute.java,v 1.2 2004-03-23 12:07:18 pablo Exp $
+ * @version $Id: DeleteAttribute.java,v 1.3 2004-03-25 23:35:27 pablo Exp $
  */
 public class DeleteAttribute extends BaseBrowserAction
 {

@@ -2,10 +2,9 @@ package org.objectledge.coral.modules.components;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.table.CoralTableModel;
 import org.objectledge.pipeline.ProcessingException;
-import org.objectledge.table.TableException;
 import org.objectledge.table.TableModel;
 import org.objectledge.table.TableState;
 import org.objectledge.table.TableStateManager;
@@ -33,7 +32,6 @@ public class ResourceTree
             if(state.isNew())
             {
                 state.setTreeView(true);
-                //state.set MultiSelect(false);
                 String rootId = Long.toString(1);
                 state.setRootId(rootId);
                 state.setCurrentPage(0);

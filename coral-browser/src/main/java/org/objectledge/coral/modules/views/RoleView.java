@@ -2,9 +2,9 @@ package org.objectledge.coral.modules.views;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.security.Role;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.table.TableStateManager;
 
@@ -13,9 +13,10 @@ import org.objectledge.table.TableStateManager;
  */
 public class RoleView extends BaseBrowserView
 {
-    public RoleView(Logger logger, CoralSessionFactory sessionFactory, TableStateManager tableStateManager)
+    public RoleView(Context context, Logger logger, CoralSessionFactory sessionFactory,
+                    TableStateManager tableStateManager)
     {
-        super(logger, sessionFactory, tableStateManager);
+        super(context, logger, sessionFactory, tableStateManager);
     }
 
     public void process(Context context) throws ProcessingException

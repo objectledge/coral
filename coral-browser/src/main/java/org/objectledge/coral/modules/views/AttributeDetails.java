@@ -2,7 +2,7 @@ package org.objectledge.coral.modules.views;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.store.Resource;
@@ -14,12 +14,12 @@ import org.objectledge.table.TableStateManager;
  */
 public class AttributeDetails extends BaseBrowserView
 {
-    public AttributeDetails(Logger logger, CoralSessionFactory sessionFactory, 
-                             TableStateManager tableStateManager)
+    public AttributeDetails(Context context, Logger logger, CoralSessionFactory sessionFactory,
+                    TableStateManager tableStateManager)
     {
-        super(logger, sessionFactory, tableStateManager);
+        super(context, logger, sessionFactory, tableStateManager);
     }
-
+    
     public void process(Context context) throws ProcessingException
     {
         try

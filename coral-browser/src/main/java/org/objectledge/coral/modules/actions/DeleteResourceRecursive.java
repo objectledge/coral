@@ -2,7 +2,7 @@ package org.objectledge.coral.modules.actions;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.pipeline.ProcessingException;
 
@@ -10,7 +10,7 @@ import org.objectledge.pipeline.ProcessingException;
  * Delete resource action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: DeleteResourceRecursive.java,v 1.2 2004-03-23 12:07:18 pablo Exp $
+ * @version $Id: DeleteResourceRecursive.java,v 1.3 2004-03-25 23:35:27 pablo Exp $
  */
 public class DeleteResourceRecursive
     extends BaseBrowserAction
