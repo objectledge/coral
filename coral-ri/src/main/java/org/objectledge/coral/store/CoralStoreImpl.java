@@ -18,6 +18,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityInUseException;
@@ -40,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.8 2004-03-12 09:22:42 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.9 2004-03-12 09:38:39 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -84,17 +85,19 @@ public class CoralStoreImpl
      * @param cacheFactory the cache factory.
      * @param persistence the persistence subsystem.
      * @param coralEventHub the event hub.
+     * @param instantiator the instantiator.
      * @param coral the component hub.
      * @param log the logger.
      * @throws ConfigurationException if the cache is not configured properly.
      */
     public CoralStoreImpl(CacheFactory cacheFactory, Persistence persistence,
-        CoralEventHub coralEventHub, CoralCore coral, Logger log)
+        CoralEventHub coralEventHub, Instantiator instantiator, CoralCore coral, Logger log)
         throws ConfigurationException
     {
         this.persistence = persistence;
         this.coral = coral;
         this.coralEventHub = coralEventHub;
+        this.resourceFactory = instantiator.getPersistentFactory(ResourceImpl.class);
         this.log = log;
         setupCache(cacheFactory, "resource");
         resourceByParent = new WeakHashMap();
