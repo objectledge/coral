@@ -54,7 +54,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.16 2004-05-25 09:09:09 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.17 2004-05-25 09:22:38 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -69,6 +69,7 @@ public class GeneratorComponent
         hintNames.add("extends");
         hintNames.add("import");
         hintNames.add("order");
+        hintNames.add("field");
     }
 
     /** The ignored hint names. */
