@@ -189,7 +189,7 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
 
     public void testToPrintableString()
     {
-        assertEquals("",handler.toPrintableString(resourceList));
+        assertEquals("[1]",handler.toPrintableString(resourceList));
     }
 
     public void testToExternalString()

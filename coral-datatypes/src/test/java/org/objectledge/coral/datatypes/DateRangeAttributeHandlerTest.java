@@ -31,6 +31,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.jmock.Mock;
@@ -155,8 +156,9 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
     public void testRetrieveCreate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        mockResultSet.expects(once()).method("getTimestamp").will(returnValue(null));
-        mockResultSet.expects(once()).method("getTimestamp").will(returnValue(null));
+        Timestamp now = new Timestamp(new Date().getTime());
+        mockResultSet.expects(once()).method("getTimestamp").will(returnValue(now));
+        mockResultSet.expects(once()).method("getTimestamp").will(returnValue(now));
         handler.retrieve(1, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));
         try
