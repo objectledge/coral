@@ -35,7 +35,7 @@ import java.util.SortedMap;
  * Represents a Coral Schema.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Schema.java,v 1.1 2004-03-22 11:54:49 fil Exp $
+ * @version $Id: Schema.java,v 1.2 2004-03-22 12:14:28 fil Exp $
  */
 public class Schema
 {
@@ -60,9 +60,9 @@ public class Schema
      * @param name the name of the attribute class.
      * @return the attribute class.
      */
-    public ResourceClass getAttributeClass(String name)
+    public AttributeClass getAttributeClass(String name)
     {
-        return (ResourceClass)attributeClasses.get(name); 
+        return (AttributeClass)attributeClasses.get(name); 
     }
     
     /**
@@ -70,7 +70,7 @@ public class Schema
      * 
      * @param attributeClass the attribute class.
      */
-    public void addResourceClass(AttributeClass attributeClass)
+    public void addAttributeClass(AttributeClass attributeClass)
     {
         attributeClasses.put(attributeClass.getName(), attributeClass);
     }
