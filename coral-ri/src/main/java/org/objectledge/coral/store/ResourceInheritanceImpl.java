@@ -28,7 +28,7 @@ public class ResourceInheritanceImpl
      * @param parent the parent resource.
      * @param child the child resource.
      */
-    ResourceInheritanceImpl(Resource parent, Resource child)
+    public ResourceInheritanceImpl(Resource parent, Resource child)
     {
         this.parent = parent;
         this.child = child;

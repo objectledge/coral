@@ -29,7 +29,7 @@ public class ResourceOwnershipImpl
      * @param owner the owner.
      * @param resource the resource.
      */
-    ResourceOwnershipImpl(Subject owner, Resource resource)
+    public ResourceOwnershipImpl(Subject owner, Resource resource)
     {
         this.owner = owner;
         this.resource = resource;
