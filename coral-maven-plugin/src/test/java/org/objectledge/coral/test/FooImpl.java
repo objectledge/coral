@@ -41,18 +41,19 @@ import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
+import org.objectledge.coral.test.*;
 import org.objectledge.database.Database;
 
 import org.jcontainer.dna.Logger;
 
 /**
- * An implementation of <code>coral.test.Test</code> Coral resource class.
+ * An implementation of <code>coral.test.Foo</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
-public class TestImpl
+public class FooImpl
     extends NodeImpl
-    implements Test
+    implements Foo
 {
     // instance variables ////////////////////////////////////////////////////
 
@@ -62,7 +63,7 @@ public class TestImpl
     // initialization /////////////////////////////////////////////////////////
 
     /**
-     * Creates a blank <code>coral.test.Test</code> resource wrapper.
+     * Creates a blank <code>coral.test.Foo</code> resource wrapper.
      *
      * <p>This constructor should be used by the handler class only. Use 
      * <code>load()</code> and <code>create()</code> methods to create
@@ -72,12 +73,12 @@ public class TestImpl
      * @param database the Database.
      * @param logger the Logger.
      */
-    public TestImpl(CoralSchema schema, Database database, Logger logger)
+    public FooImpl(CoralSchema schema, Database database, Logger logger)
     {
         super(schema, database, logger);
         try
         {
-            ResourceClass rc = schema.getResourceClass("coral.test.Test");
+            ResourceClass rc = schema.getResourceClass("coral.test.Foo");
             greetingDef = rc.getAttribute("greeting");
         }
         catch(EntityDoesNotExistException e)
@@ -89,7 +90,7 @@ public class TestImpl
     // static methods ////////////////////////////////////////////////////////
 
     /**
-     * Retrieves a <code>coral.test.Test</code> resource instance from the store.
+     * Retrieves a <code>coral.test.Foo</code> resource instance from the store.
      *
      * <p>This is a simple wrapper of StoreService.getResource() method plus
      * the typecast.</p>
@@ -99,40 +100,40 @@ public class TestImpl
 	 * @return a resource instance.
 	 * @throws EntityDoesNotExistException if the resource with the given id does not exist.
      */
-    public static Test getTest(CoralSession session, long id)
+    public static Foo getFoo(CoralSession session, long id)
         throws EntityDoesNotExistException
     {
         Resource res = session.getStore().getResource(id);
-        if(!(res instanceof Test))
+        if(!(res instanceof Foo))
         {
             throw new IllegalArgumentException("resource #"+id+" is "+
                                                res.getResourceClass().getName()+
-                                               " not coral.test.Test");
+                                               " not coral.test.Foo");
         }
-        return (Test)res;
+        return (Foo)res;
     }
 
     /**
-     * Creates a new <code>coral.test.Test</code> resource instance.
+     * Creates a new <code>coral.test.Foo</code> resource instance.
      *
      * @param session the CoralSession
      * @param name the name of the new resource
      * @param parent the parent resource.
-     * @return a new Test instance.
+     * @return a new Foo instance.
      */
-    public static Test createTest(CoralSession session, String name, Resource parent)
+    public static Foo createFoo(CoralSession session, String name, Resource parent)
     {
         try
         {
-            ResourceClass rc = session.getSchema().getResourceClass("coral.test.Test");
+            ResourceClass rc = session.getSchema().getResourceClass("coral.test.Foo");
             Map attrs = new HashMap();
             Resource res = session.getStore().createResource(name, parent, rc, attrs);
-            if(!(res instanceof Test))
+            if(!(res instanceof Foo))
             {
                 throw new BackendException("incosistent schema: created object is "+
                                            res.getClass().getName());
             }
-            return (Test)res;
+            return (Foo)res;
         }
         catch(EntityDoesNotExistException e)
         {

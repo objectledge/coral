@@ -32,17 +32,17 @@ import org.objectledge.coral.datatypes.Node;
 import org.objectledge.coral.store.Resource;
 
 /**
- * Defines the accessor methods of <code>coral.test.Test</code> Coral resource class.
+ * Defines the accessor methods of <code>coral.test.Foo</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
-public interface Test
+public interface Foo
     extends Resource, Node
 {
     // constants /////////////////////////////////////////////////////////////
 
     /** The name of the ARL resource class. */    
-    public static final String CLASS_NAME = "coral.test.Test";
+    public static final String CLASS_NAME = "coral.test.Foo";
 
     // public interface //////////////////////////////////////////////////////
  

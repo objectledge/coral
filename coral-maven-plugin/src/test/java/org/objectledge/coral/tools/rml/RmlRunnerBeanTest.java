@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
  * {@link RmlRunnerBean}.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RmlRunnerBeanTest.java,v 1.2 2004-04-30 12:40:26 fil Exp $
+ * @version $Id: RmlRunnerBeanTest.java,v 1.3 2004-05-04 12:48:35 fil Exp $
  */
 public class RmlRunnerBeanTest 
     extends LedgeTestCase
@@ -67,8 +67,8 @@ public class RmlRunnerBeanTest
         rmlRunnerBean.setFileEncoding("UTF-8");
         rmlRunnerBean.run();
         
-        assertNotNull(coralSession.getSecurity().getRole("coral.test.Test"));
-        assertNotNull(coralSession.getSchema().getResourceClass("coral.test.Test"));
+        assertNotNull(coralSession.getSecurity().getRole("coral.test.FooRole"));
+        assertNotNull(coralSession.getSchema().getResourceClass("coral.test.Foo"));
         assertNotNull(coralSession.getStore().getUniqueResourceByPath("/fred"));
     }
 }

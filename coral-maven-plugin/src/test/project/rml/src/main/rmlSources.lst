@@ -1,3 +1,3 @@
 # RML sources
-src/main/resources/rml/test/Test.rml
-src/main/resources/rml/test/TestInitial.rml
+src/main/resources/rml/test/Foo.rml
+src/main/resources/rml/test/FooInitial.rml
