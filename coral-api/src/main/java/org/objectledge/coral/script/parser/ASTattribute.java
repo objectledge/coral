@@ -21,7 +21,7 @@ public class ASTattribute extends SimpleNode {
   
   public String getName()
   {
-      return value;
+      return attributeName;
   }
   
   public String getValue()
