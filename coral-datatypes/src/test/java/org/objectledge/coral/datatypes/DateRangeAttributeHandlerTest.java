@@ -28,6 +28,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Date;
@@ -63,9 +64,13 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
     private Connection connection;
     private Mock mockStatement;
     private Statement statement;
+    private Mock mockPreparedStatement;
+    private PreparedStatement preparedStatement;
     private Mock mockResultSet;
     private ResultSet resultSet;
     private DateRange range;
+    private java.sql.Date rangeStart;
+    private java.sql.Date rangeEnd;
     private DateRangeAttributeHandler handler;
 
     public void setUp() throws Exception
@@ -89,13 +94,19 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
         handler = new DateRangeAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
+        mockPreparedStatement = mock(PreparedStatement.class);
+        preparedStatement = (PreparedStatement)mockPreparedStatement.proxy();
         mockConnection = mock(Connection.class);
         mockConnection.stub().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
-        range = new DateRange(new Date(), new Date());
+        Date d1 = new Date();
+        Date d2 = new Date(d1.getTime()+60000);
+        range = new DateRange(d1, d2);
+        rangeStart = new java.sql.Date(d1.getTime());
+        rangeEnd = new java.sql.Date(d2.getTime());
     }
 
     public void testAttributeHandlerBase()
@@ -106,19 +117,28 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
     public void testCreate() throws Exception
     {
         String stmt = "INSERT INTO " + "coral_attribute_date_range" + 
-            "(data_key, start_date, end_date) VALUES (1, '"+range.getStart().toString()+
-            "', '"+range.getEnd().toString()+"')";        
-        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+            "(data_key, start_date, end_date) VALUES (?, ?, ?)";        
+        mockConnection.expect(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expect(once()).method("setLong").with(eq(1), eq(1L)).isVoid();
+        mockPreparedStatement.expect(once()).method("setDate").with(eq(2), eq(rangeStart)).isVoid();        
+        mockPreparedStatement.expect(once()).method("setDate").with(eq(3), eq(rangeEnd)).isVoid();        
+        mockPreparedStatement.expect(once()).method("execute").will(returnValue(true));
+        mockPreparedStatement.expect(once()).method("close").isVoid();
         handler.create(range, connection);
     }
 
     public void testUpdate() throws Exception
     {
         mockResultSet.expect(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE coral_attribute_date_range SET"+
-        " start_date = '"+range.getStart().toString()+", end_date = '"+ range.getEnd().toString() 
-        +"' WHERE data_key = 1";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        mockStatement.expect(once()).method("close").isVoid();
+        String stmt = "UPDATE coral_attribute_date_range SET"+
+            " start_date = ?, end_date = ? WHERE data_key = ?";
+        mockConnection.expect(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expect(once()).method("setDate").with(eq(1), eq(rangeStart)).isVoid();        
+        mockPreparedStatement.expect(once()).method("setDate").with(eq(2), eq(rangeEnd)).isVoid();        
+        mockPreparedStatement.expect(once()).method("setLong").with(eq(3), eq(1L)).isVoid();
+        mockPreparedStatement.expect(once()).method("execute").will(returnValue(true));
+        mockPreparedStatement.expect(once()).method("close").isVoid();
         handler.update(1, range, connection);
         mockResultSet.expect(once()).method("next").will(returnValue(false));
         try

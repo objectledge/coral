@@ -218,10 +218,10 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     {
         String stmt = "SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE resource_id = 1";
         //mockResultSet.expect(once()).method("next").will(returnValue(true));
-        mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
-        mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
+        //mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
+        //mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
         mockResultSet.expect(once()).method("next").will(returnValue(false));
-        //mockCoralSchema.expect(once()).method("getAttribute").will(returnValue())
+        //mockCoralSchema.expect(once()).method("getAttribute").will(returnValue(attributeClass));
         
         mockStatement.expect(once()).method("executeQuery").with(eq(stmt)).will(returnValue(resultSet));
                 

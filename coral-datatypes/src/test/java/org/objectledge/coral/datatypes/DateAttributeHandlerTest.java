@@ -28,6 +28,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -64,9 +65,12 @@ public class DateAttributeHandlerTest extends LedgeTestCase
     private Connection connection;
     private Mock mockStatement;
     private Statement statement;
+    private Mock mockPreparedStatement;
+    private PreparedStatement preparedStatement;
     private Mock mockResultSet;
     private ResultSet resultSet;
     private Date currentDate;
+    private java.sql.Date sqlCurrentDate;
 
     private DateAttributeHandler handler;
 
@@ -91,6 +95,8 @@ public class DateAttributeHandlerTest extends LedgeTestCase
         handler = new DateAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
+        mockPreparedStatement = mock(PreparedStatement.class);
+        preparedStatement = (PreparedStatement)mockPreparedStatement.proxy();
         mockConnection = mock(Connection.class);
         mockConnection.stub().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
@@ -98,6 +104,7 @@ public class DateAttributeHandlerTest extends LedgeTestCase
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
         currentDate = new Date();
+        sqlCurrentDate = new java.sql.Date(currentDate.getTime());
     }
 
     public void testAttributeHandlerBase()
@@ -107,19 +114,26 @@ public class DateAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "coral_attribute_date" + "(data_key, data) VALUES (1, '"+currentDate.toString()+"')";
-        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
-        handler.create(currentDate, connection);
-        String stmt2 = "INSERT INTO coral_attribute_date(data_key, data) VALUES (1, '"+currentDate.toString()+"')";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        String stmt = "INSERT INTO " + "coral_attribute_date" + "(data_key, data) VALUES (?, ?)";
+        mockConnection.expect(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expect(once()).method("setLong").with(eq(1), eq(1L)).isVoid();
+        mockPreparedStatement.expect(once()).method("setDate").with(eq(2), eq(sqlCurrentDate)).isVoid();        
+        mockPreparedStatement.expect(once()).method("execute").will(returnValue(true));
         handler.create(currentDate, connection);
     }
 
     public void testUpdate() throws Exception
     {
         mockResultSet.expect(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE coral_attribute_date SET data = '"+currentDate.toString()+"' WHERE data_key = 1";
-        mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
+        mockStatement.expect(once()).method("close").isVoid();
+        String stmt2 = "UPDATE coral_attribute_date SET data = ? WHERE data_key = ?";
+        mockConnection.expect(once()).method("prepareStatement").with(eq(stmt2)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expect(once()).method("setDate").with(eq(1), eq(sqlCurrentDate)).isVoid();        
+        mockPreparedStatement.expect(once()).method("setLong").with(eq(2), eq(1L)).isVoid();
+        mockPreparedStatement.expect(once()).method("execute").will(returnValue(true));
+        mockStatement.expect(once()).method("close").isVoid();
+        mockPreparedStatement.expect(once()).method("close").isVoid();
+        
         handler.update(1, currentDate, connection);
         mockResultSet.expect(once()).method("next").will(returnValue(false));
         try
