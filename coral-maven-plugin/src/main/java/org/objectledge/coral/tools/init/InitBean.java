@@ -36,7 +36,7 @@ import org.objectledge.filesystem.FileSystem;
  * A Bean that intializes a JDBC database for use as Coral data backend.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: InitBean.java,v 1.6 2005-02-16 20:03:31 rafal Exp $
+ * @version $Id: InitBean.java,v 1.7 2005-02-16 20:33:13 rafal Exp $
  */
 public class InitBean
 {
@@ -87,6 +87,15 @@ public class InitBean
         else
         {
             runScript("sql/scheduler/db/DBSchedulerCleanup.sql");
+        }
+        
+        if(!hasTable("ledge_naming_attribute"))
+        {
+            runScript("sql/naming/db/DBNamingTables.sql");
+        }
+        else
+        {
+            runScript("sql/naming/db/DBNamingCleanup.sql");
         }
         
         if(!hasTable("coral_resource_class"))
