@@ -20,7 +20,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * Each {@link ResourceClass} has an associated set of <code>Permission</code>s
  * that can be granted upon it's instances.
  *
- * @version $Id: PermissionImpl.java,v 1.7 2004-03-03 12:39:40 fil Exp $
+ * @version $Id: PermissionImpl.java,v 1.8 2004-03-05 10:17:00 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionImpl
@@ -52,7 +52,7 @@ public class PermissionImpl
      * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
      */
-    PermissionImpl(Persistence persistence, CoralEventHub coralEventHub, 
+    public PermissionImpl(Persistence persistence, CoralEventHub coralEventHub, 
         CoralRegistry coralRegistry)
     {
         super(persistence);

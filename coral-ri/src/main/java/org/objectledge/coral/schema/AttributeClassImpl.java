@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.7 2004-02-24 12:38:17 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.8 2004-03-05 10:17:02 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -54,7 +54,7 @@ public class AttributeClassImpl
      * @param instantiator the Instantiator.
      * @param coralEventHub the CoralEventHub.
      */
-    AttributeClassImpl(Persistence persistence, Instantiator instantiator, 
+    public AttributeClassImpl(Persistence persistence, Instantiator instantiator, 
         CoralEventHub coralEventHub)
     {
         super(persistence);

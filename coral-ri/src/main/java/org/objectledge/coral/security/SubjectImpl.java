@@ -17,7 +17,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: SubjectImpl.java,v 1.7 2004-03-03 10:27:30 fil Exp $
+ * @version $Id: SubjectImpl.java,v 1.8 2004-03-05 10:17:00 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SubjectImpl
@@ -54,8 +54,8 @@ public class SubjectImpl
      * @param coralRegistry the CoralRegistry.
      * @param coralSecurity the CoralSecurity.
      */
-    SubjectImpl(Persistence persistence, CoralEventHub coralEventHub, CoralRegistry coralRegistry, 
-        CoralSecurity coralSecurity)
+    public SubjectImpl(Persistence persistence, CoralEventHub coralEventHub, 
+        CoralRegistry coralRegistry, CoralSecurity coralSecurity)
     {
         super(persistence);
         this.coralEventHub = coralEventHub;

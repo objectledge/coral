@@ -9,7 +9,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents implication relationship between two roles.
  *
- * @version $Id: RoleImplicationImpl.java,v 1.3 2004-02-27 08:57:52 fil Exp $
+ * @version $Id: RoleImplicationImpl.java,v 1.4 2004-03-05 10:17:00 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImplicationImpl
@@ -34,7 +34,7 @@ public class RoleImplicationImpl
      * 
      * @param coralSecurity the CoralSecurity.
      */
-    RoleImplicationImpl(CoralSecurity coralSecurity)
+    public RoleImplicationImpl(CoralSecurity coralSecurity)
     {
         this.coralSecurity = coralSecurity;
     }

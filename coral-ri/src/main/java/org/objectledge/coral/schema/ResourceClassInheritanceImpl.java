@@ -9,7 +9,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents resource class inheritance relationship.
  *
- * @version $Id: ResourceClassInheritanceImpl.java,v 1.3 2004-02-27 08:57:55 fil Exp $
+ * @version $Id: ResourceClassInheritanceImpl.java,v 1.4 2004-03-05 10:17:02 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassInheritanceImpl
@@ -34,7 +34,7 @@ public class ResourceClassInheritanceImpl
      * 
      * @param coralSchema the CoralSchema.
      */
-    ResourceClassInheritanceImpl(CoralSchema coralSchema)
+    public ResourceClassInheritanceImpl(CoralSchema coralSchema)
     {
         super();
         this.coralSchema = coralSchema;

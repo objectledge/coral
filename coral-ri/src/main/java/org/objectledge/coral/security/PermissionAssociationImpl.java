@@ -12,7 +12,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * Represents an association between a {@link org.objectledge.coral.security.Permission} and a 
  * {@link org.objectledge.coral.schema.ResourceClass}. 
  *
- * @version $Id: PermissionAssociationImpl.java,v 1.4 2004-02-27 08:57:52 fil Exp $
+ * @version $Id: PermissionAssociationImpl.java,v 1.5 2004-03-05 10:17:00 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssociationImpl
@@ -41,7 +41,7 @@ public class PermissionAssociationImpl
      * @param coralSchema the CoralSchema.
      * @param coralSecurity the CoralSecurity.
      */
-    PermissionAssociationImpl(CoralSchema coralSchema, CoralSecurity coralSecurity)
+    public PermissionAssociationImpl(CoralSchema coralSchema, CoralSecurity coralSecurity)
     {
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
