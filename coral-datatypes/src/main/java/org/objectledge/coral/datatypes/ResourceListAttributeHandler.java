@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -22,7 +23,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceListAttributeHandler.java,v 1.6 2004-07-09 11:11:04 pablo Exp $
+ * @version $Id: ResourceListAttributeHandler.java,v 1.7 2005-01-19 06:44:17 rafal Exp $
  */
 public class ResourceListAttributeHandler
     extends AttributeHandlerBase
@@ -112,7 +113,7 @@ public class ResourceListAttributeHandler
         {
             temp.add(new Long(rs.getLong(1)));
         }
-        return new ResourceList(coralStore, temp);
+        return instantiate(temp);
     }
 
     /**
@@ -241,7 +242,7 @@ public class ResourceListAttributeHandler
         }
         if(string.equals("@empty"))
         {
-            return new ResourceList(coralStore);
+            return instantiate(Collections.EMPTY_LIST);
         }
         List list = new ArrayList();
         StringTokenizer st = new StringTokenizer(string);
@@ -276,6 +277,17 @@ public class ResourceListAttributeHandler
                 continue;
             }        
         }
+        return instantiate(list);
+    }
+
+    /**
+     * Instantiates a resource list.
+     * 
+     * @param list list items.
+     * @return a ResourceList instance.
+     */
+    protected ResourceList instantiate(List list)
+    {
         return new ResourceList(coralStore, list);
     }
 }

@@ -1,12 +1,7 @@
 package org.objectledge.coral.datatypes;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.List;
 
-import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
@@ -19,7 +14,7 @@ import org.objectledge.database.Database;
  * objects containing weak reference to resources.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: WeakResourceListAttributeHandler.java,v 1.2 2004-05-06 13:38:43 pablo Exp $
+ * @version $Id: WeakResourceListAttributeHandler.java,v 1.3 2005-01-19 06:44:17 rafal Exp $
  */
 public class WeakResourceListAttributeHandler
     extends ResourceListAttributeHandler
@@ -38,27 +33,6 @@ public class WeakResourceListAttributeHandler
                                 AttributeClass attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
-    }
-        
-    // AttributeHandler interface ////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object retrieve(long id, Connection conn)
-        throws EntityDoesNotExistException, SQLException
-    {
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT ref FROM "+getTable()+" WHERE data_key = "+id+
-            " ORDER BY pos"
-        );
-        ArrayList temp = new ArrayList();
-        while(rs.next())
-        {
-            temp.add(new Long(rs.getLong(1)));
-        }
-        return new WeakResourceList(coralStore, temp);
     }
 
     // integrity constraints ////////////////////////////////////////////////    
@@ -79,17 +53,14 @@ public class WeakResourceListAttributeHandler
         return new Resource[0];
     }
     
-    // protected /////////////////////////////////////////////////////////////
-
     /**
-     * {@inheritDoc}
+     * Instantiates a resource list.
+     * 
+     * @param list list items.
+     * @return a ResourceList instance.
      */
-    protected Object fromString(String string)
+    protected ResourceList instantiate(List list)
     {
-        if(string.equals("@empty"))
-        {
-            return new WeakResourceList(coralStore);
-        }
-        return null;
+        return new WeakResourceList(coralStore, list);
     }
 }
