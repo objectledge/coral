@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- $Id: project.xml,v 1.1 2004-05-13 14:09:49 fil Exp $ -->
+<!-- $Id: project.xml,v 1.2 2004-05-17 14:08:00 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
 
@@ -45,6 +45,18 @@
   </licenses>
 
   <mailingLists>
+    <mailingList>
+      <name>Coral release announcements</name>
+      <subscribe>coral-announce-subscribe@lists.objectledge.org</subscribe>
+      <unsubscribe>coral-announce-unsubscribe@lists.objectledge.org</unsubscribe>
+      <archive>http://lists.objectledge.org/pipermail/coral-announce/</archive>
+    </mailingList>
+    <mailingList>
+      <name>Coral users discussion</name>
+      <subscribe>coral-user-subscribe@lists.objectledge.org</subscribe>
+      <unsubscribe>coral-user-unsubscribe@lists.objectledge.org</unsubscribe>
+      <archive>http://lists.objectledge.org/pipermail/coral-user/</archive>
+    </mailingList>
     <mailingList>
       <name>Coral developers discussion</name>
       <subscribe>coral-dev-subscribe@lists.objectledge.org</subscribe>
