@@ -38,7 +38,7 @@ import org.objectledge.coral.store.Resource;
  * A common base class for {@link QueryService} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.2 2004-08-27 12:19:24 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.3 2004-08-27 12:21:12 rafal Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery
@@ -396,14 +396,16 @@ public abstract class AbstractCoralQueryImpl
         ASTfindResourceStatement statement;
         try
         {
-            statement = parser.findResourceStatement();
+            return parser.findResourceStatement();
         }
         catch(ParseException e)
         {
             throw new MalformedQueryException("Syntax error", e);
         }
-        coral.getRMLParserFactory().recycle(parser);
-        return statement;
+        finally
+		{
+            coral.getRMLParserFactory().recycle(parser);        	
+		}
     }
 
     /**
