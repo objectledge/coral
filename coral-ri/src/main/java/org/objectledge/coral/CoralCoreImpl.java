@@ -49,7 +49,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.3 2004-03-05 14:11:04 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.4 2004-03-08 07:22:28 fil Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -149,7 +149,8 @@ public class CoralCoreImpl
      */
     public CoralQuery getQuery()
     {
-        throw new UnsupportedOperationException("non implemented yet");
+        // TODO query support
+        return null;
     }
     
     /** 
