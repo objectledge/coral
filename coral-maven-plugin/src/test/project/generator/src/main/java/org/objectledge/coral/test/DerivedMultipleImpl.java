@@ -232,16 +232,6 @@ public class DerivedMultipleImpl
             throw new BackendException("incompatible schema change",e);
         }
     }
-
-	/**
-	 * Checks if the value of the <code>i1</code> attribute is defined.
-	 *
-	 * @return <code>true</code> if the value of the <code>i1</code> attribute is defined.
-	 */
-    public boolean isI1Defined()
-	{
-	    return isDefined(i1Def);
-	}
 	
 	/**
      * Removes the value of the <code>i1</code> attribute.
@@ -257,7 +247,17 @@ public class DerivedMultipleImpl
             throw new BackendException("incompatible schema change",e);
         }     
     } 
-    
+   
+	/**
+	 * Checks if the value of the <code>i1</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>i1</code> attribute is defined.
+	 */
+    public boolean isI1Defined()
+	{
+	    return isDefined(i1Def);
+	}
+ 
     /**
      * Returns the value of the <code>i2</code> attribute.
      *
@@ -337,7 +337,17 @@ public class DerivedMultipleImpl
             return defaultValue;
         }
     }
-   
+  
+	/**
+	 * Checks if the value of the <code>i3</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>i3</code> attribute is defined.
+	 */
+    public boolean isI3Defined()
+	{
+	    return isDefined(i3Def);
+	}
+ 
     /**
      * Returns the value of the <code>s1</code> attribute.
      *
@@ -394,7 +404,17 @@ public class DerivedMultipleImpl
             throw new BackendException("incompatible schema change",e);
         }
     }
-    
+   
+	/**
+	 * Checks if the value of the <code>s1</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s1</code> attribute is defined.
+	 */
+    public boolean isS1Defined()
+	{
+	    return isDefined(s1Def);
+	}
+ 
     /**
      * Returns the value of the <code>s2</code> attribute.
      *
@@ -460,7 +480,17 @@ public class DerivedMultipleImpl
             return defaultValue;
         }
     }    
-   
+  
+	/**
+	 * Checks if the value of the <code>s3</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s3</code> attribute is defined.
+	 */
+    public boolean isS3Defined()
+	{
+	    return isDefined(s3Def);
+	}
+ 
     /**
      * Returns the value of the <code>s6</code> attribute.
      *
@@ -517,6 +547,16 @@ public class DerivedMultipleImpl
             throw new BackendException("incompatible schema change",e);
         }
     }
-     
+   
+	/**
+	 * Checks if the value of the <code>s6</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s6</code> attribute is defined.
+	 */
+    public boolean isS6Defined()
+	{
+	    return isDefined(s6Def);
+	}
+  
     // @custom methods ///////////////////////////////////////////////////////
 }

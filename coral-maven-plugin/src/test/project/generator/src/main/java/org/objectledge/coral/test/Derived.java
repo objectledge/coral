@@ -59,6 +59,13 @@ public interface Derived
      *        or <code>null</code> to remove value.
      */
     public void setS5(String value);   
-     
+   
+	/**
+	 * Checks if the value of the <code>s5</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s5</code> attribute is defined.
+	 */
+    public boolean isS5Defined();
+  
     // @custom methods ///////////////////////////////////////////////////////
 }

@@ -59,6 +59,13 @@ public interface DerivedMultiple
      *        or <code>null</code> to remove value.
      */
     public void setS6(String value);   
-     
+   
+	/**
+	 * Checks if the value of the <code>s6</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s6</code> attribute is defined.
+	 */
+    public boolean isS6Defined();
+  
     // @custom methods ///////////////////////////////////////////////////////
 }

@@ -112,13 +112,6 @@ public interface ${class.interfaceClassName}
 #if(!$attr.required)
 
 	/**
-	 * Checks if the value of the <code>${attr.name}</code> attribute is defined.
-	 *
-	 * @return <code>true</code> if the value of the <code>${attr.name}</code> attribute is defined.
-	 */
-    public boolean is${attr.javaName}Defined();
-
-	/**
      * Removes the value of the <code>${attr.name}</code> attribute.
      */
     public void unset${attr.javaName}();
@@ -156,6 +149,15 @@ public interface ${class.interfaceClassName}
 #end ## $attr.required
 #end ## !$attr.readonly   
 #end ## !$attr.java_primitive
+#if(!$attr.required)
+
+	/**
+	 * Checks if the value of the <code>${attr.name}</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>${attr.name}</code> attribute is defined.
+	 */
+    public boolean is${attr.javaName}Defined();
+#end
 #end ## #foreach $attr
 #end ## $attributes.size() > 0
 

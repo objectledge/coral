@@ -201,6 +201,16 @@ public class DerivedImpl
             throw new BackendException("incompatible schema change",e);
         }
     }
-     
+   
+	/**
+	 * Checks if the value of the <code>s5</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s5</code> attribute is defined.
+	 */
+    public boolean isS5Defined()
+	{
+	    return isDefined(s5Def);
+	}
+  
     // @custom methods ///////////////////////////////////////////////////////
 }

@@ -75,17 +75,17 @@ public interface Test
     public void setI1(int value);
 
 	/**
+     * Removes the value of the <code>i1</code> attribute.
+     */
+    public void unsetI1();
+   
+	/**
 	 * Checks if the value of the <code>i1</code> attribute is defined.
 	 *
 	 * @return <code>true</code> if the value of the <code>i1</code> attribute is defined.
 	 */
     public boolean isI1Defined();
-
-	/**
-     * Removes the value of the <code>i1</code> attribute.
-     */
-    public void unsetI1();
-   	
+	
     /**
      * Returns the value of the <code>i2</code> attribute.
      *
@@ -121,7 +121,14 @@ public interface Test
      *         undefined.
      */
     public int getI3(int defaultValue);
-   
+  
+	/**
+	 * Checks if the value of the <code>i3</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>i3</code> attribute is defined.
+	 */
+    public boolean isI3Defined();
+ 
     /**
      * Returns the value of the <code>s1</code> attribute.
      *
@@ -136,7 +143,14 @@ public interface Test
      *        or <code>null</code> to remove value.
      */
     public void setS1(String value);   
-    
+   
+	/**
+	 * Checks if the value of the <code>s1</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s1</code> attribute is defined.
+	 */
+    public boolean isS1Defined();
+ 
     /**
      * Returns the value of the <code>s2</code> attribute.
      *
@@ -160,6 +174,13 @@ public interface Test
      * @return the value of the the <code>s3</code> attribute.
      */
     public String getS3();
-    
+  
+	/**
+	 * Checks if the value of the <code>s3</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s3</code> attribute is defined.
+	 */
+    public boolean isS3Defined();
+  
     // @custom methods ///////////////////////////////////////////////////////
 }

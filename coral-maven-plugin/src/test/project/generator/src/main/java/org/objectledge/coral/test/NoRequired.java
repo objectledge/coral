@@ -74,17 +74,17 @@ public interface NoRequired
     public void setI4(int value);
 
 	/**
+     * Removes the value of the <code>i4</code> attribute.
+     */
+    public void unsetI4();
+   
+	/**
 	 * Checks if the value of the <code>i4</code> attribute is defined.
 	 *
 	 * @return <code>true</code> if the value of the <code>i4</code> attribute is defined.
 	 */
     public boolean isI4Defined();
-
-	/**
-     * Removes the value of the <code>i4</code> attribute.
-     */
-    public void unsetI4();
-    
+ 
     /**
      * Returns the value of the <code>s4</code> attribute.
      *
@@ -99,6 +99,13 @@ public interface NoRequired
      *        or <code>null</code> to remove value.
      */
     public void setS4(String value);   
-     
+   
+	/**
+	 * Checks if the value of the <code>s4</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s4</code> attribute is defined.
+	 */
+    public boolean isS4Defined();
+  
     // @custom methods ///////////////////////////////////////////////////////
 }

@@ -210,16 +210,6 @@ public class NoRequiredImpl
             throw new BackendException("incompatible schema change",e);
         }
     }
-
-	/**
-	 * Checks if the value of the <code>i4</code> attribute is defined.
-	 *
-	 * @return <code>true</code> if the value of the <code>i4</code> attribute is defined.
-	 */
-    public boolean isI4Defined()
-	{
-	    return isDefined(i4Def);
-	}
 	
 	/**
      * Removes the value of the <code>i4</code> attribute.
@@ -235,7 +225,17 @@ public class NoRequiredImpl
             throw new BackendException("incompatible schema change",e);
         }     
     } 
-    
+   
+	/**
+	 * Checks if the value of the <code>i4</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>i4</code> attribute is defined.
+	 */
+    public boolean isI4Defined()
+	{
+	    return isDefined(i4Def);
+	}
+ 
     /**
      * Returns the value of the <code>s4</code> attribute.
      *
@@ -292,6 +292,16 @@ public class NoRequiredImpl
             throw new BackendException("incompatible schema change",e);
         }
     }
-     
+   
+	/**
+	 * Checks if the value of the <code>s4</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>s4</code> attribute is defined.
+	 */
+    public boolean isS4Defined()
+	{
+	    return isDefined(s4Def);
+	}
+  
     // @custom methods ///////////////////////////////////////////////////////
 }
