@@ -24,7 +24,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.14 2005-01-21 06:48:27 rafal Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.15 2005-01-25 03:12:13 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -902,6 +902,7 @@ public class CoralSchemaImpl
                 AttributeHandler handler = cl.getHandler();
                 if(!handlers.contains(handler))
                 {
+                    log.info("preloading attribute values: "+cl.getName());
                     handler.preload(conn);
                     handlers.add(handler);
                 }

@@ -57,7 +57,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.11 2005-01-21 06:48:42 rafal Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.12 2005-01-25 03:12:19 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -2044,16 +2044,26 @@ public class CoralRegistryImpl
     {
         long time = System.currentTimeMillis();
         log.info("preloading entity registry phase 1");
+        log.info("preloading attribute classes");
         attributeClassRegistry.get();
+        log.info("preloading resource classes");
         resourceClassRegistry.get();
+        log.info("preloading attribute definitions");
         attributeDefinitionRegistry.get();
         preloadAttributeDefinitions();
+        log.info("preloading resource class inheritance");
         preloadResourceClassInheritance();
+        log.info("preloading roles");
         roleRegistry.get();
+        log.info("preloading subjects");
         subjectRegistry.get();
+        log.info("preloading permissions");
         permissionRegistry.get();
+        log.info("preloading role implications");
         preloadRoleImplications();
+        log.info("preloading role assignments");
         preloadRoleAssignments();
+        log.info("preloading permission associations");
         preloadPermissionAssociations();
         time = System.currentTimeMillis() - time;
         log.info("finished preloading registry phase 1 in "+time+"ms");
@@ -2063,6 +2073,7 @@ public class CoralRegistryImpl
     {
         long time = System.currentTimeMillis();
         log.info("preloading entity registry phase 2");
+        log.info("preloading permission assignments");
         preloadPermissionAssignments();
         time = System.currentTimeMillis() - time;
         log.info("finished preloading registry phase 2 in "+time+"ms");

@@ -42,7 +42,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.24 2005-01-21 06:55:48 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.25 2005-01-25 03:12:09 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -1473,25 +1473,46 @@ public class CoralStoreImpl
                             Connection conn = null;
                             try
                             {
+                                long delegateTime = System.currentTimeMillis();
+                                log.info("preloading resource store: preloading delegates");
                                 conn = persistence.getDatabase().getConnection();
                                 List list = persistence.load(" true ORDER BY resource_id", 
                                         resourceFactory);
+                                log.info("preloading resource store: done preloading delegates in "+
+                                    (System.currentTimeMillis()-delegateTime)+"ms");
                                 Map handlerData = new HashMap();
                                 Iterator i = list.iterator();
                                 Set allResources = new HashSet();
                                 resourceSet.put("all", allResources);
                                 // A list to protect temp parent keys from GC - they will be keys
                                 // in WeakHashMaps.
-                                List parentKeys = new ArrayList(allResources.size() / 20);
+                                List parentKeys = new ArrayList(list.size() / 20);
+                                // tracking
+                                int tAll = list.size();
+                                int tMark = 0;
+                                int tCnt = 0;
                                 while(i.hasNext())
                                 {
+                                    if(tCnt >= tMark && tCnt > 1)
+                                    {
+                                        log.info("preloading resource store "+tCnt+" of "+tAll+
+                                            " ("+tCnt*100/tAll+"%) complete");
+                                        tMark += tAll / 10;
+                                    }
+                                    tCnt++;
                                     Resource res = (Resource)i.next();
                                     ResourceHandler handler = res.getResourceClass().getHandler();
-                                    Object data = handlerData.get(handler);
+                                    Object data = handlerData.get(handler.getClass());
                                     if(data == null)
                                     {
+                                        long handlerDataTime = System.currentTimeMillis();
+                                        log.info("preloading resource store: preloading handler " +
+                                                "data for "+handler.getClass().getName());
                                         data = handler.getData(conn);
-                                        handlerData.put(handler, data);
+                                        handlerData.put(handler.getClass(), data);
+                                        log.info("preloading resource store: done preloading handler " +
+                                            "data for "+handler.getClass().getName()+" in "+
+                                            (System.currentTimeMillis()-handlerDataTime)+"ms");
                                     }
                                     res = handler.retrieve(res, conn, data);
                 
