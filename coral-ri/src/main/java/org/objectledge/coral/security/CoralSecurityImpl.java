@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.Persistence;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurityImpl.java,v 1.5 2004-03-08 09:17:30 fil Exp $
+ * @version $Id: CoralSecurityImpl.java,v 1.6 2004-12-27 05:17:23 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSecurityImpl
@@ -570,7 +570,7 @@ public class CoralSecurityImpl
      * @param inherited <code>true</code> if the permission applies to the
      *        sub-resources of <code>resource</code> recursively.
      * @throws SecurityException if the <code>grantor</code> is not allowed to
-     *         create teh assignment.</code>
+     *         create teh assignment.
      */
     public void grant(Resource resource, Role role, Permission permission, boolean inherited)
         throws SecurityException
@@ -615,7 +615,7 @@ public class CoralSecurityImpl
      * @param role the involved role.
      * @param permission the involved permission.
      * @throws SecurityException if the <code>revoker</code> is not allowed to
-     *         delete the assignment.</code>
+     *         delete the assignment.
      */
     public void revoke(Resource resource, Role role, Permission permission)
         throws SecurityException
