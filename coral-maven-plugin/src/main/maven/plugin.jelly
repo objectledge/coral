@@ -47,6 +47,8 @@
        method="execute"
        className="org.objectledge.coral.tools.init.InitBean"/>
        
+    <!-- // Embedding Coral in Maven //////////////////////////////////////////////////////// -->
+       
     <!--
      | Determines the JDBC driver class to use.
      |
@@ -77,6 +79,27 @@
         userName="${coralDbUser}"/>
       <j:set var="${var}" scope="parent" value="${coralDataSource}"/>
     </define:tag>
+
+    <!--
+     | Instantiates Coral session factory.
+     |
+     | @param dataSource the data source to use.
+     | @param var the variable to store factory into (coralSessionFactory, by default).
+     -->
+    <define:bean name="sessionFactory"
+      className="org.objectledge.coral.tools.SessionFactoryTag">
+    </define:bean>
+
+    <!--
+     | Instantiates a dummy Principal
+     |
+     | @param name the name of the principal.
+     | @param var the variable to store principal into.
+     -->
+    <define:bean name="principal"
+      className="org.objectledge.coral.tools.PrincipalTag">
+    </define:bean>
+           
   </define:taglib>
   
   <!-- // wrapper generator ///////////////////////////////////////////////////////////////// -->
