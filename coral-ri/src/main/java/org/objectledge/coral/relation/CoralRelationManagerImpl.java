@@ -60,7 +60,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Implmentation of the Coral relation manager component.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.9 2005-01-26 06:33:54 rafal Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.10 2005-01-26 08:05:26 rafal Exp $
  */
 public class CoralRelationManagerImpl
     implements CoralRelationManager, PreloadingParticipant
@@ -379,7 +379,7 @@ public class CoralRelationManagerImpl
         Connection conn = persistence.getDatabase().getConnection();
         Statement stmt = conn.createStatement();
         ResultSet result = stmt.executeQuery(
-            "SELECT resource1, resource2 FROM coral_relation WHERE relation_id = " + 
+            "SELECT resource1, resource2 FROM coral_relation_data WHERE relation_id = " + 
             Long.toString(relationId)
         );
         List<Long> temp = new ArrayList<Long>();
