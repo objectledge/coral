@@ -36,12 +36,12 @@ import org.objectledge.coral.store.Resource;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModificationTest.java,v 1.4 2004-03-02 10:03:49 zwierzem Exp $
+ * @version $Id: RelationModificationTest.java,v 1.5 2004-03-02 17:15:24 zwierzem Exp $
  */
 public class RelationModificationTest  extends MockObjectTestCase
 {
-	Mock mockResource1;
-	Mock mockResource2;
+	private Mock mockResource1;
+	private Mock mockResource2;
 	
     public static void main(String[] args)
     {
