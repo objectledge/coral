@@ -14,7 +14,7 @@ function deleteSubject(name, url)
 <table class="defaultLayoutTable" border="1" width="100%">
   <tr>
     <td valign="top">
-##      $component.embed('browser.SubjectList') 
+      $component.embed('browser.SubjectList') 
     </td>
     <td valign="top">
 ## MAIN SCREEN
@@ -25,15 +25,15 @@ function deleteSubject(name, url)
   <tr>
     <th>Subject '$subject.name' info</th>
     <th>
-    <a href="javascript:deleteSubject('$subject.name','$link.action('browser.DeleteSubject').set('sub_id',$subject.id)');">usuñ</a>
+    <a href="javascript:deleteSubject('$subject.name','$link.action('browser.DeleteSubject').set('sub_id',$subject.id)');">delete</a>
     </th>
   </tr>
   <tr>
-    <td colspan="2">Zarz±dca:
+    <td colspan="2">Supervisor:
         #if($subject.supervisor)
           <a href="$link.view('browser.SubjectView').set('sub_id',$subject.supervisor.id)">$subject.supervisor.name</a>
         #else
-          brak
+          none
         #end
     </td> 
   </tr>
@@ -41,7 +41,7 @@ function deleteSubject(name, url)
     <td colspan="2">
       <table>
         <tr>
-          <th>Podrzêdni u¿ytkownicy</th>
+          <th>Subject subordinates</th>
         </tr>
         #foreach($sub in $subject.subordinates)
         <tr>
@@ -53,7 +53,7 @@ function deleteSubject(name, url)
       </table>
       <table>
         <tr>
-          <th>Przydzielone role</th>
+          <th>Granted roles</th>
         </tr>
         #foreach($ra in $subject.roleAssignments)
         <tr>
@@ -67,7 +67,7 @@ function deleteSubject(name, url)
   </tr>
   #else
   <tr>
-    <th>Wybierz u¿ytkownika</th>
+    <th>Choose subject</th>
   </tr>
   #end
 </table>

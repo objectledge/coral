@@ -1,7 +1,7 @@
   <div align="center">
     <table class="genericLayout" cellspacing="0" cellpadding="0">
       <tr>
-        <tr><b>Niepoprawny</b> login lub has³o.<br>Spróbuj ponownie
+        <tr><b>Invalid</b> login or password.<br>Try again
 	<td>
 	</td>
 	</tr>

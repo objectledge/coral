@@ -12,7 +12,7 @@ function select(name)
 #set($tableLink = $link.set('table_id', $table.id))
 <table class="genericItemTree" cellpadding="0" cellspacing="0">
   <tr>
-    <th>Lista klas zasobów</th>
+    <th>Resource class list</th>
   </tr>
 #foreach($row in $table.rows)
   <tr>

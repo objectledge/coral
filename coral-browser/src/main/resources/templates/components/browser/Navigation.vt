@@ -14,6 +14,6 @@
       <td class="separator">|</td>
       #linkCell('admin' 'PERMISSIONS' $link.view("browser.PermissionView"))
       <td class="separator">|</td>
-      #linkCell('admin' 'USERS' $link.view("browser.SubjectView"))
+      #linkCell('admin' 'SUBJECTS' $link.view("browser.SubjectView"))
     </tr>
   </table>

@@ -44,7 +44,7 @@ function deleteRole(name, url)
 <table class="defaultLayoutTable" border="1" width="100%">
   <tr>
     <td valign="top">
-##      $component.embed('browser.RoleList') 
+      $component.embed('browser.RoleList') 
     </td>
     <td valign="top">
 ## MAIN SCREEN

@@ -2,16 +2,16 @@
 
   #if($attr.attributeClass.name == 'resource')
     #if($attr.domain)
-      <a href="#select_resource_by_domain("id" "add_resource" "attr_$attr.name" $attr.domain)">wybierz</a>
+      <a href="#select_resource_by_domain("id" "add_resource" "attr_$attr.name" $attr.domain)">choose</a>
     #else
-      <a href="#select_resource("id" "add_resource" "attr_$attr.name")">wybierz</a>
+      <a href="#select_resource("id" "add_resource" "attr_$attr.name")">choose</a>
     #end
   #elseif($attr.attributeClass.name == 'subject')
-  <a href="#select_subject("name" "add_resource" "attr_$attr.name")">wybierz</a>  
+  <a href="#select_subject("name" "add_resource" "attr_$attr.name")">choose</a>  
   #elseif($attr.attributeClass.name == 'role')
-  <a href="#select_role("name" "add_resource" "attr_$attr.name")">wybierz</a>
+  <a href="#select_role("name" "add_resource" "attr_$attr.name")">choose</a>
   #elseif($attr.attributeClass.name == 'permission')
-  <a href="#select_permission("name" "add_resource" "attr_$attr.name")">wybierz</a>
+  <a href="#select_permission("name" "add_resource" "attr_$attr.name")">choose</a>
   #end
 
 #end

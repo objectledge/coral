@@ -8,7 +8,7 @@ function fSub(action)
 
 function deletePermission(name, url)
 {
-    if(confirm("Czy napewno chcesz usun±æ prawo '"+name+"'\npamiêtaj ¿e operacja nie mo¿e byæ cofniêta!"))
+    if(confirm("Are you sure you want delete the permission '"+name+"'\nthe operation once performed cannot be rolled back!"))
     {
         document.location.href = url;
     }
@@ -29,16 +29,16 @@ function deletePermission(name, url)
 <table class="genericItemTree" width="100%" cellpadding="0" cellspacing="0">
   #if($permission)
   <tr>
-    <th>Szczegó³y prawa '$permission.name'</th>
+    <th>Permission properties: '$permission.name'</th>
     <th>
-    <a href="javascript:deletePermission('$permission.name','$link.action('DeletePermission').set('perm_id',$permission.id)');">usuñ</a>
+    <a href="javascript:deletePermission('$permission.name','$link.action('DeletePermission').set('perm_id',$permission.id)');">delete</a>
     </th>
   </tr>
   <tr>
     <td colspan="2">
       <table>
         <tr>
-          <th>Klasy zasobu zwi±zane z prawem</th>
+          <th>Resource classes associated with permission</th>
         </tr>
         #foreach($resourceClass in $permission.resourceClasses)
         <tr>
@@ -50,12 +50,12 @@ function deletePermission(name, url)
   </tr>
   #else
   <tr>
-    <th>Wybierz prawo</th>
+    <th>Choose permission</th>
   </tr>
   <tr>
     <form name="form1" method="post" action='$link.action('AddPermission')'>
       <td><input type="text" name="permission_name" value="" maxlength="40">
-        <a href="javascript:fSub('$link.action('AddPermission')')">dodaj prawo</a>
+        <a href="javascript:fSub('$link.action('AddPermission')')">add permission</a>
       </td>
     </form>
   </tr>
