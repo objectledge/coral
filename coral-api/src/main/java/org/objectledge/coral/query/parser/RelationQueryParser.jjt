@@ -1,0 +1,202 @@
+// [x]emacs: fontify this file using java rules -*- java -*-
+
+/*
+examples:
+
+RES('/path/to/resource');
+RES(12345);
+
+MAP(!'Name of Relation'){ RES('/path/to/resource') };
+MAPTRANS('Name of Relation'){ RES('/path/to/resource') };
+
+category usage:
+
+MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category') } }
++
+MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category2') } };
+
+TODO : SET operator grammar:
+Relation  GetDir             IsTransitive    ResourceSet
+'Name'    FORWARD | REVERSE  YES | NO        Recursive expression
+*/
+
+options
+{
+    UNICODE_INPUT = true;
+    JAVA_UNICODE_ESCAPE = true;
+
+    CACHE_TOKENS = true;
+    OPTIMIZE_TOKEN_MANAGER = true;
+
+    STATIC = false;
+    MULTI = true;
+    NODE_USES_PARSER = true;
+    VISITOR = true;
+}
+
+PARSER_BEGIN(RelationQueryParser)
+
+package net.labeo.internal.resource.xref;
+
+import java.io.StringReader;
+import java.io.Reader;
+
+/**
+ * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
+ */
+public class RelationQueryParser
+{
+    public static SimpleNode executeParse(String query)
+	throws Exception
+    {
+	Reader reader = new StringReader(query);
+	RelationQueryParser parser = new RelationQueryParser(reader);
+	SimpleNode n = parser.Start();
+	return n;
+    }
+}
+
+PARSER_END(RelationQueryParser)
+
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+/* Reserved words */
+TOKEN:
+{
+    <SUM : "+"> |
+    <INTERSECT : "*">
+}
+
+/* Literals */
+TOKEN : /* IDENTIFIERS */
+{
+  < IDENTIFIER_ID: <NUM> (<NUM>)* >
+|
+  < IDENTIFIER_PATH: "/" (<LETTER>|<NUM>) (LETTER>|<NUM>|" "|"/")* >
+|
+  < IDENTIFIER_NAME: (<LETTER>|<NUM>) (LETTER>|<NUM>|" "|)* >
+|
+  < #LETTER: ["_", ".", ",", "-",
+       "\u0041"-"\u005a",
+       "\u0061"-"\u007a",
+       "\u00c0"-"\u00d6",
+       "\u00d8"-"\u00f6",
+       "\u00f8"-"\u00ff",
+       "\u0100"-"\u1fff"
+      ] >
+|
+  < #NUM: ["0"-"9"] >
+}
+
+SimpleNode Start() :
+{}
+{
+    SumExpression() ";"
+    {
+	return jjtThis;
+    }
+}
+
+void SumExpression() #void :
+{}
+{
+    ( IntersectionExpression() ( <SUM> IntersectionExpression() )* ) #SumExpression(>1)
+}
+
+void IntersectionExpression() #void :
+{}
+{
+    ( UnaryExpression() ( <INTERSECT> UnaryExpression() )* ) #IntersectionExpression(>1)
+}
+
+void UnaryExpression() #void :
+{}
+{
+    "(" SumExpression() ")" | ResourceSetExpression()
+}
+
+void ResourceSetExpression() #void :
+{}
+{
+    RelationMapExpression() | TransitiveRelationMapExpression() | ResourceIdentifier()
+}
+
+void RelationMapExpression() :
+{}
+{
+    "MAP" "(" RelationExpression() ")" "{" SumExpression() "}"
+}
+
+void TransitiveRelationMapExpression() :
+{}
+{
+    "MAPTRANS" "(" RelationExpression() ")" "{" SumExpression() "}"
+}
+
+void RelationExpression() #void :
+{}
+{
+    InvertedRelationExpression() | RelationIdentifier()
+}
+
+void InvertedRelationExpression() :
+{}
+{
+    "!" RelationIdentifier()
+}
+
+void RelationIdentifier() #void :
+{}
+{
+    "'" RelationName() "'"
+}
+
+void RelationName() :
+{
+    ASTResourceIdentifierPath node = (ASTResourceIdentifierPath)jjtThis;
+    Token t;
+}
+{
+    t = <IDENTIFIER_NAME>
+    {
+	node.identifier = t.image;
+    }
+}
+
+
+void ResourceIdentifier() #void :
+{}
+{
+    "'" ResourceIdentifierPath() "'" | ResourceIdentifierId()
+}
+
+void ResourceIdentifierId() :
+{
+    ASTResourceIdentifierId node = (ASTResourceIdentifierId)jjtThis;
+    Token t;
+}
+{
+    t = <IDENTIFIER_ID>
+    {
+	node.identifier = t.image;
+    }
+}
+
+void ResourceIdentifierPath() :
+{
+    ASTResourceIdentifierPath node = (ASTResourceIdentifierPath)jjtThis;
+    Token t;
+}
+{
+    t = <IDENTIFIER_PATH>
+    {
+	node.identifier = t.image;
+    }
+}
