@@ -29,6 +29,7 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.ResourceClassImpl;
 import org.objectledge.coral.schema.ResourceClassInheritance;
+import org.objectledge.coral.schema.ResourceClassInheritanceImpl;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.PermissionAssignment;
@@ -58,10 +59,10 @@ import org.picocontainer.PicoContainer;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: RegistryServiceImpl.java,v 1.1 2004-02-26 15:01:44 fil Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.1 2004-02-26 17:09:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
-public class RegistryServiceImpl
+public class CoralRegistryImpl
     implements CoralRegistry,
                PermissionAssociationChangeListener,
                PermissionAssignmentChangeListener,
@@ -103,11 +104,11 @@ public class RegistryServiceImpl
 
     /** The <code>PersistentFactory</code> for <code>ResourceClassInheritance</code> objects. */
     private PersistentFactory resourceClassInheritanceFactory =
-        new PicoPersistentFactory(dependencyContainer, ResourceClassInheritance.class); 
+        new PicoPersistentFactory(dependencyContainer, ResourceClassInheritanceImpl.class); 
 
     /** The <code>PersistentFactory</code> for <code>AttributeDefinition</code> objects. */
     private PersistentFactory attributeDefinitionFactory =
-        new PicoPersistentFactory(dependencyContainer, AttributeDefinition.class); 
+        new PicoPersistentFactory(dependencyContainer, AttributeDefinitionImpl.class); 
 
     /** The <code>PersistentFactory</code> for <code>RoleImplication</code> objects. */
     private PersistentFactory roleImplicationFactory = 
@@ -206,19 +207,21 @@ public class RegistryServiceImpl
      * @param database the database to use.
      * @param persistence the persistence subsystem
      * @param cacheFactory the cache factory.
+     * @param coralEventHub the event hub;
      * @param coralSchema the coral schema.
      * @param coralSecurity the coral security.
      * @param coralStore the coral store.
      * @param log the logger.
      * @throws ConfigurationException if the configuration is invalid.
      */
-    public RegistryServiceImpl(Database database, Persistence persistence, 
-        CacheFactory cacheFactory, CoralSchema coralSchema, CoralSecurity coralSecurity,
-        CoralStore coralStore, Logger log)
+    public CoralRegistryImpl(Database database, Persistence persistence, 
+        CacheFactory cacheFactory, CoralEventHub coralEventHub, 
+        CoralSchema coralSchema, CoralSecurity coralSecurity, CoralStore coralStore, Logger log)
         throws ConfigurationException
     {
         this.database = database;
         this.persistence = persistence;
+        this.coralEventHub = coralEventHub;
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
         this.coralStore = coralStore;
