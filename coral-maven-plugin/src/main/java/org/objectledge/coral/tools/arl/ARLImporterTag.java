@@ -39,7 +39,7 @@ import org.objectledge.coral.tools.CoralPluginTag;
  * A tag for creating arl importer component from within a Jelly script.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ARLImporterTag.java,v 1.1 2005-01-13 09:49:07 pablo Exp $
+ * @version $Id: ARLImporterTag.java,v 1.2 2005-01-26 03:30:47 rafal Exp $
  */
 public class ARLImporterTag
     extends CoralPluginTag
@@ -85,7 +85,7 @@ public class ARLImporterTag
     /**
      * Sets the dataSource.
      *
-     * @param sourceDataSource The dataSource to set.
+     * @param targetDataSource The dataSource to set.
      */
     public void setTargetDataSource(DataSource targetDataSource)
     {
@@ -113,7 +113,8 @@ public class ARLImporterTag
         {
             try
             {
-                component = new ARLImporterComponent(sourceDataSource, targetDataSource, ledgeBaseDir);
+                component = new ARLImporterComponent(sourceDataSource, targetDataSource, 
+                    ledgeBaseDir);
             }
             catch(Exception e)
             {

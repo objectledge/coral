@@ -42,7 +42,7 @@ import org.objectledge.coral.security.Subject;
  * An implementation of the Coral session factory.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImpl.java,v 1.7 2005-01-25 06:31:42 rafal Exp $
+ * @version $Id: CoralSessionFactoryImpl.java,v 1.8 2005-01-26 03:31:28 rafal Exp $
  */
 public class CoralSessionFactoryImpl implements CoralSessionFactory
 {
@@ -56,6 +56,7 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
      * Constructs a session factory instance.
      * 
      * @param coral the Coral component hub.
+     * @param log the Logger to use.
      */
     public CoralSessionFactoryImpl(CoralCore coral, Logger log)
     {
