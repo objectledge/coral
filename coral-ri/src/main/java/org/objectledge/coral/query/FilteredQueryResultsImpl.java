@@ -21,7 +21,7 @@ import org.objectledge.coral.store.Resource;
  * QueryResults implementation}
  * 
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: FilteredQueryResultsImpl.java,v 1.2 2004-08-30 09:12:48 rafal Exp $
+ * @version $Id: FilteredQueryResultsImpl.java,v 1.3 2004-12-22 07:54:49 rafal Exp $
  */
 public class FilteredQueryResultsImpl
     implements FilteredQueryResults
@@ -48,6 +48,7 @@ public class FilteredQueryResultsImpl
     /**
      * Creates a FilteredQueryResultsImpl object.
      *
+     * @param coralSchema Coral Schema.
      * @param results the QueryResults.
      * @param select the SELECT list.
      */
@@ -229,7 +230,7 @@ public class FilteredQueryResultsImpl
      *         1..columnCount range.
      */
     public AttributeClass getColumnType(int index)
-        throws IllegalArgumentException
+        throws IndexOutOfBoundsException
     {
         if(index < 1 || index > select.length)
         {
@@ -331,6 +332,8 @@ public class FilteredQueryResultsImpl
          * <p>The indices in the array are 0 based, on contrary to the general
          * indexing of QueryResults columns. Thus the valid indexes are 0
          * .. columnCount-1 inclusive.</p>
+         * 
+         * @return the contents of the row as array.
          */
         public Object[] getArray()
         {

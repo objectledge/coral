@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * A common base class for {@link QueryService} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.6 2004-08-30 08:48:55 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.7 2004-12-22 07:54:49 rafal Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery
@@ -58,6 +58,7 @@ public abstract class AbstractCoralQueryImpl
     /** 
      * Constructs an QueryService implementation instance.
      *
+     * @param coral coral core instance.
      */
     public AbstractCoralQueryImpl(CoralCore coral)
     {
@@ -72,7 +73,7 @@ public abstract class AbstractCoralQueryImpl
      *
      * @param query the query.
      * @return query resuls.
-     * @throws MalformedQuery exception if the query has syntactic or semantic
+     * @throws MalformedQueryException if the query has syntactic or semantic
      *         errors and thus cannot be executed.
      */
     public QueryResults executeQuery(String query)
@@ -103,7 +104,9 @@ public abstract class AbstractCoralQueryImpl
      * non-null values. To test a resource's property for being defined
      * (i.e. not null), use the DEFINED operator.</p>
      *
-     * @throws MalformedQuery exception if the query has syntactic or semantic
+     * @param query the query.
+     * @return prepared query object.
+     * @throws MalformedQueryException if the query has syntactic or semantic
      *         errors and thus cannot be executed.
      */
     public PreparedQuery prepareQuery(String query)
@@ -120,7 +123,7 @@ public abstract class AbstractCoralQueryImpl
      *
      * @param statement the AST node representing a FIND RESOURCE statement.
      * @return query resuls.
-     * @throws MalformedQuery exception if the query has semantic errors and
+     * @throws MalformedQueryException if the query has semantic errors and
      * thus cannot be executed. 
      */
     public abstract QueryResults executeQuery(ASTfindResourceStatement statement)
@@ -131,7 +134,7 @@ public abstract class AbstractCoralQueryImpl
      *
      * @param statement the AST node representing a FIND RESOURCE statement.
      * @return query resuls.
-     * @throws MalformedQuery exception if the query has semantic errors and
+     * @throws MalformedQueryException if the query has semantic errors and
      * thus cannot be executed. 
      */
     protected abstract PreparedQuery prepareQuery(ASTfindResourceStatement statement)
@@ -155,7 +158,9 @@ public abstract class AbstractCoralQueryImpl
      * @param lhs <code>true</code> if the operand is on the left hand side of
      * the operator. 
      * @param columnMap map containg ResultColumn objects keyed by alias.
-     * @returns an AttributeDefinition, ResultColumn, or String.
+     * @return AttributeDefinition, ResultColumn, or String literal value.
+     * @throws MalformedQueryException if the query has semantic errors and
+     * thus cannot be executed. 
      */
     protected Object parseOperand(String operand, boolean lhs, Map columnMap)
         throws MalformedQueryException
@@ -170,6 +175,7 @@ public abstract class AbstractCoralQueryImpl
                 throw new MalformedQueryException("resource reference "+operand+
                                                   " is not allowed in this context");
             }
+            else
             {
                 return columnMap.get(operand);
             }
@@ -267,6 +273,12 @@ public abstract class AbstractCoralQueryImpl
         return new ResultColumnAttribute(rcm, ad);
     }
 
+    /**
+     * Extract AST nodes from a list.
+     * 
+     * @param list ASTclassAndAliasSpecifierList
+     * @return array of ASTclassAndAliasSpecifier objects.
+     */
     protected ASTclassAndAliasSpecifier[] getItems(ASTclassAndAliasSpecifierList list)
     {
         int count = list.jjtGetNumChildren();
@@ -278,6 +290,12 @@ public abstract class AbstractCoralQueryImpl
         return result;
     }
     
+    /**
+     * Extract AST nodes from a list.
+     * 
+     * @param list ASTorderBySpecifierList
+     * @return array of ASTorderBySpecifier objects.
+     */
     protected ASTorderBySpecifier[] getItems(ASTorderByList list)
     {
         int count = list.jjtGetNumChildren();
@@ -289,6 +307,12 @@ public abstract class AbstractCoralQueryImpl
         return result;
     }
     
+    /**
+     * Extract AST nodes from a list.
+     * 
+     * @param list ASTselectList
+     * @return array of String objects.
+     */
     protected String[] getItems(ASTselectList list)
     {
     	int count = list.jjtGetNumChildren();
@@ -306,6 +330,8 @@ public abstract class AbstractCoralQueryImpl
      *
      * @param statement the AST node representing a FIND RESOURCE statement.
      * @return a list of {@link ResultColumn} objects.
+     * @throws MalformedQueryException if the query has syntactic or semantic
+     *         errors and thus cannot be executed.
      */
     protected List getColumns(ASTfindResourceStatement statement)
         throws MalformedQueryException
@@ -807,11 +833,21 @@ public abstract class AbstractCoralQueryImpl
     {
         private MalformedQueryException e;
 
+        /**
+         * Creates new WrappedMalformedQueryException instance.
+         * 
+         * @param e a MalformedQueryException.
+         */
         public WrappedMalformedQueryException(MalformedQueryException e)
         {
             this.e = e;
         }
         
+        /**
+         * Returns the wrapped exception.
+         * 
+         * @return the wrapped exception.
+         */
         public MalformedQueryException getException()
         {
             return e;

@@ -23,7 +23,7 @@ import org.objectledge.coral.store.Resource;
  * containg tuples of resource identifiers.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLQueryResultsImpl.java,v 1.1 2004-08-27 11:31:23 rafal Exp $
+ * @version $Id: SQLQueryResultsImpl.java,v 1.2 2004-12-22 07:54:49 rafal Exp $
  */
 public class SQLQueryResultsImpl
     implements QueryResults
@@ -60,12 +60,14 @@ public class SQLQueryResultsImpl
     /**
      * Constructs a SQLQueryResultsImpl.
      *
+     * @param schema the Coral Schema.
+     * @param store the Coral Store.
      * @param resultSet the ResultSet
      * @param from the FROM list.
      * @param select the SELECT list, or <code>null</code>
      */
-    public SQLQueryResultsImpl(CoralSchema schema, CoralStore store, ResultSet resultSet, String[][] from,
-                               String[] select)
+    public SQLQueryResultsImpl(CoralSchema schema, CoralStore store, ResultSet resultSet, 
+        String[][] from, String[] select)
     {
         this.store = store;
         this.schema = schema;
@@ -333,7 +335,7 @@ public class SQLQueryResultsImpl
      *         1..columnCount range.
      */
     public ResourceClass getColumnType(int index)
-        throws IllegalArgumentException
+        throws IndexOutOfBoundsException
     {
         if(index < 1 || index > from.length)
         {
@@ -530,6 +532,8 @@ public class SQLQueryResultsImpl
          * <p>The indices in the array are 0 based, on contrary to the general
          * indexing of QueryResults columns. Thus the valid indexes are 0
          * .. columnCount-1 inclusive.</p>
+         * 
+         * @return the contents of the row as Resource array.
          */
         public Resource[] getArray()
         {
@@ -547,6 +551,8 @@ public class SQLQueryResultsImpl
          * <p>The indices in the array are 0 based, on contrary to the general
          * indexing of QueryResults columns. Thus the valid indexes are 0
          * .. columnCount-1 inclusive.</p>
+         * 
+         * @return the contents of the row as resource id array.
          */
         public long[] getIdArray()
         {

@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.3 2004-08-30 08:48:41 rafal Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.4 2004-12-22 07:54:49 rafal Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -82,7 +82,7 @@ public class SQLCoralQueryImpl
      *
      * @param statement the AST node representing a FIND RESOURCE statement.
      * @return query resuls.
-     * @throws MalformedQuery exception if the query has semantic errors and
+     * @throws MalformedQueryException if the query has semantic errors and
      * thus cannot be executed. 
      */
     public QueryResults executeQuery(ASTfindResourceStatement statement)
@@ -224,7 +224,7 @@ public class SQLCoralQueryImpl
         // ORDER BY
         if(statement.getOrderBy() != null)
         {
-            ASTorderBySpecifier items[] = getItems(statement.getOrderBy());
+            ASTorderBySpecifier[] items = getItems(statement.getOrderBy());
             query.append("ORDER BY ");
             for(int i=0; i<items.length; i++)
             {
@@ -256,7 +256,8 @@ public class SQLCoralQueryImpl
             }
             String[] select = statement.getSelect() != null ? 
             		getItems(statement.getSelect()) : null;
-            QueryResults queryResults = new SQLQueryResultsImpl(coral.getSchema(), coral.getStore(), results, from, select );
+            QueryResults queryResults = new SQLQueryResultsImpl(coral.getSchema(), 
+                coral.getStore(), results, from, select );
             results.close();
             stmt.close();
             return queryResults;
@@ -286,7 +287,7 @@ public class SQLCoralQueryImpl
      *
      * @param statement the AST node representing a FIND RESOURCE statement.
      * @return query resuls.
-     * @throws MalformedQuery exception if the query has semantic errors and
+     * @throws MalformedQueryException if the query has semantic errors and
      * thus cannot be executed. 
      */
     protected PreparedQuery prepareQuery(ASTfindResourceStatement statement)
