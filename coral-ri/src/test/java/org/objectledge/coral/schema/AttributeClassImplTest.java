@@ -27,9 +27,9 @@
 // 
 package org.objectledge.coral.schema;
 
+import org.jmock.Constraint;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
-import org.jmock.constraint.IsEqual;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralInstantiationException;
 import org.objectledge.coral.Instantiator;
@@ -45,7 +45,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClassImplTest.java,v 1.2 2004-03-09 15:46:46 fil Exp $
+ * @version $Id: AttributeClassImplTest.java,v 1.3 2004-03-12 09:15:18 fil Exp $
  */
 public class AttributeClassImplTest extends MockObjectTestCase
 {
@@ -77,10 +77,10 @@ public class AttributeClassImplTest extends MockObjectTestCase
     public void testCreation()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")). willReturn(AttributeHandler.class);
+        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(AttributeHandler.class));
         mockAttributeHandler.expect(once()).method("getComparator").will(returnValue(null));
-        mockInstantiator.expect(once()).method("newInstance").with(new IsEqual(AttributeHandler.class)).willReturn(mockAttributeHandler.proxy());
+        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -137,7 +137,7 @@ public class AttributeClassImplTest extends MockObjectTestCase
     {
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willReturn(AttributeHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(new IsEqual(AttributeHandler.class)).willThrow(new CoralInstantiationException("<handler class>", new Exception("unavailable")));
+        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).willThrow(new CoralInstantiationException("<handler class>", new Exception("unavailable")));
         try
         {
             new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -158,7 +158,7 @@ public class AttributeClassImplTest extends MockObjectTestCase
     {
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willReturn(AttributeHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(new IsEqual(AttributeHandler.class)).willReturn(new Object());
+        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(new Object()));
         try
         {        
             new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -178,7 +178,7 @@ public class AttributeClassImplTest extends MockObjectTestCase
     {
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willReturn(AttributeHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(new IsEqual(AttributeHandler.class)).willReturn(mockAttributeHandler.proxy());
+        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -200,7 +200,7 @@ public class AttributeClassImplTest extends MockObjectTestCase
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willReturn(AttributeHandler.class);
         mockAttributeHandler.expect(once()).method("getComparator").will(returnValue(null));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class)).willReturn(mockAttributeHandler.proxy());
+        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).willReturn(mockAttributeHandler.proxy());
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -249,7 +249,7 @@ public class AttributeClassImplTest extends MockObjectTestCase
     {
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")). willReturn(AttributeHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(new IsEqual(AttributeHandler.class)).willReturn(mockAttributeHandler.proxy());
+        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -266,7 +266,7 @@ public class AttributeClassImplTest extends MockObjectTestCase
     {
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")). willReturn(AttributeHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(new IsEqual(AttributeHandler.class)).willReturn(mockAttributeHandler.proxy());
+        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).will(returnValue(mockAttributeHandler.proxy()));
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(mockCoralEventWhiteboard.proxy()));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeClassChangeListener");
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
@@ -285,5 +285,12 @@ public class AttributeClassImplTest extends MockObjectTestCase
             assertEquals(PersistenceException.class, e.getCause().getClass());
             assertEquals("revert failed", e.getCause().getMessage());
         }            
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    
+    private Constraint mapElement(Object key, Constraint c)
+    {
+        return new MapElement(key, c);
     }
 }

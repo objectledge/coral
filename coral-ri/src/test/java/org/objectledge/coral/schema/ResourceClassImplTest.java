@@ -27,6 +27,7 @@
 // 
 package org.objectledge.coral.schema;
 
+import org.jmock.Constraint;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.BackendException;
@@ -44,7 +45,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.4 2004-03-09 15:46:46 fil Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.5 2004-03-12 09:15:18 fil Exp $
  */
 public class ResourceClassImplTest extends MockObjectTestCase
 {
@@ -95,7 +96,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
     {
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class)).will(returnValue(resourceHandler));
+        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addResourceClassChangeListener");
         return new ResourceClassImpl(persistence, instantiator, coralEventHub,
@@ -142,7 +143,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
     {
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willReturn(ResourceHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class)).willThrow(new CoralInstantiationException("<handler class>", new Exception("unavailable")));
+        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).willThrow(new CoralInstantiationException("<handler class>", new Exception("unavailable")));
         try
         {
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
@@ -162,7 +163,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
     {
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willReturn(ResourceHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class)).willReturn(new Object());
+        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).willReturn(new Object());
         try
         {        
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
@@ -247,7 +248,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
         mockInputRecord.expect(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class)).will(returnValue(resourceHandler));
+        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, same(rc))).will(returnValue(resourceHandler));
         mockInputRecord.expect(once()).method("isNull").with(eq("db_table")).will(returnValue(false));
         mockInputRecord.expect(once()).method("getString").with(eq("db_table")).will(returnValue("<db table>"));
         mockInputRecord.expect(once()).method("getInteger").with(eq("flags")).will(returnValue(303));    
@@ -273,7 +274,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
         mockInputRecord.expect(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class)).will(returnValue(resourceHandler));
+        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
         mockInputRecord.expect(once()).method("isNull").with(eq("db_table")).will(returnValue(true));
         mockInputRecord.expect(once()).method("getInteger").with(eq("flags")).will(returnValue(303));    
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
@@ -542,5 +543,12 @@ public class ResourceClassImplTest extends MockObjectTestCase
     public void testPermissionRemovedFromParent()
     {
         // TODO implement test
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    
+    private Constraint mapElement(Object key, Constraint c)
+    {
+        return new MapElement(key, c);
     }
 }
