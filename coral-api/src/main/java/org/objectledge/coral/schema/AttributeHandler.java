@@ -23,7 +23,7 @@ import org.objectledge.coral.store.Resource;
  * </ul>
  * </p>
  * 
- * @version $Id: AttributeHandler.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: AttributeHandler.java,v 1.3 2005-01-20 10:54:21 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface AttributeHandler
@@ -45,6 +45,15 @@ public interface AttributeHandler
     // data manipulation /////////////////////////////////////////////////////
 
     // NOTE - AttributeClass needs to be passed to the constrcutor
+
+    /**
+     * Preloads all values of the attribute from the database.
+     * 
+     * @param conn database connection.
+     * @throws SQLException if database operation fails.
+     */
+    public void preload(Connection conn)
+        throws SQLException;
 
     /**
      * Creates a new attribute instance.
