@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.13 2004-10-05 07:38:26 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.14 2004-10-25 14:24:24 pablo Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -500,5 +500,15 @@ public class PersistentResource
     public void setSaved(long id)
     {
         this.id = id;
+    }
+    
+    /**
+     * Gets the local identifier unique for object class. 
+     * 
+     * @return the persistent id.
+     */
+    public long getPersistentId()
+    {
+    	return id;
     }
 }
