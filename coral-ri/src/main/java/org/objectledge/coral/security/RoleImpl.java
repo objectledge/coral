@@ -19,9 +19,9 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
- * An implementaion of {@link Role interface}.
+ * An implementaion of {@link Role} interface.
  *
- * @version $Id: RoleImpl.java,v 1.4 2004-02-23 10:42:11 fil Exp $
+ * @version $Id: RoleImpl.java,v 1.5 2004-02-23 11:09:00 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImpl

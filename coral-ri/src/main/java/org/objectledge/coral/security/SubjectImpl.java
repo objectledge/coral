@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: SubjectImpl.java,v 1.4 2004-02-23 10:42:11 fil Exp $
+ * @version $Id: SubjectImpl.java,v 1.5 2004-02-23 11:10:18 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SubjectImpl
@@ -189,9 +189,9 @@ public class SubjectImpl
     // Subject inteface /////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns the role assigments made for this <code>Subject.</code>
+     * Returns the role assigments made for this <code>Subject</code>.
      *
-     * @return the role assigments made for this <code>Subject.</code>
+     * @return the role assigments made for this <code>Subject</code>.
      */
     public RoleAssignment[] getRoleAssignments()
     {
