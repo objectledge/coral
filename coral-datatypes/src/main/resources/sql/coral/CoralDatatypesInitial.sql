@@ -73,7 +73,7 @@ INSERT INTO coral_attribute_class VALUES(
 
 INSERT INTO coral_attribute_class VALUES(
 		6, 
-		'long',
+		'number',
 		'java.lang.Number', 
 		'org.objectledge.coral.datatypes.NumberAttributeHandler',
 		'coral_attribute_number');
