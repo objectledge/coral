@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterResourceSetNameStatement extends SimpleNode {
+public class ASTalterResourceSetNameStatement extends ASTalterResourceStatement {
   public ASTalterResourceSetNameStatement(int id) {
     super(id);
   }
@@ -15,5 +15,10 @@ public class ASTalterResourceSetNameStatement extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  public String getNewName()
+  {
+      return newName;
   }
 }

@@ -16,4 +16,21 @@ public class ASTrevokePermissionStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTrole getRole()
+  {
+      return role;
+  }
+  
+  public ASTpermission getPermission()
+  {
+      return permission;
+  }
+  
+  public ASTresource getResource()
+  {
+      return resource;
+  }
 }

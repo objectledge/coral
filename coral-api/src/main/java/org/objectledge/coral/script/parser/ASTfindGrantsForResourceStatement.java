@@ -16,4 +16,11 @@ public class ASTfindGrantsForResourceStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTresource getResource()
+  {
+      return resource;   
+  }
 }

@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterResourceSetOwnerStatement extends SimpleNode {
+public class ASTalterResourceSetOwnerStatement extends ASTalterResourceStatement {
   public ASTalterResourceSetOwnerStatement(int id) {
     super(id);
   }
@@ -15,5 +15,12 @@ public class ASTalterResourceSetOwnerStatement extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTsubject getOwner()
+  {
+      return owner;
   }
 }

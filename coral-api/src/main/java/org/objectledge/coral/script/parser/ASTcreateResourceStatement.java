@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTcreateResourceStatement extends SimpleNode {
+public class ASTcreateResourceStatement extends ASTcreateEntityStatement {
   public ASTcreateResourceStatement(int id) {
     super(id);
   }
@@ -15,5 +15,22 @@ public class ASTcreateResourceStatement extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTresourceClass getResourceClass()
+  {
+      return resourceClass;
+  }
+  
+  public ASTresource getParent()
+  {
+      return parentResource;
+  }
+  
+  public ASTattributeList getAttributes()
+  {
+      return attributeValues;
   }
 }

@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterResourceSetParentStatement extends SimpleNode {
+public class ASTalterResourceSetParentStatement extends ASTalterResourceStatement {
   public ASTalterResourceSetParentStatement(int id) {
     super(id);
   }
@@ -15,5 +15,12 @@ public class ASTalterResourceSetParentStatement extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTresource getParent()
+  {
+      return parentResource;
   }
 }

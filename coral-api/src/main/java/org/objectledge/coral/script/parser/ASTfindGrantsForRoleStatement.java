@@ -16,4 +16,16 @@ public class ASTfindGrantsForRoleStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTrole getRole()
+  {
+      return role;
+  }
+  
+  public ASTresource getResource()
+  {
+      return resource;
+  }
 }

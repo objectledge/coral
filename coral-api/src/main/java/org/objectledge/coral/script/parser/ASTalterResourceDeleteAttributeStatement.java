@@ -16,4 +16,16 @@ public class ASTalterResourceDeleteAttributeStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTresource getResource()
+  {
+      return resource;
+  }
+  
+  public String getAttributeName()
+  {
+      return attributeName;
+  }
 }

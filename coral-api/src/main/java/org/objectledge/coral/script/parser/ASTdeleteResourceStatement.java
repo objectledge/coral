@@ -16,4 +16,21 @@ public class ASTdeleteResourceStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public long getId()
+  {
+      return entityId;
+  }
+  
+  public String getName()
+  {
+      return entityName;
+  }
+  
+  public boolean getRecursive()
+  {
+      return recursive;
+  }
 }

@@ -16,4 +16,31 @@ public class ASTfindResourceStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTresource getResource()
+  {
+      return resource;
+  }
+  
+  public ASTclassAndAliasSpecifierList getFrom()
+  {
+      return from;
+  }
+  
+  public ASTconditionalExpression getWhere()
+  {
+      return where;
+  }
+  
+  public ASTorderByList getOrderBy()
+  {
+      return orderBy;
+  }
+  
+  public ASTselectList getSelect()
+  {
+      return select;
+  }
 }

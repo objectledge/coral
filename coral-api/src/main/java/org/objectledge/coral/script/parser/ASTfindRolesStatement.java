@@ -16,4 +16,16 @@ public class ASTfindRolesStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTsubject getSubject()
+  {
+      return subject;
+  }
+  
+  public boolean getDirect()
+  {
+      return direct;
+  }
 }

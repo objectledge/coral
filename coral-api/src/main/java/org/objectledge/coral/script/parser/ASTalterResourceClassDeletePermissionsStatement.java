@@ -16,4 +16,16 @@ public class ASTalterResourceClassDeletePermissionsStatement extends SimpleNode 
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTresourceClass getResourceClass()
+  {
+      return resourceClass;
+  }
+  
+  public ASTpermissionList getPermissions()
+  {
+      return permissions;
+  }  
 }

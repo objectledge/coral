@@ -16,4 +16,16 @@ public class ASTfindGrantsForSubjectStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTsubject getSubject()
+  {
+      return subject;
+  }
+  
+  public ASTresource getResource()
+  {
+      return resource;
+  }
 }
