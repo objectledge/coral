@@ -50,17 +50,17 @@ function fSub(action)
     <td colspan="2">
       <table>
         <tr>
-          <th>Definition class</th>
-          <th>Name</th>
-          <th>Attribute class</th>
+          <th><span title="Attribute class">Class</span></th>
+          <th><span title="Attribute name">Name</span></th>
+          <th><span title="Definition class">Def. class</span></th>
           <th>Domain</th>
           <th>Value</th>
         </tr>
       #foreach($attr in $resource.resourceClass.allAttributes)
         <tr>
+          <td>${attr.attributeClass.name}</td>
+		  <td><a href="$link.view('browser.AttributeDetails').set('res_id',$resource.id).set('attr_name',$attr.name)">$attr.name</a></td>
           <td><a href="$link.view('browser.ResourceClassView').set('res_class_id',$attr.declaringClass.id)">$attr.declaringClass.name</a></td>
-          <td><a href="$link.view('browser.AttributeDetails').set('res_id',$resource.id).set('attr_name',$attr.name)">$attr.name</a></td>
-          <td>$attr.attributeClass.name</td>
           <td>
             #if($attr.domain)
               <a href="$link.view('browser.ResourceClassView').set('res_class_id',$attr.declaringClass.id)">
