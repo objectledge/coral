@@ -1799,7 +1799,14 @@ public class RMLExecutor
                     return data;
                 }
                 Subject subject = entities.resolve(node.getSubject());
-                originalSession = coralSession;
+                if(originalSession == null)
+                {
+                    originalSession = coralSession;
+                }
+                else
+                {
+                    coralSession.close();
+                }
                 coralSession = coralSessionFactory.getSession(subject.getPrincipal());
                 out.println("You are now impersonating "+subject.getName());
             }
@@ -1812,6 +1819,7 @@ public class RMLExecutor
         {
             coralSession.close();
             coralSession = originalSession;
+            originalSession = null;
             coralSession.makeCurrent();            
         }
         return data;
