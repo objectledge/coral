@@ -28,6 +28,8 @@
 package org.objectledge.coral.schema;
 
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jcontainer.dna.Logger;
 import org.jmock.builder.Mock;
@@ -46,7 +48,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.3 2004-03-02 13:17:57 fil Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.4 2004-03-02 15:04:10 fil Exp $
  */
 public class CoralSchemaImplTest extends MockObjectTestCase
 {
@@ -82,6 +84,10 @@ public class CoralSchemaImplTest extends MockObjectTestCase
     private AttributeDefinition attributeDefinition;
     private Mock mockResourceClass;
     private ResourceClass resourceClass;
+    private Mock mockParentResourceClass;
+    private ResourceClass parentResourceClass;
+    private Mock mockChildResourceClass;
+    private ResourceClass childResourceClass;
     private Mock mockResourceHandler;
     private ResourceHandler resourceHandler;
     private Mock mockOtherResourceHandler;
@@ -135,6 +141,10 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
         mockResourceClass = new Mock(ResourceClass.class);
         resourceClass = (ResourceClass)mockResourceClass.proxy();
+        mockParentResourceClass = new Mock(ResourceClass.class, "mockParentResourceClass");
+        parentResourceClass = (ResourceClass)mockParentResourceClass.proxy();
+        mockChildResourceClass = new Mock(ResourceClass.class, "mockChildResourceClass");
+        childResourceClass = (ResourceClass)mockChildResourceClass.proxy();
         mockResourceHandler = new Mock(ResourceHandler.class);
         resourceHandler = (ResourceHandler)mockResourceHandler.proxy();
         mockOtherResourceHandler = new Mock(OtherResourceHandler.class);
@@ -254,6 +264,20 @@ public class CoralSchemaImplTest extends MockObjectTestCase
     }
     
     // attribute definitions /////////////////////////////////////////////////////////////////////
+    
+    public void testGetAttributeDefinition()
+    {
+        AttributeDefinition[] ad = new AttributeDefinition[0];
+        mockCoralRegistry.expect(once()).method("getAttributeDefinition").will(returnValue(ad));
+        assertSame(ad, coralSchema.getAttribute());
+    }
+    
+    public void testGetAttributeDefinitionById() 
+        throws Exception
+    {
+        mockCoralRegistry.expect(once()).method("getAttributeDefinition").with(eq(1L)).will(returnValue(attributeDefinition));        
+        assertSame(attributeDefinition, coralSchema.getAttribute(1L));
+    }
     
     public void testCreateAttributeDefinition()
     {
@@ -411,5 +435,84 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassChangeEvent").with(same(realResourceClass));
         coralSchema.setFlags(realResourceClass, 121);
         assertEquals(121, realResourceClass.getFlags());        
+    }
+    
+    public void testAddAttribute()
+        throws Exception
+    {
+        mockAttributeHandler.expect(once()).method("checkDomain").with(eq("<domain>"));
+        mockInboundEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
+        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
+
+        Object value = new Object();
+        mockResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
+        mockResourceClass.expect(once()).method("hasAttribute").with(eq("<attribute>")).will(returnValue(false));
+        mockResourceClass.expect(once()).method("getChildClasses").will(returnValue(new ResourceClass[0]));
+        mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
+        mockCoralRegistry.expect(once()).method("addAttributeDefinition").with(same(realAttributeDefinition));
+        // TODO ???
+        mockLocalEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").with(same(realAttributeDefinition), eq(true));
+        mockResourceHandler.expect(once()).method("addAttribute").with(same(realAttributeDefinition), same(value), same(connection));
+        mockDatabase.expect(once()).method("commitTransaction").with(eq(true));
+        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").with(same(realAttributeDefinition), eq(true));        
+        mockConnection.expect(once()).method("close");
+        coralSchema.addAttribute(resourceClass, realAttributeDefinition, value);
+        assertEquals(resourceClass, realAttributeDefinition.getDeclaringClass());
+    }
+    
+    public void testDeleteAttribute()
+        throws Exception
+    {
+        mockResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
+        mockAttributeDefinition.stub().method("getDeclaringClass").will(returnValue(resourceClass));
+        mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
+        // TODO ???
+        mockLocalEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").with(same(attributeDefinition), eq(false));
+        mockResourceHandler.expect(once()).method("deleteAttribute").with(same(attributeDefinition), same(connection));
+        mockCoralRegistry.expect(once()).method("deleteAttributeDefinition").with(same(attributeDefinition));
+        mockDatabase.expect(once()).method("commitTransaction").with(eq(true));
+        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassAttributesChangeEvent").with(same(attributeDefinition), eq(false));        
+        mockConnection.expect(once()).method("close");
+        coralSchema.deleteAttribute(resourceClass, attributeDefinition);
+    }
+    
+    public void testAddParentClass()
+        throws Exception
+    {
+        Map values = new HashMap();
+        
+        mockParentResourceClass.stub().method("isParent").with(same(childResourceClass)).will(returnValue(false));
+        mockChildResourceClass.stub().method("isParent").with(same(parentResourceClass)).will(returnValue(false));
+        mockParentResourceClass.stub().method("getFlags").will(returnValue(0));
+        mockParentResourceClass.stub().method("getAllAttributes").will(returnValue(new AttributeDefinition[0]));
+        mockParentResourceClass.stub().method("getId").will(returnValue(1L));
+        mockChildResourceClass.stub().method("getId").will(returnValue(2L));
+        mockChildResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
+        mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
+        ResourceClassInheritance rci = new ResourceClassInheritanceImpl(coralSchema, parentResourceClass, childResourceClass);
+        mockCoralRegistry.expect(once()).method("addResourceClassInheritance").with(eq(rci));
+        // TODO ???
+        mockLocalEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(true));
+        mockResourceHandler.expect(once()).method("addParentClass").with(same(parentResourceClass), same(values), same(connection));
+        mockDatabase.expect(once()).method("commitTransaction").with(eq(true));
+        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(true));
+        mockConnection.expect(once()).method("close");       
+        coralSchema.addParentClass(childResourceClass, parentResourceClass, values);
+    }
+    
+    public void testDeleteParentClass()
+    {
+        mockParentResourceClass.stub().method("isParent").with(same(childResourceClass)).will(returnValue(true));
+        mockChildResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
+        mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
+        ResourceClassInheritance rci = new ResourceClassInheritanceImpl(coralSchema, parentResourceClass, childResourceClass);
+        // TODO ???
+        mockLocalEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(false));
+        mockResourceHandler.expect(once()).method("deleteParentClass").with(same(parentResourceClass), same(connection));
+        mockCoralRegistry.expect(once()).method("deleteResourceClassInheritance").with(eq(rci));
+        mockDatabase.expect(once()).method("commitTransaction").with(eq(true));
+        mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(false));
+        mockConnection.expect(once()).method("close");       
+        coralSchema.deleteParentClass(childResourceClass, parentResourceClass);
     }
 }
