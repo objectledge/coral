@@ -16,4 +16,19 @@ public class ASTequalityCondition extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public String getLHS()
+  {
+  	return lhs;
+  }
+  
+  public String getRHS()
+  {
+  	return rhs;
+  }
+  
+  public boolean isRHSLiteral()
+  {
+  	return literalRHS;
+  }
 }

@@ -16,4 +16,15 @@ public class ASTorderBySpecifier extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+
+  public String getAttribute()
+  {
+      return attributeName;
+  }
+  
+  // true is ascending 
+  public boolean getDirection() 
+  {
+      return dir;
+  }
 }

@@ -2,6 +2,8 @@
 
 package org.objectledge.coral.script.parser;
 
+import org.objectledge.coral.schema.ResourceClass;
+
 public class ASTclassAndAliasSpecifier extends SimpleNode {
   public ASTclassAndAliasSpecifier(int id) {
     super(id);
@@ -15,5 +17,15 @@ public class ASTclassAndAliasSpecifier extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  public ASTresourceClass getResourceClass()
+  {
+  	  return resourceClass;
+  }
+  
+  public String getAlias()
+  {
+  	  return alias;
   }
 }

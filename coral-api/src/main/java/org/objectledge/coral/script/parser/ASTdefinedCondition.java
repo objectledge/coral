@@ -16,4 +16,9 @@ public class ASTdefinedCondition extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public String getRHS()
+  {
+  	return rhs;
+  }
 }
