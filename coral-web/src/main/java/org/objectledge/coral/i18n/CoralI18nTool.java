@@ -41,7 +41,7 @@ import org.objectledge.i18n.I18nTool;
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.9 2004-08-20 08:26:19 zwierzem Exp $
+ * @version $Id: CoralI18nTool.java,v 1.10 2004-08-20 15:56:00 zwierzem Exp $
  */
 public class CoralI18nTool extends I18nTool
 {
@@ -56,6 +56,15 @@ public class CoralI18nTool extends I18nTool
     public CoralI18nTool(I18n i18n, Locale locale, String prefix)
     {
         super(i18n, locale, prefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected I18nTool createInstance(I18nTool source)
+    {
+        CoralI18nTool s = (CoralI18nTool)source;
+        return new CoralI18nTool( s.i18n, s.locale, s.prefixBuf.toString());
     }
 
     /**
