@@ -25,7 +25,7 @@ import org.objectledge.parameters.db.DBParametersManager;
  * labeo-experimental.</p>
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParametersAttributeHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: ParametersAttributeHandler.java,v 1.2 2004-03-10 21:49:58 pablo Exp $
  */
 public class ParametersAttributeHandler
     extends AttributeHandlerBase
@@ -75,7 +75,9 @@ public class ParametersAttributeHandler
         }
         catch(DBParametersException e)
         {
+            ///CLOVER:OFF
             throw new BackendException("failed to create container", e);
+            ///CLOVER:ON
         }
     }
 
@@ -100,7 +102,9 @@ public class ParametersAttributeHandler
         }
         catch(DBParametersException e)
         {
+            ///CLOVER:OFF
             throw new BackendException("failed to retrieve container", e);
+            ///CLOVER:ON
         }
     }
 
@@ -130,7 +134,9 @@ public class ParametersAttributeHandler
         }
         catch(DBParametersException e)
         {
+            ///CLOVER:OFF
             throw new BackendException("failed to update container", e);
+            ///CLOVER:ON
         }
     }
 
@@ -154,7 +160,9 @@ public class ParametersAttributeHandler
         }
         catch(DBParametersException e)
         {
+            ///CLOVER:OFF
             throw new BackendException("failed to delete container");
+            ///CLOVER:ON
         }
     }
 

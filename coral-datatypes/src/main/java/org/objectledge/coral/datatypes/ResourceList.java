@@ -18,7 +18,7 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>  
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceList.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: ResourceList.java,v 1.2 2004-03-10 21:49:58 pablo Exp $
  */
 public class ResourceList
     extends AbstractList
@@ -271,4 +271,10 @@ public class ResourceList
         size = size-(toIndex-fromIndex);
         modCount++;
     }
+    
+    public String toString()
+    {
+        return "";
+    }
+    
 }

@@ -22,7 +22,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceListAttributeHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: ResourceListAttributeHandler.java,v 1.2 2004-03-10 21:49:58 pablo Exp $
  */
 public class ResourceListAttributeHandler
     extends AttributeHandlerBase
@@ -185,7 +185,7 @@ public class ResourceListAttributeHandler
             }
         }
         stmt.execute(
-            " DELETE FROM "+getTable()+
+            "DELETE FROM "+getTable()+
             " WHERE data_key = "+id
         );
         pstmt.executeBatch();
@@ -244,20 +244,13 @@ public class ResourceListAttributeHandler
      * */
     public Resource[] getResourceReferences(Object value)
     {
-        try
+        List list = (List)value;
+        Resource[] result = new Resource[list.size()];
+        for(int i = 0; i< list.size(); i++)
         {
-            long[] ids = ((ResourceList)value).getIds();
-            Resource[] result = new Resource[ids.length];
-            for(int i=0; i<ids.length; i++)
-            {
-                result[i] = coralStore.getResource(ids[i]);
-            }
-            return result;
+            result[i] = (Resource)list.get(i);        
         }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("inconsistent data", e);
-        }
+        return result;
     }
     
     /**
