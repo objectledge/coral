@@ -17,7 +17,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link DateRange} objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateRangeAttributeHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: DateRangeAttributeHandler.java,v 1.2 2004-03-09 15:40:43 pablo Exp $
  */
 public class DateRangeAttributeHandler
     extends AttributeHandlerBase
@@ -71,6 +71,7 @@ public class DateRangeAttributeHandler
      *        the operation as a part of a JDBC transaction.
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
+     * @throws EntityDoesNotExistException when failed to retireve data.
      */
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -81,7 +82,8 @@ public class DateRangeAttributeHandler
         );
         if(!rs.next())
         {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+getTable());
+            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "
+                                                   +getTable());
         }
         return new DateRange(rs.getTimestamp(1), rs.getTimestamp(2));
     }
