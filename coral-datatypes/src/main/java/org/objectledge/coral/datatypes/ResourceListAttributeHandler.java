@@ -23,7 +23,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceListAttributeHandler.java,v 1.7 2005-01-19 06:44:17 rafal Exp $
+ * @version $Id: ResourceListAttributeHandler.java,v 1.8 2005-01-19 07:34:06 rafal Exp $
  */
 public class ResourceListAttributeHandler
     extends AttributeHandlerBase
@@ -52,7 +52,7 @@ public class ResourceListAttributeHandler
     public long create(Object value, Connection conn)
         throws SQLException
     {
-        long id = database.getNextId(getTable());
+        long id = getNextId();
         PreparedStatement pstmt = conn.prepareStatement(
             "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES ("+
             id+", ?, ?)"
@@ -186,6 +186,7 @@ public class ResourceListAttributeHandler
         stmt.execute(
             "DELETE FROM "+getTable()+" WHERE data_key = "+id
         );
+        releaseId(id);
     }
 
     // integrity constraints ////////////////////////////////////////////////    

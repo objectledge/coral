@@ -17,7 +17,7 @@ import org.objectledge.database.Database;
  * at most 255 characters.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: StringAttributeHandler.java,v 1.3 2004-05-06 13:38:43 pablo Exp $
+ * @version $Id: StringAttributeHandler.java,v 1.4 2005-01-19 07:34:06 rafal Exp $
  */
 public class StringAttributeHandler
     extends AttributeHandlerBase
@@ -52,7 +52,7 @@ public class StringAttributeHandler
                                                "wherever greater capacity is desired");
         }
 
-        long id = database.getNextId(getTable());
+        long id = getNextId();
         Statement stmt = conn.createStatement();
         stmt.execute(
             "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+

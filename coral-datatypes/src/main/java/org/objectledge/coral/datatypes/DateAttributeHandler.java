@@ -19,7 +19,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistency of <code>java.util.Date</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateAttributeHandler.java,v 1.6 2004-12-23 04:10:58 rafal Exp $
+ * @version $Id: DateAttributeHandler.java,v 1.7 2005-01-19 07:34:06 rafal Exp $
  */
 public class DateAttributeHandler
     extends AttributeHandlerBase
@@ -48,7 +48,7 @@ public class DateAttributeHandler
     public long create(Object value, Connection conn)
         throws SQLException
     {
-        long id = database.getNextId(getTable());
+        long id = getNextId();
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO "+getTable()+
             "(data_key, data) VALUES (?, ?)");
         stmt.setLong(1, id);

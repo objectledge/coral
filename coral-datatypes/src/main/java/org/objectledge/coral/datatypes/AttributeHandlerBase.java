@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.9 2005-01-18 10:08:41 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.10 2005-01-19 07:34:06 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -99,6 +99,7 @@ public abstract class AttributeHandlerBase
         stmt.execute(
             "DELETE FROM "+getTable()+" WHERE data_key = "+id
         );
+        releaseId(id);
     }
 
     // meta information //////////////////////////////////////////////////////
@@ -461,5 +462,33 @@ public abstract class AttributeHandlerBase
             Entity e2 = (Entity)o2;
             return e1.toString().compareTo(e2.toString());
         }
+    }
+
+    // attribute id management //////////////////////////////////////////////////////////////////
+    
+    /**
+     * Returns next free attribute identifier.
+     * 
+     * @return next free attribute identifier.
+     * @throws SQLException if the identifier could not be computed due to database error.
+     */
+    protected long getNextId()
+        throws SQLException
+    {
+        return database.getNextId(getTable());
+    }
+
+    /**
+     * Releases an attribute identifier.
+     * 
+     * <p>The provided implementation does nothing - identifiers are never reused.</p>
+     * 
+     * @param id the identifier to release.
+     * @throws SQLException if the identifier could not be released due to database error.
+     */
+    protected void releaseId(long id)
+        throws SQLException
+    {
+        // not implemented
     }
 }

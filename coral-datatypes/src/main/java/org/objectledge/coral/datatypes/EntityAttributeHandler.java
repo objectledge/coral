@@ -121,7 +121,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      */
     public long create(Object value, Connection conn) throws SQLException
     {
-        long id = database.getNextId(getTable());
+        long id = getNextId();
         Statement stmt = conn.createStatement();
         stmt.execute("INSERT INTO " + getTable() + "(data_key, ref) VALUES (" + id + ", "
             + ((Entity)value).getIdString() + ")");

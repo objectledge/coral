@@ -18,7 +18,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link DateRange} objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateRangeAttributeHandler.java,v 1.8 2005-01-17 11:38:22 rafal Exp $
+ * @version $Id: DateRangeAttributeHandler.java,v 1.9 2005-01-19 07:34:06 rafal Exp $
  */
 public class DateRangeAttributeHandler
     extends AttributeHandlerBase
@@ -47,7 +47,7 @@ public class DateRangeAttributeHandler
     public long create(Object value, Connection conn)
         throws SQLException
     {
-        long id = database.getNextId(getTable());
+        long id = getNextId();
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO "+getTable()+
             "(data_key, start_date, end_date) VALUES (?, ?, ?)");
         stmt.setLong(1, id);

@@ -16,7 +16,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.lang.Boolean</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: BooleanAttributeHandler.java,v 1.3 2004-05-06 13:24:05 pablo Exp $
+ * @version $Id: BooleanAttributeHandler.java,v 1.4 2005-01-19 07:34:06 rafal Exp $
  */
 public class BooleanAttributeHandler
     extends AttributeHandlerBase
@@ -46,7 +46,7 @@ public class BooleanAttributeHandler
     public long create(Object value, Connection conn)
         throws SQLException
     {
-        long id = database.getNextId(getTable());
+        long id = getNextId();
         Statement stmt = conn.createStatement();
         stmt.execute(
             "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
