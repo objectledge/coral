@@ -35,7 +35,6 @@ import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.datatypes.DateRange;
 import org.objectledge.coral.datatypes.ResourceList;
 import org.objectledge.coral.datatypes.WeakResourceList;
@@ -44,6 +43,7 @@ import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.Role;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
 import org.objectledge.database.DatabaseUtils;
@@ -52,7 +52,7 @@ import org.objectledge.parameters.Parameters;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralDatatypesTest.java,v 1.2 2004-03-16 11:16:46 fil Exp $
+ * @version $Id: CoralDatatypesTest.java,v 1.3 2004-03-16 13:38:12 fil Exp $
  */
 public class CoralDatatypesTest extends CoralTestCase
 {

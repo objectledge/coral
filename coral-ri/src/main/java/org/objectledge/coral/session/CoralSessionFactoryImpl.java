@@ -34,15 +34,13 @@ import org.apache.commons.pool.KeyedObjectPool;
 import org.apache.commons.pool.impl.GenericKeyedObjectPool;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.CoralSession;
-import org.objectledge.coral.CoralSessionFactory;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.security.Subject;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImpl.java,v 1.2 2004-03-09 10:12:40 fil Exp $
+ * @version $Id: CoralSessionFactoryImpl.java,v 1.3 2004-03-16 13:38:13 fil Exp $
  */
 public class CoralSessionFactoryImpl implements CoralSessionFactory
 {

@@ -32,14 +32,13 @@ import java.security.Principal;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImplTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
+ * @version $Id: CoralSessionFactoryImplTest.java,v 1.3 2004-03-16 13:38:13 fil Exp $
  */
 public class CoralSessionFactoryImplTest extends MockObjectTestCase
 {

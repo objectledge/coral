@@ -25,17 +25,18 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  
 // POSSIBILITY OF SUCH DAMAGE. 
 // 
-package org.objectledge.coral;
+package org.objectledge.coral.session;
 
 import java.security.Principal;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.session.*;
 
 /**
  * A factory of Coral sessions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactory.java,v 1.2 2004-03-08 08:06:20 fil Exp $
+ * @version $Id: CoralSessionFactory.java,v 1.1 2004-03-16 13:38:11 fil Exp $
  */
 public interface CoralSessionFactory
 {

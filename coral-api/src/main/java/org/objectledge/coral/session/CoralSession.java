@@ -1,4 +1,4 @@
-package org.objectledge.coral;
+package org.objectledge.coral.session;
 
 import java.security.Principal;
 
@@ -12,7 +12,7 @@ import org.objectledge.coral.store.CoralStore;
 /**
  * An access point to the Coral document store.
  *
- * @version $Id: CoralSession.java,v 1.3 2004-03-15 13:44:55 fil Exp $
+ * @version $Id: CoralSession.java,v 1.1 2004-03-16 13:38:11 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSession

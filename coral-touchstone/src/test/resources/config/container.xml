@@ -98,7 +98,7 @@
   
   <component class-key="org.objectledge.coral.CoralCore" 
              class="org.objectledge.coral.CoralCoreImpl"/>
-  <component class-key="org.objectledge.coral.CoralSessionFactory" 
+  <component class-key="org.objectledge.coral.session.CoralSessionFactory" 
              class="org.objectledge.coral.session.CoralSessionFactoryImpl"/>
 
 </container>

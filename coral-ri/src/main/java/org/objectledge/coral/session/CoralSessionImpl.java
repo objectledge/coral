@@ -33,7 +33,6 @@ import java.security.Principal;
 import org.apache.commons.pool.KeyedObjectPool;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.schema.CoralSchema;
@@ -45,7 +44,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.3 2004-03-15 13:44:53 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.4 2004-03-16 13:38:13 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession

@@ -38,7 +38,7 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.objectledge.container.LedgeContainer;
-import org.objectledge.coral.CoralSessionFactory;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.IdGenerator;
 import org.objectledge.database.ThreadDataSource;
@@ -47,7 +47,7 @@ import org.objectledge.filesystem.FileSystem;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralTestCase.java,v 1.7 2004-03-15 16:36:18 fil Exp $
+ * @version $Id: CoralTestCase.java,v 1.8 2004-03-16 13:38:12 fil Exp $
  */
 public abstract class CoralTestCase extends TestCase
 {

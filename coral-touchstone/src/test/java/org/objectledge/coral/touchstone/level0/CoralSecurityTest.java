@@ -33,11 +33,11 @@ import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.Role;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
 import org.objectledge.database.DatabaseUtils;
@@ -45,7 +45,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityTest.java,v 1.4 2004-03-15 11:26:18 fil Exp $
+ * @version $Id: CoralSecurityTest.java,v 1.5 2004-03-16 13:38:12 fil Exp $
  */
 public class CoralSecurityTest
     extends CoralTestCase

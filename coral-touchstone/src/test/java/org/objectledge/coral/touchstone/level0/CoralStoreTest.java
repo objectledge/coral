@@ -33,15 +33,15 @@ import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralStoreTest.java,v 1.1 2004-03-15 09:18:56 fil Exp $
+ * @version $Id: CoralStoreTest.java,v 1.2 2004-03-16 13:38:12 fil Exp $
  */
 public class CoralStoreTest
     extends CoralTestCase
