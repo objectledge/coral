@@ -3760,11 +3760,11 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jj_la1[84] = jj_gen;
           ;
         }
+      }
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
       jjtreeCloseNodeScope(jjtn000);
         {if (true) return jjtn000;}
-      }
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);

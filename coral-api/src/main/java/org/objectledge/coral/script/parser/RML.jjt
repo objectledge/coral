@@ -1330,12 +1330,14 @@ ASTfindResourceStatement findResourceStatement() :
 {
 }
 {
-    jjtThis.resource = resource() | 
     (
-        [ "FROM" jjtThis.from = classAndAliasSpecifierList() ] 
-        [ "WHERE" jjtThis.where = conditionalExpression() ]
-        [ "ORDER" "BY" jjtThis.orderBy = orderByList() ]
-        [ "SELECT" jjtThis.select = selectList() ]
+        jjtThis.resource = resource() | 
+        (
+            [ "FROM" jjtThis.from = classAndAliasSpecifierList() ] 
+            [ "WHERE" jjtThis.where = conditionalExpression() ]
+            [ "ORDER" "BY" jjtThis.orderBy = orderByList() ]
+            [ "SELECT" jjtThis.select = selectList() ]
+        )
     )
     {
         return jjtThis;
