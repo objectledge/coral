@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationQueryParserTest.java,v 1.1 2004-03-01 13:54:10 zwierzem Exp $
+ * @version $Id: RelationQueryParserTest.java,v 1.1 2004-03-18 13:26:43 fil Exp $
  */
 public class RelationQueryParserTest extends TestCase
 {

@@ -36,7 +36,7 @@ import org.objectledge.coral.store.Resource;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModificationTest.java,v 1.5 2004-03-02 17:15:24 zwierzem Exp $
+ * @version $Id: RelationModificationTest.java,v 1.1 2004-03-18 13:26:43 fil Exp $
  */
 public class RelationModificationTest  extends MockObjectTestCase
 {
