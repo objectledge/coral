@@ -17,7 +17,7 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.2 2004-04-22 12:56:23 zwierzem Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.3 2004-06-14 12:03:29 fil Exp $
  */
 public class ResourceListTableModel extends ListTableModel
 {
@@ -90,16 +90,16 @@ public class ResourceListTableModel extends ListTableModel
     
     /**
      * Returns the id of the object.
+     * @param child model object.
      *
-     * @param object model object.
      * @return the id of the object.
      */
-    public String getId(Object object)
+    public String getId(Object parent, Object child)
     {
-        if(object == null)
+        if(child == null)
         {
             return "-1";
         }
-        return Long.toString(((Resource)object).getId());
+        return Long.toString(((Resource)child).getId());
     }
 }

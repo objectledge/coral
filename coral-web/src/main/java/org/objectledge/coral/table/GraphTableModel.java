@@ -105,17 +105,17 @@ public class GraphTableModel
 
     /**
      * Returns the id of the object.
+     * @param child model object.
      *
-     * @param object model object.
      * @return the id of the object.
      */
-    public String getId(Object object)
+    public String getId(Object parent, Object child)
     {
-        if(object == null)
+        if(child == null)
         {
             return "-1";
         }
-        return ""+((Resource)object).getId();
+        return ""+((Resource)child).getId();
     }
 
     /**
