@@ -44,6 +44,7 @@ public abstract class BaseCoralView
         AuthenticationContext authenticationContext = 
             AuthenticationContext.getAuthenticationContext(context);
         HttpContext httpContext = HttpContext.getHttpContext(context);
+        templatingContext.put("coralSession", coralSession);
         templatingContext.put("mvcContext", mvcContext);
         templatingContext.put("parameters", parameters);
         templatingContext.put("httpContext", httpContext);
