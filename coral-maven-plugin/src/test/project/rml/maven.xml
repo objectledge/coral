@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.1 2004-04-28 14:04:17 fil Exp $ -->
+<!-- $Id: maven.xml,v 1.2 2004-04-29 15:57:15 fil Exp $ -->
 <project
   xmlns:j="jelly:core"
   xmlns:coral="coral">
@@ -36,15 +36,20 @@
   <preGoal name="java:compile">
     <attainGoal name="coral:generator"/>
   </preGoal>
-  
+
   <goal name="plugin:testPluginFeature">
+    <attainGoal name="java:compile"/>
     <attainGoal name="coral:init"/>
-  
+    <attainGoal name="coral:run-rml"/>
+
     <coral:dataSource var="coralDataSource"/>
-    <coral:principal variable="rootPrincipal" name="root"/>
     <coral:sessionFactory var="coralSessionFactory" dataSource="${coralDataSource}"/>
-    <j:set var="rootSession" value="${coralSessionFactory.getSession(rootPrincipal)}"/>
-    
+    <j:set var="session" value="${coralSessionFactory.getRootSession()}"/>
+    <j:set var="fred" value="${session.store.getUniqueResourceByPath('/fred')}"/>
+    <j:if test="${!fred.greeting.equals('ahoj przygodo!')}">
+       <fail>RML executuion failed at some point</fail>
+    </j:if>
+    <echo>RML execution successful</echo>    
   </goal>
 </project>
 

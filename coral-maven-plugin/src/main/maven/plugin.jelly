@@ -170,8 +170,46 @@
 
   <goal name="coral:init"
     description="Initializes a relational database for Coral usage">
+    <j:if test="${maven.debugOn}">
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
+      <echo>
+        coral.db.url=${coralDbUrl}
+        coral.db.user=${coralDbUser}
+        coral.db.password=${coralDbPassword}        
+	  </echo>
+	</j:if>
     <coral:dataSource var="initDataSource"/>
     <coral:init dataSource="${initDataSource}"/>
+  </goal>
+  
+  <!-- // RML runner //////////////////////////////////////////////////////////////////////// -->
+  
+  <goal name="coral:run-rml"
+    description="Executes RML scripts contained in the project">
+    <m:pluginVar plugin="coral-maven-plugin" var="coralRmlFileEncoding" property="coral.rml.file.encoding"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="coralRmlSubject" property="coral.rml.subject"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="coralRmlSources" property="coral.rml.sources"/>
+    <j:if test="${maven.debugOn}">
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
+      <echo>
+        coral.db.url=${coralDbUrl}
+        coral.db.user=${coralDbUser}
+        coral.db.password=${coralDbPassword}
+        coral.rml.subject=${coralRmlSubject}
+        coral.rml.sources=${coralRmlSources}
+        coral.rml.file.encoding=${coralRmlFileEncoding}
+	  </echo>
+	</j:if>
+    <coral:dataSource var="coralDataSource"/>
+    <coral:sessionFactory var="coralSessionFactory" dataSource="${coralDataSource}"/>
+    <coral:principal variable="coralPrincipal" name="${coralRmlSubject}"/>
+    <j:set var="coralSession" value="${coralSessionFactory.getSession(coralPrincipal)}"/>
+    <coral:rmlRunner session="${coralSession}" sourcesList="${coralRmlSources}" 
+      fileEncoding="${coralRmlFileEncoding}" baseDir="${basedir}"/>
   </goal>
   
 </project>

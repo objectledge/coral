@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.1 2004-04-28 14:04:17 fil Exp $ -->
+<!-- $Id: project.xml,v 1.2 2004-04-29 15:57:15 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
 
@@ -37,4 +37,42 @@
   <currentVersion>0.1-dev</currentVersion>
   
   <name>Coral Maven Plugin - RML runner test</name>
+  <package>org.objectledge.coral.test</package>
+
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/main/rml</directory>
+      </resource>
+    </resources>
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>coral</groupId>
+      <artifactId>coral-api</artifactId>
+      <version>SNAPSHOT</version>
+      <url>http://coral.objectledge.org/modules/coral-api/</url>
+    </dependency>
+    <dependency>
+      <groupId>coral</groupId>
+      <artifactId>coral-datatypes</artifactId>
+      <version>SNAPSHOT</version>
+      <url>http://coral.objectledge.org/modules/coral-datatypes/</url>
+    </dependency>
+    <dependency>
+      <groupId>objectledge</groupId>
+      <artifactId>ledge-components</artifactId>
+      <version>SNAPSHOT</version>
+      <url>http://objectledge.org/modules/ledge-components/</url>
+    </dependency>
+    <dependency>
+      <groupId>dna</groupId>
+      <artifactId>dna-api</artifactId>
+      <version>1.1-rc2</version>
+      <url>http://dna.jcontainer.org</url>
+    </dependency>    
+  </dependencies>
+  
 </project>
