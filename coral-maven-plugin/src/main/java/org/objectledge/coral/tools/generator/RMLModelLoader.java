@@ -73,7 +73,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.4 2004-03-23 10:03:03 fil Exp $
+ * @version $Id: RMLModelLoader.java,v 1.5 2004-03-23 11:34:36 fil Exp $
  */
 public class RMLModelLoader
 {
@@ -98,13 +98,20 @@ public class RMLModelLoader
      * @param in the Reader to read script from.
      * @throws Exception if there is a problem parsing or executing the script.
      */
-    public synchronized void process(Reader in)
+    public synchronized void load(Reader in)
         throws Exception
     {
         RMLParser parser = parserFactory.getParser(in);
-        ASTscript script = parser.script();
-        visitor.visit(script, null);
-        parserFactory.recycle(parser);
+        try
+        {
+            ASTscript script = parser.script();
+            visitor.visit(script, null);
+        }
+        finally
+        {
+            parserFactory.recycle(parser);
+        }
+        
         if(!exceptions.isEmpty())
         {
             Exception e = (Exception)exceptions.get(0);
@@ -119,17 +126,16 @@ public class RMLModelLoader
      * @param in the script in String form.
      * @throws Exception if there is a problem parsing or executing the script.
      */
-    public void process(String in)
+    public void execute(String in)
         throws Exception
     {
-        process(new StringReader(in));
+        load(new StringReader(in));
     }
-
 
     /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.4 2004-03-23 10:03:03 fil Exp $
+     * @version $Id: RMLModelLoader.java,v 1.5 2004-03-23 11:34:36 fil Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {
