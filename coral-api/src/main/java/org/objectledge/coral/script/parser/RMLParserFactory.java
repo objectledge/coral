@@ -37,7 +37,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLParserFactory.java,v 1.1 2004-03-18 14:28:12 fil Exp $
+ * @version $Id: RMLParserFactory.java,v 1.2 2004-03-23 11:32:06 fil Exp $
  */
 public class RMLParserFactory
 {
@@ -71,10 +71,6 @@ public class RMLParserFactory
             throw (RuntimeException)new IllegalStateException("unable to create parser").
                 initCause(e);            
         }
-        finally
-        {
-            reader = null;
-        }
     }
 
     /**
@@ -107,7 +103,14 @@ public class RMLParserFactory
         public Object makeObject() 
             throws Exception
         {
-            return new RMLParser(reader);
+            try
+            {
+                return new RMLParser(reader);
+            }
+            finally
+            {
+                reader = null;
+            }
         }
         
         /** 
@@ -115,7 +118,17 @@ public class RMLParserFactory
          */
         public void activateObject(Object object) throws Exception
         {
-            ((RMLParser)object).ReInit(reader);
+            if(reader != null)
+            {
+                try
+                {
+                    ((RMLParser)object).ReInit(reader);
+                }
+                finally
+                {
+                    reader = null;
+                }
+            }
         }
     }
 }
