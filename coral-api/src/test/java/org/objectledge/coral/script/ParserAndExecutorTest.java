@@ -32,7 +32,6 @@ import java.io.StringReader;
 
 import org.jmock.Constraint;
 import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -47,13 +46,14 @@ import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.CoralStore;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParserAndExecutorTest.java,v 1.2 2004-03-19 12:17:27 fil Exp $
+ * @version $Id: ParserAndExecutorTest.java,v 1.3 2004-03-19 13:57:24 fil Exp $
  */
-public class ParserAndExecutorTest extends MockObjectTestCase
+public class ParserAndExecutorTest extends LedgeTestCase
 {
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
@@ -360,7 +360,7 @@ public class ParserAndExecutorTest extends MockObjectTestCase
         execute("ALTER RESOURCE CLASS 1 SET HANDLER CLASS new_class;");
     }
 
-    public void testAlterResourceClassSetDbTableClass()
+    public void testAlterResourceClassSetDbTable()
         throws Exception
     {
         mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
@@ -368,5 +368,114 @@ public class ParserAndExecutorTest extends MockObjectTestCase
         mockCoralSchema.expect(once()).method("setDbTable").with(same(resourceClass), 
             eq("new_table")).isVoid();
         execute("ALTER RESOURCE CLASS 1 SET DB TABLE new_table;");
+    }
+
+    public void testAlterResourceClassSetFlags()
+        throws Exception
+    {
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockCoralSchema.expect(once()).method("setFlags").with(same(resourceClass), 
+            eq(ResourceClassFlags.FINAL)).isVoid();
+        execute("ALTER RESOURCE CLASS 1 SET FLAGS FINAL;");
+    }
+    
+    public void testAlterResourceClassAlterAttributeSetName()
+        throws Exception
+    {
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockResourceClass.expect(once()).method("getAttribute").with(eq("attribute1")).
+            will(returnValue(attributeDefinition1));    
+        mockCoralSchema.expect(once()).method("setName").with(same(attributeDefinition1), 
+            eq("new_name")).isVoid();
+        execute("ALTER RESOURCE CLASS 1 ALTER ATTRIBUTE attribute1 SET NAME new_name;");
+    }
+
+    public void testAlterResourceClassAlterAttributeSetFlags()
+        throws Exception
+    {
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockResourceClass.expect(once()).method("getAttribute").with(eq("attribute1")).
+            will(returnValue(attributeDefinition1));    
+        mockCoralSchema.expect(once()).method("setFlags").with(same(attributeDefinition1), 
+            eq(AttributeFlags.DESCRIPTIVE)).isVoid();
+        execute("ALTER RESOURCE CLASS 1 ALTER ATTRIBUTE attribute1 SET FLAGS DESCRIPTIVE;");
+    }
+    
+    public void testAlterResourceClassAddAttribute()
+        throws Exception
+    {
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockCoralSchema.expect(atLeastOnce()).method("getAttributeClass").with(eq("string")).
+            will(returnValue(attributeClass));
+        mockCoralSchema.expect(once()).method("createAttribute").with(eq("capitalized"), 
+            same(attributeClass), eq("[A-Z]*"), eq(AttributeFlags.REQUIRED)).
+            will(returnValue(attributeDefinition1));
+        mockCoralSchema.expect(once()).method("addAttribute").with(same(resourceClass), 
+            same(attributeDefinition1), NULL).isVoid();
+        execute("ALTER RESOURCE CLASS 1 ADD ATTRIBUTE REQUIRED string('[A-Z]*') capitalized;");
+        
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockCoralSchema.expect(atLeastOnce()).method("getAttributeClass").with(eq("string")).
+            will(returnValue(attributeClass));
+        mockCoralSchema.expect(once()).method("createAttribute").with(eq("capitalized"), 
+            same(attributeClass), eq("[A-Z]*"), eq(AttributeFlags.REQUIRED)).
+            will(returnValue(attributeDefinition1));
+        mockCoralSchema.expect(once()).method("addAttribute").with(same(resourceClass), 
+            same(attributeDefinition1), eq("FOO")).isVoid();
+        execute("ALTER RESOURCE CLASS 1 ADD ATTRIBUTE REQUIRED string('[A-Z]*') capitalized " +            "VALUE FOO;");
+    }
+    
+    public void testAlterResourceClassDeleteAttribute()
+        throws Exception
+    {
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockResourceClass.expect(once()).method("getAttribute").with(eq("attribute1")).
+            will(returnValue(attributeDefinition1));    
+        mockCoralSchema.expect(once()).method("deleteAttribute").with(same(resourceClass), 
+            same(attributeDefinition1)).isVoid();
+        execute("ALTER RESOURCE CLASS 1 DELETE ATTRIBUTE attribute1;");
+    }
+    
+    public void testAlterResourceClassAddSuperclass()
+        throws Exception
+    {
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq("parent")).
+            will(returnValue(parentResourceClass));
+        mockCoralSchema.expect(once()).method("addParentClass").with(same(resourceClass), 
+            same(parentResourceClass), ANYTHING).isVoid();
+        execute("ALTER RESOURCE CLASS 1 ADD SUPERCLASS parent;");
+
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq("parent")).
+            will(returnValue(parentResourceClass));
+        mockParentResourceClass.expect(once()).method("getAttribute").with(eq("v1")).
+            will(returnValue(attributeDefinition1));
+        mockParentResourceClass.expect(once()).method("getAttribute").with(eq("v2")).
+            will(returnValue(attributeDefinition2));
+        mockCoralSchema.expect(once()).method("addParentClass").with(same(resourceClass), 
+            same(parentResourceClass), and(mapElement(attributeDefinition1, eq("v1")), 
+            mapElement(attributeDefinition2, eq("v2")))).isVoid();
+        execute("ALTER RESOURCE CLASS 1 ADD SUPERCLASS parent VALUES ( a1 = v1, a2 = v2 );");
+    }
+    
+    public void testResourceClassDeleteSuperclass()
+        throws Exception
+    {
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq("parent")).
+            will(returnValue(parentResourceClass));
+        mockCoralSchema.expect(once()).method("deleteParentClass").with(same(resourceClass), 
+            same(parentResourceClass)).isVoid();
+        execute("ALTER RESOURCE CLASS 1 DELETE SUPERCLASS parent;");
     }
 }
