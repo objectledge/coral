@@ -53,7 +53,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.12 2004-04-29 10:05:38 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.13 2004-04-29 15:53:15 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -391,7 +391,7 @@ public class GeneratorComponent
         }
         else
         {
-            out.println("  skipping "+rc.getName()+" implementation (not modified)");
+            out.println("    skipping "+rc.getName()+" implementation (not modified)");
         }
     }
 
