@@ -43,7 +43,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PicoInstantiatorTest.java,v 1.1 2004-03-09 11:15:24 fil Exp $
+ * @version $Id: PicoInstantiatorTest.java,v 1.2 2004-06-25 12:55:38 fil Exp $
  */
 public class PicoInstantiatorTest
     extends TestCase
@@ -79,7 +79,7 @@ public class PicoInstantiatorTest
     public void testCustomizedDependencyInstantiation()
         throws Exception
     {
-        LoggerFactory factory = new LoggerFactory();
+        LoggerFactory factory = new LoggerFactory(null);
         picoContainer.registerComponent(new CustomizedComponentAdapter(Logger.class, factory));
         assertEquals(Green.class, picoInstantiator.newInstance(Green.class).getClass());
     }
