@@ -75,6 +75,8 @@ public class TestImpl
     /** The AttributeDefinition object for the <code>s3</code> attribute. */
     private AttributeDefinition s3Def;
 
+	// custom injected fields /////////////////////////////////////////////////
+	
     /** The CoralStore */
     protected CoralStore coralStore;
 
