@@ -9,7 +9,7 @@ import org.objectledge.pipeline.ProcessingException;
  * Add attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ExecuteCommand.java,v 1.2 2004-06-16 12:51:56 pablo Exp $
+ * @version $Id: ExecuteCommand.java,v 1.3 2004-07-14 17:30:38 pablo Exp $
  */
 public class ExecuteCommand extends BaseBrowserAction
 {
@@ -46,6 +46,7 @@ public class ExecuteCommand extends BaseBrowserAction
         {
             logger.error("ARLException: ", e);
             templatingContext.put("result", "exception");
+            templatingContext.put("command_result", e);
             return;
         }
         finally
