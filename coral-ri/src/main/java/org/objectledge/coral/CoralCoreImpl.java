@@ -33,6 +33,8 @@ import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.entity.CoralRegistryImpl;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.CoralEventHubImpl;
+import org.objectledge.coral.event.CoralEventWhiteboard;
+import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.CoralSchemaImpl;
 import org.objectledge.coral.security.CoralSecurity;
@@ -47,7 +49,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.1 2004-03-05 13:00:52 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.2 2004-03-05 14:03:00 fil Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -56,6 +58,7 @@ public class CoralCoreImpl
     private CoralSchema coralSchema;
     private CoralSecurity coralSecurity;
     private CoralStore coralStore;
+    private CoralEventWhiteboard coralEventWhiteboard;
     
     private MutablePicoContainer container;
 
@@ -83,6 +86,7 @@ public class CoralCoreImpl
         // TODO bridge support
         CoralEventHub coralEventHub = new CoralEventHubImpl(eventWhiteboardFactory, null);
         container.registerComponentInstance(CoralEventHub.class, coralEventHub);
+        coralEventWhiteboard = coralEventHub.getGlobal();
         // instantiator
         Instantiator instantiator = new PicoInstantiator(container);
         container.registerComponentInstance(Instantiator.class, instantiator);
@@ -128,5 +132,21 @@ public class CoralCoreImpl
     public CoralStore getStore()
     {
         return coralStore;
+    }
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralEventWhiteboard getEventWhiteboard()
+    {
+        return coralEventWhiteboard;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralQuery getQuery()
+    {
+        throw new UnsupportedOperationException("non implemented yet");
     }
 }

@@ -28,6 +28,8 @@
 package org.objectledge.coral;
 
 import org.objectledge.coral.entity.CoralRegistry;
+import org.objectledge.coral.event.CoralEventWhiteboard;
+import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.CoralStore;
@@ -36,7 +38,7 @@ import org.objectledge.coral.store.CoralStore;
  * A bridge between interdependent Coral componentes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCore.java,v 1.1 2004-03-05 08:24:26 fil Exp $
+ * @version $Id: CoralCore.java,v 1.2 2004-03-05 14:03:00 fil Exp $
  */
 public interface CoralCore
 {
@@ -67,4 +69,18 @@ public interface CoralCore
      * @return a CoralRegistry implementation.
      */
     public CoralRegistry getRegistry();
+    
+    /**
+     * Returns a CoralEventWhiteboard implementation.
+     * 
+     * @return a CoralEventWhiteboard implementation.
+     */
+    public CoralEventWhiteboard getEventWhiteboard();
+    
+    /**
+     * Returns a CoralQuery implemenation.
+     * 
+     * @return a CoralQuery implementaion.
+     */
+    public CoralQuery getQuery(); 
 }
