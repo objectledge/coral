@@ -41,11 +41,12 @@ import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
+import org.objectledge.utils.*;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClassImplTest.java,v 1.4 2004-03-16 13:33:34 fil Exp $
+ * @version $Id: AttributeClassImplTest.java,v 1.5 2004-03-19 13:55:24 fil Exp $
  */
 public class AttributeClassImplTest extends MockObjectTestCase
 {

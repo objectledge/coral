@@ -46,11 +46,12 @@ import org.objectledge.coral.event.ResourceClassChangeListener;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.Persistent;
+import org.objectledge.utils.*;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.8 2004-03-12 09:15:18 fil Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.9 2004-03-19 13:55:24 fil Exp $
  */
 public class CoralSchemaImplTest extends MockObjectTestCase
 {
