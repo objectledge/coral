@@ -24,7 +24,7 @@ import org.objectledge.parameters.db.DBParametersManager;
  * <code>DBParametersManager</code>, currenty in ledge-components.</p>
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParametersAttributeHandler.java,v 1.5 2004-12-27 04:47:33 zwierzem Exp $
+ * @version $Id: ParametersAttributeHandler.java,v 1.6 2005-01-26 08:07:29 rafal Exp $
  */
 public class ParametersAttributeHandler
     extends AttributeHandlerBase
@@ -218,6 +218,28 @@ public class ParametersAttributeHandler
     {
         checkValue(value);
         return ((Parameters)value).toString();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public void preload(Connection conn)
+        throws SQLException
+    {
+        try
+        {
+            dbParametersManager.preloadContainers();
+        }
+        catch(DBParametersException e)
+        {
+            if(e.getCause() != null && e.getCause() instanceof SQLException)
+            {
+                throw (SQLException)e.getCause();
+            }
+            else
+            {
+                throw (SQLException)new SQLException("failed to preload containers").initCause(e);
+            }
+        }
     }
 }
 
