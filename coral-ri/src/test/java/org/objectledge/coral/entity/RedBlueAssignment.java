@@ -29,7 +29,7 @@ package org.objectledge.coral.entity;
 
 import java.util.Date;
 
-import org.objectledge.coral.security.CoralSecurity;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
@@ -39,7 +39,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RedBlueAssignment.java,v 1.1 2004-02-24 16:32:05 fil Exp $
+ * @version $Id: RedBlueAssignment.java,v 1.2 2004-03-05 11:52:16 fil Exp $
  */
 public class RedBlueAssignment 
     extends AbstractAssignment
@@ -59,10 +59,10 @@ public class RedBlueAssignment
     /**
      * @param security
      */
-    public RedBlueAssignment(CoralSecurity security, Persistence persistence, 
+    public RedBlueAssignment(CoralCore coral, Persistence persistence, 
         RedBlueEntityFactory redBlueEntityFactory)
     {
-        super(security);
+        super(coral);
         this.persistence = persistence;
         this.redBlueEntityFactory = redBlueEntityFactory;
     }
@@ -72,11 +72,11 @@ public class RedBlueAssignment
      * @param grantor
      * @param grantTime
      */
-    public RedBlueAssignment(CoralSecurity security, Persistence persistence, 
+    public RedBlueAssignment(CoralCore coral, Persistence persistence, 
         RedBlueEntityFactory redBlueEntityFactory, 
         RedEntity red, BlueEntity blue, Subject grantor, Date grantTime)
     {
-        super(security, grantor, grantTime);
+        super(coral, grantor, grantTime);
         this.persistence = persistence;
         this.redBlueEntityFactory = redBlueEntityFactory;
         setRed(red);

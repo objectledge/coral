@@ -30,6 +30,7 @@ package org.objectledge.coral.schema;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.CoralInstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.CoralRegistry;
@@ -43,7 +44,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.2 2004-02-26 09:11:12 fil Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.3 2004-03-05 11:52:14 fil Exp $
  */
 public class ResourceClassImplTest extends MockObjectTestCase
 {
@@ -61,6 +62,8 @@ public class ResourceClassImplTest extends MockObjectTestCase
     private CoralEventWhiteboard coralEventWhiteboard;
     private Mock mockCoralRegistry;
     private CoralRegistry coralRegistry;
+    private Mock mockCoralCore;
+    private CoralCore coralCore;
     private Mock mockResourceHandler;
     private ResourceHandler resourceHandler;
 
@@ -80,6 +83,9 @@ public class ResourceClassImplTest extends MockObjectTestCase
         coralEventWhiteboard = (CoralEventWhiteboard)mockCoralEventWhiteboard.proxy();
         mockCoralRegistry = new Mock(CoralRegistry.class);
         coralRegistry = (CoralRegistry)mockCoralRegistry.proxy();
+        mockCoralCore = new Mock(CoralCore.class);
+        coralCore = (CoralCore)mockCoralCore.proxy();
+        mockCoralCore.stub().method("getRegistry").will(returnValue(coralRegistry));
         mockResourceHandler = new Mock(ResourceHandler.class);
         resourceHandler = (ResourceHandler)mockResourceHandler.proxy();
     }
@@ -93,7 +99,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addResourceClassChangeListener");
         return new ResourceClassImpl(persistence, instantiator, coralEventHub,
-            coralRegistry, "<resource class>", "<java class>", "<handler class>", dbTable, 303);
+            coralCore, "<resource class>", "<java class>", "<handler class>", dbTable, 303);
     }
     
     // basics ///////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +126,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         try
         {
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
-                coralRegistry, "<resource class>", "<java class>", "<handler class>", "<db table>", 303);
+                coralCore, "<resource class>", "<java class>", "<handler class>", "<db table>", 303);
             fail("should throw an exception");        
         }
         catch(Exception e)
@@ -140,7 +146,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         try
         {
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
-                coralRegistry, "<resource class>", "<java class>", "<handler class>", "<db table>", 303);
+                coralCore, "<resource class>", "<java class>", "<handler class>", "<db table>", 303);
             fail("should throw an exception");        
         }
         catch(Exception e)
@@ -160,7 +166,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         try
         {        
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
-                coralRegistry, "<resource class>", "<java class>", "<handler class>", "<db table>", 303);
+                coralCore, "<resource class>", "<java class>", "<handler class>", "<db table>", 303);
             fail("should throw an exception");        
         }
         catch(Exception e)
@@ -234,7 +240,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
     public void testLoading()
         throws Exception
     {
-        ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralRegistry);
+        ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralCore);
         mockInputRecord.expect(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
         mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
         mockInputRecord.expect(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
@@ -260,7 +266,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
     public void testLoadingNullDbTable()
         throws Exception
     {
-        ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralRegistry);
+        ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralCore);
         mockInputRecord.expect(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
         mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
         mockInputRecord.expect(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
@@ -284,7 +290,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
     
     public void testLoadingJavaClassException()
     {
-        ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralRegistry);
+        ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralCore);
         mockInputRecord.expect(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
         mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
         mockInputRecord.expect(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));

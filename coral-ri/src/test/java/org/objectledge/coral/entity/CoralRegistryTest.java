@@ -58,7 +58,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralRegistryTest.java,v 1.3 2004-03-05 10:18:17 fil Exp $
+ * @version $Id: CoralRegistryTest.java,v 1.4 2004-03-05 11:52:17 fil Exp $
  */
 public class CoralRegistryTest extends MockObjectTestCase
 {
@@ -124,57 +124,56 @@ public class CoralRegistryTest extends MockObjectTestCase
         
         mockResourceClassInheritanceImplPersistentFactory = new Mock(PersistentFactory.class, "mockResourceClassInheritanceImplPersistentFactory");
         mockResourceClassInheritanceImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new ResourceClassInheritanceImpl(coralSchema)));
+            will(returnValue(new ResourceClassInheritanceImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(ResourceClassInheritanceImpl.class)).
             will(returnValue(mockResourceClassInheritanceImplPersistentFactory.proxy()));
         mockAttributeDefinitionImplPersistentFactory = new Mock(PersistentFactory.class, "mockAttributeDefinitionImplPersistentFactory");
         mockAttributeDefinitionImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema)));
+            will(returnValue(new AttributeDefinitionImpl(persistence, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(AttributeDefinitionImpl.class)).
             will(returnValue(mockAttributeDefinitionImplPersistentFactory.proxy()));
         mockRoleImplicationImplPersistentFactory = new Mock(PersistentFactory.class, "mockRoleImplicationImplImplPersistentFactory");
         mockRoleImplicationImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new RoleImplicationImpl(coralSecurity)));
+            will(returnValue(new RoleImplicationImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(RoleImplicationImpl.class)).
             will(returnValue(mockRoleImplicationImplPersistentFactory.proxy()));
         mockRoleAssignmentImplPersistentFactory = new Mock(PersistentFactory.class, "mockRoleAssignmentImplPersistentFactory");
         mockRoleAssignmentImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new RoleAssignmentImpl(coralSecurity)));
+            will(returnValue(new RoleAssignmentImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(RoleAssignmentImpl.class)).
             will(returnValue(mockRoleAssignmentImplPersistentFactory.proxy()));
         mockPermissionAssignmentImplPersistentFactory = new Mock(PersistentFactory.class, "mockPermissionAssociationImplPersistentFactory");
         mockPermissionAssignmentImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new PermissionAssignmentImpl(coralSecurity, coralStore)));
+            will(returnValue(new PermissionAssignmentImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(PermissionAssignmentImpl.class)).
             will(returnValue(mockPermissionAssignmentImplPersistentFactory.proxy()));
         mockPermissionAssociationImplPersistentFactory = new Mock(PersistentFactory.class, "mockPermissionAssignmentImplPersistentFactory");
         mockPermissionAssociationImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new PermissionAssociationImpl(coralSchema, coralSecurity)));
+            will(returnValue(new PermissionAssociationImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(PermissionAssociationImpl.class)).
             will(returnValue(mockPermissionAssociationImplPersistentFactory.proxy()));
-        // TODO what to do about registry parameter here?
 
         mockSubjectImplPersistentFactory = new Mock(PersistentFactory.class, "mockSubjectImplPersistentFactory");
         mockSubjectImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new SubjectImpl(persistence, coralEventHub, null, coralSecurity)));
+            will(returnValue(new SubjectImpl(persistence, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(SubjectImpl.class)).
             will(returnValue(mockSubjectImplPersistentFactory.proxy()));
 
         mockRoleImplPersistentFactory = new Mock(PersistentFactory.class, "mockRoleImplPersistentFactory");
         mockRoleImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new RoleImpl(persistence, coralEventHub, null)));
+            will(returnValue(new RoleImpl(persistence, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(RoleImpl.class)).
             will(returnValue(mockRoleImplPersistentFactory.proxy()));
 
         mockPermissionImplPersistentFactory = new Mock(PersistentFactory.class, "mockPermissionImplPersistentFactory");
         mockPermissionImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new PermissionImpl(persistence, coralEventHub, null)));
+            will(returnValue(new PermissionImpl(persistence, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(PermissionImpl.class)).
             will(returnValue(mockPermissionImplPersistentFactory.proxy()));
 
         mockResourceClassImplPersistentFactory = new Mock(PersistentFactory.class, "mockResourceClassImplPersistentFactory");
         mockResourceClassImplPersistentFactory.stub().method("newInstance").
-            will(returnValue(new ResourceClassImpl(persistence, instantiator, coralEventHub, null)));
+            will(returnValue(new ResourceClassImpl(persistence, instantiator, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(ResourceClassImpl.class)).
             will(returnValue(mockResourceClassImplPersistentFactory.proxy()));
 

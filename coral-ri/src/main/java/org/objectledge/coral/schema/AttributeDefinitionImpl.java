@@ -1,6 +1,7 @@
 package org.objectledge.coral.schema;
 
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.event.AttributeDefinitionChangeListener;
@@ -13,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a concrete attribute of an resource class.
  *
- * @version $Id: AttributeDefinitionImpl.java,v 1.11 2004-03-05 10:17:02 fil Exp $
+ * @version $Id: AttributeDefinitionImpl.java,v 1.12 2004-03-05 11:52:16 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeDefinitionImpl
@@ -25,6 +26,9 @@ public class AttributeDefinitionImpl
 
     /** The CoralEventHub. */
     private CoralEventHub coralEventHub;
+    
+    /** The component hub. */
+    private CoralCore coral;
     
     /** The CoralSchema. */
     private CoralSchema coralSchema;
@@ -47,15 +51,15 @@ public class AttributeDefinitionImpl
      * Constructs a {@link AttributeDefinitionImpl}.
      *
      * @param persistence the Peristence subsystem.
-     * @param coralEventHub the CoralEventHub.
-     * @param coralSchema the CoralSchema.
+     * @param coralEventHub the event hub.
+     * @param coral the component hub.
      */
     public AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub, 
-        CoralSchema coralSchema)
+        CoralCore coral)
     {
         super(persistence);
         this.coralEventHub = coralEventHub;
-        this.coralSchema = coralSchema;
+        this.coral = coral;
     }
 
     /**
@@ -63,20 +67,20 @@ public class AttributeDefinitionImpl
      *
      * @param persistence the Peristence subsystem.
      * @param coralEventHub the CoralEventHub.
-     * @param coralSchema the CoralSchema.
+     * @param coral the component hub,
      * 
      * @param name the name of this attribute.
      * @param attributeClass the class of this attribute.
      * @param domain the value domain constraint.
      * @param flags the flags of this attribute.
      */
-    public AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub, 
-        CoralSchema coralSchema,
+    public AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub,
+        CoralCore coral, 
         String name, AttributeClass attributeClass, String domain, int flags)
     {
         super(persistence, name);
         this.coralEventHub = coralEventHub;
-        this.coralSchema = coralSchema;
+        this.coral = coral;
         this.attributeClass = attributeClass;
         this.declaringClass = null;
         this.domain = domain;
@@ -151,7 +155,7 @@ public class AttributeDefinitionImpl
         long attributeClassId = record.getLong("attribute_class_id");
         try
         {
-            this.attributeClass = coralSchema.getAttributeClass(attributeClassId);
+            this.attributeClass = coral.getSchema().getAttributeClass(attributeClassId);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -160,7 +164,7 @@ public class AttributeDefinitionImpl
         long declaringClassId = record.getLong("resource_class_id");
         try
         {
-            this.declaringClass = coralSchema.getResourceClass(declaringClassId);
+            this.declaringClass = coral.getSchema().getResourceClass(declaringClassId);
         }
         catch(EntityDoesNotExistException e)
         {

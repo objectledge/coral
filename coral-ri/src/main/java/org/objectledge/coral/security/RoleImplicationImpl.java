@@ -1,5 +1,6 @@
 package org.objectledge.coral.security;
 
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssociation;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
@@ -9,7 +10,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents implication relationship between two roles.
  *
- * @version $Id: RoleImplicationImpl.java,v 1.4 2004-03-05 10:17:00 fil Exp $
+ * @version $Id: RoleImplicationImpl.java,v 1.5 2004-03-05 11:52:15 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImplicationImpl
@@ -18,8 +19,8 @@ public class RoleImplicationImpl
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The CoralSecurity. */
-    private CoralSecurity coralSecurity;
+    /** The component hub. */
+    private CoralCore coral;
     
     /** The super role. */
     private Role superRole;
@@ -32,25 +33,25 @@ public class RoleImplicationImpl
     /**
      * Constructs a {@link RoleImplicationImpl}.
      * 
-     * @param coralSecurity the CoralSecurity.
+     * @param coral the component hub.
      */
-    public RoleImplicationImpl(CoralSecurity coralSecurity)
+    public RoleImplicationImpl(CoralCore coral)
     {
-        this.coralSecurity = coralSecurity;
+        this.coral= coral;
     }
     
     /**
      * Constructs a {@link RoleImplicationImpl}.
      * 
-     * @param coralSecurity the CoralSecurity.
+     * @param coral the component hub.
      *
      * @param superRole the implicating/containing role.
      * @param subRole the implied/contained role.
      */
-    public RoleImplicationImpl(CoralSecurity coralSecurity,
+    public RoleImplicationImpl(CoralCore coral,
         Role superRole, Role subRole)
     {
-        this.coralSecurity = coralSecurity;
+        this.coral = coral;
         this.superRole = superRole;
         this.subRole = subRole;
     }
@@ -139,7 +140,7 @@ public class RoleImplicationImpl
         long superRoleId = record.getLong("super_role");
         try
         {
-            this.superRole = coralSecurity.getRole(superRoleId);
+            this.superRole = coral.getSecurity().getRole(superRoleId);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -148,7 +149,7 @@ public class RoleImplicationImpl
         long subRoleId = record.getLong("sub_role");
         try
         {
-            this.subRole = coralSecurity.getRole(subRoleId);
+            this.subRole = coral.getSecurity().getRole(subRoleId);
         }
         catch(EntityDoesNotExistException e)
         {

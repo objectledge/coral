@@ -2,7 +2,7 @@ package org.objectledge.coral.entity;
 
 import java.util.Date;
 
-import org.objectledge.coral.security.CoralSecurity;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
@@ -11,7 +11,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Base of {@link org.objectledge.coral.entity.Assignment} implementations.
  *
- * @version $Id: AbstractAssignment.java,v 1.4 2004-02-23 13:50:27 fil Exp $
+ * @version $Id: AbstractAssignment.java,v 1.5 2004-03-05 11:52:16 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractAssignment
@@ -21,7 +21,7 @@ public abstract class AbstractAssignment
     // Member objects ///////////////////////////////////////////////////////////////////////////
 
     /** CoralSecurity. */
-    protected CoralSecurity coralSecurity;
+    protected CoralCore coral;
 
     /** The grantor */
     protected Subject grantor;
@@ -34,22 +34,23 @@ public abstract class AbstractAssignment
     /**
      * Constructs an assignment.
      * 
-     * @param security the CoralSecurity subsystem.
+     * @param coral the component hub.
      */
-    public AbstractAssignment(CoralSecurity security) 
+    public AbstractAssignment(CoralCore coral) 
     {
-        this.coralSecurity = security;
+        this.coral = coral;
     }
 
     /**
      * Constructs an assignment object.
      *
-     * @param security the CoralSecurity subsystem.
+     * @param coral the component hub.
      * @param grantor the grantor.
      * @param grantTime grant time.
      */
-    public AbstractAssignment(CoralSecurity security, Subject grantor, Date grantTime)
+    public AbstractAssignment(CoralCore coral, Subject grantor, Date grantTime)
     {
+        this.coral = coral;
         this.grantor = grantor;
         this.grantTime = grantTime;
     }
@@ -87,7 +88,7 @@ public abstract class AbstractAssignment
         long grantorId = record.getLong("grantor");
         try
         {
-            grantor = coralSecurity.getSubject(grantorId);
+            grantor = coral.getSecurity().getSubject(grantorId);
         }
         catch(EntityDoesNotExistException e)
         {

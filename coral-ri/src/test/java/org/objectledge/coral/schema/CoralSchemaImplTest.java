@@ -49,7 +49,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.5 2004-03-05 08:24:27 fil Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.6 2004-03-05 11:52:14 fil Exp $
  */
 public class CoralSchemaImplTest extends MockObjectTestCase
 {
@@ -495,7 +495,7 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         mockChildResourceClass.stub().method("getId").will(returnValue(2L));
         mockChildResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
         mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
-        ResourceClassInheritance rci = new ResourceClassInheritanceImpl(coralSchema, parentResourceClass, childResourceClass);
+        ResourceClassInheritance rci = new ResourceClassInheritanceImpl(coralCore, parentResourceClass, childResourceClass);
         mockCoralRegistry.expect(once()).method("addResourceClassInheritance").with(eq(rci));
         // TODO ???
         mockLocalEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(true));
@@ -511,7 +511,7 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         mockParentResourceClass.stub().method("isParent").with(same(childResourceClass)).will(returnValue(true));
         mockChildResourceClass.stub().method("getHandler").will(returnValue(resourceHandler));
         mockDatabase.expect(once()).method("beginTransaction").will(returnValue(true));
-        ResourceClassInheritance rci = new ResourceClassInheritanceImpl(coralSchema, parentResourceClass, childResourceClass);
+        ResourceClassInheritance rci = new ResourceClassInheritanceImpl(coralCore, parentResourceClass, childResourceClass);
         // TODO ???
         mockLocalEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(false));
         mockResourceHandler.expect(once()).method("deleteParentClass").with(same(parentResourceClass), same(connection));

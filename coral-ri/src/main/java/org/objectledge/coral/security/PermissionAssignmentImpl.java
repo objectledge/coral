@@ -2,9 +2,9 @@ package org.objectledge.coral.security;
 
 import java.util.Date;
 
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssignment;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * org.objectledge.store.Resource#getPermissionAssignments()} method. They experss security
  * constraints placed upon a specific resource (and optionally it's sub-resources). </p> 
  *
- * @version $Id: PermissionAssignmentImpl.java,v 1.5 2004-03-05 10:17:00 fil Exp $
+ * @version $Id: PermissionAssignmentImpl.java,v 1.6 2004-03-05 11:52:15 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssignmentImpl
@@ -27,9 +27,9 @@ public class PermissionAssignmentImpl
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
     
-    /** The CoralStore. */
-    private CoralStore coralStore;
-    
+    /** The component hub. */
+    private CoralCore coral;
+        
     /** The {@link org.objectledge.coral.store.Resource}. */
     private Resource resource;
     
@@ -47,20 +47,18 @@ public class PermissionAssignmentImpl
     /**
      * Constructs a {@link PermissionAssignmentImpl}.
      *
-     * @param coralSecurity the CoralSecurity.
-     * @param coralStore the CoralStore.
+     * @param coral the component hub.
      */
-    public PermissionAssignmentImpl(CoralSecurity coralSecurity, CoralStore coralStore)
+    public PermissionAssignmentImpl(CoralCore coral)
     {
-        super(coralSecurity);
-        this.coralStore = coralStore;
+        super(coral);
+        this.coral = coral;
     }
 
     /**
      * Constructs a {@link PermissionAssignmentImpl}.
      *
-     * @param coralSecurity the CoralSecurity.
-     * @param coralStore the CoralStore.
+     * @param coral the component hub.
      * 
      * @param grantor the grantor of the permission.
      * @param resource the resource.
@@ -68,10 +66,11 @@ public class PermissionAssignmentImpl
      * @param permission the permission.
      * @param inherited <code>true</code> if the permission is effective on child resources too.
      */
-    public PermissionAssignmentImpl(CoralSecurity coralSecurity, CoralStore coralStore,
+    public PermissionAssignmentImpl(CoralCore coral,
         Subject grantor, Resource resource, Role role, Permission permission, boolean inherited )
     {
-        super(coralSecurity, grantor, new Date());
+        super(coral, grantor, new Date());
+        this.coral = coral;
         this.resource = resource;
         this.role = role;
         this.permission = permission;
@@ -169,11 +168,11 @@ public class PermissionAssignmentImpl
         try
         {
             long resourceId = record.getLong("resource_id");
-            resource = coralStore.getResource(resourceId);
+            resource = coral.getStore().getResource(resourceId);
             long roleId = record.getLong("role_id");
-            role = coralSecurity.getRole(roleId);
+            role = coral.getSecurity().getRole(roleId);
             long permissionId = record.getLong("permission_id");
-            permission = coralSecurity.getPermission(permissionId);
+            permission = coral.getSecurity().getPermission(permissionId);
         }
         catch(EntityDoesNotExistException e)
         {

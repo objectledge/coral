@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.Persistence;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurityImpl.java,v 1.3 2004-03-05 08:24:27 fil Exp $
+ * @version $Id: CoralSecurityImpl.java,v 1.4 2004-03-05 11:52:15 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSecurityImpl
@@ -113,7 +113,7 @@ public class CoralSecurityImpl
     public Subject createSubject(String name)
         throws EntityExistsException
     {
-        Subject subject = new SubjectImpl(persistence, coralEventHub, coral.getRegistry(), this, 
+        Subject subject = new SubjectImpl(persistence, coralEventHub, coral, 
             name);
         coral.getRegistry().addSubject(subject);
         return subject;
@@ -211,7 +211,7 @@ public class CoralSecurityImpl
      */
     public Role createRole(String name)
     {
-        Role role = new RoleImpl(persistence, coralEventHub, coral.getRegistry(), name);
+        Role role = new RoleImpl(persistence, coralEventHub, coral, name);
         coral.getRegistry().addRole(role);
         return role;
     }
@@ -254,7 +254,7 @@ public class CoralSecurityImpl
     {
         // if the implications is alredy defined, quit happily
         Set implications = coral.getRegistry().getRoleImplications(subRole);
-        RoleImplication item = new RoleImplicationImpl(this, superRole, subRole);
+        RoleImplication item = new RoleImplicationImpl(coral, superRole, subRole);
         if(implications.contains(item))
         {
             return;
@@ -308,7 +308,7 @@ public class CoralSecurityImpl
                                                " is not a direct sub-role of "+
                                                superRole.getName());
         }
-        RoleImplication item = new RoleImplicationImpl(this, superRole, subRole);
+        RoleImplication item = new RoleImplicationImpl(coral, superRole, subRole);
         coral.getRegistry().deleteRoleImplication(item);
     }
     
@@ -340,7 +340,7 @@ public class CoralSecurityImpl
         throws SecurityException
     {
 
-        RoleAssignment item = new RoleAssignmentImpl(this, 
+        RoleAssignment item = new RoleAssignmentImpl(coral, 
             grantor, subject, role, grantingAllowed);
 
         // if the assignemnt already exists, quit happily
@@ -394,7 +394,7 @@ public class CoralSecurityImpl
     public void revoke(Role role, Subject subject, Subject revoker)
         throws IllegalArgumentException, SecurityException
     {
-        RoleAssignment item = new RoleAssignmentImpl(this, 
+        RoleAssignment item = new RoleAssignmentImpl(coral, 
             revoker, subject, role, false);
         Set assignments = coral.getRegistry().getRoleAssignments(subject);
         if(!assignments.contains(item))
@@ -487,7 +487,7 @@ public class CoralSecurityImpl
      */
     public Permission createPermission(String name)
     {
-        Permission permission = new PermissionImpl(persistence, coralEventHub, coral.getRegistry(), 
+        Permission permission = new PermissionImpl(persistence, coralEventHub, coral, 
             name);
         coral.getRegistry().addPermission(permission);
         return permission;
@@ -528,7 +528,7 @@ public class CoralSecurityImpl
     {
         Set associations = coral.getRegistry().getPermissionAssociations(resourceClass);
         PermissionAssociation item = 
-            new PermissionAssociationImpl(coral.getSchema(), this, 
+            new PermissionAssociationImpl(coral, 
                 resourceClass, permission);
         if(associations.contains(item))
         {
@@ -549,7 +549,7 @@ public class CoralSecurityImpl
         throws IllegalArgumentException
     {
         Set associations = coral.getRegistry().getPermissionAssociations(resourceClass);
-        PermissionAssociation item = new PermissionAssociationImpl(coral.getSchema(), this, 
+        PermissionAssociation item = new PermissionAssociationImpl(coral, 
             resourceClass, permission);
         if(!associations.contains(item))
         {
@@ -603,7 +603,7 @@ public class CoralSecurityImpl
                                         " cannot be granted on resources of type "+
                                         resource.getResourceClass().getName());
         }
-        PermissionAssignment item = new PermissionAssignmentImpl(this, coral.getStore(), 
+        PermissionAssignment item = new PermissionAssignmentImpl(coral, 
             grantor, resource, role, permission, inherited);
         coral.getRegistry().addPermissionAssignment(item);
     }
@@ -655,7 +655,7 @@ public class CoralSecurityImpl
                                             role.getName()+" on resource #"+resource.getId());
             }
         }
-        PermissionAssignment item = new PermissionAssignmentImpl(this, coral.getStore(), 
+        PermissionAssignment item = new PermissionAssignmentImpl(coral, 
             revoker,resource, role, permission, false);
         coral.getRegistry().deletePermissionAssignment(item);           
     }

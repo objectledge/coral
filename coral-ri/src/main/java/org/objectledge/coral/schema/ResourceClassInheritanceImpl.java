@@ -1,5 +1,6 @@
 package org.objectledge.coral.schema;
 
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssociation;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
@@ -9,7 +10,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents resource class inheritance relationship.
  *
- * @version $Id: ResourceClassInheritanceImpl.java,v 1.4 2004-03-05 10:17:02 fil Exp $
+ * @version $Id: ResourceClassInheritanceImpl.java,v 1.5 2004-03-05 11:52:16 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassInheritanceImpl
@@ -18,8 +19,8 @@ public class ResourceClassInheritanceImpl
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The CoralSchema. */
-    private CoralSchema coralSchema;
+    /** The component hub. */
+    private CoralCore coral;
 
     /** The parent class. */
     private ResourceClass parent;
@@ -32,29 +33,29 @@ public class ResourceClassInheritanceImpl
     /**
      * Contstructs a ResourceClassInheritanceImpl.
      * 
-     * @param coralSchema the CoralSchema.
+     * @param coral the component hub.
      */
-    public ResourceClassInheritanceImpl(CoralSchema coralSchema)
+    public ResourceClassInheritanceImpl(CoralCore coral)
     {
         super();
-        this.coralSchema = coralSchema;
+        this.coral= coral;
     }
 
     /**
      * Constructs a {@link ResourceClassInheritanceImpl}.
      *
-     * @param coralSchema the CoralSchema.
+     * @param coral the component hub.
      *
      * @param parent the parent class.
      * @param child the child class.
      */
-    public ResourceClassInheritanceImpl(CoralSchema coralSchema, 
+    public ResourceClassInheritanceImpl(CoralCore coral, 
         ResourceClass parent, ResourceClass child)
     {
         super();
         this.parent = parent;
         this.child = child;
-        this.coralSchema = coralSchema;
+        this.coral= coral;
     }
 
     // Hashing & equality ///////////////////////////////////////////////////////////////////////
@@ -141,7 +142,7 @@ public class ResourceClassInheritanceImpl
         long parentId = record.getLong("parent");
         try
         {
-            this.parent = coralSchema.getResourceClass(parentId);
+            this.parent = coral.getSchema().getResourceClass(parentId);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -150,7 +151,7 @@ public class ResourceClassInheritanceImpl
         long childId = record.getLong("child");
         try
         {
-            this.child = coralSchema.getResourceClass(childId);
+            this.child = coral.getSchema().getResourceClass(childId);
         }
         catch(EntityDoesNotExistException e)
         {

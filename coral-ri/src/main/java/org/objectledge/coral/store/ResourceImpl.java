@@ -10,16 +10,14 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractEntity;
-import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.schema.AttributeDefinition;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
-import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.PermissionAssignment;
 import org.objectledge.coral.security.Role;
 import org.objectledge.coral.security.Subject;
@@ -38,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.6 2004-03-03 14:46:12 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.7 2004-03-05 11:52:17 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -48,17 +46,8 @@ public class ResourceImpl
 {
     // Instance variables ////////////////////////////////////////////////////////////////////////
 
-    /** The CoralStore. */
-    private CoralStore coralStore;
-    
-    /** The CoralSchema. */
-    private CoralSchema coralSchema;
-    
-    /** The CoralSecurity. */
-    private CoralSecurity coralSecurity;
-
-    /** The CoralRegistry. */
-    private CoralRegistry coralRegistry;
+    /** The component hub. */
+    private CoralCore coral;
 
     /** The CoralEventHub. */
     private CoralEventHub coralEventHub;
@@ -105,21 +94,14 @@ public class ResourceImpl
      * Constructs a blank Resource object for reading data in.
      *
      * @param persistence the Persistence subsystem.
-     * @param coralSchema the CoralSchema.
-     * @param coralSecurity the CoralSecurity.
-     * @param coralStore the CoralStore.
-     * @param coralEventHub the CoralEventHub.
-     * @param coralRegistry the CoralRegistry.
+     * @param coral the component hub.
+     * @param coralEventHub the event hub.
      */
-    ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
-        CoralSecurity coralSecurity, CoralRegistry coralRegistry, CoralEventHub coralEventHub)
+    ResourceImpl(Persistence persistence, CoralCore coral, CoralEventHub coralEventHub)
     {
         super(persistence);
-        this.coralSchema = coralSchema;
-        this.coralSecurity = coralSecurity;
-        this.coralStore = coralStore;
+        this.coral = coral;
         this.coralEventHub = coralEventHub;
-        this.coralRegistry = coralRegistry;
         buildAttributeMap();
     }
     
@@ -127,27 +109,20 @@ public class ResourceImpl
      * Constructs a new security delegate Resource object.
      *
      * @param persistence the Persistence subsystem.
-     * @param coralSchema the CoralSchema.
-     * @param coralSecurity the CoralSecurity.
-     * @param coralStore the CoralStore.
-     * @param coralEventHub the CoralEventHub.
-     * @param coralRegistry the CoralRegistry.
+     * @param coral the component hub.
+     * @param coralEventHub the event hub.
      * 
      * @param name the name of the new resource.
      * @param resourceClass the resource class of the new resource.
      * @param parent the parent resource (may be <code>null</code>)
      * @param creator the Subject that creates the resource.
      */
-    public ResourceImpl(Persistence persistence, CoralStore coralStore, CoralSchema coralSchema,
-        CoralSecurity coralSecurity, CoralRegistry coralRegistry, CoralEventHub coralEventHub,
+    public ResourceImpl(Persistence persistence, CoralCore coral, CoralEventHub coralEventHub,
         String name, ResourceClass resourceClass, Resource parent, Subject creator)
     {
         super(persistence, name);
-        this.coralSchema = coralSchema;
-        this.coralSecurity = coralSecurity;
-        this.coralStore = coralStore;
+        this.coral = coral;
         this.coralEventHub = coralEventHub;
-        this.coralRegistry = coralRegistry;
 
         this.resourceClass = resourceClass;
         this.parent = parent;
@@ -233,18 +208,18 @@ public class ResourceImpl
         try
         {
             long resourceClassId = record.getLong("resource_class_id");
-            resourceClass = coralSchema.getResourceClass(resourceClassId);
+            resourceClass = coral.getSchema().getResourceClass(resourceClassId);
             if(!record.isNull("parent"))
             {
                 parentId = record.getLong("parent");
             }
             long creatorId = record.getLong("created_by");
-            creator = coralSecurity.getSubject(creatorId);
+            creator = coral.getSecurity().getSubject(creatorId);
             created = record.getDate("creation_time");
             long ownerId = record.getLong("owned_by");
-            owner = coralSecurity.getSubject(ownerId);
+            owner = coral.getSecurity().getSubject(ownerId);
             long modifierId = record.getLong("modified_by");
-            modifier = coralSecurity.getSubject(modifierId);
+            modifier = coral.getSecurity().getSubject(modifierId);
             modified = record.getDate("modification_time");
         }
         catch(EntityDoesNotExistException e)
@@ -394,7 +369,7 @@ public class ResourceImpl
             {
                 try
                 {
-                    parent = coralStore.getResource(parentId);
+                    parent = coral.getStore().getResource(parentId);
                 }
                 catch(EntityDoesNotExistException e)
                 {
@@ -569,7 +544,7 @@ public class ResourceImpl
         }
         try
         {
-            Resource impl = coralStore.getResource(getId());
+            Resource impl = coral.getStore().getResource(getId());
             coralEventHub.getGlobal().fireResourceChangeEvent(impl, subject);
         }
         catch(EntityDoesNotExistException e)
@@ -687,10 +662,10 @@ public class ResourceImpl
     {
         if(assignments == null)
         {
-            assignments = coralRegistry.getPermissionAssignments(this);
+            assignments = coral.getRegistry().getPermissionAssignments(this);
             try
             {
-                Resource impl = coralStore.getResource(getId());
+                Resource impl = coral.getStore().getResource(getId());
                 coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, impl);
             }
             catch(Exception e)

@@ -31,6 +31,7 @@ import java.util.Date;
 
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.database.persistence.InputRecord;
@@ -41,39 +42,53 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractAssignmentTest.java,v 1.1 2004-02-24 16:32:05 fil Exp $
+ * @version $Id: AbstractAssignmentTest.java,v 1.2 2004-03-05 11:52:17 fil Exp $
  */
 public class AbstractAssignmentTest extends MockObjectTestCase
 {
     private Mock mockPersistence;
-    
+    private Persistence persistence;
     private Mock mockInputRecord;
-    
+    private InputRecord inputRecord;
     private Mock mockOutputRecord;
-    
+    private OutputRecord outputRecord;
     private Mock mockCoralSecurity;
-    
-    private RedBlueEntityFactory factory;
-    
+    private CoralSecurity coralSecurity;
+    private Mock mockCoralCore;
+    private CoralCore coralCore;
+    private RedBlueEntityFactory factory;    
     private Mock mockSubject;
+    private Subject subject;
+    private Mock mockOtherSubject;
+    private Subject otherSubject;
     
     public void setUp()
     {
         mockPersistence = new Mock(Persistence.class);
+        persistence = (Persistence)mockPersistence.proxy();
         mockInputRecord = new Mock(InputRecord.class);
+        inputRecord = (InputRecord)mockInputRecord.proxy();
         mockOutputRecord = new Mock(OutputRecord.class);
+        outputRecord = (OutputRecord)mockOutputRecord.proxy();
         mockCoralSecurity = new Mock(CoralSecurity.class);
-        factory = new RedBlueEntityFactory((Persistence)mockPersistence.proxy());
+        coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
+        mockCoralCore = new Mock(CoralCore.class);
+        coralCore = (CoralCore)mockCoralCore.proxy();
+        mockCoralCore.stub().method("getSecurity").will(returnValue(coralSecurity));
+        factory = new RedBlueEntityFactory(persistence);
         mockSubject = new Mock(Subject.class);
+        subject = (Subject)mockSubject.proxy();
+        mockOtherSubject = new Mock(Subject.class, "mockOtherSubject");
+        otherSubject = (Subject)mockSubject.proxy();
     }
     
     public void testCreation()
     {
         RedEntity red1 = factory.getRed(1);
         BlueEntity blue2 = factory.getBlue(2);
-        RedBlueAssignment as = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), 
-            (Persistence)mockPersistence.proxy(), factory, 
-            red1, blue2, (Subject)mockSubject.proxy(), new Date());
+        RedBlueAssignment as = new RedBlueAssignment(coralCore, 
+            persistence, factory, 
+            red1, blue2, subject, new Date());
         assertEquals(1, as.getRed().getId());    
         assertEquals(2, as.getBlue().getId());        
     }
@@ -83,12 +98,12 @@ public class AbstractAssignmentTest extends MockObjectTestCase
         RedEntity red1 = factory.getRed(1);
         BlueEntity blue1 = factory.getBlue(1);
         BlueEntity blue2 = factory.getBlue(2);
-        RedBlueAssignment red1blue1 = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory, 
-            red1, blue1, (Subject)mockSubject.proxy(), new Date());
-        RedBlueAssignment red1blue2 = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory, 
-            red1, blue2, (Subject)mockSubject.proxy(), new Date());
-        RedBlueAssignment red1blue1copy = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory, 
-            red1, blue1, (Subject)mockSubject.proxy(), new Date());
+        RedBlueAssignment red1blue1 = new RedBlueAssignment(coralCore, persistence, factory, 
+            red1, blue1, subject, new Date());
+        RedBlueAssignment red1blue2 = new RedBlueAssignment(coralCore, persistence, factory, 
+            red1, blue2, subject, new Date());
+        RedBlueAssignment red1blue1copy = new RedBlueAssignment(coralCore, persistence, factory, 
+            red1, blue1, subject, new Date());
         assertFalse(red1blue1.hashCode() == red1blue2.hashCode());
         assertTrue(red1blue1.hashCode() == red1blue1copy.hashCode());                
     }
@@ -98,12 +113,12 @@ public class AbstractAssignmentTest extends MockObjectTestCase
         RedEntity red1 = factory.getRed(1);
         BlueEntity blue1 = factory.getBlue(1);
         BlueEntity blue2 = factory.getBlue(2);
-        RedBlueAssignment red1blue1 = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory, 
-            red1, blue1, (Subject)mockSubject.proxy(), new Date());
-        RedBlueAssignment red1blue2 = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory, 
-            red1, blue2, (Subject)mockSubject.proxy(), new Date());
-        RedBlueAssignment red1blue1copy = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory, 
-            red1, blue1, (Subject)mockSubject.proxy(), new Date());
+        RedBlueAssignment red1blue1 = new RedBlueAssignment(coralCore, persistence, factory, 
+            red1, blue1, subject, new Date());
+        RedBlueAssignment red1blue2 = new RedBlueAssignment(coralCore, persistence, factory, 
+            red1, blue2, subject, new Date());
+        RedBlueAssignment red1blue1copy = new RedBlueAssignment(coralCore, persistence, factory, 
+            red1, blue1, subject, new Date());
         assertFalse(red1blue1.equals(red1blue2));
         assertTrue(red1blue1.equals(red1blue1copy));
         assertNotSame(red1blue1, red1blue1copy);
@@ -115,10 +130,9 @@ public class AbstractAssignmentTest extends MockObjectTestCase
         RedEntity red1 = factory.getRed(1);
         BlueEntity blue2 = factory.getBlue(2);
         Date date = new Date();
-        RedBlueAssignment red1blue1 = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory, 
-            red1, blue2, (Subject)mockSubject.proxy(), date);
-        Subject otherSubject = (Subject)new Mock(Subject.class).proxy();
-        assertSame(mockSubject.proxy(), red1blue1.getGrantedBy());
+        RedBlueAssignment red1blue1 = new RedBlueAssignment(coralCore, persistence, factory, 
+            red1, blue2, subject, date);
+        assertSame(subject, red1blue1.getGrantedBy());
         red1blue1.setGrantedBy(otherSubject);        
         assertSame(otherSubject, red1blue1.getGrantedBy());
         assertEquals(date, red1blue1.getGrantTime());
@@ -138,9 +152,9 @@ public class AbstractAssignmentTest extends MockObjectTestCase
         mockOutputRecord.expect(once()).method("setLong").with(eq("blue_id"), eq(2L));
         mockOutputRecord.expect(once()).method("setLong").with(eq("grantor"), eq(3L));
         mockOutputRecord.expect(once()).method("setDate").with(eq("grant_time"), eq(date));                
-        RedBlueAssignment red1blue1 = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory, 
-            red1, blue2, (Subject)mockSubject.proxy(), date);
-        red1blue1.getData((OutputRecord)mockOutputRecord.proxy());
+        RedBlueAssignment red1blue1 = new RedBlueAssignment(coralCore, persistence, factory, 
+            red1, blue2, subject, date);
+        red1blue1.getData(outputRecord);
         red1blue1.getTable();
         red1blue1.getKeyColumns();
     }
@@ -148,29 +162,29 @@ public class AbstractAssignmentTest extends MockObjectTestCase
     public void testLoading()
         throws Exception
     {
-        RedBlueAssignment rb = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory);
+        RedBlueAssignment rb = new RedBlueAssignment(coralCore, persistence, factory);
         Date date = new Date();
         mockInputRecord.expect(once()).method("getLong").with(eq("red_id")).will(returnValue(1L));
         mockInputRecord.expect(once()).method("getLong").with(eq("blue_id")).will(returnValue(2L));
         mockInputRecord.expect(once()).method("getLong").with(eq("grantor")).will(returnValue(3L));
         mockInputRecord.expect(once()).method("getDate").with(eq("grant_time")).will(returnValue(date));                
-        mockCoralSecurity.expect(once()).method("getSubject").with(eq(3L)).will(returnValue(mockSubject.proxy()));
-        rb.setData((InputRecord)mockInputRecord.proxy());
+        mockCoralSecurity.expect(once()).method("getSubject").with(eq(3L)).will(returnValue(subject));
+        rb.setData(inputRecord);
         assertEquals(1L, rb.getRed().getId());
         assertEquals(2L, rb.getBlue().getId());
-        assertSame(mockSubject.proxy(), rb.getGrantedBy());
+        assertSame(subject, rb.getGrantedBy());
         assertSame(date, rb.getGrantTime());
     }      
 
     public void testLoadingMissingSubject()
         throws Exception
     {
-        RedBlueAssignment rb = new RedBlueAssignment((CoralSecurity)mockCoralSecurity.proxy(), (Persistence)mockPersistence.proxy(), factory);
+        RedBlueAssignment rb = new RedBlueAssignment(coralCore, persistence, factory);
         mockInputRecord.expect(once()).method("getLong").with(eq("grantor")).will(returnValue(3L));
         mockCoralSecurity.expect(once()).method("getSubject").with(eq(3L)).will(throwException(new EntityDoesNotExistException("subject not found")));
         try
         {
-            rb.setData((InputRecord)mockInputRecord.proxy());
+            rb.setData(inputRecord);
             fail("exception expected");
         }
         catch(Exception e)

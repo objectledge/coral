@@ -30,6 +30,7 @@ package org.objectledge.coral.schema;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.CoralEventWhiteboard;
@@ -41,7 +42,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeDefinitionImplTest.java,v 1.1 2004-02-25 13:24:33 fil Exp $
+ * @version $Id: AttributeDefinitionImplTest.java,v 1.2 2004-03-05 11:52:14 fil Exp $
  */
 public class AttributeDefinitionImplTest extends MockObjectTestCase
 {
@@ -61,6 +62,8 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     private CoralEventHub coralEventHub;
     private Mock mockCoralEventWhiteboard;
     private CoralEventWhiteboard coralEventWhiteboard;
+    private Mock mockCoralCore;
+    private CoralCore coralCore;
 
     public void setUp()
     {
@@ -80,13 +83,16 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
         coralEventHub = (CoralEventHub)mockCoralEventHub.proxy();
         mockCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);
         coralEventWhiteboard = (CoralEventWhiteboard)mockCoralEventWhiteboard.proxy();
+        mockCoralCore = new Mock(CoralCore.class);
+        coralCore = (CoralCore)mockCoralCore.proxy();
+        mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
     }
     
     public void testCreation()
     {
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema, 
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         def.setDeclaringClass(resourceClass);
         assertEquals(-1L, def.getId());
@@ -102,7 +108,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     {
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema, 
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         def.setDeclaringClass(resourceClass);
         mockOutputRecord.expect(once()).method("setLong").with(eq("attribute_definition_id"), eq(-1L));
@@ -122,7 +128,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     {
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema, 
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, null, 303);
         def.setDeclaringClass(resourceClass);
         mockOutputRecord.expect(once()).method("setLong").with(eq("attribute_definition_id"), eq(-1L));
@@ -140,7 +146,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     public void testLoading()
         throws Exception
     {
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema);
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore);
 
         mockInputRecord.expect(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
         mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
@@ -165,7 +171,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     public void testLoadingNullDomain()
         throws Exception
     {
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema);
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore);
 
         mockInputRecord.expect(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
         mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
@@ -189,7 +195,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     public void testLoadingMissingAttributeClass()
         throws Exception
     {
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema);
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore);
 
         mockInputRecord.expect(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
         mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
@@ -211,7 +217,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     public void testLoadingMissingResourceClass()
         throws Exception
     {
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema);
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore);
 
         mockInputRecord.expect(once()).method("getLong").with(eq("attribute_definition_id")).will(returnValue(-1L));
         mockInputRecord.expect(once()).method("getString").with(eq("name")).will(returnValue("<attribute>"));
@@ -236,7 +242,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     {
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema, 
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         mockPersistence.expect(once()).method("revert").with(same(def));
         def.attributeDefinitionChanged(def);
@@ -246,7 +252,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     {
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema, 
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         def.attributeDefinitionChanged(null);
     }
@@ -255,7 +261,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     {
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema, 
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         mockPersistence.expect(once()).method("revert").with(same(def)).will(throwException(new PersistenceException("revert failed")));
         try
@@ -275,7 +281,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
     {
         mockCoralEventHub.expect(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(once()).method("addAttributeDefinitionChangeListener");
-        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralSchema, 
+        AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         assertEquals(303, def.getFlags());
         def.setFlags(909);

@@ -29,6 +29,7 @@ package org.objectledge.coral.schema;
 
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
@@ -38,60 +39,64 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassInheritanceImplTest.java,v 1.1 2004-02-25 12:08:53 fil Exp $
+ * @version $Id: ResourceClassInheritanceImplTest.java,v 1.2 2004-03-05 11:52:15 fil Exp $
  */
 public class ResourceClassInheritanceImplTest extends MockObjectTestCase
 {
     private Mock mockPersistence;
-    
+    private Persistence persistence;
     private Mock mockInputRecord;
-    
+    private InputRecord inputRecord;
     private Mock mockOutputRecord;
-    
+    private OutputRecord outputRecord;
     private Mock mockCoralSchema;
-    
+    private CoralSchema coralSchema;
+    private Mock mockCoralCore;
+    private CoralCore coralCore;
     private Mock mockParentClass;
-    
+    private ResourceClass parentClass;    
     private Mock mockChildClass;
-
+    private ResourceClass childClass;
     private Mock mockChildClass2;
-    
-    private ResourceClass parent;
-    
-    private ResourceClass child;
-    
-    private ResourceClass child2;
+    private ResourceClass childClass2;
     
     public void setUp()
     {
         mockPersistence = new Mock(Persistence.class);
+        persistence = (Persistence)mockPersistence.proxy();
         mockInputRecord = new Mock(InputRecord.class);
+        inputRecord = (InputRecord)mockInputRecord.proxy();
         mockOutputRecord = new Mock(OutputRecord.class);
+        outputRecord = (OutputRecord)mockOutputRecord.proxy();
         mockCoralSchema = new Mock(CoralSchema.class);
+        coralSchema = (CoralSchema)mockCoralSchema.proxy();
+        mockCoralCore = new Mock(CoralCore.class);
+        coralCore = (CoralCore)mockCoralCore.proxy();
+        mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
         mockParentClass = new Mock(ResourceClass.class, "parent");
-        parent = (ResourceClass)mockParentClass.proxy();
+        parentClass = (ResourceClass)mockParentClass.proxy();
         mockChildClass = new Mock(ResourceClass.class, "child");
-        child = (ResourceClass)mockChildClass.proxy();
+        childClass = (ResourceClass)mockChildClass.proxy();
         mockChildClass2 = new Mock(ResourceClass.class, "child 2");
-        child2 = (ResourceClass)mockChildClass2.proxy();
+        childClass2 = (ResourceClass)mockChildClass2.proxy();
     }
     
     public void testCreation()
     {
-        ResourceClassInheritanceImpl record = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy(), 
-            parent, child);
-        assertSame(parent, record.getParent());    
-        assertSame(child, record.getChild());    
+        ResourceClassInheritanceImpl record = new ResourceClassInheritanceImpl(coralCore, 
+            parentClass, childClass);
+        assertSame(parentClass, record.getParent());    
+        assertSame(childClass, record.getChild());    
     }
     
     public void testHashCode()
     {
-        ResourceClassInheritanceImpl inheritance = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy(), 
-            parent, child);
-        ResourceClassInheritanceImpl inheritance2 = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy(), 
-            parent, child2);
-        ResourceClassInheritanceImpl inheritanceCopy = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy(), 
-            parent, child);
+        ResourceClassInheritanceImpl inheritance = new ResourceClassInheritanceImpl(coralCore, 
+            parentClass, childClass);
+        ResourceClassInheritanceImpl inheritance2 = new ResourceClassInheritanceImpl(coralCore, 
+            parentClass, childClass2);
+        ResourceClassInheritanceImpl inheritanceCopy = new ResourceClassInheritanceImpl(coralCore, 
+            parentClass, childClass);
         mockParentClass.expect(atLeastOnce()).method("getId").will(returnValue(1L));
         mockChildClass.expect(atLeastOnce()).method("getId").will(returnValue(2L));
         mockChildClass2.expect(atLeastOnce()).method("getId").will(returnValue(3L));
@@ -101,12 +106,12 @@ public class ResourceClassInheritanceImplTest extends MockObjectTestCase
     
     public void testEquals()
     {
-        ResourceClassInheritanceImpl inheritance = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy(),  
-            parent, child);
-        ResourceClassInheritanceImpl inheritance2 = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy(), 
-            parent, child2);
-        ResourceClassInheritanceImpl inheritanceCopy = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy(), 
-            parent, child);
+        ResourceClassInheritanceImpl inheritance = new ResourceClassInheritanceImpl(coralCore,  
+            parentClass, childClass);
+        ResourceClassInheritanceImpl inheritance2 = new ResourceClassInheritanceImpl(coralCore, 
+            parentClass, childClass2);
+        ResourceClassInheritanceImpl inheritanceCopy = new ResourceClassInheritanceImpl(coralCore, 
+            parentClass, childClass);
         assertFalse(inheritance.equals(inheritance2));
         assertTrue(inheritance.equals(inheritanceCopy));
         assertNotSame(inheritance, inheritanceCopy);
@@ -116,13 +121,13 @@ public class ResourceClassInheritanceImplTest extends MockObjectTestCase
     public void testStoring()
         throws Exception
     {
-        ResourceClassInheritanceImpl inheritance = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy(), 
-            parent, child);
+        ResourceClassInheritanceImpl inheritance = new ResourceClassInheritanceImpl(coralCore, 
+            parentClass, childClass);
         mockParentClass.expect(once()).method("getId").will(returnValue(1L));
         mockChildClass.expect(once()).method("getId").will(returnValue(2L));
         mockOutputRecord.expect(once()).method("setLong").with(eq("parent"), eq(1L));
         mockOutputRecord.expect(once()).method("setLong").with(eq("child"), eq(2L));
-        inheritance.getData((OutputRecord)mockOutputRecord.proxy());
+        inheritance.getData(outputRecord);
         inheritance.getTable();
         inheritance.getKeyColumns();
     }
@@ -130,25 +135,25 @@ public class ResourceClassInheritanceImplTest extends MockObjectTestCase
     public void testLoading()
         throws Exception
     {
-        ResourceClassInheritanceImpl rb = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy());
+        ResourceClassInheritanceImpl rb = new ResourceClassInheritanceImpl(coralCore);
         mockInputRecord.expect(once()).method("getLong").with(eq("parent")).will(returnValue(1L));
         mockInputRecord.expect(once()).method("getLong").with(eq("child")).will(returnValue(2L));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).will(returnValue(parent));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(2L)).will(returnValue(child));
-        rb.setData((InputRecord)mockInputRecord.proxy());
-        assertSame(parent, rb.getParent());
-        assertSame(child, rb.getChild());
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).will(returnValue(parentClass));
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(2L)).will(returnValue(childClass));
+        rb.setData(inputRecord);
+        assertSame(parentClass, rb.getParent());
+        assertSame(childClass, rb.getChild());
     }
 
     public void testLoadingMissingParent()
         throws Exception
     {
-        ResourceClassInheritanceImpl rb = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy());
+        ResourceClassInheritanceImpl rb = new ResourceClassInheritanceImpl(coralCore);
         mockInputRecord.expect(once()).method("getLong").with(eq("parent")).will(returnValue(1L));
         mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).will(throwException(new EntityDoesNotExistException("missing resource class")));
         try
         {
-            rb.setData((InputRecord)mockInputRecord.proxy());
+            rb.setData(inputRecord);
             fail("exception expected");
         }
         catch(Exception e)
@@ -162,14 +167,14 @@ public class ResourceClassInheritanceImplTest extends MockObjectTestCase
     public void testLoadingMissingChild()
         throws Exception
     {
-        ResourceClassInheritanceImpl rb = new ResourceClassInheritanceImpl((CoralSchema)mockCoralSchema.proxy());
+        ResourceClassInheritanceImpl rb = new ResourceClassInheritanceImpl(coralCore);
         mockInputRecord.expect(once()).method("getLong").with(eq("parent")).will(returnValue(1L));
         mockInputRecord.expect(once()).method("getLong").with(eq("child")).will(returnValue(2L));
-        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).will(returnValue(parent));
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).will(returnValue(parentClass));
         mockCoralSchema.expect(once()).method("getResourceClass").with(eq(2L)).will(throwException(new EntityDoesNotExistException("missing resource class")));
         try
         {
-            rb.setData((InputRecord)mockInputRecord.proxy());
+            rb.setData(inputRecord);
             fail("exception expected");
         }
         catch(Exception e)

@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.2 2004-03-05 08:24:26 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.3 2004-03-05 11:52:17 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -736,9 +736,8 @@ public class CoralStoreImpl
         {
             conn = database.getConnection();
             shouldCommit = database.beginTransaction();
-            Resource delegate = new ResourceImpl(persistence, this, coral.getSchema(), 
-                coral.getSecurity(),
-            coral.getRegistry(), coralEventHub, name, resourceClass, parent, creator);
+            Resource delegate = new ResourceImpl(persistence, coral, coralEventHub, 
+                name, resourceClass, parent, creator);
             persistence.save((Persistent)delegate);
             res = delegate.getResourceClass().getHandler().
                 create(delegate, attributes, conn);

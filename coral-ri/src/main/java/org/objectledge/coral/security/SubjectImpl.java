@@ -3,8 +3,8 @@ package org.objectledge.coral.security;
 import java.util.Set;
 
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractEntity;
-import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.RoleAssignmentChangeListener;
 import org.objectledge.coral.event.SubjectChangeListener;
@@ -17,7 +17,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: SubjectImpl.java,v 1.8 2004-03-05 10:17:00 fil Exp $
+ * @version $Id: SubjectImpl.java,v 1.9 2004-03-05 11:52:15 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SubjectImpl
@@ -26,14 +26,11 @@ public class SubjectImpl
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The CoralEventHub. */
+    /** The event hub. */
     private CoralEventHub coralEventHub;
     
-    /** The CoralRegistry. */
-    private CoralRegistry coralRegistry;
-    
-    /** CoralSecurity. */
-    private CoralSecurity coralSecurity;
+    /** The component hub. */
+    private CoralCore coral;
     
     /** The permission conatiner. */
     private PermissionContainer permissions = null;
@@ -50,17 +47,15 @@ public class SubjectImpl
      * Constructs a {@link SubjectImpl}.
      * 
      * @param persistence the Peristence subsystem.
-     * @param coralEventHub the CoralEventHub.
-     * @param coralRegistry the CoralRegistry.
-     * @param coralSecurity the CoralSecurity.
+     * @param coralEventHub the event hub.
+     * @param coral the component hub.
      */
     public SubjectImpl(Persistence persistence, CoralEventHub coralEventHub, 
-        CoralRegistry coralRegistry, CoralSecurity coralSecurity)
+        CoralCore coral)
     {
         super(persistence);
         this.coralEventHub = coralEventHub;
-        this.coralRegistry = coralRegistry;
-        this.coralSecurity = coralSecurity;
+        this.coral = coral;
     }
     
     /**
@@ -68,19 +63,16 @@ public class SubjectImpl
      *
      * @param persistence the Peristence subsystem.
      * @param coralEventHub the CoralEventHub.
-     * @param coralRegistry the CoralRegistry.
-     * @param coralSecurity the CoralSecurity.
+     * @param coral the component hub.
      * 
      * @param name the name of the subject.
      */
-    public SubjectImpl(Persistence persistence, CoralEventHub coralEventHub, 
-        CoralRegistry coralRegistry, CoralSecurity coralSecurity,  
+    public SubjectImpl(Persistence persistence, CoralEventHub coralEventHub, CoralCore coral,  
         String name)
     {
         super(persistence, name);
         this.coralEventHub = coralEventHub;
-        this.coralRegistry = coralRegistry;
-        this.coralSecurity = coralSecurity;
+        this.coral = coral;
         coralEventHub.getInbound().addSubjectChangeListener(this, this);
     }
 
@@ -248,7 +240,7 @@ public class SubjectImpl
      */
     public Resource[] getOwnedResources()
     {
-        return coralRegistry.getOwnedResources(this);
+        return coral.getRegistry().getOwnedResources(this);
     }
     
     /**
@@ -260,7 +252,7 @@ public class SubjectImpl
      */
     public Resource[] getCreatedResources()
     {
-        return coralRegistry.getCreatedResources(this);
+        return coral.getRegistry().getCreatedResources(this);
     }
     
     /**
@@ -270,7 +262,7 @@ public class SubjectImpl
      */
     public RoleAssignment[] getGrantedRoleAssginments()
     {
-        return coralRegistry.getGrantedRoleAssignments(this);
+        return coral.getRegistry().getGrantedRoleAssignments(this);
     }
 
     /**
@@ -280,7 +272,7 @@ public class SubjectImpl
      */
     public PermissionAssignment[] getGrantedPermissionAssignemnts()
     {
-        return coralRegistry.getGrantedPermissionAssignments(this);
+        return coral.getRegistry().getGrantedPermissionAssignments(this);
     }
 
     // RoleAssignmentChangeListener interface ///////////////////////////////////////////////////
@@ -326,7 +318,7 @@ public class SubjectImpl
     {
         if(roleAssignments == null)
         {
-            roleAssignments = coralRegistry.getRoleAssignments(this);
+            roleAssignments = coral.getRegistry().getRoleAssignments(this);
             coralEventHub.getGlobal().addRoleAssignmentChangeListener(this, this);
         }
     }
@@ -336,7 +328,7 @@ public class SubjectImpl
         if(roles == null)
         {
             buildRoleAssignments();
-            roles = new RoleContainer(coralEventHub, coralRegistry, roleAssignments, false);
+            roles = new RoleContainer(coralEventHub, coral, roleAssignments, false);
         }
     }
     
@@ -346,7 +338,7 @@ public class SubjectImpl
         if(permissions == null)
         {
             buildRoles();
-            permissions = new PermissionContainer(coralEventHub, coralRegistry, roles);
+            permissions = new PermissionContainer(coralEventHub, coral, roles);
         }
     }
 }

@@ -1,8 +1,8 @@
 package org.objectledge.coral.security;
 
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssociation;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
@@ -12,7 +12,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * Represents an association between a {@link org.objectledge.coral.security.Permission} and a 
  * {@link org.objectledge.coral.schema.ResourceClass}. 
  *
- * @version $Id: PermissionAssociationImpl.java,v 1.5 2004-03-05 10:17:00 fil Exp $
+ * @version $Id: PermissionAssociationImpl.java,v 1.6 2004-03-05 11:52:15 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssociationImpl
@@ -21,11 +21,8 @@ public class PermissionAssociationImpl
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
-    /** The CoralSchema. */
-    private CoralSchema coralSchema;
-    
-    /** The CoralSecurity. */
-    private CoralSecurity coralSecurity;
+    /** The component hub. */
+    private CoralCore coral;
 
     /** The {@link org.objectledge.coral.schema.ResourceClass}. */
     private ResourceClass resourceClass;
@@ -37,30 +34,26 @@ public class PermissionAssociationImpl
 
     /**
      * Contstructs a PermissionAssociationImpl.
-     * 
-     * @param coralSchema the CoralSchema.
-     * @param coralSecurity the CoralSecurity.
+     *
+     * @param coral the component hub.
      */
-    public PermissionAssociationImpl(CoralSchema coralSchema, CoralSecurity coralSecurity)
+    public PermissionAssociationImpl(CoralCore coral)
     {
-        this.coralSchema = coralSchema;
-        this.coralSecurity = coralSecurity;
+        this.coral= coral;
     }
     
     /**
      * Contstructs a PermissionAssociationImpl.
      *
-     * @param coralSchema the CoralSchema.
-     * @param coralSecurity the CoralSecurity.
+     * @param coral the component hub.
      *
      * @param resourceClass the involved {@link org.objectledge.coral.schema.ResourceClass}.
      * @param permission the involved {@link org.objectledge.coral.security.Permission}.
      */
-    public PermissionAssociationImpl(CoralSchema coralSchema, CoralSecurity coralSecurity,
+    public PermissionAssociationImpl(CoralCore coral,
          ResourceClass resourceClass, Permission permission)
     {
-        this.coralSchema = coralSchema;
-        this.coralSecurity = coralSecurity;
+        this.coral = coral;
         this.resourceClass = resourceClass;
         this.permission = permission;
     }
@@ -149,7 +142,7 @@ public class PermissionAssociationImpl
         long resourceClassId = record.getLong("resource_class_id");
         try
         {
-            resourceClass = coralSchema.getResourceClass(resourceClassId);
+            resourceClass = coral.getSchema().getResourceClass(resourceClassId);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -158,7 +151,7 @@ public class PermissionAssociationImpl
         long permissionId = record.getLong("permission_id");
         try
         {
-            permission = coralSecurity.getPermission(permissionId);
+            permission = coral.getSecurity().getPermission(permissionId);
         }
         catch(EntityDoesNotExistException e)
         {

@@ -22,7 +22,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.5 2004-03-05 08:24:26 fil Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.6 2004-03-05 11:52:16 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -272,7 +272,7 @@ public class CoralSchemaImpl
     {
         // check domain specified for well-formedness
         attributeClass.getHandler().checkDomain(domain);
-        return new AttributeDefinitionImpl(persistence, coralEventHub, this, 
+        return new AttributeDefinitionImpl(persistence, coralEventHub, coral, 
             name, attributeClass, domain, flags);
     }
 
@@ -411,7 +411,7 @@ public class CoralSchemaImpl
         throws EntityExistsException, JavaClassException
     {
         ResourceClass resourceClass = new ResourceClassImpl(persistence, instantiator, 
-            coralEventHub, coral.getRegistry(), 
+            coralEventHub, coral, 
             name, javaClass, handlerClass, dbTable, flags);
         coral.getRegistry().addResourceClass(resourceClass);
         return resourceClass;
@@ -683,7 +683,7 @@ public class CoralSchemaImpl
         {
             conn = database.getConnection();
             shouldCommit = database.beginTransaction();
-            relationship = new ResourceClassInheritanceImpl(this,
+            relationship = new ResourceClassInheritanceImpl(coral,
                 parent, child);
             coral.getRegistry().addResourceClassInheritance(relationship);
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, true);
@@ -749,7 +749,7 @@ public class CoralSchemaImpl
         {
             conn = database.getConnection();
             shouldCommit = database.beginTransaction();
-            relationship = new ResourceClassInheritanceImpl(this, 
+            relationship = new ResourceClassInheritanceImpl(coral, 
                 parent, child);
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, false);
             child.getHandler().deleteParentClass(parent, conn);

@@ -2,6 +2,7 @@ package org.objectledge.coral.security;
 
 import java.util.Date;
 
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssignment;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
@@ -11,7 +12,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * An implementation of {@link org.objectledge.security.RoleAssignment} interface.
  *
- * @version $Id: RoleAssignmentImpl.java,v 1.5 2004-03-05 10:17:00 fil Exp $
+ * @version $Id: RoleAssignmentImpl.java,v 1.6 2004-03-05 11:52:15 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleAssignmentImpl
@@ -34,27 +35,27 @@ public class RoleAssignmentImpl
     /**
      * Creates a {@link RoleAssignmentImpl}.
      *
-     * @param coralSecurity the CoralSecurity.
+     * @param coral the component hub.
      */
-    public RoleAssignmentImpl(CoralSecurity coralSecurity)
+    public RoleAssignmentImpl(CoralCore coral)
     {
-        super(coralSecurity);
+        super(coral);
     }
     
     /**
      * Creates a {@link RoleAssignmentImpl}.
      * 
-     * @param coralSecurity the CoralSecurity.
+     * @param coral the component hub.
      *
      * @param grantor the subject that created this assignment.
      * @param subject the involved subject.
      * @param role the involved role.
      * @param grantingAllowed is delagating of role allowed.
      */
-    public RoleAssignmentImpl(CoralSecurity coralSecurity, 
+    public RoleAssignmentImpl(CoralCore coral, 
         Subject grantor, Subject subject, Role role, boolean grantingAllowed)
     {
-        super(coralSecurity, grantor, new Date());
+        super(coral, grantor, new Date());
         this.subject = subject;
         this.role = role;
         this.grantingAllowed = grantingAllowed;
@@ -146,7 +147,7 @@ public class RoleAssignmentImpl
         long roleId = record.getLong("role_id");
         try
         {
-            this.role = coralSecurity.getRole(roleId);
+            this.role = coral.getSecurity().getRole(roleId);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -155,7 +156,7 @@ public class RoleAssignmentImpl
         long subjectId = record.getLong("subject_id");
         try
         {
-            subject = coralSecurity.getSubject(subjectId);
+            subject = coral.getSecurity().getSubject(subjectId);
         }
         catch(EntityDoesNotExistException e)
         {

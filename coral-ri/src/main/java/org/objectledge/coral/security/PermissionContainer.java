@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.objectledge.coral.entity.CoralRegistry;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.ResourceTreeChangeListener;
@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceInheritance;
  * A helper class for managing a set of permissions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionContainer.java,v 1.4 2004-02-23 10:42:11 fil Exp $
+ * @version $Id: PermissionContainer.java,v 1.5 2004-03-05 11:52:15 fil Exp $
  */
 public class PermissionContainer
     implements PermissionAssignmentChangeListener,
@@ -26,12 +26,12 @@ public class PermissionContainer
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
+    /** The component hub. */
+    private CoralCore coral;
+
     /** The CoralEventHub. */
     private CoralEventHub coralEventHub;
     
-    /** The CoralRegistry. */
-    private CoralRegistry coralRegistry;
-
     /** The role container. */
     private RoleContainer roles;
 
@@ -57,11 +57,11 @@ public class PermissionContainer
      * 
      * @param roles a RoleContainer.
      */
-    PermissionContainer(CoralEventHub coralEventHub, CoralRegistry coralRegistry, 
+    PermissionContainer(CoralEventHub coralEventHub, CoralCore coral, 
         RoleContainer roles)
     {
         this.coralEventHub = coralEventHub;
-        this.coralRegistry = coralRegistry;
+        this.coral = coral;
         this.roles = roles;
         roles.setPermissionContainer(this);
     }
@@ -233,7 +233,7 @@ public class PermissionContainer
             Set roleSet = roles.getMatchingRoles();
             while(r != null)
             {
-                Set pas = coralRegistry.getPermissionAssignments(r);
+                Set pas = coral.getRegistry().getPermissionAssignments(r);
                 Iterator i = pas.iterator();
                 while(i.hasNext())
                 {

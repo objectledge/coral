@@ -8,16 +8,15 @@ import java.io.IOException;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeDefinitionImpl;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.ResourceClassInheritance;
 import org.objectledge.coral.schema.ResourceClassInheritanceImpl;
-import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.PermissionAssignment;
 import org.objectledge.coral.security.PermissionAssignmentImpl;
@@ -29,7 +28,6 @@ import org.objectledge.coral.security.RoleAssignmentImpl;
 import org.objectledge.coral.security.RoleImplication;
 import org.objectledge.coral.security.RoleImplicationImpl;
 import org.objectledge.coral.security.Subject;
-import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ResourceInheritance;
 import org.objectledge.coral.store.ResourceInheritanceImpl;
@@ -63,15 +61,9 @@ public class NotificationEventBridgeImpl
     
     /** The component instantiator. */
     private Instantiator instantiator;
-    
-    /** The CoralSchema. */
-    private CoralSchema coralSchema;
-    
-    /** The CoralSecurity. */
-    private CoralSecurity coralSecurity;
-    
-    /** The CoralStore. */
-    private CoralStore coralStore;
+        
+    /** The component hub. */
+    private CoralCore coral;
     
     /** The logger. */
     private Logger log;
@@ -109,20 +101,15 @@ public class NotificationEventBridgeImpl
      * @param persistence the Peristence substem.
      * @param notification the Notification subsystem.
      * @param instantiator the component instantiator.
-     * @param coralSchema the CoralSchema.
-     * @param coralSecurity the CoralSecurity.
-     * @param coralStore the CoralStore.
+     * @param coral the component hub.
      * @param log the logger.
      */
     public NotificationEventBridgeImpl(Persistence persistence, Notification notification, 
-        Instantiator instantiator, CoralSchema coralSchema, CoralSecurity coralSecurity,
-        CoralStore coralStore, Logger log)
+        Instantiator instantiator, CoralCore coral, Logger log)
     {
         this.persistence = persistence;   
         this.notification = notification;
-        this.coralSchema = coralSchema;
-        this.coralSecurity = coralSecurity;
-        this.coralStore = coralStore;
+        this.coral = coral;
         this.log = log;
         
         this.attributeDefinitionFactory = instantiator.
@@ -273,10 +260,10 @@ public class NotificationEventBridgeImpl
             
             if("PermissionAssociationChange".equals(type))
             {
-                ResourceClass rc = coralSchema.getResourceClass(entity1);
-                Permission p = coralSecurity.getPermission(entity2);
+                ResourceClass rc = coral.getSchema().getResourceClass(entity1);
+                Permission p = coral.getSecurity().getPermission(entity2);
                 PermissionAssociation pa = 
-                    new PermissionAssociationImpl(coralSchema, coralSecurity, rc, p);
+                    new PermissionAssociationImpl(coral, rc, p);
                 event.firePermissionAssociationChangeEvent(pa, added);
             }
             else if("PermissionAssignmentChange".equals(type))
@@ -293,10 +280,10 @@ public class NotificationEventBridgeImpl
                 }
                 else
                 {
-                    Resource res = coralStore.getResource(entity1);
-                    Role r = coralSecurity.getRole(entity2);
-                    Permission p = coralSecurity.getPermission(entity3);
-                    pa = new PermissionAssignmentImpl(coralSecurity, coralStore, 
+                    Resource res = coral.getStore().getResource(entity1);
+                    Role r = coral.getSecurity().getRole(entity2);
+                    Permission p = coral.getSecurity().getPermission(entity3);
+                    pa = new PermissionAssignmentImpl(coral, 
                         null, res, r, p, false);
                 }
                 event.firePermissionAssignmentChangeEvent(pa, added);
@@ -314,25 +301,25 @@ public class NotificationEventBridgeImpl
                 }
                 else
                 {
-                    Subject s = coralSecurity.getSubject(entity1);
-                    Role r = coralSecurity.getRole(entity2);
-                    ra = new RoleAssignmentImpl(coralSecurity, null, s, r, false);
+                    Subject s = coral.getSecurity().getSubject(entity1);
+                    Role r = coral.getSecurity().getRole(entity2);
+                    ra = new RoleAssignmentImpl(coral, null, s, r, false);
                 }
                 event.fireRoleAssignmentChangeEvent(ra, added);
             }
             else if("RoleImplicationChange".equals(type)) 
             {
-                Role sup = coralSecurity.getRole(entity1);
-                Role sub = coralSecurity.getRole(entity2);
-                RoleImplication ri = new RoleImplicationImpl(coralSecurity, sup, sub);
+                Role sup = coral.getSecurity().getRole(entity1);
+                Role sub = coral.getSecurity().getRole(entity2);
+                RoleImplication ri = new RoleImplicationImpl(coral, sup, sub);
                 event.fireRoleImplicationChangeEvent(ri, added);
             }
             else if("ResourceClassInheritanceChange".equals(type)) 
             {
-                ResourceClass p = coralSchema.getResourceClass(entity1);
-                ResourceClass c = coralSchema.getResourceClass(entity2);
+                ResourceClass p = coral.getSchema().getResourceClass(entity1);
+                ResourceClass c = coral.getSchema().getResourceClass(entity2);
                 ResourceClassInheritance rci = 
-                    new ResourceClassInheritanceImpl(coralSchema, p, c);
+                    new ResourceClassInheritanceImpl(coral, p, c);
                 event.fireResourceClassInheritanceChangeEvent(rci, added);
             }
             else if("ResourceClassAttributesChange".equals(type)) 
@@ -343,46 +330,46 @@ public class NotificationEventBridgeImpl
             }
             else if("ResourceTreeChange".equals(type)) 
             {
-                Resource p = coralStore.getResource(entity1);
-                Resource c = coralStore.getResource(entity2);
+                Resource p = coral.getStore().getResource(entity1);
+                Resource c = coral.getStore().getResource(entity2);
                 ResourceInheritance ri = 
                     new ResourceInheritanceImpl(p, c);
                 event.fireResourceTreeChangeEvent(ri, added);
             }
             else if("ResourceOwnershipChange".equals(type)) 
             {
-                Subject s = coralSecurity.getSubject(entity1);
-                Resource r = coralStore.getResource(entity2);
+                Subject s = coral.getSecurity().getSubject(entity1);
+                Resource r = coral.getStore().getResource(entity2);
                 ResourceOwnership ro = 
                     new ResourceOwnershipImpl(s, r);
                 event.fireResourceOwnershipChangeEvent(ro, added);
             }
             else if("SubjectChange".equals(type)) 
             {
-                Subject s = coralSecurity.getSubject(entity1);
+                Subject s = coral.getSecurity().getSubject(entity1);
                 event.fireSubjectChangeEvent(s);
             }
             else if("RoleChange".equals(type)) 
             {
-                Role r = coralSecurity.getRole(entity1);
+                Role r = coral.getSecurity().getRole(entity1);
                 event.fireRoleChangeEvent(r);
             }
             else if("PermissionChange".equals(type)) 
             {
-                Permission p = coralSecurity.getPermission(entity1);
+                Permission p = coral.getSecurity().getPermission(entity1);
                 event.firePermissionChangeEvent(p);
             }
             else if("ResourceCreation".equals(type)) 
             {
-                Resource r = coralStore.getResource(entity1);
+                Resource r = coral.getStore().getResource(entity1);
                 event.fireResourceCreationEvent(r);
             }
             else if("ResourceChange".equals(type)) 
             {
-                Resource r = coralStore.getResource(entity1);
+                Resource r = coral.getStore().getResource(entity1);
                 if(entity2 != -1)
                 {
-					Subject s = coralSecurity.getSubject(entity2);
+					Subject s = coral.getSecurity().getSubject(entity2);
 					event.fireResourceChangeEvent(r, s);
                 }
                 else
@@ -392,17 +379,17 @@ public class NotificationEventBridgeImpl
             }
 			else if("ResourceDeletion".equals(type)) 
 			{
-				Resource r = coralStore.getResource(entity1);
+				Resource r = coral.getStore().getResource(entity1);
 				event.fireResourceDeletionEvent(r);
 			}
             else if("ResourceClassChange".equals(type)) 
             {
-                ResourceClass rc = coralSchema.getResourceClass(entity1);
+                ResourceClass rc = coral.getSchema().getResourceClass(entity1);
                 event.fireResourceClassChangeEvent(rc);
             }
             else if("AttributeClassChange".equals(type)) 
             {
-                AttributeClass ac = coralSchema.getAttributeClass(entity1);
+                AttributeClass ac = coral.getSchema().getAttributeClass(entity1);
                 event.fireAttributeClassChangeEvent(ac);
             }
             else if("AttributeDefinictionChange".equals(type)) 
