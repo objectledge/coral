@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>coral-api</project>
+		<project>coral-datatypes</project>
 		<project>ledge-components</project>
 	</projects>
 	<buildSpec>
