@@ -22,7 +22,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.3 2004-03-02 12:22:16 fil Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.4 2004-03-02 15:03:43 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -234,6 +234,29 @@ public class CoralSchemaImpl
     }
 
     // Attribute instances ///////////////////////////////////////////////////
+
+    /**
+     * Returns all attributes defined by classes in the system.
+     * 
+     * @return all attributes defined by classes in the system.
+     */
+    public AttributeDefinition[] getAttribute()
+    {
+        return coralRegistry.getAttributeDefinition();
+    }
+
+    /**
+     * Returns an attribute definition with the specified id.
+     * 
+     * @param id attribute definition identifier.
+     * @return the attribute definition.
+     * @throws EntityDoesNotExistException if no such attribute definition exists.
+     */
+    public AttributeDefinition getAttribute(long id)
+        throws EntityDoesNotExistException
+    {
+        return coralRegistry.getAttributeDefinition(id);
+    }
 
     /**
      * Creates an attribute instance.
@@ -603,29 +626,6 @@ public class CoralSchemaImpl
         {
             DatabaseUtils.close(conn);
         }
-    }
-
-    /**
-     * Returns all attributes defined by classes in the system.
-     * 
-     * @return all attributes defined by classes in the system.
-     */
-    public AttributeDefinition[] getAttribute()
-    {
-        return coralRegistry.getAttributeDefinition();
-    }
-
-    /**
-     * Returns an attribute definition with the specified id.
-     * 
-     * @param id attribute definition identifier.
-     * @return the attribute definition.
-     * @throws EntityDoesNotExistException if no such attribute definition exists.
-     */
-    public AttributeDefinition getAttribute(long id)
-        throws EntityDoesNotExistException
-    {
-        return coralRegistry.getAttributeDefinition(id);
     }
 
     /**
