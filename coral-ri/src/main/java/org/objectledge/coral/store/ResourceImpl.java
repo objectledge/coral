@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.14 2004-08-24 08:09:31 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.15 2004-09-27 09:12:52 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -86,7 +86,43 @@ public class ResourceImpl
     /**
      * Mapping of builtin attributes to methods.
      */
-    private Map builtinAttributes = new HashMap();
+    private static Map builtinAttributes = new HashMap();
+
+    /**
+     * Fillin the {@link #builtinAttributes} map.
+     */
+    static
+    {
+        try
+        {
+            Class[] noArg = new Class[0];
+            Class impl = ResourceImpl.class;
+            builtinAttributes.
+                put("name", impl.getMethod("getName", noArg));
+            builtinAttributes.
+                put("id", impl.getMethod("getId", noArg));
+            builtinAttributes.
+                put("path",impl.getMethod("getPath", noArg));
+            builtinAttributes.
+                put("resource_class", impl.getMethod("getResourceClass", noArg));
+            builtinAttributes.
+                put("parent", impl.getMethod("getParent", noArg));
+            builtinAttributes.
+                put("owner", impl.getMethod("getOwner", noArg));
+            builtinAttributes.
+                put("created_by", impl.getMethod("getCreatedBy", noArg));
+            builtinAttributes.
+                put("modified_by", impl.getMethod("getModifiedBy", noArg));        
+            builtinAttributes.
+                put("creation_time", impl.getMethod("getCreationTime", noArg));
+            builtinAttributes.
+                put("modification_time", impl.getMethod("getModificationTime", noArg));
+        }
+        catch(NoSuchMethodException e)
+        {
+            throw new BackendException("failed to resolve class method", e);
+        }
+    }
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -102,7 +138,6 @@ public class ResourceImpl
         super(persistence);
         this.coral = coral;
         this.coralEventHub = coralEventHub;
-        buildAttributeMap();
     }
     
     /**
@@ -135,7 +170,6 @@ public class ResourceImpl
         this.modifier = creator;
         this.created = new Date();
         this.modified = this.created;
-        buildAttributeMap();
     }
     
     /**
@@ -734,41 +768,5 @@ public class ResourceImpl
             }
             return pas;
         }          
-    }
-
-    /**
-     * Fillin the {@link #builtinAttributes} map.
-     */
-    private void buildAttributeMap()
-    {
-        try
-        {
-            Class[] noArg = new Class[0];
-            Class impl = ResourceImpl.class;
-            builtinAttributes.
-                put("name", impl.getMethod("getName", noArg));
-            builtinAttributes.
-                put("id", impl.getMethod("getId", noArg));
-            builtinAttributes.
-                put("path",impl.getMethod("getPath", noArg));
-            builtinAttributes.
-                put("resource_class", impl.getMethod("getResourceClass", noArg));
-            builtinAttributes.
-                put("parent", impl.getMethod("getParent", noArg));
-            builtinAttributes.
-                put("owner", impl.getMethod("getOwner", noArg));
-            builtinAttributes.
-                put("created_by", impl.getMethod("getCreatedBy", noArg));
-            builtinAttributes.
-                put("modified_by", impl.getMethod("getModifiedBy", noArg));        
-            builtinAttributes.
-                put("creation_time", impl.getMethod("getCreationTime", noArg));
-            builtinAttributes.
-                put("modification_time", impl.getMethod("getModificationTime", noArg));
-        }
-        catch(NoSuchMethodException e)
-        {
-            throw new BackendException("failed to resolve class method", e);
-        }
     }
 }
