@@ -79,7 +79,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
 
     private ResourceAttributeHandler handler;
     
-    private NodeResourceImpl node;
+    private NodeImpl node;
 
     public void setUp() throws Exception
     {
@@ -99,8 +99,8 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
         attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
         
         mockResourceClass = mock(ResourceClass.class);
-        mockResourceClass.stub().method("getJavaClass").will(returnValue(NodeResourceImpl.class));
-        mockResourceClass.stub().method("getName").will(returnValue("node"));
+        mockResourceClass.stub().method("getJavaClass").will(returnValue(NodeImpl.class));
+        mockResourceClass.stub().method("getName").will(returnValue("coral.Node"));
         mockResourceClass.stub().method("getAttribute").will(returnValue(attributeDefinition));
                
         resourceClass = (ResourceClass)mockResourceClass.proxy();
@@ -136,7 +136,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
         
-        node = new NodeResourceImpl(coralSchema, database, logger);
+        node = new NodeImpl(coralSchema, database, logger);
     }
 
     public void testAttributeHandlerBase()

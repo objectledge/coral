@@ -1,5 +1,5 @@
 # 
-# Copyright (c) 2003, Caltha - Gajda, Krzewski, Mach, Potempski Sp.J. 
+# Copyright (c) 2003, 2004 Caltha - Gajda, Krzewski, Mach, Potempski Sp.J. 
 # All rights reserved. 
 # 
 # Redistribution and use in source and binary forms, with or without modification,  
@@ -33,7 +33,7 @@
 # created from an SQL script during instance setup. The script is used by the wrapper class 
 # generation tool to initialize itself.
 #
-# $Id$
+# $Id:$
 #
 
 # primitives
@@ -124,8 +124,8 @@ CREATE ATTRIBUTE CLASS weak_resource_list
 
 # node class
 	
-CREATE RESOURCE CLASS BUILTIN node
-	JAVA CLASS org.objectledge.coral.datatypes.NodeResource
+CREATE RESOURCE CLASS BUILTIN coral.Node
+	JAVA CLASS org.objectledge.coral.datatypes.Node
 	HANDLER CLASS org.objectledge.coral.datatypes.GenericResourceHandler
 	ATTRIBUTES 	(
 		REQUIRED BUILTIN long id,

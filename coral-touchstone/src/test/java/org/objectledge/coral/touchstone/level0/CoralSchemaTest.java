@@ -42,7 +42,7 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaTest.java,v 1.3 2004-03-16 13:38:12 fil Exp $
+ * @version $Id: CoralSchemaTest.java,v 1.4 2004-04-22 18:03:16 zwierzem Exp $
  */
 public class CoralSchemaTest
     extends CoralTestCase
@@ -129,11 +129,11 @@ public class CoralSchemaTest
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
         session.getSchema().createResourceClass("alt_node", 
-            "org.objectledge.coral.datatypes.NodeResourceImpl", 
+            "org.objectledge.coral.datatypes.NodeImpl", 
             "org.objectledge.coral.datatypes.GenericResourceHandler", null, 0);
         DefaultTable expectedTable = new DefaultTable("alt_node_resource_class",
             coralResourceClassColumns);
-        expectedTable.addRow(new Object[] { new Long(2), "alt_node", "org.objectledge.coral.datatypes.NodeResourceImpl", 
+        expectedTable.addRow(new Object[] { new Long(2), "alt_node", "org.objectledge.coral.datatypes.NodeImpl", 
             "org.objectledge.coral.datatypes.GenericResourceHandler", null, new Integer(0)});
         ITable actualTable = databaseConnection.createQueryTable("alt_node_resource_class",
             "SELECT * FROM coral_resource_class WHERE name = 'alt_node'");
@@ -157,9 +157,9 @@ public class CoralSchemaTest
         throws Exception
     { 
         CoralSession session = coralSessionFactory.getAnonymousSession();
-        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        ResourceClass nodeClass = session.getSchema().getResourceClass("coral.Node");
         ResourceClass altNodeClass = session.getSchema().createResourceClass("alt_node", 
-            "org.objectledge.coral.datatypes.NodeResourceImpl", 
+            "org.objectledge.coral.datatypes.NodeImpl", 
             "org.objectledge.coral.datatypes.GenericResourceHandler", null, 0);
         assertEquals(2, altNodeClass.getId());
         session.getSchema().addParentClass(altNodeClass, nodeClass, new HashMap());
@@ -185,7 +185,7 @@ public class CoralSchemaTest
         throws Exception
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
-        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        ResourceClass nodeClass = session.getSchema().getResourceClass("coral.Node");
         AttributeDefinition[] attributes = nodeClass.getAllAttributes();
         assertTrue(attributes.length > 0);
         session.close();
@@ -195,7 +195,7 @@ public class CoralSchemaTest
         throws Exception
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
-        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        ResourceClass nodeClass = session.getSchema().getResourceClass("coral.Node");
         AttributeClass integerClass = session.getSchema().getAttributeClass("integer");
         AttributeDefinition attr = session.getSchema().
             createAttribute("foo", integerClass, null, 0);

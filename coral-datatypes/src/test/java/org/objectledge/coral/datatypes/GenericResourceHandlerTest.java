@@ -97,7 +97,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     private ResultSet resultSet;
     // not mock  
     private GenericResourceHandler handler;
-    private NodeResourceImpl node;
+    private NodeImpl node;
     
     public void setUp() throws Exception
     {
@@ -135,8 +135,8 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockResourceClass = mock(ResourceClass.class);
-        mockResourceClass.stub().method("getJavaClass").will(returnValue(NodeResourceImpl.class));
-        mockResourceClass.stub().method("getName").will(returnValue("node"));
+        mockResourceClass.stub().method("getJavaClass").will(returnValue(NodeImpl.class));
+        mockResourceClass.stub().method("getName").will(returnValue("coral.Node"));
         mockResourceClass.stub().method("getAttribute").will(returnValue(attributeDefinition));
         mockResourceClass.stub().method("getInheritance").will(returnValue(new ResourceClassInheritance[0]));
         mockResourceClass.stub().method("getDeclaredAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
@@ -147,7 +147,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockCoralSchema.stub().method("getAttribute").with(eq(1L)).will(returnValue(attributeDefinition));
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         
-        node = new NodeResourceImpl(coralSchema, database, logger);
+        node = new NodeImpl(coralSchema, database, logger);
         
         mockInstantiator = mock(Instantiator.class);
         mockInstantiator.stub().method("newInstance").will(returnValue(node));
@@ -188,7 +188,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         attributes.put(attributeDefinition, "foo");
         mockAttributeHandler.expect(once()).method("create").with(eq("foo"),ANYTHING).will(returnValue(1L));
         mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
-        NodeResource newResource = (NodeResource)handler.create(resource, attributes, connection);
+        Node newResource = (Node)handler.create(resource, attributes, connection);
         assertEquals(newResource.getDescription(),"foo");
         handler.update(newResource, connection);
         newResource.setDescription("bar");

@@ -41,7 +41,7 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralStoreTest.java,v 1.2 2004-03-16 13:38:12 fil Exp $
+ * @version $Id: CoralStoreTest.java,v 1.3 2004-04-22 18:03:16 zwierzem Exp $
  */
 public class CoralStoreTest
     extends CoralTestCase
@@ -73,7 +73,7 @@ public class CoralStoreTest
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
         Resource root = session.getStore().getResource(1L);
-        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        ResourceClass nodeClass = session.getSchema().getResourceClass("coral.Node");
         Resource resource = session.getStore().createResource("resource", root, nodeClass, new HashMap());
         
         DefaultTable expectedTable = new DefaultTable("resource", coralResourceColumns);

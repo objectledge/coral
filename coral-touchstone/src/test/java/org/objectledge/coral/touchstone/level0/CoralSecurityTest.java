@@ -45,7 +45,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityTest.java,v 1.5 2004-03-16 13:38:12 fil Exp $
+ * @version $Id: CoralSecurityTest.java,v 1.6 2004-04-22 18:03:16 zwierzem Exp $
  */
 public class CoralSecurityTest
     extends CoralTestCase
@@ -211,7 +211,7 @@ public class CoralSecurityTest
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
         Permission permission = session.getSecurity().createPermission("custom_permission");
-        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        ResourceClass nodeClass = session.getSchema().getResourceClass("coral.Node");
         session.getSecurity().addPermission(nodeClass, permission);           
         DefaultTable expectedTable = new DefaultTable("coral_permission_association",
             coralPermissionAssociationColumns);
@@ -274,7 +274,7 @@ public class CoralSecurityTest
         CoralSession session = coralSessionFactory.getRootSession();
         Role role = session.getSecurity().createRole("custom_role");
         Permission permission = session.getSecurity().createPermission("custom_permission");
-        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        ResourceClass nodeClass = session.getSchema().getResourceClass("coral.Node");
         session.getSecurity().addPermission(nodeClass, permission);
         Resource resource = session.getStore().getResource(1L);
         session.getSecurity().grant(resource, role, permission, true);
@@ -303,7 +303,7 @@ public class CoralSecurityTest
     {
         Statement stmt = databaseConnection.getConnection().createStatement();
         stmt.execute("INSERT INTO coral_resource_class VALUES(2, "+
-            "'alt_node', 'org.objectledge.coral.datatypes.NodeResourceImpl',"+ 
+            "'alt_node', 'org.objectledge.coral.datatypes.NodeImpl',"+ 
             "'org.objectledge.coral.datatypes.GenericResourceHandler', '', 4)");
         stmt.execute("INSERT INTO coral_resource_class_inheritance VALUES(1,2)");
         stmt.execute("INSERT INTO coral_permission VALUES(1,'permission')");
@@ -320,7 +320,7 @@ public class CoralSecurityTest
         Role rootRole = session.getSecurity().getRole(Role.ROOT);
         Subject root = session.getSecurity().getSubject(Subject.ROOT);
         Subject anonymous = session.getSecurity().getSubject(Subject.ANONYMOUS);
-        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        ResourceClass nodeClass = session.getSchema().getResourceClass("coral.Node");
         assertTrue(nodeClass.isAssociatedWith(permission));
         ResourceClass altNodeClass = session.getSchema().getResourceClass("alt_node");
         Role role = session.getSecurity().getUniqueRole("role");

@@ -52,7 +52,7 @@ import org.objectledge.parameters.Parameters;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralDatatypesTest.java,v 1.3 2004-03-16 13:38:12 fil Exp $
+ * @version $Id: CoralDatatypesTest.java,v 1.4 2004-04-22 18:03:16 zwierzem Exp $
  */
 public class CoralDatatypesTest extends CoralTestCase
 {
@@ -165,7 +165,7 @@ public class CoralDatatypesTest extends CoralTestCase
         super.setUp();
         Statement stmt = databaseConnection.getConnection().createStatement();
         stmt.execute("INSERT INTO coral_resource_class VALUES(2, "+
-            "'test', 'org.objectledge.coral.datatypes.NodeResourceImpl',"+ 
+            "'test', 'org.objectledge.coral.datatypes.NodeImpl',"+ 
             "'org.objectledge.coral.datatypes.GenericResourceHandler', '', 0)");
         
         stmt.execute("INSERT INTO coral_resource VALUES(2,2,1,'resource',1,NOW(),1,1,NOW())");
