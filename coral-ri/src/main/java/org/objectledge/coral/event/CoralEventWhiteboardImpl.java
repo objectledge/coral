@@ -22,7 +22,7 @@ import org.objectledge.event.EventForwarder;
 /**
  * Convenience wrapper around <code>EventService</code> implementation.
  *
- * @version $Id: CoralEventWhiteboardImpl.java,v 1.2 2004-02-27 15:23:35 fil Exp $
+ * @version $Id: CoralEventWhiteboardImpl.java,v 1.3 2004-02-27 15:32:15 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralEventWhiteboardImpl
@@ -31,7 +31,7 @@ public class CoralEventWhiteboardImpl
     // Member objects ////////////////////////////////////////////////////////
 
     /** The {@link EventForwarder}. */
-    private EventForwarder event;
+    private EventForwarder whiteboard;
 
     /** {@link
      * PermissionAssociationChangeListener#permissionsChanged(PermissionAssociation,boolean)} */
@@ -115,7 +115,7 @@ public class CoralEventWhiteboardImpl
      */
     CoralEventWhiteboardImpl(EventForwarder event)
     {
-        this.event = event;
+        this.whiteboard = event;
         
         try
         {
@@ -194,7 +194,7 @@ public class CoralEventWhiteboardImpl
     public void addPermissionAssignmentChangeListener(
         PermissionAssignmentChangeListener listener, Object object)
     {
-        event.addListener(PermissionAssignmentChangeListener.class, listener, object);
+        whiteboard.addListener(PermissionAssignmentChangeListener.class, listener, object);
     }
     
     /**
@@ -207,7 +207,7 @@ public class CoralEventWhiteboardImpl
     public void removePermissionAssignmentChangeListener(
         PermissionAssignmentChangeListener listener, Object object)
     {
-        event.removeListener(PermissionAssignmentChangeListener.class, listener, object);
+        whiteboard.removeListener(PermissionAssignmentChangeListener.class, listener, object);
     }
 
     /**
@@ -220,7 +220,7 @@ public class CoralEventWhiteboardImpl
     public void addRoleAssignmentChangeListener(
         RoleAssignmentChangeListener listener, Object object)
     {
-        event.addListener(RoleAssignmentChangeListener.class, listener, object);
+        whiteboard.addListener(RoleAssignmentChangeListener.class, listener, object);
     }
     
     /**
@@ -233,7 +233,7 @@ public class CoralEventWhiteboardImpl
     public void removeRoleAssignmentChangeListener(
         RoleAssignmentChangeListener listener, Object object)
     {
-        event.removeListener(RoleAssignmentChangeListener.class, listener, object);
+        whiteboard.removeListener(RoleAssignmentChangeListener.class, listener, object);
     }
 
     /**
@@ -246,7 +246,7 @@ public class CoralEventWhiteboardImpl
     public void addPermissionAssociationChangeListener(
         PermissionAssociationChangeListener listener, Object object)
     {
-        event.addListener(PermissionAssociationChangeListener.class, listener, object);
+        whiteboard.addListener(PermissionAssociationChangeListener.class, listener, object);
     }
     
     /**
@@ -259,7 +259,7 @@ public class CoralEventWhiteboardImpl
     public void removePermissionAssociationChangeListener(
         PermissionAssociationChangeListener listener, Object object)
     {
-        event.removeListener(PermissionAssociationChangeListener.class, listener, object);
+        whiteboard.removeListener(PermissionAssociationChangeListener.class, listener, object);
     }
 
     /**
@@ -272,7 +272,7 @@ public class CoralEventWhiteboardImpl
     public void addRoleImplicationChangeListener(
         RoleImplicationChangeListener listener, Object object)
     {
-        event.addListener(RoleImplicationChangeListener.class, listener, object);
+        whiteboard.addListener(RoleImplicationChangeListener.class, listener, object);
     }
     
     /**
@@ -285,7 +285,7 @@ public class CoralEventWhiteboardImpl
     public void removeRoleImplicationChangeListener(
         RoleImplicationChangeListener listener, Object object)
     {
-        event.removeListener(RoleImplicationChangeListener.class, listener, object);
+        whiteboard.removeListener(RoleImplicationChangeListener.class, listener, object);
     }
 
     /**
@@ -298,7 +298,7 @@ public class CoralEventWhiteboardImpl
     public void addResourceClassInheritanceChangeListener(
         ResourceClassInheritanceChangeListener listener, Object object)
     {
-        event.addListener(ResourceClassInheritanceChangeListener.class, listener, object);
+        whiteboard.addListener(ResourceClassInheritanceChangeListener.class, listener, object);
     }
     
     /**
@@ -311,7 +311,7 @@ public class CoralEventWhiteboardImpl
     public void removeResourceClassInheritanceChangeListener(
         ResourceClassInheritanceChangeListener listener, Object object)
     {
-        event.removeListener(ResourceClassInheritanceChangeListener.class, listener, object);
+        whiteboard.removeListener(ResourceClassInheritanceChangeListener.class, listener, object);
     }
 
     /**
@@ -324,7 +324,7 @@ public class CoralEventWhiteboardImpl
     public void addResourceClassAttributesChangeListener(
         ResourceClassAttributesChangeListener listener, Object object)
     {
-        event.addListener(ResourceClassAttributesChangeListener.class, listener, object);
+        whiteboard.addListener(ResourceClassAttributesChangeListener.class, listener, object);
     }
     
     /**
@@ -337,7 +337,7 @@ public class CoralEventWhiteboardImpl
     public void removeResourceClassAttributesChangeListener(
         ResourceClassAttributesChangeListener listener, Object object)
     {
-        event.removeListener(ResourceClassAttributesChangeListener.class, listener, object);
+        whiteboard.removeListener(ResourceClassAttributesChangeListener.class, listener, object);
     }
 
     /**
@@ -350,7 +350,7 @@ public class CoralEventWhiteboardImpl
     public void addResourceTreeChangeListener(
         ResourceTreeChangeListener listener, Object object)
     {
-        event.addListener(ResourceTreeChangeListener.class, listener, object);
+        whiteboard.addListener(ResourceTreeChangeListener.class, listener, object);
     }
     
     /**
@@ -363,7 +363,7 @@ public class CoralEventWhiteboardImpl
     public void removeResourceTreeChangeListener(
         ResourceTreeChangeListener listener, Object object)
     {
-        event.removeListener(ResourceTreeChangeListener.class, listener, object);
+        whiteboard.removeListener(ResourceTreeChangeListener.class, listener, object);
     }
 
     /**
@@ -376,7 +376,7 @@ public class CoralEventWhiteboardImpl
     public void addResourceOwnershipChangeListener(
         ResourceOwnershipChangeListener listener, Object object)
     {
-        event.addListener(ResourceOwnershipChangeListener.class, listener, object);
+        whiteboard.addListener(ResourceOwnershipChangeListener.class, listener, object);
     }
     
     /**
@@ -389,7 +389,7 @@ public class CoralEventWhiteboardImpl
     public void removeResourceOwnershipChangeListener(
         ResourceOwnershipChangeListener listener, Object object)
     {
-        event.removeListener(ResourceOwnershipChangeListener.class, listener, object);
+        whiteboard.removeListener(ResourceOwnershipChangeListener.class, listener, object);
     }
 
     /**
@@ -402,7 +402,7 @@ public class CoralEventWhiteboardImpl
     public void addResourceClassChangeListener(
         ResourceClassChangeListener listener, Object object)
     {
-        event.addListener(ResourceClassChangeListener.class, listener, object);
+        whiteboard.addListener(ResourceClassChangeListener.class, listener, object);
     }
     
     /**
@@ -415,7 +415,7 @@ public class CoralEventWhiteboardImpl
     public void removeResourceClassChangeListener(
         ResourceClassChangeListener listener, Object object)
     {
-        event.removeListener(ResourceClassChangeListener.class, listener, object);
+        whiteboard.removeListener(ResourceClassChangeListener.class, listener, object);
     }
 
     /**
@@ -428,7 +428,7 @@ public class CoralEventWhiteboardImpl
     public void addAttributeClassChangeListener(
         AttributeClassChangeListener listener, Object object)
     {
-        event.addListener(AttributeClassChangeListener.class, listener, object);
+        whiteboard.addListener(AttributeClassChangeListener.class, listener, object);
     }
     
     /**
@@ -441,7 +441,7 @@ public class CoralEventWhiteboardImpl
     public void removeAttributeClassChangeListener(
         AttributeClassChangeListener listener, Object object)
     {
-        event.removeListener(AttributeClassChangeListener.class, listener, object);
+        whiteboard.removeListener(AttributeClassChangeListener.class, listener, object);
     }
 
     /**
@@ -454,7 +454,7 @@ public class CoralEventWhiteboardImpl
     public void addAttributeDefinitionChangeListener(
         AttributeDefinitionChangeListener listener, Object object)
     {
-        event.addListener(AttributeDefinitionChangeListener.class, listener, object);
+        whiteboard.addListener(AttributeDefinitionChangeListener.class, listener, object);
     }
     
     /**
@@ -467,7 +467,7 @@ public class CoralEventWhiteboardImpl
     public void removeAttributeDefinitionChangeListener(
         AttributeDefinitionChangeListener listener, Object object)
     {
-        event.removeListener(AttributeDefinitionChangeListener.class, listener, object);
+        whiteboard.removeListener(AttributeDefinitionChangeListener.class, listener, object);
     }
 
     /**
@@ -480,7 +480,7 @@ public class CoralEventWhiteboardImpl
     public void addResourceCreationListener(
         ResourceCreationListener listener, Object object)
     {
-        event.addListener(ResourceCreationListener.class, listener, object);
+        whiteboard.addListener(ResourceCreationListener.class, listener, object);
     }
     
     /**
@@ -493,7 +493,7 @@ public class CoralEventWhiteboardImpl
     public void removeResourceCreationListener(
         ResourceCreationListener listener, Object object)
     {
-        event.removeListener(ResourceCreationListener.class, listener, object);
+        whiteboard.removeListener(ResourceCreationListener.class, listener, object);
     }
 
     /**
@@ -506,7 +506,7 @@ public class CoralEventWhiteboardImpl
     public void addResourceChangeListener(
         ResourceChangeListener listener, Object object)
     {
-        event.addListener(ResourceChangeListener.class, listener, object);
+        whiteboard.addListener(ResourceChangeListener.class, listener, object);
     }
     
     /**
@@ -519,7 +519,7 @@ public class CoralEventWhiteboardImpl
     public void removeResourceChangeListener(
         ResourceChangeListener listener, Object object)
     {
-        event.removeListener(ResourceChangeListener.class, listener, object);
+        whiteboard.removeListener(ResourceChangeListener.class, listener, object);
     }
 
 	/**
@@ -532,7 +532,7 @@ public class CoralEventWhiteboardImpl
 	public void addResourceDeletionListener(
 		ResourceDeletionListener listener, Object object)
 	{
-		event.addListener(ResourceDeletionListener.class, listener, object);
+		whiteboard.addListener(ResourceDeletionListener.class, listener, object);
 	}
 
 	/**
@@ -545,7 +545,7 @@ public class CoralEventWhiteboardImpl
 	public void removeResourceDeletionListener(
 		ResourceDeletionListener listener, Object object)
 	{
-		event.removeListener(ResourceDeletionListener.class, listener, object);
+		whiteboard.removeListener(ResourceDeletionListener.class, listener, object);
 	}
 
 	/**
@@ -558,7 +558,7 @@ public class CoralEventWhiteboardImpl
 	public void addResourceTreeDeletionListener(
 		ResourceTreeDeletionListener listener, Object object)
 	{
-		event.addListener(ResourceTreeDeletionListener.class, listener, object);
+		whiteboard.addListener(ResourceTreeDeletionListener.class, listener, object);
 	}
     
 	/**
@@ -571,7 +571,7 @@ public class CoralEventWhiteboardImpl
 	public void removeResourceTreeDeletionListener(
 		ResourceTreeDeletionListener listener, Object object)
 	{
-		event.removeListener(ResourceTreeDeletionListener.class, listener, object);
+		whiteboard.removeListener(ResourceTreeDeletionListener.class, listener, object);
 	}
 	
     /**
@@ -584,7 +584,7 @@ public class CoralEventWhiteboardImpl
     public void addSubjectChangeListener(
         SubjectChangeListener listener, Object object)
     {
-        event.addListener(SubjectChangeListener.class, listener, object);
+        whiteboard.addListener(SubjectChangeListener.class, listener, object);
     }
     
     /**
@@ -597,7 +597,7 @@ public class CoralEventWhiteboardImpl
     public void removeSubjectChangeListener(
         SubjectChangeListener listener, Object object)
     {
-        event.removeListener(SubjectChangeListener.class, listener, object);
+        whiteboard.removeListener(SubjectChangeListener.class, listener, object);
     }
     
     /**
@@ -610,7 +610,7 @@ public class CoralEventWhiteboardImpl
     public void addRoleChangeListener(
         RoleChangeListener listener, Object object)
     {
-        event.addListener(RoleChangeListener.class, listener, object);
+        whiteboard.addListener(RoleChangeListener.class, listener, object);
     }
     
     /**
@@ -623,7 +623,7 @@ public class CoralEventWhiteboardImpl
     public void removeRoleChangeListener(
         RoleChangeListener listener, Object object)
     {
-        event.removeListener(RoleChangeListener.class, listener, object);
+        whiteboard.removeListener(RoleChangeListener.class, listener, object);
     }
 
     /**
@@ -636,7 +636,7 @@ public class CoralEventWhiteboardImpl
     public void addPermissionChangeListener(
         PermissionChangeListener listener, Object object)
     {
-        event.addListener(PermissionChangeListener.class, listener, object);
+        whiteboard.addListener(PermissionChangeListener.class, listener, object);
     }
     
     /**
@@ -649,7 +649,7 @@ public class CoralEventWhiteboardImpl
     public void removePermissionChangeListener(
         PermissionChangeListener listener, Object object)
     {
-        event.removeListener(PermissionChangeListener.class, listener, object);
+        whiteboard.removeListener(PermissionChangeListener.class, listener, object);
     }
 
     // event firing //////////////////////////////////////////////////////////
@@ -666,10 +666,10 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { assignment, new Boolean(added) };
                 
-        event.fireEvent(permissionAssignmentChange, args, assignment.getResource());
-        event.fireEvent(permissionAssignmentChange, args, assignment.getRole());
-        event.fireEvent(permissionAssignmentChange, args, assignment.getPermission());
-        event.fireEvent(permissionAssignmentChange, args, null);
+        whiteboard.fireEvent(permissionAssignmentChange, args, assignment.getResource());
+        whiteboard.fireEvent(permissionAssignmentChange, args, assignment.getRole());
+        whiteboard.fireEvent(permissionAssignmentChange, args, assignment.getPermission());
+        whiteboard.fireEvent(permissionAssignmentChange, args, null);
     }
     
     /** 
@@ -684,9 +684,9 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { assignment, new Boolean(added) };
                 
-        event.fireEvent(roleAssignmentChange, args, assignment.getSubject());
-        event.fireEvent(roleAssignmentChange, args, assignment.getRole());
-        event.fireEvent(roleAssignmentChange, args, null);
+        whiteboard.fireEvent(roleAssignmentChange, args, assignment.getSubject());
+        whiteboard.fireEvent(roleAssignmentChange, args, assignment.getRole());
+        whiteboard.fireEvent(roleAssignmentChange, args, null);
     }
 
     /**
@@ -701,9 +701,9 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { association, new Boolean(added) };
                 
-        event.fireEvent(permissionAssociationChange, args, association.getResourceClass());
-        event.fireEvent(permissionAssociationChange, args, association.getPermission());
-        event.fireEvent(permissionAssociationChange, args, null);
+        whiteboard.fireEvent(permissionAssociationChange, args, association.getResourceClass());
+        whiteboard.fireEvent(permissionAssociationChange, args, association.getPermission());
+        whiteboard.fireEvent(permissionAssociationChange, args, null);
     }
 
     /** 
@@ -718,9 +718,9 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { implication, new Boolean(added) };
                 
-        event.fireEvent(roleImplicationChange, args, implication.getSuperRole());
-        event.fireEvent(roleImplicationChange, args, implication.getSubRole());
-        event.fireEvent(roleImplicationChange, args, null);
+        whiteboard.fireEvent(roleImplicationChange, args, implication.getSuperRole());
+        whiteboard.fireEvent(roleImplicationChange, args, implication.getSubRole());
+        whiteboard.fireEvent(roleImplicationChange, args, null);
     }
 
     /** 
@@ -735,9 +735,9 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { inheritance, new Boolean(added) };
                 
-        event.fireEvent(resourceClassInheritanceChange, args, inheritance.getParent());
-        event.fireEvent(resourceClassInheritanceChange, args, inheritance.getChild());
-        event.fireEvent(resourceClassInheritanceChange, args, null);
+        whiteboard.fireEvent(resourceClassInheritanceChange, args, inheritance.getParent());
+        whiteboard.fireEvent(resourceClassInheritanceChange, args, inheritance.getChild());
+        whiteboard.fireEvent(resourceClassInheritanceChange, args, null);
     }
 
     /** 
@@ -751,8 +751,8 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { attribute, new Boolean(added) };
                 
-        event.fireEvent(resourceClassAttributesChange, args, attribute.getDeclaringClass());
-        event.fireEvent(resourceClassAttributesChange, args, null);
+        whiteboard.fireEvent(resourceClassAttributesChange, args, attribute.getDeclaringClass());
+        whiteboard.fireEvent(resourceClassAttributesChange, args, null);
     }
 
     /**
@@ -767,9 +767,9 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { inheritance, new Boolean(added) };
                 
-        event.fireEvent(resourceTreeChange, args, inheritance.getParent());
-        event.fireEvent(resourceTreeChange, args, inheritance.getChild());
-        event.fireEvent(resourceTreeChange, args, null);
+        whiteboard.fireEvent(resourceTreeChange, args, inheritance.getParent());
+        whiteboard.fireEvent(resourceTreeChange, args, inheritance.getChild());
+        whiteboard.fireEvent(resourceTreeChange, args, null);
     }
 
     /**
@@ -784,9 +784,9 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { ownership, new Boolean(added) };
                 
-        event.fireEvent(resourceOwnershipChange, args, ownership.getOwner());
-        event.fireEvent(resourceOwnershipChange, args, ownership.getResource());
-        event.fireEvent(resourceOwnershipChange, args, null);
+        whiteboard.fireEvent(resourceOwnershipChange, args, ownership.getOwner());
+        whiteboard.fireEvent(resourceOwnershipChange, args, ownership.getResource());
+        whiteboard.fireEvent(resourceOwnershipChange, args, null);
     }
 
     /**
@@ -798,8 +798,8 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { subject };
         
-        event.fireEvent(subjectChange, args, subject);
-        event.fireEvent(subjectChange, args, null);
+        whiteboard.fireEvent(subjectChange, args, subject);
+        whiteboard.fireEvent(subjectChange, args, null);
     }   
     
     /**
@@ -811,8 +811,8 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { role };
         
-        event.fireEvent(roleChange, args, role);
-        event.fireEvent(roleChange, args, null);
+        whiteboard.fireEvent(roleChange, args, role);
+        whiteboard.fireEvent(roleChange, args, null);
     }   
 
     /**
@@ -826,15 +826,15 @@ public class CoralEventWhiteboardImpl
         
         if(resource.getParent() != null)
         {
-            event.fireEvent(resourceCreation, args, resource.getParent());
+            whiteboard.fireEvent(resourceCreation, args, resource.getParent());
         }
-        event.fireEvent(resourceCreation, args, resource.getResourceClass());
+        whiteboard.fireEvent(resourceCreation, args, resource.getResourceClass());
         ResourceClass[] parents = resource.getResourceClass().getParentClasses();
         for(int i=0; i<parents.length; i++)
         {
-            event.fireEvent(resourceCreation, args, parents[i]);
+            whiteboard.fireEvent(resourceCreation, args, parents[i]);
         }
-        event.fireEvent(resourceCreation, args, null);
+        whiteboard.fireEvent(resourceCreation, args, null);
     }   
 
     /**
@@ -847,14 +847,14 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { resource, subject };
         
-        event.fireEvent(resourceChange, args, resource);
-        event.fireEvent(resourceChange, args, resource.getResourceClass());
+        whiteboard.fireEvent(resourceChange, args, resource);
+        whiteboard.fireEvent(resourceChange, args, resource.getResourceClass());
         ResourceClass[] parents = resource.getResourceClass().getParentClasses();
         for(int i=0; i<parents.length; i++)
         {
-			event.fireEvent(resourceChange, args, parents[i]);
+			whiteboard.fireEvent(resourceChange, args, parents[i]);
         }
-        event.fireEvent(resourceChange, args, null);
+        whiteboard.fireEvent(resourceChange, args, null);
     }   
 
 	/**
@@ -866,14 +866,14 @@ public class CoralEventWhiteboardImpl
 	{
 		Object[] args = new Object[] { resource };
         
-		event.fireEvent(resourceDeletion, args, resource);
-		event.fireEvent(resourceDeletion, args, resource.getResourceClass());
+		whiteboard.fireEvent(resourceDeletion, args, resource);
+		whiteboard.fireEvent(resourceDeletion, args, resource.getResourceClass());
 		ResourceClass[] parents = resource.getResourceClass().getParentClasses();
 		for(int i=0; i<parents.length; i++)
 		{
-			event.fireEvent(resourceDeletion, args, parents[i]);
+			whiteboard.fireEvent(resourceDeletion, args, parents[i]);
 		}
-		event.fireEvent(resourceDeletion, args, null);
+		whiteboard.fireEvent(resourceDeletion, args, null);
 	}   
 
 	/**
@@ -884,14 +884,14 @@ public class CoralEventWhiteboardImpl
 	public void fireResourceTreeDeletionEvent(Resource resource)
 	{
 		Object[] args = new Object[] { resource };
-		event.fireEvent(resourceTreeDeletion, args, resource);
-		event.fireEvent(resourceTreeDeletion, args, resource.getResourceClass());
+		whiteboard.fireEvent(resourceTreeDeletion, args, resource);
+		whiteboard.fireEvent(resourceTreeDeletion, args, resource.getResourceClass());
 		ResourceClass[] parents = resource.getResourceClass().getParentClasses();
 		for(int i=0; i<parents.length; i++)
 		{
-			event.fireEvent(resourceTreeDeletion, args, parents[i]);
+			whiteboard.fireEvent(resourceTreeDeletion, args, parents[i]);
 		}
-		event.fireEvent(resourceTreeDeletion, args, null);
+		whiteboard.fireEvent(resourceTreeDeletion, args, null);
 	}
 	
     /**
@@ -903,8 +903,8 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { permission };
         
-        event.fireEvent(permissionChange, args, permission);
-        event.fireEvent(permissionChange, args, null);
+        whiteboard.fireEvent(permissionChange, args, permission);
+        whiteboard.fireEvent(permissionChange, args, null);
     }   
 
     /**
@@ -916,8 +916,8 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { resourceClass };
         
-        event.fireEvent(resourceClassChange, args, resourceClass);
-        event.fireEvent(resourceClassChange, args, null);
+        whiteboard.fireEvent(resourceClassChange, args, resourceClass);
+        whiteboard.fireEvent(resourceClassChange, args, null);
     }   
 
     /**
@@ -929,8 +929,8 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { attributeClass };
         
-        event.fireEvent(attributeClassChange, args, attributeClass);
-        event.fireEvent(attributeClassChange, args, null);
+        whiteboard.fireEvent(attributeClassChange, args, attributeClass);
+        whiteboard.fireEvent(attributeClassChange, args, null);
     }   
 
     /**
@@ -942,7 +942,7 @@ public class CoralEventWhiteboardImpl
     {
         Object[] args = new Object[] { attributeDefinition };
         
-        event.fireEvent(attributeDefinitionChange, args, attributeDefinition);
-        event.fireEvent(attributeDefinitionChange, args, null);
+        whiteboard.fireEvent(attributeDefinitionChange, args, attributeDefinition);
+        whiteboard.fireEvent(attributeDefinitionChange, args, null);
     }   
 }
