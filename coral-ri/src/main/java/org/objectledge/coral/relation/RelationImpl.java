@@ -50,7 +50,7 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.16 2004-03-11 13:03:17 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.17 2004-03-17 12:19:58 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -189,6 +189,13 @@ implements Relation
         return KEY_COLUMNS;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getDataTable()
+	{
+		return "coral_relation_data";
+	}
     
 	/**
 	 * {@inheritDoc}
@@ -211,7 +218,8 @@ implements Relation
 			Connection conn = database.getConnection();
 	        Statement stmt = conn.createStatement();
 	        ResultSet rs = stmt.executeQuery(
-				"SELECT resource1,resource2 FROM " + getTable() + " WHERE data_key = " + getId());
+				"SELECT resource1,resource2 FROM " + getDataTable() + 
+				" WHERE relation_id = " + getId());
 	        while (rs.next())
 	        {
 	            Long r1k = new Long(rs.getLong(1));

@@ -52,7 +52,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.3 2004-03-09 14:49:57 zwierzem Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.4 2004-03-17 12:19:58 zwierzem Exp $
  */
 public class CoralRelationManagerImpl implements CoralRelationManager
 {
@@ -188,16 +188,16 @@ public class CoralRelationManagerImpl implements CoralRelationManager
                 {
                     // db update
                     Statement stmt = conn.createStatement();
-                    stmt.execute(" DELETE FROM " + relationImpl.getTable()
-                            + " WHERE data_key = " + relationImpl.getId());
+                    stmt.execute(" DELETE FROM " + relationImpl.getDataTable()
+                            + " WHERE relation_id = " + relationImpl.getId());
 
                     // memory update
                     relationImpl.clear();
                 }
 
                 PreparedStatement pstmt = conn.prepareStatement(
-							" DELETE FROM " + relationImpl.getTable()
-                            + " WHERE data_key = " + relationImpl.getId()
+							" DELETE FROM " + relationImpl.getDataTable()
+                            + " WHERE relation_id = " + relationImpl.getId()
                             + " AND resource1 = ? AND resource2 = ?");
                 long[][] data = minimalMod.getRemoved();
                 if (data.length > 0)
@@ -217,8 +217,8 @@ public class CoralRelationManagerImpl implements CoralRelationManager
                 }
 
                 pstmt = conn.prepareStatement(
-                        "INSERT INTO " + relationImpl.getTable() 
-                        + "(data_key, resource1, resource2) VALUES (" + relationImpl.getId()
+                        "INSERT INTO " + relationImpl.getDataTable() 
+                        + "(relation_id, resource1, resource2) VALUES (" + relationImpl.getId()
                         + ", ?, ?)");
                 data = minimalMod.getAdded();
                 if (data.length > 0)
@@ -287,7 +287,7 @@ public class CoralRelationManagerImpl implements CoralRelationManager
             // delete relation contents
 			Statement stmt = conn.createStatement();
 			stmt.execute(
-				"DELETE FROM "+relationImpl.getTable()+" WHERE data_key = "+relationImpl.getId()
+				"DELETE FROM "+relationImpl.getDataTable()+" WHERE relation_id = "+relationImpl.getId()
 			);
 
             relationRegistry.delete(relation);
