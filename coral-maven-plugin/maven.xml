@@ -28,24 +28,12 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.4 2004-09-08 12:09:27 rafal Exp $ -->
+<!-- $Id: maven.xml,v 1.5 2004-09-08 13:48:42 rafal Exp $ -->
 <project xmlns:j="jelly:core"
          xmlns:m="jelly:maven"
-         xmlns:util="jelly:util">
+         xmlns:p="plugin"
+         xmlns:a="artifact">
          
-  <postGoal name="plugin:install">
-    <!-- run in separate process, so that plugin cache is regenerated -->
-    <exec 
-      executable="maven"
-      failOnError="true">
-      <arg value="-d ${basedir}"/>
-      <j:if test="${!maven.mode.online}">
-        <arg value="-o"/>
-      </j:if>
-      <arg value="plugin:testPluginFeatures"/>
-    </exec>
-  </postGoal>
- 
   <goal name="plugin:testPluginFeatures">
     <m:reactor 
       basedir="src/test/project"
@@ -54,8 +42,33 @@
       ignoreFailures="false"/>
   </goal>
   
-  <goal name="plugin:install-snapshot">
-    <attainGoal name="plugin:install-now"/>
+  <goal name="plugin:installInMaven">
+    <p:uninstall name="${pom.artifactId}" />
+    <copy file="${maven.build.dir}/${maven.final.name}.jar"
+      todir="${maven.plugin.dir}" />
+    <m:uninstallPlugin artifactId="${pom.artifactId}" />
+    <m:installPlugin file="${maven.build.dir}/${maven.final.name}.jar" cache="true" />
+    <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
+      <attainGoal name="plugin:testPluginFeatures"/>
+    </j:if>
+  </goal>
+
+  <goal name="plugin:install" prereqs="plugin:plugin">
+    <a:install
+      artifact="${maven.build.dir}/${maven.final.name}.jar"
+      type="plugin"
+      project="${pom}"
+    />
+    <attainGoal name="plugin:installInMaven"/>
+  </goal>
+
+  <goal name="plugin:install-snapshot" prereqs="plugin:plugin">
+    <a:install-snapshot
+      artifact="${maven.build.dir}/${maven.final.name}.jar"
+      type="plugin"
+      project="${pom}"
+    />
+    <attainGoal name="plugin:installInMaven"/>
   </goal>
   
 </project>
