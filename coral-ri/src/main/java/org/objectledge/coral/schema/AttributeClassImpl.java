@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.5 2004-02-23 13:50:27 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.6 2004-02-24 11:29:26 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -230,7 +230,7 @@ public class AttributeClassImpl
         }
         catch(ClassNotFoundException e)
         {
-            throw new JavaClassException(e.getMessage(), e.getCause());
+            throw new JavaClassException(e.getMessage(), e);
         }
     }
 
