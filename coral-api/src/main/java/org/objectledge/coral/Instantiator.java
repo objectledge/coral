@@ -27,22 +27,53 @@
 // 
 package org.objectledge.coral;
 
+import java.util.Map;
+
+import org.objectledge.database.persistence.PersistentFactory;
+
 /**
- * Thrown when an object could not be instantiated, because of unmet dependendecies.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralInstantiationException.java,v 1.1 2004-02-20 12:51:54 fil Exp $
+ * @version $Id: Instantiator.java,v 1.1 2004-03-16 13:02:41 fil Exp $
  */
-public class CoralInstantiationException extends Exception
+public interface Instantiator
 {
     /**
-     * Creates a new instance of the exception.
+     * Loads an instance of the specified class.
      * 
-     * @param msg the detail message.
-     * @param cause the root cause of the exception.
+     * @param className the name of the class.
+     * @return a Class object.
+     * @throws ClassNotFoundException if the class is not defined.
      */
-    public CoralInstantiationException(String msg, Throwable cause)
-    {
-        super(msg, cause);
-    }
+    public Class loadClass(String className)
+        throws ClassNotFoundException;
+    
+    /**
+     * Creates a new instance of the specified class.
+     * 
+     * @param clazz a Class object.
+     * @return the instance of the class.
+     * @throws CoralInstantiationException if the class could not be instantiated.
+     */
+    public Object newInstance(Class clazz)
+        throws CoralInstantiationException;
+        
+    /**
+     * Creates a new instance of the specified class.
+     * 
+     * @param clazz a Class object.
+     * @param additional additional components to make available to constructor.
+     * @return the instance of the class.
+     * @throws CoralInstantiationException if the class could not be instantiated.
+     */
+    public Object newInstance(Class clazz, Map additional)    
+        throws CoralInstantiationException;    
+        
+    /**
+     * Creates a PersistentFactory for the specified class.
+     * 
+     * @param clazz a Class object.
+     * @return a PersistentFactory for the specified class. 
+     */
+    public PersistentFactory getPersistentFactory(Class clazz);
 }
