@@ -432,6 +432,10 @@ public class EntityRegistry
             rename(entity, name);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
+        catch(EntityExistsException ex)
+        {
+        	throw ex;
+        }
         catch(PersistenceException ex)
         {
             try
