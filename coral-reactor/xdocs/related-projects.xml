@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>Related projects</title>
+  </properties>
+  
+  <body>
+    <section name="Related projects">
+      <subsection name="ObjectLedge">
+        <p>
+          <a href="http://objectledge.org">ObjectLedge</a>
+        </p>
+        <p>
+          Object Ledge is a platform for building applications in Java 2 Standard and Enterprise 
+          Edition environments. 
+        </p>
+        <p>
+          ObjectLedge follows component / container and Inversion Of Control design paradigms 
+          implemented with the excelent <a href="http://picocontainer.org">PicoContainer</a> package.
+        </p>
+        <p>
+          ObjectLedge provides a number of components - basic building blocks of the applications,
+          a few extensions to the Pico framework, customized containers for easy deployment of
+          applications in command line, daemon, and J2EE servlet environments.
+        </p>
+      </subsection>
+      <subsection name="Cyklotron">
+        <p>
+          <a href="http://cyklotron.org">Cyklotron</a>
+        </p>
+        <p>Cyklotron is a content management system - an application for easy development and 
+        management of websites. </p>
+        <p> Cyklotron project is sponsored by major player in the Non Governmental Organizations 
+        domain, and thus it's primary focus is serving the needs of NGOs, but the developed software 
+        will be also useful and available for commercial entities.</p>
+        <p>Cyklotron is based on earlier CykloKlon project. You can see Cyklotron in 
+        action on these major NGO websites in Poland: 
+        <a href="http://www.ngo.pl">http://www.ngo.pl</a> and 
+        <a href="http://www.niepelnosprawni.info">http://www.niepelnosprawni.info</a>. The aim of 
+        this project is creating a next generation of Cyklotron software, that is faster more robust
+        and easier to use, and providing it to the wide public.</p>
+        <p>It is developed as an Open Source project, and is based on a large number of open source 
+        libraries and tools. The software developed in the course of the project will be available 
+        for any non-commercial or commercial use on the terms of liberal BSD license.</p>
+      </subsection>
+    </section>
+  </body>
+</document>
