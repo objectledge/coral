@@ -91,6 +91,9 @@
   <component class-key="org.objectledge.cache.CacheFactory" 
              class="org.objectledge.cache.DefaultCacheFactory"/>
   
+  <component class-key="org.objectledge.parameters.db.DBParametersManager"
+             class="org.objectledge.parameters.db.DefaultDBParametersManager"/>
+  
   <!-- coral -->
   
   <component class-key="org.objectledge.coral.CoralCore" 
