@@ -108,6 +108,8 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
         range = new DateRange(d1, d2);
         rangeStart = new java.sql.Timestamp(d1.getTime());
         rangeEnd = new java.sql.Timestamp(d2.getTime());
+        mockResultSet.stubs().method("close").isVoid();
+        mockStatement.stubs().method("close").isVoid();
     }
 
     public void testAttributeHandlerBase()

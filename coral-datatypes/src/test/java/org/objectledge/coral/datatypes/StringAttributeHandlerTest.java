@@ -102,6 +102,8 @@ public class StringAttributeHandlerTest extends LedgeTestCase
             sb.append("1234567890");
         }
         longString = sb.toString();
+        mockResultSet.stubs().method("close").isVoid();
+        mockStatement.stubs().method("close").isVoid();
     }
 
     public void testAttributeHandlerBase()

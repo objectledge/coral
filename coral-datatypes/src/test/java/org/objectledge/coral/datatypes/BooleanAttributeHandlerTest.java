@@ -94,6 +94,8 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
+        mockResultSet.stubs().method("close").isVoid();
+        mockStatement.stubs().method("close").isVoid();
     }
 
     public void testAttributeHandlerBase()
@@ -103,7 +105,7 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
 
     public void testDelete() throws Exception
     {
-        mockResultSet.expects(once()).method("next").will(returnValue(true));
+        //mockResultSet.expects(once()).method("next").will(returnValue(true));
         String stmt = "DELETE FROM coral_attribute_boolean WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         booleanHandler.delete(1, connection);

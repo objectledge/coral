@@ -109,7 +109,8 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stubs().method("executeQuery").will(returnValue(resultSet));
-
+        mockResultSet.stubs().method("close").isVoid();
+        mockStatement.stubs().method("close").isVoid();
     }
 
     public void testAttributeHandlerBase()
