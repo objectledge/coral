@@ -3,6 +3,7 @@ package org.objectledge.coral.modules.views;
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.session.CoralSession;
+import org.objectledge.i18n.I18nContext;
 import org.objectledge.parameters.Parameters;
 import org.objectledge.parameters.RequestParameters;
 import org.objectledge.pipeline.ProcessingException;
@@ -43,9 +44,10 @@ public abstract class BaseCoralView
         Parameters parameters = RequestParameters.getRequestParameters(context);
         TemplatingContext templatingContext = TemplatingContext.getTemplatingContext(context);
         MVCContext mvcContext = MVCContext.getMVCContext(context);
+        I18nContext i18nContext = I18nContext.getI18nContext(context);
     	try
         {
-            process(parameters, templatingContext, mvcContext, coralSession);
+            process(parameters, templatingContext, mvcContext, i18nContext, coralSession);
             return super.build(template, embeddedBuildResults);
         }
         catch(ProcessingException e)
@@ -60,10 +62,11 @@ public abstract class BaseCoralView
      * @param parameters the parameters.
      * @param templatingContext the templating context.
      * @param mvcContext the mvcContext
+     * @param i18nContext TODO
      * @param coralSession the coral session.
      */    
     public abstract void process(Parameters parameters, TemplatingContext templatingContext, 
         						 MVCContext mvcContext, 
-        						 CoralSession coralSession)
+        						 I18nContext i18nContext, CoralSession coralSession)
         throws ProcessingException;
 }
