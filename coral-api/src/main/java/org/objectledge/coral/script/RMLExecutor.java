@@ -120,9 +120,6 @@ public class RMLExecutor
     /** The entity resolver. */
     private RMLEntityResolver entities;
 
-    /** The root role. */
-    private Role rootRole;
-
     // initialization ////////////////////////////////////////////////////////
 
     /**
@@ -142,7 +139,6 @@ public class RMLExecutor
         this.out = new PrintWriter(out);
         this.coralSessionFactory = coralSessionFactory;
         entities = new RMLEntityResolver(coralSession);
-        rootRole = coralSession.getSecurity().getRole(Role.ROOT);
     }
 
     // statements ////////////////////////////////////////////////////////////
@@ -1749,18 +1745,19 @@ public class RMLExecutor
     {
         if(node.getSubject() != null)
         {
-            if(!coralSession.getUserSubject().hasRole(rootRole))
-            {
-                out.println("You are not allowed to impersonate other subjects");
-                return data;
-            }
-            if(coralSessionFactory == null)
-            {
-                out.println("Impersonation is disabled");
-                return data;
-            }
             try
             {
+                Role rootRole = coralSession.getSecurity().getRole(Role.ROOT);
+                if(!coralSession.getUserSubject().hasRole(rootRole))
+                {
+                    out.println("You are not allowed to impersonate other subjects");
+                    return data;
+                }
+                if(coralSessionFactory == null)
+                {
+                    out.println("Impersonation is disabled");
+                    return data;
+                }
                 Subject subject = entities.resolve(node.getSubject());
                 originalSession = coralSession;
                 coralSession = coralSessionFactory.getSession(subject.getPrincipal());
