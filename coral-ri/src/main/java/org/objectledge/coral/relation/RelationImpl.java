@@ -27,7 +27,6 @@
 //
 package org.objectledge.coral.relation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,7 +42,7 @@ import org.objectledge.database.persistence.Persistence;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.3 2004-02-23 11:00:06 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.4 2004-02-23 12:26:59 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -75,6 +74,8 @@ implements Relation
     {
     	super(persistence, name);
     	
+    	this.store = store;
+    	
         Set set1 = new HashSet(def.length/2);
         Set set2 = new HashSet(def.length/2);
 
@@ -102,56 +103,30 @@ implements Relation
 
     // public api ---------------------------------------------------------------------------------
 
+	private ReverseRelation reverseRelation = new ReverseRelation(); 
+
     /**
      * {@inheritDoc}
      */
     public Relation getReverse()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return reverseRelation;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized long[][] getDefinition()
-    {
-        ArrayList temp = new ArrayList(rel.size());
-        Iterator i1 = rel.keySet().iterator();
-        while(i1.hasNext())
-        {
-            Object r = i1.next();
-            long rv = ((Long)r).longValue();
-            Set set = (Set)rel.get(r);
-            temp.ensureCapacity(temp.size()+set.size()-1);
-            for (Iterator iter = set.iterator(); iter.hasNext();)
-            {
-                Long ri = (Long) iter.next();
-                long[] entry = new long[2];
-                entry[0] = rv;
-                entry[1] = ri.longValue();
-                temp.add(entry);
-            }
-        }
-        long[][] result = new long[temp.size()][];
-        temp.toArray(result);
-        return result;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isReverse()
+	{
+		return false;
+	}
 
     /**
      * {@inheritDoc}
      */
     public Resource[] get(Resource r)
     {
-        Set set = (Set)rel.get(new Long(r.getId()));
-        if(set != null)
-        {
-            return instantiate(set);
-        }
-        else
-        {
-            return new Resource[0];
-        }
+		return get(rel, r);
     }
 
     /**
@@ -159,22 +134,7 @@ implements Relation
      */
     public long[] get(long id)
     {
-        Set set = (Set)rel.get(new Long(id));
-        if(set != null)
-        {
-        	long[] ids = new long[set.size()];
-        	int i = 0;
-            for (Iterator iter = set.iterator(); iter.hasNext(); i++)
-            {
-                Long element = (Long) iter.next();
-                ids[i] = element.longValue();
-            }
-            return ids;
-        }
-        else
-        {
-            return new long[0];
-        }
+    	return get(rel, id);
     }
 
     /**
@@ -190,12 +150,12 @@ implements Relation
      */
     public boolean hasRef(long id, long idInv)
     {
-        Set set = (Set)rel.get(new Long(id));
-        if(set != null)
-        {
-            return set.contains(new Long(idInv));
-        }
-        return false;
+		Set set = (Set)rel.get(new Long(id));
+		if(set != null)
+		{
+			return set.contains(new Long(idInv));
+		}
+		return false;
     }
 
     // peristence api -----------------------------------------------------------------------------
@@ -263,6 +223,46 @@ implements Relation
         return set;
     }
 
+	/**
+	 * Returns resources referenced by a given resource in the relation.
+	 */
+	private Resource[] get(Map relation, Resource r)
+	{
+		Set set = (Set)relation.get(new Long(r.getId()));
+		if(set != null)
+		{
+			return instantiate(set);
+		}
+		else
+		{
+			return new Resource[0];
+		}
+	}
+
+	/**
+	 * Return an array of ids contained in the map under given id. 
+	 */
+	private long[] get(Map relation, long id)
+	{
+		Set set = (Set)relation.get(new Long(id));
+		if(set != null)
+		{
+			long[] ids = new long[set.size()];
+			int i = 0;
+			for (Iterator iter = set.iterator(); iter.hasNext(); i++)
+			{
+				Long element = (Long) iter.next();
+				ids[i] = element.longValue();
+			}
+			return ids;
+		}
+		else
+		{
+			return new long[0];
+		}
+	}
+
+
     /**
      * Returns an array of Resources with given identifiers.
      *
@@ -283,8 +283,76 @@ implements Relation
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new BackendException("incosistent data", e);
+            throw new BackendException("inconsistent data", e);
         }
         return res;
+    }
+
+	/** Represents a reversed relation. */    
+    private class ReverseRelation implements Relation
+    {
+        /**
+         * {@inheritDoc}
+         */
+        public Relation getReverse()
+        {
+            return RelationImpl.this;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean isReverse()
+        {
+            return true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Resource[] get(Resource r)
+        {
+			return RelationImpl.this.get(invRel, r);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public long[] get(long id)
+        {
+			return RelationImpl.this.get(invRel, id);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean hasRef(Resource r, Resource rInv)
+        {
+			return RelationImpl.this.hasRef(rInv, r);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean hasRef(long id, long idInv)
+        {
+			return RelationImpl.this.hasRef(idInv, id);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public long getId()
+        {
+            return RelationImpl.this.getId();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public String getName()
+        {
+			return RelationImpl.this.getName();
+        }
     }
 }
