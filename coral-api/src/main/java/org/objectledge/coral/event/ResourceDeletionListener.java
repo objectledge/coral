@@ -22,5 +22,6 @@ public interface ResourceDeletionListener
 	 *
 	 * @param resource the resource that is being deleted.
 	 */
-	public void resourceDeleted(Resource resource);
+	public void resourceDeleted(Resource resource)
+        throws Exception;
 }
