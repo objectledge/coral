@@ -29,20 +29,20 @@
 //
 
 /*
-examples:
-
-RES('/path/to/resource');
-RES(12345);
-
-MAP(!'Name of Relation'){ RES('/path/to/resource') };
-MAPTRANS('Name of Relation'){ RES('/path/to/resource') };
-
-category usage:
-
-MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category') } }
-+
-MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category2') } };
-*/
+ * examples:
+ * 
+ * RES('/path/to/resource');
+ * RES(12345);
+ * 
+ * MAP(!'Name of Relation'){ RES('/path/to/resource') };
+ * MAPTRANS('Name of Relation'){ RES('/path/to/resource') };
+ * 
+ * category usage:
+ * 
+ * MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category') } }
+ * +
+ * MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category2') } };
+ */
 
 options
 {
