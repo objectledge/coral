@@ -34,7 +34,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.9 2004-06-29 11:15:23 fil Exp $
+ * @version $Id: GenericResource.java,v 1.10 2004-06-29 12:19:19 fil Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -197,29 +197,32 @@ public class GenericResource
             {
 	            AttributeHandler handler = attr.getAttributeClass().getHandler();
 	            Object value = attributes.get(attr);
-	            value = handler.toAttributeValue(value);
-	            long newId = handler.create(value, conn);
-	            ids.put(attr, new Long(newId));
-	            stmt.execute(
-	                "INSERT INTO coral_generic_resource "+
-	                "(resource_id, attribute_definition_id, data_key) "+
-	                "VALUES ("+delegate.getId()+", "+attr.getId()+", "+
-	                newId+")"
-	            );
-	            if(handler.shouldRetrieveAfterCreate())
+	            if(value != null)
 	            {
-	                try
-	                {
-	                    this.attributes.put(attr, handler.retrieve(newId, conn));
-	                }
-	                catch(EntityDoesNotExistException e)
-	                {
-	                    throw new BackendException("data integrity error", e);
-	                }
-	            }
-	            else
-	            {
-	                this.attributes.put(attr, value);
+		            value = handler.toAttributeValue(value);
+		            long newId = handler.create(value, conn);
+		            ids.put(attr, new Long(newId));
+		            stmt.execute(
+		                "INSERT INTO coral_generic_resource "+
+		                "(resource_id, attribute_definition_id, data_key) "+
+		                "VALUES ("+delegate.getId()+", "+attr.getId()+", "+
+		                newId+")"
+		            );
+		            if(handler.shouldRetrieveAfterCreate())
+		            {
+		                try
+		                {
+		                    this.attributes.put(attr, handler.retrieve(newId, conn));
+		                }
+		                catch(EntityDoesNotExistException e)
+		                {
+		                    throw new BackendException("data integrity error", e);
+		                }
+		            }
+		            else
+		            {
+		                this.attributes.put(attr, value);
+		            }
 	            }
             }
         }
