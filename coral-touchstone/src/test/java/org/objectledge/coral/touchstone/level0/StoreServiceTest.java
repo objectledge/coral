@@ -27,18 +27,38 @@
 // 
 package org.objectledge.coral.touchstone.level0;
 
+import java.util.HashMap;
+
+import org.dbunit.dataset.Column;
+import org.dbunit.dataset.DefaultTable;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.datatype.DataType;
 import org.objectledge.coral.CoralSession;
+import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: StoreServiceTest.java,v 1.1 2004-03-12 09:39:35 fil Exp $
+ * @version $Id: StoreServiceTest.java,v 1.2 2004-03-15 09:15:07 fil Exp $
  */
 public class StoreServiceTest
     extends CoralTestCase
 {
+    private Column[] coralResourceColumns = new Column[]
+    {
+        new Column("resource_id", DataType.BIGINT),
+        new Column("resource_class_id", DataType.BIGINT),
+        new Column("parent", DataType.BIGINT),
+        new Column("name", DataType.VARCHAR),
+        new Column("created_by", DataType.BIGINT),
+        //new Column("creation_time", DataType.TIMESTAMP),
+        new Column("owned_by", DataType.BIGINT),
+        new Column("modified_by", DataType.BIGINT)
+        //new Column("modification_time", DataType.TIMESTAMP)
+    }; 
+
     public void testBuiltinResources()
         throws Exception
     {
@@ -46,5 +66,32 @@ public class StoreServiceTest
         Resource root = session.getStore().getResource(1L);
         session.close();
         assertNotNull(root);
+    }
+    
+    public void testResourceOperations()
+        throws Exception
+    {
+        CoralSession session = coralSessionFactory.getAnonymousSession();
+        Resource root = session.getStore().getResource(1L);
+        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        Resource resource = session.getStore().createResource("resource", root, nodeClass, new HashMap());
+        
+        DefaultTable expectedTable = new DefaultTable("resource", coralResourceColumns);
+        expectedTable.addRow(new Object[] { new Long(resource.getId()), new Long(nodeClass.getId()),
+            new Long(root.getId()), "resource", new Long(2), new Long(2), new Long(2)});
+        ITable actualTable = databaseConnection.createQueryTable("resource",
+            "SELECT resource_id, resource_class_id, parent, name, created_by, owned_by, modified_by FROM coral_resource"+
+            " WHERE name = 'resource'");
+        databaseConnection.close();
+        assertEquals(expectedTable, actualTable);
+        
+        session.getStore().deleteResource(resource);
+        expectedTable = new DefaultTable("resource", coralResourceColumns);
+        actualTable = databaseConnection.createQueryTable("resource",
+            "SELECT resource_id, resource_class_id, parent, name, created_by, owned_by, modified_by FROM coral_resource"+
+            " WHERE name = 'resource'");        
+        databaseConnection.close();
+        assertEquals(expectedTable, actualTable);
+        session.close();
     }
 }
