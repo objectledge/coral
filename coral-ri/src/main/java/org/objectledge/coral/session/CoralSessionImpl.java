@@ -50,7 +50,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.6 2004-03-18 15:21:42 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.7 2004-03-26 14:35:50 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -118,10 +118,19 @@ public class CoralSessionImpl
      */
     public void close()
     {
+        CoralSession current = coral.getCurrentSession();
+        this.makeCurrent();
         verify();
         open = false;
         ownerThread = null;
-        coral.setCurrentSession(null);
+        if(current == this)
+        {
+            coral.setCurrentSession(null);
+        }
+        else
+        {
+            coral.setCurrentSession(current);
+        }
         try
         {
             pool.returnObject(this, principal);
