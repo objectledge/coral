@@ -50,7 +50,7 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.14 2004-03-10 16:31:39 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.15 2004-03-11 12:58:33 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -63,13 +63,10 @@ implements Relation
 
     /** Map r1 -&gt; set of r2. */
     private Map rel = new HashMap();
-	/** Sum of sizes of id sets stored in map {@link #rel}. */
-	private float relSetsSizeSum = 0F;
-
     /** Map r2 -&gt; set of r1. */
     private Map invRel = new HashMap();
-	/** Sum of sizes of id sets stored in map {@link #invRel}. */
-	private float invRelSetsSizeSum = 0F;
+	/** Number of unique resource pairs. */
+	private int resourceIdPairsNum = 0;
 
     // initialization -----------------------------------------------------------------------------
 
@@ -151,7 +148,24 @@ implements Relation
 	 */
 	public float getAvgMappingSize()
 	{
-		return relSetsSizeSum / (float) rel.keySet().size();
+		return getAvgMappingSize(rel);
+	}
+
+	private float getAvgMappingSize(Map relation)
+	{
+		int numSets = relation.keySet().size();
+		if(numSets != 0)
+		{
+			return resourceIdPairsNum / (float) numSets;
+		}
+		else
+		{
+			if(resourceIdPairsNum != 0)
+			{
+				throw new IllegalStateException("inconsistent state");
+			}
+			return 0F;
+		}
 	}
 
     // persistence api ----------------------------------------------------------------------------
@@ -210,8 +224,7 @@ implements Relation
 	            set2.add(r1k);
 	        }
 	
-	        this.relSetsSizeSum = calcSetsSizeSum(rel);
-	        this.invRelSetsSizeSum = calcSetsSizeSum(invRel);
+	        this.resourceIdPairsNum = calcSetsSizeSum(rel);
 		}
 		catch (SQLException e)
 		{
@@ -220,7 +233,7 @@ implements Relation
 		}
 	}
 
-	private float calcSetsSizeSum(Map relation)
+	private int calcSetsSizeSum(Map relation)
 	{
 		int totalSize = 0;
 		for (Iterator iter = relation.values().iterator(); iter.hasNext();)
@@ -228,7 +241,7 @@ implements Relation
 			Set relSet = (Set) iter.next();
 			totalSize += relSet.size();
 		}
-		return (float) totalSize;
+		return totalSize;
 	}
 
     // implementation api -------------------------------------------------------------------------
@@ -240,8 +253,7 @@ implements Relation
     {
         rel.clear();
         invRel.clear();
-		relSetsSizeSum = 0F;
-		invRelSetsSizeSum = 0F;
+		resourceIdPairsNum = 0;
     }
 
     /**
@@ -262,18 +274,25 @@ implements Relation
         if(set1 != null)
         {
             p1 = set1.remove(r2k);
+            if(set1.size() == 0)
+            {
+				rel.remove(r1k);
+            }
         }
 
         boolean p2 = false;
         if(set2 != null)
         {
             p2 = set2.remove(r1k);
+			if(set2.size() == 0)
+			{
+				invRel.remove(r2k);
+			}
         }
 
 		if(p1 && p2)
 		{
-			relSetsSizeSum -= 1F;
-			invRelSetsSizeSum -= 1F;
+			resourceIdPairsNum -= 1F;
 		}
 
         if(p1 != p2)
@@ -302,8 +321,7 @@ implements Relation
 
 		if(p1 && p2)
 		{
-			relSetsSizeSum += 1F;
-			invRelSetsSizeSum += 1F;
+			resourceIdPairsNum += 1F;
 		}
 
 		if(p1 != p2)
@@ -469,7 +487,7 @@ implements Relation
 		 */
 		public float getAvgMappingSize()
 		{
-			return invRelSetsSizeSum / (float) invRel.keySet().size();
+			return RelationImpl.this.getAvgMappingSize(invRel);
 		}
     }
 }
