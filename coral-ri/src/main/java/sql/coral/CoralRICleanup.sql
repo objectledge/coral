@@ -50,3 +50,6 @@ DELETE FROM coral_role;
 DELETE FROM coral_subject;
 DELETE FROM coral_attribute_class;
 DELETE FROM coral_resource_class;
+
+DELETE FROM ledge_id_table WHERE table_name = 'coral_role';
+DELETE FROM ledge_id_table WHERE table_name = 'coral_subject';
