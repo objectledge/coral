@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.10 2004-08-23 12:01:29 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.11 2004-08-27 08:33:59 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -86,7 +86,8 @@ public class PersistentResource
         super.retrieve(delegate, rClass, conn, data);
         try
         {
-            setData((InputRecord)data);
+        	InputRecord in = (InputRecord)((Map)data).get(new Long(delegate.getId()));
+            setData(in);
         }
         catch(PersistenceException e)
         {
@@ -310,9 +311,14 @@ public class PersistentResource
     protected void initAttributeMap(Resource delegate, ResourceClass resourceClass)
     {
     	super.initAttributeMap(delegate, resourceClass);
+    	initPersistence(resourceClass);
+    }
+    
+    void initPersistence(ResourceClass resourceClass)
+    {
     	dbTable = resourceClass.getDbTable();
     	keyColumns = new String[1];
-    	keyColumns[0] = dbTable+"_id";
+    	keyColumns[0] = dbTable+"_id";    	
     }
     
     // Persistent interface //////////////////////////////////////////////////
