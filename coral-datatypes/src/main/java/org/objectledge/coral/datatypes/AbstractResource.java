@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -55,15 +56,22 @@ import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
+import org.objectledge.database.Database;
 
 /**
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.2 2004-06-29 09:52:21 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.3 2004-06-29 10:28:32 fil Exp $
  */
 public abstract class AbstractResource implements Resource
 {
+    /** The database service. */
+    private Database database;
+
+    /** The logging facility. */
+    private Logger logger;
+
     /** Security delegate object. */
     protected Resource delegate;
     
@@ -81,6 +89,19 @@ public abstract class AbstractResource implements Resource
     
     /** ResourceClass -> parent class instance. */
     protected Map parents = new HashMap();
+
+    
+    /**
+     * Constructor.
+     * 
+     * @param database the database.
+     * @param logger the logger.
+     */
+    public AbstractResource(Database database, Logger logger)
+    {
+        this.database = database;
+        this.logger = logger;
+    }
     
     // equality /////////////////////////////////////////////////////////////////////////////////
     
@@ -548,6 +569,88 @@ public abstract class AbstractResource implements Resource
         }
     }
  
+    /**
+     * Updates the image of the resource in the persistent storage.
+     *
+     * @throws UnknownAttributeException if attribute is unknown. 
+     */
+    public synchronized void update()
+        throws UnknownAttributeException
+    {
+        Connection conn = null;
+        boolean controler = false;
+        try
+        {
+            controler = database.beginTransaction();
+            conn = database.getConnection();
+            update(conn);
+            database.commitTransaction(controler);
+        }
+        catch(SQLException e)
+        {
+            try
+            {
+                database.rollbackTransaction(controler);
+            }
+            catch(SQLException ee)
+            {
+                logger.error("Failed to rollback transaction", ee);
+            }
+            throw new BackendException("Failed to update resource", e);
+        }
+        finally
+        {
+            if(conn != null)
+            {
+                try
+                {
+                    conn.close();
+                }
+                catch(SQLException ee)
+                {
+                    logger.error("Failed to close connection", ee);
+                }
+            }
+        }   
+        delegate.update();
+    }
+
+    /**
+     * Reverts the Resource object to the state present in the persistent
+     * storage. 
+     */
+    public synchronized void revert()
+    {
+        Connection conn = null;
+        boolean controler = false;
+        try
+        {
+            conn = database.getConnection();
+            GenericResourceHandler handler = (GenericResourceHandler)delegate.
+                getResourceClass().getHandler();
+            Object data = handler.getData(delegate, conn); 
+            revert(null, conn, data);
+        }
+        catch(SQLException e)
+        {
+            throw new BackendException("Failed to revert resource", e);
+        }
+        finally
+        {
+            if(conn != null)
+            {
+                try
+                {
+                    conn.close();
+                }
+                catch(SQLException ee)
+                {
+                    logger.error("Failed to close connection", ee);
+                }
+            }
+        }   
+    }
+
     // implementation ///////////////////////////////////////////////////////////////////////////
     
     private synchronized Resource getHost(AttributeDefinition attribute)
