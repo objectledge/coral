@@ -45,7 +45,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStore.java,v 1.4 2004-04-15 12:13:14 pablo Exp $
+ * @version $Id: SessionCoralStore.java,v 1.5 2005-01-17 09:55:35 rafal Exp $
  */
 public class SessionCoralStore implements CoralStore
 {
@@ -253,6 +253,7 @@ public class SessionCoralStore implements CoralStore
         Resource sourceRoot,
         Resource destinationParent,
         String destinationName)
+        throws CircularDependencyException
     {
         session.verify();
         coral.getStore().copyTree(sourceRoot, destinationParent, destinationName);

@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.17 2004-12-23 07:15:27 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.18 2005-01-17 09:55:34 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -1085,6 +1085,11 @@ public class CoralStoreImpl
             throw new IllegalArgumentException(
                 "use unsetParent() to delete parent-child relationships");
         }
+        if(isAncestor(child, parent))
+        {
+            throw new CircularDependencyException("the resource : '" + child.getPath() +
+                "' is an ancestor of the resource: '" + parent.getPath()+"'");
+        }
         synchronized(resourceByParent)
         {
             synchronized(resourceByParentAndName)
@@ -1299,10 +1304,19 @@ public class CoralStoreImpl
      * @param destinationParent the parent of root node of the destination
      * tree. 
      * @param destinationName the name of root node of the destination tree.
+     * @throws CircularDependencyException if the destination parent is a child of source root.
      */
     public void copyTree(Resource sourceRoot, Resource destinationParent, 
                          String destinationName)
+        throws CircularDependencyException
     {
+        if(isAncestor(sourceRoot, destinationParent))
+        {
+            throw new CircularDependencyException("the tree with parent: '"+
+                                                    sourceRoot.getPath()+"' cannot be copied " +
+                                                   "under his descendant: '"+
+                                                    destinationParent.getPath());
+        }
         String srcBasePath = sourceRoot.getPath();
         String dstBasePath = destinationParent.getPath()+"/"+destinationName;
         ArrayList srcStack = new ArrayList();

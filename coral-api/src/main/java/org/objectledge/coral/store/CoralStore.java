@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStore.java,v 1.5 2004-12-23 07:18:36 rafal Exp $
+ * @version $Id: CoralStore.java,v 1.6 2005-01-17 09:55:30 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralStore
@@ -271,9 +271,11 @@ public interface CoralStore
      * @param destinationParent the parent of root node of the destination
      * tree. 
      * @param destinationName the name of root node of the destination tree.
+     * @throws CircularDependencyException if the destination parent is a child of source root.
      */
     public void copyTree(Resource sourceRoot, Resource destinationParent, 
-                         String destinationName);
+                         String destinationName)
+        throws CircularDependencyException;
                          
     /**
      * Checks whether the resource is an ancestor of the other.
