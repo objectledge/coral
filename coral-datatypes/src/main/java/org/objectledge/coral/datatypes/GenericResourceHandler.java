@@ -1,5 +1,6 @@
 package org.objectledge.coral.datatypes;
 
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +28,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.5 2004-03-16 11:06:22 fil Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.6 2004-04-30 12:36:28 fil Exp $
  */
 public class GenericResourceHandler
     extends ResourceHandlerBase
@@ -312,6 +313,11 @@ public class GenericResourceHandler
      */
     private void checkDelegate(Resource delegate)
     {
+        if((delegate.getResourceClass().getJavaClass().getModifiers() & Modifier.INTERFACE) != 0)
+        {
+            throw new ClassCastException(delegate.getResourceClass().getName()+" specifies "+
+                delegate.getResourceClass().getJavaClass()+" as implementation class");
+        }
         if(!GenericResource.class.isAssignableFrom(delegate.getResourceClass().getJavaClass()))
         {
             throw new ClassCastException("GenericResourceHandler won't operate on "+
