@@ -35,7 +35,7 @@ public class ChooseResource
                 ResourceClass domainClass = coralSession.getSchema().getResourceClass(domain);
                 templatingContext.put("domainClass", domainClass);
             }
-            TableState state = tableStateManager.getState(context, "coral:screen:choose_resource");
+            TableState state = tableStateManager.getState(context, this.getClass().getName());
             if(state.isNew())
             {
                 state.setTreeView(true);

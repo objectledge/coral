@@ -33,7 +33,7 @@ public class ChoosePermission extends BaseBrowserView
             I18nContext i18nContext = I18nContext.getI18nContext(context);
             TableColumn[] columns = new TableColumn[1];
             columns[0] = new TableColumn("name", new PermissionNameComparator(i18nContext.getLocale()));
-            TableState state = tableStateManager.getState(context, "coral:components:choose_permission");
+            TableState state = tableStateManager.getState(context, this.getClass().getName());
             if (state.isNew())
             {
                 state.setTreeView(false);

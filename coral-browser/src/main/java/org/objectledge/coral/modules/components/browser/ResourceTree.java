@@ -28,7 +28,7 @@ public class ResourceTree
         try
         {
             I18nContext i18nContext = I18nContext.getI18nContext(context);
-            TableState state = tableStateManager.getState(context, "coral:components:resource_tree");
+            TableState state = tableStateManager.getState(context, this.getClass().getName());
             if(state.isNew())
             {
                 state.setTreeView(true);
