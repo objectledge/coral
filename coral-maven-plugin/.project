@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>coral-api</project>
+		<project>ledge-components</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -13,6 +14,11 @@
 		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>com.cortexeb.tools.clover.eclipse.cloverjavabuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
