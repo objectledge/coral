@@ -38,7 +38,7 @@ import org.objectledge.coral.store.Resource;
  * </p>  
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: Relation.java,v 1.1 2004-02-20 09:15:48 zwierzem Exp $
+ * @version $Id: Relation.java,v 1.2 2004-02-20 14:49:28 zwierzem Exp $
  */
 public interface Relation extends Entity
 {
@@ -71,6 +71,15 @@ public interface Relation extends Entity
 	 */
 	public Resource[] get(Resource r);
 
+	/**
+	 * Returns the second elements ids of all pairs in the relationship definition
+	 * where id is the first elements id.
+	 *
+	 * @param id the Resource id.
+	 * @return the array of resource ids in relation to a given resource id
+	 */
+	public long[] get(long id);
+
 	/** 
 	 * Returns <code>true</code> if given resource references the other.
 	 *
@@ -79,4 +88,14 @@ public interface Relation extends Entity
 	 * @return <code>true</code> if given resource (r) is bound to another given resource (rInv).
 	 */
 	public boolean hasRef(Resource r, Resource rInv);
+
+	/** 
+	 * Returns <code>true</code> if given resource id references the other.
+	 *
+	 * @param id resource id one.
+	 * @param idInv resource id two
+	 * @return <code>true</code> if given resource id (id) is bound to another 
+	 * 		given resource id (idInv).
+	 */
+	public boolean hasRef(long id, long idInv);
 }

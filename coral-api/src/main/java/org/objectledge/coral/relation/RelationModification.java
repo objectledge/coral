@@ -28,9 +28,8 @@
 package org.objectledge.coral.relation;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
 
 import org.objectledge.coral.store.Resource;
 
@@ -38,58 +37,31 @@ import org.objectledge.coral.store.Resource;
  * A class representing a batch of {@link Relation} modifications.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModification.java,v 1.1 2004-02-20 09:15:48 zwierzem Exp $
+ * @version $Id: RelationModification.java,v 1.2 2004-02-20 14:49:28 zwierzem Exp $
  */
 public class RelationModification
 {
-    /** Flag which tells if relation has been cleared. */
-    private boolean cleared = false;
-    /** Set of added relations. */
-    private Set added = new HashSet(128);
-    /** Set of deleted relations. */
-    private Set deleted = new HashSet(128);
-
+	private List operations = new ArrayList(128);
+	 
     // basic api ----------------------------------------------------------------------------------
 
 	/**
-	 * Returns the <code>cleared</code> flag for this <code>RelationModification</code>.
-	 * 
-	 * @return <code>true</code> if relation should be cleared.
+	 * Returns a list of collected operations.
+	 *  
+	 * @return unmodifiable list of collected operations
 	 */
-	public boolean isCleared()
+	public List getOperations()
 	{
-		return cleared;
+		return Collections.unmodifiableList(operations);
 	}
-
-	/**
-	 * Returns an array of deleted id pairs.
-	 * 
-	 * @return deleted id pairs
-	 */
-    public long[][] getDeleted()
-    {
-        return setToArray(deleted);
-    }
-
-	/**
-	 * Returns an array of added id pairs.
-	 * 
-	 * @return added id pairs
-	 */
-    public long[][] getAdded()
-    {
-        return setToArray(added);
-    }
-
+	
 	/**
 	 * Resets this <code>RelationModification</code> state - as if no modifications were
 	 * performed.
 	 */
-	public synchronized void reset()
+	public void reset()
 	{
-		cleared = false;
-		added.clear();
-		deleted.clear();
+		operations.clear();
 	}
 
     // modification -------------------------------------------------------------------------------
@@ -100,7 +72,7 @@ public class RelationModification
      * @param r1 the first element of the pair.
      * @param r2 the second element of the pair.
      */
-    public synchronized void put(Resource r1, Resource r2)
+    public void put(Resource r1, Resource r2)
     {
         add(new Long(r1.getId()), new Long(r2.getId()));
     }
@@ -111,7 +83,7 @@ public class RelationModification
      * @param r1 the first element of the pairs.
      * @param ress second elements of the pairs.
      */
-    public synchronized void put(Resource r1, Resource[] ress)
+    public void put(Resource r1, Resource[] ress)
     {
         Long id1 = new Long(r1.getId());
         for (int i = 0; i < ress.length; i++)
@@ -126,7 +98,7 @@ public class RelationModification
      * @param ress first elements of the pairs.
      * @param r2 the second element of the pairs.
      */
-    public synchronized void put(Resource[] ress, Resource r2)
+    public void put(Resource[] ress, Resource r2)
     {
         Long id2 = new Long(r2.getId());
         for (int i = 0; i < ress.length; i++)
@@ -139,9 +111,9 @@ public class RelationModification
      * Delete a ordered pair from the relationship's definition.
      *
      * @param r1 the first element of the pair.
-     * @param r2 the second element of the pair.
+     * @param r2 the second element of the4 pair.
      */
-    public synchronized void remove(Resource r1, Resource r2)
+    public void remove(Resource r1, Resource r2)
     {
         rem(new Long(r1.getId()), new Long(r2.getId()));
     }
@@ -149,24 +121,19 @@ public class RelationModification
     /**
      * Delete all pairs where r is the first element of the pair from relationship's definition.
      *
-     * TODO: Remove all added with resource on the left side.
-     * TODO: How do I track removed on one side???
      * @param r the resource
      */
-    public synchronized void remove(Resource r)
+    public void remove(Resource r)
     {
-    	
         rem(new Long(r.getId()), null);
     }
 
     /**
      * Delete all pairs where r is the second element of the pair from relationship's definition.
      *
-     * TODO: Remove all added with resource on the right side.
-     * TODO: How do I track removed on one side???
      * @param r the resource
      */
-    public synchronized void removeInv(Resource r)
+    public void removeInv(Resource r)
     {    	
         rem(null, new Long(r.getId()));
     }
@@ -174,89 +141,100 @@ public class RelationModification
     /**
      * Removes all references defined for the relation.
      */
-    public synchronized void clear()
+    public void clear()
     {
-        this.added.clear();
-        this.deleted.clear();
-        cleared = true;
+        operations.clear();
+        operations.add(new ClearOperation());
     }
 
     // implementation -----------------------------------------------------------------------------
 
     private void add(Long id1, Long id2)
     {
-        IdPair pair = new IdPair(id1, id2);
-        if(deleted.contains(pair))
-        {
-            deleted.remove(pair);
-        }
-        else
-        {
-            added.add(pair);
-        }
+		operations.add(new AddOperation(id1, id2));
     }
 
     private void rem(Long id1, Long id2)
     {
-        IdPair pair = new IdPair(id1, id2);
-        if(added.contains(pair))
-        {
-            added.remove(pair);
-        }
-        else
-        {
-            deleted.add(pair);
-        }
+		operations.add(new RemoveOperation(id1, id2));
     }
 
     /**
-     * A class representing an id pair - a relation between resources.
+     * A class representing an operation.
      */
-    private class IdPair
+    public abstract static class ModificationOperation
     {
-        private int hashCode;
+		private int hashCode;
         private long id1 = -1L;
         private long id2 = -1L;
-
-        public IdPair(Long id1, Long id2)
+		
+		/**
+		 * For creation of parameterless operations.
+		 */
+		public ModificationOperation()
+		{
+		}
+		
+		/**
+		 * Creates a modification operation bound to one or two ids.
+		 * 
+		 * @param id1 left side of the relation
+		 * @param id2 right side of the relation
+		 */
+        public ModificationOperation(Long id1, Long id2)
         {
-            if(id1 == null && id2 == null)
-            {
-                throw new IllegalArgumentException("both params cannot be null");
-            }
+			if(id1 == null && id2 == null)
+			{
+				throw new IllegalArgumentException("both params cannot be null");
+			}
 
-            if(id1 != null && id2 != null)
-            {
-                hashCode = (id1.hashCode()) ^ (id2.hashCode());
-                this.id1 = id1.longValue();
-                this.id2 = id2.longValue();
-            }
-            else if(id1 != null)
-            {
-                hashCode = id1.hashCode();
-                this.id1 = id1.longValue();
-            }
-            else
-            {
-                hashCode = id2.hashCode();
-                this.id2 = id2.longValue();
-            }
-        }
+			if(id1 != null && id2 != null)
+			{
+				hashCode = (id1.hashCode()) ^ (id2.hashCode());
+				this.id1 = id1.longValue();
+				this.id2 = id2.longValue();
+			}
+			else if(id1 != null)
+			{
+				hashCode = id1.hashCode();
+				this.id1 = id1.longValue();
+			}
+			else
+			{
+				hashCode = id2.hashCode();
+				this.id2 = id2.longValue();
+			}
+		}
 
-        public int hashCode()
-        {
-            return hashCode;
-        }
+		/**
+		 * {@inheritDoc}
+		 */
+		public int hashCode()
+		{
+			return hashCode;
+		}
 
-        public boolean equals(Object o)
-        {
-            if(o instanceof IdPair)
-            {
-                IdPair lp = (IdPair)o;
-                return (this.id1 == lp.id1) && (this.id2 == lp.id2);
-            }
-            return false;
-        }
+		/**
+		 * {@inheritDoc}
+		 */
+		public boolean equals(Object o)
+		{
+			if(o instanceof ModificationOperation)
+			{
+				ModificationOperation lp = (ModificationOperation)o;
+				return (this.id1 == lp.id1) && (this.id2 == lp.id2);
+			}
+			return false;
+		}
+
+		/**
+		 * Checks whether first id in the pair is defined.
+		 * @return <code>true</code> if Id1 is defined
+		 */
+		public boolean hasId1()
+		{
+			return id1 != -1L;
+		}
 
         /**
          * Returns the first id in the pair.
@@ -267,6 +245,15 @@ public class RelationModification
             return id1;
         }
 
+		/**
+		 * Checks whether second id in the pair is defined.
+		 * @return <code>true</code> if Id2 is defined
+		 */
+		public boolean hasId2()
+		{
+			return id2 != -1L;
+		}
+
         /**
          * Returns the second id in the pair.
          * @return the id value
@@ -275,19 +262,94 @@ public class RelationModification
         {
             return id2;
         }
+
+		/**
+		 * Executes visit on a given visitor
+		 * 
+		 * @param visitor visitor of this operation
+		 */		
+		public abstract void visit(ModificationOperationVisitor visitor);
     }
 
-    private long[][] setToArray(Set set)
-    {
-        ArrayList list = new ArrayList(set.size());
-        for (Iterator iter = set.iterator(); iter.hasNext();)
+	/**
+	 * Modification operations visitor interface for typesafe and effortless operations interpreter
+	 * creation.
+	 */
+	public interface ModificationOperationVisitor
+	{
+		/**
+		 * Visits {@link ClearOperation}
+		 * @param oper visited operation
+		 */
+		public void visit(ClearOperation oper);
+		/**
+		 * Visits {@link AddOperation}
+		 * @param oper visited operation
+		 */
+		public void visit(AddOperation oper);
+		/**
+		 * Visits {@link RemoveOperation}
+		 * @param oper visited operation
+		 */
+		public void visit(RemoveOperation oper);
+	}
+    
+	/**
+	 * Relation clearing operation.
+	 */
+	public static class ClearOperation extends ModificationOperation
+	{
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(ModificationOperationVisitor visitor)
+		{
+			visitor.visit(this);
+		}
+	}
+
+	/**
+	 * Relation addition operation.
+	 */
+	public static class AddOperation extends ModificationOperation
+	{
+		/**
+		 * {@inheritDoc}
+		 */
+        public AddOperation(Long id1, Long id2)
         {
-            IdPair pair = (IdPair) iter.next();
-            long[] entry = new long[] { pair.getId1(), pair.getId2() };
-            list.add(entry);
+            super(id1, id2);
         }
-        long[][] result = new long[list.size()][];
-        list.toArray(result);
-        return result;
-    }
+        
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(ModificationOperationVisitor visitor)
+		{
+			visitor.visit(this);
+		}
+	}
+
+	/**
+	 * Relation removal operation, allows <em>wildcard</em> removals by defining only one side of
+	 * the relation.
+	 */
+	public static class RemoveOperation extends ModificationOperation
+	{
+		/**
+		 * {@inheritDoc}
+		 */
+		public RemoveOperation(Long id1, Long id2)
+		{
+			super(id1, id2);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(ModificationOperationVisitor visitor)
+		{
+			visitor.visit(this);
+		}
+	}
 }
