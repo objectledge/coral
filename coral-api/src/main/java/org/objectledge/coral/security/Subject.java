@@ -1,12 +1,14 @@
 package org.objectledge.coral.security;
 
+import java.security.Principal;
+
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.store.Resource;
 
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: Subject.java,v 1.5 2004-03-08 08:05:46 fil Exp $
+ * @version $Id: Subject.java,v 1.6 2004-03-18 11:32:45 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Subject
@@ -17,6 +19,13 @@ public interface Subject
 
     /** The identifier of the anonymous subject. */
     public static final long ANONYMOUS = 2L;
+    
+    /**
+     * Returns a Principal object that can be used to uniquely identify this subject.
+     * 
+     * @return a Principal object.
+     */
+    public Principal getPrincipal();
     
     /**
      * Returns the role assigments made for this <code>Subject</code>.

@@ -1,5 +1,6 @@
 package org.objectledge.coral.security;
 
+import java.security.Principal;
 import java.util.Set;
 
 import org.objectledge.coral.BackendException;
@@ -17,7 +18,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: SubjectImpl.java,v 1.10 2004-03-09 15:46:46 fil Exp $
+ * @version $Id: SubjectImpl.java,v 1.11 2004-03-18 11:32:44 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SubjectImpl
@@ -155,6 +156,23 @@ public class SubjectImpl
     }
 
     // Subject inteface /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns a Principal object that can be used to uniquely identify this subject.
+     * 
+     * @return a Principal object.
+     */
+    public Principal getPrincipal()
+    {
+        return new Principal()
+        {
+            public String getName()
+            {
+                return SubjectImpl.this.getName();
+            }
+        };
+    }
+    
 
     /**
      * Returns the role assigments made for this <code>Subject</code>.
