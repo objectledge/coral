@@ -19,6 +19,7 @@ import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
+import org.objectledge.coral.PreloadingParticipant;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityInUseException;
@@ -41,11 +42,11 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.23 2005-01-20 13:10:30 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.24 2005-01-21 06:55:48 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
-    implements CoralStore
+    implements CoralStore, PreloadingParticipant
 {
     // Instance variables ////////////////////////////////////////////////////////////////////////
 
@@ -1445,7 +1446,7 @@ public class CoralStoreImpl
     /**
      * {@inheritDoc}
      */
-    public void startup(int phase)
+    public void preloadData(int phase)
         throws Exception
     {
         if(phase == 2)
