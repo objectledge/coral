@@ -1,0 +1,153 @@
+// 
+// Copyright (c) 2003,2004 , Caltha - Gajda, Krzewski, Mach, Potempski Sp.J. 
+// All rights reserved. 
+// 
+// Redistribution and use in source and binary forms, with or without modification,  
+// are permitted provided that the following conditions are met: 
+//  
+// * Redistributions of source code must retain the above copyright notice,  
+//	 this list of conditions and the following disclaimer. 
+// * Redistributions in binary form must reproduce the above copyright notice,  
+//	 this list of conditions and the following disclaimer in the documentation  
+//	 and/or other materials provided with the distribution. 
+// * Neither the name of the Caltha - Gajda, Krzewski, Mach, Potempski Sp.J.  
+//	 nor the names of its contributors may be used to endorse or promote products  
+//	 derived from this software without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED  
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+// IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,  
+// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,  
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+// OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,  
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)  
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  
+// POSSIBILITY OF SUCH DAMAGE. 
+// 
+package org.objectledge.coral.tools.generator;
+
+import org.objectledge.coral.script.parser.RMLParserFactory;
+import org.objectledge.coral.tools.generator.model.AttributeClass;
+import org.objectledge.coral.tools.generator.model.ResourceClass;
+import org.objectledge.coral.tools.generator.model.Schema;
+import org.objectledge.utils.LedgeTestCase;
+
+/**
+ * 
+ * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
+ * @version $Id: RMLModelLoaderTest.java,v 1.1 2004-03-22 16:03:57 fil Exp $
+ */
+public class RMLModelLoaderTest
+    extends LedgeTestCase
+{
+    private Schema schema;
+    private RMLModelLoader modelLoader;
+    private static RMLParserFactory parserFactory;
+
+    public void setUp()
+    {
+        if(parserFactory == null)
+        {
+            parserFactory = new RMLParserFactory();
+        }
+        schema = new Schema();
+        modelLoader = new RMLModelLoader(schema, parserFactory);
+    }
+
+
+    public void testError()
+        throws Exception
+    {
+        // TODO the first script processed is ignored???
+        modelLoader.process("WHAT THE HELL?!");        
+    }
+
+    public void testCreateAttributeClass()
+        throws Exception
+    {
+        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        AttributeClass ac1 = schema.getAttributeClass("ac1");
+        assertEquals("jc1", ac1.getJavaClassName());
+    }
+    
+    public void testDeleteAttributeClass()
+        throws Exception
+    {
+        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        AttributeClass ac1 = schema.getAttributeClass("ac1");
+        assertNotNull(ac1);
+        modelLoader.process("DELETE ATTRIBUTE CLASS ac1;");
+        assertTrue(schema.getAttributeClasses().isEmpty());
+    }
+
+    public void testAlterAttributeClassSetName()
+        throws Exception
+    {
+        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        AttributeClass ac1 = schema.getAttributeClass("ac1");
+        assertNotNull(ac1);
+        modelLoader.process("ALTER ATTRIBUTE CLASS ac1 SET NAME ac2;");
+        AttributeClass ac2 = schema.getAttributeClass("ac2");
+        assertNotNull(ac2);
+        assertSame(ac1, ac2);
+    }
+
+    public void testAlterAttributeClassSetJavaClass()
+        throws Exception
+    {
+        modelLoader.process("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
+        AttributeClass ac1 = schema.getAttributeClass("ac1");
+        assertNotNull(ac1);
+        modelLoader.process("ALTER ATTRIBUTE CLASS ac1 SET JAVA CLASS jc2;");
+        assertEquals("jc2", ac1.getJavaClassName());
+    }
+
+    public void testCreateResourceClass()
+        throws Exception
+    {
+        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        ResourceClass rc1 = schema.getResourceClass("rc1");
+        assertEquals("jc1", rc1.getInterfaceClassName());
+        assertEquals("jc1Impl", rc1.getImplClassName());
+        assertEquals("dt1", rc1.getDbTable());
+    }
+    
+    // create with flags
+    // crate with superclasses
+    // crate with attributes
+    
+    public void testAlterResourceClassSetName()
+        throws Exception
+    {
+        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        ResourceClass rc1 = schema.getResourceClass("rc1");
+        assertNotNull(rc1);
+        modelLoader.process("ALTER RESOURCE CLASS rc1 SET NAME rc2;");
+        ResourceClass rc2 = schema.getResourceClass("rc2");
+        assertNotNull(rc2);
+        assertSame(rc1, rc2);
+    }
+    
+    public void testAlterResourceClassSetJavaClass()
+        throws Exception
+    {    
+        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        ResourceClass rc1 = schema.getResourceClass("rc1");
+        assertEquals("jc1", rc1.getInterfaceClassName());
+        assertEquals("jc1Impl", rc1.getImplClassName());
+        assertEquals("jc1", rc1.getInterfaceClassName());
+        modelLoader.process("ALTER RESOURCE CLASS rc1 SET JAVA CLASS jc2Impl;");
+        assertEquals("jc2", rc1.getInterfaceClassName());
+        assertEquals("jc2Impl", rc1.getImplClassName());
+    }
+    
+    public void testAlterResourceClassSetDbTable()
+        throws Exception
+    {
+        modelLoader.process("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 DB TABLE dt1;");
+        ResourceClass rc1 = schema.getResourceClass("rc1");
+        assertEquals("dt1", rc1.getDbTable());
+        modelLoader.process("ALTER RESOURCE CLASS rc1 SET DB TABLE dt2;");
+    }
+}
