@@ -29,7 +29,8 @@
 <project 
   xmlns:j="jelly:core"
   xmlns:m="jelly:maven"
-  xmlns:define="jelly:define">
+  xmlns:define="jelly:define"
+  xmlns:coral="coral">
 
   <define:taglib uri="coral">  
   
@@ -43,12 +44,21 @@
   
   <!-- // wrapper generator ///////////////////////////////////////////////////////////////// -->
   <goal name="coral:generator">
-    <m:pluginVar plugin="coral" var="generatorFileEncoding" property="coral.generator.file.encoding"/>
-    <m:pluginVar plugin="coral" var="generatorPackageGroups" property="coral.generator.packageGroups"/>
-    <m:pluginVar plugin="coral" var="generatorHeaderFile" property="coral.generator.header.file"/>
-    <m:pluginVar plugin="coral" var="generatorSourcesList" property="coral.generator.sources.list"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorFileEncoding" property="coral.generator.file.encoding"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageGroups" property="coral.generator.package.groups"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorHeaderFile" property="coral.generator.header.file"/>
+    <m:set var="generatorSourcesList" value="${coral.generator.sources.list}"/>
     <j:set var="generatorTargetDirectory" value="${pom.build.sourceDirectory.substring(basedir.length())}"/>
     <m:paramCheck value="${generatorSourcesList}" message="coral.generator.sources.list undefined" fail="true"/>
+    <j:if test="${maven.debugOn}">
+      <echo>
+        coral.generator.file.encoding=${generatorFileEncoding}
+	    coral.generator.package.groups=${generatorPackageGroups}
+	    coral.generator.header.file=${generatorHeaderFile}
+	    coral.generator.sources.list=${generatorSourcesList}
+	    coral.generator.target.directory=${generatorTargetDirectory}
+	  </echo>
+	</j:if>
     <coral:generator
       baseDir="${basedir}"
       fileEncoding="${generatorFileEncoding}"
