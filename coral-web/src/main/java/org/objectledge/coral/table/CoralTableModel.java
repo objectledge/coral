@@ -23,7 +23,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.4 2004-06-14 12:03:29 fil Exp $
+ * @version $Id: CoralTableModel.java,v 1.5 2004-06-14 13:55:02 fil Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {
@@ -170,7 +170,7 @@ public class CoralTableModel implements ExtendedTableModel
      *
      * @return the id of the object.
      */
-    public String getId(Object parent, Object child)
+    public String getId(String parent, Object child)
     {
         if(child == null)
         {

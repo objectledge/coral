@@ -16,7 +16,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  * A table model for Coral relations.
  *
  *  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: GraphTableModel.java,v 1.4 2004-06-14 13:47:38 zwierzem Exp $
+ * @version $Id: GraphTableModel.java,v 1.5 2004-06-14 13:55:02 fil Exp $
  */
 public class GraphTableModel
     implements ExtendedTableModel
@@ -114,7 +114,7 @@ public class GraphTableModel
      *
      * @return the id of the object.
      */
-    public String getId(Object parent, Object child)
+    public String getId(String parent, Object child)
     {
         if(child == null)
         {
