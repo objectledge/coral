@@ -13,9 +13,10 @@ import org.objectledge.table.generic.GenericTreeRowSet;
 
 
 /**
- * A table model for wrapping a <code>java.util.List</code>
+ * A table model for Coral relations.
  *
- * <p>Item indices are used as ids.</p>
+ *  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
+ * @version $Id: GraphTableModel.java,v 1.4 2004-06-14 13:47:38 zwierzem Exp $
  */
 public class GraphTableModel
     implements ExtendedTableModel
@@ -80,6 +81,8 @@ public class GraphTableModel
     
     /**
      * Returns the model dependent object by its id.
+     * 
+     * TODO: Ids shold be handled differently!!
      *
      * @param id the id of the object
      * @return model object
@@ -106,6 +109,8 @@ public class GraphTableModel
     /**
      * Returns the id of the object.
      * @param child model object.
+     *
+     * TODO: Ids shold be handled differently!!
      *
      * @return the id of the object.
      */
