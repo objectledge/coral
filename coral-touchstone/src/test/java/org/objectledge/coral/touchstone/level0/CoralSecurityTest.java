@@ -27,6 +27,8 @@
 // 
 package org.objectledge.coral.touchstone.level0;
 
+import java.sql.Statement;
+
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.ITable;
@@ -38,11 +40,12 @@ import org.objectledge.coral.security.Role;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityTest.java,v 1.2 2004-03-15 09:47:01 fil Exp $
+ * @version $Id: CoralSecurityTest.java,v 1.3 2004-03-15 11:10:31 fil Exp $
  */
 public class CoralSecurityTest
     extends CoralTestCase
@@ -293,5 +296,38 @@ public class CoralSecurityTest
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
         session.close();                        
+    }
+    
+    public void testOtherEntityLoading()
+        throws Exception
+    {
+        Statement stmt = databaseConnection.getConnection().createStatement();
+        stmt.execute("INSERT INTO coral_resource_class VALUES(2, "+
+            "'alt_node', 'org.objectledge.coral.datatypes.NodeResourceImpl',"+ 
+            "'org.objectledge.coral.datatypes.GenericResourceHandler', '', 4)");
+        stmt.execute("INSERT INTO coral_resource_class_inheritance VALUES(1,2)");
+        stmt.execute("INSERT INTO coral_permission VALUES(1,'permission')");
+        stmt.execute("INSERT INTO coral_permission_association VALUES(1,1)");
+        stmt.execute("INSERT INTO coral_resource VALUES(2,2,1,'resource',1,NOW(),1,1,NOW())");
+        stmt.execute("INSERT INTO coral_permission_assignment VALUES(2,1,1,'1',1,NOW())");
+        DatabaseUtils.close(stmt);
+        databaseConnection.close();
+        CoralSession session = coralSessionFactory.getRootSession();
+        Resource resource = session.getStore().getUniqueResource("resource");
+        Permission permission = session.getSecurity().getUniquePermission("permission");
+        Role rootRole = session.getSecurity().getRole(Role.ROOT);
+        Subject root = session.getSecurity().getSubject(Subject.ROOT);
+        Subject anonymous = session.getSecurity().getSubject(Subject.ANONYMOUS);
+        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        assertTrue(nodeClass.isAssociatedWith(permission));
+        ResourceClass altNodeClass = session.getSchema().getResourceClass("alt_node");
+        assertTrue(nodeClass.isParent(altNodeClass));
+        assertTrue(altNodeClass.isAssociatedWith(permission));
+        assertTrue(resource.getResourceClass().equals(altNodeClass));
+        assertTrue(resource.getPermissionAssignments().length == 1);
+        assertTrue(rootRole.getPermissionAssignments().length == 1);
+        assertTrue(root.hasPermission(resource, permission));
+        assertFalse(anonymous.hasPermission(resource, permission));
+        session.close();
     }
 }
