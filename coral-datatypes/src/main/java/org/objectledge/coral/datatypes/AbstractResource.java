@@ -62,7 +62,7 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.4 2004-06-29 10:39:38 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.5 2004-06-29 12:18:15 fil Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -141,6 +141,41 @@ public abstract class AbstractResource implements Resource
         }
         return false;
     }
+    
+    /**
+     * Returns a String representation of this object.
+     *
+     * <p> This method is overriden to augument debugging. The format of the representation is as 
+     * following: 
+     * <blockquote>
+     *   <code>javaClass name #id @identity</code>
+     * </blockquote>
+     * Where:
+     * <ul>
+     *   <li><code>javaClass</code> is the actual implementation class of the object</li>
+     *   <li><code>path</code> is the path of the resource as returned by the {@link #getPath()} 
+     *     method.</li>
+     *   <li><code>id</code> is the identifier of the resource as returned by the {@link #getId()}
+     *     method.</li> 
+     *   <li><code>idenity</code> is the object instance's identity hashcode as retured by the
+     *     <code>System.getIdentityHashCode(Object)</code> function.</li>
+     *  </ul>
+     *  </p>
+     * 
+     * @return a String representation of this object.
+     */
+    public String toString()
+    {
+        StringBuffer buff = new StringBuffer();
+        buff.append(getClass().getName());
+        buff.append(' ');
+        buff.append(getPath());
+        buff.append(" #");
+        buff.append(getId());
+        buff.append(" @");
+        buff.append(Integer.toString(System.identityHashCode(this), 16));
+        return buff.toString();
+    }
 
     // Resource interface - delegation //////////////////////////////////////////////////////////
     
@@ -181,22 +216,21 @@ public abstract class AbstractResource implements Resource
             parents.put(parent, instance);
         }
         AttributeDefinition[] declared = rClass.getDeclaredAttributes();
-        loop: for(int i=0; i<declared.length; i++)
+        for(int i=0; i<declared.length; i++)
         {
             AttributeDefinition attr = declared[i];
-            if((attr.getFlags() & AttributeFlags.BUILTIN) != 0)
+            if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
-                continue loop;
-            }
-            AttributeHandler handler = attr.getAttributeClass().getHandler();
-            Object value = attributes.get(attr);
-            if(value == null)
-            {
-                if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
-                {
-                    throw new ValueRequiredException("value for REQUIRED attribute "+
-                                                     attr.getName()+" is missing");
-                }
+	            AttributeHandler handler = attr.getAttributeClass().getHandler();
+	            Object value = attributes.get(attr);
+	            if(value == null)
+	            {
+	                if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
+	                {
+	                    throw new ValueRequiredException("value for REQUIRED attribute "+
+	                                                     attr.getName()+" is missing");
+	                }
+	            }
             }
         }
         initAttributeMap(delegate, rClass);
