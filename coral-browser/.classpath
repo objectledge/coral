@@ -10,5 +10,6 @@
     <classpathentry kind="var" path="MAVEN_REPO/coral/jars/coral-api-SNAPSHOT.jar"/>
     <classpathentry kind="var" path="MAVEN_REPO/coral/jars/coral-ri-SNAPSHOT.jar"/>
     <classpathentry kind="src" path="/coral-datatypes"/>
+    <classpathentry kind="src" path="/coral-web"/>
     <classpathentry kind="output" path="target/classes"/>
 </classpath>
