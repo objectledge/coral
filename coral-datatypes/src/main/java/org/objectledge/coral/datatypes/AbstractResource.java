@@ -60,7 +60,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.1 2004-06-29 09:28:53 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.2 2004-06-29 09:52:21 fil Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -77,7 +77,7 @@ public abstract class AbstractResource implements Resource
     private Map attributeMap = new HashMap();
     
     /** Set of AttributeDefinitions of the modified attributes. */
-    private Set modified = new HashSet();
+    protected Set modified = new HashSet();
     
     /** ResourceClass -> parent class instance. */
     protected Map parents = new HashMap();
@@ -587,7 +587,7 @@ public abstract class AbstractResource implements Resource
 
     protected abstract Object getLocally(AttributeDefinition attribute);
 
-    protected abstract Object setLocally(AttributeDefinition attribute, Object value);
+    protected abstract void setLocally(AttributeDefinition attribute, Object value);
 
     protected abstract void unsetLocally(AttributeDefinition attribute);
 }
