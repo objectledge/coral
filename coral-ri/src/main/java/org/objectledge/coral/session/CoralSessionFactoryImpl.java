@@ -40,7 +40,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImpl.java,v 1.3 2004-03-16 13:38:13 fil Exp $
+ * @version $Id: CoralSessionFactoryImpl.java,v 1.4 2004-03-18 11:33:52 fil Exp $
  */
 public class CoralSessionFactoryImpl implements CoralSessionFactory
 {
@@ -87,7 +87,7 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
         try
         {
             Subject subject = coral.getSecurity().getSubject(Subject.ROOT);
-            return getSession(new CoralPrincipal(subject));
+            return getSession(subject.getPrincipal());
         }
         catch(Exception e)
         {
@@ -103,7 +103,7 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
         try
         {
             Subject subject = coral.getSecurity().getSubject(Subject.ANONYMOUS);
-            return getSession(new CoralPrincipal(subject));
+            return getSession(subject.getPrincipal());
         }
         catch(Exception e)
         {
@@ -134,26 +134,5 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
         {
             return new CoralSessionImpl(coral, pool);
         }
-    }
-    
-    /**
-     * Simple Principal interface implementation.
-     */
-    private class CoralPrincipal implements Principal
-    {
-        private String name;
-    
-        private CoralPrincipal(Subject subject)
-        {
-            this.name = subject.getName();
-        }
-        
-        /** 
-         * {@inheritDoc}
-         */
-        public String getName()
-        {
-            return name;
-        }
-    }
+    }    
 }
