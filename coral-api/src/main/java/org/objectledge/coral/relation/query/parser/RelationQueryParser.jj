@@ -40,9 +40,15 @@
  * 
  * category usage:
  * 
- * MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category') } }
+ * MAP('category.References'){ MAPTRANS('coral.ResourceHierarchy'){ RES('/path/to/category') } }
  * +
- * MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category2') } };
+ * MAP('category.References'){ MAPTRANS('coral.ResourceHierarchy'){ RES('/path/to/category2') } };
+ *
+ * second example:
+ * 
+ * MAP('category.References'){ MAPTRANS('coral.ResourceHierarchy'){ RES(1234) } }
+ * +
+ * MAP('category.References'){ MAPTRANS('coral.ResourceHierarchy'){ RES(3213) } };
  */
 
 options
