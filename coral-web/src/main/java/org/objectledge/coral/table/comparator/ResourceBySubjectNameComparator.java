@@ -4,13 +4,14 @@ import java.util.Locale;
 
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.table.comparator.BaseStringComparator;
 
 /**
  * This is a base comparator for comparing names of subjects related
  * to a resource.
  *
  * @author <a href="mailto:damian@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceBySubjectNameComparator.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
+ * @version $Id: ResourceBySubjectNameComparator.java,v 1.2 2005-02-14 17:26:31 pablo Exp $
  */
 public abstract class ResourceBySubjectNameComparator
     extends BaseStringComparator

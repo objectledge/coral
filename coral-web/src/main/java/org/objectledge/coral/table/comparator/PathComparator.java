@@ -3,12 +3,13 @@ package org.objectledge.coral.table.comparator;
 import java.util.Locale;
 
 import org.objectledge.coral.store.Resource;
+import org.objectledge.table.comparator.BaseStringComparator;
 
 /**
  * This is a comparator for comparing resource paths.
  *
  * @author <a href="mailto:damian@caltha.pl">Damian Gajda</a>
- * @version $Id: PathComparator.java,v 1.2 2004-05-06 13:54:18 pablo Exp $
+ * @version $Id: PathComparator.java,v 1.3 2005-02-14 17:26:31 pablo Exp $
  */
 public class PathComparator
     extends BaseStringComparator

@@ -3,10 +3,11 @@ package org.objectledge.coral.table.comparator;
 import java.util.Locale;
 
 import org.objectledge.coral.security.Permission;
+import org.objectledge.table.comparator.BaseStringComparator;
 
 /**
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: PermissionNameComparator.java,v 1.1 2004-04-22 12:56:23 zwierzem Exp $ 
+ * @version $Id: PermissionNameComparator.java,v 1.2 2005-02-14 17:26:31 pablo Exp $ 
  */
 public class PermissionNameComparator
 	 extends BaseStringComparator
