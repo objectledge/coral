@@ -69,6 +69,7 @@ public abstract class BaseCoralView
      * @param mvcContext the mvcContext
      * @param i18nContext TODO
      * @param coralSession the coral session.
+     * @throws ProcessingException if processing in the view fails.
      */    
     public abstract void process(Parameters parameters, TemplatingContext templatingContext, 
         						 MVCContext mvcContext, 

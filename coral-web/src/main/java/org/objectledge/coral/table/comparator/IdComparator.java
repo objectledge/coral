@@ -8,11 +8,14 @@ import org.objectledge.coral.entity.Entity;
  * This is a comparator for comparing entities ids.
  *
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
- * @version $Id: IdComparator.java,v 1.2 2004-07-14 17:31:05 pablo Exp $
+ * @version $Id: IdComparator.java,v 1.3 2005-02-21 14:04:29 rafal Exp $
  */
 public class IdComparator
     implements Comparator
 {
+    /**
+     * {@inheritDoc}
+     */
     public int compare(Object o1, Object o2)
     {
         if(!((o1 instanceof Entity && o2 instanceof Entity )))

@@ -7,13 +7,20 @@ import org.objectledge.table.TableFilter;
  * This is a filter for filtering resources upon their paths.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: PathFilter.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
+ * @version $Id: PathFilter.java,v 1.2 2005-02-21 14:04:32 rafal Exp $
  */
 public class PathFilter
     implements TableFilter
 {
+    /** the accepted paths. */
     protected String[] paths;
 
+    /**
+     * Creates new PathFilter instance.
+     * 
+     * @param root the filtering root.
+     * @param acceptedPaths the accepted paths, relative to the root.
+     */
     public PathFilter(Resource root, String[] acceptedPaths)
     {
         String basePath = root.getPath();
@@ -38,6 +45,9 @@ public class PathFilter
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean accept(Object object)
     {
         if(!(object instanceof Resource))

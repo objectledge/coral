@@ -7,7 +7,7 @@ import java.util.Date;
  * This is a base comparator for comparing time values related to an object.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: TimeComparator.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
+ * @version $Id: TimeComparator.java,v 1.2 2005-02-21 14:04:29 rafal Exp $
  */
 public abstract class TimeComparator
     implements Comparator
@@ -18,6 +18,9 @@ public abstract class TimeComparator
      *  <li>If both are null, dates are considered equal</li>
      *  <li>If one of the dates is null it is considered to be after the non null date</li>
      *  </ul>
+     * @param d1 first date.
+     * @param d2 second date.
+     * @return the result of the comparison.
      */
     public int compareDates(Date d1, Date d2)
     {

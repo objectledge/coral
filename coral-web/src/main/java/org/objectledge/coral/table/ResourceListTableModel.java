@@ -23,20 +23,34 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.7 2005-02-07 21:04:19 zwierzem Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.8 2005-02-21 14:04:39 rafal Exp $
  */
 public class ResourceListTableModel extends ListTableModel
 {
     /** resources keyed by their id */
     private Map<String, Resource> resourcesById;
 
+    /**
+     * Creates new ResourceListTableModel instance.
+     * 
+     * @param array an array of Resources
+     * @param locale the locale to be used by comparators.
+     * @throws TableException if there is a problem creating the model.
+     */
     public ResourceListTableModel(Resource[] array, Locale locale)
         throws TableException
     {
         super(array, null);
         columns = getColumns(locale);
     }
-        
+
+    /**
+     * Creates new ResourceListTableModel instance.
+     * 
+     * @param list a list of the resources.
+     * @param locale the locale to be used by comparators.
+     * @throws TableException if there is a problem creating the model.
+     */
     public ResourceListTableModel(List list, Locale locale)
         throws TableException
     {
@@ -44,6 +58,13 @@ public class ResourceListTableModel extends ListTableModel
         columns = getColumns(locale);
     }
 
+    /**
+     * Returns table models.
+     * 
+     * @param locale the locale to be used by comparators.
+     * @return array of table columns.
+     * @throws TableException if there is a problem crating column objects. 
+     */
     protected TableColumn[] getColumns(Locale locale)
         throws TableException
     {
@@ -91,6 +112,7 @@ public class ResourceListTableModel extends ListTableModel
     
     /**
      * Returns the id of the object.
+     * @param parent the id of the parent object.
      * @param child model object.
      *
      * @return the id of the object.

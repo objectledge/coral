@@ -44,8 +44,9 @@ public class CoralWebI18nToolFactory extends WebI18nToolFactory
     protected CoralI18nHelper coralI18nHelper;
     
     /**
-     * @param context
-     * @param i18n
+     * @param context application context.
+     * @param i18n the I18n component.
+     * @param coralI18nHelper the coral I18n helper.
      */
     public CoralWebI18nToolFactory(Context context, I18n i18n, CoralI18nHelper coralI18nHelper)
     {

@@ -9,16 +9,24 @@ import org.objectledge.coral.store.Resource;
  * This comparator compares names of modifier subjects.
  *
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
- * @version $Id: ModifierNameComparator.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
+ * @version $Id: ModifierNameComparator.java,v 1.2 2005-02-21 14:04:29 rafal Exp $
  */
 public class ModifierNameComparator
     extends ResourceBySubjectNameComparator
 {
+    /**
+     * Creates new ModifierNameComparator instance.
+     * 
+     * @param locale the locale to use.
+     */
     public ModifierNameComparator(Locale locale)
     {
         super(locale);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected Subject getSubject(Resource r)
     {
         return r.getModifiedBy();

@@ -41,7 +41,7 @@ import org.objectledge.i18n.I18nTool;
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.12 2005-02-14 19:33:21 pablo Exp $
+ * @version $Id: CoralI18nTool.java,v 1.13 2005-02-21 14:04:20 rafal Exp $
  */
 public class CoralI18nTool extends I18nTool
 {
@@ -50,7 +50,7 @@ public class CoralI18nTool extends I18nTool
     
     /**
      * @param i18n the i18n component.
-     * @param helper the i18n coral helper.
+     * @param coralI18nHelper the i18n coral helper.
      * @param locale the locale.
      * @param prefix the prefix.
      */

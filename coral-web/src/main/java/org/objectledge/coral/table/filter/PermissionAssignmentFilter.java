@@ -10,7 +10,7 @@ import org.objectledge.table.TableFilter;
  * assignments.
  *
  * @author <a href="mailto:damian@caltha.pl">Damian Gajda</a>
- * @version $Id: PermissionAssignmentFilter.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
+ * @version $Id: PermissionAssignmentFilter.java,v 1.2 2005-02-21 14:04:32 rafal Exp $
  */
 public class PermissionAssignmentFilter
     implements TableFilter
@@ -18,12 +18,21 @@ public class PermissionAssignmentFilter
     private Subject subject;
     private Permission permission;
 
+    /**
+     * Creates new PermissionAssignmentFilter instance.
+     * 
+     * @param subject the requested subject.
+     * @param permission the requested premission.
+     */
     public PermissionAssignmentFilter(Subject subject, Permission permission)
     {
         this.subject = subject;
         this.permission = permission;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean accept(Object object)
     {
         if(!(object instanceof Resource))

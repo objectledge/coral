@@ -8,12 +8,12 @@ import org.objectledge.pipeline.Valve;
  * Coral session cleanup valve.
  *  
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: CoralSessionCleanupValve.java,v 1.1 2004-06-23 14:11:03 pablo Exp $
+ * @version $Id: CoralSessionCleanupValve.java,v 1.2 2005-02-21 14:04:35 rafal Exp $
  */
 public class CoralSessionCleanupValve implements Valve 
 {
 	/**
-	 * @inheritDoc{}  
+	 * {@inheritDoc}
 	 */
 	public void process(Context context) throws ProcessingException
 	{

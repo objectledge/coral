@@ -24,7 +24,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: CoralEntitySelectionState.java,v 1.4 2005-01-18 11:03:40 rafal Exp $
+ * @version $Id: CoralEntitySelectionState.java,v 1.5 2005-02-21 14:04:43 rafal Exp $
  */
 public abstract class CoralEntitySelectionState
 {
@@ -264,6 +264,7 @@ public abstract class CoralEntitySelectionState
      * Get string value of the entity.
      * 
      * @param entity the entity.
+     * @return the name of the entity.
      */
     public String getValue(Entity entity)
     {
@@ -274,6 +275,7 @@ public abstract class CoralEntitySelectionState
      * Get string value of the entity.
      * 
      * @param id the id.
+     * @return the name of the entity.
      */
 	public String getValue(long id)
 	{
@@ -284,6 +286,7 @@ public abstract class CoralEntitySelectionState
      * Get string value of the entity.
      * 
      * @param id the id.
+     * @return the name of the entity.
      */
 	public String getValue(Long id)
 	{
@@ -295,7 +298,7 @@ public abstract class CoralEntitySelectionState
 	 * 
 	 * @param coralSession the coral session
 	 * @return the entities map.
-	 * @throws ProcessingException
+	 * @throws ProcessingException if there is a problem retrieving the entities.
 	 */
     public Map getEntities(CoralSession coralSession)
         throws ProcessingException
@@ -309,7 +312,7 @@ public abstract class CoralEntitySelectionState
 	 * @param coralSession the coral session
 	 * @param requestedValue the requested value.
 	 * @return the entities map.
-	 * @throws ProcessingException
+     * @throws ProcessingException if there is a problem retrieving the entities.
 	 */
     public Map getEntities(CoralSession coralSession, String requestedValue)
         throws ProcessingException
@@ -372,6 +375,7 @@ public abstract class CoralEntitySelectionState
      * @param coralSession the coral session.
      * @param id the id of the entity.
      * @return the entity.
+     * @throws Exception if the entity could not be retrieved.
      */
     public abstract Entity getEntity(CoralSession coralSession, long id)
     	throws Exception;

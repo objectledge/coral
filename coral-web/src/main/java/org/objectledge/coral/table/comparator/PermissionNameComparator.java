@@ -7,16 +7,24 @@ import org.objectledge.table.comparator.BaseStringComparator;
 
 /**
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: PermissionNameComparator.java,v 1.2 2005-02-14 17:26:31 pablo Exp $ 
+ * @version $Id: PermissionNameComparator.java,v 1.3 2005-02-21 14:04:29 rafal Exp $ 
  */
 public class PermissionNameComparator
 	 extends BaseStringComparator
 {
+    /**
+     * Creates new PermissionNameComparator instance.
+     * 
+     * @param locale the locle to use.
+     */
     public PermissionNameComparator(Locale locale)
     {
         super(locale);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int compare(Object o1, Object o2)
     {
         if (!((o1 instanceof Permission && o2 instanceof Permission)))

@@ -12,7 +12,7 @@ import org.objectledge.pipeline.Valve;
  * Coral session init valve.
  *  
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: CoralSessionInitValve.java,v 1.2 2004-06-29 13:34:37 zwierzem Exp $
+ * @version $Id: CoralSessionInitValve.java,v 1.3 2005-02-21 14:04:35 rafal Exp $
  */
 public class CoralSessionInitValve implements Valve 
 {
@@ -30,7 +30,7 @@ public class CoralSessionInitValve implements Valve
 	}
 	
 	/**
-	 * @inheritDoc{}  
+	 * {@inheritDoc}  
 	 */
 	public void process(Context context) throws ProcessingException
 	{

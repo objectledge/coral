@@ -17,13 +17,20 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: SubjectListTableModel.java,v 1.4 2005-02-07 21:04:19 zwierzem Exp $
+ * @version $Id: SubjectListTableModel.java,v 1.5 2005-02-21 14:04:39 rafal Exp $
  */
 public class SubjectListTableModel extends ListTableModel
 {
     /** subjects keyed by their id */
     private Map<String, Subject> subjectsById;
 
+    /**
+     * Creates new SubjectListTableModel instance.
+     * 
+     * @param array an array of Subjects.
+     * @param locale the locale to be used by comparators.
+     * @throws TableException if there is a problem creating the model.
+     */
     public SubjectListTableModel(Subject[] array, Locale locale)
         throws TableException
     {
@@ -31,6 +38,13 @@ public class SubjectListTableModel extends ListTableModel
         columns = getColumns(locale);
     }
         
+    /**
+     * Creates new SubjectListTableModel instance.
+     * 
+     * @param list a list of Subjects.
+     * @param locale the locale to be used by comparators.
+     * @throws TableException if there is a problem creating the model.
+     */
     public SubjectListTableModel(List list, Locale locale)
         throws TableException
     {
@@ -38,6 +52,13 @@ public class SubjectListTableModel extends ListTableModel
         columns = getColumns(locale);
     }
 
+    /**
+     * Return model columns.
+     * 
+     * @param locale the locale to be used by comparators.
+     * @return an array of column objects.
+     * @throws TableException if there is a problem creating column objects.
+     */
     protected TableColumn[] getColumns(Locale locale)
         throws TableException
     {
@@ -71,8 +92,9 @@ public class SubjectListTableModel extends ListTableModel
     
     /**
      * Returns the id of the object.
+     * 
+     * @param parent the id of the parent objet.
      * @param child model object.
-     *
      * @return the id of the object.
      */
     public String getId(String parent, Object child)

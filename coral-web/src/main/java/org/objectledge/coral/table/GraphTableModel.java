@@ -17,7 +17,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  * A table model for Coral relations.
  *
  *  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: GraphTableModel.java,v 1.7 2005-01-18 11:03:32 rafal Exp $
+ * @version $Id: GraphTableModel.java,v 1.8 2005-02-21 14:04:39 rafal Exp $
  */
 public class GraphTableModel
     implements ExtendedTableModel
@@ -37,6 +37,8 @@ public class GraphTableModel
     /**
      * Constructs a new model.
      *
+     * @param coralSession the coralSession.
+     * @param logger the logger to use.
      * @param ref the cross reference to build model for.
      */
     public GraphTableModel(CoralSession coralSession, Logger logger, Relation ref) 
@@ -48,7 +50,7 @@ public class GraphTableModel
     }
     
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public TableRowSet getRowSet(TableState state, TableFilter[] filters)
     {
@@ -105,10 +107,11 @@ public class GraphTableModel
 
     /**
      * Returns the id of the object.
+     * 
+     * TODO: Ids should be handled differently!!
+     *
+     * @param parent the id of the parent object.
      * @param child model object.
-     *
-     * TODO: Ids shold be handled differently!!
-     *
      * @return the id of the object.
      */
     public String getId(String parent, Object child)

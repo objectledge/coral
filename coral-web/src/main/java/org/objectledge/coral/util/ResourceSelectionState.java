@@ -19,7 +19,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: ResourceSelectionState.java,v 1.3 2005-01-18 11:03:40 rafal Exp $
+ * @version $Id: ResourceSelectionState.java,v 1.4 2005-02-21 14:04:43 rafal Exp $
  */
 public class ResourceSelectionState 
 	extends CoralEntitySelectionState
@@ -55,6 +55,14 @@ public class ResourceSelectionState
         super(name);
     }
 
+    /**
+     * Returns the ids of the resources that are expanded.
+     * 
+     * @param coralSession the coral session.
+     * @param rootId root object id.
+     * @return the ids of the expanded resources.
+     * @throws ProcessingException if there is a problem accessing the underlying object.
+     */
     public String[] getExpandedIds(CoralSession coralSession, long rootId)
     	throws ProcessingException
     {

@@ -31,15 +31,22 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.10 2005-02-07 21:04:19 zwierzem Exp $
+ * @version $Id: CoralTableModel.java,v 1.11 2005-02-21 14:04:39 rafal Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {
-    /** coral session */
+    /** coral session. */
     protected CoralSession coralSession;
 
+    /** comparators keyed by column name. */
     protected Map<String, Comparator> comparatorByColumnName = new HashMap<String, Comparator>();
 
+    /**
+     * Creates new CoralTableModel instance.
+     * 
+     * @param coralSession the coral session.
+     * @param locale the locale to be used.
+     */
     public CoralTableModel(CoralSession coralSession, Locale locale)
     {
         this.coralSession = coralSession;
@@ -170,8 +177,9 @@ public class CoralTableModel implements ExtendedTableModel
 
     /**
      * Returns the id of the object.
+     * 
+     * @param parent the id of the parent object.
      * @param child model object.
-     *
      * @return the id of the object.
      */
     public String getId(String parent, Object child)

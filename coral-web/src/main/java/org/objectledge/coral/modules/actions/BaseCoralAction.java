@@ -12,7 +12,7 @@ import org.objectledge.web.mvc.MVCContext;
 /**
  * The base screen for coral application.
  * 
- * @version $Id: BaseCoralAction.java,v 1.5 2005-02-11 11:30:58 pablo Exp $
+ * @version $Id: BaseCoralAction.java,v 1.6 2005-02-21 14:04:49 rafal Exp $
  */
 public abstract class BaseCoralAction implements Valve
 {
@@ -41,13 +41,16 @@ public abstract class BaseCoralAction implements Valve
      * @param mvcContext the mvc context.
      * @param templatingContext the templating context.
      * @param coralSession the coralSession.
+     * @throws ProcessingException when action execution fails.
      */    
-    public abstract void execute(Context context, Parameters parameters, MVCContext mvcContext, TemplatingContext templatingContext, CoralSession coralSession)
+    public abstract void execute(Context context, Parameters parameters, MVCContext mvcContext,
+        TemplatingContext templatingContext, CoralSession coralSession)
         throws ProcessingException;  
     
     /**
      * Retrieve coral session from context.
      * 
+     * @param context the context.
      * @return the coral session.
      */
     protected CoralSession getCoralSession(Context context)

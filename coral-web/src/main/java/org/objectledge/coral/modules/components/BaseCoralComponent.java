@@ -53,6 +53,7 @@ public abstract class BaseCoralComponent
      * @param templatingContext the templating context.
      * @param mvcContext the mvc context.
      * @param coralSession the coral session.
+     * @throws ProcessingException if the processing in the component fails.
      */    
     public abstract void process(Parameters parameters, TemplatingContext templatingContext, 
         						 MVCContext mvcContext,

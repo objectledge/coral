@@ -12,18 +12,30 @@ import org.objectledge.table.TableFilter;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceClassFilter.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
+ * @version $Id: ResourceClassFilter.java,v 1.2 2005-02-21 14:04:32 rafal Exp $
  */
 public class ResourceClassFilter
     implements TableFilter
 {
+    /** the accepted resource classes. */
     protected Set acceptedResourceClasses;
 
+    /**
+     * Creates new ResourceClassFilter instance.
+     * 
+     * @param acceptedResourceClass the requested resource class.
+     */
     public ResourceClassFilter(ResourceClass acceptedResourceClass)
     {
         this(acceptedResourceClass, false);
     }
 
+    /**
+     * Creates new ResourceClassFilter instance.
+     * 
+     * @param acceptedResourceClass the requested resource class.
+     * @param allowInheritance should child classes be accepted as well?
+     */
     public ResourceClassFilter(ResourceClass acceptedResourceClass, boolean allowInheritance)
     {
         ResourceClass[] resClasses = new ResourceClass[1];
@@ -31,16 +43,33 @@ public class ResourceClassFilter
         init(resClasses, allowInheritance);
     }
     
+    /**
+     * Creates new ResourceClassFilter instance.
+     * 
+     * @param acceptedResourceClasses the requested resource classes.
+     */
     public ResourceClassFilter(ResourceClass[] acceptedResourceClasses)
     {
         this(acceptedResourceClasses, false);
     }
-    
+
+    /**
+     * Creates new ResourceClassFilter instance.
+     * 
+     * @param acceptedResourceClasses accepted resource classes.
+     * @param allowInheritance should child classes be accepted as well?
+     */
     public ResourceClassFilter(ResourceClass[] acceptedResourceClasses, boolean allowInheritance)
     {
         init(acceptedResourceClasses, allowInheritance);
     }
-    
+
+    /**
+     * Initializes the filter.
+     * 
+     * @param acceptedResourceClasses the requested resource classes.
+     * @param allowInheritance should child classes be accepted as well?
+     */
     protected void init(ResourceClass[] acceptedResourceClasses, boolean allowInheritance)
     {
         this.acceptedResourceClasses = new HashSet();
@@ -69,7 +98,10 @@ public class ResourceClassFilter
             getChildClasses(classes[i], childClasses);
         }
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean accept(Object object)
     {
         if(!(object instanceof Resource))

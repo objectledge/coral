@@ -11,18 +11,26 @@ import org.objectledge.table.TableFilter;
  * contstructor parameters.
  *
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
- * @version $Id: TimeFilter.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
+ * @version $Id: TimeFilter.java,v 1.2 2005-02-21 14:04:32 rafal Exp $
  */
 public abstract class TimeFilter
     implements TableFilter
 {
+    /** the start of the accepted range. */
     protected Date start;
+    
+    /** the end of the accepted range. */
     protected Date end;
 
+    /** the strategy to be used. */
     protected DateRangeCheckStrategy strategy;
 
     /** Constructs a filter for date values. Different start and end parameters
      * make the filter choose a different filtering strategy.
+     * 
+     * @param start the accepted range start.
+     * @param end the accepted range end.
+     * 
      * @see TimeFilter.BetweenStartEnd
      * @see TimeFilter.NotBetweenStartEnd
      * @see TimeFilter.AfterStart
@@ -59,9 +67,17 @@ public abstract class TimeFilter
         }
     }
 
-    /** This method must be implemented to provide date used to filter out resources. */
+    /** 
+     * This method must be implemented to provide date used to filter out resources. 
+     *
+     * @param r the resource.
+     * @return date to be used for filtering.
+     */
     protected abstract Date getDate(Resource r);
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean accept(Object object)
     {
         if(!(object instanceof Resource))
@@ -81,6 +97,11 @@ public abstract class TimeFilter
 		}
     }
 
+    /**
+     * A hint from the child classes if the null dates should be accepted.
+     * 
+     * @return <code>true</code> if the null dates should be accepted.
+     */
 	protected boolean acceptNullDate()
 	{
 		return true;
@@ -92,7 +113,12 @@ public abstract class TimeFilter
      */
     public interface DateRangeCheckStrategy
     {
-        /** Returns <code>true</code> if a given date object fits filtering strategy. */
+        /** 
+         * Returns <code>true</code> if a given date object fits filtering strategy. 
+         * 
+         * @param d the date.
+         * @return <code>true</code> if a given date object fits filtering strategy.
+         */
         public boolean check(Date d);
     }
 
@@ -100,6 +126,9 @@ public abstract class TimeFilter
     public class BetweenStartEnd
         implements DateRangeCheckStrategy
     {
+        /**
+         * {@inheritDoc}
+         */
         public boolean check(Date d)
         {
             if(start.before(d) && end.after(d))
@@ -114,6 +143,9 @@ public abstract class TimeFilter
     public class NotBetweenStartEnd
         implements DateRangeCheckStrategy
     {
+        /**
+         * {@inheritDoc}
+         */
         public boolean check(Date d)
         {
             if(end.after(d) || start.before(d))
@@ -128,6 +160,9 @@ public abstract class TimeFilter
     public class AfterStart
         implements DateRangeCheckStrategy
     {
+        /**
+         * {@inheritDoc}
+         */
         public boolean check(Date d)
         {
             if(start.before(d))
@@ -142,6 +177,9 @@ public abstract class TimeFilter
     public class BeforeEnd
         implements DateRangeCheckStrategy
     {
+        /**
+         * {@inheritDoc}
+         */
         public boolean check(Date d)
         {
             if(end.after(d))
@@ -156,6 +194,9 @@ public abstract class TimeFilter
     public class PassAll
         implements DateRangeCheckStrategy
     {
+        /**
+         * {@inheritDoc}
+         */
         public boolean check(Date d)
         {
             return true;
