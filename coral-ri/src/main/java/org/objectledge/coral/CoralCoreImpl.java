@@ -41,7 +41,6 @@ import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.relation.query.CoralRelationQueryImpl;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.CoralSchemaImpl;
-import org.objectledge.coral.script.parser.RMLConstants;
 import org.objectledge.coral.script.parser.RMLParserFactory;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.CoralSecurityImpl;
@@ -59,7 +58,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.9 2004-03-18 15:22:51 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.10 2004-04-01 08:54:23 fil Exp $
  */
 public class CoralCoreImpl
     implements CoralCore

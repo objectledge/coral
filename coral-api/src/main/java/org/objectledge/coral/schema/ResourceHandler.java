@@ -4,14 +4,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 
 /**
  * Manages persistency of resources belonging to a specific class .
  *
- * @version $Id: ResourceHandler.java,v 1.3 2004-03-08 09:17:31 fil Exp $
+ * @version $Id: ResourceHandler.java,v 1.4 2004-04-01 08:54:15 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceHandler

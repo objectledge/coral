@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.2 2004-03-08 09:17:28 fil Exp $
+ * @version $Id: PersistentResource.java,v 1.3 2004-04-01 08:54:27 fil Exp $
  */
 public class PersistentResource
     implements Resource, Persistent
@@ -98,7 +98,7 @@ public class PersistentResource
         throws ValueRequiredException, SQLException
     {
         this.delegate = delegate;
-        AttributeDefinition attrs[] = delegate.getResourceClass().getAllAttributes();
+        AttributeDefinition[] attrs = delegate.getResourceClass().getAllAttributes();
         for(int i=0; i<attrs.length; i++)
         {
             AttributeDefinition attr = attrs[i];
@@ -130,27 +130,27 @@ public class PersistentResource
                 }
                 else
                 {
-                    long id;
+                    long valueId;
                     if(value instanceof Entity)
                     {
-                        id = ((Entity)value).getId();
+                        valueId = ((Entity)value).getId();
                     }
                     else
                     {
-                        id = handler.create(value, conn);
+                        valueId = handler.create(value, conn);
                         if(handler.shouldRetrieveAfterCreate())
                         {
                             try
                             {
-                                this.attributes.put(attr, handler.retrieve(id, conn));
+                                this.attributes.put(attr, handler.retrieve(valueId, conn));
                             }
                             catch(EntityDoesNotExistException e)
                             {
-                                throw new BackendException("unexepected EntityDoesNotExistException", e);
+                                throw new BackendException("data integrity error", e);
                             }
                         }
                     }
-                    ids.put(attr, new Long(id));
+                    ids.put(attr, new Long(valueId));
                 }
             }
         }
@@ -165,14 +165,14 @@ public class PersistentResource
             AttributeDefinition attr = (AttributeDefinition)i.next();
             if(!Entity.class.isAssignableFrom(attr.getAttributeClass().getJavaClass()))
             {
-                long id = ((Long)ids.get(attr)).longValue();
+                long valueId = ((Long)ids.get(attr)).longValue();
                 try
                 {
-                    attr.getAttributeClass().getHandler().delete(id, conn);
+                    attr.getAttributeClass().getHandler().delete(valueId, conn);
                 }
                 catch(EntityDoesNotExistException e)
                 {
-                throw new BackendException("unexepected EntityDoesNotExistException", e);
+                    throw new BackendException("data integrity error", e);
                 }
             }
         }
@@ -585,7 +585,8 @@ public class PersistentResource
                             }
                             else
                             {
-                                record.setString(attribute.getName(), handler.toExternalString(value));
+                                record.setString(attribute.getName(), 
+                                    handler.toExternalString(value));
                             }
                         }
                     }
@@ -609,11 +610,11 @@ public class PersistentResource
                     }
                     else
                     {
-                        Long idObj = (Long)ids.get(attribute);
-                        long id = idObj != null ? idObj.longValue() : -1;
-                        if(id != -1)
+                        Long valueIdObj = (Long)ids.get(attribute);
+                        long valueId = valueIdObj != null ? valueIdObj.longValue() : -1;
+                        if(valueId != -1)
                         {
-                            record.setLong(attribute.getName(), id);
+                            record.setLong(attribute.getName(), valueId);
                         }
                         else
                         {
@@ -623,12 +624,12 @@ public class PersistentResource
                 }
                 else
                 {
-                    Long idObj = (Long)ids.get(attribute);
-                    long id = idObj != null ? idObj.longValue() : -1;
-                    id = updateAttribute(attribute, id, value);
-                    if(id != -1)
+                    Long valueIdObj = (Long)ids.get(attribute);
+                    long valueId = valueIdObj != null ? valueIdObj.longValue() : -1;
+                    valueId = updateAttribute(attribute, valueId, value);
+                    if(valueId != -1)
                     {
-                        record.setLong(attribute.getName(), id);
+                        record.setLong(attribute.getName(), valueId);
                     }
                     else
                     {
@@ -669,13 +670,14 @@ public class PersistentResource
                     {
                         if(handler.supportsExternalString())
                         {
-                            Object value = handler.toAttributeValue(record.getString(attribute.getName()));
+                            Object value = handler.
+                                toAttributeValue(record.getString(attribute.getName()));
                             attributes.put(attribute, value);
                         }
                         else
                         {
-                            long id = record.getLong(attribute.getName());
-                            ids.put(attribute, new Long(id));
+                            long valueId = record.getLong(attribute.getName());
+                            ids.put(attribute, new Long(valueId));
                         }
                     }
                 }

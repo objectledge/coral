@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
@@ -22,7 +21,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceListAttributeHandler.java,v 1.3 2004-03-15 16:35:42 fil Exp $
+ * @version $Id: ResourceListAttributeHandler.java,v 1.4 2004-04-01 08:54:27 fil Exp $
  */
 public class ResourceListAttributeHandler
     extends AttributeHandlerBase

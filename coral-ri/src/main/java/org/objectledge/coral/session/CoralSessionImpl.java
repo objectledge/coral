@@ -33,7 +33,6 @@ import java.security.Principal;
 import org.apache.commons.pool.KeyedObjectPool;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.relation.CoralRelationManager;
@@ -41,7 +40,6 @@ import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.script.CoralScript;
 import org.objectledge.coral.script.CoralScriptImpl;
-import org.objectledge.coral.script.parser.RMLParserFactory;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
@@ -50,7 +48,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.7 2004-03-26 14:35:50 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.8 2004-04-01 08:54:22 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession

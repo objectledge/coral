@@ -1,6 +1,5 @@
 package org.objectledge.coral.datatypes;
 
-import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -16,7 +15,6 @@ import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
@@ -26,7 +24,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.3 2004-03-12 09:37:58 fil Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.4 2004-04-01 08:54:27 fil Exp $
  */
 public class PersistentResourceHandler
     extends ResourceHandlerBase
@@ -49,7 +47,8 @@ public class PersistentResourceHandler
      * 
      */
     public PersistentResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
-         ResourceClass resourceClass, Persistence persistence, Logger logger, Instantiator instantiator)
+         ResourceClass resourceClass, 
+         Persistence persistence, Logger logger, Instantiator instantiator)
     {
         super(coralSchema, coralSecurity, instantiator, resourceClass);
         this.persistence = persistence;

@@ -21,14 +21,11 @@ import org.objectledge.coral.store.Resource;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceHandlerBase.java,v 1.3 2004-03-12 09:37:40 fil Exp $
+ * @version $Id: ResourceHandlerBase.java,v 1.4 2004-04-01 08:54:27 fil Exp $
  */
 public abstract class ResourceHandlerBase 
     implements ResourceHandler
 {
-    /** The root subject. */
-    Subject rootSubject;
-
     /** The resource class this handler is responsible for. */
     protected ResourceClass resourceClass;
 
@@ -53,14 +50,6 @@ public abstract class ResourceHandlerBase
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
         this.instantiator = instantiator;
-        try
-        {
-            rootSubject = coralSecurity.getSubject(Subject.ROOT);
-        }
-        catch (EntityDoesNotExistException e)
-        {
-            throw new ComponentInitializationError("cannot lookup root subject", e);
-        }
         this.resourceClass = resourceClass;
     }
 

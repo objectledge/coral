@@ -9,7 +9,6 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
@@ -20,7 +19,7 @@ import org.objectledge.database.Database;
  * An implementation of <code>node</code> Coral resource class.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: NodeResourceImpl.java,v 1.4 2004-03-31 12:04:55 fil Exp $
+ * @version $Id: NodeResourceImpl.java,v 1.5 2004-04-01 08:54:27 fil Exp $
  */
 public class NodeResourceImpl
     extends GenericResource

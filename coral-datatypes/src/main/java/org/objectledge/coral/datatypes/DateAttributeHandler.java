@@ -19,7 +19,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistency of <code>java.util.Date</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateAttributeHandler.java,v 1.2 2004-03-15 15:47:10 fil Exp $
+ * @version $Id: DateAttributeHandler.java,v 1.3 2004-04-01 08:54:27 fil Exp $
  */
 public class DateAttributeHandler
     extends AttributeHandlerBase
@@ -82,7 +82,8 @@ public class DateAttributeHandler
         );
         if(!rs.next())
         {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+getTable());
+            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
+                getTable());
         }
         return new Date(rs.getTimestamp(1).getTime());
     }

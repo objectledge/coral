@@ -34,7 +34,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.4 2004-03-12 09:22:43 fil Exp $
+ * @version $Id: GenericResource.java,v 1.5 2004-04-01 08:54:27 fil Exp $
  */
 public class GenericResource
     implements Resource
@@ -946,14 +946,14 @@ public class GenericResource
         {
             if(delegate == null)
             {
-                throw new BackendException("failed to retrieve attribute value " +                                        "(attribute definition = "+attribute.getName()+
-                                        " , attribute id = "+aId+")", e);
+                throw new BackendException("failed to retrieve attribute value " +                    "(attribute definition = "+attribute.getName()+
+                    " , attribute id = "+aId+")", e);
             }
             else
             {
                 throw new BackendException("failed to retrieve attribute value " +
-                                        "(attribute definition = "+attribute.getName()+
-                                        " , attribute id = "+aId+") for resource: "+delegate.getId() , e);
+                    "(attribute definition = "+attribute.getName()+
+                    " , attribute id = "+aId+") for resource: "+delegate.getId() , e);
             }
         }
         finally

@@ -17,7 +17,7 @@ import org.objectledge.database.Database;
  * contain more than 255 characters.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: TextAttributeHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: TextAttributeHandler.java,v 1.2 2004-04-01 08:54:27 fil Exp $
  */
 public class TextAttributeHandler
     extends AttributeHandlerBase
@@ -80,7 +80,8 @@ public class TextAttributeHandler
         );
         if(!rs.next())
         {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+getTable());
+            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
+                getTable());
         }
         return unescape(rs.getString(1));
     }

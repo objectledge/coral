@@ -16,7 +16,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.lang.Boolean</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: BooleanAttributeHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: BooleanAttributeHandler.java,v 1.2 2004-04-01 08:54:27 fil Exp $
  */
 public class BooleanAttributeHandler
     extends AttributeHandlerBase
@@ -80,7 +80,8 @@ public class BooleanAttributeHandler
         );
         if(!rs.next())
         {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+getTable());
+            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
+                getTable());
         }
         return new Boolean(rs.getBoolean(1));
     }
