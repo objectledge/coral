@@ -19,5 +19,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/maven/jars/maven-jelly-tags-20040427.080410.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-jelly/jars/commons-jelly-20030902.160215.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/maven/jars/maven.jar"/>
+	<classpathentry sourcepath="MAVEN_REPO/hsqldb/sources/hsqldb-1.7.2-rc1-src.zip" kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.7.2-rc1-jdk1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
