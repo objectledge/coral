@@ -55,17 +55,33 @@
      -->
     <define:tag name="dbDriver">
       <j:set var="dbType" value="${url.substring(5, url.indexOf(':', 5))}"/>
-      <m:pluginVar plugin="coral-maven-plugin" var="${var}" property="coral.driver.${dbType}"/>
-      <j:set var="value" value="${context.getVariable(var)}"/>
-      <j:set var="${var}" scope="parent" value="${context.getVariable(var)}"/>
-      <j:if test="${value == ''}">
+      <j:set var="dbDriver" value=""/>
+      <m:pluginVar plugin="coral-maven-plugin" var="dbDriver" property="coral.driver.${dbType}"/>
+      <j:if test="${dbDriver == null || dbDriver.legnth() == 0}">
         <fail>Unknown database type ${dbType}</fail>
       </j:if>
+      <j:set var="${var}" scope="parent" value="${dbDriver}"/>
+    </define:tag>
+    
+    <!--
+     | Instantiates coral DataSource, based upon coral.db.url, coral.db.user and coral.db.password settings.
+     |
+     | @param var the name of the variable to put DataSource object into.
+     -->
+    <define:tag name="dataSource">
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
+      <coral:dbDriver var="coralDbDriver" url="${coralDbUrl}"/>
+      <sql:driver var="coralDataSource" driver="${coralDbDriver}" jdbcURL="${coralDbUrl}" 
+        userName="${coralDbUser}"/>
+      <j:set var="${var}" scope="parent" value="${coralDataSource}"/>
     </define:tag>
   </define:taglib>
   
   <!-- // wrapper generator ///////////////////////////////////////////////////////////////// -->
-  <goal name="coral:generator">
+  <goal name="coral:generator"
+    description="Generates Java wrapper types for Coral resource classes">
     <m:pluginVar plugin="coral-maven-plugin" var="generatorFileEncoding" property="coral.generator.file.encoding"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorImportGroups" property="coral.generator.import.groups"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageIncludes" property="coral.generator.package.includes"/>
@@ -97,14 +113,10 @@
   </goal>
 
   <!-- // database initializer ////////////////////////////////////////////////////////////// -->
-  <goal name="coral:init">
-    <m:pluginVar plugin="coral-maven-plugin" var="initDbUrl" property="coral.db.url"/>  
-    <m:pluginVar plugin="coral-maven-plugin" var="initDbUser" property="coral.db.user"/>  
-    <m:pluginVar plugin="coral-maven-plugin" var="initDbPassword" property="coral.db.password"/>
-    <coral:dbDriver var="initDbDriver" url="${initDbUrl}"/>
-    <sql:driver var="initDs" driver="${initDbDriver}" jdbcURL="${initDbUrl}" 
-      userName="${initDbUser}"/>
-    <coral:init dataSource="${initDs}"/>
+  <goal name="coral:init"
+    description="Initializes a relational database for Coral usage">
+    <coral:dataSource var="initDataSource"/>
+    <coral:init dataSource="${initDataSource}"/>
   </goal>
   
 </project>
