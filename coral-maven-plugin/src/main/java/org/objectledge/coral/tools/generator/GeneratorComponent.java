@@ -50,7 +50,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.4 2004-03-31 10:13:54 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.5 2004-03-31 13:56:36 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -262,9 +262,10 @@ public class GeneratorComponent
      * 
      * @param path the path of the file to process.
      * @param contents the new contents of the file.
+     * @return <code>true</code> if the file was actually modified.
      * @throws IOException if the file could not be written.
      */
-    void write(String path, String contents)
+    boolean write(String path, String contents)
         throws IOException
     {
         if(!fileSystem.exists(path))
@@ -275,10 +276,11 @@ public class GeneratorComponent
         {
             if(contents.equals(fileSystem.read(path, fileEncoding)))
             {
-                return;
+                return false;
             }
         }
         fileSystem.write(path, contents, fileEncoding);
+        return true;
     }
     
     void loadSources(String path)

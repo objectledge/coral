@@ -43,7 +43,7 @@ import org.objectledge.utils.LedgeTestCase;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponentTest.java,v 1.1 2004-03-31 10:21:01 fil Exp $
+ * @version $Id: GeneratorComponentTest.java,v 1.2 2004-03-31 13:56:35 fil Exp $
  */
 public class GeneratorComponentTest
     extends LedgeTestCase
@@ -170,7 +170,7 @@ public class GeneratorComponentTest
         mockFileSystem.stub().method("exists").with(eq("foo/Out.java")).will(returnValue(false));
         mockFileSystem.expect(once()).method("mkdirs").with(eq("/foo")).isVoid();
         mockFileSystem.expect(once()).method("write").with(eq("foo/Out.java"), eq("content"), eq("UTF-8")).isVoid();
-        generatorComponent.write("foo/Out.java", "content");
+        assertTrue(generatorComponent.write("foo/Out.java", "content"));
     }
 
     public void testWriteChanged()
@@ -179,7 +179,7 @@ public class GeneratorComponentTest
         mockFileSystem.stub().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
         mockFileSystem.expect(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue("other content"));
         mockFileSystem.expect(once()).method("write").with(eq("foo/Out.java"), eq("content"), eq("UTF-8")).isVoid();
-        generatorComponent.write("foo/Out.java", "content");
+        assertTrue(generatorComponent.write("foo/Out.java", "content"));
     }
 
     public void testWriteNotChanged()
@@ -187,7 +187,7 @@ public class GeneratorComponentTest
     {
         mockFileSystem.stub().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
         mockFileSystem.expect(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue("content"));
-        generatorComponent.write("foo/Out.java", "content");
+        assertFalse(generatorComponent.write("foo/Out.java", "content"));
     }
     
     public void testLoadSources()
