@@ -46,6 +46,7 @@ import org.objectledge.coral.script.parser.ASTalterResourceClassDeleteAttributeS
 import org.objectledge.coral.script.parser.ASTalterResourceClassDeleteSuperclassStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassSetDbTableStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassSetFlagsStatement;
+import org.objectledge.coral.script.parser.ASTalterResourceClassSetJavaClassStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassSetNameStatement;
 import org.objectledge.coral.script.parser.ASTattributeClass;
 import org.objectledge.coral.script.parser.ASTattributeDefinition;
@@ -72,7 +73,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.2 2004-03-22 15:10:26 fil Exp $
+ * @version $Id: RMLModelLoader.java,v 1.3 2004-03-23 09:57:26 fil Exp $
  */
 public class RMLModelLoader
 {
@@ -130,7 +131,7 @@ public class RMLModelLoader
     /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.2 2004-03-22 15:10:26 fil Exp $
+     * @version $Id: RMLModelLoader.java,v 1.3 2004-03-23 09:57:26 fil Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {
@@ -332,6 +333,23 @@ public class RMLModelLoader
                 schema.deleteResourceClass(rc);
                 rc.setName(node.getNewName());
                 schema.addResourceClass(rc);
+            }
+            catch(Exception e)
+            {
+                wrap(e);
+            }
+            return data;
+        }
+
+        /**
+         * {@inheritDoc}
+         */    
+        public Object visit(ASTalterResourceClassSetJavaClassStatement node, Object data)
+        {
+            try
+            {
+                ResourceClass rc = resolve(node.getResourceClass());
+                rc.setJavaClassName(node.getJavaClass());
             }
             catch(Exception e)
             {
