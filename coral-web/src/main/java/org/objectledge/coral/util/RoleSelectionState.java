@@ -13,7 +13,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: RoleSelectionState.java,v 1.1 2004-07-13 10:43:12 pablo Exp $
+ * @version $Id: RoleSelectionState.java,v 1.2 2004-07-14 17:31:06 pablo Exp $
  */
 public class RoleSelectionState 
 	extends CoralEntitySelectionState
@@ -25,7 +25,7 @@ public class RoleSelectionState
      * @param name the name.
      * @return the selection state.
      */
-    public static RoleSelectionState getAbstractState(Context context, String name)
+    public static RoleSelectionState getState(Context context, String name)
     {
         HttpContext httpContext = HttpContext.getHttpContext(context);
         HttpSession session = httpContext.getRequest().getSession();
@@ -55,6 +55,6 @@ public class RoleSelectionState
     public Entity getEntity(CoralSession coralSession, long id)
     	throws Exception
     {
-        return coralSession.getSecurity().getSubject(id);
+        return coralSession.getSecurity().getRole(id);
     }
 }

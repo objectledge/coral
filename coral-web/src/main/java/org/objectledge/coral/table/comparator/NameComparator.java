@@ -2,13 +2,13 @@ package org.objectledge.coral.table.comparator;
 
 import java.util.Locale;
 
-import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.entity.Entity;
 
 /**
- * This is a comparator for comparing resource names.
+ * This is a comparator for comparing coral entities names.
  *
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
- * @version $Id: NameComparator.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
+ * @version $Id: NameComparator.java,v 1.2 2004-07-14 17:31:05 pablo Exp $
  */
 public class NameComparator
     extends BaseStringComparator
@@ -20,13 +20,13 @@ public class NameComparator
     
     public int compare(Object o1, Object o2)
     {
-        if(!((o1 instanceof Resource && o2 instanceof Resource )))
+        if(!((o1 instanceof Entity && o2 instanceof Entity )))
         {
             return 0;
         }
 
-        Resource r1 = (Resource)o1;
-        Resource r2 = (Resource)o2;
+        Entity r1 = (Entity)o1;
+        Entity r2 = (Entity)o2;
 
         return compareStrings(r1.getName(), r2.getName());
     }

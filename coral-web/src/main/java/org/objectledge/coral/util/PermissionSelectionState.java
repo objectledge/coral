@@ -13,7 +13,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: PermissionSelectionState.java,v 1.1 2004-07-13 10:43:12 pablo Exp $
+ * @version $Id: PermissionSelectionState.java,v 1.2 2004-07-14 17:31:06 pablo Exp $
  */
 public class PermissionSelectionState 
 	extends CoralEntitySelectionState
@@ -55,6 +55,6 @@ public class PermissionSelectionState
     public Entity getEntity(CoralSession coralSession, long id)
     	throws Exception
     {
-        return coralSession.getSecurity().getSubject(id);
+        return coralSession.getSecurity().getPermission(id);
     }
 }

@@ -13,7 +13,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: SubjectSelectionState.java,v 1.1 2004-07-13 10:43:12 pablo Exp $
+ * @version $Id: SubjectSelectionState.java,v 1.2 2004-07-14 17:31:06 pablo Exp $
  */
 public class SubjectSelectionState 
 	extends CoralEntitySelectionState
@@ -25,7 +25,7 @@ public class SubjectSelectionState
      * @param name the name.
      * @return the selection state.
      */
-    public static SubjectSelectionState getAbstractState(Context context, String name)
+    public static SubjectSelectionState getState(Context context, String name)
     {
         HttpContext httpContext = HttpContext.getHttpContext(context);
         HttpSession session = httpContext.getRequest().getSession();

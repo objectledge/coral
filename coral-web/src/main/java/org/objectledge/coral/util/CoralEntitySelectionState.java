@@ -24,7 +24,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: CoralEntitySelectionState.java,v 1.1 2004-07-13 10:43:12 pablo Exp $
+ * @version $Id: CoralEntitySelectionState.java,v 1.2 2004-07-14 17:31:06 pablo Exp $
  */
 public abstract class CoralEntitySelectionState
 {
@@ -324,11 +324,11 @@ public abstract class CoralEntitySelectionState
                 String value = (String)(state.get(id));
                 if(requestedValue == null || requestedValue.equals(value))
                 {
-                    entities.put(storeService.getResource(id.longValue()), value);
+                    entities.put(getEntity(coralSession, id.longValue()), value);
                 }
             }
         }
-        catch(EntityDoesNotExistException e)
+        catch(Exception e)
         {
             throw new ProcessingException("cannot retrieve resource", e);
         }
