@@ -47,7 +47,7 @@ import org.objectledge.coral.schema.SchemaIntegrityException;
  * Represents a Coral ResourceClass.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClass.java,v 1.8 2004-03-25 13:33:10 fil Exp $
+ * @version $Id: ResourceClass.java,v 1.9 2004-03-31 10:12:00 fil Exp $
  */
 public class ResourceClass
     extends Entity
@@ -344,13 +344,10 @@ public class ResourceClass
         {
             return implParentClass; 
         }
-        if(parentClasses.size() == 1)
+        
+        if(parentClasses.size() > 0)
         {
             return (ResourceClass)parentClasses.values().toArray()[0];
-        }
-        if(parentClasses.size() > 1)
-        {
-            throw new IllegalStateException("unable to determine implementaion parent class, " +                "use @extend");
         }
         throw new IllegalStateException("primary wrapper generation not supported");
     }
@@ -457,12 +454,22 @@ public class ResourceClass
     public void addParentClass(ResourceClass parentClass)
         throws SchemaIntegrityException, CircularDependencyException
     {
-        List intersection = getAllAttributes();
-        intersection.retainAll(parentClass.getAllAttributes()); 
-        if(!intersection.isEmpty())
+        List conflicting = new ArrayList();
+        List newAttributes = parentClass.getAllAttributes();
+        SortedMap existingAttributes = attributeMap(getAllAttributes());
+        for(Iterator i = newAttributes.iterator(); i.hasNext();)
+        {
+            Attribute attr = (Attribute)i.next();
+            Attribute existing = (Attribute)existingAttributes.get(attr.getName());
+            if(existing != null && !attr.getDeclaringClass().equals(existing.getDeclaringClass()))
+            {
+                conflicting.add(attr.getName());
+            }
+        }
+        if(!conflicting.isEmpty())
         {
             throw new SchemaIntegrityException("class "+parentClass.getName()+
-                " contains attributes with conficting names");
+                " contains attributes with conficting names "+conflicting.toString());
         }
         if(parentClass.getAllParentClasses().contains(this))
         {
@@ -489,7 +496,7 @@ public class ResourceClass
      */
     public void setImplParentClass(ResourceClass implParentClass)
     {
-        if(!getDeclaredParentClasses().contains(implParentClass))
+        if(implParentClass != null && !getDeclaredParentClasses().contains(implParentClass))
         {
             throw new IllegalArgumentException(implParentClass.getName()+
                 " is not a direct parent class of "+getName());
@@ -507,10 +514,13 @@ public class ResourceClass
     public void setAttributeOrder(List order)
         throws EntityDoesNotExistException
     {
-        for(Iterator i = order.iterator(); i.hasNext(); )
+        if(order != null)
         {
-            String name = (String)i.next();
-            getAttribute(name);
+            for(Iterator i = order.iterator(); i.hasNext(); )
+            {
+                String name = (String)i.next();
+                getAttribute(name);
+            }
         }
         attributeOrder = order;
     }
@@ -542,5 +552,16 @@ public class ResourceClass
         {
             return new ArrayList(attributes);
         }
+    }
+    
+    private SortedMap attributeMap(Collection attributes)
+    {
+        SortedMap result = new TreeMap();
+        for(Iterator i = attributes.iterator(); i.hasNext();)
+        {
+            Attribute attr = (Attribute)i.next();
+            result.put(attr.getName(), attr);
+        }
+        return result;
     }
 }
