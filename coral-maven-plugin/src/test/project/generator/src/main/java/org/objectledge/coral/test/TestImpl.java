@@ -202,8 +202,6 @@ public class TestImpl
      *
      * @param defaultValue the value to return if the attribute is undefined.
      * @return the value of the <code>i1</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public int getI1(int defaultValue)
     {
@@ -267,8 +265,6 @@ public class TestImpl
      * Returns the value of the <code>i2</code> attribute.
      *
      * @return the value of the <code>i2</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public int getI2()
     {
@@ -328,8 +324,6 @@ public class TestImpl
      *
      * @param defaultValue the value to return if the attribute is undefined.
      * @return the value of the <code>i3</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public int getI3(int defaultValue)
     {

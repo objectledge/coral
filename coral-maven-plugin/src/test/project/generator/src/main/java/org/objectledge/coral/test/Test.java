@@ -62,8 +62,6 @@ public interface Test
      *
      * @param defaultValue the value to return if the attribute is undefined.
      * @return the value of the <code>i1</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public int getI1(int defaultValue);
 
@@ -90,8 +88,6 @@ public interface Test
      * Returns the value of the <code>i2</code> attribute.
      *
      * @return the value of the the <code>i2</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public int getI2();
 
@@ -117,8 +113,6 @@ public interface Test
      *
      * @param defaultValue the value to return if the attribute is undefined.
      * @return the value of the <code>i3</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public int getI3(int defaultValue);
   

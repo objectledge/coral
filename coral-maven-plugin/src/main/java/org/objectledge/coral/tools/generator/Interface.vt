@@ -75,8 +75,6 @@ public interface ${class.interfaceClassName}
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
      * @return the value of the the <code>${attr.name}</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public ${attr.javaType} get${attr.javaName}();
 #else
@@ -96,8 +94,6 @@ public interface ${class.interfaceClassName}
      *
      * @param defaultValue the value to return if the attribute is undefined.
      * @return the value of the <code>${attr.name}</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public ${attr.javaType} get${attr.javaName}(${attr.javaType} defaultValue);
 #end

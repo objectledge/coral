@@ -244,8 +244,6 @@ public class ${class.implClassName}
      *
      * @param defaultValue the value to return if the attribute is undefined.
      * @return the value of the <code>${attr.name}</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public ${attr.javaType} get${attr.javaName}(${attr.javaType} defaultValue)
     {
@@ -264,8 +262,6 @@ public class ${class.implClassName}
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
      * @return the value of the <code>${attr.name}</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public ${attr.javaType} get${attr.javaName}()
     {

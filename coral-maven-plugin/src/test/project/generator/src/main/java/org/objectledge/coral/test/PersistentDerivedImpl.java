@@ -156,8 +156,6 @@ public class PersistentDerivedImpl
      * Returns the value of the <code>i1</code> attribute.
      *
      * @return the value of the <code>i1</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public int getI1()
     {

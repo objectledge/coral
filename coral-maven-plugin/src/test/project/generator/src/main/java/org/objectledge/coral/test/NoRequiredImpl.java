@@ -175,8 +175,6 @@ public class NoRequiredImpl
      *
      * @param defaultValue the value to return if the attribute is undefined.
      * @return the value of the <code>i4</code> attribute.
-     * @throws IllegalStateException if the value of the attribute is 
-     *         undefined.
      */
     public int getI4(int defaultValue)
     {
