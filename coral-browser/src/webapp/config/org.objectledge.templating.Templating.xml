@@ -33,4 +33,7 @@
   <paths>
     <path>/templates/</path>
   </paths>
+  <properties>
+    <property name="velocimacro.library" value="templates/common/table.vt"/>
+  </properties>
 </config>
