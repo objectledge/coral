@@ -2,5 +2,8 @@
 <fileset-config file-format-version="1.0.0">
     <fileset name="main sources" enabled="true" check-config-name="Ledge checks">
         <file-match-pattern match-pattern="main.*java$" include-pattern="true"/>
+        <file-match-pattern match-pattern="script/parser/.*java$" include-pattern="false"/>
+        <file-match-pattern
+            match-pattern="relation/query/parser/.*java$" include-pattern="false"/>
     </fileset>
 </fileset-config>
