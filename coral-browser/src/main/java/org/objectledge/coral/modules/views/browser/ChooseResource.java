@@ -48,7 +48,7 @@ public class ChooseResource
                 state.setPageSize(0);
                 state.setSortColumnName("name");
             }
-            TableModel model = new CoralTableModel(coralSession, logger, mvcContext.getLocale());
+            TableModel model = new CoralTableModel(coralSession, mvcContext.getLocale());
             TableTool helper = new TableTool(state, model);
             templatingContext.put("table", helper);            
         }
