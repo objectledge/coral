@@ -42,7 +42,7 @@ import org.objectledge.coral.store.Resource;
  * "reverse"/inverted relation expresses resource -> it's parent relationship.</p>
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceHierarchyRelationImpl.java,v 1.2 2005-03-29 08:26:09 rafal Exp $
+ * @version $Id: ResourceHierarchyRelationImpl.java,v 1.3 2005-03-29 12:17:25 zwierzem Exp $
  */
 public class ResourceHierarchyRelationImpl
     implements Relation
@@ -53,7 +53,7 @@ public class ResourceHierarchyRelationImpl
 
     private static final String ID_STRING = "1";
 
-    private static final String NAME = "resource_hierarchy";
+    public static final String NAME = "resource.Hierarchy";
 
     private final CoralStore store;
     
