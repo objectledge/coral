@@ -12,7 +12,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * An implementation of {@link org.objectledge.security.RoleAssignment} interface.
  *
- * @version $Id: RoleAssignmentImpl.java,v 1.7 2004-03-09 15:46:46 fil Exp $
+ * @version $Id: RoleAssignmentImpl.java,v 1.8 2004-03-15 09:02:48 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleAssignmentImpl
@@ -129,6 +129,7 @@ public class RoleAssignmentImpl
         super.getData(record);
         record.setLong("subject_id", subject.getId());
         record.setLong("role_id", role.getId());
+        record.setBoolean("granting_allowed", grantingAllowed);
     }
 
     /**
@@ -162,6 +163,7 @@ public class RoleAssignmentImpl
         {
             throw new PersistenceException("Failed to load RoleAssignment", e);
         }
+        grantingAllowed = record.getBoolean("granting_allowed");
     }
     
     // Role assignment interface /////////////////////////////////////////////
