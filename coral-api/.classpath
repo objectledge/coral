@@ -8,5 +8,9 @@
     <classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
     <classpathentry kind="var" path="MAVEN_REPO/jmock/jars/jmock-20040220-211330.jar"/>
     <classpathentry kind="var" path="MAVEN_REPO/commons-pool/jars/commons-pool-1.0.jar"/>
+    <classpathentry kind="var"
+        path="MAVEN_REPO/dna/jars/dna-impl-1.1-rc2.jar" sourcepath="MAVEN_REPO/dna/sources/dna-impl-1.1-rc2-src.zip"/>
+    <classpathentry kind="var"
+        path="MAVEN_REPO/dna/jars/dna-api-1.1-rc2.jar" sourcepath="MAVEN_REPO/dna/sources/dna-api-1.1-rc2-src.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
