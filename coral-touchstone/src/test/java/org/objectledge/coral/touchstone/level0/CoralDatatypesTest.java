@@ -52,7 +52,7 @@ import org.objectledge.parameters.Parameters;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralDatatypesTest.java,v 1.1 2004-03-15 16:36:54 fil Exp $
+ * @version $Id: CoralDatatypesTest.java,v 1.2 2004-03-16 11:16:46 fil Exp $
  */
 public class CoralDatatypesTest extends CoralTestCase
 {
@@ -239,7 +239,9 @@ public class CoralDatatypesTest extends CoralTestCase
         
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(25, 2, 14, NULL, 'parameters_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 25, 1)");
+        stmt.execute("DELETE FROM ledge_parameters");
         stmt.execute("INSERT INTO ledge_parameters VALUES(1, 'key', 'value')");
+        stmt.execute("DELETE FROM ledge_id_table WHERE table_name = 'ledge_parameters'");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'ledge_parameters')");
         
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(26, 2, 15, NULL, 'resource_list_attr', 0)");
@@ -256,18 +258,6 @@ public class CoralDatatypesTest extends CoralTestCase
         databaseConnection.close();
         session = coralSessionFactory.getAnonymousSession();
         resource = session.getStore().getUniqueResource("resource");        
-    }
-    
-    public void tearDown()
-        throws Exception
-    {
-        Statement stmt = databaseConnection.getConnection().createStatement();
-        stmt.execute("DELETE FROM ledge_parameters");
-        stmt.execute("DELETE FROM ledge_id_table WHERE table_name = 'ledge_parameters'");
-        DatabaseUtils.close(stmt);
-        databaseConnection.close();
-        session.close();
-        super.tearDown();
     }
     
     public void testStringAttribute()
