@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * Represents a Coral AttributeDefinition.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Attribute.java,v 1.4 2004-03-25 15:19:57 fil Exp $
+ * @version $Id: Attribute.java,v 1.5 2004-03-25 15:57:47 fil Exp $
  */
 public class Attribute
     extends Entity
@@ -129,6 +129,19 @@ public class Attribute
         {
             return false;
         }
+    }
+    
+    /**
+     * Returns the name of the attribute, with first character capitalized.
+     * 
+     * @return the name of the attribute, with first character capitalized.
+     */
+    public String getJavaName()
+    {
+        StringBuffer buff = new StringBuffer();
+        buff.append(Character.toUpperCase(getName().charAt(0)));
+        buff.append(getName().substring(1));
+        return buff.toString();
     }
     
     /**

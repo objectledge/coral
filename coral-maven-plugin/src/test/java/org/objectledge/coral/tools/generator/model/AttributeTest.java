@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeTest.java,v 1.1 2004-03-25 15:20:21 fil Exp $
+ * @version $Id: AttributeTest.java,v 1.2 2004-03-25 15:57:48 fil Exp $
  */
 public class AttributeTest extends LedgeTestCase
 {
@@ -156,5 +156,12 @@ public class AttributeTest extends LedgeTestCase
         assertTrue(attribute.isConcrete());    
         assertFalse(attribute.isRequired());    
         assertTrue(attribute.isReadonly());
+    }
+    
+    public void testJavaName()
+    {
+        assertEquals("Attribute", attribute.getJavaName());
+        attribute.setName("q");
+        assertEquals("Q", attribute.getJavaName());        
     }
 }
