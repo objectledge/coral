@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * A class representing a batch of {@link Relation} modifications.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModification.java,v 1.4 2004-02-24 12:26:48 zwierzem Exp $
+ * @version $Id: RelationModification.java,v 1.5 2004-03-01 16:44:00 zwierzem Exp $
  */
 public class RelationModification
 {
@@ -201,12 +201,12 @@ public class RelationModification
 			}
 			else if(id1 != null)
 			{
-				hashCode = id1.hashCode();
+				hashCode = id1.hashCode() ^ 0xf0f0f0f0;
 				this.id1 = id1.longValue();
 			}
 			else
 			{
-				hashCode = id2.hashCode();
+				hashCode = id2.hashCode() ^ 0x0f0f0f0f;
 				this.id2 = id2.longValue();
 			}
 		}
@@ -224,7 +224,7 @@ public class RelationModification
 		 */
 		public boolean equals(Object o)
 		{
-			if(o instanceof ModificationOperation)
+			if(o.getClass().equals(this.getClass()) && o instanceof ModificationOperation)
 			{
 				ModificationOperation lp = (ModificationOperation)o;
 				return (this.id1 == lp.id1) && (this.id2 == lp.id2);
