@@ -46,7 +46,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * Query executor executes a parsed query and returns the set of queried {@link Resource} ids.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: QueryExecutor.java,v 1.4 2004-02-24 17:09:53 zwierzem Exp $
+ * @version $Id: QueryExecutor.java,v 1.5 2004-02-25 10:57:20 zwierzem Exp $
  */
 public class QueryExecutor extends AbstractQueryVisitor
 {
@@ -149,7 +149,7 @@ public class QueryExecutor extends AbstractQueryVisitor
 
 	/**
 	 * Visits the relation mapping node and recursively retrieves a set of resource ids from the 
-	 * relation (by assumin relation is transitive but not circular) using a provided set of
+	 * relation (by assuming relation is transitive but not circular) using a provided set of
 	 * resource ids from the subquery. The retrieved {@link IdSet} is returned up the tree.
 	 * 
 	 * @param node visited node
