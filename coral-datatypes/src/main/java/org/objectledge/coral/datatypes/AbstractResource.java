@@ -62,15 +62,15 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.3 2004-06-29 10:28:32 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.4 2004-06-29 10:39:38 fil Exp $
  */
 public abstract class AbstractResource implements Resource
 {
     /** The database service. */
-    private Database database;
+    protected Database database;
 
     /** The logging facility. */
-    private Logger logger;
+    protected Logger logger;
 
     /** Security delegate object. */
     protected Resource delegate;
@@ -78,17 +78,17 @@ public abstract class AbstractResource implements Resource
     /** The resource class this object holds attributes of. */
     protected ResourceClass componentResourceClass;
     
+    /** Set of AttributeDefinitions of the modified attributes. */
+    protected Set modified = new HashSet();
+
     /** The hashcode. */
     private int hashCode;
     
     /** AttributeDefinition -> hosting instance map. */
-    private Map attributeMap = new HashMap();
-    
-    /** Set of AttributeDefinitions of the modified attributes. */
-    protected Set modified = new HashSet();
+    private Map attributeMap = new HashMap();    
     
     /** ResourceClass -> parent class instance. */
-    protected Map parents = new HashMap();
+    private Map parents = new HashMap();
 
     
     /**
@@ -152,45 +152,12 @@ public abstract class AbstractResource implements Resource
         return delegate;
     }    
     
-    protected ResourceClass getComponentResourceClass()
+    ResourceClass getComponentResourceClass()
     {
         return componentResourceClass;
     }
     
-    protected void initAttributeMap(Resource delegate, ResourceClass rClass)
-    {
-        this.delegate = delegate;
-        this.hashCode = delegate.hashCode();
-        if(rClass == null)
-        {
-            rClass = delegate.getResourceClass();
-        }
-        this.componentResourceClass = rClass;
-        ResourceClass[] parentClasses = getDirectParentClasses(rClass);
-        for(int i=0; i<parentClasses.length; i++)
-        {
-            ResourceClass parent = parentClasses[i];
-            Resource instance = (Resource)parents.get(parent);
-            AttributeDefinition[] hosted = parent.getAllAttributes();
-            for(int j=0; j<hosted.length; j++)
-            {
-                if((hosted[j].getFlags() & AttributeFlags.BUILTIN) == 0)
-                {
-                    attributeMap.put(hosted[j], instance);
-                }
-            }
-        }
-        AttributeDefinition[] declared = rClass.getDeclaredAttributes();
-        for(int i=0; i<declared.length; i++)
-        {
-            if((declared[i].getFlags() & AttributeFlags.BUILTIN) == 0)
-            {
-                attributeMap.put(declared[i], this);
-            }
-        }        
-    }
-    
-    protected synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, Object data)
+    synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, Object data)
     	throws SQLException
     {
         ResourceClass[] parentClasses = getDirectParentClasses(rClass);
@@ -203,7 +170,7 @@ public abstract class AbstractResource implements Resource
         initAttributeMap(delegate, rClass);
     }
 
-    protected synchronized void create(Resource delegate, ResourceClass rClass, Map attributes,
+    synchronized void create(Resource delegate, ResourceClass rClass, Map attributes,
         Connection conn) throws SQLException, ValueRequiredException, ConstraintViolationException
     {
         ResourceClass[] parentClasses = getDirectParentClasses(rClass);
@@ -277,7 +244,7 @@ public abstract class AbstractResource implements Resource
 	    }
 	}
     
-	protected synchronized void delete(Connection conn)
+	synchronized void delete(Connection conn)
 	    throws SQLException
 	{
 	    Iterator i = parents.keySet().iterator();
@@ -652,6 +619,39 @@ public abstract class AbstractResource implements Resource
     }
 
     // implementation ///////////////////////////////////////////////////////////////////////////
+    
+    private void initAttributeMap(Resource delegate, ResourceClass rClass)
+    {
+        this.delegate = delegate;
+        this.hashCode = delegate.hashCode();
+        if(rClass == null)
+        {
+            rClass = delegate.getResourceClass();
+        }
+        this.componentResourceClass = rClass;
+        ResourceClass[] parentClasses = getDirectParentClasses(rClass);
+        for(int i=0; i<parentClasses.length; i++)
+        {
+            ResourceClass parent = parentClasses[i];
+            Resource instance = (Resource)parents.get(parent);
+            AttributeDefinition[] hosted = parent.getAllAttributes();
+            for(int j=0; j<hosted.length; j++)
+            {
+                if((hosted[j].getFlags() & AttributeFlags.BUILTIN) == 0)
+                {
+                    attributeMap.put(hosted[j], instance);
+                }
+            }
+        }
+        AttributeDefinition[] declared = rClass.getDeclaredAttributes();
+        for(int i=0; i<declared.length; i++)
+        {
+            if((declared[i].getFlags() & AttributeFlags.BUILTIN) == 0)
+            {
+                attributeMap.put(declared[i], this);
+            }
+        }        
+    }
     
     private synchronized Resource getHost(AttributeDefinition attribute)
 	    throws UnknownAttributeException
