@@ -10,10 +10,10 @@ import org.objectledge.i18n.I18n;
  * This is a comparator for comparing localized coral resource names.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: I18nResourceNameComparator.java,v 1.1 2004-07-16 14:32:29 zwierzem Exp $
+ * @version $Id: I18nResourceNameComparator.java,v 1.2 2004-08-19 13:40:23 zwierzem Exp $
  */
 public class I18nResourceNameComparator
-    extends BaseStringComparator
+    extends NameComparator
 {
     private I18n i18n;
     private Locale locale;
