@@ -1232,7 +1232,8 @@ void alterResourceClassStatement()       :
         "ALTER" "ATTRIBUTE" attr=name() "SET" 
         (
             ( "NAME" alterResourceClassAlterAttributeSetNameStatement(rc, attr) ) |
-            ( "FLAGS" alterResourceClassAlterAttributeSetFlagsStatement(rc, attr) )
+            ( "FLAGS" alterResourceClassAlterAttributeSetFlagsStatement(rc, attr) ) |
+            ( "DOMAIN" alterResourceClassAlterAttributeSetDomainStatement(rc, attr) )
         )
     ) 
 }
@@ -1939,6 +1940,43 @@ void alterResourceClassAlterAttributeSetFlagsStatement(ASTresourceClass resource
     try {
 /*@egen*/
     jjtn000.attributeFlags = attributeFlagList()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
+void alterResourceClassAlterAttributeSetDomainStatement(ASTresourceClass resourceClass, String attr) :
+{/*@bgen(jjtree) alterResourceClassAlterAttributeSetDomainStatement */
+    ASTalterResourceClassAlterAttributeSetDomainStatement jjtn000 = new ASTalterResourceClassAlterAttributeSetDomainStatement(this, JJTALTERRESOURCECLASSALTERATTRIBUTESETDOMAINSTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+    jjtn000.resourceClass = resourceClass;
+    jjtn000.attributeName = attr;
+}
+{/*@bgen(jjtree) alterResourceClassAlterAttributeSetDomainStatement */
+    try {
+/*@egen*/
+    jjtn000.domain = name()/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);

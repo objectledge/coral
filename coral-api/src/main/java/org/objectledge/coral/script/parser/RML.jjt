@@ -605,7 +605,8 @@ void alterResourceClassStatement() #void :
         "ALTER" "ATTRIBUTE" attr=name() "SET" 
         (
             ( "NAME" alterResourceClassAlterAttributeSetNameStatement(rc, attr) ) |
-            ( "FLAGS" alterResourceClassAlterAttributeSetFlagsStatement(rc, attr) )
+            ( "FLAGS" alterResourceClassAlterAttributeSetFlagsStatement(rc, attr) ) |
+            ( "DOMAIN" alterResourceClassAlterAttributeSetDomainStatement(rc, attr) )
         )
     ) 
 }
@@ -857,6 +858,15 @@ void alterResourceClassAlterAttributeSetFlagsStatement(ASTresourceClass resource
 }
 {
     jjtThis.attributeFlags = attributeFlagList()
+}
+
+void alterResourceClassAlterAttributeSetDomainStatement(ASTresourceClass resourceClass, String attr) :
+{
+    jjtThis.resourceClass = resourceClass;
+    jjtThis.attributeName = attr;
+}
+{
+    jjtThis.domain = name()
 }
 
 void alterResourceClassAddAttributeStatement(ASTresourceClass resourceClass) :

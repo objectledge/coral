@@ -4,7 +4,7 @@ package org.objectledge.coral.script.parser;
  * Basic implementation of the visitor that simply traverses the whole tree.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DefaultRMLVisitor.java,v 1.2 2004-03-19 12:15:19 fil Exp $
+ * @version $Id: DefaultRMLVisitor.java,v 1.3 2004-03-19 12:47:58 fil Exp $
  */
 public class DefaultRMLVisitor
     implements RMLVisitor
@@ -214,6 +214,14 @@ public class DefaultRMLVisitor
      * {@inheritDoc}
      */
     public Object visit(ASTalterResourceClassAlterAttributeSetFlagsStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterResourceClassAlterAttributeSetDomainStatement node, Object data)
     {
         return visit((SimpleNode)node, data);
     }

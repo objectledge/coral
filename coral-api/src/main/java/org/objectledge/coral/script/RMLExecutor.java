@@ -26,6 +26,7 @@ import org.objectledge.coral.script.parser.ASTalterPermissionSetNameStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAddAttributeStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAddPermissionsStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAddSuperclassStatement;
+import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeSetDomainStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeSetFlagsStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeSetNameStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassDeleteAttributeStatement;
@@ -585,6 +586,24 @@ public class RMLExecutor
             ResourceClass rc = entities.resolve(node.getResourceClass());
             AttributeDefinition attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().setFlags(attr, parseFlags(node.getFlags()));
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterResourceClassAlterAttributeSetDomainStatement node, Object data)
+    {
+        try
+        {
+            ResourceClass rc = entities.resolve(node.getResourceClass());
+            AttributeDefinition attr = rc.getAttribute(node.getAttributeName());
+            coralSession.getSchema().setDomain(attr, node.getDomain());
         }
         catch(Exception e)
         {

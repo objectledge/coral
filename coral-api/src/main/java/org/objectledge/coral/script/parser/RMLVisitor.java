@@ -42,6 +42,7 @@ public interface RMLVisitor
   public Object visit(ASTalterResourceClassSetFlagsStatement node, Object data);
   public Object visit(ASTalterResourceClassAlterAttributeSetNameStatement node, Object data);
   public Object visit(ASTalterResourceClassAlterAttributeSetFlagsStatement node, Object data);
+  public Object visit(ASTalterResourceClassAlterAttributeSetDomainStatement node, Object data);
   public Object visit(ASTalterResourceClassAddAttributeStatement node, Object data);
   public Object visit(ASTalterResourceClassDeleteAttributeStatement node, Object data);
   public Object visit(ASTalterResourceClassAddSuperclassStatement node, Object data);
