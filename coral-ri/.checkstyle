@@ -2,5 +2,10 @@
 <fileset-config file-format-version="1.0.0">
     <fileset check-config-name="Ledge checks" enabled="true" name="main sources">
         <file-match-pattern include-pattern="true" match-pattern="main.*java$"/>
+        <file-match-pattern include-pattern="false" match-pattern="scheduler/cron/.*java$"/>
+        <file-match-pattern include-pattern="false" match-pattern="encodings/encoders"/>
+    </fileset>
+    <fileset check-config-name="Ledge test checks" enabled="true" name="test sources">
+        <file-match-pattern include-pattern="true" match-pattern="test.*.java$"/>
     </fileset>
 </fileset-config>
