@@ -23,12 +23,12 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.6 2005-01-18 11:03:32 rafal Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.7 2005-02-07 21:04:19 zwierzem Exp $
  */
 public class ResourceListTableModel extends ListTableModel
 {
     /** resources keyed by their id */
-    private Map resourcesById;
+    private Map<String, Resource> resourcesById;
 
     public ResourceListTableModel(Resource[] array, Locale locale)
         throws TableException
@@ -79,7 +79,7 @@ public class ResourceListTableModel extends ListTableModel
     {
         if(resourcesById == null)
         {
-            resourcesById = new HashMap();
+            resourcesById = new HashMap<String, Resource>();
             for(Iterator i = list.iterator(); i.hasNext();)
             {
                 Resource res = (Resource)(i.next());

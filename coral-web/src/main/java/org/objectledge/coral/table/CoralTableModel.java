@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.session.CoralSession;
@@ -30,14 +31,14 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.9 2005-01-18 11:03:32 rafal Exp $
+ * @version $Id: CoralTableModel.java,v 1.10 2005-02-07 21:04:19 zwierzem Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {
     /** coral session */
     protected CoralSession coralSession;
 
-    protected HashMap comparatorByColumnName = new HashMap();
+    protected Map<String, Comparator> comparatorByColumnName = new HashMap<String, Comparator>();
 
     public CoralTableModel(CoralSession coralSession, Locale locale)
     {

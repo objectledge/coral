@@ -17,12 +17,12 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: SubjectListTableModel.java,v 1.3 2005-01-18 11:03:32 rafal Exp $
+ * @version $Id: SubjectListTableModel.java,v 1.4 2005-02-07 21:04:19 zwierzem Exp $
  */
 public class SubjectListTableModel extends ListTableModel
 {
     /** subjects keyed by their id */
-    private Map subjectsById;
+    private Map<String, Subject> subjectsById;
 
     public SubjectListTableModel(Subject[] array, Locale locale)
         throws TableException
@@ -59,11 +59,11 @@ public class SubjectListTableModel extends ListTableModel
     {
         if(subjectsById == null)
         {
-            subjectsById = new HashMap();
+            subjectsById = new HashMap<String, Subject>();
             for(Iterator i = list.iterator(); i.hasNext();)
             {
-                Subject res = (Subject)(i.next());
-                subjectsById.put(res.getIdString(), res);
+                Subject subject = (Subject)(i.next());
+                subjectsById.put(subject.getIdString(), subject);
             }
         }
         return subjectsById.get(id);
