@@ -24,16 +24,3 @@
 # character to interpose another module into the current module.  This
 # can be useful for creating a module that consists of many directories
 # spread out over the entire source repository.
-
-coral-all-api -d coral-all/coral-api coral-api
-coral-all-browser -d coral-all/coral-browser coral-browser
-coral-all-datatypes -d coral-all/coral-datatypes coral-datatypes
-coral-all-maven-plugin -d coral-all/coral-maven-plugin coral-maven-plugin
-coral-all-reactor -d coral-all/coral-reactor coral-reactor
-coral-all-ri -d coral-all/coral-ri coral-ri
-coral-all-touchstone -d coral-all/coral-touchstone coral-touchstone
-coral-all-web -d coral-all/coral-web coral-web
-
-coral-all -a coral-all-api coral-all-browser coral-all-datatypes coral-all-maven-plugin coral-all-reactor coral-all-ri coral-all-touchstone coral-all-web
-
-
