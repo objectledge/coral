@@ -5,6 +5,7 @@
     <classpathentry kind="src" path="/coral-api"/>
     <classpathentry kind="src" path="/coral-ri"/>
     <classpathentry kind="src" path="/ledge-components"/>
-    <classpathentry kind="src" path="/dna"/>
+    <classpathentry kind="var"
+        path="MAVEN_REPO/dna/jars/dna-api-1.1-rc2.jar" sourcepath="MAVEN_REPO/dna/sources/dna-api-1.1-rc2-src.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
