@@ -1,10 +1,12 @@
 package org.objectledge.coral.query;
 
+import org.objectledge.coral.script.parser.ASTfindResourceStatement;
+
 /**
  * Allows the application to perform queries on data contained in the Coral.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: CoralQuery.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: CoralQuery.java,v 1.3 2004-03-18 11:34:33 fil Exp $
  */
 public interface CoralQuery
 {
@@ -18,6 +20,14 @@ public interface CoralQuery
      */
     public QueryResults executeQuery(String query)
         throws MalformedQueryException;
+
+    /**
+     * Executes a query represented as RML Abstract Syntax Tree.
+     * 
+     * @param node query AST root.
+     * @return query results.
+     */
+    public QueryResults executeQuery(ASTfindResourceStatement node);
     
     /** 
      * Prepares a query.
