@@ -58,7 +58,7 @@ import org.objectledge.utils.StringUtils;
  * Performs importing data from old style ARL schema database to brand new CORAL scheme.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ARLImporterComponent.java,v 1.8 2005-01-15 14:46:50 pablo Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.9 2005-01-26 03:32:34 rafal Exp $
  */
 public class ARLImporterComponent
 {
@@ -91,31 +91,31 @@ public class ARLImporterComponent
 
     /** the resource class mapping */
     private Map rcMap;
-    
+
     /** the attribute definition mapping */
     private Map adMap;
 
     /** the attribute to attribute class name mapping */
     private Map adNameMap;
-    
+
     /** permission map */
     private Map pMap;
-    
+
     /** java class mapping */
-    private HashMap javaClassMap; 
+    private HashMap javaClassMap;
 
     /** cross reference attribute mapping */
     private HashMap xrefMap;
-    
+
     /** classes to ignore */
     private Set classesToIgnore;
-    
+
     /** ignored resources */
     private Set ignoredResources;
-    
+
     /** ignored data_keys */
     private HashMap ignoredDataKeys;
-    
+
     /**
      * Creates new ARLImporterComponent instance.
      * 
@@ -124,7 +124,8 @@ public class ARLImporterComponent
      * @param basePath the base path of ledge installation.
      * @throws Exception if the component could not be initialized.
      */
-    public ARLImporterComponent(DataSource source, DataSource target, String basePath) throws Exception
+    public ARLImporterComponent(DataSource source, DataSource target, String basePath)
+        throws Exception
     {
         this.source = source;
         this.target = target;
@@ -147,10 +148,11 @@ public class ARLImporterComponent
      * 
      * @throws Exception if the generation fails for some reason.
      */
-    public boolean execute(String mappingFile, boolean arlSchema, 
-        boolean appSchema, boolean appData) throws Exception
+    public boolean execute(String mappingFile, boolean arlSchema, boolean appSchema, 
+        boolean appData)
+        throws Exception
     {
-        System.out.println("ARL Importer started! "+mappingFile);
+        System.out.println("ARL Importer started! " + mappingFile);
         prepareDefinedMaps(mappingFile);
         setUpConnections();
         if(arlSchema)
@@ -213,12 +215,12 @@ public class ARLImporterComponent
         {
             throw new Exception("The mapping file was not defined - see project.properties");
         }
-        System.out.println("Loading mapping from "+mappingFile);
+        System.out.println("Loading mapping from " + mappingFile);
         boolean xrefDef = false;
         boolean ignoredClasses = false;
         String encoding = "UTF-8";
         InputStream is = new FileInputStream(new File(mappingFile));
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(is,encoding));
+        LineNumberReader reader = new LineNumberReader(new InputStreamReader(is, encoding));
         int counter = 0;
         while(reader.ready())
         {
@@ -241,28 +243,30 @@ public class ARLImporterComponent
             }
             if(!xrefDef)
             {
-                StringTokenizer st = new StringTokenizer(line," ");
+                StringTokenizer st = new StringTokenizer(line, " ");
                 if(st.countTokens() < 2)
                 {
-                    throw new Exception("Line "+counter+": Too few tokens for java class mapping");
+                    throw new Exception("Line " + counter
+                        + ": Too few tokens for java class mapping");
                 }
                 String oldClassName = st.nextToken();
                 String newClassName = st.nextToken();
-                System.out.println("Java mapping: "+oldClassName+"=>"+newClassName);
+                System.out.println("Java mapping: " + oldClassName + "=>" + newClassName);
                 javaClassMap.put(oldClassName, newClassName);
                 continue;
             }
             if(!ignoredClasses)
             {
-                StringTokenizer st = new StringTokenizer(line," ");
+                StringTokenizer st = new StringTokenizer(line, " ");
                 if(st.countTokens() < 3)
                 {
-                    throw new Exception("Line "+counter+": Too few tokens for xref mapping");
+                    throw new Exception("Line " + counter + ": Too few tokens for xref mapping");
                 }
                 String className = st.nextToken();
                 String attrName = st.nextToken();
                 String relationName = st.nextToken();
-                System.out.println("Xref mapping: "+className+":"+attrName+"=>"+relationName);
+                System.out.println("Xref mapping: " + className + ":" + attrName + "=>"
+                    + relationName);
                 Map temp = (Map)xrefMap.get(className);
                 if(temp == null)
                 {
@@ -273,18 +277,19 @@ public class ARLImporterComponent
                 continue;
             }
             String classToIgnore = line.trim();
-            System.out.println("Class to ignore: "+classToIgnore);
+            System.out.println("Class to ignore: " + classToIgnore);
             classesToIgnore.add(classToIgnore);
         }
         is.close();
     }
-    
+
     /**
      * Setup the connections and statement.
      * 
      * @throws Exception if somethings goes bad.
      */
-    private void setUpConnections() throws Exception
+    private void setUpConnections()
+        throws Exception
     {
         sourceConn = source.getConnection();
         targetConn = target.getConnection();
@@ -297,37 +302,30 @@ public class ARLImporterComponent
      * 
      * @throws Exception if something goes bad.
      */
-    private void close() throws Exception
+    private void close()
+        throws Exception
     {
         sourceConn.close();
         targetConn.close();
     }
 
-    private void importAttributeClass() throws Exception
+    private void importAttributeClass()
+        throws Exception
     {
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_class");
-        while (rs.next())
+        while(rs.next())
         {
             long attributeClassId = rs.getLong("attribute_class_id");
             String name = rs.getString("name");
             String javaClassName = rs.getString("java_class_name");
             String handlerClassName = rs.getString("handler_class_name");
             String dbTableName = rs.getString("db_table_name");
-            targetStmt.execute(
-                "INSERT INTO coral_attribute_class"
-                    + " (attribute_class_id, name, java_class_name,"                    + " handler_class_name, db_table_name) "
-                    + "VALUES ("
-                    + attributeClassId
-                    + ", '"
-                    + name
-                    + "','"
-                    + javaClassName
-                    + "','"
-                    + handlerClassName
-                    + "','"
-                    + dbTableName
-                    + "')");
-            Long acId = new Long(attributeClassId); 
+            targetStmt.execute("INSERT INTO coral_attribute_class"
+                + " (attribute_class_id, name, java_class_name,"
+                + " handler_class_name, db_table_name) " + "VALUES (" + attributeClassId + ", '"
+                + name + "','" + javaClassName + "','" + handlerClassName + "','" + dbTableName
+                + "')");
+            Long acId = new Long(attributeClassId);
             acMap.put(acId, acId);
             acNameMap.put(acId, name);
         }
@@ -339,11 +337,12 @@ public class ARLImporterComponent
      * 
      * @throws Exception
      */
-    private void prepareArlSchemaMaps() throws Exception
+    private void prepareArlSchemaMaps()
+        throws Exception
     {
         HashMap nameToId = new HashMap();
         ResultSet rs = targetStmt.executeQuery("SELECT * FROM coral_attribute_class");
-        while (rs.next())
+        while(rs.next())
         {
             long attributeClassId = rs.getLong("attribute_class_id");
             String name = rs.getString("name");
@@ -351,7 +350,7 @@ public class ARLImporterComponent
             nameToId.put(name, new Long(attributeClassId));
         }
         rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_class");
-        while (rs.next())
+        while(rs.next())
         {
             long attributeClassId = rs.getLong("attribute_class_id");
             String name = rs.getString("name");
@@ -369,24 +368,27 @@ public class ARLImporterComponent
             }
             if(targetId != null)
             {
-                System.out.println("Attribute class "+ name +" mapping: "+attributeClassId+" => "+targetId);
-                Long acId = new Long(attributeClassId); 
+                System.out.println("Attribute class " + name + " mapping: " + attributeClassId
+                    + " => " + targetId);
+                Long acId = new Long(attributeClassId);
                 acMap.put(acId, targetId);
                 acNameMap.put(targetId, trueName);
             }
             else
             {
-                
-                System.out.println("Attribute class "+ name +" mapping: "+attributeClassId+" => IGNORE");
+
+                System.out.println("Attribute class " + name + " mapping: " + attributeClassId
+                    + " => IGNORE");
             }
         }
         updateLedgeIdTabel("coral_attribute_class", "attribute_class_id");
     }
-    
-    private void importResourceClass() throws Exception
+
+    private void importResourceClass()
+        throws Exception
     {
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_resource_class");
-        while (rs.next())
+        while(rs.next())
         {
             long resourceClassId = rs.getLong("resource_class_id");
             String name = rs.getString("name");
@@ -394,50 +396,40 @@ public class ARLImporterComponent
             String handlerClassName = rs.getString("handler_class_name");
             String dbTable = rs.getString("db_table");
             int flags = rs.getInt("flags");
-            System.out.println("Loading resourc class: "+
-                resourceClassId+","+name+","+javaClassName+","+
-                handlerClassName+","+dbTable+","+flags);
-            targetStmt.execute(
-                "INSERT INTO coral_resource_class"
-                    + " (resource_class_id, name, java_class_name, "                     + "handler_class_name, db_table_name, flags) "
-                    + "VALUES ("
-                    + resourceClassId
-                    + ", '"
-                    + escape(name)
-                    + "','"
-                    + javaClassName
-                    + "','"
-                    + handlerClassName
-                    + "','"
-                    + dbTable
-                    + "',"
-                    + flags
-                    + ")");
+            System.out.println("Loading resourc class: " + resourceClassId + "," + name + ","
+                + javaClassName + "," + handlerClassName + "," + dbTable + "," + flags);
+            targetStmt.execute("INSERT INTO coral_resource_class"
+                + " (resource_class_id, name, java_class_name, "
+                + "handler_class_name, db_table_name, flags) " + "VALUES (" + resourceClassId
+                + ", '" + escape(name) + "','" + javaClassName + "','" + handlerClassName + "','"
+                + dbTable + "'," + flags + ")");
             Long classId = new Long(resourceClassId);
             rcMap.put(classId, classId);
         }
         updateLedgeIdTabel("coral_resource_class", "resource_class_id");
     }
 
-    private void importResourceClassInheritance() throws Exception
+    private void importResourceClassInheritance()
+        throws Exception
     {
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_resource_class_inheritance");
-        while (rs.next())
+        while(rs.next())
         {
             long parent = rs.getLong("parent");
             long child = rs.getLong("child");
-            targetStmt.execute("INSERT INTO coral_resource_class_inheritance" +
-                               " (parent, child) " + "VALUES (" + parent + "," + child + ")");
+            targetStmt.execute("INSERT INTO coral_resource_class_inheritance" + " (parent, child) "
+                + "VALUES (" + parent + "," + child + ")");
         }
     }
 
-    private void importAttributeDefinition() throws Exception
+    private void importAttributeDefinition()
+        throws Exception
     {
         //ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_definition");
-        ResultSet rs = sourceStmt.executeQuery("SELECT *,rc.name AS rcname FROM " +
-                "arl_attribute_definition ad, arl_resource_class rc " +
-                " WHERE ad.resource_class_id = rc.resource_class_id");
-        while (rs.next())
+        ResultSet rs = sourceStmt.executeQuery("SELECT *,rc.name AS rcname FROM "
+            + "arl_attribute_definition ad, arl_resource_class rc "
+            + " WHERE ad.resource_class_id = rc.resource_class_id");
+        while(rs.next())
         {
             long attributeDefinitionId = rs.getLong("attribute_definition_id");
             long resourceClassId = rs.getLong("resource_class_id");
@@ -446,23 +438,11 @@ public class ARLImporterComponent
             String domain = rs.getString("domain");
             String name = rs.getString("name");
             int flags = rs.getInt("flags");
-            targetStmt.execute(
-                "INSERT INTO coral_attribute_definition"
-                    + " (attribute_definition_id, resource_class_id, attribute_class_id,"
-                    + " domain, name, flags) "
-                    + "VALUES ("
-                    + attributeDefinitionId
-                    + ","
-                    + resourceClassId
-                    + ","
-                    + attributeClassId
-                    + ",'"
-                    + domain
-                    + "','"
-                    + escape(name)
-                    + "',"
-                    + flags
-                    + ")");
+            targetStmt.execute("INSERT INTO coral_attribute_definition"
+                + " (attribute_definition_id, resource_class_id, attribute_class_id,"
+                + " domain, name, flags) " + "VALUES (" + attributeDefinitionId + ","
+                + resourceClassId + "," + attributeClassId + ",'" + domain + "','" + escape(name)
+                + "'," + flags + ")");
             Long adId = new Long(attributeDefinitionId);
             adMap.put(adId, adId);
             adNameMap.put(adId, className);
@@ -470,93 +450,98 @@ public class ARLImporterComponent
         updateLedgeIdTabel("coral_attribute_definition", "attribute_definition_id");
     }
 
-    private void importPermission() throws Exception
+    private void importPermission()
+        throws Exception
     {
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_permission");
-        while (rs.next())
+        while(rs.next())
         {
             long permissionId = rs.getLong("permission_id");
             String name = rs.getString("name");
-            targetStmt.execute("INSERT INTO coral_permission" +
-             " (permission_id, name) " + "VALUES (" + permissionId + ",'" + escape(name) + "')");
+            targetStmt.execute("INSERT INTO coral_permission" + " (permission_id, name) "
+                + "VALUES (" + permissionId + ",'" + escape(name) + "')");
             Long pId = new Long(permissionId);
             pMap.put(pId, pId);
         }
         updateLedgeIdTabel("coral_permission", "permission_id");
     }
-    
-    private void importPermissionAssociation() throws Exception
+
+    private void importPermissionAssociation()
+        throws Exception
     {
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_permission_association");
-        while (rs.next())
+        while(rs.next())
         {
             long resourceClassId = rs.getLong("resource_class_id");
             long permissionId = rs.getLong("permission_id");
-            targetStmt.execute(
-                "INSERT INTO coral_permission_association" +
-                " (resource_class_id, permission_id) " + 
-                "VALUES (" + resourceClassId + "," + permissionId + ")");
+            targetStmt.execute("INSERT INTO coral_permission_association"
+                + " (resource_class_id, permission_id) " + "VALUES (" + resourceClassId + ","
+                + permissionId + ")");
         }
     }
 
-    private void prepareAppSchemaMaps() throws Exception
+    private void prepareAppSchemaMaps()
+        throws Exception
     {
         //resource classes
         HashMap nameToId = new HashMap();
         ResultSet rs = targetStmt.executeQuery("SELECT * FROM coral_resource_class");
-        while (rs.next())
+        while(rs.next())
         {
             long classId = rs.getLong("resource_class_id");
             String name = rs.getString("name");
             nameToId.put(name, new Long(classId));
         }
         rs = sourceStmt.executeQuery("SELECT * FROM arl_resource_class ORDER BY name");
-        while (rs.next())
+        while(rs.next())
         {
             long classId = rs.getLong("resource_class_id");
             String name = rs.getString("name");
             Long targetId = (Long)nameToId.get(name);
             if(targetId != null)
             {
-                System.out.println("Resource class "+ name +" mapping: "+classId+" => "+targetId);
+                System.out.println("Resource class " + name + " mapping: " + classId + " => "
+                    + targetId);
                 rcMap.put(new Long(classId), targetId);
             }
             else
             {
-                System.out.println("Resource class "+ name +" mapping: "+classId+" => IGNORE");
+                System.out
+                    .println("Resource class " + name + " mapping: " + classId + " => IGNORE");
             }
         }
 
         // permissions
         nameToId = new HashMap();
         rs = targetStmt.executeQuery("SELECT * FROM coral_permission");
-        while (rs.next())
+        while(rs.next())
         {
             long classId = rs.getLong("permission_id");
             String name = rs.getString("name");
             nameToId.put(name, new Long(classId));
         }
         rs = sourceStmt.executeQuery("SELECT * FROM arl_permission ORDER BY name");
-        while (rs.next())
+        while(rs.next())
         {
             long classId = rs.getLong("permission_id");
             String name = rs.getString("name");
             Long targetId = (Long)nameToId.get(name);
             if(targetId != null)
             {
-                System.out.println("Permission "+ name +" mapping: "+classId+" => "+targetId);
+                System.out.println("Permission " + name + " mapping: " + classId + " => "
+                    + targetId);
                 pMap.put(new Long(classId), targetId);
             }
             else
             {
-                System.out.println("Permission "+ name +" mapping: "+classId+" => IGNORE");
+                System.out.println("Permission " + name + " mapping: " + classId + " => IGNORE");
             }
         }
 
         //      attribute definition
         HashMap rcAcToId = new HashMap();
         rs = targetStmt.executeQuery("SELECT * FROM coral_attribute_definition");
-        while (rs.next())
+        while(rs.next())
         {
             long attributeDefinitionId = rs.getLong("attribute_definition_id");
             long resourceClassId = rs.getLong("resource_class_id");
@@ -572,10 +557,11 @@ public class ARLImporterComponent
             }
             acToId.put(name, adId);
         }
-        
-        rs = sourceStmt.executeQuery("SELECT *,rc.name AS rcname, ad.name AS adname FROM arl_attribute_definition ad, arl_resource_class rc " +
-                " WHERE ad.resource_class_id = rc.resource_class_id");
-        while (rs.next())
+
+        rs = sourceStmt.executeQuery("SELECT *,rc.name AS rcname, ad.name AS adname "
+            + "FROM arl_attribute_definition ad, arl_resource_class rc "
+            + " WHERE ad.resource_class_id = rc.resource_class_id");
+        while(rs.next())
         {
             long attributeDefinitionId = rs.getLong("attribute_definition_id");
             long resourceClassId = rs.getLong("resource_class_id");
@@ -590,32 +576,35 @@ public class ARLImporterComponent
             acId = (Long)acMap.get(acId);
             if(rcId == null)
             {
-                System.out.println("Attribute Definition mapping: "+attributeDefinitionId+
-                    " for RC: "+className+" ("+resourceClassId+") ignored (RC ignored!)");
+                System.out.println("Attribute Definition mapping: " + attributeDefinitionId
+                    + " for RC: " + className + " (" + resourceClassId + ") ignored (RC ignored!)");
                 continue;
             }
             if(acId == null)
             {
-                System.out.println("Attribute Definition mapping: "+attributeDefinitionId+
-                    " for RC: "+className+" ("+resourceClassId+") ignored (AC ignored! - I bet that was Xref)");
+                System.out.println("Attribute Definition mapping: " + attributeDefinitionId
+                    + " for RC: " + className + " (" + resourceClassId
+                    + ") ignored (AC ignored! - I bet that was Xref)");
                 continue;
             }
             Map acToId = (Map)rcAcToId.get(rcId);
             if(acToId == null)
             {
-                System.out.println("Attribute Definition mapping: "+attributeDefinitionId+
-                    " for RC: "+className+" ("+resourceClassId+") ignored (No RC=>AC/AD mapping!)");
+                System.out.println("Attribute Definition mapping: " + attributeDefinitionId
+                    + " for RC: " + className + " (" + resourceClassId
+                    + ") ignored (No RC=>AC/AD mapping!)");
                 continue;
             }
             Long newAdId = (Long)acToId.get(attrName);
             if(newAdId == null)
             {
-                System.out.println("Attribute Definition mapping: "+attrName+" ("+attributeDefinitionId+
-                    ") for RC: "+className+" ("+resourceClassId+") ignored (No RC/AC=>AD mapping!)");
+                System.out.println("Attribute Definition mapping: " + attrName + " ("
+                    + attributeDefinitionId + ") for RC: " + className + " (" + resourceClassId
+                    + ") ignored (No RC/AC=>AD mapping!)");
                 continue;
             }
-            System.out.println("Attribute Definition mapping: "+attributeDefinitionId+
-                " => "+newAdId);
+            System.out.println("Attribute Definition mapping: " + attributeDefinitionId + " => "
+                + newAdId);
             adMap.put(adId, newAdId);
             adNameMap.put(adId, className);
         }
@@ -624,20 +613,20 @@ public class ARLImporterComponent
         updateLedgeIdTabel("coral_attribute_definition", "attribute_definition_id");
     }
 
-    private void importSubject() throws Exception
+    private void importSubject()
+        throws Exception
     {
         System.out.println("Subject importing started...");
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_subject");
-        while (rs.next())
+        while(rs.next())
         {
             long subjectId = rs.getLong("subject_id");
             String name = rs.getString("name");
-            System.out.println("Loading subject: "+subjectId+","+name);
+            System.out.println("Loading subject: " + subjectId + "," + name);
             try
             {
-                targetStmt.execute(
-                    "INSERT INTO coral_subject" + " (subject_id, name) " + 
-                    "VALUES (" + subjectId + ",'" + escape(name) + "')");
+                targetStmt.execute("INSERT INTO coral_subject" + " (subject_id, name) "
+                    + "VALUES (" + subjectId + ",'" + escape(name) + "')");
             }
             catch(Exception e)
             {
@@ -658,19 +647,20 @@ public class ARLImporterComponent
         System.out.println("Subject importing finished!\n");
     }
 
-    private void importRole() throws Exception
+    private void importRole()
+        throws Exception
     {
         System.out.println("Roles importing started...");
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_role");
-        while (rs.next())
+        while(rs.next())
         {
             long roleId = rs.getLong("role_id");
             String name = rs.getString("name");
-            System.out.println("Loading role: "+roleId+","+name);
+            System.out.println("Loading role: " + roleId + "," + name);
             try
             {
-                targetStmt.execute("INSERT INTO coral_role" + " (role_id, name) " +
-                 "VALUES (" + roleId + ",'" + escape(name) + "')");
+                targetStmt.execute("INSERT INTO coral_role" + " (role_id, name) " + "VALUES ("
+                    + roleId + ",'" + escape(name) + "')");
             }
             catch(Exception e)
             {
@@ -691,36 +681,38 @@ public class ARLImporterComponent
         System.out.println("Roles importing finished!\n");
     }
 
-    private void importRoleImplication() throws Exception
+    private void importRoleImplication()
+        throws Exception
     {
         System.out.println("Role implications importing started...");
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_role_implication");
         System.out.print("\nLoading role implication:");
-        while (rs.next())
+        while(rs.next())
         {
             long superRole = rs.getLong("super_role");
             long subRole = rs.getLong("sub_role");
             System.out.print(".");
-            targetStmt.execute("INSERT INTO coral_role_implication" + 
-            " (super_role, sub_role) " + "VALUES (" + superRole + "," + subRole + ")");
+            targetStmt.execute("INSERT INTO coral_role_implication" + " (super_role, sub_role) "
+                + "VALUES (" + superRole + "," + subRole + ")");
         }
         System.out.print("\n");
         System.out.println("Role implications importing finished!\n");
     }
 
-    private void importRoleAssignment() throws Exception
+    private void importRoleAssignment()
+        throws Exception
     {
         System.out.println("Role assignments importing started...");
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_role_assignment");
-        String stmtContent = "INSERT INTO coral_role_assignment " +
-        " (subject_id, role_id, grantor, grant_time, granting_allowed) " +
-        " VALUES (?, ?, ?, ?, ?)"; 
+        String stmtContent = "INSERT INTO coral_role_assignment "
+            + " (subject_id, role_id, grantor, grant_time, granting_allowed) "
+            + " VALUES (?, ?, ?, ?, ?)";
         PreparedStatement stmt = targetConn.prepareStatement(stmtContent);
         int size = 0;
         boolean rootAssignment = false;
         Date rootAssignmentDate = null;
         System.out.print("\nLoading role assignment:");
-        while (rs.next())
+        while(rs.next())
         {
             System.out.print(".");
             long subjectId = rs.getLong("subject_id");
@@ -752,10 +744,10 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_role_assignment" +
-            " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_role_assignment"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         if(rootAssignment)
         {
@@ -778,20 +770,21 @@ public class ARLImporterComponent
         System.out.println("Role assignments importing finished!\n");
     }
 
-    private void importResource() throws Exception
+    private void importResource()
+        throws Exception
     {
         System.out.println("Resources importing started...");
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_resource");
         String stmtContent = "INSERT INTO coral_resource "
-                    + " (resource_id, resource_class_id, parent, name, created_by, "
-                    + "creation_time, owned_by, modified_by, modification_time) "
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"; 
+            + " (resource_id, resource_class_id, parent, name, created_by, "
+            + "creation_time, owned_by, modified_by, modification_time) "
+            + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = targetConn.prepareStatement(stmtContent);
         ResourceData rootResource = null;
         System.out.print("\nLoading resources:");
         HashMap resourceMap = new HashMap();
         HashSet untouchedSet = new HashSet();
-        while (rs.next())
+        while(rs.next())
         {
             System.out.print(".");
             ResourceData resourceData = new ResourceData(rs);
@@ -799,7 +792,7 @@ public class ARLImporterComponent
             rcId = (Long)rcMap.get(rcId);
             if(rcId == null)
             {
-                System.out.println("\nResource: "+resourceData.getId()+" ignored");
+                System.out.println("\nResource: " + resourceData.getId() + " ignored");
                 ignoredResources.add(resourceData.getId());
             }
             else
@@ -816,8 +809,8 @@ public class ARLImporterComponent
             Iterator it = untouchedSet.iterator();
             Long id = (Long)it.next();
             load(id, resourceMap, untouchedSet, list);
-        }   
-            
+        }
+
         if(list.size() > 0)
         {
             ResourceData rd = (ResourceData)list.get(0);
@@ -848,17 +841,16 @@ public class ARLImporterComponent
             {
                 throw e.getNextException();
             }
-            if (result.length != (list.size()-1))
+            if(result.length != (list.size() - 1))
             {
-                throw new Exception("Failed to copy all records from arl_resources" +
-                    " - source length:" + (list.size()-1) + " , copied: " + result.length);
+                throw new Exception("Failed to copy all records from arl_resources"
+                    + " - source length:" + (list.size() - 1) + " , copied: " + result.length);
             }
         }
         updateLedgeIdTabel("coral_resource", "resource_id");
         System.out.println("Resources importing finished!\n");
     }
 
-    
     private void load(Long id, Map resourceMap, Set untouchedSet, List list)
         throws Exception
     {
@@ -869,7 +861,7 @@ public class ARLImporterComponent
         {
             if(!resourceMap.containsKey(id))
             {
-                throw new Exception("failed to find resource: "+id.longValue());
+                throw new Exception("failed to find resource: " + id.longValue());
             }
             if(untouchedSet.contains(id))
             {
@@ -893,29 +885,31 @@ public class ARLImporterComponent
             }
             catch(Exception e)
             {
-                throw new Exception("failed to find parent resource: "+
-                    parent.longValue()+" for resource "+id.longValue(), e);
+                throw new Exception("failed to find parent resource: " + parent.longValue()
+                    + " for resource " + id.longValue(), e);
             }
         }
         list.add(rd);
         untouchedSet.remove(id);
     }
-    
-    private void importPermissionAssignment() throws Exception
+
+    private void importPermissionAssignment()
+        throws Exception
     {
         System.out.println("Permission assignments importing started...");
-        ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_permission_assignment pa, arl_permission p" +
-                " WHERE pa.permission_id = p.permission_id");
-        
-        String stmtContent = "INSERT INTO coral_permission_assignment " +
-        " (resource_id, role_id, permission_id, is_inherited, grantor, grant_time) " +
-        " VALUES (?, ?, ?, ?, ?, ?)"; 
+        ResultSet rs = sourceStmt
+            .executeQuery("SELECT * FROM arl_permission_assignment pa, arl_permission p"
+                + " WHERE pa.permission_id = p.permission_id");
+
+        String stmtContent = "INSERT INTO coral_permission_assignment "
+            + " (resource_id, role_id, permission_id, is_inherited, grantor, grant_time) "
+            + " VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = targetConn.prepareStatement(stmtContent);
         int size = 0;
         boolean rootAssignment = false;
         Date rootAssignmentDate = null;
         System.out.print("\nLoading permission assignment:");
-        while (rs.next())
+        while(rs.next())
         {
             System.out.print(".");
             long resourceId = rs.getLong("resource_id");
@@ -926,13 +920,13 @@ public class ARLImporterComponent
             pId = (Long)pMap.get(pId);
             if(pId == null)
             {
-                System.out.println("\nPermission '"+name+"' ignored - no mapping!");
+                System.out.println("\nPermission '" + name + "' ignored - no mapping!");
                 continue;
             }
             Long rId = new Long(resourceId);
             if(ignoredResources.contains(rId))
             {
-                System.out.println("\nPermission '"+name+"' ignored - banned resource: "+rId);
+                System.out.println("\nPermission '" + name + "' ignored - banned resource: " + rId);
                 continue;
             }
             boolean isInherited = rs.getBoolean("is_inherited");
@@ -957,23 +951,24 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_permission_assignments" +
-            " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_permission_assignments"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         System.out.println("Permission assignments importing started...");
     }
 
-    private void importGenericResource() throws Exception
+    private void importGenericResource()
+        throws Exception
     {
         System.out.println("Generis resource importing started...");
-        ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_generic_resource ORDER BY resource_id");
+        ResultSet rs = sourceStmt
+            .executeQuery("SELECT * FROM arl_generic_resource ORDER BY resource_id");
         PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_generic_resource"
-                    + " (resource_id, attribute_definition_id, data_key) "
-                    + "VALUES (?, ?, ?)");
+            + " (resource_id, attribute_definition_id, data_key) " + "VALUES (?, ?, ?)");
         int size = 0;
-        while (rs.next())
+        while(rs.next())
         {
             long resourceId = rs.getLong("resource_id");
             long attributeDefinitionId = rs.getLong("attribute_definition_id");
@@ -986,16 +981,19 @@ public class ARLImporterComponent
             {
                 if(adId != null)
                 {
-                    System.out.println("Generic Resource "+resourceId+":"+attributeDefinitionId+" ignored - banned Resource!");
+                    System.out.println("Generic Resource " + resourceId + ":"
+                        + attributeDefinitionId + " ignored - banned Resource!");
                     continue;
                 }
                 if(!contains)
                 {
-                    System.out.println("Generic Resource "+resourceId+":"+attributeDefinitionId+" ignored - no AD mapping!");
+                    System.out.println("Generic Resource " + resourceId + ":"
+                        + attributeDefinitionId + " ignored - no AD mapping!");
                 }
-                if(contains  && adId == null)
+                if(contains && adId == null)
                 {
-                    System.out.println("Generic Resource "+resourceId+":"+attributeDefinitionId+" ignored - no AD mapping and Banned resource!");
+                    System.out.println("Generic Resource " + resourceId + ":"
+                        + attributeDefinitionId + " ignored - no AD mapping and Banned resource!");
                 }
                 //TO remember the data_keys
                 String className = (String)adNameMap.get(new Long(attributeDefinitionId));
@@ -1008,9 +1006,9 @@ public class ARLImporterComponent
                 classSet.add(new Long(dataKey));
                 continue;
             }
-            stmt.setLong(1,resourceId);
-            stmt.setLong(2,adId.longValue());
-            stmt.setLong(3,dataKey);
+            stmt.setLong(1, resourceId);
+            stmt.setLong(2, adId.longValue());
+            stmt.setLong(3, dataKey);
             stmt.addBatch();
             size++;
         }
@@ -1023,15 +1021,16 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_generic_resource" + 
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_generic_resource"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         System.out.println("Generic resource importing finished!\n");
     }
 
-    private void importAttributeBoolean() throws Exception
+    private void importAttributeBoolean()
+        throws Exception
     {
         System.out.println("Boolean attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("boolean");
@@ -1040,10 +1039,10 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_boolean");
-        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_boolean " + 
-        "(data_key, data) VALUES (?, ?)");
+        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_boolean "
+            + "(data_key, data) VALUES (?, ?)");
         int size = 0;
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1066,16 +1065,17 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_attribute_boolean" + 
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_attribute_boolean"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         updateLedgeIdTabel("coral_attribute_boolean", "data_key");
         System.out.println("Boolean attribute importing finished!'\n");
     }
 
-    private void importAttributeInteger() throws Exception
+    private void importAttributeInteger()
+        throws Exception
     {
         System.out.println("Integer attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("integer");
@@ -1084,10 +1084,10 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_integer");
-        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_integer " + 
-        "(data_key, data) VALUES (?, ?)");
+        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_integer "
+            + "(data_key, data) VALUES (?, ?)");
         int size = 0;
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1110,16 +1110,17 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_attribute_integer" + 
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_attribute_integer"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         updateLedgeIdTabel("coral_attribute_integer", "data_key");
         System.out.println("Integer attribute importing finished!\n");
     }
 
-    private void importAttributeLong() throws Exception
+    private void importAttributeLong()
+        throws Exception
     {
         System.out.println("Long attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("long");
@@ -1128,10 +1129,10 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_long");
-        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_long " + 
-        "(data_key, data) VALUES (?, ?)");
+        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_long "
+            + "(data_key, data) VALUES (?, ?)");
         int size = 0;
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1154,16 +1155,17 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_attribute_long" + 
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_attribute_long"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         updateLedgeIdTabel("coral_attribute_long", "data_key");
         System.out.println("Long attribute importing finished!\n");
     }
 
-    private void importAttributeNumber() throws Exception
+    private void importAttributeNumber()
+        throws Exception
     {
         System.out.println("Number attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("number");
@@ -1172,10 +1174,10 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_number");
-        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_number " + 
-        "(data_key, data) VALUES (?, ?)");
+        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_number "
+            + "(data_key, data) VALUES (?, ?)");
         int size = 0;
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1198,16 +1200,17 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_attribute_number" + 
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_attribute_number"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         updateLedgeIdTabel("coral_attribute_number", "data_key");
         System.out.println("Number attribute importing finished!\n");
     }
 
-    private void importAttributeString() throws Exception
+    private void importAttributeString()
+        throws Exception
     {
         System.out.println("String attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("string");
@@ -1216,10 +1219,10 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_string");
-        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_string " + 
-        "(data_key, data) VALUES (?, ?)");
+        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_string "
+            + "(data_key, data) VALUES (?, ?)");
         int size = 0;
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1234,7 +1237,8 @@ public class ARLImporterComponent
             stmt.setString(2, escapedData);
             if(data.length() > 255 || escapedData.length() > 255)
             {
-                System.out.println("Data key:"+dataKey+ " source length:"+data.length()+" escaped length:"+escapedData.length());
+                System.out.println("Data key:" + dataKey + " source length:" + data.length()
+                    + " escaped length:" + escapedData.length());
                 System.out.println("------------------");
                 System.out.println(data);
                 System.out.println("------------------");
@@ -1253,16 +1257,17 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_attribute_string" + 
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_attribute_string"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         updateLedgeIdTabel("coral_attribute_string", "data_key");
         System.out.println("String attribute importing finished!\n");
     }
 
-    private void importAttributeText() throws Exception
+    private void importAttributeText()
+        throws Exception
     {
         System.out.println("Text attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("text");
@@ -1271,10 +1276,10 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_text");
-        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_text " + 
-        "(data_key, data) VALUES (?, ?)");
+        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_text "
+            + "(data_key, data) VALUES (?, ?)");
         int size = 0;
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1299,16 +1304,17 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_attribute_text" + 
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_attribute_text"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         updateLedgeIdTabel("coral_attribute_text", "data_key");
         System.out.println("Text attribute importing finished!\n");
     }
 
-    private void importAttributeDate() throws Exception
+    private void importAttributeDate()
+        throws Exception
     {
         System.out.println("Date attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("date");
@@ -1317,10 +1323,10 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_date");
-        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_date " + 
-            "(data_key, data) VALUES (?, ?)");
+        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_attribute_date "
+            + "(data_key, data) VALUES (?, ?)");
         int size = 0;
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1343,16 +1349,17 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from arl_attribute_date" + 
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from arl_attribute_date"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         updateLedgeIdTabel("coral_attribute_date", "data_key");
         System.out.println("Date attribute importing finished!\n");
     }
 
-    private void importAttributeDateRange() throws Exception
+    private void importAttributeDateRange()
+        throws Exception
     {
         System.out.println("Date range attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("date_range");
@@ -1362,11 +1369,11 @@ public class ARLImporterComponent
         }
         System.out.println("Date range attribute importing started...");
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_date_range");
-        PreparedStatement stmt = targetConn.
-            prepareStatement("INSERT INTO coral_attribute_date_range " +
-                             "(data_key, startDate, endDate) VALUES (?, ?, ?)");
+        PreparedStatement stmt = targetConn
+            .prepareStatement("INSERT INTO coral_attribute_date_range "
+                + "(data_key, startDate, endDate) VALUES (?, ?, ?)");
         int size = 0;
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1391,16 +1398,17 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records from 'arl_attribute_date_range'" +
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records from 'arl_attribute_date_range'"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         updateLedgeIdTabel("coral_attribute_date_range", "data_key");
         System.out.println("Date range attribute importing finished!\n");
     }
 
-    private void importAttributeResourceClass() throws Exception
+    private void importAttributeResourceClass()
+        throws Exception
     {
         System.out.println("Resource class attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("resource_class");
@@ -1409,7 +1417,7 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_resource_class");
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1424,8 +1432,8 @@ public class ARLImporterComponent
             {
                 continue;
             }
-            targetStmt.execute("INSERT INTO coral_attribute_resource_class" +
-                               " (data_key, ref) " + "VALUES (" + dataKey + "," + rcId + ")");
+            targetStmt.execute("INSERT INTO coral_attribute_resource_class" + " (data_key, ref) "
+                + "VALUES (" + dataKey + "," + rcId + ")");
         }
         updateLedgeIdTabel("coral_attribute_resource_class", "data_key");
         System.out.println("Resource class attribute importing finished!\n");
@@ -1436,7 +1444,8 @@ public class ARLImporterComponent
      * 
      * @throws Exception if anything goes wrong
      */
-    private void importAttributeResource() throws Exception
+    private void importAttributeResource()
+        throws Exception
     {
         System.out.println("Resource attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("resource");
@@ -1445,7 +1454,7 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_resource");
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1459,8 +1468,8 @@ public class ARLImporterComponent
             {
                 continue;
             }
-            targetStmt.execute("INSERT INTO coral_attribute_resource" + " (data_key, ref) " +
-                               "VALUES (" + dataKey + "," + ref + ")");
+            targetStmt.execute("INSERT INTO coral_attribute_resource" + " (data_key, ref) "
+                + "VALUES (" + dataKey + "," + ref + ")");
         }
         updateLedgeIdTabel("coral_attribute_resource", "data_key");
         System.out.println("Resource attribute importing started!\n");
@@ -1471,7 +1480,8 @@ public class ARLImporterComponent
      * 
      * @throws Exception if anything goes wrong
      */
-    private void importAttributeSubject() throws Exception
+    private void importAttributeSubject()
+        throws Exception
     {
         System.out.println("Subject attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("subject");
@@ -1480,7 +1490,7 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_subject");
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1489,19 +1499,20 @@ public class ARLImporterComponent
                 continue;
             }
             long ref = rs.getLong("ref");
-            targetStmt.execute("INSERT INTO coral_attribute_subject" + " (data_key, ref) " +
-                               "VALUES (" + dataKey + "," + ref + ")");
+            targetStmt.execute("INSERT INTO coral_attribute_subject" + " (data_key, ref) "
+                + "VALUES (" + dataKey + "," + ref + ")");
         }
         updateLedgeIdTabel("coral_attribute_subject", "data_key");
         System.out.println("Subject attribute importing finished!\n");
     }
-    
+
     /**
      * Copy role attributes content.
      * 
      * @throws Exception if anything goes wrong
      */
-    private void importAttributeRole() throws Exception
+    private void importAttributeRole()
+        throws Exception
     {
         System.out.println("Role attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("role");
@@ -1510,7 +1521,7 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_role");
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1519,8 +1530,8 @@ public class ARLImporterComponent
                 continue;
             }
             long ref = rs.getLong("ref");
-            targetStmt.execute("INSERT INTO coral_attribute_role" + " (data_key, ref) " +
-                               "VALUES (" + dataKey + "," + ref + ")");
+            targetStmt.execute("INSERT INTO coral_attribute_role" + " (data_key, ref) "
+                + "VALUES (" + dataKey + "," + ref + ")");
         }
         updateLedgeIdTabel("coral_attribute_role", "data_key");
         System.out.println("Role attribute importing finished!\n");
@@ -1531,7 +1542,8 @@ public class ARLImporterComponent
      * 
      * @throws Exception if anything goes wrong
      */
-    private void importAttributePermission() throws Exception
+    private void importAttributePermission()
+        throws Exception
     {
         System.out.println("Permission attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("permission");
@@ -1540,7 +1552,7 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_permission");
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1555,8 +1567,8 @@ public class ARLImporterComponent
             {
                 continue;
             }
-            targetStmt.execute("INSERT INTO coral_attribute_permission" + " (data_key, ref) " +
-                               "VALUES (" + dataKey + "," + pId + ")");
+            targetStmt.execute("INSERT INTO coral_attribute_permission" + " (data_key, ref) "
+                + "VALUES (" + dataKey + "," + pId + ")");
         }
         updateLedgeIdTabel("coral_attribute_permission", "data_key");
         System.out.println("Permission attribute importing finished!\n");
@@ -1567,7 +1579,8 @@ public class ARLImporterComponent
      * 
      * @throws Exception if anything goes wrong
      */
-    private void importAttributeResourceList() throws Exception
+    private void importAttributeResourceList()
+        throws Exception
     {
         System.out.println("Resource list attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("resource_list");
@@ -1576,7 +1589,7 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_resource_list");
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1586,9 +1599,8 @@ public class ARLImporterComponent
             }
             int pos = rs.getInt("pos");
             long ref = rs.getLong("ref");
-            targetStmt.execute("INSERT INTO coral_attribute_resource_list" + 
-                               " (data_key, pos, ref) " + "VALUES (" + dataKey + 
-                               "," + pos + "," + ref + ")");
+            targetStmt.execute("INSERT INTO coral_attribute_resource_list"
+                + " (data_key, pos, ref) " + "VALUES (" + dataKey + "," + pos + "," + ref + ")");
         }
         updateLedgeIdTabel("coral_attribute_resource_list", "data_key");
         System.out.println("Resource list attribute importing started!\n");
@@ -1599,7 +1611,8 @@ public class ARLImporterComponent
      * 
      * @throws Exception if anything goes wrong
      */
-    private void importAttributeWeakResourceList() throws Exception
+    private void importAttributeWeakResourceList()
+        throws Exception
     {
         System.out.println("Weak resource list attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("weak_resource_list");
@@ -1608,7 +1621,7 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_weak_resource_lis");
-        while (rs.next())
+        while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
             Long dataKeyLong = new Long(dataKey);
@@ -1618,9 +1631,8 @@ public class ARLImporterComponent
             }
             int pos = rs.getInt("pos");
             long ref = rs.getLong("ref");
-            targetStmt.execute(
-                "INSERT INTO coral_attribute_weak_resource_list" + 
-                " (data_key, pos, ref) " + "VALUES (" + dataKey + "," + pos + "," + ref + ")");
+            targetStmt.execute("INSERT INTO coral_attribute_weak_resource_list"
+                + " (data_key, pos, ref) " + "VALUES (" + dataKey + "," + pos + "," + ref + ")");
         }
         updateLedgeIdTabel("coral_attribute_weak_resource_list", "data_key");
         System.out.println("Weak resource list attribute importing finished!\n");
@@ -1631,7 +1643,8 @@ public class ARLImporterComponent
      * 
      * @throws Exception if anything goes wrong
      */
-    private void importAttributeCrossReference() throws Exception
+    private void importAttributeCrossReference()
+        throws Exception
     {
         Set classSet = (Set)ignoredDataKeys.get("cross_reference");
         if(classSet == null)
@@ -1639,7 +1652,8 @@ public class ARLImporterComponent
             classSet = new HashSet();
         }
         System.out.println("Cross reference attribute importing started...");
-        ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_class WHERE name = 'cross_reference'");
+        ResultSet rs = sourceStmt
+            .executeQuery("SELECT * FROM arl_attribute_class WHERE name = 'cross_reference'");
         long acId = -1;
         if(rs.next())
         {
@@ -1649,11 +1663,11 @@ public class ARLImporterComponent
         {
             throw new Exception("no cross reference attribute definition");
         }
-        String query = "SELECT rc.name, ad.attribute_definition_id, " +
-                "ad.name AS adname FROM arl_resource_class rc, " +
-                "arl_attribute_definition ad WHERE " +
-                "rc.resource_class_id = ad.resource_class_id AND " +
-                "ad.attribute_class_id = "+acId;
+        String query = "SELECT rc.name, ad.attribute_definition_id, "
+            + "ad.name AS adname FROM arl_resource_class rc, "
+            + "arl_attribute_definition ad WHERE "
+            + "rc.resource_class_id = ad.resource_class_id AND " + "ad.attribute_class_id = "
+            + acId;
         rs = sourceStmt.executeQuery(query);
         Map adMap = new HashMap();
         while(rs.next())
@@ -1662,37 +1676,34 @@ public class ARLImporterComponent
             String attributeName = rs.getString("adname");
             long adId = rs.getLong("attribute_definition_id");
             String relationName = resolveCrossReference(className, attributeName);
-            System.out.println("XREF Mapping: "+adId+" => "+relationName);
+            System.out.println("XREF Mapping: " + adId + " => " + relationName);
             adMap.put(new Long(adId), relationName);
         }
-        
+
         Iterator it = adMap.keySet().iterator();
         int relationId = 0;
-        query = "SELECT cr.resource1, cr.resource2, gr.data_key AS grdatakey FROM " +
-        "arl_attribute_cross_reference cr, " +
-        "arl_generic_resource gr WHERE " +
-        "cr.data_key = gr.data_key AND " +
-        "gr.attribute_definition_id = ";
+        query = "SELECT cr.resource1, cr.resource2, gr.data_key AS grdatakey FROM "
+            + "arl_attribute_cross_reference cr, " + "arl_generic_resource gr WHERE "
+            + "cr.data_key = gr.data_key AND " + "gr.attribute_definition_id = ";
         while(it.hasNext())
         {
             Long adId = (Long)it.next();
             String relationName = (String)adMap.get(adId);
             /**
-            if(relationName.trim().equals("IGNORE"))
-            {
-                continue;
-            }
-            */
+             if(relationName.trim().equals("IGNORE"))
+             {
+             continue;
+             }
+             */
             relationId++;
-            targetStmt.execute(
-                "INSERT INTO coral_relation " + 
-                " (relation_id, name) " + "VALUES (" + relationId + ",'" + relationName + "')");
-            rs = sourceStmt.executeQuery(query+adId);
-            PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_relation_data " + 
-                "(relation_id, resource1, resource2) VALUES (?, ?, ?)");
+            targetStmt.execute("INSERT INTO coral_relation " + " (relation_id, name) " + "VALUES ("
+                + relationId + ",'" + relationName + "')");
+            rs = sourceStmt.executeQuery(query + adId);
+            PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO coral_relation_data "
+                + "(relation_id, resource1, resource2) VALUES (?, ?, ?)");
             int size = 0;
             Set alreadyInserted = new HashSet();
-            while (rs.next())
+            while(rs.next())
             {
                 long resource1 = rs.getLong("resource1");
                 long resource2 = rs.getLong("resource2");
@@ -1712,8 +1723,9 @@ public class ARLImporterComponent
                 {
                     continue;
                 }
-                System.out.println("Relation: '"+relationName+"', R1:"+resource1+", R2:"+resource2);
-                String key = ""+relationId+"_"+resource1+"_"+resource2;
+                System.out.println("Relation: '" + relationName + "', R1:" + resource1 + ", R2:"
+                    + resource2);
+                String key = "" + relationId + "_" + resource1 + "_" + resource2;
                 if(alreadyInserted.contains(key))
                 {
                     System.out.println("Duplicate!");
@@ -1731,17 +1743,17 @@ public class ARLImporterComponent
             {
                 try
                 {
-                    System.out.println("Adding to relation ID "+relationId);
+                    System.out.println("Adding to relation ID " + relationId);
                     result = stmt.executeBatch();
                 }
                 catch(SQLException e)
                 {
                     throw e.getNextException();
                 }
-                if (result.length != size)
+                if(result.length != size)
                 {
-                    throw new Exception("Failed to copy all records from arl_attribute_date" + 
-                                         " - source length:" + size + " , copied: " + result.length);
+                    throw new Exception("Failed to copy all records from arl_attribute_date"
+                        + " - source length:" + size + " , copied: " + result.length);
                 }
             }
         }
@@ -1754,7 +1766,8 @@ public class ARLImporterComponent
      * 
      * @throws Exception if anything goes wrong
      */
-    private void importAttributeParameters() throws Exception
+    private void importAttributeParameters()
+        throws Exception
     {
         System.out.println("Parameters attribute importing started...");
         Set classSet = (Set)ignoredDataKeys.get("parameter_container");
@@ -1762,12 +1775,12 @@ public class ARLImporterComponent
         {
             classSet = new HashSet();
         }
-        String query1 = "SELECT attribute_class_id from arl_attribute_class" +
-            " where name = 'parameter_container'";
-        String query2 = "SELECT resource_id, container_id, p.name AS pname, p.value AS value from arl_attribute_definition ad, " +
-                "arl_generic_resource gr, parameter_container p " +
-                "WHERE ad.attribute_definition_id = gr.attribute_definition_id " +
-                "AND p.container_id = gr.data_key AND ad.attribute_class_id = ";
+        String query1 = "SELECT attribute_class_id from arl_attribute_class"
+            + " where name = 'parameter_container'";
+        String query2 = "SELECT resource_id, container_id, p.name AS pname, p.value AS value "
+            + "FROM arl_attribute_definition ad, arl_generic_resource gr, parameter_container p "
+            + "WHERE ad.attribute_definition_id = gr.attribute_definition_id "
+            + "AND p.container_id = gr.data_key AND ad.attribute_class_id = ";
         ResultSet rs = sourceStmt.executeQuery(query1);
         long acId = -1;
         if(rs.next())
@@ -1778,9 +1791,9 @@ public class ARLImporterComponent
         {
             throw new Exception("couldn't find parameters_container attribute class");
         }
-        rs = sourceStmt.executeQuery(query2+acId);
-        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO ledge_parameters " + 
-            "(parameters_id, name, value) VALUES (?, ?, ?)");
+        rs = sourceStmt.executeQuery(query2 + acId);
+        PreparedStatement stmt = targetConn.prepareStatement("INSERT INTO ledge_parameters "
+            + "(parameters_id, name, value) VALUES (?, ?, ?)");
         int size = 0;
         while(rs.next())
         {
@@ -1812,15 +1825,15 @@ public class ARLImporterComponent
         {
             throw e.getNextException();
         }
-        if (result.length != size)
+        if(result.length != size)
         {
-            throw new Exception("Failed to copy all records to ledge_parameters" + 
-                                 " - source length:" + size + " , copied: " + result.length);
+            throw new Exception("Failed to copy all records to ledge_parameters"
+                + " - source length:" + size + " , copied: " + result.length);
         }
         updateLedgeIdTabel("ledge_parameters", "parameters_id");
         System.out.println("Parameters attribute importing finished!\n");
-    }    
-    
+    }
+
     /**
      * Backslash escape the \ and ' characters.
      * 
@@ -1856,18 +1869,18 @@ public class ARLImporterComponent
         Map temp = (Map)xrefMap.get(className);
         if(temp == null)
         {
-            throw new Exception("Couldn't find mapping for attribute '"+attrName+
-                "' in class '"+className+"'");
+            throw new Exception("Couldn't find mapping for attribute '" + attrName + "' in class '"
+                + className + "'");
         }
         String relationName = (String)temp.get(attrName);
         if(relationName == null)
         {
-            throw new Exception("Couldn't find mapping for attribute '"+attrName+
-                "' in class '"+className+"'");
+            throw new Exception("Couldn't find mapping for attribute '" + attrName + "' in class '"
+                + className + "'");
         }
         return relationName;
     }
-    
+
     /**
      * Resolve cross reference mapping. 
      */
@@ -1881,7 +1894,7 @@ public class ARLImporterComponent
         }
         return newClassName;
     }
-    
+
     /**
      * Simple wrapper for resource. 
      *
@@ -1889,16 +1902,27 @@ public class ARLImporterComponent
     private class ResourceData
     {
         long resourceId;
+
         Long resourceIdLong;
+
         long resourceClassId;
+
         Long resourceClassIdLong;
+
         long parent;
+
         Long parentLong;
+
         String name;
+
         long createdBy;
+
         Date creationTime;
+
         long ownedBy;
+
         long modifiedBy;
+
         Date modificationTime;
 
         public ResourceData(ResultSet rs)
@@ -1946,7 +1970,7 @@ public class ARLImporterComponent
             stmt.setDate(9, modificationTime);
             stmt.addBatch();
         }
-        
+
         public Long getId()
         {
             return resourceIdLong;
@@ -1956,19 +1980,19 @@ public class ARLImporterComponent
         {
             return parentLong;
         }
-        
+
         public Long getResourceClass()
         {
             return resourceClassIdLong;
         }
-        
+
         public void setResourceClass(Long rcId)
         {
             resourceClassIdLong = rcId;
             resourceClassId = rcId.longValue();
         }
     }
-    
+
     /**
      * Convert string to camel case.
      * 
@@ -1978,20 +2002,20 @@ public class ARLImporterComponent
     private String camelCaseAttribute(String input)
     {
         if(input.indexOf("_") < 0)
-        {   
+        {
             return input;
         }
-        StringTokenizer st2 = new StringTokenizer(input,"_");
+        StringTokenizer st2 = new StringTokenizer(input, "_");
         String result = st2.nextToken();
         while(st2.hasMoreTokens())
         {
             String temp = st2.nextToken();
-            result = result+temp.substring(0,1).toUpperCase();
-            result = result+temp.substring(1,temp.length());
+            result = result + temp.substring(0, 1).toUpperCase();
+            result = result + temp.substring(1, temp.length());
         }
-        return result;        
+        return result;
     }
-    
+
     /**
      * Fix the ledge_id_table for given table.
      * 
@@ -2002,30 +2026,29 @@ public class ARLImporterComponent
     private void updateLedgeIdTabel(String tableName, String pKey)
         throws Exception
     {
-        long maxKey = 1; 
-        ResultSet rs = targetStmt.executeQuery("SELECT "+pKey+" FROM "+tableName+
-            " ORDER BY "+pKey+" DESC LIMIT 1");
+        long maxKey = 1;
+        ResultSet rs = targetStmt.executeQuery("SELECT " + pKey + " FROM " + tableName
+            + " ORDER BY " + pKey + " DESC LIMIT 1");
         if(rs.next())
         {
-            maxKey = rs.getLong(pKey)+1;
+            maxKey = rs.getLong(pKey) + 1;
         }
         else
         {
             maxKey = 1;
         }
-        rs = targetStmt.executeQuery("SELECT * FROM ledge_id_table " +
-                "WHERE table_name = '"+tableName+"'");
+        rs = targetStmt.executeQuery("SELECT * FROM ledge_id_table " + "WHERE table_name = '"
+            + tableName + "'");
         boolean exist = rs.next();
         if(exist)
         {
-            targetStmt.execute(
-                "UPDATE ledge_id_table SET next_id = "+maxKey+" WHERE table_name = '"+tableName+"'");
+            targetStmt.execute("UPDATE ledge_id_table SET next_id = " + maxKey
+                + " WHERE table_name = '" + tableName + "'");
         }
         else
         {
-            targetStmt.execute(
-                "INSERT INTO ledge_id_table" + 
-                " (next_id, table_name) " + "VALUES (" + maxKey + ",'" + tableName + "')");
+            targetStmt.execute("INSERT INTO ledge_id_table" + " (next_id, table_name) "
+                + "VALUES (" + maxKey + ",'" + tableName + "')");
         }
     }
 }
