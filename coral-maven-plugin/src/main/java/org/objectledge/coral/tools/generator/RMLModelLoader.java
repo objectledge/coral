@@ -73,11 +73,11 @@ import org.objectledge.coral.tools.generator.model.Schema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.3 2004-03-23 09:57:26 fil Exp $
+ * @version $Id: RMLModelLoader.java,v 1.4 2004-03-23 10:03:03 fil Exp $
  */
 public class RMLModelLoader
 {
-    private RMLParserFactory parserFactory;
+    private RMLParserFactory parserFactory = new RMLParserFactory();
     private RMLVisistor visitor = new RMLVisistor();
     private List exceptions = new ArrayList();    
     private Schema schema;
@@ -86,12 +86,10 @@ public class RMLModelLoader
      * Creates a model loader instance.
      * 
      * @param schema the schema to load data into.
-     * @param parserFactory the factory of RML parsers.
      */
-    public RMLModelLoader(Schema schema, RMLParserFactory parserFactory)
+    public RMLModelLoader(Schema schema)
     {
         this.schema = schema;
-        this.parserFactory = parserFactory;
     }
     
     /**
@@ -131,7 +129,7 @@ public class RMLModelLoader
     /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.3 2004-03-23 09:57:26 fil Exp $
+     * @version $Id: RMLModelLoader.java,v 1.4 2004-03-23 10:03:03 fil Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {

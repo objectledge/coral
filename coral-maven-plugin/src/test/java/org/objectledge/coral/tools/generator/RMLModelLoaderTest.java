@@ -39,25 +39,19 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoaderTest.java,v 1.2 2004-03-23 09:57:37 fil Exp $
+ * @version $Id: RMLModelLoaderTest.java,v 1.3 2004-03-23 10:03:04 fil Exp $
  */
 public class RMLModelLoaderTest
     extends LedgeTestCase
 {
     private Schema schema;
     private RMLModelLoader modelLoader;
-    private static RMLParserFactory parserFactory;
 
     public void setUp()
     {
-        if(parserFactory == null)
-        {
-            parserFactory = new RMLParserFactory();
-        }
         schema = new Schema();
-        modelLoader = new RMLModelLoader(schema, parserFactory);
+        modelLoader = new RMLModelLoader(schema);
     }
-
 
     public void testError()
         throws Exception
