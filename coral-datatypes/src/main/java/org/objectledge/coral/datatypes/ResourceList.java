@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 
@@ -18,7 +19,7 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>  
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceList.java,v 1.4 2005-01-17 11:20:23 rafal Exp $
+ * @version $Id: ResourceList.java,v 1.5 2005-02-21 11:52:20 rafal Exp $
  */
 public class ResourceList
     extends AbstractList
@@ -33,9 +34,9 @@ public class ResourceList
 
     // instance variables ////////////////////////////////////////////////////
 
-    /** The coral store. */
-    protected CoralStore coralStore;
-
+    /** The session factory. */
+    protected CoralSessionFactory coralSessionFactory;
+    
     /** The resource ids. */
 	protected long[] ids = new long[CAPACITY_INITIAL];
 
@@ -48,12 +49,12 @@ public class ResourceList
     /**
      * Creates an empty list.
      * 
-     * @param coralStore the coral store.
+     * @param coralSessionFactory the Coral session factory. 
      */
-    public ResourceList(CoralStore coralStore)
+    public ResourceList(CoralSessionFactory coralSessionFactory)
     {
         super();
-        this.coralStore = coralStore;
+        this.coralSessionFactory = coralSessionFactory;
     }
 
     /**
@@ -61,12 +62,12 @@ public class ResourceList
      *
      * <p>The collection should contain Resource or Long objects.</p>
      *
-     * @param coralStore the coral store.
+     * @param coralSessionFactory the Coral session factory. 
      * @param elements the collection of resources or identifiers.
      */
-    public ResourceList(CoralStore coralStore, Collection elements)
+    public ResourceList(CoralSessionFactory coralSessionFactory, Collection elements)
     {
-        this(coralStore);
+        this(coralSessionFactory);
         Iterator i = elements.iterator();
         size = elements.size();
         capacity = size+CAPACITY_INCREMENT;
@@ -125,12 +126,22 @@ public class ResourceList
         }
         try
         {
-            return coralStore.getResource(ids[index]);
+            return getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
             throw new BackendException("resource #"+ids[index]+" dissappeared", e);
         }
+    }
+
+    /**
+     * Returns a CoralStore instance.
+     * 
+     * @return the CoralStore instance.
+     */
+    protected CoralStore getStore()
+    {
+        return coralSessionFactory.getCurrentSession().getStore();
     }
 
     /**
@@ -213,7 +224,7 @@ public class ResourceList
         Object old;
         try
         {
-            old = coralStore.getResource(ids[index]);
+            old = getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -236,7 +247,7 @@ public class ResourceList
         Object old;
         try
         {
-            old = coralStore.getResource(ids[index]);
+            old = getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {

@@ -38,6 +38,8 @@ import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
+import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.Database;
@@ -57,6 +59,10 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
     private CoralSecurity coralSecurity;
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
+    private Mock mockCoralSessionFactory;
+    private CoralSessionFactory coralSessionFactory;
+    private Mock mockCoralSession;
+    private CoralSession coralSession;
     private Mock mockAttributeClass;
     private AttributeClass attributeClass;
 
@@ -91,12 +97,19 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
+        mockCoralSession = mock(CoralSession.class);
+        coralSession = (CoralSession)mockCoralSession.proxy();
+        mockCoralSession.stubs().method("getStore").will(returnValue(coralStore));
+        mockCoralSessionFactory = mock(CoralSessionFactory.class);
+        coralSessionFactory = (CoralSessionFactory)mockCoralSessionFactory.proxy();
+        mockCoralSessionFactory.stubs().method("getCurrentSession").will(returnValue(coralSession));
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(WeakResourceList.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("weak_resource_list"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_weak_resource_list"));
-        handler = new WeakResourceListAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
+        handler = new WeakResourceListAttributeHandler(database, coralStore, coralSecurity, 
+            coralSchema, coralSessionFactory, attributeClass);
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement = mock(Statement.class);
@@ -119,7 +132,7 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
         
         ArrayList list = new ArrayList();
         list.add(resource);
-        resourceList = new WeakResourceList(coralStore, list);
+        resourceList = new WeakResourceList(coralSessionFactory, list);
     }
 
     public void testAttributeHandlerBase()

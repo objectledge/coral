@@ -15,6 +15,7 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.Database;
@@ -23,13 +24,16 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceListAttributeHandler.java,v 1.9 2005-01-20 10:48:26 rafal Exp $
+ * @version $Id: ResourceListAttributeHandler.java,v 1.10 2005-02-21 11:52:20 rafal Exp $
  */
 public class ResourceListAttributeHandler
     extends AttributeHandlerBase
 {
     /** preloading cache. */
     protected ResourceList[] cache; 
+    
+    /** the CoralSessionFactory. */
+    protected CoralSessionFactory coralSessionFactory;
 
     /**
      * The constructor.
@@ -37,14 +41,17 @@ public class ResourceListAttributeHandler
      * @param database the database.
      * @param coralStore the store.
      * @param coralSecurity the security.
-     * @param coralSchema the scheam.
+     * @param coralSchema the schema.
+     * @param coralSessionFactory the session factory.
      * @param attributeClass the attribute class.
      */
     public ResourceListAttributeHandler(Database database, CoralStore coralStore,
                                          CoralSecurity coralSecurity, CoralSchema coralSchema,
+                                         CoralSessionFactory coralSessionFactory,
                                          AttributeClass attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
+        this.coralSessionFactory = coralSessionFactory;
     }
     
     // AttributeHandler interface ////////////////////////////////////////////
@@ -347,6 +354,6 @@ public class ResourceListAttributeHandler
      */
     protected ResourceList instantiate(List list)
     {
-        return new ResourceList(coralStore, list);
+        return new ResourceList(coralSessionFactory, list);
     }
 }

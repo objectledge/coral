@@ -3,7 +3,7 @@ package org.objectledge.coral.datatypes;
 import java.util.Collection;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.store.CoralStore;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.Resource;
 
 /**
@@ -15,7 +15,7 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: WeakResourceList.java,v 1.3 2005-01-17 11:20:23 rafal Exp $
+ * @version $Id: WeakResourceList.java,v 1.4 2005-02-21 11:52:20 rafal Exp $
  */
 public class WeakResourceList
     extends ResourceList
@@ -23,11 +23,11 @@ public class WeakResourceList
     /**
      * Creates an empty list.
      * 
-     * @param coralStore the coral store.
+     * @param coralSessionFactory the Coral session factory. 
      */
-    public WeakResourceList(CoralStore coralStore)
+    public WeakResourceList(CoralSessionFactory coralSessionFactory)
     {
-        super(coralStore);
+        super(coralSessionFactory);
     }
     
 	/**
@@ -35,12 +35,12 @@ public class WeakResourceList
 	 *
 	 * <p>The collection should contain Resource or Long objects.</p>
 	 *
-     * @param coralStore the coral store.
+     * @param coralSessionFactory the Coral session factory. 
 	 * @param elements the collection of resources or identifiers.
 	 */
-	public WeakResourceList(CoralStore coralStore, Collection elements)
+	public WeakResourceList(CoralSessionFactory coralSessionFactory, Collection elements)
 	{
-		super(coralStore, elements);
+		super(coralSessionFactory, elements);
 	}
 
     
@@ -58,7 +58,7 @@ public class WeakResourceList
         }
         try
         {
-            return coralStore.getResource(ids[index]);
+            return getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -92,7 +92,7 @@ public class WeakResourceList
         Object old = null;
         try
         {
-            old = coralStore.getResource(ids[index]);
+            old = getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -115,7 +115,7 @@ public class WeakResourceList
         Object old = null;
         try
         {
-            old = coralStore.getResource(ids[index]);
+            old = getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -151,7 +151,7 @@ public class WeakResourceList
         {
             try
             {
-                coralStore.getResource(ids[i]);
+                getStore().getResource(ids[i]);
                 buff.append(ids[i]);
             }
             catch(EntityDoesNotExistException e)
