@@ -13,13 +13,13 @@
         </tr>
         <tr>
           <td>Defined in class:</td>
-          <td><a href="$link.view('ResourceClassView').set('res_class_id',$attr_def.declaringClass.id)">$attr_def.declaringClass.name</a></td>
+          <td><a href="$link.view('browser.ResourceClassView').set('res_class_id',$attr_def.declaringClass.id)">$attr_def.declaringClass.name</a></td>
         </tr>
         <tr>
           <td>Domain:</td>
           <td>
             #if($attr_def.domain)
-              <a href="$link.view('ResourceClassView').set('res_class_id',$attr.declaringClass.id)">
+              <a href="$link.view('browser.ResourceClassView').set('res_class_id',$attr.declaringClass.id)">
                 $attr_def.domain
               </a>
             #else
@@ -47,18 +47,18 @@
                   #set($res2 = $res_id)
                  #end
                   <td>
-                  <a href="$link.view('ResourceView').set('res_id',$res_id)">resource nb. $res_id</a>
+                  <a href="$link.view('browser.ResourceView').set('res_id',$res_id)">resource nb. $res_id</a>
                   </td>
                 #end
                   <td>
-                    <a href="$link.action('DeleteRelation').set('res_id',$resource.id).set('attr_name',$attr_def.name).set('res_1',$res1).set('res_2',$res2)">
+                    <a href="$link.action('browser.DeleteRelation').set('res_id',$resource.id).set('attr_name',$attr_def.name).set('res_1',$res1).set('res_2',$res2)">
                    delete
                     </a>
                   </td>
                 </tr>
               #end
                 <tr>
-                  <form name="add_relation" method="post" action='$link.action('AddRelation')'>
+                  <form name="add_relation" method="post" action='$link.action('browser.AddRelation')'>
                   <input type="hidden" name="res_id" value="$resource.id">
                   <input type="hidden" name="attr_name" value="$attr_def.name">
                   <td>
@@ -84,16 +84,16 @@
               #foreach($res in $resource.get($attr_def))
                 <tr>
                   <td>
-                  <a href="$link.view('ResourceView').set('res_id',$res.id)">$res.path</a>($res.id) 
+                  <a href="$link.view('browser.ResourceView').set('res_id',$res.id)">$res.path</a>($res.id) 
                   </td>
                   <td>
-                    <a href="$link.action('RemoveFromResourceList').set('res_id',$resource.id).set('attr_name',$attr_def.name).set('res_1',$res.id)">
+                    <a href="$link.action('browser.RemoveFromResourceList').set('res_id',$resource.id).set('attr_name',$attr_def.name).set('res_1',$res.id)">
                     delete</a>
                   </td>
                 </tr>
               #end
                 <tr>
-                  <form name="add_to_list" method="post" action='$link.action('AddToResourceList')'>
+                  <form name="add_to_list" method="post" action='$link.action('browser.AddToResourceList')'>
                   <input type="hidden" name="res_id" value="$resource.id">
                   <input type="hidden" name="attr_name" value="$attr_def.name">
                   <td>
@@ -107,7 +107,7 @@
                 </tr>
               </table>
             #elseif($attr_def.attributeClass.name == 'resource')
-              <a href="$link.view('ResourceView').set('res_id',$resource.get($attr_def).id)">
+              <a href="$link.view('browser.ResourceView').set('res_id',$resource.get($attr_def).id)">
                 $resource.get($attr_def).path</a>
             #else
               $attr_def.attributeClass.handler.toPrintableString($resource.get($attr_def))
