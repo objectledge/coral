@@ -34,6 +34,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import org.jmock.Mock;
+import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
@@ -84,7 +85,8 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
         database = (Database)mockDatabase.proxy();
 
         mockCoralStore = mock(CoralStore.class);
-        mockCoralStore.stubs().method("getResource").will(returnValue(resource));
+        mockCoralStore.stubs().method("getResource").with(eq(1L)).will(returnValue(resource));
+        mockCoralStore.stubs().method("getResourceByPath").with(eq("/bar")).will(returnValue(new Resource[0]));
         coralStore = (CoralStore)mockCoralStore.proxy();
         mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
@@ -179,7 +181,7 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
     {
         try
         {
-            handler.toAttributeValue("bar");
+            handler.toAttributeValue("/bar");
             fail("should throw the exception");
         }
         catch (IllegalArgumentException e)
