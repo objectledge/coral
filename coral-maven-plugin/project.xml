@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.16 2004-05-27 12:31:37 fil Exp $ -->
+<!-- $Id: project.xml,v 1.17 2004-05-27 12:40:37 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -213,12 +213,12 @@
     <dependency>
       <groupId>maven</groupId>
       <artifactId>maven</artifactId>
-      <version>1.0-rc2</version>
+      <version>1.0-rc3</version>
     </dependency>
     <dependency>
       <groupId>maven</groupId>
       <artifactId>maven-jelly-tags</artifactId>
-      <version>20040427.080410</version>
+      <version>20040429.235300</version>
     </dependency>
 
     <!-- testing -->
