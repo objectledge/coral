@@ -42,6 +42,12 @@
  * MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category') } }
  * +
  * MAP('category-categorization'){ MAPTRANS('category-hier'){ RES('/path/to/category2') } };
+ *
+ * second example:
+ * 
+ * MAP('category-categorization'){ MAPTRANS('resource_hierarchy'){ RES(1234) } }
+ * +
+ * MAP('category-categorization'){ MAPTRANS('resource_hierarchy'){ RES(3213) } };
  */
 
 options
