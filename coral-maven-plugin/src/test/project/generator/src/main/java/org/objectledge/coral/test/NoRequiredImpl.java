@@ -167,7 +167,8 @@ public class NoRequiredImpl
         }
         else
         {
-            throw new IllegalStateException("attribute value is undefined");
+            throw new IllegalStateException("value of attribute i4 is undefined"+
+			    " for resource #"+getId());
         }
     }
 

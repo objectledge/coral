@@ -122,8 +122,8 @@ public class SymbolicLinkImpl
      * @return a new SymbolicLink instance.
      * @throws ValueRequiredException if one of the required attribues is undefined.
      */
-    public static SymbolicLink createSymbolicLink(CoralSession session, String name, Resource parent, 
-        Resource target)
+    public static SymbolicLink createSymbolicLink(CoralSession session, String name, Resource
+        parent, Resource target)
         throws ValueRequiredException
     {
         try
