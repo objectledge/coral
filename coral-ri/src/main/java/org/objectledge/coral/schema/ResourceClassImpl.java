@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.CoralInstantiationException;
+import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.event.CoralEventHub;
@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.17 2004-03-12 12:00:47 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.18 2004-03-16 13:33:35 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -698,7 +698,7 @@ public class ResourceClassImpl
         {
             throw new JavaClassException(e.getMessage(), e);
         }
-        catch(CoralInstantiationException e)
+        catch(InstantiationException e)
         {
             throw new JavaClassException(e.getMessage(), e.getCause());
         }

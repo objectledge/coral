@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.objectledge.coral.BackendException;
-import org.objectledge.coral.CoralInstantiationException;
+import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.event.AttributeClassChangeListener;
@@ -17,7 +17,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.10 2004-03-11 17:36:17 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.11 2004-03-16 13:33:35 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -267,7 +267,7 @@ public class AttributeClassImpl
         {
             throw new JavaClassException(e.getMessage(), e);
         }
-        catch(CoralInstantiationException e)
+        catch(InstantiationException e)
         {
             throw new JavaClassException(e.getMessage(), e.getCause());
         }

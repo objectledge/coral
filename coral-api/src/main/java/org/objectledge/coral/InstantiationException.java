@@ -31,9 +31,9 @@ package org.objectledge.coral;
  * Thrown when an object could not be instantiated, because of unmet dependendecies.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralInstantiationException.java,v 1.1 2004-03-16 13:02:41 fil Exp $
+ * @version $Id: InstantiationException.java,v 1.1 2004-03-16 13:33:31 fil Exp $
  */
-public class CoralInstantiationException extends Exception
+public class InstantiationException extends Exception
 {
     /**
      * Creates a new instance of the exception.
@@ -41,7 +41,7 @@ public class CoralInstantiationException extends Exception
      * @param msg the detail message.
      * @param cause the root cause of the exception.
      */
-    public CoralInstantiationException(String msg, Throwable cause)
+    public InstantiationException(String msg, Throwable cause)
     {
         super(msg, cause);
     }

@@ -31,7 +31,7 @@ import org.jmock.Constraint;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.BackendException;
-import org.objectledge.coral.CoralInstantiationException;
+import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.event.AttributeClassChangeListener;
 import org.objectledge.coral.event.CoralEventHub;
@@ -45,7 +45,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClassImplTest.java,v 1.3 2004-03-12 09:15:18 fil Exp $
+ * @version $Id: AttributeClassImplTest.java,v 1.4 2004-03-16 13:33:34 fil Exp $
  */
 public class AttributeClassImplTest extends MockObjectTestCase
 {
@@ -137,7 +137,7 @@ public class AttributeClassImplTest extends MockObjectTestCase
     {
         mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
         mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willReturn(AttributeHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).willThrow(new CoralInstantiationException("<handler class>", new Exception("unavailable")));
+        mockInstantiator.expect(once()).method("newInstance").with(eq(AttributeHandler.class), mapElement(AttributeClass.class, isA(AttributeClass.class))).willThrow(new InstantiationException("<handler class>", new Exception("unavailable")));
         try
         {
             new AttributeClassImpl((Persistence)mockPersistence.proxy(), 

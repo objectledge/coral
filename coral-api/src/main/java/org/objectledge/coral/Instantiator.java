@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Instantiator.java,v 1.1 2004-03-16 13:02:41 fil Exp $
+ * @version $Id: Instantiator.java,v 1.2 2004-03-16 13:33:31 fil Exp $
  */
 public interface Instantiator
 {
@@ -53,10 +53,10 @@ public interface Instantiator
      * 
      * @param clazz a Class object.
      * @return the instance of the class.
-     * @throws CoralInstantiationException if the class could not be instantiated.
+     * @throws InstantiationException if the class could not be instantiated.
      */
     public Object newInstance(Class clazz)
-        throws CoralInstantiationException;
+        throws InstantiationException;
         
     /**
      * Creates a new instance of the specified class.
@@ -64,10 +64,10 @@ public interface Instantiator
      * @param clazz a Class object.
      * @param additional additional components to make available to constructor.
      * @return the instance of the class.
-     * @throws CoralInstantiationException if the class could not be instantiated.
+     * @throws InstantiationException if the class could not be instantiated.
      */
     public Object newInstance(Class clazz, Map additional)    
-        throws CoralInstantiationException;    
+        throws InstantiationException;    
         
     /**
      * Creates a PersistentFactory for the specified class.
