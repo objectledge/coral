@@ -19,7 +19,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link Resource} references.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceAttributeHandler.java,v 1.2 2004-04-01 08:54:27 fil Exp $
+ * @version $Id: ResourceAttributeHandler.java,v 1.3 2004-05-06 13:24:05 pablo Exp $
  */
 public class ResourceAttributeHandler
     extends AttributeHandlerBase
@@ -43,14 +43,7 @@ public class ResourceAttributeHandler
     // AttributeHandler interface ////////////////////////////////////////////
 
     /**
-     * Creates a new attribute instance.
-     *
-     * @param value the value of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @return the identifier of the new attribute.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public long create(Object value, Connection conn)
         throws SQLException
@@ -65,13 +58,7 @@ public class ResourceAttributeHandler
     }
 
     /**
-     * Retrieves an attribute value.
-     *
-     * @param id the identifier of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public Object retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -89,16 +76,7 @@ public class ResourceAttributeHandler
     }
 
     /**
-     * Modifies an existing attribute.
-     *
-     * @param id the identifier of the attribute.
-     * @param value the value of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws EntityDoesNotExistException if the attribute with specified id
-     *         does not exist. 
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void update(long id, Object value, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -115,13 +93,7 @@ public class ResourceAttributeHandler
     // meta information //////////////////////////////////////////////////////
     
     /**
-     * Provides information about comparison operations supported by the
-     * attribute type.
-     *
-     * <p>The returned value is a bitwise sum of the CONDITION_*
-     * constants.</p>
-     * @return information about comparison operations supported by the
-     * attribute type.
+     * {@inheritDoc}
      */
     public int getSupportedConditions()
     {
@@ -131,15 +103,7 @@ public class ResourceAttributeHandler
     // protected /////////////////////////////////////////////////////////////
 
     /**
-     * Converts a string into an attribute object.
-     *
-     * <p>If the string starts with a number, it is considered to be resource
-     * id. Otherwise it is considered resource name. If the name is ambigous,
-     * an exception will be thrown.</p>
-     * 
-     * @param string the string to convert.
-     * @return the attribute object, or <code>null</code> if conversion not
-     *         supported. 
+     * {@inheritDoc}
      */
     protected Object fromString(String string)
     {
@@ -171,10 +135,7 @@ public class ResourceAttributeHandler
     }
 
     /**
-     * Converts an attribute value into a human readable string.
-     *
-     * @param value the value to convert.
-     * @return a human readable string.
+     * {@inheritDoc}
      */
     public String toPrintableString(Object value)
     {
@@ -185,9 +146,7 @@ public class ResourceAttributeHandler
     // value domain //////////////////////////////////////////////////////////
 
     /**
-     * Check if the domain constraint is well formed.
-     *
-     * @param domain value domain constraint.
+     * {@inheritDoc}
      */
     public void checkDomain(String domain)
     {
@@ -206,11 +165,7 @@ public class ResourceAttributeHandler
     }   
     
     /**
-     * Check if an attribute value fullfills a domain constraint.
-     *
-     * @param domain value domain constraint.
-     * @param value an attribute value.
-     * @throws ConstraintViolationExcepion if the value does not fulfill the constraint.
+     * {@inheritDoc}
      */
     public void checkDomain(String domain, Object value)
         throws ConstraintViolationException
@@ -246,11 +201,7 @@ public class ResourceAttributeHandler
     // integrity constraints ////////////////////////////////////////////////    
 
     /**
-     * Checks if the attributes of this type can impose integrity constraints 
-     * on the data store.
-     * 
-     * @return <code>true</code> if the attribute can impose constraints on the
-     * data store. 
+     * {@inheritDoc}
      */
     public boolean containsResourceReferences()
     {
@@ -258,11 +209,8 @@ public class ResourceAttributeHandler
     }
     
     /**
-     * Returns the resources referenced by this attribute.
-     * 
-     * @param value the attribute value.
-     * @return resources referenced by this attribute.
-     * */
+     * {@inheritDoc}
+     */
     public Resource[] getResourceReferences(Object value)
     {
         Resource[] result;
@@ -279,14 +227,7 @@ public class ResourceAttributeHandler
     }
     
     /**
-     * Removes all resource attributes from the attribute value.
-     * 
-     * <p>This method may be called during deletion of a group of 
-     * interdependant resources.</p>
-     * 
-     * @param value attribute value.
-     * @return <code>true</code> if the attribute value should be
-     *         removed form the resource.
+     * {@inheritDoc}
      */
     public boolean clearResourceReferences(Object value)
     {

@@ -22,7 +22,7 @@ import org.objectledge.utils.StringUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.2 2004-03-09 15:46:49 fil Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.3 2004-05-06 13:19:59 pablo Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -75,18 +75,7 @@ public abstract class AttributeHandlerBase
     }
 
     /**
-     * Removes an existing attribute.
-     *
-     * <p>This method is implemented here because it is identical for all
-     * generic attributes.</p>
-     *
-     * @param id the identifier of the attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     * @throws EntityDoesNotExistException if the attribute with specified id
-     *         does not exist. 
+     * {@inheritDoc}
      */
     public void delete(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
@@ -101,15 +90,7 @@ public abstract class AttributeHandlerBase
     // meta information //////////////////////////////////////////////////////
 
     /**
-     * Provideds a hint to the ResorceHandler class that it should not cache
-     * the data value used to create the attribute, but re-retrieve the value
-     * from the AttributeHandler and cache that one instead.
-     *
-     * <p>For all common attribute classes the returned value is
-     * <code>false</code>.</p>
-     *
-     * @return <code>false</code> if the data value used for creating the
-     *         resource can be safely cached.
+     * {@inheritDoc}
      */
     public boolean shouldRetrieveAfterCreate()
     {
@@ -117,13 +98,7 @@ public abstract class AttributeHandlerBase
     }
 
     /**
-     * Provides information about comparison operations supported by the
-     * attribute type.
-     *
-     * <p>The returned value is a bitwise sum of the CONDITION_*
-     * constants.</p>
-     * @return information about comparison operations supported by the
-     * attribute type.
+     * {@inheritDoc}
      */
     public int getSupportedConditions()
     {
@@ -131,14 +106,7 @@ public abstract class AttributeHandlerBase
     }
 
     /**
-     * Returns a <code>java.util.Comparator</code> that can be used for
-     * comparing attribute values.
-     *
-     * <p>The returned object's must be written to be safely used by multiple
-     * threads at the same time.</p>
-     *
-     * @returns a <code>Comparator</code> or <code>null</code> if the
-     *          attribute class does not have sensible comparison semantics.
+     * {@inheritDoc}
      */
     public Comparator getComparator()
     {
@@ -154,11 +122,7 @@ public abstract class AttributeHandlerBase
     }
 
     /**
-     * Retruns <code>true</code> if the {@toExternalString()} is supported for
-     * this attribute type.
-     *
-     * @return Retruns <code>true</code> if the {@toExternalString()} is
-     *         supported for this attribute type.
+     * {@inheritDoc}
      */
     public boolean supportsExternalString()
     {
@@ -168,16 +132,7 @@ public abstract class AttributeHandlerBase
     // value conversion //////////////////////////////////////////////////////
 
     /**
-     * Returns an attribute represenation of the passed argument.
-     *
-     * <p>If the passed object is of expeced type, or it's subclass, it is
-     * returned unchanged. If it is of type that the AttributeHandler
-     * recognizes as a suitable for conversion, the conversion will be
-     * performed and the resulting object will be returned. Otherwise,
-     * IllegalArgumentException will be thrown.</p>
-     * 
-     * @param object the object to be checked/converted. 
-     * @return a native representation of the object.
+     * {@inheritDoc}
      */
     public Object toAttributeValue(Object object)
     {
@@ -213,10 +168,7 @@ public abstract class AttributeHandlerBase
     }
 
     /**
-     * Converts an attribute value into a human readable string.
-     *
-     * @param value the value to convert.
-     * @return a human readable string.
+     * {@inheritDoc}
      */
     public String toPrintableString(Object value)
     {
@@ -232,13 +184,7 @@ public abstract class AttributeHandlerBase
     }
     
     /**
-     * Converts an attribute value into a string representation suitable for
-     * using in queries against the underlying data store, like a relational
-     * database.
-     *
-     * @param value the value to convert.
-     * @return a string representation suitable for using in queries agains
-     *         the underlying data store.
+     * {@inheritDoc}
      */
     public String toExternalString(Object value)
     {
@@ -258,9 +204,7 @@ public abstract class AttributeHandlerBase
     // value domain //////////////////////////////////////////////////////////
 
     /**
-     * Check if the domain constraint is well formed.
-     *
-     * @param domain value domain constraint.
+     * {@inheritDoc}
      */
     public void checkDomain(String domain)
     {
@@ -272,11 +216,7 @@ public abstract class AttributeHandlerBase
     }
     
     /**
-     * Check if an attribute value fullfills a domain constraint.
-     *
-     * @param domain value domain constraint.
-     * @param value an attribute value.
-     * @throws ConstraintViolationExcepion if the value does not fulfill the constraint.
+     * {@inheritDoc}
      */
     public void checkDomain(String domain, Object value)
         throws ConstraintViolationException
@@ -297,7 +237,7 @@ public abstract class AttributeHandlerBase
     // integrity constraints ////////////////////////////////////////////////    
 
     /**
-     * Is a composite attribute (wraps the actual values iside an object).
+     * {@inheritDoc}
      */
     public boolean isComposite()
     {
@@ -305,11 +245,7 @@ public abstract class AttributeHandlerBase
     }
 
     /**
-     * Checks if the attributes of this type can impose integrity constraints 
-     * on the data store.
-     * 
-     * @return <code>true</code> if the attribute can impose constraints on the
-     * data store. 
+     * {@inheritDoc}
      */
     public boolean containsResourceReferences()
     {
@@ -317,11 +253,8 @@ public abstract class AttributeHandlerBase
     }
     
     /**
-     * Returns the resources referenced by this attribute.
-     * 
-     * @param value the attribute value.
-     * @return resources referenced by this attribute.
-     * */
+     * {@inheritDoc}
+     */
     public Resource[] getResourceReferences(Object value)
     {
         throw new UnsupportedOperationException(attributeClass.getName()+
@@ -329,14 +262,7 @@ public abstract class AttributeHandlerBase
     }
     
     /**
-     * Removes all resource attributes from the attribute value.
-     * 
-     * <p>This method may be called during deletion of a group of 
-     * interdependant resources.</p>
-     * 
-     * @param value attribute value.
-     * @return <code>true</code> if the attribute value should be
-     *         removed form the resource.
+     * {@inheritDoc}
      */
     public boolean clearResourceReferences(Object value)
     {
@@ -346,6 +272,11 @@ public abstract class AttributeHandlerBase
 
     // protected /////////////////////////////////////////////////////////////
 
+    /**
+     * Return the name of the table.
+     * 
+     * @return the table name.
+     */
     protected String getTable()
     {
         return attributeClass.getDbTable();
@@ -384,7 +315,10 @@ public abstract class AttributeHandlerBase
     /**
      * Checks if the specified record exists in the table.
      *
-     * @param id the record id
+     * @param id the record id.
+     * @param stmt the sql statement.
+     * @throws EntityDoesNotExistException if not exists.
+     * @throws SQLException if occured.
      */
     protected void checkExists(long id, Statement stmt)
         throws EntityDoesNotExistException, SQLException
@@ -420,6 +354,9 @@ public abstract class AttributeHandlerBase
 
     /**
      * Backslash escape the \ and ' characters.
+     * 
+     * @param string the input string.
+     * @return the escaped string.
      */
     protected String escape(String string)
     {
@@ -428,6 +365,8 @@ public abstract class AttributeHandlerBase
 
 	/**
 	 * Unescape unicode escapes.
+     * @param string the input string.
+     * @return the unescaped string.
 	 */
 	protected String unescape(String string)
 	{
@@ -436,6 +375,8 @@ public abstract class AttributeHandlerBase
 
     /**
      * Return a new Comparator, or null if not supported.
+     * 
+     * @return the comparator.
      */
     protected Comparator createComparator()
     {
@@ -458,6 +399,9 @@ public abstract class AttributeHandlerBase
     public static class ComparableComparator
         implements Comparator
     {
+        /**
+         * {@inheritDoc}
+         */
         public int compare(Object o1, Object o2)
         {
             return ((Comparable)o1).compareTo(o2);
@@ -470,6 +414,9 @@ public abstract class AttributeHandlerBase
     public static class EntityComparator
         implements Comparator
     {
+        /**
+         * {@inheritDoc}
+         */
         public int compare(Object o1, Object o2)
         {
             Entity e1 = (Entity)o1;
