@@ -23,16 +23,12 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.11 2005-01-18 10:08:41 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.12 2005-01-19 09:01:45 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
 {
     // Member objects ////////////////////////////////////////////////////////
-
-    /** resource sets, keyed by resource class. Resources are kept through
-    weak  references. */
-    private Map cache = new HashMap();
 
     /**
      * The constructor.
