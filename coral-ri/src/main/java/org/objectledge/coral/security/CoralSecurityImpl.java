@@ -5,22 +5,20 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.objectledge.coral.BackendException;
-import org.objectledge.coral.entity.CoralRegistry;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.schema.CircularDependencyException;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.Persistence;
 
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurityImpl.java,v 1.2 2004-03-03 10:27:30 fil Exp $
+ * @version $Id: CoralSecurityImpl.java,v 1.3 2004-03-05 08:24:27 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSecurityImpl
@@ -33,15 +31,9 @@ public class CoralSecurityImpl
     
     /** The event hub. */
     private CoralEventHub coralEventHub;
-
-    /** The CoralRegistry. */
-    private CoralRegistry coralRegistry;
     
-    /** The CoralSchema. */
-    private CoralSchema coralSchema;
-    
-    /** The CoralSchema. */
-    private CoralStore coralStore;
+    /** The component hub. */
+    private CoralCore coral;
 
     /** The {@link Role#ROOT} role. */
     private Role root;
@@ -56,18 +48,14 @@ public class CoralSecurityImpl
      *
      * @param persistence the persistence subsystem
      * @param coralEventHub the even hub.
-     * @param coralRegistry the registry.
-     * @param coralSchema the CoralSchema
-     * @param coralStore the CoralStore.
+     * @param coral the component hub.
      */
     public CoralSecurityImpl(Persistence persistence, CoralEventHub coralEventHub,
-        CoralRegistry coralRegistry, CoralSchema coralSchema, CoralStore coralStore)
+        CoralCore coral)
     {
         this.persistence = persistence;
         this.coralEventHub = coralEventHub;
-        this.coralRegistry = coralRegistry;
-        this.coralSchema = coralSchema;
-        this.coralStore = coralStore;
+        this.coral = coral;
     }
 
     // Subjects /////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +67,7 @@ public class CoralSecurityImpl
      */
     public Subject[] getSubject()
     {
-        return coralRegistry.getSubject();
+        return coral.getRegistry().getSubject();
     }
 
     /**
@@ -93,7 +81,7 @@ public class CoralSecurityImpl
     public Subject getSubject(long id)
         throws EntityDoesNotExistException
     {
-        return coralRegistry.getSubject(id);
+        return coral.getRegistry().getSubject(id);
     }
     
     /**
@@ -111,7 +99,7 @@ public class CoralSecurityImpl
     public Subject getSubject(String name)
         throws EntityDoesNotExistException
     {
-        return coralRegistry.getSubject(name);
+        return coral.getRegistry().getSubject(name);
     }
     
     /**
@@ -125,9 +113,9 @@ public class CoralSecurityImpl
     public Subject createSubject(String name)
         throws EntityExistsException
     {
-        Subject subject = new SubjectImpl(persistence, coralEventHub, coralRegistry, this, 
+        Subject subject = new SubjectImpl(persistence, coralEventHub, coral.getRegistry(), this, 
             name);
-        coralRegistry.addSubject(subject);
+        coral.getRegistry().addSubject(subject);
         return subject;
     }
     
@@ -142,7 +130,7 @@ public class CoralSecurityImpl
     public void deleteSubject(Subject subject)
         throws EntityInUseException
     {
-        coralRegistry.deleteSubject(subject);
+        coral.getRegistry().deleteSubject(subject);
     }
 
     /**
@@ -155,7 +143,7 @@ public class CoralSecurityImpl
     public void setName(Subject subject, String name)
         throws EntityExistsException
     {
-        coralRegistry.renameSubject(subject, name);
+        coral.getRegistry().renameSubject(subject, name);
         coralEventHub.getOutbound().fireSubjectChangeEvent(subject);
     }
     
@@ -168,7 +156,7 @@ public class CoralSecurityImpl
      */
     public Role[] getRole()
     {
-        return coralRegistry.getRole();
+        return coral.getRegistry().getRole();
     }
 
     /**
@@ -182,7 +170,7 @@ public class CoralSecurityImpl
     public Role getRole(long id)
         throws EntityDoesNotExistException
     {
-        return coralRegistry.getRole(id);
+        return coral.getRegistry().getRole(id);
     }
     
     /**
@@ -198,7 +186,7 @@ public class CoralSecurityImpl
      */
     public Role[] getRole(String name)
     {
-        return coralRegistry.getRole(name);
+        return coral.getRegistry().getRole(name);
     }
     
     /**
@@ -212,7 +200,7 @@ public class CoralSecurityImpl
     public Role getUniqueRole(String name)
         throws IllegalStateException
     {
-        return coralRegistry.getUniqueRole(name);
+        return coral.getRegistry().getUniqueRole(name);
     }
 
     /**
@@ -223,8 +211,8 @@ public class CoralSecurityImpl
      */
     public Role createRole(String name)
     {
-        Role role = new RoleImpl(persistence, coralEventHub, coralRegistry, name);
-        coralRegistry.addRole(role);
+        Role role = new RoleImpl(persistence, coralEventHub, coral.getRegistry(), name);
+        coral.getRegistry().addRole(role);
         return role;
     }
     
@@ -238,7 +226,7 @@ public class CoralSecurityImpl
     public void deleteRole(Role role)
         throws EntityInUseException
     {
-        coralRegistry.deleteRole(role);
+        coral.getRegistry().deleteRole(role);
     }
 
     /**
@@ -249,7 +237,7 @@ public class CoralSecurityImpl
      */
     public void setName(Role role, String name)
     {
-        coralRegistry.renameRole(role, name);
+        coral.getRegistry().renameRole(role, name);
         coralEventHub.getOutbound().fireRoleChangeEvent(role);
     }
     
@@ -265,7 +253,7 @@ public class CoralSecurityImpl
         throws CircularDependencyException
     {
         // if the implications is alredy defined, quit happily
-        Set implications = coralRegistry.getRoleImplications(subRole);
+        Set implications = coral.getRegistry().getRoleImplications(subRole);
         RoleImplication item = new RoleImplicationImpl(this, superRole, subRole);
         if(implications.contains(item))
         {
@@ -300,7 +288,7 @@ public class CoralSecurityImpl
                 }
             }
         }
-        coralRegistry.addRoleImplication(item);
+        coral.getRegistry().addRoleImplication(item);
     }
     
     /**
@@ -321,7 +309,7 @@ public class CoralSecurityImpl
                                                superRole.getName());
         }
         RoleImplication item = new RoleImplicationImpl(this, superRole, subRole);
-        coralRegistry.deleteRoleImplication(item);
+        coral.getRegistry().deleteRoleImplication(item);
     }
     
     /**
@@ -356,7 +344,7 @@ public class CoralSecurityImpl
             grantor, subject, role, grantingAllowed);
 
         // if the assignemnt already exists, quit happily
-        Set assignments = coralRegistry.getRoleAssignments(subject);
+        Set assignments = coral.getRegistry().getRoleAssignments(subject);
         if(assignments.contains(item))
         {
             return;
@@ -384,7 +372,7 @@ public class CoralSecurityImpl
         {
             throw new SecurityException("granting of 'nobody' role is not allowed");
         }
-        coralRegistry.addRoleAssignment(item);
+        coral.getRegistry().addRoleAssignment(item);
     }
     
     /**
@@ -408,7 +396,7 @@ public class CoralSecurityImpl
     {
         RoleAssignment item = new RoleAssignmentImpl(this, 
             revoker, subject, role, false);
-        Set assignments = coralRegistry.getRoleAssignments(subject);
+        Set assignments = coral.getRegistry().getRoleAssignments(subject);
         if(!assignments.contains(item))
         {
             throw new IllegalArgumentException(subject.getName()+" was not explicitly granted"+
@@ -432,7 +420,7 @@ public class CoralSecurityImpl
                                             subject.getName());
             }
         }
-        coralRegistry.deleteRoleAssignment(item);
+        coral.getRegistry().deleteRoleAssignment(item);
     }
 
     // Permissions //////////////////////////////////////////////////////////////////////////////
@@ -444,7 +432,7 @@ public class CoralSecurityImpl
      */
     public Permission[] getPermission()
     {
-        return coralRegistry.getPermission();
+        return coral.getRegistry().getPermission();
     }
 
     /**
@@ -458,7 +446,7 @@ public class CoralSecurityImpl
     public Permission getPermission(long id)
         throws EntityDoesNotExistException
     {
-        return coralRegistry.getPermission(id);
+        return coral.getRegistry().getPermission(id);
     }
     
     /**
@@ -474,7 +462,7 @@ public class CoralSecurityImpl
      */
     public Permission[] getPermission(String name)
     {
-        return coralRegistry.getPermission(name);
+        return coral.getRegistry().getPermission(name);
     }
     
     /**
@@ -488,7 +476,7 @@ public class CoralSecurityImpl
     public Permission getUniquePermission(String name)
         throws IllegalStateException
     {
-        return coralRegistry.getUniquePermission(name);
+        return coral.getRegistry().getUniquePermission(name);
     }
 
     /**
@@ -499,9 +487,9 @@ public class CoralSecurityImpl
      */
     public Permission createPermission(String name)
     {
-        Permission permission = new PermissionImpl(persistence, coralEventHub, coralRegistry, 
+        Permission permission = new PermissionImpl(persistence, coralEventHub, coral.getRegistry(), 
             name);
-        coralRegistry.addPermission(permission);
+        coral.getRegistry().addPermission(permission);
         return permission;
     }
     
@@ -515,7 +503,7 @@ public class CoralSecurityImpl
     public void deletePermission(Permission permission)
         throws EntityInUseException
     {
-        coralRegistry.deletePermission(permission);
+        coral.getRegistry().deletePermission(permission);
     }
     
     /**
@@ -526,7 +514,7 @@ public class CoralSecurityImpl
      */
     public void setName(Permission permission, String name)
     {
-        coralRegistry.renamePermission(permission, name);
+        coral.getRegistry().renamePermission(permission, name);
         coralEventHub.getOutbound().firePermissionChangeEvent(permission);
     }
 
@@ -538,15 +526,15 @@ public class CoralSecurityImpl
      */
     public void addPermission(ResourceClass resourceClass, Permission permission)
     {
-        Set associations = coralRegistry.getPermissionAssociations(resourceClass);
+        Set associations = coral.getRegistry().getPermissionAssociations(resourceClass);
         PermissionAssociation item = 
-            new PermissionAssociationImpl(coralSchema, this, 
+            new PermissionAssociationImpl(coral.getSchema(), this, 
                 resourceClass, permission);
         if(associations.contains(item))
         {
             return;
         }
-        coralRegistry.addPermissionAssociation(item);
+        coral.getRegistry().addPermissionAssociation(item);
     }
     
     /**
@@ -560,8 +548,8 @@ public class CoralSecurityImpl
     public void deletePermission(ResourceClass resourceClass, Permission permission)
         throws IllegalArgumentException
     {
-        Set associations = coralRegistry.getPermissionAssociations(resourceClass);
-        PermissionAssociation item = new PermissionAssociationImpl(coralSchema, this, 
+        Set associations = coral.getRegistry().getPermissionAssociations(resourceClass);
+        PermissionAssociation item = new PermissionAssociationImpl(coral.getSchema(), this, 
             resourceClass, permission);
         if(!associations.contains(item))
         {
@@ -569,7 +557,7 @@ public class CoralSecurityImpl
                                                " is not associated with "+
                                                permission.getName()+" permission");
         }
-        coralRegistry.deletePermissionAssociation(item);
+        coral.getRegistry().deletePermissionAssociation(item);
     }
     
     /**
@@ -615,9 +603,9 @@ public class CoralSecurityImpl
                                         " cannot be granted on resources of type "+
                                         resource.getResourceClass().getName());
         }
-        PermissionAssignment item = new PermissionAssignmentImpl(this, coralStore, 
+        PermissionAssignment item = new PermissionAssignmentImpl(this, coral.getStore(), 
             grantor, resource, role, permission, inherited);
-        coralRegistry.addPermissionAssignment(item);
+        coral.getRegistry().addPermissionAssignment(item);
     }
     
     /**
@@ -645,7 +633,7 @@ public class CoralSecurityImpl
         }
         if(!revoker.hasRole(getRootRole()))
         {
-            Set assignments = coralRegistry.getPermissionAssignments(resource);
+            Set assignments = coral.getRegistry().getPermissionAssignments(resource);
             Iterator i = assignments.iterator();
             PermissionAssignmentImpl pa = null;
             loop: while(i.hasNext())
@@ -667,9 +655,9 @@ public class CoralSecurityImpl
                                             role.getName()+" on resource #"+resource.getId());
             }
         }
-        PermissionAssignment item = new PermissionAssignmentImpl(this, coralStore, 
+        PermissionAssignment item = new PermissionAssignmentImpl(this, coral.getStore(), 
             revoker,resource, role, permission, false);
-        coralRegistry.deletePermissionAssignment(item);           
+        coral.getRegistry().deletePermissionAssignment(item);           
     }
     
     // implementation ///////////////////////////////////////////////////////////////////////////
@@ -685,7 +673,7 @@ public class CoralSecurityImpl
         {
             try
             {
-                root = coralRegistry.getRole(Role.ROOT);
+                root = coral.getRegistry().getRole(Role.ROOT);
             }
             catch(EntityDoesNotExistException e)
             {
@@ -706,7 +694,7 @@ public class CoralSecurityImpl
         {
             try
             {
-                root = coralRegistry.getRole(Role.NOBODY);
+                root = coral.getRegistry().getRole(Role.NOBODY);
             }
             catch(EntityDoesNotExistException e)
             {

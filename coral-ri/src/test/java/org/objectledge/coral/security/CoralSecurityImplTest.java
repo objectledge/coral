@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.CoralEventWhiteboard;
@@ -48,15 +49,13 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityImplTest.java,v 1.1 2004-03-03 14:10:11 fil Exp $
+ * @version $Id: CoralSecurityImplTest.java,v 1.2 2004-03-05 08:24:28 fil Exp $
  */
 public class CoralSecurityImplTest 
     extends MockObjectTestCase
 {
     private Mock mockPersistence;
     private Persistence persistence;
-    private Mock mockCoralRegistry;
-    private CoralRegistry coralRegistry;
     private Mock mockCoralEventHub;
     private CoralEventHub coralEventHub;
     private Mock mockLocalEventWhiteboard;
@@ -65,10 +64,14 @@ public class CoralSecurityImplTest
     private CoralEventWhiteboard outboundEventWhiteboard;
     private Mock mockInboundEventWhiteboard;
     private CoralEventWhiteboard inboundEventWhiteboard;
+    private Mock mockCoralRegistry;
+    private CoralRegistry coralRegistry;
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockCoralStore;
     private CoralStore coralStore;
+    private Mock mockCoralCore;
+    private CoralCore coralCore;
     
     private CoralSecurity coralSecurity;
     
@@ -115,8 +118,13 @@ public class CoralSecurityImplTest
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         mockCoralStore = new Mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
+        mockCoralCore = new Mock(CoralCore.class);
+        coralCore = (CoralCore)mockCoralCore.proxy();
+        mockCoralCore.stub().method("getRegistry").will(returnValue(coralRegistry));
+        mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
+        mockCoralCore.stub().method("getStore").will(returnValue(coralStore));
         
-        coralSecurity = new CoralSecurityImpl(persistence, coralEventHub, coralRegistry, coralSchema, coralStore);
+        coralSecurity = new CoralSecurityImpl(persistence, coralEventHub, coralCore);
         
         mockSubject = new Mock(Subject.class);
         subject = (Subject)mockSubject.proxy();

@@ -33,6 +33,7 @@ import org.jcontainer.dna.Logger;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.cache.CacheFactory;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.schema.CoralSchema;
@@ -44,7 +45,7 @@ import org.objectledge.database.persistence.Persistence;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralRegistryTest.java,v 1.1 2004-02-26 17:10:35 fil Exp $
+ * @version $Id: CoralRegistryTest.java,v 1.2 2004-03-05 08:24:26 fil Exp $
  */
 public class CoralRegistryTest extends MockObjectTestCase
 {
@@ -64,6 +65,8 @@ public class CoralRegistryTest extends MockObjectTestCase
     private CoralSecurity coralSecurity;
     private Mock mockCoralStore;
     private CoralStore coralStore;
+    private Mock mockCoralCore;
+    private CoralCore coralCore;
     private Mock mockLogger;
     private Logger logger;
     
@@ -85,6 +88,11 @@ public class CoralRegistryTest extends MockObjectTestCase
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockCoralStore = new Mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
+        mockCoralCore = new Mock(CoralCore.class);
+        coralCore = (CoralCore)mockCoralCore.proxy();
+        mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
+        mockCoralCore.stub().method("getSecurity").will(returnValue(coralSecurity));
+        mockCoralCore.stub().method("getStore").will(returnValue(coralStore));
         mockLogger = new Mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
     }
@@ -101,7 +109,7 @@ public class CoralRegistryTest extends MockObjectTestCase
         mockCoralEventWhiteboard.expect(once()).method("addResourceClassInheritanceChangeListener").with(ANYTHING, NULL);
         mockCoralEventWhiteboard.expect(once()).method("addResourceClassAttributesChangeListener").with(ANYTHING, NULL);
         return new CoralRegistryImpl(database, persistence, cacheFactory, coralEventHub,
-            coralSchema, coralSecurity, coralStore, logger);
+            coralCore, logger);
     }
     
     public void testCreation()

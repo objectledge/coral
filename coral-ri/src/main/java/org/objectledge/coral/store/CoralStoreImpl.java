@@ -17,20 +17,18 @@ import org.jcontainer.dna.ConfigurationException;
 import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
-import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CircularDependencyException;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.ResourceClassFlags;
 import org.objectledge.coral.schema.ResourceHandler;
 import org.objectledge.coral.schema.UnknownAttributeException;
-import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.PermissionAssignment;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.database.Database;
@@ -43,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.1 2004-03-03 14:46:22 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.2 2004-03-05 08:24:26 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -56,12 +54,8 @@ public class CoralStoreImpl
     private Persistence persistence;
     
     private CoralEventHub coralEventHub;
-    
-    private CoralRegistry coralRegistry;
-    
-    private CoralSchema coralSchema;
-    
-    private CoralSecurity coralSecurity;
+        
+    private CoralCore coral;
     
     private Logger log;
 
@@ -93,29 +87,24 @@ public class CoralStoreImpl
      * @param cacheFactory the cache factory.
      * @param database the database.
      * @param persistence the persistence subsystem.
-     * @param coralRegistry the CoralRegistry.
      * @param coralEventHub the event hub.
-     * @param coralSchema the coral schema.
-     * @param coralSecurity the coral security.
+     * @param coral the component hub.
      * @param log the logger.
      * @throws ConfigurationException if the cache is not configured properly.
      */
     public CoralStoreImpl(CacheFactory cacheFactory, Database database, Persistence persistence,
-        CoralRegistry coralRegistry, CoralEventHub coralEventHub, CoralSchema coralSchema,
-        CoralSecurity coralSecurity, Logger log)
+        CoralEventHub coralEventHub, CoralCore coral, Logger log)
         throws ConfigurationException
     {
         this.database = database;
         this.persistence = persistence;
-        this.coralRegistry = coralRegistry;
-        this.coralSchema = coralSchema;
-        this.coralSecurity = coralSecurity;
-        this.coralRegistry = coralRegistry;
+        this.coral = coral;
         this.log = log;
         setupCache(cacheFactory, "resource");
         resourceByParent = new WeakHashMap();
         resourceByParentAndName = new WeakHashMap();
     }
+
 
     /**
      * Initializes the caches.
@@ -747,8 +736,9 @@ public class CoralStoreImpl
         {
             conn = database.getConnection();
             shouldCommit = database.beginTransaction();
-            Resource delegate = new ResourceImpl(persistence, this, coralSchema, coralSecurity,
-            coralRegistry, coralEventHub, name, resourceClass, parent, creator);
+            Resource delegate = new ResourceImpl(persistence, this, coral.getSchema(), 
+                coral.getSecurity(),
+            coral.getRegistry(), coralEventHub, name, resourceClass, parent, creator);
             persistence.save((Persistent)delegate);
             res = delegate.getResourceClass().getHandler().
                 create(delegate, attributes, conn);
@@ -888,12 +878,13 @@ public class CoralStoreImpl
                                     throw new EntityInUseException("resource #"+resource.getId()+
                                                                    " has "+count+" children");
                                 }
-                                Set assignments = coralRegistry.getPermissionAssignments(resource);
+                                Set assignments = coral.getRegistry().
+                                    getPermissionAssignments(resource);
                                 Iterator i = assignments.iterator();
                                 while(i.hasNext())
                                 {
                                     PermissionAssignment pa = (PermissionAssignment)i.next();
-                                    coralRegistry.deletePermissionAssignment(pa);           
+                                    coral.getRegistry().deletePermissionAssignment(pa);           
                                 }
                                 resource.getResourceClass().getHandler().
                                     delete(resource, conn);
@@ -1113,8 +1104,8 @@ public class CoralStoreImpl
             try
             {
                 Resource rootResource = getResource(1);
-                Subject rootSubject = coralSecurity.getSubject(Subject.ROOT);
-                ResourceClass rc = coralSchema.getResourceClass("node");
+                Subject rootSubject = coral.getSecurity().getSubject(Subject.ROOT);
+                ResourceClass rc = coral.getSchema().getResourceClass("node");
                 return createResource("tmp", rootResource, rc, new HashMap(), rootSubject);
             }
             catch(Exception ee)

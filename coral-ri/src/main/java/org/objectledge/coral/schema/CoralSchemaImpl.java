@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
-import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityInUseException;
@@ -22,7 +22,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.4 2004-03-02 15:03:43 fil Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.5 2004-03-05 08:24:26 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -36,7 +36,7 @@ public class CoralSchemaImpl
     
     private Instantiator instantiator;
 
-    private CoralRegistry coralRegistry;
+    private CoralCore coral;
     
     private CoralEventHub coralEventHub;
     
@@ -50,17 +50,17 @@ public class CoralSchemaImpl
      * @param database the database.
      * @param persistence the persistence subsystem.
      * @param instantiator the instantiator.
-     * @param coralRegistry the CoralRegistry.
-     * @param coralEventHub the coralEventHub.
+     * @param coral the component hub.
+     * @param coralEventHub the event hub.
      * @param log the logger.
      */
     public CoralSchemaImpl(Database database, Persistence persistence, Instantiator instantiator,
-        CoralRegistry coralRegistry, CoralEventHub coralEventHub, Logger log)
+        CoralCore coral, CoralEventHub coralEventHub, Logger log)
     {
         this.database = database;
         this.persistence = persistence;
         this.instantiator = instantiator;
-        this.coralRegistry = coralRegistry;
+        this.coral= coral;
         this.coralEventHub = coralEventHub;
         this.log = log;
     }
@@ -74,7 +74,7 @@ public class CoralSchemaImpl
      */
     public AttributeClass[] getAttributeClass()
     {
-        return coralRegistry.getAttributeClass();
+        return coral.getRegistry().getAttributeClass();
     }
 
     /**
@@ -88,7 +88,7 @@ public class CoralSchemaImpl
     public AttributeClass getAttributeClass(long id)
         throws EntityDoesNotExistException
     {
-        return coralRegistry.getAttributeClass(id);
+        return coral.getRegistry().getAttributeClass(id);
     }
     
     /**
@@ -102,7 +102,7 @@ public class CoralSchemaImpl
     public AttributeClass getAttributeClass(String name)
         throws EntityDoesNotExistException
     {
-        return coralRegistry.getAttributeClass(name);
+        return coral.getRegistry().getAttributeClass(name);
     }
 
     /**
@@ -129,7 +129,7 @@ public class CoralSchemaImpl
         AttributeClass attributeClass = new AttributeClassImpl(persistence, instantiator, 
             coralEventHub, 
             name, javaClass, handlerClass, dbTable);
-        coralRegistry.addAttributeClass(attributeClass);
+        coral.getRegistry().addAttributeClass(attributeClass);
         return attributeClass;
     }
 
@@ -143,7 +143,7 @@ public class CoralSchemaImpl
     public void deleteAttributeClass(AttributeClass attributeClass)
         throws EntityInUseException
     {
-        coralRegistry.deleteAttributeClass(attributeClass);
+        coral.getRegistry().deleteAttributeClass(attributeClass);
     }
 
     /**
@@ -156,7 +156,7 @@ public class CoralSchemaImpl
     public void setName(AttributeClass attributeClass, String name)
         throws EntityExistsException
     {
-        coralRegistry.renameAttributeClass(attributeClass, name);
+        coral.getRegistry().renameAttributeClass(attributeClass, name);
         coralEventHub.getOutbound().fireAttributeClassChangeEvent(attributeClass);
     }
 
@@ -242,7 +242,7 @@ public class CoralSchemaImpl
      */
     public AttributeDefinition[] getAttribute()
     {
-        return coralRegistry.getAttributeDefinition();
+        return coral.getRegistry().getAttributeDefinition();
     }
 
     /**
@@ -255,7 +255,7 @@ public class CoralSchemaImpl
     public AttributeDefinition getAttribute(long id)
         throws EntityDoesNotExistException
     {
-        return coralRegistry.getAttributeDefinition(id);
+        return coral.getRegistry().getAttributeDefinition(id);
     }
 
     /**
@@ -294,7 +294,7 @@ public class CoralSchemaImpl
         String oldName = attribute.getName();
         try
         {
-            coralRegistry.renameAttributeDefinition(attribute, name);
+            coral.getRegistry().renameAttributeDefinition(attribute, name);
             coralEventHub.getOutbound().fireAttributeDefinitionChangeEvent(attribute);
         }
         catch(Exception e)
@@ -357,7 +357,7 @@ public class CoralSchemaImpl
      */
     public ResourceClass[] getResourceClass()
     {
-        return coralRegistry.getResourceClass();
+        return coral.getRegistry().getResourceClass();
     }
 
     /**
@@ -371,7 +371,7 @@ public class CoralSchemaImpl
     public ResourceClass getResourceClass(long id)
         throws EntityDoesNotExistException
     {
-        return coralRegistry.getResourceClass(id);
+        return coral.getRegistry().getResourceClass(id);
     }
     
     /**
@@ -385,7 +385,7 @@ public class CoralSchemaImpl
     public ResourceClass getResourceClass(String name)
         throws EntityDoesNotExistException
     {
-        return coralRegistry.getResourceClass(name);
+        return coral.getRegistry().getResourceClass(name);
     }
 
     /**
@@ -411,9 +411,9 @@ public class CoralSchemaImpl
         throws EntityExistsException, JavaClassException
     {
         ResourceClass resourceClass = new ResourceClassImpl(persistence, instantiator, 
-            coralEventHub, coralRegistry, 
+            coralEventHub, coral.getRegistry(), 
             name, javaClass, handlerClass, dbTable, flags);
-        coralRegistry.addResourceClass(resourceClass);
+        coral.getRegistry().addResourceClass(resourceClass);
         return resourceClass;
     }
 
@@ -427,7 +427,7 @@ public class CoralSchemaImpl
     public void deleteResourceClass(ResourceClass resourceClass)
         throws EntityInUseException
     {
-        coralRegistry.deleteResourceClass(resourceClass);
+        coral.getRegistry().deleteResourceClass(resourceClass);
     }
 
     /**
@@ -440,7 +440,7 @@ public class CoralSchemaImpl
     public void setName(ResourceClass resourceClass, String name)
         throws EntityExistsException
     {
-        coralRegistry.renameResourceClass(resourceClass, name);
+        coral.getRegistry().renameResourceClass(resourceClass, name);
         coralEventHub.getOutbound().fireResourceClassChangeEvent(resourceClass);
     }
 
@@ -537,7 +537,7 @@ public class CoralSchemaImpl
             shouldCommit = database.beginTransaction();
             conn = database.getConnection();
             ((AttributeDefinitionImpl)attribute).setDeclaringClass(resourceClass);
-            coralRegistry.addAttributeDefinition(attribute);
+            coral.getRegistry().addAttributeDefinition(attribute);
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, true);
             resourceClass.getHandler().addAttribute(attribute, value, conn);
             database.commitTransaction(shouldCommit);
@@ -591,7 +591,7 @@ public class CoralSchemaImpl
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, false);
             attribute.getDeclaringClass().getHandler().
                 deleteAttribute(attribute, conn);
-            coralRegistry.deleteAttributeDefinition(attribute);
+            coral.getRegistry().deleteAttributeDefinition(attribute);
             database.commitTransaction(shouldCommit);
             coralEventHub.getOutbound().fireResourceClassAttributesChangeEvent(attribute, false);
         }
@@ -685,7 +685,7 @@ public class CoralSchemaImpl
             shouldCommit = database.beginTransaction();
             relationship = new ResourceClassInheritanceImpl(this,
                 parent, child);
-            coralRegistry.addResourceClassInheritance(relationship);
+            coral.getRegistry().addResourceClassInheritance(relationship);
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, true);
             child.getHandler().addParentClass(parent, attributes, conn);
             database.commitTransaction(shouldCommit);
@@ -753,7 +753,7 @@ public class CoralSchemaImpl
                 parent, child);
             coralEventHub.getLocal().fireResourceClassInheritanceChangeEvent(relationship, false);
             child.getHandler().deleteParentClass(parent, conn);
-            coralRegistry.deleteResourceClassInheritance(relationship);
+            coral.getRegistry().deleteResourceClassInheritance(relationship);
             database.commitTransaction(shouldCommit);
             coralEventHub.getOutbound().fireResourceClassInheritanceChangeEvent(relationship, 
                 false);

@@ -14,6 +14,7 @@ import org.jcontainer.dna.ConfigurationException;
 import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.PermissionAssociationChangeListener;
@@ -25,12 +26,10 @@ import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeClassImpl;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeDefinitionImpl;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.ResourceClassImpl;
 import org.objectledge.coral.schema.ResourceClassInheritance;
 import org.objectledge.coral.schema.ResourceClassInheritanceImpl;
-import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.PermissionAssignment;
 import org.objectledge.coral.security.PermissionAssignmentImpl;
@@ -45,7 +44,6 @@ import org.objectledge.coral.security.RoleImplication;
 import org.objectledge.coral.security.RoleImplicationImpl;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.security.SubjectImpl;
-import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
@@ -59,7 +57,7 @@ import org.picocontainer.PicoContainer;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.2 2004-03-03 10:27:30 fil Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.3 2004-03-05 08:24:27 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -91,15 +89,9 @@ public class CoralRegistryImpl
     /** The event hub. */
     private CoralEventHub coralEventHub;
     
-    /** The coral schema. */
-    private CoralSchema coralSchema;
+    /** The component hub. */
+    private CoralCore coral;
     
-    /** The coral security. */
-    private CoralSecurity coralSecurity;
-    
-    /** The coral store. */
-    private CoralStore coralStore;
-
     // Factory classes
 
     /** The <code>PersistentFactory</code> for <code>ResourceClassInheritance</code> objects. */
@@ -207,24 +199,20 @@ public class CoralRegistryImpl
      * @param database the database to use.
      * @param persistence the persistence subsystem
      * @param cacheFactory the cache factory.
-     * @param coralEventHub the event hub;
-     * @param coralSchema the coral schema.
-     * @param coralSecurity the coral security.
-     * @param coralStore the coral store.
+     * @param coralEventHub the event hub.
+     * @param coral the component hub.
      * @param log the logger.
      * @throws ConfigurationException if the configuration is invalid.
      */
     public CoralRegistryImpl(Database database, Persistence persistence, 
         CacheFactory cacheFactory, CoralEventHub coralEventHub, 
-        CoralSchema coralSchema, CoralSecurity coralSecurity, CoralStore coralStore, Logger log)
+        CoralCore coral, Logger log)
         throws ConfigurationException
     {
         this.database = database;
         this.persistence = persistence;
         this.coralEventHub = coralEventHub;
-        this.coralSchema = coralSchema;
-        this.coralSecurity = coralSecurity;
-        this.coralStore = coralStore;
+        this.coral = coral;
         this.log = log;
         
         setupCaches();
@@ -478,20 +466,20 @@ public class CoralRegistryImpl
             AttributeDefinition[] attributes = item.getDeclaredAttributes();
             for(int i=0; i<attributes.length; i++)
             {
-                coralSchema.deleteAttribute(item, attributes[i]);
+                coral.getSchema().deleteAttribute(item, attributes[i]);
             }
             ResourceClassInheritance[] rci = item.getInheritance();
             for(int i=0; i<rci.length; i++)
             {
                 if(rci[i].getChild().equals(item))
                 {
-                    coralSchema.deleteParentClass(item, rci[i].getParent());
+                    coral.getSchema().deleteParentClass(item, rci[i].getParent());
                 }
             }
             Permission[] perms = item.getPermissions();
             for(int i=0; i<perms.length; i++)
             {
-                coralSecurity.deletePermission(item, perms[i]);
+                coral.getSecurity().deletePermission(item, perms[i]);
             }
             resourceClassRegistry.delete(item);
             database.commitTransaction(shouldCommit);
@@ -1965,7 +1953,7 @@ public class CoralRegistryImpl
             Resource[] result = new Resource[list.size()];
             for(int i=0; i<list.size(); i++)
             {
-                result[i] = coralStore.getResource(((Resource)list.get(i)).getId());
+                result[i] = coral.getStore().getResource(((Resource)list.get(i)).getId());
             }
             return result;
         }
@@ -1992,13 +1980,13 @@ public class CoralRegistryImpl
             ArrayList stack = new ArrayList();
             for(int i=0; i<list.size(); i++)
             {
-                stack.add(coralStore.getResource(((Resource)list.get(i)).getId()));
+                stack.add(coral.getStore().getResource(((Resource)list.get(i)).getId()));
             }
             while(stack.size() > 0)
             {
                 Resource r = (Resource)stack.remove(stack.size()-1);
                 temp.add(r);
-                Resource[] subs = coralStore.getResource(r);
+                Resource[] subs = coral.getStore().getResource(r);
                 for(int i=0; i<subs.length; i++)
                 {
                     stack.add(subs[i]);

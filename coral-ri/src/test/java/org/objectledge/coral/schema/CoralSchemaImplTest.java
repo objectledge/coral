@@ -34,6 +34,7 @@ import java.util.Map;
 import org.jcontainer.dna.Logger;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
+import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.AttributeClassChangeListener;
@@ -48,7 +49,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.4 2004-03-02 15:04:10 fil Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.5 2004-03-05 08:24:27 fil Exp $
  */
 public class CoralSchemaImplTest extends MockObjectTestCase
 {
@@ -62,6 +63,8 @@ public class CoralSchemaImplTest extends MockObjectTestCase
     private Instantiator instantiator;
     private Mock mockCoralRegistry;
     private CoralRegistry coralRegistry;
+    private Mock mockCoralCore;
+    private CoralCore coralCore;
     private Mock mockCoralEventHub;
     private CoralEventHub coralEventHub;
     private Mock mockLocalEventWhiteboard;
@@ -111,6 +114,9 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         instantiator = (Instantiator)mockInstantiator.proxy();
         mockCoralRegistry = new Mock(CoralRegistry.class);
         coralRegistry = (CoralRegistry)mockCoralRegistry.proxy();
+        mockCoralCore = new Mock(CoralCore.class);
+        coralCore = (CoralCore)mockCoralCore.proxy();
+        mockCoralCore.stub().method("getRegistry").will(returnValue(coralRegistry));
         mockCoralEventHub = new Mock(CoralEventHub.class);
         coralEventHub = (CoralEventHub)mockCoralEventHub.proxy();
         mockLocalEventWhiteboard = new Mock(CoralEventWhiteboard.class, "localEventWhiteboard");
@@ -122,7 +128,7 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         mockLogger = new Mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
         
-        coralSchema = new CoralSchemaImpl(database, persistence, instantiator, coralRegistry, 
+        coralSchema = new CoralSchemaImpl(database, persistence, instantiator, coralCore, 
             coralEventHub, logger);
         
         mockDatabase.stub().method("getConnection").will(returnValue(connection));
