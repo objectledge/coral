@@ -30,6 +30,7 @@ package org.objectledge.coral.tools.generator.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 
@@ -37,12 +38,12 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
  * Represents a Coral Schema.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Schema.java,v 1.3 2004-03-22 14:51:02 fil Exp $
+ * @version $Id: Schema.java,v 1.4 2004-03-22 16:03:29 fil Exp $
  */
 public class Schema
 {
-    private SortedMap attributeClasses;
-    private SortedMap resourceClasses;
+    private SortedMap attributeClasses = new TreeMap();
+    private SortedMap resourceClasses = new TreeMap();
 
     // attribute classes ////////////////////////////////////////////////////////////////////////
     
