@@ -120,6 +120,11 @@
     <define:bean name="principal"
       className="org.objectledge.coral.tools.PrincipalTag">
     </define:bean>
+
+    <!-- // SQL runner ////////////////////////////////////////////////////////////////////// -->
+    
+    <define:jellybean name="sqlRunner"
+      className="org.objectledge.coral.tools.sql.SqlRunnerBean"/>
     
     <!-- // RML runner ////////////////////////////////////////////////////////////////////// -->
     
@@ -182,6 +187,29 @@
 	</j:if>
     <coral:dataSource var="initDataSource"/>
     <coral:init dataSource="${initDataSource}"/>
+  </goal>
+
+  <!-- // SQL runner //////////////////////////////////////////////////////////////////////// -->
+  
+  <goal name="coral:run-sql"
+    description="Executes SQL scripts contained in the project">
+    <m:pluginVar plugin="coral-maven-plugin" var="coralSqlFileEncoding" property="coral.sql.file.encoding"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="coralSqlSources" property="coral.sql.sources"/>
+    <j:if test="${maven.debugOn}">
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
+      <echo>
+        coral.db.url=${coralDbUrl}
+        coral.db.user=${coralDbUser}
+        coral.db.password=${coralDbPassword}
+        coral.sql.sources=${coralSqlSources}
+        coral.sql.file.encoding=${coralSqlFileEncoding}
+	  </echo>
+	</j:if>
+    <coral:dataSource var="coralDataSource"/>
+    <coral:sqlRunner dataSource="${coralDataSource}" sourcesList="${coralSqlSources}" 
+      fileEncoding="${coralSqlFileEncoding}" baseDir="${basedir}"/>
   </goal>
   
   <!-- // RML runner //////////////////////////////////////////////////////////////////////// -->
