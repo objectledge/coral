@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTcreatePermissionStatement extends SimpleNode {
+public class ASTcreatePermissionStatement extends ASTcreateEntityStatement {
   public ASTcreatePermissionStatement(int id) {
     super(id);
   }

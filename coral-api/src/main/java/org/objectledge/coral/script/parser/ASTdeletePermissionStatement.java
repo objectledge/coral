@@ -16,4 +16,11 @@ public class ASTdeletePermissionStatement extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTpermission getPermission()
+  {
+      return permission;
+  }
 }

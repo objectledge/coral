@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTfindSubrolesStatement extends SimpleNode {
+public class ASTfindSubrolesStatement extends ASTfindRelatedRolesStatement {
   public ASTfindSubrolesStatement(int id) {
     super(id);
   }

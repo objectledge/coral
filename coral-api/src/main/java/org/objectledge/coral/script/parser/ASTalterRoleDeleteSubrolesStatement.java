@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterRoleDeleteSubrolesStatement extends SimpleNode {
+public class ASTalterRoleDeleteSubrolesStatement extends ASTalterRoleStatement {
   public ASTalterRoleDeleteSubrolesStatement(int id) {
     super(id);
   }
@@ -15,5 +15,12 @@ public class ASTalterRoleDeleteSubrolesStatement extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+  public ASTroleList getSubRoles()
+  {
+      return subRoles;
   }
 }

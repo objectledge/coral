@@ -2,7 +2,7 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTcreateClassStatement extends SimpleNode {
+public class ASTcreateClassStatement extends ASTcreateEntityStatement {
   public ASTcreateClassStatement(int id) {
     super(id);
   }
@@ -18,11 +18,6 @@ public class ASTcreateClassStatement extends SimpleNode {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-
-  public String getName()
-  {
-      return name;
-  }
   
   public String getJavaClass()
   {
