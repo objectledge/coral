@@ -53,7 +53,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.14 2004-05-07 11:41:56 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.15 2004-05-24 13:05:21 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -69,7 +69,36 @@ public class GeneratorComponent
         hintNames.add("import");
         hintNames.add("order");
     }
+
+    /** The ignored hint names. */
+    private static Set ignoredHintNames = new HashSet();
     
+    static
+    {
+        // javadoc 1.4
+        ignoredHintNames.add("author");
+        ignoredHintNames.add("docRoot");
+        ignoredHintNames.add("deprecated");
+        ignoredHintNames.add("exception");
+        ignoredHintNames.add("inheritDoc");
+        ignoredHintNames.add("link");
+        ignoredHintNames.add("linkplain");
+        ignoredHintNames.add("param");
+        ignoredHintNames.add("return");
+        ignoredHintNames.add("see");
+        ignoredHintNames.add("serial");
+        ignoredHintNames.add("serialData");
+        ignoredHintNames.add("serialField");
+        ignoredHintNames.add("since");
+        ignoredHintNames.add("throws");
+        ignoredHintNames.add("value");
+        ignoredHintNames.add("version");
+        // todo
+        ignoredHintNames.add("todo");
+        ignoredHintNames.add("fixme");
+        ignoredHintNames.add("xxx");
+    }
+
     /** The character encoding to use for reading and writing files. */
     private String fileEncoding = "UTF-8";
 
@@ -261,7 +290,7 @@ public class GeneratorComponent
                                 l.add(st.nextToken().trim());
                             }
                         }
-                        else
+                        else if(!ignoredHintNames.contains(token))
                         {
                             throw new IOException("unknown hint @"+token+" in "+path+" at line "+
                                 lnr.getLineNumber());
