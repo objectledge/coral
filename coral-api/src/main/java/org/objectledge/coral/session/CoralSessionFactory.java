@@ -35,7 +35,7 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
  * A factory of Coral sessions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactory.java,v 1.2 2004-04-01 08:54:14 fil Exp $
+ * @version $Id: CoralSessionFactory.java,v 1.3 2005-02-21 11:51:17 rafal Exp $
  */
 public interface CoralSessionFactory
 {
@@ -61,5 +61,14 @@ public interface CoralSessionFactory
      *
      * @return the anonymous session. 
      */
-    public CoralSession getAnonymousSession();        
+    public CoralSession getAnonymousSession();
+    
+    /**
+     * Returns the session associated with the calling thread.
+     * 
+     * @return the session associated with the calling thread.
+     * @throws IllegalStateException if no session is associated with the current thread.
+     */
+    public CoralSession getCurrentSession()
+        throws IllegalStateException;
 }

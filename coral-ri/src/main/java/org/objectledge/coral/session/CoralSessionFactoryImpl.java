@@ -42,7 +42,7 @@ import org.objectledge.coral.security.Subject;
  * An implementation of the Coral session factory.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImpl.java,v 1.8 2005-01-26 03:31:28 rafal Exp $
+ * @version $Id: CoralSessionFactoryImpl.java,v 1.9 2005-02-21 11:51:24 rafal Exp $
  */
 public class CoralSessionFactoryImpl implements CoralSessionFactory
 {
@@ -117,6 +117,20 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
         {
             throw new BackendException("failed to open superuser session", e);
         }
+    }
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralSession getCurrentSession()
+        throws IllegalStateException
+    {
+        CoralSession session = coral.getCurrentSession();
+        if(session == null)
+        {
+            throw new IllegalStateException("no session is associated with this thread");
+        }
+        return session;
     }
 
     /**
