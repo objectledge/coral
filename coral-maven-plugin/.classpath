@@ -14,5 +14,10 @@
 	<classpathentry sourcepath="MAVEN_REPO/dna/sources/dna-impl-1.1-rc2-src.zip" kind="var" path="MAVEN_REPO/dna/jars/dna-impl-1.1-rc2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/velocity/jars/velocity-1.4-dev-20030725.181200.jar"/>
 	<classpathentry sourcepath="MAVEN_REPO/log4j/sources/log4j-1.2.8-source.zip" kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar"/>
+	<classpathentry kind="src" path="/coral-ri"/>
+	<classpathentry sourcepath="MAVEN_REPO/picocontainer/sources/picocontainer-1.0-RC-1-SNAPSHOT-src.zip" kind="var" path="MAVEN_REPO/picocontainer/jars/picocontainer-1.0-RC-1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/maven/jars/maven-jelly-tags-20040427.080410.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-jelly/jars/commons-jelly-20030902.160215.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/maven/jars/maven.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.6 2004-04-23 13:04:03 fil Exp $ -->
+<!-- $Id: project.xml,v 1.7 2004-04-28 14:03:41 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -204,6 +204,21 @@
       <groupId>commons-jelly</groupId>
       <artifactId>commons-jelly-tags-sql</artifactId>
       <version>1.0-SNAPSHOT.20030210.064311</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-jelly</groupId>
+      <artifactId>commons-jelly</artifactId>
+      <version>20030902.160215</version>
+    </dependency>
+    <dependency>
+      <groupId>maven</groupId>
+      <artifactId>maven</artifactId>
+      <jar>maven.jar</jar>
+    </dependency>
+    <dependency>
+      <groupId>maven</groupId>
+      <artifactId>maven-jelly-tags</artifactId>
+      <version>20040427.080410</version>
     </dependency>
 
     <!-- testing -->
