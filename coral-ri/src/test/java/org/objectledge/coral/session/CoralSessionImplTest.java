@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImplTest.java,v 1.6 2004-05-28 10:04:10 fil Exp $
+ * @version $Id: CoralSessionImplTest.java,v 1.7 2004-06-29 11:14:29 fil Exp $
  */
 public class CoralSessionImplTest extends LedgeTestCase
 {
@@ -83,7 +83,7 @@ public class CoralSessionImplTest extends LedgeTestCase
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(coralSession));
         coralSession.open(principal, subject);
         
-        mockKeyedObjectPool.expects(once()).method("returnObject").with(same(coralSession), same(principal)).isVoid();
+        mockKeyedObjectPool.expects(once()).method("returnObject").with(same(principal), same(coralSession)).isVoid();
         assertEquals(principal, coralSession.getUserPrincipal());
         assertEquals(subject, coralSession.getUserSubject());
 
@@ -118,7 +118,7 @@ public class CoralSessionImplTest extends LedgeTestCase
         mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
         mockCoralCore.stubs().method("getCurrentSession").will(returnValue(coralSession));
         coralSession.open(principal, subject);
-        mockKeyedObjectPool.expects(once()).method("returnObject").with(same(coralSession), same(principal)).isVoid();
+        mockKeyedObjectPool.expects(once()).method("returnObject").with(same(principal), same(coralSession)).isVoid();
         mockCoralCore.expects(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
         mockCoralCore.expects(once()).method("setCurrentSession").with(NULL).isVoid();
         coralSession.close();
