@@ -31,7 +31,6 @@ package org.objectledge.coral.i18n;
 import org.objectledge.context.Context;
 import org.objectledge.i18n.I18n;
 import org.objectledge.i18n.I18nContext;
-import org.objectledge.i18n.I18nTool;
 import org.objectledge.i18n.WebI18nToolFactory;
 
 /**
