@@ -40,11 +40,13 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
 import org.objectledge.threads.ThreadPool;
+import org.picocontainer.PicoContainer;
+import org.picocontainer.defaults.DefaultPicoContainer;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImplTest.java,v 1.2 2004-03-09 10:58:11 fil Exp $
+ * @version $Id: CoralCoreImplTest.java,v 1.3 2004-03-12 07:39:45 fil Exp $
  */
 public class CoralCoreImplTest extends MockObjectTestCase
 {
@@ -75,8 +77,9 @@ public class CoralCoreImplTest extends MockObjectTestCase
         logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));        
         threadPool = new ThreadPool(null, new Context(), null, logger);
         eventWhiteboardFactory = new EventWhiteboardFactory(null, logger, threadPool);
+        PicoContainer emptyContainer = new DefaultPicoContainer();
         
-        coralCore = new CoralCoreImpl(persistence, cacheFactory, eventWhiteboardFactory, logger);
+        coralCore = new CoralCoreImpl(emptyContainer, persistence, cacheFactory, eventWhiteboardFactory, logger);
 
         mockCoralSession = new Mock(CoralSession.class);
         coralSession = (CoralSession)mockCoralSession.proxy();
