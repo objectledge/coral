@@ -40,12 +40,10 @@ import org.objectledge.coral.relation.RelationModification.RemoveOperation;
  * This class holds a minimal representation of a {@link RelationModification}
  * for a given {@link Relation}.
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModification.java,v 1.1 2004-02-20 15:15:07 zwierzem Exp $
+ * @version $Id: MinimalRelationModification.java,v 1.2 2004-02-20 16:55:11 zwierzem Exp $
  */
 public class MinimalRelationModification
-implements RelationModification.ModificationOperationVisitor
 {
-	private Relation relation;
 	private boolean clear = false;
 	private Set added = new HashSet(128);
 	private Set removed = new HashSet(128);
@@ -59,83 +57,15 @@ implements RelationModification.ModificationOperationVisitor
 	 */
 	public MinimalRelationModification(RelationModification modification, Relation relation)
 	{
-		this.relation = relation;
+		ConstructingVisitor visitor = new ConstructingVisitor(relation);
 		for (Iterator iter = modification.getOperations().iterator(); iter.hasNext();)
 		{
 			RelationModification.ModificationOperation operation =
 				(RelationModification.ModificationOperation) iter.next();
-			operation.visit(this);
+			operation.visit(visitor);
 		}
 	}
 	
-	// creation api ---------------------------------------------------------------------------
-
-    /**
-     * {@inheritDoc}
-     */
-    public void visit(ClearOperation oper)
-    {
-		added.clear();
-		removed.clear();
-		clear = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void visit(AddOperation oper)
-    {
-		if(removed.contains(oper))
-		{
-			removed.remove(oper);
-		}
-		else
-		{
-			added.add(oper);
-		}
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void visit(RemoveOperation oper)
-    {
-		if(oper.hasId1() && oper.hasId2())
-		{
-			remove(oper);
-		}
-		else if(oper.hasId1())
-		{
-			Long id1 = new Long(oper.getId1());
-			long[] id2set = relation.get(id1.longValue());
-			for (int i = 0; i < id2set.length; i++)
-            {
-                remove(new RelationModification.RemoveOperation(id1, new Long(id2set[i])));
-            }
-		}
-		else // if(oper.hasId2())
-		{
-			Long id2 = new Long(oper.getId2());
-			long[] id1set = relation.get(id2.longValue());
-			for (int i = 0; i < id1set.length; i++)
-			{
-				remove(new RelationModification.RemoveOperation(new Long(id1set[i]), id2));
-			}
-		}
-    }
-
-	private void remove(RelationModification.RemoveOperation operation)
-	{
-		if(added.contains(operation))
-		{
-			added.remove(operation);
-		}
-		else
-		{
-			removed.add(operation);
-		}
-	}
-
 	// data retrieval api ---------------------------------------------------------------------
 
 	/**
@@ -164,6 +94,20 @@ implements RelationModification.ModificationOperationVisitor
     {
 		return setToArray(removed);
     }
+    
+    // implementation -----------------------------------------------------------------------------
+
+	private void remove(RelationModification.RemoveOperation operation)
+	{
+		if(added.contains(operation))
+		{
+			added.remove(operation);
+		}
+		else
+		{
+			removed.add(operation);
+		}
+	}
 
 	private long[][] setToArray(Set set)
 	{
@@ -179,4 +123,73 @@ implements RelationModification.ModificationOperationVisitor
 		list.toArray(result);
 		return result;
 	}	
+
+	// creation -----------------------------------------------------------------------------------
+
+	/**
+	 * Class used during Minimal representation construction. 
+	 */
+	private class ConstructingVisitor implements RelationModification.ModificationOperationVisitor
+	{
+		private Relation relation;
+		
+		public ConstructingVisitor(Relation relation)
+		{
+			this.relation = relation;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(ClearOperation oper)
+		{
+			added.clear();
+			removed.clear();
+			clear = true;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(AddOperation oper)
+		{
+			if(removed.contains(oper))
+			{
+				removed.remove(oper);
+			}
+			else
+			{
+				added.add(oper);
+			}
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void visit(RemoveOperation oper)
+		{
+			if(oper.hasId1() && oper.hasId2())
+			{
+				remove(oper);
+			}
+			else if(oper.hasId1())
+			{
+				Long id1 = new Long(oper.getId1());
+				long[] id2set = relation.get(id1.longValue());
+				for (int i = 0; i < id2set.length; i++)
+				{
+					remove(new RelationModification.RemoveOperation(id1, new Long(id2set[i])));
+				}
+			}
+			else // if(oper.hasId2())
+			{
+				Long id2 = new Long(oper.getId2());
+				long[] id1set = relation.get(id2.longValue());
+				for (int i = 0; i < id1set.length; i++)
+				{
+					remove(new RelationModification.RemoveOperation(new Long(id1set[i]), id2));
+				}
+			}
+		}
+	}
 }
