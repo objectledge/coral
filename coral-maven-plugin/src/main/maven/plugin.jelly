@@ -156,6 +156,8 @@
         <echo>No RML sources defined - aborting</echo>
       </j:when>
       <j:otherwise>
+        <util:file var="basedirFile" name="${basedir}"/>
+        <j:set var="generatorTargetDirectory" value="${pom.build.sourceDirectory.substring(basedirFile.canonicalPath.length())}"/>      
 	    <j:if test="${maven.debugOn}">
 	      <echo>
 	        coral.generator.file.encoding=${generatorFileEncoding}
@@ -164,7 +166,7 @@
 		    coral.generator.package.excludes=${generatorPackageExcludes}
 		    coral.generator.header.file=${generatorHeaderFile}
 		    coral.generator.sources.list=${generatorSourcesList}
-		    coral.generator.target.directory=${pom.build.sourceDirectory}
+		    coral.generator.target.directory=${generatorTargetDirectory}
 		  </echo>
 		</j:if>
 	    <coral:generator
@@ -175,7 +177,7 @@
 	      packageExcludes="${generatorPackageExcludes}"
 	      headerFile="${generatorHeaderFile}"
 	      sourceFiles="${generatorSourcesList}"
-	      targetDir="${pom.build.sourceDirectory}"/>
+	      targetDir="${generatorTargetDirectory}"/>
       </j:otherwise>
     </j:choose>
   </goal>
