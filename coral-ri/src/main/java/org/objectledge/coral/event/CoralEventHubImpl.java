@@ -35,7 +35,7 @@ import org.objectledge.event.OutboundEventWhiteboard;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventHubImpl.java,v 1.2 2004-03-01 13:33:47 fil Exp $
+ * @version $Id: CoralEventHubImpl.java,v 1.3 2004-03-01 13:41:50 fil Exp $
  */
 public class CoralEventHubImpl
     implements CoralEventHub
@@ -56,15 +56,15 @@ public class CoralEventHubImpl
      */    
     public CoralEventHubImpl(EventWhiteboardFactory eventWhiteboardFactory, CoralEventBridge bridge)
     {
-        EventWhiteboard inbound = eventWhiteboardFactory.getForwarder();
+        EventWhiteboard inbound = eventWhiteboardFactory.newInstance();
         inboundEvents = new CoralEventWhiteboardImpl(new InboundEventWhiteboard(inbound));
-        EventWhiteboard outbound = eventWhiteboardFactory.getForwarder();
+        EventWhiteboard outbound = eventWhiteboardFactory.newInstance();
         if(bridge != null)
         {
             bridge.attach(inbound, outbound);
         }
         outboundEvents = new CoralEventWhiteboardImpl(new OutboundEventWhiteboard(outbound));
-        EventWhiteboard local = eventWhiteboardFactory.getForwarder();
+        EventWhiteboard local = eventWhiteboardFactory.newInstance();
         localEvents = new CoralEventWhiteboardImpl(local);
         globalEvents = new CoralEventRedirector(inboundEvents, localEvents, outboundEvents);
     }    
