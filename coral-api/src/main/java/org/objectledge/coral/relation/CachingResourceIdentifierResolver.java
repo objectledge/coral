@@ -38,13 +38,13 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
  * implementations.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CachingResourceIdentifierResolver.java,v 1.1 2004-02-20 09:15:48 zwierzem Exp $
+ * @version $Id: CachingResourceIdentifierResolver.java,v 1.2 2005-04-01 12:30:20 zwierzem Exp $
  */
 public class CachingResourceIdentifierResolver
 implements ResourceIdentifierResolver
 {
 	private ResourceIdentifierResolver resolver;
-	private Map setCache = new HashMap();
+	private Map<String, Set<Long>> setCache = new HashMap<String, Set<Long>>();
 
 	/**
 	 * Creates the wrapper. 
@@ -58,10 +58,10 @@ implements ResourceIdentifierResolver
 	/**
 	 * {@inheritDoc}
 	 */
-	public Set resolveIdentifier(String identifier)
+	public Set<Long> resolveIdentifier(String identifier)
 		throws EntityDoesNotExistException
 	{
-		Set set = (Set) setCache.get(identifier);
+		Set<Long> set = setCache.get(identifier);
 		if(set == null)
 		{
 			set = resolver.resolveIdentifier(identifier);

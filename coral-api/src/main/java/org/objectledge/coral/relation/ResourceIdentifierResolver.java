@@ -36,7 +36,7 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
  * An implementation of this interface must resolve identifier strings to resource ids.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceIdentifierResolver.java,v 1.1 2004-02-20 09:15:48 zwierzem Exp $
+ * @version $Id: ResourceIdentifierResolver.java,v 1.2 2005-04-01 12:30:20 zwierzem Exp $
  */
 public interface ResourceIdentifierResolver
 {
@@ -48,6 +48,6 @@ public interface ResourceIdentifierResolver
 	 * @throws EntityDoesNotExistException if there was something wrong while resolving
 	 * 		an indentifier
 	 */
-	public Set resolveIdentifier(String identifier)
+	public Set<Long> resolveIdentifier(String identifier)
 		throws EntityDoesNotExistException;
 }

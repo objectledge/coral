@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * </p>  
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: Relation.java,v 1.7 2004-12-23 07:18:29 rafal Exp $
+ * @version $Id: Relation.java,v 1.8 2005-04-01 12:30:20 zwierzem Exp $
  */
 public interface Relation extends Entity
 {
@@ -76,7 +76,7 @@ public interface Relation extends Entity
 	 * @param id the Resource id.
 	 * @return the unmodifiable set of resource ids in relation to a given resource id
 	 */
-	public Set get(long id);
+	public Set<Long> get(long id);
 
 	/** 
 	 * Returns <code>true</code> if given resource references the other.

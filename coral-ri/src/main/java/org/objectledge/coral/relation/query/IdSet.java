@@ -33,19 +33,18 @@ import java.util.Set;
  * Id set represents a set of resource ids. It is used during query execution.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: IdSet.java,v 1.1 2004-02-24 13:34:59 zwierzem Exp $
+ * @version $Id: IdSet.java,v 1.2 2005-04-01 12:32:12 zwierzem Exp $
  */
 public class IdSet
 {
-	private Set set;
+	private Set<Long> set;
 
 	/**
 	 * Constucts an id set from a set of {@link Long} objects.
-	 * <p>Warning!! The set is not checked for keeping the proper data type.</p>
 	 *  
 	 * @param set set of ids
 	 */
-	public IdSet(Set set)
+	public IdSet(Set<Long> set)
 	{
 		this.set = set;
 	}
@@ -75,7 +74,7 @@ public class IdSet
      * 
      * @return internal set of {@link Long} objects
      */
-    public Set getSet()
+    public Set<Long> getSet()
     {
         return set;
     }

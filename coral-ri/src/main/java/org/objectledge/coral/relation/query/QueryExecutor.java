@@ -47,7 +47,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * org.objectledge.coral.store.Resource} ids.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: QueryExecutor.java,v 1.6 2005-02-08 20:34:47 rafal Exp $
+ * @version $Id: QueryExecutor.java,v 1.7 2005-04-01 12:32:12 zwierzem Exp $
  */
 public class QueryExecutor extends AbstractQueryVisitor
 {
@@ -138,11 +138,11 @@ public class QueryExecutor extends AbstractQueryVisitor
 	 */
 	public Object doVisit(ASTRelationMapExpression node, Object data, Relation relation)
 	{
-		Set mapSet = getMapSet(node, data).getSet();
-		Set resultSet = new HashSet(mapSet.size());
-		for (Iterator iter = mapSet.iterator(); iter.hasNext();)
+		Set<Long> mapSet = getMapSet(node, data).getSet();
+		Set<Long> resultSet = new HashSet<Long>(mapSet.size());
+		for (Iterator<Long> iter = mapSet.iterator(); iter.hasNext();)
         {
-            Long id = (Long) iter.next();
+            Long id = iter.next();
 			resultSet.addAll(relation.get(id.longValue()));
         }
 		return new IdSet(resultSet);
@@ -160,11 +160,11 @@ public class QueryExecutor extends AbstractQueryVisitor
 	 */
 	public Object doVisit(ASTTransitiveRelationMapExpression node, Object data, Relation relation)
 	{
-		Set mapSet = getMapSet(node, data).getSet();
-		Set resultSet = new HashSet(mapSet.size());
-		for (Iterator iter = mapSet.iterator(); iter.hasNext();)
+		Set<Long> mapSet = getMapSet(node, data).getSet();
+		Set<Long> resultSet = new HashSet<Long>(mapSet.size());
+		for (Iterator<Long> iter = mapSet.iterator(); iter.hasNext();)
 		{
-			Long id = (Long) iter.next();
+			Long id = iter.next();
 			buildTransitiveSet(relation, id, mapSet, resultSet);
 		}
 		return new IdSet(resultSet);
@@ -177,12 +177,12 @@ public class QueryExecutor extends AbstractQueryVisitor
 		return (IdSet) node.jjtGetChild(1).jjtAccept(this, data);
 	}
 
-	private void buildTransitiveSet(Relation relation, Long id, Set mapSet, Set resultSet)
+	private void buildTransitiveSet(Relation relation, Long id, Set<Long> mapSet, Set<Long> resultSet)
 	{
-		Set localResult = relation.get(id.longValue()); 
-		for (Iterator iter = localResult.iterator(); iter.hasNext();)
+		Set<Long> localResult = relation.get(id.longValue()); 
+		for (Iterator<Long> iter = localResult.iterator(); iter.hasNext();)
         {
-            Long localId = (Long) iter.next();
+            Long localId = iter.next();
 			if(mapSet.contains(localId))
 			{
 				throw new RuntimeException("circular relation '"+relation.getName()
@@ -203,12 +203,12 @@ public class QueryExecutor extends AbstractQueryVisitor
 	{
 		try
 		{
-			Set set = resolver.resolveIdentifier(identifier);
+			Set<Long> set = resolver.resolveIdentifier(identifier);
 			return new IdSet(set);
 		}
 		catch(Exception e)
 		{
-			return new IdSet(new HashSet());
+			return new IdSet(new HashSet<Long>());
 		}
 	}
 }

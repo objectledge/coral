@@ -47,7 +47,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.26 2005-02-09 22:02:17 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.27 2005-04-01 12:32:13 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -60,9 +60,9 @@ implements Relation
     private CoralRelationManager coralRelationManager;
 
     /** Map r1 -&gt; set of r2. */
-    private Map rel = new HashMap();
+    private Map<Long, Set<Long>> rel = new HashMap<Long, Set<Long>>();
     /** Map r2 -&gt; set of r1. */
-    private Map invRel = new HashMap();
+    private Map<Long, Set<Long>> invRel = new HashMap<Long, Set<Long>>();
 	/** Number of unique resource pairs. */
 	private int resourceIdPairsNum = 0;
 
@@ -132,7 +132,7 @@ implements Relation
     /**
      * {@inheritDoc}
      */
-    public Set get(long id)
+    public Set<Long> get(long id)
     {
         return get(rel, id);
     }
@@ -213,8 +213,8 @@ implements Relation
 		long[] def = coralRelationManager.getRelationDefinition(this);
         
         
-        Set set1 = new HashSet(def.length/4);
-        Set set2 = new HashSet(def.length/4);
+        Set<Long> set1 = new HashSet(def.length/4);
+        Set<Long> set2 = new HashSet(def.length/4);
 
         for(int i=0; i<def.length / 2; i++)
         {
@@ -222,8 +222,8 @@ implements Relation
             set2.add(new Long(def[2 * i + 1]));
         }
 
-        rel = new HashMap((int)(set1.size()*1.5));
-        invRel = new HashMap((int)(set2.size()*1.5));
+        rel = new HashMap<Long, Set<Long>>((int)(set1.size()*1.5));
+        invRel = new HashMap<Long, Set<Long>>((int)(set2.size()*1.5));
 
         for(int i=0; i<def.length / 2; i++)
         {
@@ -249,12 +249,12 @@ implements Relation
 		return "coral_relation_data";
 	}
     
-	private int calcSetsSizeSum(Map relation)
+	private int calcSetsSizeSum(Map<Long, Set<Long>> relation)
 	{
 		int totalSize = 0;
-		for (Iterator iter = relation.values().iterator(); iter.hasNext();)
+		for (Iterator<Set<Long>> iter = relation.values().iterator(); iter.hasNext();)
 		{
-			Set relSet = (Set) iter.next();
+            Set<Long> relSet = iter.next();
 			totalSize += relSet.size();
 		}
 		return totalSize;
@@ -283,8 +283,8 @@ implements Relation
         Long r1k = new Long(id1);
         Long r2k = new Long(id2);
 
-        Set set1 = (Set) rel.get(r1k);
-        Set set2 = (Set) invRel.get(r2k);
+        Set<Long> set1 = rel.get(r1k);
+        Set<Long> set2 = invRel.get(r2k);
 
         boolean p1 = false;
         if(set1 != null)
@@ -328,8 +328,8 @@ implements Relation
         Long r1k = new Long(id1);
         Long r2k = new Long(id2);
 
-        Set set1 = maybeCreateSet(rel, r1k);
-        Set set2 = maybeCreateSet(invRel, r2k);
+        Set<Long> set1 = maybeCreateSet(rel, r1k);
+        Set<Long> set2 = maybeCreateSet(invRel, r2k);
 
         boolean p1 = set1.add(r2k);
         // -- this the moment in which the relationship is directed r1 -> r2
@@ -353,7 +353,7 @@ implements Relation
     /**
      * Returns a set for a given id key and relation, maybe creates it.
      */
-    private Set maybeCreateSet(Map relation, Long idk)
+    private Set<Long> maybeCreateSet(Map<Long, Set<Long>> relation, Long idk)
     {
         return maybeCreateSet(relation, idk, initialSetCapacity);
     }
@@ -361,12 +361,12 @@ implements Relation
     /**
      * Returns a set for a given id key and relation, maybe creates it.
      */
-    private Set maybeCreateSet(Map relation, Long idk, int initialCapacity)
+    private Set<Long> maybeCreateSet(Map<Long, Set<Long>> relation, Long idk, int initialCapacity)
     {
-        Set set = (Set)relation.get(idk);
+        Set<Long> set = relation.get(idk);
         if(set == null)
         {
-            set = new HashSet(initialCapacity);
+            set = new HashSet<Long>(initialCapacity);
             relation.put(idk, set);
         }
         return set;
@@ -375,9 +375,9 @@ implements Relation
     /**
      * Returns resources referenced by a given resource in the relation.
      */
-    Resource[] get(Map relation, Resource r)
+    Resource[] get(Map<Long, Set<Long>> relation, Resource r)
     {
-        Set set = (Set)relation.get(r.getIdObject());
+        Set<Long> set = relation.get(r.getIdObject());
         if(set != null)
         {
             return instantiate(set);
@@ -391,16 +391,16 @@ implements Relation
     /**
      * Return an array of ids contained in the map under given id.
      */
-    Set get(Map relation, long id)
+    Set<Long> get(Map<Long, Set<Long>> relation, long id)
     {
-        Set set = (Set)relation.get(new Long(id));
+        Set<Long> set = relation.get(new Long(id));
         if(set != null)
         {
         	return Collections.unmodifiableSet(set);
         }
         else
         {
-            return Collections.EMPTY_SET;
+            return (Set<Long>) Collections.EMPTY_SET;
         }
     }
 
@@ -410,15 +410,15 @@ implements Relation
      * @param a indentifier array.
      * @return Resource array.
      */
-    private Resource[] instantiate(Set a)
+    private Resource[] instantiate(Set<Long> a)
     {
         Resource[] res = new Resource[a.size()];
         try
         {
             int i = 0;
-            for (Iterator iter = a.iterator(); iter.hasNext(); i++)
+            for (Iterator<Long> iter = a.iterator(); iter.hasNext(); i++)
             {
-                Long id = (Long) iter.next();
+                Long id = iter.next();
                 res[i] = store.getResource(id.longValue());
             }
         }
@@ -461,7 +461,7 @@ implements Relation
         /**
          * {@inheritDoc}
          */
-        public Set get(long id)
+        public Set<Long> get(long id)
         {
             return RelationImpl.this.get(invRel, id);
         }
