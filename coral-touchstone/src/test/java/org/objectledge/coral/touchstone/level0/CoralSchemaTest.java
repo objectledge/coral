@@ -42,7 +42,7 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaTest.java,v 1.1 2004-03-15 09:18:56 fil Exp $
+ * @version $Id: CoralSchemaTest.java,v 1.2 2004-03-15 09:47:01 fil Exp $
  */
 public class CoralSchemaTest
     extends CoralTestCase
@@ -178,6 +178,16 @@ public class CoralSchemaTest
             getTable("coral_resource_class_inheritance");
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);            
+        session.close();
+    }
+    
+    public void testBuiltinAttributeDefinitions()
+        throws Exception
+    {
+        CoralSession session = coralSessionFactory.getAnonymousSession();
+        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        AttributeDefinition[] attributes = nodeClass.getAllAttributes();
+        assertTrue(attributes.length > 0);
         session.close();
     }
     

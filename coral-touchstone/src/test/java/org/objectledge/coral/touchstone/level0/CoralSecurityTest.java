@@ -42,7 +42,7 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityTest.java,v 1.1 2004-03-15 09:18:56 fil Exp $
+ * @version $Id: CoralSecurityTest.java,v 1.2 2004-03-15 09:47:01 fil Exp $
  */
 public class CoralSecurityTest
     extends CoralTestCase
@@ -225,6 +225,16 @@ public class CoralSecurityTest
             getTable("coral_permission_association");
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
+        session.close();                        
+    }
+    
+    public void testBuiltinRoleAssignments()
+        throws Exception
+    {
+        CoralSession session = coralSessionFactory.getRootSession();
+        Subject root = session.getSecurity().getSubject(Subject.ROOT);
+        Role rootRole = session.getSecurity().getRole(Role.ROOT);
+        assertTrue(root.hasRole(rootRole));
         session.close();                        
     }
 
