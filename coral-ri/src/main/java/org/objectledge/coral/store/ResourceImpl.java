@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.9 2004-03-09 15:46:46 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.10 2004-03-12 09:39:06 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -97,7 +97,7 @@ public class ResourceImpl
      * @param coral the component hub.
      * @param coralEventHub the event hub.
      */
-    ResourceImpl(Persistence persistence, CoralCore coral, CoralEventHub coralEventHub)
+    public ResourceImpl(Persistence persistence, CoralCore coral, CoralEventHub coralEventHub)
     {
         super(persistence);
         this.coral = coral;
