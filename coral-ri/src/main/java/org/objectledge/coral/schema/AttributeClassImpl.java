@@ -1,5 +1,8 @@
 package org.objectledge.coral.schema;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralInstantiationException;
 import org.objectledge.coral.Instantiator;
@@ -14,7 +17,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.9 2004-03-09 15:46:47 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.10 2004-03-11 17:36:17 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -256,7 +259,9 @@ public class AttributeClassImpl
         try
         {
             Class handlerClass = instantiator.loadClass(className);
-            handler = (AttributeHandler)instantiator.newInstance(handlerClass);
+            Map additional = new HashMap();
+            additional.put(AttributeClass.class, this);
+            handler = (AttributeHandler)instantiator.newInstance(handlerClass, additional);
         }
         catch(ClassNotFoundException e)
         {
