@@ -57,7 +57,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.11 2005-01-28 01:04:42 rafal Exp $
+ * @version $Id: RelationImplTest.java,v 1.12 2005-02-11 11:30:37 rafal Exp $
  */
 public class RelationImplTest extends LedgeTestCase
 {
@@ -85,7 +85,7 @@ public class RelationImplTest extends LedgeTestCase
     
     private Mock mockCoralRelationManager = mock(CoralRelationManager.class);
     private CoralRelationManager coralRelationManager = 
-        (CoralRelationManager)mockCoralRelationManager.proxy();;
+        (CoralRelationManager)mockCoralRelationManager.proxy();
 
     public static void main(String[] args)
     {

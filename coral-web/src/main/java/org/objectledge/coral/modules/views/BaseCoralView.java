@@ -36,7 +36,7 @@ public abstract class BaseCoralView
     public String build(Template template, String embeddedBuildResults) 
         throws BuildException
     {
-    	CoralSession coralSession = (CoralSession)context.getAttribute(CoralSession.class);;
+    	CoralSession coralSession = (CoralSession)context.getAttribute(CoralSession.class);
         Parameters parameters = RequestParameters.getRequestParameters(context);
         TemplatingContext templatingContext = TemplatingContext.getTemplatingContext(context);
         MVCContext mvcContext = MVCContext.getMVCContext(context);
