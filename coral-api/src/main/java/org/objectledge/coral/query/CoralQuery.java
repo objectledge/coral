@@ -6,7 +6,7 @@ import org.objectledge.coral.script.parser.ASTfindResourceStatement;
  * Allows the application to perform queries on data contained in the Coral.
  *
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: CoralQuery.java,v 1.4 2004-05-14 11:19:10 fil Exp $
+ * @version $Id: CoralQuery.java,v 1.5 2004-08-27 11:28:29 rafal Exp $
  */
 public interface CoralQuery
 {
@@ -26,8 +26,10 @@ public interface CoralQuery
      * 
      * @param node query AST root.
      * @return query results.
+     * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
-    public QueryResults executeQuery(ASTfindResourceStatement node);
+    public QueryResults executeQuery(ASTfindResourceStatement node)
+    	throws MalformedQueryException;
     
     /** 
      * Prepares a query.

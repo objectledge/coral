@@ -38,7 +38,7 @@ import org.objectledge.coral.script.parser.ASTfindResourceStatement;
  * Session local CoralQuery wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralQuery.java,v 1.3 2004-03-18 11:34:32 fil Exp $
+ * @version $Id: SessionCoralQuery.java,v 1.4 2004-08-27 11:28:29 rafal Exp $
  */
 public class SessionCoralQuery
     implements CoralQuery
@@ -70,7 +70,7 @@ public class SessionCoralQuery
     /** 
      * {@inheritDoc}
      */
-    public QueryResults executeQuery(ASTfindResourceStatement node)
+    public QueryResults executeQuery(ASTfindResourceStatement node) throws MalformedQueryException
     {
         session.verify();
         return coral.getQuery().executeQuery(node);
