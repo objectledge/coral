@@ -58,7 +58,7 @@ import org.objectledge.utils.StringUtils;
  * Performs importing data from old style ARL schema database to brand new CORAL scheme.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ARLImporterComponent.java,v 1.12 2005-02-06 22:58:18 pablo Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.13 2005-03-23 05:57:56 rafal Exp $
  */
 public class ARLImporterComponent
 {
@@ -1626,7 +1626,10 @@ public class ARLImporterComponent
         {
             classSet = new HashSet();
         }
-        ResultSet rs = sourceStmt.executeQuery("SELECT * FROM arl_attribute_weak_resource_lis");
+        String lis = "arl_attribute_weak_resource_lis";
+        String list = "arl_attribute_weak_resource_list";
+        String table = DatabaseUtils.hasTable(source, lis) ? lis : list;
+        ResultSet rs = sourceStmt.executeQuery("SELECT * FROM "+table);
         while(rs.next())
         {
             long dataKey = rs.getLong("data_key");
