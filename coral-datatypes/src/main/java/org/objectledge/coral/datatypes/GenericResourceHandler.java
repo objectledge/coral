@@ -24,7 +24,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.15 2005-04-01 09:25:35 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.16 2005-04-04 11:36:28 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -246,16 +246,28 @@ public class GenericResourceHandler
         try
         {
             stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT count(*) from coral_generic_resource WHERE " +
+                "attribute_definition_id = " + attr.getIdString());
+            rs.next();
+            System.out.println("deleting attribute "+attr.getName()+" from "+rc.getName()+": "+
+                rs.getInt(1)+" items");
             rs = stmt.executeQuery("SELECT coral_resource.resource_id, data_key FROM "
                 + "coral_resource, coral_generic_resource " + "WHERE resource_class_id = "
                 + rc.getIdString() + " AND attribute_definition_id = " + attr.getIdString()
                 + " AND coral_resource.resource_id = coral_generic_resource.resource_id");
+            int cnt = 0;
             while(rs.next())
             {
                 long resId = rs.getLong(1);
                 long dataId = rs.getLong(2);
                 try
                 {
+                    System.out.print(".");
+                    cnt++;
+                    if(cnt % 100 == 0)
+                    {
+                        System.out.println(" "+cnt+" ");
+                    }
                     attr.getAttributeClass().getHandler().delete(dataId, conn);
                 }
                 catch(EntityDoesNotExistException e)
@@ -265,6 +277,7 @@ public class GenericResourceHandler
             }
             stmt.execute("DELETE FROM coral_generic_resource "
                 + "WHERE attribute_definition_id = " + attr.getIdString());
+            System.out.println();
         }
         finally
         {
@@ -289,14 +302,15 @@ public class GenericResourceHandler
         {
             atMap.put(attrs[i].getIdObject(), attrs[i]);
         }
-        Statement stmt1 = conn.createStatement();
-        Statement stmt2 = conn.createStatement();
-        ResultSet rs = stmt1.executeQuery(
+        Statement stmt = conn.createStatement();
+        ResultSet rs;
+        rs = stmt.executeQuery(
             "SELECT coral_resource.resource_id, attribute_definition_id, data_key FROM "+
             "coral_resource, coral_generic_resource "+
             "WHERE resource_class_id = "+rc.getIdString()+
             " AND coral_resource.resource_id = coral_generic_resource.resource_id"
         );
+        int cnt = 0;
         while(rs.next())
         {
             long resId = rs.getLong(1);
@@ -313,13 +327,16 @@ public class GenericResourceHandler
                 {
                     throw new BackendException("internal error", e);
                 }
-                stmt2.execute(
-                    "DELETE FROM coral_generic_resource "+
-                    "WHERE resource_id = "+resId+
-                    "AND attribute_definition_id = "+atId
-                );
             }
         }
+        for(int i=0; i<attrs.length; i++)
+        {
+            stmt.execute(
+                "DELETE FROM coral_generic_resource "+
+                "WHERE attribute_definition_id = "+attrs[i].getIdString()
+            );
+        }
+        stmt.close();
         revert(rc, conn);
     }
 
