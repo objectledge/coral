@@ -49,7 +49,7 @@ CREATE TABLE coral_resource_class (
         java_class_name VARCHAR(255) NOT NULL,
         handler_class_name VARCHAR(255),
         db_table VARCHAR(255),
-        flags INTEGER NOT NULL DEFAULT 0,
+        flags INTEGER DEFAULT 0 NOT NULL,
         PRIMARY KEY (resource_class_id)
 );
 
@@ -73,7 +73,7 @@ CREATE TABLE coral_attribute_definition (
         attribute_class_id BIGINT NOT NULL,
         domain VARCHAR(255),
         name VARCHAR(32) NOT NULL,
-        flags INTEGER NOT NULL DEFAULT 0,
+        flags INTEGER DEFAULT 0 NOT NULL,
         PRIMARY KEY (attribute_definition_id)
 );
 
@@ -93,8 +93,7 @@ CREATE TABLE coral_subject (
         PRIMARY KEY (subject_id)
 );
 
-CREATE UNIQUE INDEX coral_subject_name ON coral_subject
-        USING BTREE (name);
+CREATE UNIQUE INDEX coral_subject_name ON coral_subject (name);
 
 CREATE TABLE coral_role (
         role_id BIGINT NOT NULL,
@@ -120,7 +119,7 @@ CREATE TABLE coral_role_assignment (
         subject_id BIGINT NOT NULL,
         role_id BIGINT NOT NULL,
         grantor BIGINT NOT NULL,
-        grant_time TIMESTAMP WITH TIME ZONE NOT NULL,
+        grant_time TIMESTAMP NOT NULL,
         granting_allowed CHAR(1),
         PRIMARY KEY (subject_id, role_id)
 );
@@ -143,20 +142,6 @@ CREATE TABLE coral_permission (
         PRIMARY KEY (permission_id)
 );
 
-CREATE TABLE coral_resource_class_permission (
-        resource_class_id BIGINT NOT NULL,
-        permission_id BIGINT NOT NULL,
-        PRIMARY KEY (resource_class_id, permission_id)
-);
-
-ALTER TABLE coral_resource_class_permission         
-        ADD FOREIGN KEY (resource_class_id)
-        REFERENCES coral_resource_class (resource_class_id);
-
-ALTER TABLE coral_resource_class_permission
-        ADD FOREIGN KEY (permission_id)
-        REFERENCES coral_permission (permission_id);
-
 -- CoralStore ---------------------------------------------------------------
 
 CREATE TABLE coral_resource (
@@ -165,10 +150,10 @@ CREATE TABLE coral_resource (
         parent BIGINT,
         name VARCHAR(255) NOT NULL,
         created_by BIGINT NOT NULL,
-        creation_time TIMESTAMP WITH TIME ZONE NOT NULL,
+        creation_time TIMESTAMP NOT NULL,
         owned_by BIGINT NOT NULL,
         modified_by BIGINT,
-        modification_time TIMESTAMP WITH TIME ZONE,
+        modification_time TIMESTAMP,
         PRIMARY KEY (resource_id)
 );
 
@@ -177,7 +162,7 @@ ALTER TABLE coral_resource
         REFERENCES coral_resource_class (resource_class_id);
 
 ALTER TABLE coral_resource
-        ADD FOREIGN KEY (parent)
+        ADD CONSTRAINT resource_parent_fk FOREIGN KEY (parent)
         REFERENCES coral_resource (resource_id);
 
 ALTER TABLE coral_resource
@@ -192,14 +177,11 @@ ALTER TABLE coral_resource
         ADD FOREIGN KEY (modified_by)
         REFERENCES coral_subject (subject_id);
 
-CREATE INDEX coral_resource_parent ON coral_resource
-        USING BTREE (parent);
+CREATE INDEX coral_resource_parent ON coral_resource (parent);
 
-CREATE INDEX coral_resource_name ON coral_resource
-        USING HASH (name);
+CREATE INDEX coral_resource_name ON coral_resource (name);
 
-CREATE INDEX coral_resource_parent_name ON coral_resource
-        USING BTREE (parent, name);
+CREATE INDEX coral_resource_parent_name ON coral_resource (parent, name);
 
 CREATE TABLE coral_permission_assignment (
         resource_id BIGINT NOT NULL,
@@ -207,7 +189,7 @@ CREATE TABLE coral_permission_assignment (
         permission_id BIGINT NOT NULL,
         is_inherited CHAR(1) NOT NULL,
         grantor BIGINT NOT NULL,
-        grant_time TIMESTAMP WITH TIME ZONE NOT NULL,
+        grant_time TIMESTAMP NOT NULL,
         PRIMARY KEY (resource_id, role_id, permission_id)
 );
 

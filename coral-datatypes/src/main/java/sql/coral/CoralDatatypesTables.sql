@@ -83,20 +83,20 @@ CREATE TABLE coral_attribute_string (
 
 CREATE TABLE coral_attribute_text (
         data_key BIGINT NOT NULL,
-        data TEXT,
+        data VARCHAR,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_date (
         data_key BIGINT NOT NULL,
-        data TIMESTAMP WITH TIME ZONE,
+        data TIMESTAMP,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_date_range (
         data_key BIGINT NOT NULL,
-        start_date TIMESTAMP WITH TIME ZONE,
-        end_date TIMESTAMP WITH TIME ZONE,
+        start_date TIMESTAMP,
+        end_date TIMESTAMP,
         PRIMARY KEY (data_key)
 );
 
@@ -166,4 +166,4 @@ CREATE TABLE coral_attribute_weak_resource_list (
         pos INTEGER NOT NULL,
         ref BIGINT,
         PRIMARY KEY (data_key, pos)
-);        
+);
