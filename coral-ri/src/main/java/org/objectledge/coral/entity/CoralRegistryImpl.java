@@ -55,7 +55,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.5 2004-03-05 12:09:19 fil Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.6 2004-03-09 14:33:30 zwierzem Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -69,9 +69,6 @@ public class CoralRegistryImpl
 {
     // Member objects ////////////////////////////////////////////////////////
 
-    /** The db connection pool to use. */
-    private String pool;
-    
     /** The {@link PersistenceService}. */
     private Persistence persistence;
     
