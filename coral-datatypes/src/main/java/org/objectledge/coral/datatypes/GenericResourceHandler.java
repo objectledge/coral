@@ -28,7 +28,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.6 2004-04-30 12:36:28 fil Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.7 2004-05-06 10:55:25 pablo Exp $
  */
 public class GenericResourceHandler
     extends ResourceHandlerBase
@@ -40,9 +40,11 @@ public class GenericResourceHandler
     private Map cache = new HashMap();
 
     /**
-     * Constructor.
+     * The constructor.
      * 
-     * @param coralSecurity the coralSecurity.
+     * @param coralSchema the coral schema.
+     * @param coralSecurity the coral security.
+     * @param instantiator the instantiator.
      * @param resourceClass the resource class.
      */
     public GenericResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity, 
@@ -54,18 +56,7 @@ public class GenericResourceHandler
     // Resource handler interface ////////////////////////////////////////////
 
     /**
-     * Saves a new resource in the persistent storage.
-     *
-     * @param delegate the security delegate {@link Resource} object.
-     * @param attributes the initial values of the attributes, keyed with
-     *        {@link AttributeDefinition} objects.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @return the new resource.
-     * @throws ValueRequiredException if not all obligatory attributes are
-     *         provided.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public Resource create(Resource delegate, Map attributes, Connection conn)
         throws ValueRequiredException, SQLException
@@ -78,13 +69,7 @@ public class GenericResourceHandler
     }
 
     /**
-     * Removes the resource from the persistent storage.
-     *
-     * @param resource the resource
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void delete(Resource resource, Connection conn)
         throws SQLException
@@ -94,14 +79,7 @@ public class GenericResourceHandler
     }
 
     /**
-     * Retrives a resource from the persistent storage.
-     *
-     * @param delegate the security delegate {@link Resource} object.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @return the resource.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public Resource retrieve(Resource delegate, Connection conn)
         throws SQLException
@@ -115,14 +93,7 @@ public class GenericResourceHandler
     }
 
     /**
-     * Retrives a resource from the persistent storage.
-     *
-     * @param delegate the security delegate {@link Resource} object.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @return the resource.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public Resource retrieve(Resource delegate, Connection conn, Map dataKeyMap)
         throws SQLException
@@ -135,13 +106,7 @@ public class GenericResourceHandler
     }
 
     /**
-     * Reverts the state of a resource from the persistent storage.
-     *
-     * @param resource the resource.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void revert(Resource resource, Connection conn)
         throws SQLException
@@ -153,13 +118,7 @@ public class GenericResourceHandler
     }
 
     /**
-     * Reverts the state of a resource from the persistent storage.
-     *
-     * @param resource the resource.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void revert(Resource resource, Connection conn, Map dataKeyMap)
         throws SQLException
@@ -170,13 +129,7 @@ public class GenericResourceHandler
     }
 
     /**
-     * Updates the contents of the resource in the persistent storage.
-     *
-     * @param resource the resource.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void update(Resource resource, Connection conn)
         throws SQLException
@@ -186,20 +139,7 @@ public class GenericResourceHandler
     }
 
     /**
-     * Called when an attribute is added to a structured resource class.
-     *
-     * <p>Concrete resource classes will probably deny this operation by
-     * throwing <code>UnsupportedOperationException</code>.</p>
-     *
-     * @param attribute the new attribute.
-     * @param value the initial value to be set for existing instances of this
-     *        class.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     * @throws ValueRequiredException if <code>null</code> value was provided
-     *         for a REQUIRED attribute.
+     * {@inheritDoc}
      */
     public void addAttribute(AttributeDefinition attribute, 
                              Object value, Connection conn)
@@ -214,16 +154,7 @@ public class GenericResourceHandler
     }
     
     /**
-     * Called when an attribute is removed from a structured resource class.
-     *
-     * <p>Concrete resource classes will probably deny this operation by
-     * throwing <code>UnsupportedOperationException</code>.</p>
-     *
-     * @param attribute the removed attribute.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void deleteAttribute(AttributeDefinition attribute, Connection conn)
         throws SQLException
@@ -237,21 +168,7 @@ public class GenericResourceHandler
     }
 
     /**
-     * Called when a parent class is added to a sturctured resource class.
-     *
-     * <p>Concrete resource classes will probably deny this operation by
-     * throwing <code>UnsupportedOperationException</code>.</p>
-     *
-     * @param parent the new parent class.
-     * @param attributes the initial values of the attributes. Values are
-     *        keyed with {@link AttributeDefinition} objects.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     * @throws ValueRequiredException if values for any of parent class
-     *         REQUIRED attributes are missing from <code>attributes</code>
-     *         map. 
+     * {@inheritDoc}
      */
     public void addParentClass(ResourceClass parent, Map values, Connection conn)
         throws ValueRequiredException, SQLException
@@ -266,16 +183,7 @@ public class GenericResourceHandler
     }
     
     /**
-     * Called when a parent class is removed from a structured resource class.
-     *
-     * <p>Concrete resource classes will probably deny this operation by
-     * throwing <code>UnsupportedOperationException</code>.</p>
-     *
-     * @param parent the new parent class.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
+     * {@inheritDoc}
      */
     public void deleteParentClass(ResourceClass parent, Connection conn)
         throws SQLException
@@ -578,7 +486,15 @@ public class GenericResourceHandler
         }
         revert(rc, conn);
     }
-    
+
+    /**
+     * Retrieve the data keys.
+     * 
+     * @param delegate the delegate resource.
+     * @param conn the connection.
+     * @return the map of data keys.
+     * @throws SQLException if happens.
+     */    
     public Map getDataKeys(Resource delegate, Connection conn)
         throws SQLException
     {       
@@ -609,7 +525,14 @@ public class GenericResourceHandler
         }
         return keyMap;
     }
-    
+
+    /**
+     * Retrieve the data keys.
+     * 
+     * @param conn the connection.
+     * @return the map of data keys.
+     * @throws SQLException if happens.
+     */    
     public Map getDataKeys(Connection conn)
         throws SQLException
     {

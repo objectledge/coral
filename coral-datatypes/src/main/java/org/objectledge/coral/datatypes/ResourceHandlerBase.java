@@ -3,10 +3,8 @@ package org.objectledge.coral.datatypes;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.objectledge.ComponentInitializationError;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
-import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
@@ -14,14 +12,13 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.ResourceHandler;
 import org.objectledge.coral.security.CoralSecurity;
-import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 
 /**
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceHandlerBase.java,v 1.4 2004-04-01 08:54:27 fil Exp $
+ * @version $Id: ResourceHandlerBase.java,v 1.5 2004-05-06 10:55:25 pablo Exp $
  */
 public abstract class ResourceHandlerBase 
     implements ResourceHandler
@@ -41,8 +38,10 @@ public abstract class ResourceHandlerBase
     /**
      * The base constructor.
      * 
-     * @param coralSecurity
-     * @param resourceClass
+     * @param coralSchema the coral schema.
+     * @param coralSecurity the coral security.
+     * @param instantiator the instantiator.
+     * @param resourceClass the resource class.
      */
     public ResourceHandlerBase(CoralSchema coralSchema, CoralSecurity coralSecurity,
         Instantiator instantiator, ResourceClass resourceClass)
@@ -53,8 +52,8 @@ public abstract class ResourceHandlerBase
         this.resourceClass = resourceClass;
     }
 
-    /* 
-     * (overriden)
+    /**
+     * {@inheritDoc}
      */
     public Resource[] getResourceReferences(Resource resource, boolean clearable)
     {
@@ -80,8 +79,8 @@ public abstract class ResourceHandlerBase
         return result;
     }   
     
-    /* 
-     * (overriden)
+    /**
+     * {@inheritDoc}
      */
     public void clearResourceReferences(Resource resource)
     {
@@ -121,6 +120,7 @@ public abstract class ResourceHandlerBase
      *
      * @param rClass the resource class to be instantiated
      * @return implementation object.
+     * @throws BackendException if failed to instantiate. 
      */
     protected GenericResource instantiate(ResourceClass rClass)
         throws BackendException
