@@ -53,6 +53,9 @@ public class EntityRegistry
     
     /** The "all" to entity set map. */
     private Map all;
+    
+    /** Objects added through addSynthetic() */
+    private Set synthetics;
 
     /** The under which the value set is stored in 'all' map */
     private static final String ALL_KEY = "all";
@@ -152,6 +155,10 @@ public class EntityRegistry
             {
                 List items = persistence.load(null, factory);
                 resolve(items, es);
+                if(synthetics != null)
+                {
+                    es.addAll(synthetics);
+                }
             }
             catch(PersistenceException ex)
             {
@@ -271,7 +278,37 @@ public class EntityRegistry
         if(es != null)
         {
             es.add(entity);
-        }        
+        }                
+    }
+    
+    /**
+     * Adds a synthetic entity to the directly.
+     * 
+     * <p>This method does not attempt to save the entity to storage - should be used for 
+     * synthetic entities.</p> 
+     * 
+     * @param entity the entity to add.
+     */
+    public void addSynthetic(Entity entity)
+    {
+        byId.put(entity.getIdObject(), entity);
+        Set es = (Set)byName.get(entity.getName());
+        if(es == null)
+        {
+            es = new HashSet();
+            byName.put(entity.getName(), es);
+        }
+        es.add(entity);
+        es = (Set)all.get(ALL_KEY);
+        if(es != null)
+        {
+            es.add(entity);
+        }
+        if(synthetics == null)
+        {
+            synthetics = new HashSet();
+        }
+        synthetics.add(entity);
     }
     
     /**
