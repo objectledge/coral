@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.4 2004-03-01 11:44:10 fil Exp $ -->
+<!-- $Id: project.xml,v 1.5 2004-03-08 08:07:15 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -86,6 +86,11 @@
       <version>1.1-rc2</version>
       <url>http://dna.jcontainer.org</url>
     </dependency>    
+    <dependency>
+      <groupId>commons-pool</groupId>
+      <artifactId>commons-pool</artifactId>
+      <version>1.0</version>
+    </dependency>
     <!-- testing -->
     <dependency>
       <groupId>jmock</groupId>

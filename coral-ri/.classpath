@@ -17,5 +17,6 @@
         path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar" sourcepath="MAVEN_REPO/log4j/sources/log4j-1.2.8-source.zip"/>
     <classpathentry kind="var"
         path="MAVEN_REPO/dna/jars/dna-impl-1.1-rc2.jar" sourcepath="MAVEN_REPO/dna/sources/dna-impl-1.1-rc2-src.zip"/>
+    <classpathentry kind="var" path="MAVEN_REPO/commons-pool/jars/commons-pool-1.0.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
