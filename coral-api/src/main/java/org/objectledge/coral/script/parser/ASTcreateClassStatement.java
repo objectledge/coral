@@ -26,7 +26,7 @@ public class ASTcreateClassStatement extends ASTcreateEntityStatement {
 
   public String getHandlerClass()
   {
-      return javaClass;
+      return handlerClass;
   }  
   
   public String getDbTable()

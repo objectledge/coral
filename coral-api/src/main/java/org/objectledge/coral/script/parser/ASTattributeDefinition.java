@@ -19,7 +19,7 @@ public class ASTattributeDefinition extends SimpleNode {
   
   public String getName()
   {
-      return name;
+      return attributeName;
   }
   
   public ASTattributeClass getAttributeClass()
