@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceOwnership;
 /**
  * Event multiplexer class.
  *
- * @version $Id: CoralEventListener.java,v 1.3 2004-02-20 12:51:17 fil Exp $
+ * @version $Id: CoralEventListener.java,v 1.4 2004-02-27 12:39:42 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class CoralEventListener
@@ -43,52 +43,52 @@ public abstract class CoralEventListener
     // Memeber objects ///////////////////////////////////////////////////////
     
     /** The {@link CoralEventWhiteboard}. */
-    private CoralEventWhiteboard service;
+    private CoralEventWhiteboard whiteboard;
 
     // initialization ////////////////////////////////////////////////////////
 
     /**
      * Register the multiplexer with an <code>EventService</code>.
      *
-     * @param service the event service.
+     * @param whiteboard the event whiteboard.
      */
-    public void register(CoralEventWhiteboard service)
+    public void register(CoralEventWhiteboard whiteboard)
     {
-        service.addPermissionAssignmentChangeListener( 
+        whiteboard.addPermissionAssignmentChangeListener( 
             this, null);
-        service.addPermissionAssociationChangeListener(
+        whiteboard.addPermissionAssociationChangeListener(
             this, null);
-        service.addRoleAssignmentChangeListener(
+        whiteboard.addRoleAssignmentChangeListener(
             this, null);
-        service.addRoleImplicationChangeListener(
+        whiteboard.addRoleImplicationChangeListener(
             this, null);
-        service.addResourceClassInheritanceChangeListener(
+        whiteboard.addResourceClassInheritanceChangeListener(
             this, null);
-        service.addResourceClassAttributesChangeListener(
+        whiteboard.addResourceClassAttributesChangeListener(
             this, null);
-        service.addResourceTreeChangeListener(
+        whiteboard.addResourceTreeChangeListener(
             this, null);
-        service.addResourceOwnershipChangeListener(
+        whiteboard.addResourceOwnershipChangeListener(
             this, null);
-        service.addSubjectChangeListener(
+        whiteboard.addSubjectChangeListener(
             this, null);
-        service.addRoleChangeListener(
+        whiteboard.addRoleChangeListener(
             this, null);
-        service.addPermissionChangeListener(
+        whiteboard.addPermissionChangeListener(
             this, null);
-        service.addResourceCreationListener(
+        whiteboard.addResourceCreationListener(
             this, null);
-        service.addResourceChangeListener(
+        whiteboard.addResourceChangeListener(
             this, null);
-		service.addResourceDeletionListener(
+		whiteboard.addResourceDeletionListener(
 			this, null);
-        service.addResourceClassChangeListener(
+        whiteboard.addResourceClassChangeListener(
             this, null);
-        service.addAttributeClassChangeListener(
+        whiteboard.addAttributeClassChangeListener(
             this, null);
-        service.addAttributeDefinitionChangeListener(
+        whiteboard.addAttributeDefinitionChangeListener(
             this, null);
-        this.service = service;
+        this.whiteboard = whiteboard;
     }
     
     /**
@@ -96,43 +96,43 @@ public abstract class CoralEventListener
      */
     public void unregister()
     {
-        if(service != null)
+        if(whiteboard != null)
         {   
-            service.removePermissionAssignmentChangeListener( 
+            whiteboard.removePermissionAssignmentChangeListener( 
                 this, null);
-            service.removePermissionAssociationChangeListener(
+            whiteboard.removePermissionAssociationChangeListener(
                 this, null);
-            service.removeRoleAssignmentChangeListener(
+            whiteboard.removeRoleAssignmentChangeListener(
                 this, null);
-            service.removeRoleImplicationChangeListener(
+            whiteboard.removeRoleImplicationChangeListener(
                 this, null);
-            service.removeResourceClassInheritanceChangeListener(
+            whiteboard.removeResourceClassInheritanceChangeListener(
                 this, null);
-            service.removeResourceClassAttributesChangeListener(
+            whiteboard.removeResourceClassAttributesChangeListener(
                 this, null);
-            service.removeResourceTreeChangeListener(
+            whiteboard.removeResourceTreeChangeListener(
                 this, null);
-            service.removeResourceOwnershipChangeListener(
+            whiteboard.removeResourceOwnershipChangeListener(
                 this, null);
-            service.removeSubjectChangeListener(
+            whiteboard.removeSubjectChangeListener(
                 this, null);
-            service.removeRoleChangeListener(
+            whiteboard.removeRoleChangeListener(
                 this, null);
-            service.removePermissionChangeListener(
+            whiteboard.removePermissionChangeListener(
                 this, null);
-            service.removeResourceCreationListener(
+            whiteboard.removeResourceCreationListener(
                 this, null);
-            service.removeResourceChangeListener(
+            whiteboard.removeResourceChangeListener(
                 this, null);
-			service.removeResourceDeletionListener(
+			whiteboard.removeResourceDeletionListener(
 				this, null);
-            service.removeResourceClassChangeListener(
+            whiteboard.removeResourceClassChangeListener(
                 this, null);
-            service.removeAttributeClassChangeListener(
+            whiteboard.removeAttributeClassChangeListener(
                 this, null);
-            service.removeAttributeDefinitionChangeListener(
+            whiteboard.removeAttributeDefinitionChangeListener(
                 this, null);
-            service = null;
+            whiteboard = null;
         }
     }    
 
