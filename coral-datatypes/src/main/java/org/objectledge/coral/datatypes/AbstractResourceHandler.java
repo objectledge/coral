@@ -28,7 +28,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.6 2004-12-23 07:15:36 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.7 2005-01-20 06:00:24 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -48,6 +48,9 @@ public abstract class AbstractResourceHandler
     /** resource sets, keyed by resource class. Resources are kept through  weak  references. */
     private Map cache = new HashMap();
     
+    /** to avoid multiple cache processing. */
+    private Map cached = new WeakHashMap();
+
     /**
      * The base constructor.
      * 
@@ -264,14 +267,33 @@ public abstract class AbstractResourceHandler
      *
      * @param res the resource to add to the cache.
      */
-    protected void addToCache(AbstractResource res)
+    private void addToCache(AbstractResource res)
     {
-        // we use WeakHashMap to emulate WeakSet
-        Map rset = (Map)cache.get(res.getFacetClass());
+        if(!cached.containsKey(res))
+        {
+            addToCache0(res.getResourceClass(), res);
+            ResourceClass[] classes = res.getResourceClass().getParentClasses();
+            for(int i=0; i<classes.length; i++)
+            {
+                addToCache0(classes[i], res);
+            }
+            cached.put(res, null);
+        }
+    }
+    
+    /**
+     * Adds the loaded/created resource to the internal cache.
+     * 
+     * @param rc a ResourceClass to use for cache key.
+     * @param res a Resource.
+     */
+    private void addToCache0(ResourceClass rc, AbstractResource res)
+    {
+        Map rset = (Map)cache.get(rc);
         if(rset == null)
         {
             rset = new WeakHashMap();
-            cache.put(res.getResourceClass(), rset);
+            cache.put(rc, rset);
         }
         rset.put(res, null);
     }
@@ -286,17 +308,28 @@ public abstract class AbstractResourceHandler
     protected synchronized void revert(ResourceClass rc, Connection conn)
         throws SQLException
     {
+        revert0(rc, conn);
+        ResourceClass[] classes = rc.getChildClasses();
+        for(int i=0; i<classes.length; i++)
+        {
+            revert0(classes[i], conn);
+        }
+    }
+    
+    private void revert0(ResourceClass rc, Connection conn)
+        throws SQLException
+    {
         Map rset = (Map)cache.get(rc);
         if(rset != null)
         {
             // we'll get too much but this shouldn't be a problem.
-            Object data = getData(rc, conn);
+            Map dataKeyMap = (Map)getData(rc, conn);
             Set orig = new HashSet(rset.keySet());
             Iterator i = orig.iterator();
             while(i.hasNext())
             {
                 AbstractResource r = (AbstractResource)i.next();
-                r.revert(r.getFacetClass(), conn, data);
+                r.revert(rc, conn, dataKeyMap);
             }
         }
     }

@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.16 2005-01-18 10:08:42 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.17 2005-01-20 06:00:24 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -103,7 +103,8 @@ public class PersistentResource
         ids.clear();
         try
         {
-            setData((InputRecord)data);
+            InputRecord in = (InputRecord)((Map)data).get(delegate.getIdObject());
+            setData(in);
         }
         catch(PersistenceException e)
         {
@@ -317,12 +318,13 @@ public class PersistentResource
     protected void initAttributeMap(Resource delegate, ResourceClass resourceClass)
     {
     	super.initAttributeMap(delegate, resourceClass);
-    	initPersistence(resourceClass);
+    	initPersistence(delegate);
     }
     
-    void initPersistence(ResourceClass resourceClass)
+    void initPersistence(Resource delegate)
     {
-    	dbTable = resourceClass.getDbTable();
+        this.delegate = delegate;
+    	dbTable = delegate.getResourceClass().getDbTable();
     	keyColumns = new String[1];
     	keyColumns[0] = dbTable+"_id";    	
     }
@@ -351,7 +353,7 @@ public class PersistentResource
     public void getData(OutputRecord record)
         throws PersistenceException
     {
-        AttributeDefinition[] attrs = facetClass.getAllAttributes();
+        AttributeDefinition[] attrs = delegate.getResourceClass().getAllAttributes();
         record.setLong(getTable()+"_id", id);
         record.setLong("resource_id", delegate.getId());
         for(int i=0; i<attrs.length; i++)
@@ -445,7 +447,7 @@ public class PersistentResource
         throws PersistenceException
     {
         id = record.getLong(getTable()+"_id");
-        AttributeDefinition[] attrs = facetClass.getAllAttributes();
+        AttributeDefinition[] attrs = delegate.getResourceClass().getAllAttributes();
         for(int i=0; i<attrs.length; i++)
         {
             AttributeDefinition attribute = attrs[i];

@@ -26,7 +26,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.14 2005-01-18 10:08:42 rafal Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.15 2005-01-20 06:00:24 rafal Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -173,7 +173,7 @@ public class PersistentResourceHandler
 		{
     		Persistent instance = (Persistent)instantiator.
                 newInstance(resourceClass.getJavaClass());
-    		((PersistentResource)instance).initPersistence(delegate.getResourceClass());
+    		((PersistentResource)instance).initPersistence(delegate);
             PreparedStatement statement = DefaultInputRecord.
         		getSelectStatement("resource_id = "+delegate.getIdString(), instance, conn);
             ResultSet rs = statement.executeQuery();

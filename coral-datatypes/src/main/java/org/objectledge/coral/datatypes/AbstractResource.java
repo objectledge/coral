@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.18 2005-01-19 13:21:46 pablo Exp $
+ * @version $Id: AbstractResource.java,v 1.19 2005-01-20 06:00:24 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -72,9 +72,6 @@ public abstract class AbstractResource implements Resource
 
     /** Security delegate object. */
     protected Resource delegate;
-    
-    /** The resource class this object holds attributes of. */
-    protected ResourceClass facetClass;
     
     /** Set of AttributeDefinitions of the modified attributes. */
     protected Set modified = new HashSet();
@@ -185,11 +182,6 @@ public abstract class AbstractResource implements Resource
         return delegate;
     }    
     
-    ResourceClass getFacetClass()
-    {
-        return facetClass;
-    }
-    
     synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, 
         Object data)
     	throws SQLException
@@ -198,7 +190,16 @@ public abstract class AbstractResource implements Resource
         for(int i=0; i<parentClasses.length; i++)
         {
             ResourceClass parent = parentClasses[i];
-            Resource instance = parent.getHandler().retrieve(delegate, conn, data);
+            Resource instance;
+            if(parent.getHandler() instanceof AbstractResourceHandler)
+            {
+                retrieve(delegate, parent, conn, data);
+                instance = this;
+            }
+            else
+            {
+                instance = parent.getHandler().retrieve(delegate, conn, data);
+            }
             facets.put(parent, instance);
         }
         initAttributeMap(delegate, rClass);
@@ -211,7 +212,16 @@ public abstract class AbstractResource implements Resource
         for (int i = 0; i < parentClasses.length; i++)
         {
             ResourceClass parent = parentClasses[i];
-            Resource instance = parent.getHandler().create(delegate, attributes, conn);
+            Resource instance;
+            if(parent.getHandler() instanceof GenericResourceHandler)
+            {
+                create(delegate, parent, attributes, conn);
+                instance = this;
+            }
+            else
+            {
+                instance = parent.getHandler().create(delegate, attributes, conn);
+            }
             facets.put(parent, instance);
         }
         AttributeDefinition[] declared = rClass.getDeclaredAttributes();
@@ -248,11 +258,26 @@ public abstract class AbstractResource implements Resource
 	        if(facets.containsKey(parent))
 	        {
 	            instance = (Resource)facets.get(parent);
-	            parent.getHandler().revert(instance, conn, data);
+                if(parent.getHandler() instanceof AbstractResourceHandler)
+                {
+                    revert(parent, conn, data);
+                }
+                else
+                {
+                    parent.getHandler().revert(instance, conn, data);
+                }
 	        }
 	        else
 	        {
-	            instance = parent.getHandler().retrieve(delegate, conn, data);
+                if(parent.getHandler() instanceof AbstractResourceHandler)
+                {
+                    retrieve(delegate, parent, conn, data);
+                    instance = this;
+                }
+                else
+                {
+                    instance = parent.getHandler().retrieve(delegate, conn, data);
+                }
 	            facets.put(parent, instance);
 	        }
 	    }
@@ -270,8 +295,11 @@ public abstract class AbstractResource implements Resource
 	        if(!(o instanceof AttributeDefinition))
 	        {
 	            Resource res = (Resource)o;
-	            ResourceHandler handler = res.getResourceClass().getHandler();
-	            handler.update(res, conn);
+                if(res != this)
+                {
+                    ResourceHandler handler = res.getResourceClass().getHandler();
+                    handler.update(res, conn);
+                }
 	            i.remove();
 	        }
 	    }
@@ -284,8 +312,11 @@ public abstract class AbstractResource implements Resource
 	    while(i.hasNext())
 	    {
 	        ResourceClass parentClass = (ResourceClass)i.next();
-	        Resource parent = (Resource)facets.get(parentClass);
-	        parentClass.getHandler().delete(parent, conn);
+	        Resource facet = (Resource)facets.get(parentClass);
+            if(facet != this)
+            {
+                parentClass.getHandler().delete(facet, conn);
+            }
 	    }
 	}
     
@@ -668,7 +699,7 @@ public abstract class AbstractResource implements Resource
             GenericResourceHandler handler = (GenericResourceHandler)delegate.
                 getResourceClass().getHandler();
             Object data = handler.getData(delegate, conn); 
-            revert(null, conn, data);
+            revert(delegate.getResourceClass(), conn, data);
         }
         catch(SQLException e)
         {
@@ -702,11 +733,6 @@ public abstract class AbstractResource implements Resource
     {
         this.delegate = delegate;
         this.hashCode = delegate.hashCode();
-        if(rClass == null)
-        {
-            rClass = delegate.getResourceClass();
-        }
-        this.facetClass = rClass;
         ResourceClass[] parentClasses = getDirectParentClasses(rClass);
         for(int i=0; i<parentClasses.length; i++)
         {
