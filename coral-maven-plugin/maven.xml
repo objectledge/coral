@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.3 2004-05-13 14:09:52 fil Exp $ -->
+<!-- $Id: maven.xml,v 1.4 2004-09-08 12:09:27 rafal Exp $ -->
 <project xmlns:j="jelly:core"
          xmlns:m="jelly:maven"
          xmlns:util="jelly:util">
@@ -41,7 +41,6 @@
       <arg value="-d ${basedir}"/>
       <j:if test="${!maven.mode.online}">
         <arg value="-o"/>
-        <arg value="dummyGoal"/>
       </j:if>
       <arg value="plugin:testPluginFeatures"/>
     </exec>
@@ -53,11 +52,6 @@
       includes="*/project.xml"
       goals="clean,plugin:testPluginFeature"
       ignoreFailures="false"/>
-  </goal>
-  
-  <goal name="dummyGoal">
-    <echo>A dummy goal, to make sure plugin:testPluginFeatures, see issue MAVEN-</echo>
-    <echo>It's time to remove this goal and it's invocation, if you see this message.</echo>
   </goal>
   
   <goal name="plugin:install-snapshot">
