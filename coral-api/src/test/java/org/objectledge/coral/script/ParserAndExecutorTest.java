@@ -51,7 +51,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParserAndExecutorTest.java,v 1.3 2004-03-19 13:57:24 fil Exp $
+ * @version $Id: ParserAndExecutorTest.java,v 1.4 2004-03-23 09:56:33 fil Exp $
  */
 public class ParserAndExecutorTest extends LedgeTestCase
 {
@@ -390,6 +390,18 @@ public class ParserAndExecutorTest extends LedgeTestCase
         mockCoralSchema.expect(once()).method("setName").with(same(attributeDefinition1), 
             eq("new_name")).isVoid();
         execute("ALTER RESOURCE CLASS 1 ALTER ATTRIBUTE attribute1 SET NAME new_name;");
+    }
+
+    public void testAlterResourceClassAlterAttributeSetDomain()
+        throws Exception
+    {
+        mockCoralSchema.expect(once()).method("getResourceClass").with(eq(1L)).
+            will(returnValue(resourceClass));
+        mockResourceClass.expect(once()).method("getAttribute").with(eq("attribute1")).
+            will(returnValue(attributeDefinition1));    
+        mockCoralSchema.expect(once()).method("setDomain").with(same(attributeDefinition1), 
+            eq("new")).isVoid();
+        execute("ALTER RESOURCE CLASS 1 ALTER ATTRIBUTE attribute1 SET DOMAIN new;");
     }
 
     public void testAlterResourceClassAlterAttributeSetFlags()
