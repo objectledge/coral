@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * Represents a Coral AttributeDefinition.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Attribute.java,v 1.2 2004-03-23 16:16:40 fil Exp $
+ * @version $Id: Attribute.java,v 1.3 2004-03-25 13:32:16 fil Exp $
  */
 public class Attribute
     extends Entity
@@ -48,6 +48,13 @@ public class Attribute
     private AttributeClass attributeClass;
     private ResourceClass declaringClass;
     private String domain;
+    
+    /**
+     * Protected no-arg constructor, to allow mocking.
+     */
+    protected Attribute()
+    {
+    }
     
     /**
      * Creates an Attribute instance.
