@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoaderTest.java,v 1.4 2004-03-23 11:34:52 fil Exp $
+ * @version $Id: RMLModelLoaderTest.java,v 1.5 2004-03-23 11:57:35 fil Exp $
  */
 public class RMLModelLoaderTest
     extends LedgeTestCase
@@ -125,9 +125,9 @@ public class RMLModelLoaderTest
         modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         ResourceClass rc1 = schema.getResourceClass("rc1");
-        assertTrue(rc1.getAttributes().isEmpty());
+        assertTrue(rc1.getDeclaredAttributes().isEmpty());
         modelLoader.execute("ALTER RESOURCE CLASS rc1 ADD ATTRIBUTE ac1 a1;");
-        Attribute a1 = rc1.getAttribute("a1");
+        Attribute a1 = rc1.getDeclaredAttribute("a1");
         assertSame(rc1, a1.getDeclaringClass());
         assertSame(ac1, a1.getAttributeClass());
     }
@@ -139,10 +139,10 @@ public class RMLModelLoaderTest
         modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         ResourceClass rc1 = schema.getResourceClass("rc1");
-        Attribute a1 = rc1.getAttribute("a1");
+        Attribute a1 = rc1.getDeclaredAttribute("a1");
         assertSame(ac1, a1.getAttributeClass());
         modelLoader.execute("ALTER RESOURCE CLASS rc1 DELETE ATTRIBUTE a1;");
-        assertTrue(rc1.getAttributes().isEmpty());
+        assertTrue(rc1.getDeclaredAttributes().isEmpty());
     }
     
     public void testAlterResourceClassAddParentClass()
@@ -220,10 +220,10 @@ public class RMLModelLoaderTest
         modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         AttributeClass ac1 = schema.getAttributeClass("ac1");
         ResourceClass rc1 = schema.getResourceClass("rc1");
-        Attribute a1 = rc1.getAttribute("a1");
+        Attribute a1 = rc1.getDeclaredAttribute("a1");
         assertSame(ac1, a1.getAttributeClass());
         modelLoader.execute("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET NAME a2;");
-        Attribute a2 = rc1.getAttribute("a2");
+        Attribute a2 = rc1.getDeclaredAttribute("a2");
         assertSame(ac1, a2.getAttributeClass());
     }
 
@@ -233,7 +233,7 @@ public class RMLModelLoaderTest
         modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         ResourceClass rc1 = schema.getResourceClass("rc1");
-        Attribute a1 = rc1.getAttribute("a1");
+        Attribute a1 = rc1.getDeclaredAttribute("a1");
         assertNull(a1.getDomain());
         modelLoader.execute("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET DOMAIN '[A-Z]*';");
         assertEquals("[A-Z]*", a1.getDomain());
@@ -245,7 +245,7 @@ public class RMLModelLoaderTest
         modelLoader.execute("CREATE ATTRIBUTE CLASS ac1 JAVA CLASS jc1 HANDLER CLASS hc1;");
         modelLoader.execute("CREATE RESOURCE CLASS rc1 JAVA CLASS jc1 HANDLER CLASS hc1 ATTRIBUTES (ac1 a1);");
         ResourceClass rc1 = schema.getResourceClass("rc1");
-        Attribute a1 = rc1.getAttribute("a1");
+        Attribute a1 = rc1.getDeclaredAttribute("a1");
         assertEquals(0, a1.getFlags());
         modelLoader.execute("ALTER RESOURCE CLASS rc1 ALTER ATTRIBUTE a1 SET FLAGS REQUIRED;");
         assertEquals(AttributeFlags.REQUIRED, a1.getFlags());

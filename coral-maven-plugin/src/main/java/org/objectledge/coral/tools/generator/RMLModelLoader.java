@@ -73,7 +73,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.5 2004-03-23 11:34:36 fil Exp $
+ * @version $Id: RMLModelLoader.java,v 1.6 2004-03-23 11:57:34 fil Exp $
  */
 public class RMLModelLoader
 {
@@ -135,7 +135,7 @@ public class RMLModelLoader
     /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.5 2004-03-23 11:34:36 fil Exp $
+     * @version $Id: RMLModelLoader.java,v 1.6 2004-03-23 11:57:34 fil Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {
@@ -280,7 +280,7 @@ public class RMLModelLoader
             try
             {
                 ResourceClass rc = resolve(node.getResourceClass());
-                Attribute attr = rc.getAttribute(node.getAttributeName());
+                Attribute attr = rc.getDeclaredAttribute(node.getAttributeName());
                 rc.deleteAttribute(attr);
             }
             catch(Exception e)
@@ -404,7 +404,7 @@ public class RMLModelLoader
             try
             {
                 ResourceClass rc = resolve(node.getResourceClass());
-                Attribute attr = rc.getAttribute(node.getAttributeName());
+                Attribute attr = rc.getDeclaredAttribute(node.getAttributeName());
                 rc.deleteAttribute(attr);
                 attr.setName(node.getNewName());
                 rc.addAttribute(attr);
@@ -424,7 +424,7 @@ public class RMLModelLoader
             try
             {
                 ResourceClass rc = resolve(node.getResourceClass());
-                Attribute attr = rc.getAttribute(node.getAttributeName());
+                Attribute attr = rc.getDeclaredAttribute(node.getAttributeName());
                 attr.setFlags(parseFlags(node.getFlags()));
             }
             catch(Exception e)
@@ -443,7 +443,7 @@ public class RMLModelLoader
             try
             {
                 ResourceClass rc = resolve(node.getResourceClass());
-                Attribute attr = rc.getAttribute(node.getAttributeName());
+                Attribute attr = rc.getDeclaredAttribute(node.getAttributeName());
                 attr.setDomain(node.getDomain());
             }
             catch(Exception e)

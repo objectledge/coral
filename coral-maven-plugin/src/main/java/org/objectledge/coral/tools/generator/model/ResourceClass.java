@@ -38,7 +38,7 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
  * Represents a Coral ResourceClass.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClass.java,v 1.4 2004-03-23 09:56:57 fil Exp $
+ * @version $Id: ResourceClass.java,v 1.5 2004-03-23 11:57:34 fil Exp $
  */
 public class ResourceClass
     extends Entity
@@ -106,7 +106,7 @@ public class ResourceClass
      * 
      * @return the attributes of this resource class.
      */    
-    public List getAttributes()
+    public List getDeclaredAttributes()
     {
         return new ArrayList(attributes.values());
     }
@@ -119,7 +119,7 @@ public class ResourceClass
      * @return the attribute definition.
      * @throws EntityDoesNotExistException if the attribute does not exist.
      */
-    public Attribute getAttribute(String attributeName)
+    public Attribute getDeclaredAttribute(String attributeName)
         throws EntityDoesNotExistException
     {
         Attribute result = (Attribute)attributes.get(attributeName);
