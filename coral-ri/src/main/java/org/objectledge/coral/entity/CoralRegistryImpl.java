@@ -55,7 +55,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.7 2004-03-09 15:46:47 fil Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.8 2004-03-15 09:02:12 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -805,14 +805,6 @@ public class CoralRegistryImpl
         try
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
-            // check for subordinates
-            int subordinates = persistence.count("coral_subject", 
-               "supervisor = "+item.getId());
-            if(subordinates > 0)
-            {
-                throw new EntityInUseException(item.getName()+" has "+
-                                               subordinates+" subordinates");
-            }
             // check for created resources
             int created = persistence.count("coral_resource", 
                 "created_by = "+item.getId());
