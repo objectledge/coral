@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.15 2004-03-09 15:46:47 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.16 2004-03-12 09:13:51 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -690,7 +690,9 @@ public class ResourceClassImpl
         try
         {
             Class handlerClass = instantiator.loadClass(className);
-            handler = (ResourceHandler)instantiator.newInstance(handlerClass);
+            Map additional = new HashMap();
+            additional.put(ResourceClass.class, this);
+            handler = (ResourceHandler)instantiator.newInstance(handlerClass, additional);
         }
         catch(ClassNotFoundException e)
         {
