@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.21 2005-01-19 06:59:37 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.22 2005-01-20 06:14:38 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -174,7 +174,7 @@ public class CoralStoreImpl
     {
         synchronized(resourceByParent)
         {
-            Set rs = (Set)resourceByParent.get(parent.getIdObject());
+            Set rs = (Set)resourceByParent.get(parent);
             if(rs == null)
             {
                 Connection conn = null;
@@ -203,7 +203,7 @@ public class CoralStoreImpl
                 {
                     DatabaseUtils.close(conn);
                 }
-                resourceByParent.put(parent.getIdObject(), rs);
+                resourceByParent.put(parent, rs);
             }
             Resource[] result = new Resource[rs.size()];
             rs.toArray(result);
@@ -335,11 +335,11 @@ public class CoralStoreImpl
     {
         synchronized(resourceByParentAndName)
         {
-            Map nameMap = (Map)resourceByParentAndName.get(parent.getIdObject());
+            Map nameMap = (Map)resourceByParentAndName.get(parent);
             if(nameMap == null)
             {
                 nameMap = new HashMap();
-                resourceByParentAndName.put(parent.getIdObject(), nameMap);
+                resourceByParentAndName.put(parent, nameMap);
             }
             Set rs = (Set)nameMap.get(name);
             if(rs == null)
@@ -680,7 +680,7 @@ public class CoralStoreImpl
         {
             synchronized(resourceByParent)
             {
-                Set children = (Set)resourceByParent.get(parent.getIdObject());
+                Set children = (Set)resourceByParent.get(parent);
                 if(children != null)
                 {
                     children.add(res);
@@ -688,7 +688,7 @@ public class CoralStoreImpl
             }
             synchronized(resourceByParentAndName)
             {
-                Map nameMap = (Map)resourceByParentAndName.get(parent.getIdObject());
+                Map nameMap = (Map)resourceByParentAndName.get(parent);
                 if(nameMap != null)
                 {
                     Set rs = (Set)nameMap.get(res.getName());
@@ -743,7 +743,7 @@ public class CoralStoreImpl
                                 shouldCommit = persistence.getDatabase().beginTransaction();
                                 conn = persistence.getDatabase().getConnection();
                                 int count;
-                                Set children = (Set)resourceByParent.get(resource.getIdObject());
+                                Set children = (Set)resourceByParent.get(resource);
                                 if(children != null)
                                 {
                                     count = children.size();
@@ -775,13 +775,13 @@ public class CoralStoreImpl
                                 {
                                     rs.remove(resource);
                                 }
-                                rs = (Set)resourceByParent.get(resource.getParent().getIdObject());
+                                rs = (Set)resourceByParent.get(resource.getParent());
                                 if(rs != null)
                                 {
                                     rs.remove(resource);
                                 }
                                 Map nameMap = (Map)resourceByParentAndName.
-                                    get(resource.getParent().getIdObject());
+                                    get(resource.getParent());
                                 if(nameMap != null)
                                 {
                                     rs = (Set)nameMap.get(resource.getName());
@@ -1050,7 +1050,7 @@ public class CoralStoreImpl
                     Resource parent = resource.getParent();
                     if(parent != null)
                     {
-                        Map nameMap = (Map)resourceByParentAndName.get(parent.getIdObject());
+                        Map nameMap = (Map)resourceByParentAndName.get(parent);
                         if(nameMap != null)
                         {
                             rs = (Set)nameMap.get(oldName);
@@ -1108,19 +1108,19 @@ public class CoralStoreImpl
                     delegate.setParent(parent);
                     persistence.save(delegate);
 
-                    Set rs = (Set)resourceByParent.get(oldParent.getIdObject());
+                    Set rs = (Set)resourceByParent.get(oldParent);
                     if(rs != null)
                     {
                         rs.remove(child);
                     }
-                    rs = (Set)resourceByParent.get(parent.getIdObject());
+                    rs = (Set)resourceByParent.get(parent);
                     if(rs != null)
                     {
                         rs.add(child);
                     }
 
                     String name = child.getName();
-                    Map nameMap = (Map)resourceByParentAndName.get(oldParent.getIdObject());
+                    Map nameMap = (Map)resourceByParentAndName.get(oldParent);
                     if(nameMap != null)
                     {
                         rs = (Set)nameMap.get(name);
@@ -1129,7 +1129,7 @@ public class CoralStoreImpl
                             rs.remove(child);
                         }
                     }
-                    nameMap = (Map)resourceByParentAndName.get(parent.getIdObject());
+                    nameMap = (Map)resourceByParentAndName.get(parent);
                     if(nameMap != null)
                     {
                         rs = (Set)nameMap.get(name);
@@ -1174,14 +1174,14 @@ public class CoralStoreImpl
                     delegate.setParent(null);
                     persistence.save(delegate);
 
-                    Set rs = (Set)resourceByParent.get(oldParent.getIdObject());
+                    Set rs = (Set)resourceByParent.get(oldParent);
                     if(rs != null)
                     {
                         rs.remove(child);
                     }
 
                     String name = child.getName();
-                    Map nameMap = (Map)resourceByParentAndName.get(oldParent.getIdObject());
+                    Map nameMap = (Map)resourceByParentAndName.get(oldParent);
                     if(nameMap != null)
                     {
                         rs = (Set)nameMap.get(name);
