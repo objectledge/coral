@@ -47,7 +47,7 @@ import org.objectledge.coral.schema.SchemaIntegrityException;
  * Represents a Coral ResourceClass.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClass.java,v 1.10 2004-07-08 13:48:24 rafal Exp $
+ * @version $Id: ResourceClass.java,v 1.11 2004-12-21 08:45:30 rafal Exp $
  */
 public class ResourceClass
     extends Entity
@@ -85,7 +85,8 @@ public class ResourceClass
      * @param dbTable the database table for this resource class.
      * @param flags the flags for this resource class.
      */
-    public ResourceClass(String name, String javaClassName, String handlerClassName, String dbTable, int flags)
+    public ResourceClass(String name, String javaClassName, String handlerClassName, String dbTable,
+        int flags)
     {
         super(name, flags);
         setJavaClassName(javaClassName);
@@ -172,7 +173,7 @@ public class ResourceClass
     /**
      * Sets the handler class name for this resource class.
      * 
-     * @param handlerClassName the handler class name.
+     * @return the handler class name.
      */
     public String getHandlerClassName()
     {

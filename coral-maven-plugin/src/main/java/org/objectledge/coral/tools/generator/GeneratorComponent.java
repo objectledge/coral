@@ -55,7 +55,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.24 2004-09-24 11:26:25 zwierzem Exp $
+ * @version $Id: GeneratorComponent.java,v 1.25 2004-12-21 08:45:31 rafal Exp $
  */
 public class GeneratorComponent
 {
@@ -185,8 +185,9 @@ public class GeneratorComponent
      */
     public GeneratorComponent(String fileEncoding, String sourceFiles, String targetDir, 
         String importGroups, String packageIncludes, String packageExcludes, String headerFile, 
-        String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix, String sqlListPath, 
-        FileSystem fileSystem, Templating templating, Schema schema, RMLModelLoader loader, PrintStream out)
+        String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix, 
+        String sqlListPath, FileSystem fileSystem, Templating templating, Schema schema, 
+        RMLModelLoader loader, PrintStream out)
         throws Exception
     {
         this.fileSystem = fileSystem;
@@ -635,7 +636,8 @@ public class GeneratorComponent
                 StringTokenizer st = new StringTokenizer((String)fieldHint.get(i));
                 if(st.countTokens() != 2)
                 {
-                    throw new Exception("malformed @field hints - expected @field <type> <name> pairs");
+                    throw new Exception("malformed @field hints - " +
+                            "expected @field <type> <name> pairs");
                 }
                 entry.put("type", st.nextToken().trim());
                 entry.put("name", st.nextToken().trim());
@@ -652,7 +654,8 @@ public class GeneratorComponent
      * @throws Exception
      * @throws EntityDoesNotExistException
      */
-    private void processExtendsHint(ResourceClass rc, Map hints) throws Exception, EntityDoesNotExistException
+    private void processExtendsHint(ResourceClass rc, Map hints) 
+        throws Exception, EntityDoesNotExistException
     {
         List extendsHint = (List)hints.get("extends");
         if(extendsHint != null)

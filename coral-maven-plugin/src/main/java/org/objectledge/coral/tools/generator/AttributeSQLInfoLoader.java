@@ -30,7 +30,6 @@ package org.objectledge.coral.tools.generator;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
-import java.util.StringTokenizer;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.tools.generator.model.AttributeClass;
@@ -41,17 +40,28 @@ import org.objectledge.coral.tools.generator.model.Schema;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeSQLInfoLoader.java,v 1.2 2004-08-23 11:59:24 rafal Exp $
+ * @version $Id: AttributeSQLInfoLoader.java,v 1.3 2004-12-21 08:45:31 rafal Exp $
  */
 public class AttributeSQLInfoLoader
 {
     private final Schema schema;
 
+    /**
+     * Creates new AttributeSQLInfoLoader instance.
+     * 
+     * @param schema the generator schema to load information into.
+     */
     public AttributeSQLInfoLoader(Schema schema)
     {
         this.schema = schema;
     }
     
+    /**
+     * Loads the SQL attribute information from an open Reader.
+     * 
+     * @param reader the Reader to use.
+     * @throws IOException in case of I/O failure.
+     */
     public void load(Reader reader)
     	throws IOException
     {
@@ -67,6 +77,13 @@ public class AttributeSQLInfoLoader
         }
     }
     
+    /**
+     * Load a single line of SQL attribute information.
+     * 
+     * @param line line contents.
+     * @param lineNum line number, for error reporting.
+     * @throws IOException in case of I/O failure.
+     */
     public void execute(String line, int lineNum)
     	throws IOException
     {

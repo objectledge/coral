@@ -37,13 +37,12 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 
 import org.objectledge.database.DatabaseUtils;
-import org.objectledge.utils.StringUtils;
 
 /**
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ARLImporterComponent.java,v 1.3 2004-10-25 14:15:23 rafal Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.4 2004-12-21 08:45:28 rafal Exp $
  */
 public class ARLImporterComponent
 {

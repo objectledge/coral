@@ -31,20 +31,20 @@ package org.objectledge.coral.tools.generator.model;
  * A holder of SQL attribute information. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeSQLInfo.java,v 1.1 2004-07-08 15:06:20 rafal Exp $
+ * @version $Id: AttributeSQLInfo.java,v 1.2 2004-12-21 08:45:30 rafal Exp $
  */
 public class AttributeSQLInfo
 {
-    protected String externalTable;
-    protected String externalTableKey;
-    protected String sqlType;
+    private String externalTable;
+    private String externalTableKey;
+    private String sqlType;
     
     /**
      * Creates new SQLAttribute instance.
      * 
-     * @param sqlType
-     * @param externalTable
-     * @param externalTableKey
+     * @param sqlType the SQL type
+     * @param externalTable the SQL table
+     * @param externalTableKey the SQL table key
      */
     public AttributeSQLInfo(String sqlType, String externalTable, String externalTableKey)
     {
