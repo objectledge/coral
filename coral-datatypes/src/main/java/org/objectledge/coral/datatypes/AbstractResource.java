@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.11 2004-07-22 16:35:46 zwierzem Exp $
+ * @version $Id: AbstractResource.java,v 1.12 2004-08-23 11:42:33 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -658,7 +658,7 @@ public abstract class AbstractResource implements Resource
 
     // implementation ///////////////////////////////////////////////////////////////////////////
     
-    private void initAttributeMap(Resource delegate, ResourceClass rClass)
+    protected void initAttributeMap(Resource delegate, ResourceClass rClass)
     {
         this.delegate = delegate;
         this.hashCode = delegate.hashCode();
