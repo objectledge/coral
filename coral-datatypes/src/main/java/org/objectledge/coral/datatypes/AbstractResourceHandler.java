@@ -28,7 +28,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.3 2004-07-01 11:27:22 fil Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.4 2004-08-23 08:27:09 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -252,9 +252,9 @@ public abstract class AbstractResourceHandler
             throw new ClassCastException(delegate.getResourceClass().getName()+" specifies "+
                 delegate.getResourceClass().getJavaClass()+" as implementation class");
         }
-        if(!GenericResource.class.isAssignableFrom(delegate.getResourceClass().getJavaClass()))
+        if(!AbstractResource.class.isAssignableFrom(delegate.getResourceClass().getJavaClass()))
         {
-            throw new ClassCastException("GenericResourceHandler won't operate on "+
+            throw new ClassCastException("AbstractResourceHandler won't operate on "+
                                          delegate.getResourceClass().getName());
         }
     }
