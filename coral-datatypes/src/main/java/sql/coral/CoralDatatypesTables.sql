@@ -55,13 +55,13 @@ CREATE TABLE coral_attribute_boolean (
         data_key BIGINT NOT NULL,
         data INTEGER,
         PRIMARY KEY (data_key)
-);        
+);
 
 CREATE TABLE coral_attribute_integer (
         data_key BIGINT NOT NULL,
         data INTEGER,
         PRIMARY KEY (data_key)
-);        
+);
 
 CREATE TABLE coral_attribute_long (
         data_key BIGINT NOT NULL,
@@ -80,6 +80,9 @@ CREATE TABLE coral_attribute_string (
         data VARCHAR(255),
         PRIMARY KEY (data_key)
 );
+
+-- PostgreSQL, HSQLDB accept VARCHAR
+-- PostgreSQL, MySQL accept TEXT
 
 CREATE TABLE coral_attribute_text (
         data_key BIGINT NOT NULL,
