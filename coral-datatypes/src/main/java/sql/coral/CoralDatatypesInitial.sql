@@ -150,7 +150,7 @@ INSERT INTO coral_attribute_class VALUES(
 		'weak_resource_list',
 		'org.objectledge.coral.datatypes.WeakResourceList', 
 		'org.objectledge.coral.datatypes.WeakResourceListAttributeHandler',
-		'coral_attribute_resource_list');
+		'coral_attribute_weak_resource_list');
 		
 INSERT INTO ledge_id_table VALUES(17, 'coral_attribute_class');
 
