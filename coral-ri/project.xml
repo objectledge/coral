@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.1 2004-02-19 15:25:44 fil Exp $ -->
+<!-- $Id: project.xml,v 1.2 2004-02-24 12:49:18 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -67,6 +67,12 @@
       <artifactId>coral-api</artifactId>
       <version>SNAPSHOT</version>
       <url>http://coral.objectledge.org/modules/coral-api/</url>
+    </dependency>
+    <!-- testing -->
+    <dependency>
+      <groupId>jmock</groupId>
+      <artifactId>jmock</artifactId>
+      <version>20040220-211330</version>
     </dependency>
   </dependencies>
 </project>
