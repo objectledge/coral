@@ -103,7 +103,8 @@ public class PersistentNodeImpl
      * @param parent the parent resource.
      * @return a new PersistentNode instance.
      */
-    public static PersistentNode createPersistentNode(CoralSession session, String name, Resource parent)
+    public static PersistentNode createPersistentNode(CoralSession session, String name, Resource 
+        parent)
     {
         try
         {
