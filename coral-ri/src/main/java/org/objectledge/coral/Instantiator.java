@@ -27,12 +27,14 @@
 // 
 package org.objectledge.coral;
 
+import java.util.Map;
+
 import org.objectledge.database.persistence.PersistentFactory;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Instantiator.java,v 1.2 2004-03-05 10:18:17 fil Exp $
+ * @version $Id: Instantiator.java,v 1.3 2004-03-11 17:36:03 fil Exp $
  */
 public interface Instantiator
 {
@@ -55,6 +57,17 @@ public interface Instantiator
      */
     public Object newInstance(Class clazz)
         throws CoralInstantiationException;
+        
+    /**
+     * Creates a new instance of the specified class.
+     * 
+     * @param clazz a Class object.
+     * @param additional additional components to make available to constructor.
+     * @return the instance of the class.
+     * @throws CoralInstantiationException if the class could not be instantiated.
+     */
+    public Object newInstance(Class clazz, Map additional)    
+        throws CoralInstantiationException;    
         
     /**
      * Creates a PersistentFactory for the specified class.
