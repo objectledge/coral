@@ -39,7 +39,7 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SchemaServiceTest.java,v 1.3 2004-03-12 11:46:19 fil Exp $
+ * @version $Id: SchemaServiceTest.java,v 1.4 2004-03-12 12:01:40 fil Exp $
  */
 public class SchemaServiceTest
     extends CoralTestCase
@@ -51,6 +51,15 @@ public class SchemaServiceTest
         new Column("handler_class_name", DataType.VARCHAR),
         new Column("db_table_name", DataType.VARCHAR)
     };
+
+    private Column[] coralResourceClassColumns = new Column[] {
+        new Column("resource_class_id", DataType.BIGINT),
+        new Column("name", DataType.VARCHAR),
+        new Column("java_class_name", DataType.VARCHAR),
+        new Column("handler_class_name", DataType.VARCHAR),
+        new Column("db_table_name", DataType.VARCHAR),
+        new Column("flags", DataType.INTEGER)
+    };
     
     public void testBuiltinAttributeClasses()
     {
@@ -60,7 +69,7 @@ public class SchemaServiceTest
         assertTrue(classes.length > 0);
     }
     
-    public void testCreateAttributeClass()
+    public void testAttributeClassOperations()
         throws Exception
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
@@ -84,7 +93,7 @@ public class SchemaServiceTest
              "SELECT * FROM coral_attribute_class WHERE name = 'alt_integer'");                    
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
-    }
+    }    
     
     public void testBuiltinResourceClasses()
     {
@@ -92,5 +101,32 @@ public class SchemaServiceTest
         ResourceClass[] classes = session.getSchema().getResourceClass();
         session.close();
         assertTrue(classes.length > 0);
+    }    
+
+    public void testResourceClassOperations()
+        throws Exception
+    {
+        CoralSession session = coralSessionFactory.getAnonymousSession();
+        session.getSchema().createResourceClass("alt_node", 
+            "org.objectledge.coral.datatypes.NodeResourceImpl", 
+            "org.objectledge.coral.datatypes.GenericResourceHandler", null, 0);
+        DefaultTable expectedTable = new DefaultTable("alt_node_resource_class",
+            coralResourceClassColumns);
+        expectedTable.addRow(new Object[] { new Integer(2), "alt_node", "org.objectledge.coral.datatypes.NodeResourceImpl", 
+            "org.objectledge.coral.datatypes.GenericResourceHandler", null, new Integer(0)});
+        ITable actualTable = databaseConnection.createQueryTable("alt_node_resource_class",
+            "SELECT * FROM coral_resource_class WHERE name = 'alt_node'");
+        databaseConnection.close();
+        assertEquals(expectedTable, actualTable);
+
+        ResourceClass rc = session.getSchema().getResourceClass("alt_node");
+
+        session.getSchema().deleteResourceClass(rc);
+        expectedTable = new DefaultTable("alt_node_resource_class",
+             coralResourceClassColumns);
+        actualTable = databaseConnection.createQueryTable("alt_node_resource_class",
+             "SELECT * FROM coral_resource_class WHERE name = 'alt_node'");                    
+        databaseConnection.close();
+        assertEquals(expectedTable, actualTable);
     }    
 }
