@@ -28,7 +28,6 @@
 package org.objectledge.coral.session;
 
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.event.AttributeClassChangeListener;
 import org.objectledge.coral.event.AttributeDefinitionChangeListener;
 import org.objectledge.coral.event.CoralEventWhiteboard;
@@ -67,7 +66,7 @@ import org.objectledge.coral.store.ResourceOwnership;
  * Session local CoralEventWhiteboard wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralEventWhiteboard.java,v 1.1 2004-03-08 08:51:24 fil Exp $
+ * @version $Id: SessionCoralEventWhiteboard.java,v 1.2 2004-03-08 11:19:21 fil Exp $
  */
 public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
 {
@@ -80,9 +79,10 @@ public class SessionCoralEventWhiteboard implements CoralEventWhiteboard
      * @param coral the Coral components hub.
      * @param session the session.
      */
-    SessionCoralEventWhiteboard(CoralCore coral, CoralSession session)
+    SessionCoralEventWhiteboard(CoralCore coral, CoralSessionImpl session)
     {
         this.coral = coral;
+        this.session = session;
     }
 
     /** 
