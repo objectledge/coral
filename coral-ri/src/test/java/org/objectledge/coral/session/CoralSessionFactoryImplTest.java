@@ -38,7 +38,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImplTest.java,v 1.5 2004-03-24 14:40:11 fil Exp $
+ * @version $Id: CoralSessionFactoryImplTest.java,v 1.6 2004-05-04 09:53:20 fil Exp $
  */
 public class CoralSessionFactoryImplTest extends LedgeTestCase
 {
@@ -114,6 +114,7 @@ public class CoralSessionFactoryImplTest extends LedgeTestCase
         
         session.getStore();
         
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
         mockCoralCore.expect(once()).method("setCurrentSession").with(NULL).isVoid();
         session.close();
     }
