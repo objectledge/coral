@@ -20,7 +20,7 @@ import org.objectledge.database.Database;
  * An implementation of <code>node</code> ARL resource class.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: NodeResourceImpl.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: NodeResourceImpl.java,v 1.2 2004-03-08 09:17:28 fil Exp $
  */
 public class NodeResourceImpl
     extends GenericResource
@@ -87,23 +87,22 @@ public class NodeResourceImpl
     /**
      * Creates a new <code>node</code> resource instance.
      *
-     * @param rs the ResourceService
+     * @param coralStore the coral store.
+     * @param coralSchema the coral schema.
      * @param name the name of the new resource
      * @param parent the parent resource.
-     * @param subject the subject that creates the resource
      * @return a new NodeResource instance.
      */
     public static NodeResource createNodeResource(CoralStore coralStore, 
                                                    CoralSchema coralSchema,
-                                                   String name, Resource parent,
-                                                   Subject subject)
+                                                   String name, Resource parent)
         throws ValueRequiredException
     {
         try
         {
             ResourceClass rc = coralSchema.getResourceClass("node");
             Map attrs = new HashMap();
-            Resource res = coralStore.createResource(name, parent, rc, attrs, subject);
+            Resource res = coralStore.createResource(name, parent, rc, attrs);
             if(!(res instanceof NodeResource))
             {
                 throw new BackendException("incosistent schema: created object is "+

@@ -20,7 +20,7 @@ import org.objectledge.coral.store.Resource;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceHandlerBase.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: ResourceHandlerBase.java,v 1.2 2004-03-08 09:17:28 fil Exp $
  */
 public abstract class ResourceHandlerBase 
     implements ResourceHandler
@@ -119,6 +119,6 @@ public abstract class ResourceHandlerBase
                 }
             }
         }
-        resource.update(rootSubject);
+        resource.update();
     }
 }

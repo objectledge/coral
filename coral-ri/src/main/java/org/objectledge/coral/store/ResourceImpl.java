@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.7 2004-03-05 11:52:17 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.8 2004-03-08 09:17:29 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -527,12 +527,10 @@ public class ResourceImpl
 
     /**
      * Updates the image of the resource in the persistent storage.
-     *
-     * @param subject the subject that performs the update. 
      */
-    public void update(Subject subject)
+    public void update()
     {
-        modifier = subject;
+        modifier = coral.getCurrentSubject();
         modified = new Date();
         try
         {
@@ -545,7 +543,7 @@ public class ResourceImpl
         try
         {
             Resource impl = coral.getStore().getResource(getId());
-            coralEventHub.getGlobal().fireResourceChangeEvent(impl, subject);
+            coralEventHub.getGlobal().fireResourceChangeEvent(impl, modifier);
         }
         catch(EntityDoesNotExistException e)
         {

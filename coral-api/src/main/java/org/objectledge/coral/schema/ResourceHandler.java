@@ -11,7 +11,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages persistency of resources belonging to a specific class .
  *
- * @version $Id: ResourceHandler.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: ResourceHandler.java,v 1.3 2004-03-08 09:17:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceHandler
@@ -77,13 +77,12 @@ public interface ResourceHandler
      * Updates the contents of the resource in the persistent storage.
      *
      * @param resource the resource.
-     * @param subject the subject that performs the update. 
      * @param conn the JDBC <code>Connection</code> to use. Needed to perform
      *        the operation as a part of a JDBC transaction.
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public void update(Resource resource, Subject subject, Connection conn)
+    public void update(Resource resource, Connection conn)
         throws SQLException;
 
     /**

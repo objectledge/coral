@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Represents a resource.
  *
- * @version $Id: Resource.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: Resource.java,v 1.3 2004-03-08 09:17:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Resource
@@ -175,10 +175,8 @@ public interface Resource
 
     /**
      * Updates the image of the resource in the persistent storage.
-     *
-     * @param subject the subject that performs the update. 
      */
-    public void update(Subject subject);
+    public void update();
 
     /**
      * Reverts the Resource object to the state present in the persistent

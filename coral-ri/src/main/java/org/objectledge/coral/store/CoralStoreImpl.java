@@ -40,7 +40,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.5 2004-03-05 12:59:59 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.6 2004-03-08 09:17:29 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -707,7 +707,6 @@ public class CoralStoreImpl
      * @param resourceClass the class of the new resource.
      * @param attributes the mapping of {@link AttributeDefinition} objects
      *        into initial values of the attributes.
-     * @param creator the subject that creates the resource.
      * @return the newly created resource.
      * @throws UnknownAttributeException if the <code>attribute</code> map
      *         contains a key that does not belong to
@@ -716,10 +715,11 @@ public class CoralStoreImpl
      *         present in <code>attributes</code>.
      */
     public Resource createResource(String name, Resource parent, ResourceClass resourceClass,
-                                   Map attributes, Subject creator)
+                                   Map attributes)
         throws UnknownAttributeException,
                ValueRequiredException
     {
+        Subject creator = coral.getCurrentSubject();
         if((resourceClass.getFlags() & ResourceClassFlags.ABSTRACT) != 0)
         {
             throw new IllegalArgumentException("cannot instantiate ABSTRACT class "+
@@ -1099,9 +1099,8 @@ public class CoralStoreImpl
             try
             {
                 Resource rootResource = getResource(1);
-                Subject rootSubject = coral.getSecurity().getSubject(Subject.ROOT);
                 ResourceClass rc = coral.getSchema().getResourceClass("node");
-                return createResource("tmp", rootResource, rc, new HashMap(), rootSubject);
+                return createResource("tmp", rootResource, rc, new HashMap());
             }
             catch(Exception ee)
             {
@@ -1380,11 +1379,10 @@ public class CoralStoreImpl
      * @param source the resource to copy.
      * @param destinationParent the parent resource of the copy.
      * @param destinationName the name of the copy.
-     * @param subject the subject performing the operation.
      * @return the copy.
      */
     public Resource copyResource(Resource source, Resource destinationParent, 
-                                 String destinationName, Subject subject)
+                                 String destinationName)
     {
         HashMap attrs = new HashMap();
         AttributeDefinition[] atDefs = source.getResourceClass().getAllAttributes();
@@ -1395,7 +1393,7 @@ public class CoralStoreImpl
         try
         {
             return createResource(destinationName, destinationParent, 
-                                  source.getResourceClass(), attrs, subject);
+                                  source.getResourceClass(), attrs);
         }
         catch(ValueRequiredException e)
         {
@@ -1423,17 +1421,16 @@ public class CoralStoreImpl
      * @param destinationParent the parent of root node of the destination
      * tree. 
      * @param destinationName the name of root node of the destination tree.
-     * @param subject the subject performing the operation.
      */
     public void copyTree(Resource sourceRoot, Resource destinationParent, 
-                         String destinationName, Subject subject)
+                         String destinationName)
     {
         String srcBasePath = sourceRoot.getPath();
         String dstBasePath = destinationParent.getPath()+"/"+destinationName;
         ArrayList srcStack = new ArrayList();
         ArrayList dstStack = new ArrayList();
         Resource dstRoot = copyResource(sourceRoot, destinationParent, 
-                                        destinationName, subject);
+                                        destinationName);
         srcStack.add(sourceRoot);
         dstStack.add(dstRoot);
         while(srcStack.size() > 0)
@@ -1445,7 +1442,7 @@ public class CoralStoreImpl
             {
                 srcStack.add(srcChildren[i]);
                 dstStack.add(copyResource(srcChildren[i], dst, 
-                                          srcChildren[i].getName(), subject));
+                                          srcChildren[i].getName()));
             }
         }
 
@@ -1503,7 +1500,7 @@ public class CoralStoreImpl
             }
             if(changed)
             {
-                dst.update(subject);
+                dst.update();
             }
             Resource[] children = getResource(dst);
             for(int i=0; i<children.length; i++)

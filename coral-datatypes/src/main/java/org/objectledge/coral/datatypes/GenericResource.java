@@ -34,7 +34,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: GenericResource.java,v 1.2 2004-03-08 09:17:28 fil Exp $
  */
 public class GenericResource
     implements Resource
@@ -474,7 +474,7 @@ public class GenericResource
      *
      * @param subject the subject that performs the update. 
      */
-    public synchronized void update(Subject subject)
+    public synchronized void update()
         throws UnknownAttributeException
     {
         Connection conn = null;
@@ -483,7 +483,7 @@ public class GenericResource
         {
             conn = database.getConnection();
             controler = database.beginTransaction();
-            update(subject, conn);
+            update(conn);
             database.commitTransaction(controler);
         }
         catch(SQLException e)
@@ -512,7 +512,7 @@ public class GenericResource
                 }
             }
         }   
-        delegate.update(subject);
+        delegate.update();
     }
 
     /**
@@ -785,7 +785,7 @@ public class GenericResource
      * @param subject the subject that performs the update. 
      * @param conn the JDBC connection to use.
      */
-    synchronized void update(Subject subject, Connection conn)
+    synchronized void update(Connection conn)
         throws SQLException
     {
         Statement stmt = conn.createStatement();
@@ -854,7 +854,7 @@ public class GenericResource
             {
                 Resource res = (Resource)o;
                 ResourceHandler handler = res.getResourceClass().getHandler();
-                handler.update(res, subject, conn);
+                handler.update(res, conn);
             }
             // reset the modified status of the item after it has been
             // succesfully updated

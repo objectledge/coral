@@ -45,7 +45,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStore.java,v 1.1 2004-03-08 08:51:24 fil Exp $
+ * @version $Id: SessionCoralStore.java,v 1.2 2004-03-08 09:17:30 fil Exp $
  */
 public class SessionCoralStore implements CoralStore
 {
@@ -260,16 +260,14 @@ public class SessionCoralStore implements CoralStore
         String name,
         Resource parent,
         ResourceClass resourceClass,
-        Map attributes,
-        Subject creator)
+        Map attributes)
         throws UnknownAttributeException, ValueRequiredException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getStore().createResource(name, parent, resourceClass, attributes, 
-                creator);
+            return coral.getStore().createResource(name, parent, resourceClass, attributes);
         }
         finally
         {
@@ -386,15 +384,13 @@ public class SessionCoralStore implements CoralStore
     public Resource copyResource(
         Resource source,
         Resource destinationParent,
-        String destinationName,
-        Subject subject)
+        String destinationName)
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            return coral.getStore().copyResource(source, destinationParent, destinationName, 
-                subject);
+            return coral.getStore().copyResource(source, destinationParent, destinationName);
         }
         finally
         {
@@ -408,14 +404,13 @@ public class SessionCoralStore implements CoralStore
     public void copyTree(
         Resource sourceRoot,
         Resource destinationParent,
-        String destinationName,
-        Subject subject)
+        String destinationName)
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getStore().copyTree(sourceRoot, destinationParent, destinationName, subject);
+            coral.getStore().copyTree(sourceRoot, destinationParent, destinationName);
         }
         finally
         {

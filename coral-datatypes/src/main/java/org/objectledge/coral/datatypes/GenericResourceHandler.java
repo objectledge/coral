@@ -27,7 +27,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.2 2004-03-08 09:17:28 fil Exp $
  */
 public class GenericResourceHandler
     extends ResourceHandlerBase
@@ -172,17 +172,16 @@ public class GenericResourceHandler
      * Updates the contents of the resource in the persistent storage.
      *
      * @param resource the resource.
-     * @param subject the subject that performs the update. 
      * @param conn the JDBC <code>Connection</code> to use. Needed to perform
      *        the operation as a part of a JDBC transaction.
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public void update(Resource resource, Subject subject, Connection conn)
+    public void update(Resource resource, Connection conn)
         throws SQLException
     {
         checkResource(resource);
-        ((GenericResource)resource).update(subject, conn);
+        ((GenericResource)resource).update(conn);
     }
 
     /**

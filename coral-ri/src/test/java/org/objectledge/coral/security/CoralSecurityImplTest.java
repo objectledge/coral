@@ -49,7 +49,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityImplTest.java,v 1.3 2004-03-05 11:52:18 fil Exp $
+ * @version $Id: CoralSecurityImplTest.java,v 1.4 2004-03-08 09:17:30 fil Exp $
  */
 public class CoralSecurityImplTest 
     extends MockObjectTestCase
@@ -292,12 +292,13 @@ public class CoralSecurityImplTest
         mockCoralRegistry.stub().method("getRoleAssignments").with(same(subject)).will(returnValue(new HashSet()));
         mockSubject.stub().method("getId").will(returnValue(2L));
         mockRole.stub().method("getId").will(returnValue(2L));
+        mockCoralCore.stub().method("getCurrentSubject").will(returnValue(rootSubject));
         mockCoralRegistry.stub().method("getRole").with(eq(1L)).will(returnValue(rootRole));
         mockRootSubject.stub().method("hasRole").with(same(rootRole)).will(returnValue(true));
         RoleAssignment ra = new RoleAssignmentImpl(coralCore, rootSubject, subject, role, true);
 
         mockCoralRegistry.expect(once()).method("addRoleAssignment").with(eq(ra));
-        coralSecurity.grant(role, subject, true, rootSubject);
+        coralSecurity.grant(role, subject, true);
     }
     
     public void testRevokeRole()
@@ -309,11 +310,12 @@ public class CoralSecurityImplTest
         Set ras = new HashSet(1);
         ras.add(ra);
         mockCoralRegistry.stub().method("getRoleAssignments").with(same(subject)).will(returnValue(ras));
+        mockCoralCore.stub().method("getCurrentSubject").will(returnValue(rootSubject));
         mockCoralRegistry.stub().method("getRole").with(eq(1L)).will(returnValue(rootRole));
         mockRootSubject.stub().method("hasRole").with(same(rootRole)).will(returnValue(true));
 
         mockCoralRegistry.expect(once()).method("deleteRoleAssignment").with(eq(ra));
-        coralSecurity.revoke(role, subject, rootSubject);
+        coralSecurity.revoke(role, subject);
     }
     
     // permissions //////////////////////////////////////////////////////////////////////////////
@@ -404,6 +406,7 @@ public class CoralSecurityImplTest
     public void testGrantPermission()
         throws Exception
     {
+        mockCoralCore.stub().method("getCurrentSubject").will(returnValue(rootSubject));
         mockCoralRegistry.stub().method("getRole").with(eq(1L)).will(returnValue(rootRole));
         mockRootSubject.stub().method("hasRole").with(same(rootRole)).will(returnValue(true));
         mockResource.stub().method("getResourceClass").will(returnValue(resourceClass));
@@ -414,13 +417,14 @@ public class CoralSecurityImplTest
         PermissionAssignment pa = new PermissionAssignmentImpl(coralCore,
             rootSubject, resource, role, permission, true);
         mockCoralRegistry.expect(once()).method("addPermissionAssignment").with(eq(pa));
-        coralSecurity.grant(resource, role, permission, true, rootSubject);
+        coralSecurity.grant(resource, role, permission, true);
     }
     
     public void testRevokePermission()
         throws Exception
     {
         mockRole.stub().method("hasPermission").with(same(resource), same(permission)).will(returnValue(true));
+        mockCoralCore.stub().method("getCurrentSubject").will(returnValue(rootSubject));
         mockCoralRegistry.stub().method("getRole").with(eq(1L)).will(returnValue(rootRole));
         mockRootSubject.stub().method("hasRole").with(same(rootRole)).will(returnValue(true));
         mockResource.stub().method("getId").will(returnValue(1L));
@@ -429,6 +433,6 @@ public class CoralSecurityImplTest
         PermissionAssignment pa = new PermissionAssignmentImpl(coralCore,
             rootSubject, resource, role, permission, false);
         mockCoralRegistry.expect(once()).method("deletePermissionAssignment").with(eq(pa));
-        coralSecurity.revoke(resource, role, permission, rootSubject);
+        coralSecurity.revoke(resource, role, permission);
     }
 }

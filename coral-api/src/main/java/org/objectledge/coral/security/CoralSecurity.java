@@ -10,7 +10,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurity.java,v 1.3 2004-03-03 10:27:31 fil Exp $
+ * @version $Id: CoralSecurity.java,v 1.4 2004-03-08 09:17:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSecurity
@@ -193,12 +193,9 @@ public interface CoralSecurity
      * @param subject the involved subject.
      * @param grantingAllowed will the subject be allowed to grant the role to
      *        other subjects.
-     * @param grantor the subject that grants the role.
-     * @throws SecurityException if the grantor is not allowed to grant the
-     *         role.
+     * @throws SecurityException if the current session owner is not allowed to grant the role.
      */
-    public void grant(Role role, Subject subject, 
-                      boolean grantingAllowed, Subject grantor)
+    public void grant(Role role, Subject subject, boolean grantingAllowed)
         throws SecurityException;
     
     /**
@@ -211,13 +208,11 @@ public interface CoralSecurity
      * 
      * @param role the involved role.
      * @param subject the involved subject.
-     * @param revoker the subject that revokes the role.
      * @throws IllegalArgumentException if the <code>subject</code> does not
      *         actually have the <code>role</code>.
-     * @throws SecurityException if the <code>revoker</code> is not allowed to
-     *         revoke the role.
+     * @throws SecurityException if the current session owner is not allowed to revoke the role.
      */
-    public void revoke(Role role, Subject subject, Subject revoker)
+    public void revoke(Role role, Subject subject)
         throws IllegalArgumentException, SecurityException;
 
     // Permissions ///////////////////////////////////////////////////////////
@@ -320,12 +315,10 @@ public interface CoralSecurity
      * @param permission the involved permission.
      * @param inherited <code>true</code> if the permission applies to the
      *        sub-resources of <code>resource</code> recursively.
-     * @param grantor the subject that creates the assignment.
-     * @throws SecurityException if the <code>grantor</code> is not allowed to
-     *         create teh assignment.</code>
+     * @throws SecurityException if the current session owner is not allowed to create the 
+     *         assignment.
      */
-    public void grant(Resource resource, Role role, Permission permission,
-                      boolean inherited, Subject grantor)
+    public void grant(Resource resource, Role role, Permission permission, boolean inherited)
         throws SecurityException;
     
     /**
@@ -337,11 +330,10 @@ public interface CoralSecurity
      * @param resource the involved resource.
      * @param role the involved role.
      * @param permission the involved permission.
-     * @param revoker the subject that creates the assignment.
      * @throws IllegalArgumentException if no such permission grant exits.
-     * @throws SecurityException if the revoker is not allowed to delete the assignment.
+     * @throws SecurityException if the current session owner is not allowed to delete the 
+     *         assignment.
      */
-    public void revoke(Resource resource, Role role, Permission permission,
-                       Subject revoker)
+    public void revoke(Resource resource, Role role, Permission permission)
         throws IllegalArgumentException, SecurityException;
 }

@@ -26,7 +26,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.2 2004-03-08 09:17:28 fil Exp $
  */
 public class PersistentResourceHandler
     extends ResourceHandlerBase
@@ -196,7 +196,7 @@ public class PersistentResourceHandler
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public void update(Resource resource, Subject subject, Connection conn)
+    public void update(Resource resource, Connection conn)
         throws SQLException
     {
         checkResource(resource);

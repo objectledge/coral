@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: PersistentResource.java,v 1.2 2004-03-08 09:17:28 fil Exp $
  */
 public class PersistentResource
     implements Resource, Persistent
@@ -487,16 +487,14 @@ public class PersistentResource
 
     /**
      * Updates the image of the resource in the persistent storage.
-     *
-     * @param subject the subject that performs the update. 
      */
-    public void update(Subject subject)
+    public void update()
         throws IllegalArgumentException, UnknownAttributeException
     {
-        delegate.update(subject);
+        delegate.update();
         try
         {
-            delegate.getResourceClass().getHandler().update(this, subject, null);
+            delegate.getResourceClass().getHandler().update(this, null);
         }
         catch(SQLException e)
         {

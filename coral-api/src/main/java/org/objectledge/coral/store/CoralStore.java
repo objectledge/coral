@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStore.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: CoralStore.java,v 1.3 2004-03-08 09:17:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralStore
@@ -166,7 +166,6 @@ public interface CoralStore
      * @param resourceClass the class of the new resource.
      * @param attributes the mapping of {@link AttributeDefinition} objects
      *        into initial values of the attributes.
-     * @param creator the subject that creates the resource.
      * @return the newly created resource.
      * @throws UnknownAttributeException if the <code>attribute</code> map
      *         contains a key that does not belong to
@@ -175,7 +174,7 @@ public interface CoralStore
      *         present in <code>attributes</code>.
      */
     public Resource createResource(String name, Resource parent, ResourceClass resourceClass, 
-                                   Map attributes, Subject creator)
+                                   Map attributes)
         throws UnknownAttributeException,
                ValueRequiredException;
 
@@ -251,11 +250,10 @@ public interface CoralStore
      * @param source the resource to copy.
      * @param destinationParent the parent resource of the copy.
      * @param destinationName the name of the copy.
-     * @param subject the subject performing the operation.
      * @return the copy.
      */
     public Resource copyResource(Resource source, Resource destinationParent, 
-                                 String destinationName, Subject subject);
+                                 String destinationName);
 
     /**
      * Copies a resource tree to another location.
@@ -273,8 +271,7 @@ public interface CoralStore
      * @param destinationParent the parent of root node of the destination
      * tree. 
      * @param destinationName the name of root node of the destination tree.
-     * @param subject the subject performing the operation.
      */
     public void copyTree(Resource sourceRoot, Resource destinationParent, 
-                         String destinationName, Subject subject);
+                         String destinationName);
 }

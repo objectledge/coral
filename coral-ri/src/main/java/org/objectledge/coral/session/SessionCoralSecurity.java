@@ -44,7 +44,7 @@ import org.objectledge.coral.store.Resource;
  * A session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSecurity.java,v 1.1 2004-03-08 08:51:24 fil Exp $
+ * @version $Id: SessionCoralSecurity.java,v 1.2 2004-03-08 09:17:30 fil Exp $
  */
 public class SessionCoralSecurity implements CoralSecurity
 {
@@ -321,14 +321,14 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public void grant(Role role, Subject subject, boolean grantingAllowed, Subject grantor)
+    public void grant(Role role, Subject subject, boolean grantingAllowed)
         throws SecurityException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().grant(role, subject, grantingAllowed, grantor);
+            coral.getSecurity().grant(role, subject, grantingAllowed);
         }
         finally
         {
@@ -339,14 +339,14 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public void revoke(Role role, Subject subject, Subject revoker)
+    public void revoke(Role role, Subject subject)
         throws IllegalArgumentException, SecurityException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().revoke(role, subject, revoker);
+            coral.getSecurity().revoke(role, subject);
         }
         finally
         {
@@ -515,15 +515,14 @@ public class SessionCoralSecurity implements CoralSecurity
         Resource resource,
         Role role,
         Permission permission,
-        boolean inherited,
-        Subject grantor)
+        boolean inherited)
         throws SecurityException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().grant(resource, role, permission, inherited, grantor);
+            coral.getSecurity().grant(resource, role, permission, inherited);
         }
         finally
         {
@@ -534,14 +533,14 @@ public class SessionCoralSecurity implements CoralSecurity
     /** 
      * {@inheritDoc}
      */
-    public void revoke(Resource resource, Role role, Permission permission, Subject revoker)
+    public void revoke(Resource resource, Role role, Permission permission)
         throws IllegalArgumentException, SecurityException
     {
         session.checkOpen();
         coral.setCurrentSession(session);
         try
         {
-            coral.getSecurity().revoke(resource, role, permission, revoker);
+            coral.getSecurity().revoke(resource, role, permission);
         }
         finally
         {
