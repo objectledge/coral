@@ -55,6 +55,6 @@ public class CoralWebI18nToolFactory extends WebI18nToolFactory
     public Object getTool()
     {
 		I18nContext i18nContext = I18nContext.getI18nContext(context);
-		return new CoralI18nTool(i18n, this, i18nContext.getLocale(), null);
+		return new CoralI18nTool(i18n, i18nContext.getLocale(), null);
     }
 }

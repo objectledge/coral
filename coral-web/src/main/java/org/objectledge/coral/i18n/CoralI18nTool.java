@@ -28,30 +28,29 @@
 
 package org.objectledge.coral.i18n;
 
+
 import java.util.Locale;
 
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.i18n.I18n;
 import org.objectledge.i18n.I18nTool;
-import org.objectledge.templating.tools.ContextToolFactory;
 
 /**
  * The I18n contex tool.
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.6 2004-08-19 15:14:51 zwierzem Exp $
+ * @version $Id: CoralI18nTool.java,v 1.7 2004-08-19 16:14:54 zwierzem Exp $
  */
 public class CoralI18nTool extends I18nTool
 {
     /**
      * @param i18n th
-     * @param factory
      * @param locale
      * @param prefix
      */
-    public CoralI18nTool(I18n i18n, ContextToolFactory factory, Locale locale, String prefix)
+    public CoralI18nTool(I18n i18n, Locale locale, String prefix)
     {
         super(i18n, locale, prefix);
     }
