@@ -45,7 +45,7 @@ import org.objectledge.utils.LedgeTestCase;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponentTest.java,v 1.8 2004-07-09 07:57:00 rafal Exp $
+ * @version $Id: GeneratorComponentTest.java,v 1.9 2004-08-23 15:06:21 rafal Exp $
  */
 public class GeneratorComponentTest
     extends LedgeTestCase
@@ -65,6 +65,8 @@ public class GeneratorComponentTest
     private Template interfaceTemplate;
     private Mock mockGenericImplTemplate;
     private Template genericImplTemplate;
+    private Mock mockSQLTemplate;
+    private Template sqlTemplate;
     private Mock mockReader1;
     private Reader reader1;
     private Mock mockReader2;
@@ -92,6 +94,8 @@ public class GeneratorComponentTest
         interfaceTemplate = (Template)mockInterfaceTemplate.proxy();
         mockGenericImplTemplate = mock(Template.class, "mockGenericImplTemplate");
         genericImplTemplate = (Template)mockGenericImplTemplate.proxy();
+        mockSQLTemplate = mock(Template.class, "mockSQLTemplate");
+        sqlTemplate = (Template)mockSQLTemplate.proxy();
         
         mockReader1 = mock(Reader.class, "mockReader1");
         reader1 = (Reader)mockReader1.proxy();
@@ -107,9 +111,10 @@ public class GeneratorComponentTest
         mockFileSystem.stubs().method("read").with(eq("LICENSE.txt"),eq("UTF-8")).will(returnValue("//license"));
         mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Interface")).will(returnValue(interfaceTemplate));
         mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Implementation")).will(returnValue(genericImplTemplate));
+        mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/SQL")).will(returnValue(sqlTemplate));
         generatorComponent = new GeneratorComponent("UTF-8", "src/main/rml/files.lst",
             "src/main/java", "java.,javax.,org.objectledge.", "*", 
-            "", "LICENSE.txt", fileSystem, templating, schema, rmlModelLoader, System.out);
+            "", "LICENSE.txt", null, null, null, null, fileSystem, templating, schema, rmlModelLoader, System.out);
             
         testFileSystem = FileSystem.getStandardFileSystem("src/test/resources/generator");
     }

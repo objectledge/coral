@@ -40,7 +40,7 @@ import org.objectledge.templating.velocity.VelocityTemplating;
  * An interface between GeneratorComponent and Maven.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorBean.java,v 1.7 2004-04-29 12:19:05 fil Exp $
+ * @version $Id: GeneratorBean.java,v 1.8 2004-08-23 15:06:22 rafal Exp $
  */
 public class GeneratorBean
 {
@@ -52,7 +52,11 @@ public class GeneratorBean
     private String packageIncludes;
     private String packageExcludes;
     private String headerFile;
-
+    private String sqlTargetDir;
+    private String sqlTargetPrefix;
+    private String sqlAttributeInfoFile;
+    private String sqlListPath;
+    
     /**
      * Creates new GeneratorBean instance.
      */
@@ -80,7 +84,8 @@ public class GeneratorBean
 
         GeneratorComponent generator = new GeneratorComponent(fileEncoding, sourceFiles, 
             targetDir, importGroups, packageIncludes, packageExcludes, headerFile, 
-            fileSystem, templating, schema, loader, System.out);
+            sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath, 
+			fileSystem, templating, schema, loader, System.out);
         generator.execute();
     }
 
@@ -165,6 +170,39 @@ public class GeneratorBean
     {
         this.targetDir = targetDir;
     }
+
+    
+	/**
+	 * @param sqlAttributeInfoFile The sqlAttributeInfoFile to set.
+	 */
+	public void setSqlAttributeInfoFile(String sqlAttributeInfoFile) 
+	{
+		this.sqlAttributeInfoFile = sqlAttributeInfoFile;
+	}
+	
+	/**
+	 * @param sqlListPath The sqlListPath to set.
+	 */
+	public void setSqlListPath(String sqlListPath) 
+	{
+		this.sqlListPath = sqlListPath;
+	}
+	
+	/**
+	 * @param sqlTargetDir The sqlTargetDir to set.
+	 */
+	public void setSqlTargetDir(String sqlTargetDir) 
+	{
+		this.sqlTargetDir = sqlTargetDir;
+	}
+	
+	/**
+	 * @param sqlTargetPrefix The sqlTargetPrefix to set.
+	 */
+	public void setSqlTargetPrefix(String sqlTargetPrefix) 
+	{
+		this.sqlTargetPrefix = sqlTargetPrefix;
+	}
     
     // implementation ///////////////////////////////////////////////////////////////////////////
     

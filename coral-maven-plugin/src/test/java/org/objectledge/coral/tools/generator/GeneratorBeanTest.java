@@ -52,6 +52,10 @@ public class GeneratorBeanTest extends LedgeTestCase
         generatorBean.setPackageExcludes("org.objectledge.coral.test.excluded");        
         generatorBean.setSourceFiles("src/main/rmlSources.lst");
         generatorBean.setTargetDir("src/main/java");
+        generatorBean.setSqlAttributeInfoFile("sql/coral/CoralDatatypesAttributes.properties");
+        generatorBean.setSqlTargetDir("src/main/sql");
+        generatorBean.setSqlTargetPrefix("sql");
+        generatorBean.setSqlListPath("src/main/sql/coral/test/generated.list");
         generatorBean.run();
     }
 }

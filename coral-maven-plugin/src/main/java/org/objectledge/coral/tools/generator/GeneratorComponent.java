@@ -54,7 +54,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.21 2004-07-08 15:06:20 rafal Exp $
+ * @version $Id: GeneratorComponent.java,v 1.22 2004-08-23 15:06:22 rafal Exp $
  */
 public class GeneratorComponent
 {
@@ -106,10 +106,22 @@ public class GeneratorComponent
 
     /** The path of source file list. */
     private String sourceFiles;
-    
+        
     /** The target directory. */
     private String targetDir;
     
+    /** The target directory for SQL files. */
+    private String sqlTargetDir;
+    
+    /** The path prefix of the SQL files in the classpath. */
+    private String sqlTargetPrefix;
+    
+    /** Path to SQL info on AttributeClasses file. */
+    private String sqlAttributeInfoFile;
+    
+    /** Path of the SQL list file to be generated. */
+    private String sqlListPath;
+
     /** The schema. */
     private Schema schema;
     
@@ -127,6 +139,9 @@ public class GeneratorComponent
     
     /** Implementation template. */
     private Template implementationTemplate;
+    
+    /** SQL script template. */
+    private Template sqlTemplate;
     
     /** Package prefices used for grouping. */
     private List importGroups = new ArrayList();
@@ -148,7 +163,6 @@ public class GeneratorComponent
     
     /**
      * Creates new GeneratorComponent instance.
-     * 
      * @param fileEncoding the character encoding to use for reading and writing files.
      * @param sourceFiles the path of source file list.
      * @param targetDir the target directory.
@@ -156,17 +170,22 @@ public class GeneratorComponent
      * @param packageIncludes packages to include in generation.
      * @param packageExcludes packages to exclude from generation
      * @param headerFile the path to the header file.
+     * @param sqlAttributeInfoFile path of the SQL type information for attribute classes.
+     * @param sqlTargetDir directory to write the SQL files to.
+     * @param sqlTargetPrefix path prefix of the SQL files in the Ledge FS (for list file).
+     * @param sqlListPath path of file listing all the generated SQL files.
      * @param fileSystem the file system to operate on.
      * @param templating the templating component.
      * @param schema the schema.
      * @param loader the loader.
      * @param out the PrintStream to write informational messages to.
+     * 
      * @throws Exception if the component could not be initialized.
      */
     public GeneratorComponent(String fileEncoding, String sourceFiles, String targetDir, 
         String importGroups, String packageIncludes, String packageExcludes, String headerFile, 
-        FileSystem fileSystem, Templating templating, Schema schema, RMLModelLoader loader, 
-        PrintStream out)
+        String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix, String sqlListPath, 
+        FileSystem fileSystem, Templating templating, Schema schema, RMLModelLoader loader, PrintStream out)
         throws Exception
     {
         this.fileSystem = fileSystem;
@@ -189,6 +208,16 @@ public class GeneratorComponent
         this.importGroups = split(importGroups);
         this.packageIncludes = split(packageIncludes);
         this.packageExcludes = split(packageExcludes);
+        this.sqlAttributeInfoFile = sqlAttributeInfoFile;
+        this.sqlTargetDir = sqlTargetDir;
+        this.sqlTargetPrefix = sqlTargetPrefix;
+        this.sqlListPath = sqlListPath;
+        /*
+        this.sqlAttributeInfoFile = "sql/coral/CoralDatatypesAttributes.properties";
+        this.sqlTargetDir = "src/main/resources/sql";
+        this.sqlTargetPrefix = "sql";
+        this.sqlListPath = "src/main/resources/sql/generated.list";
+        */
         
         if(fileSystem.exists(headerFile))
         {
@@ -211,12 +240,24 @@ public class GeneratorComponent
         throws Exception
     {
         loadSources(sourceFiles);
-        loadSQLInfo("sql/coral/CoralDatatypesAttributes.properties");
+        loadSQLInfo(sqlAttributeInfoFile);
         List resourceClasses = schema.getResourceClasses();
         for(Iterator i = resourceClasses.iterator(); i.hasNext();)
         {
             ResourceClass rc = (ResourceClass)i.next();
             processClass(rc);
+        }
+        String sqlList = generateSQLList();
+        if(sqlList.length() > 0)
+        {
+        	if(write(sqlListPath, sqlList))
+        	{
+        		System.out.println("    writing generated SQL list to "+sqlListPath);
+        	}
+        	else
+        	{
+        		System.out.println("    skipping generated SQL list (not modified)");
+        	}
         }
     }
     
@@ -234,6 +275,8 @@ public class GeneratorComponent
             getTemplate("org/objectledge/coral/tools/generator/Interface");
         implementationTemplate = templating.
             getTemplate("org/objectledge/coral/tools/generator/Implementation");
+        sqlTemplate = templating.
+			getTemplate("org/objectledge/coral/tools/generator/SQL");
     }
     
     /**
@@ -378,6 +421,16 @@ public class GeneratorComponent
         return targetDir+"/"+rc.getFQImplClassName().replace('.', '/')+".java";
     }
     
+    String sqlPath(ResourceClass rc)
+    {
+    	return sqlTargetDir+"/"+rc.getName().replace('.', '/')+".sql";
+    }
+    
+    String sqlAltPath(ResourceClass rc)
+    {
+    	return sqlTargetPrefix+"/"+rc.getName().replace('.', '/')+".sql";
+    }
+    
     List split(String string)
     {
         StringTokenizer st = new StringTokenizer(string, ",");
@@ -428,7 +481,7 @@ public class GeneratorComponent
         }
         if(matches(rc.getPackageName(), packageExcludes))
         {
-            out.println("   skipping "+rc.getName()+" (package "+rc.getPackageName()+" excluded)");
+            out.println("    skipping "+rc.getName()+" (package "+rc.getPackageName()+" excluded)");
             return;            
         }
 
@@ -448,6 +501,18 @@ public class GeneratorComponent
         else
         {
             out.println("    skipping "+rc.getName()+" implementation (not modified)");
+        }
+        
+        if(rc.getDbTable() != null && rc.getDbTable().length() > 0)
+        {
+        	if(generateSQL(rc, sqlPath(rc), sqlTemplate))
+        	{
+        		out.println("    writing "+rc.getName()+" SQL script to "+sqlPath(rc));
+        	}
+        	else
+        	{
+        		out.println("    skipping "+rc.getName()+" SQL script (not modified)");
+        	}
         }
     }
 
@@ -519,6 +584,30 @@ public class GeneratorComponent
 
         String result = template.merge(context);
         return write(path, result);
+    }
+    
+    boolean generateSQL(ResourceClass rc, String path, Template template)
+    	throws Exception
+    {
+        TemplatingContext context = templating.createContext();
+        context.put("class", rc);
+        String result = template.merge(context);
+        return write(path, result);    	
+    }
+    
+    String generateSQLList()
+    {
+    	StringBuffer buff = new StringBuffer();
+        List resourceClasses = schema.getResourceClasses();
+        for(Iterator i = resourceClasses.iterator(); i.hasNext();)
+        {
+            ResourceClass rc = (ResourceClass)i.next();
+            if(rc.getDbTable() != null && rc.getDbTable().length() > 0)
+            {
+            	buff.append(sqlAltPath(rc)).append("\n");
+            }
+        }
+        return buff.toString();
     }
     
     /**

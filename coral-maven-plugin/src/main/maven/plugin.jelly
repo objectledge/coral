@@ -159,6 +159,11 @@
     <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageExcludes" property="coral.generator.package.excludes"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorHeaderFile" property="coral.generator.header.file"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorSourcesList" property="coral.generator.sources.list"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSqlAttributeInfoFile" property="coral.generator.sql.attributeInfo"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSqlTargetDir" property="coral.generator.sql.targetDir"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSqlTargetPrefix" property="coral.generator.sql.targetPrefix"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSqlListPath" property="coral.generator.sql.list"/>
+
     <j:choose>
       <j:when test="${empty(pom.build.sourceDirectory)}">
         <echo>No Java sources defined - aborting</echo>
@@ -168,7 +173,7 @@
       </j:when>
       <j:otherwise>
         <util:file var="basedirFile" name="${basedir}"/>
-        <j:set var="generatorTargetDirectory" value="${pom.build.sourceDirectory.substring(basedirFile.canonicalPath.length())}"/>      
+        <j:set var="generatorTargetDirectory" value="${pom.build.sourceDirectory.substring(basedirFile.canonicalPath.length())}"/> 
 	    <j:if test="${maven.debugOn}">
 	      <echo>
 	        coral.generator.file.encoding=${generatorFileEncoding}
@@ -178,6 +183,10 @@
 		    coral.generator.header.file=${generatorHeaderFile}
 		    coral.generator.sources.list=${generatorSourcesList}
 		    coral.generator.target.directory=${generatorTargetDirectory}
+		    coral.generator.sql.attributeInfo=${generatorSqlAttributeInfoFile}
+		    coral.generator.sql.targetDir=${generatorSqlTargetDir}
+		    coral.generator.sql.targetPrefix=${generatorSqlTargetPrefix}
+		    coral.generator.sql.list=${generatorSqlListPath}
 		  </echo>
 		</j:if>
 	    <coral:generator
@@ -188,7 +197,12 @@
 	      packageExcludes="${generatorPackageExcludes}"
 	      headerFile="${generatorHeaderFile}"
 	      sourceFiles="${generatorSourcesList}"
-	      targetDir="${generatorTargetDirectory}"/>
+	      targetDir="${generatorTargetDirectory}"
+	      sqlAttributeInfoFile="${generatorSqlAttributeInfoFile}"
+	      sqlTargetDir="${generatorSqlTargetDir}"
+	      sqlTargetPrefix="${generatorSqlTargetPrefix}"
+	      sqlListPath="${generatorSqlListPath}"
+	      />
       </j:otherwise>
     </j:choose>
   </goal>
