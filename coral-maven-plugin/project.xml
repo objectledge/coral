@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.5 2004-03-31 13:57:25 fil Exp $ -->
+<!-- $Id: project.xml,v 1.6 2004-04-23 13:04:03 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -199,6 +199,11 @@
       <artifactId>velocity</artifactId>
       <version>1.4-dev</version>
       <url>http://jakarta.apache.org/velocity/</url>
+    </dependency>
+    <dependency>
+      <groupId>commons-jelly</groupId>
+      <artifactId>commons-jelly-tags-sql</artifactId>
+      <version>1.0-SNAPSHOT.20030210.064311</version>
     </dependency>
 
     <!-- testing -->

@@ -30,16 +30,38 @@
   xmlns:j="jelly:core"
   xmlns:m="jelly:maven"
   xmlns:define="jelly:define"
+  xmlns:sql="jelly:sql"
   xmlns:coral="coral">
 
   <define:taglib uri="coral">  
   
     <!-- // wrapper generator /////////////////////////////////////////////////////////////// -->
+
     <define:jellybean
        name="generator"
        method="execute"
        className="org.objectledge.coral.tools.generator.GeneratorBean"/>
+
+    <define:jellybean
+       name="init"
+       method="execute"
+       className="org.objectledge.coral.tools.init.InitBean"/>
        
+    <!--
+     | Determines the JDBC driver class to use.
+     |
+     | @param url the JDBC database url.
+     | @param var the name of the variable to set.
+     -->
+    <define:tag name="dbDriver">
+      <j:set var="dbType" value="${url.substring(5, url.indexOf(':', 5))}"/>
+      <m:pluginVar plugin="coral-maven-plugin" var="${var}" property="coral.driver.${dbType}"/>
+      <j:set var="value" value="${context.getVariable(var)}"/>
+      <j:set var="${var}" scope="parent" value="${context.getVariable(var)}"/>
+      <j:if test="${value == ''}">
+        <fail>Unknown database type ${dbType}</fail>
+      </j:if>
+    </define:tag>
   </define:taglib>
   
   <!-- // wrapper generator ///////////////////////////////////////////////////////////////// -->
@@ -72,6 +94,17 @@
       headerFile="${generatorHeaderFile}"
       sourceFiles="${generatorSourcesList}"
       targetDir="${generatorTargetDirectory}"/>
+  </goal>
+
+  <!-- // database initializer ////////////////////////////////////////////////////////////// -->
+  <goal name="coral:init">
+    <m:pluginVar plugin="coral-maven-plugin" var="initDbUrl" property="coral.db.url"/>  
+    <m:pluginVar plugin="coral-maven-plugin" var="initDbUser" property="coral.db.user"/>  
+    <m:pluginVar plugin="coral-maven-plugin" var="initDbPassword" property="coral.db.password"/>
+    <coral:dbDriver var="initDbDriver" url="${initDbUrl}"/>
+    <sql:driver var="initDs" driver="${initDbDriver}" jdbcURL="${initDbUrl}" 
+      userName="${initDbUser}"/>
+    <coral:init dataSource="${initDs}"/>
   </goal>
   
 </project>
