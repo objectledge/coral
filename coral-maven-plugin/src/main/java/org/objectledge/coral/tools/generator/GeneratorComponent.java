@@ -55,7 +55,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.27 2004-12-23 03:35:21 rafal Exp $
+ * @version $Id: GeneratorComponent.java,v 1.28 2004-12-23 06:44:06 rafal Exp $
  */
 public class GeneratorComponent
 {
@@ -527,10 +527,7 @@ public class GeneratorComponent
     {
         String handler = rc.getHandlerClassName();
         int pos = handler.indexOf("Handler");
-        String impl = handler.substring(0, pos);
-        int dot = impl.lastIndexOf('.');
-        String unqImpl = impl.substring(dot+1);
-        return unqImpl;
+        return handler.substring(0, pos);
     }
     
     /**
@@ -578,8 +575,12 @@ public class GeneratorComponent
         }
         else
         {
-            context.put("implParentClass", resolvePrimaryParentClass(rc));
-            context.put("emitBuiltins", Boolean.TRUE);
+            String ppc = resolvePrimaryParentClass(rc);
+            int dot = ppc.lastIndexOf('.');
+            String unqPpc = ppc.substring(dot+1);
+            context.put("implParentClass", unqPpc);
+            context.put("fqImplParentClass", ppc);
+            context.put("primaryParentClass", Boolean.TRUE);
         }
         
         context.put("imports", imports);

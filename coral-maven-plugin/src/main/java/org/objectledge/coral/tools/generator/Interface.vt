@@ -30,7 +30,7 @@
 ##
 $imports.add("org.objectledge.coral.store.Resource")##
 ##
-#if($emitBuiltins)
+#if($primaryParentClass)
 $imports.add("org.objectledge.coral.schema.ResourceClass")##
 $imports.add("org.objectledge.coral.security.Subject")##
 $imports.add("java.util.Date")##
@@ -162,7 +162,7 @@ public interface ${class.interfaceClassName}
 #end
 #end ## #foreach $attr
 #end ## $attributes.size() > 0
-#if($emitBuiltins)
+#if($primaryParentClass)
     /**
      * Returns the path name of the resource.
      *

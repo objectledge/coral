@@ -46,6 +46,9 @@ $imports.add("java.util.HashMap")##
 #if($class.implParentClass)
 $imports.add($class.implParentClass.getFQImplClassName())##
 #end
+#if($primaryParentClass)
+$imports.add($fqImplParentClass)##
+#end
 #foreach($attr in $attributes)
 #if(!$attr.primitive)
 $imports.add($attr.getFQJavaType())##
