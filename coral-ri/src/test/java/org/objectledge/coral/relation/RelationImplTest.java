@@ -72,7 +72,7 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.2 2004-03-11 12:55:21 zwierzem Exp $
+ * @version $Id: RelationImplTest.java,v 1.3 2004-03-18 15:23:10 fil Exp $
  */
 public class RelationImplTest extends MockObjectTestCase
 {
@@ -139,6 +139,7 @@ public class RelationImplTest extends MockObjectTestCase
         assertEquals(relation.getId(), -1L);
         assertEquals(relation.getName(), "relation name");
 
+        mockConnection.expect(once()).method("close").isVoid();
         try
         {
             relation.setData(inputRecord);
