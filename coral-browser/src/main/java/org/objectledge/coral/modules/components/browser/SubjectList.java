@@ -43,7 +43,7 @@ public class SubjectList
 			}
 			Subject[] subjects = coralSession.getSecurity().getSubject();
 			TableModel model = new ListTableModel(subjects, columns);
-			TableTool helper = new TableTool(state, model);
+			TableTool helper = new TableTool(state, null, model);
 			templatingContext.put("table", helper);
 		}
 		catch (TableException e)

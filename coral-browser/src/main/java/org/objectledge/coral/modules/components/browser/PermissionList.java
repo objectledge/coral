@@ -41,7 +41,7 @@ public class PermissionList extends BaseBrowserComponent
             }
             Permission[] permissions = coralSession.getSecurity().getPermission();
             TableModel model = new ListTableModel(permissions, columns);
-            TableTool helper = new TableTool(state, model);
+            TableTool helper = new TableTool(state, null, model);
             templatingContext.put("table", helper);
         }
         catch (Exception e)

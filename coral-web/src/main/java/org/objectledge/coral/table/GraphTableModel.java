@@ -7,6 +7,7 @@ import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.table.ExtendedTableModel;
 import org.objectledge.table.TableColumn;
+import org.objectledge.table.TableFilter;
 import org.objectledge.table.TableRowSet;
 import org.objectledge.table.TableState;
 import org.objectledge.table.generic.GenericTreeRowSet;
@@ -16,7 +17,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  * A table model for Coral relations.
  *
  *  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: GraphTableModel.java,v 1.5 2004-06-14 13:55:02 fil Exp $
+ * @version $Id: GraphTableModel.java,v 1.6 2004-07-01 11:35:41 zwierzem Exp $
  */
 public class GraphTableModel
     implements ExtendedTableModel
@@ -47,15 +48,11 @@ public class GraphTableModel
     }
     
     /**
-     * Returns a {@link TableRowSet} object initialised by this model
-     * and a given {@link TableState}.
-     *
-     * @param state the parent
-     * @return table of children
+     * @inheritDoc
      */
-    public TableRowSet getRowSet(TableState state)
+    public TableRowSet getRowSet(TableState state, TableFilter[] filters)
     {
-        return new GenericTreeRowSet(state, this);
+        return new GenericTreeRowSet(state, filters, this);
     }
 
     /**

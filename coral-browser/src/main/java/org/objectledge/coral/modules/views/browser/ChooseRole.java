@@ -41,7 +41,7 @@ public class ChooseRole extends BaseBrowserView
             }
             Role[] roles = coralSession.getSecurity().getRole();
             TableModel model = new ListTableModel(roles, columns);
-            TableTool helper = new TableTool(state, model);
+            TableTool helper = new TableTool(state, null, model);
             templatingContext.put("table", helper);
         }
         catch (Exception e)

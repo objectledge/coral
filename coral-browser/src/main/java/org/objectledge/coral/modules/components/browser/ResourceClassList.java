@@ -41,7 +41,7 @@ public class ResourceClassList extends BaseBrowserComponent
             }
             ResourceClass[] classes = coralSession.getSchema().getResourceClass();
             TableModel model = new ListTableModel(classes, columns);
-            TableTool helper = new TableTool(state, model);
+            TableTool helper = new TableTool(state, null, model);
             templatingContext.put("table", helper);
         }
         catch (TableException e)

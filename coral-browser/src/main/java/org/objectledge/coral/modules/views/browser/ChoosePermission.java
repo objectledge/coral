@@ -42,7 +42,7 @@ public class ChoosePermission extends BaseBrowserView
             }
             Permission[] permissions = coralSession.getSecurity().getPermission();
             TableModel model = new ListTableModel(permissions, columns);
-            TableTool helper = new TableTool(state, model);
+            TableTool helper = new TableTool(state, null, model);
             templatingContext.put("table", helper);
         }
         catch (TableException e)

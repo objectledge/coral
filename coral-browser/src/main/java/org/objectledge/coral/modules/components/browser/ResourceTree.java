@@ -42,7 +42,7 @@ public class ResourceTree
                 state.setSortColumnName("name");
             }
             TableModel model = new CoralTableModel(coralSession, i18nContext.getLocale());
-            TableTool helper = new TableTool(state, model);
+            TableTool helper = new TableTool(state, null, model);
             templatingContext.put("table", helper);
         }
         catch(Exception e)

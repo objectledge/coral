@@ -19,6 +19,7 @@ import org.objectledge.coral.table.comparator.PathComparator;
 import org.objectledge.table.ExtendedTableModel;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableException;
+import org.objectledge.table.TableFilter;
 import org.objectledge.table.TableRowSet;
 import org.objectledge.table.TableState;
 import org.objectledge.table.generic.GenericListRowSet;
@@ -29,7 +30,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.6 2004-06-15 14:28:27 zwierzem Exp $
+ * @version $Id: CoralTableModel.java,v 1.7 2004-07-01 11:35:41 zwierzem Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {
@@ -82,21 +83,17 @@ public class CoralTableModel implements ExtendedTableModel
     }
 
     /**
-     * Returns a {@link TableRowSet} object initialised by this model
-     * and a given {@link TableState}.
-     *
-     * @param state the parent
-     * @return table of children
+     * @inheritDoc
      */
-    public TableRowSet getRowSet(TableState state)
+    public TableRowSet getRowSet(TableState state, TableFilter[] filters)
     {
         if(state.getTreeView())
         {
-            return new GenericTreeRowSet(state, this);
+            return new GenericTreeRowSet(state, filters, this);
         }
         else
         {
-            return new GenericListRowSet(state, this);   
+            return new GenericListRowSet(state, filters, this);   
         }
     }
 

@@ -41,7 +41,7 @@ public class ChooseSubject extends BaseBrowserView
             }
             Subject[] subjects = coralSession.getSecurity().getSubject();
             TableModel model = new ListTableModel(subjects, columns);
-            TableTool helper = new TableTool(state, model);
+            TableTool helper = new TableTool(state, null, model);
             templatingContext.put("table", helper);
         }
         catch(Exception e)
