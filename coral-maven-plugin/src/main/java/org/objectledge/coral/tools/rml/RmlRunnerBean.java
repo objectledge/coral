@@ -37,7 +37,7 @@ import org.objectledge.filesystem.FileSystem;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RmlRunnerBean.java,v 1.1 2004-04-29 15:57:16 fil Exp $
+ * @version $Id: RmlRunnerBean.java,v 1.2 2004-04-30 12:37:32 fil Exp $
  */
 public class RmlRunnerBean
 {
@@ -102,7 +102,11 @@ public class RmlRunnerBean
             public void load(Reader in)
                 throws Exception
             {
-                session.getScript().runScript(in);
+                String result = session.getScript().runScript(in);
+                if(result != null && result.length() > 0)
+                {
+                    System.out.println(result);
+                }
             }
         };
         loader.loadBatch(sourcesList);
