@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
@@ -21,7 +22,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceListAttributeHandler.java,v 1.5 2004-05-06 13:38:43 pablo Exp $
+ * @version $Id: ResourceListAttributeHandler.java,v 1.6 2004-07-09 11:11:04 pablo Exp $
  */
 public class ResourceListAttributeHandler
     extends AttributeHandlerBase
@@ -234,10 +235,47 @@ public class ResourceListAttributeHandler
      */
     protected Object fromString(String string)
     {
+        if(string == null || string.length() == 0)
+        {
+            return null;
+        }
         if(string.equals("@empty"))
         {
             return new ResourceList(coralStore);
         }
-        return null;
+        List list = new ArrayList();
+        StringTokenizer st = new StringTokenizer(string);
+        while(st.hasMoreTokens())
+        {
+            String token = st.nextToken();
+            if(Character.isDigit(token.charAt(0)))
+            {
+                long id = Long.parseLong(token);
+                try
+                {
+                    list.add(coralStore.getResource(id));
+                    continue;
+                }
+                catch(EntityDoesNotExistException e)
+                {
+                    throw new IllegalArgumentException("resource #"+id+" not found");
+                }
+            }
+            else
+            {
+                Resource[] res = coralStore.getResourceByPath(token);
+                if(res.length == 0)
+                {
+                    throw new IllegalArgumentException("resource '"+token+"' not found");
+                }
+                if(res.length > 1)
+                {
+                    throw new IllegalArgumentException("resource name '"+token+"' is ambigous");
+                }
+                list.add(res[0]);
+                continue;
+            }        
+        }
+        return new ResourceList(coralStore, list);
     }
 }
