@@ -1,0 +1,21 @@
+#####
+## TYPE: S
+## NAME: Default 'access denied' screen for whole system
+## AUTHOR: <a href="mailto:pablo@ngo.pl">Potempski Pawel</a>
+## AUTHOR: <a href="mailto:mmach@ngo.pl">Michal Mach</a>
+## VER: $Id
+## DESCR: This screen is shown when there's nothing 
+## DESCR: else to show.
+## STATUS: final
+## TODO: create pre-template for internationalization
+#####
+
+  <table class="defaultLayoutTable" cellspacing="10">
+    <tr>
+      <td>
+	<b>Nie masz prawa do ogladania tego zasobu.</b>
+	<p>Mo¿e to wynikaæ z tego, ¿e nie jeste¶ zalogowany - je¿eli posiadasz ju¿ konto, zaloguj siê.
+	  <p>Je¿eli próbujesz obejrzeæ chronione zasoby, to widzisz ten komunikat dlatego, ¿e nie masz prawa ich ogladac.
+      </td>
+    </tr>
+  </table>

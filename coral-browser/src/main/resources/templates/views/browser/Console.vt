@@ -1,0 +1,18 @@
+<form name="form0" method="post" action="$link.action("browser.ExecuteCommand")#input">
+
+<div>
+<textarea cols="" rows="5" style="width: 100%;" name="command">$command</textarea>
+</div>
+<div>
+  <input type="submit" value="&nbsp;Execute&nbsp;">
+</div>
+</form>
+
+<a name="upload"></a>
+<form name="form1" method="post" enctype="multipart/form-data" action="$link.action("console,UploadScript")#input">
+<div>
+<input type="hidden" name="padding">
+<input type="submit" value="&nbsp;Upload&nbsp;"> script
+<input type="file" name="script">
+</div>
+</form>

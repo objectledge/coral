@@ -1,0 +1,25 @@
+#set ($screen_title='Brak dostêpu')
+
+<table class="alertTitleTable">
+<tr><td>
+<b>$screen_title</b>
+<td></tr>
+<table>
+
+<table class="defaultTable">
+	<tr>
+	<td>
+		<b>B³±d:</b> $exception.getMessage()
+	</td>
+
+	</tr>
+</table>
+
+<table class="defaultTable">
+	<tr>
+		<td>
+		Nie masz dostêpu do tego zasobu.
+		</td>
+
+	</tr>
+</table>

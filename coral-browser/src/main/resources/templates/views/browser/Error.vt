@@ -1,0 +1,25 @@
+<div align="center">
+  <table class="alertTitleTable" width="40%">
+    <tr>
+      <td>
+	<b>B³±d systemu!</b>
+      </td>
+    </tr>
+  </table>
+
+  <table class="defaultTable" width="40%">
+    <tr>
+      <td>
+	<b>W systemie wyst±pi³ b³±d.</b><p>
+	  System <i>Cyklotron</i> jest na etapie intensywnych prac rozwojowych. Wszystkie b³êdy jakie wyst±pi± w trakcie dzia³ania systemu s± zapisywane i na bie¿±co poprawiane przez nasz zespó³.<p>
+	  Je¿eli powy¿szy b³±d uniemo¿liwi³ Ci pracê, napisz na adres <a href="mailto:cyklotron-errors@ngo.pl">cyklotron-errors@ngo.pl</a> za³±czaj±c krótki opis dzia³añ, które doprowadzi³y do jego wyst±pienia. Postaramy siê usun±æ go jak najszybciej.
+      </td>
+    </tr>
+</table>
+</div>
+
+<br> To co ponizej bedzie skasowane:
+<br>
+<pre>
+$stackTrace
+</pre>

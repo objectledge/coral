@@ -1,0 +1,19 @@
+#macro(linkCell $class $label $linkObject)
+<td #if($class != '') class="$class" #end onMouseOver="this.style.backgroundColor='#AAAAAA'" onMouseOut="this.style.backgroundColor=''" nowrap><a href="$linkObject">$label</a></td>
+#end
+
+  <table width="100%" class="adminNavi" cellspacing="0">
+    <tr>
+      #linkCell('admin' 'CONSOLE' $link.view("browser.Console"))
+      <td class="inscription" width="95%" align="right">Abstract Resource Layer Browser: &nbsp;</td>
+      #linkCell('admin' 'ZASOBY' $link.view("browser.ResourceView"))
+      <td class="separator">|</td>
+      #linkCell('admin' 'KLASY' $link.view("browser.ResourceClassView"))
+      <td class="separator">|</td>
+      #linkCell('admin' 'ROLE' $link.view("browser.RoleView"))
+      <td class="separator">|</td>
+      #linkCell('admin' 'PRAWA' $link.view("browser.PermissionView"))
+      <td class="separator">|</td>
+      #linkCell('admin' 'U¯YTKOWNICY' $link.view("browser.SubjectView"))
+    </tr>
+  </table>

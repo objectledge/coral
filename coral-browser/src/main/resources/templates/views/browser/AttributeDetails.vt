@@ -1,0 +1,124 @@
+
+#result_inline_message("results.arlbrowser")
+<table class="genericItemTree" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <th>Szczegó³y atrybutu '$attr_def.name' zasobu '$resource.path'</th>
+  </tr>
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <td>Typ atrybutu:</td>
+          <td>$attr_def.attributeClass.name</td>
+        </tr>
+        <tr>
+          <td>Zdefiniowany w klasie:</td>
+          <td><a href="$link.view('ResourceClassView').set('res_class_id',$attr_def.declaringClass.id)">$attr_def.declaringClass.name</a></td>
+        </tr>
+        <tr>
+          <td>Domena:</td>
+          <td>
+            #if($attr_def.domain)
+              <a href="$link.view('ResourceClassView').set('res_class_id',$attr.declaringClass.id)">
+                $attr_def.domain
+              </a>
+            #else
+             -
+            #end
+          </td>
+        </tr>
+        <tr>
+          <td>Warto¶æ:</td>
+          <td>
+          #if($resource.isDefined($attr_def) && $resource.get($attr_def))
+            #if($attr_def.attributeClass.name == 'cross_reference')
+              <table>
+                <tr>
+                  <th>Zasób 1</th>
+                  <th>Zasób 2</th>
+                  <th>&nbsp;</th>
+                </tr>
+              #foreach($list in $resource.get($attr_def).definition)
+                <tr>
+                #foreach($res_id in $list)
+                 #if($velocityCount == 1)
+                  #set($res1 = $res_id)
+                 #else
+                  #set($res2 = $res_id)
+                 #end
+                  <td>
+                  <a href="$link.view('ResourceView').set('res_id',$res_id)">zasób nr. $res_id</a>
+                  </td>
+                #end
+                  <td>
+                    <a href="$link.action('DeleteRelation').set('res_id',$resource.id).set('attr_name',$attr_def.name).set('res_1',$res1).set('res_2',$res2)">
+                   usuñ
+                    </a>
+                  </td>
+                </tr>
+              #end
+                <tr>
+                  <form name="add_relation" method="post" action='$link.action('AddRelation')'>
+                  <input type="hidden" name="res_id" value="$resource.id">
+                  <input type="hidden" name="attr_name" value="$attr_def.name">
+                  <td>
+                    <input type="text" name="res_1" value="">
+                    <a href="#select_resource("id" "add_relation" "res_1")">wybierz</a>
+                  </td>
+                  <td>
+                    <input type="text" name="res_2" value="">
+                    <a href="#select_resource("id" "add_relation" "res_2")">wybierz</a>
+                  </td>
+                  <td>
+                    <a href="javascript:document.add_relation.submit()">dodaj</a>
+                  </td>
+                  </form>
+                </tr>
+              </table>
+            #elseif($attr_def.attributeClass.name == 'resource_list')
+              <table>
+                <tr>
+                  <th>Zasób</th>
+                  <th>&nbsp;</th>
+                </tr>
+              #foreach($res in $resource.get($attr_def))
+                <tr>
+                  <td>
+                  <a href="$link.view('ResourceView').set('res_id',$res.id)">$res.path</a>($res.id) 
+                  </td>
+                  <td>
+                    <a href="$link.action('RemoveFromResourceList').set('res_id',$resource.id).set('attr_name',$attr_def.name).set('res_1',$res.id)">
+                    usuñ</a>
+                  </td>
+                </tr>
+              #end
+                <tr>
+                  <form name="add_to_list" method="post" action='$link.action('AddToResourceList')'>
+                  <input type="hidden" name="res_id" value="$resource.id">
+                  <input type="hidden" name="attr_name" value="$attr_def.name">
+                  <td>
+                    <input type="text" name="res_1" value="">
+                    <a href="#select_resource("id" "add_to_list" "res_1")">wybierz</a>
+                  </td>
+                  <td>
+                    <a href="javascript:document.add_to_list.submit()">dodaj</a>
+                  </td>
+                  </form>
+                </tr>
+              </table>
+            #elseif($attr_def.attributeClass.name == 'resource')
+              <a href="$link.view('ResourceView').set('res_id',$resource.get($attr_def).id)">
+                $resource.get($attr_def).path</a>
+            #else
+              $attr_def.attributeClass.handler.toPrintableString($resource.get($attr_def))
+            #end
+          #else
+            nie zdefiniowany
+          #end
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
