@@ -41,7 +41,7 @@
       <groupId>coral</groupId>
       <artifactId>coral-maven-plugin</artifactId>
       <type>plugin</type>
-      <version>0.1-dev</version>
+      <version>0.1</version>
       <url>http://coral.objectledge.org/modules/coral-maven-plugin/</url>
     </dependency>        
     
