@@ -37,7 +37,7 @@ import org.objectledge.coral.schema.CoralSchema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSchemaTest.java,v 1.1 2004-03-08 11:34:06 fil Exp $
+ * @version $Id: SessionCoralSchemaTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
  */
 public class SessionCoralSchemaTest extends MockObjectTestCase
 {
@@ -62,6 +62,8 @@ public class SessionCoralSchemaTest extends MockObjectTestCase
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);
         sessionCoralSchema = new SessionCoralSchema(coralCore, session);
     }
@@ -72,9 +74,7 @@ public class SessionCoralSchemaTest extends MockObjectTestCase
     
     public void testGetAttributeClass()
     {
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
         mockCoralSchema.expect(once()).method("getAttributeClass").will(returnValue(new AttributeClass[0]));
-        mockCoralCore.expect(once()).method("setCurrentSession").with(NULL).isVoid();
         sessionCoralSchema.getAttributeClass();
     }
 }

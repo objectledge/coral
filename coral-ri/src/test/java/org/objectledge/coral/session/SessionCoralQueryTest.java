@@ -36,7 +36,7 @@ import org.objectledge.coral.query.CoralQuery;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralQueryTest.java,v 1.1 2004-03-08 11:34:06 fil Exp $
+ * @version $Id: SessionCoralQueryTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
  */
 public class SessionCoralQueryTest extends MockObjectTestCase
 {
@@ -61,6 +61,8 @@ public class SessionCoralQueryTest extends MockObjectTestCase
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);
         sessionCoralQuery = new SessionCoralQuery(coralCore, session);
     }
@@ -72,18 +74,14 @@ public class SessionCoralQueryTest extends MockObjectTestCase
     public void testExecuteQuery()
         throws Exception
     {
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
         mockCoralQuery.expect(once()).method("executeQuery").will(returnValue(null));
-        mockCoralCore.expect(once()).method("setCurrentSession").with(NULL).isVoid();
         sessionCoralQuery.executeQuery("<query>");
     }
 
     public void testPrepareQuery()
         throws Exception
     {
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
         mockCoralQuery.expect(once()).method("prepareQuery").will(returnValue(null));
-        mockCoralCore.expect(once()).method("setCurrentSession").with(NULL).isVoid();
         sessionCoralQuery.prepareQuery("<query>");
     }
 }

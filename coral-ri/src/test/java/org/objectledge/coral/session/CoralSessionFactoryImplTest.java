@@ -39,7 +39,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImplTest.java,v 1.1 2004-03-09 10:12:58 fil Exp $
+ * @version $Id: CoralSessionFactoryImplTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
  */
 public class CoralSessionFactoryImplTest extends MockObjectTestCase
 {
@@ -94,23 +94,29 @@ public class CoralSessionFactoryImplTest extends MockObjectTestCase
     public void testNormalSession()
         throws Exception
     {
+        mockCoralCore.expect(once()).method("setCurrentSession").with(isA(CoralSession.class)).isVoid();
         CoralSession session = coralSessionFactoryImpl.getSession(principal);
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
+        
         assertSame(subject, session.getUserSubject());
         assertSame(principal, session.getUserPrincipal());         
         
         session.getStore();
         
+        mockCoralCore.expect(once()).method("setCurrentSession").with(NULL).isVoid();
         session.close();
     }
     
     public void testRootSession()
     {
+        mockCoralCore.expect(once()).method("setCurrentSession").with(isA(CoralSession.class)).isVoid();
         CoralSession session = coralSessionFactoryImpl.getRootSession();
         assertSame(rootSubject, session.getUserSubject()); 
     }
 
     public void testAnonymousSession()
     {
+        mockCoralCore.expect(once()).method("setCurrentSession").with(isA(CoralSession.class)).isVoid();
         CoralSession session = coralSessionFactoryImpl.getAnonymousSession();
         assertSame(anonymousSubject, session.getUserSubject()); 
     }

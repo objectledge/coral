@@ -45,11 +45,12 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.2 2004-03-08 16:13:57 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.3 2004-03-15 13:44:53 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
 {
+    private CoralCore coral;
     private CoralSchema schema;
     private CoralSecurity security;
     private CoralStore store;
@@ -65,6 +66,7 @@ public class CoralSessionImpl
 
     CoralSessionImpl(CoralCore coral, KeyedObjectPool pool)
     {
+        this.coral = coral;
         this.pool = pool;
                 
         schema = new SessionCoralSchema(coral, this);
@@ -79,9 +81,10 @@ public class CoralSessionImpl
         this.principal = principal;
         ownerThread = new WeakReference(Thread.currentThread());
         open = true;
+        coral.setCurrentSession(this);
     }
     
-    void checkOpen()
+    void verify()
     {
         if(!open)
         {
@@ -92,6 +95,11 @@ public class CoralSessionImpl
         {
             throw new IllegalStateException("attempted to use session from wrong thread");     
         }
+        if(!this.equals(coral.getCurrentSession()))
+        {
+            throw new IllegalStateException("another session is active for this thread."+
+                " Use makeCurrent() to switch");
+        }
     }
 
     /** 
@@ -99,9 +107,10 @@ public class CoralSessionImpl
      */
     public void close()
     {
-        checkOpen();
+        verify();
         open = false;
         ownerThread = null;
+        coral.setCurrentSession(null);
         try
         {
             pool.returnObject(this, principal);
@@ -110,6 +119,14 @@ public class CoralSessionImpl
         {
             throw new BackendException("failed to recycle session object");
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void makeCurrent()
+    {
+        coral.setCurrentSession(this);
     }
 
     /** 

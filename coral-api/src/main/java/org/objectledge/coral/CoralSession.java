@@ -12,7 +12,7 @@ import org.objectledge.coral.store.CoralStore;
 /**
  * An access point to the Coral document store.
  *
- * @version $Id: CoralSession.java,v 1.2 2004-02-20 12:51:17 fil Exp $
+ * @version $Id: CoralSession.java,v 1.3 2004-03-15 13:44:55 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSession
@@ -73,6 +73,14 @@ public interface CoralSession
      * @return the user that owns this session.
      */
     public Subject getUserSubject();
+    
+    /**
+     * Selects this session as the current session of the thread.
+     * 
+     * <p>You don't need to call this method unless you use multiple sessions interchangably in a 
+     * single thread.</p>
+     */
+    public void makeCurrent();
     
     /**
      * Closes the session.

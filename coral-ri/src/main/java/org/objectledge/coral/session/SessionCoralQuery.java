@@ -37,7 +37,7 @@ import org.objectledge.coral.query.QueryResults;
  * Session local CoralQuery wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralQuery.java,v 1.1 2004-03-08 08:51:24 fil Exp $
+ * @version $Id: SessionCoralQuery.java,v 1.2 2004-03-15 13:44:53 fil Exp $
  */
 public class SessionCoralQuery
     implements CoralQuery
@@ -62,16 +62,8 @@ public class SessionCoralQuery
      */
     public QueryResults executeQuery(String query) throws MalformedQueryException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getQuery().executeQuery(query);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getQuery().executeQuery(query);
     }
 
     /** 
@@ -79,15 +71,7 @@ public class SessionCoralQuery
      */
     public PreparedQuery prepareQuery(String query) throws MalformedQueryException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getQuery().prepareQuery(query);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getQuery().prepareQuery(query);
     }
 }

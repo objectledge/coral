@@ -45,7 +45,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStore.java,v 1.2 2004-03-08 09:17:30 fil Exp $
+ * @version $Id: SessionCoralStore.java,v 1.3 2004-03-15 13:44:53 fil Exp $
  */
 public class SessionCoralStore implements CoralStore
 {
@@ -69,16 +69,8 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResource()
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getResource();
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getResource();
     }
 
     /** 
@@ -86,16 +78,8 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResource(Resource parent)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getResource(parent);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getResource(parent);
     }
 
     /** 
@@ -103,16 +87,8 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource getResource(long id) throws EntityDoesNotExistException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getResource(id);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getResource(id);
     }
 
     /** 
@@ -120,16 +96,8 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResource(String name)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getResource(name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getResource(name);
     }
 
     /** 
@@ -137,16 +105,8 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource getUniqueResource(String name) throws IllegalStateException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getUniqueResource(name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getUniqueResource(name);
     }
 
     /** 
@@ -154,16 +114,8 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResource(Resource parent, String name)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getResource(parent, name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getResource(parent, name);
     }
 
     /** 
@@ -171,16 +123,8 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource getUniqueResource(Resource parent, String name) throws IllegalStateException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getUniqueResource(parent, name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getUniqueResource(parent, name);
     }
 
     /** 
@@ -188,16 +132,8 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResourceByPath(String path)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getResourceByPath(path);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getResourceByPath(path);
     }
 
     /** 
@@ -206,16 +142,8 @@ public class SessionCoralStore implements CoralStore
     public Resource getUniqueResourceByPath(String path)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getUniqueResourceByPath(path);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getUniqueResourceByPath(path);
     }
 
     /** 
@@ -223,16 +151,8 @@ public class SessionCoralStore implements CoralStore
      */
     public Resource[] getResourceByPath(Resource start, String path)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getResourceByPath(start, path);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getResourceByPath(start, path);
     }
 
     /** 
@@ -241,16 +161,8 @@ public class SessionCoralStore implements CoralStore
     public Resource getUniqueResourceByPath(Resource start, String path)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().getUniqueResourceByPath(start, path);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().getUniqueResourceByPath(start, path);
     }
 
     /** 
@@ -263,16 +175,8 @@ public class SessionCoralStore implements CoralStore
         Map attributes)
         throws UnknownAttributeException, ValueRequiredException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().createResource(name, parent, resourceClass, attributes);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().createResource(name, parent, resourceClass, attributes);
     }
 
     /** 
@@ -281,16 +185,8 @@ public class SessionCoralStore implements CoralStore
     public void deleteResource(Resource resource)
         throws EntityInUseException, IllegalArgumentException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getStore().deleteResource(resource);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        coral.getStore().deleteResource(resource);
     }
 
     /** 
@@ -298,16 +194,8 @@ public class SessionCoralStore implements CoralStore
      */
     public int deleteTree(Resource res) throws EntityInUseException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().deleteTree(res);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().deleteTree(res);
     }
 
     /** 
@@ -315,16 +203,8 @@ public class SessionCoralStore implements CoralStore
      */
     public void setName(Resource resource, String name)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getStore().setName(resource, name);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        coral.getStore().setName(resource, name);
     }
 
     /** 
@@ -332,16 +212,8 @@ public class SessionCoralStore implements CoralStore
      */
     public void setParent(Resource child, Resource parent) throws CircularDependencyException
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getStore().setParent(child, parent);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        coral.getStore().setParent(child, parent);
     }
 
     /** 
@@ -349,16 +221,8 @@ public class SessionCoralStore implements CoralStore
      */
     public void unsetParent(Resource child)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getStore().unsetParent(child);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        coral.getStore().unsetParent(child);
     }
 
     /** 
@@ -366,16 +230,8 @@ public class SessionCoralStore implements CoralStore
      */
     public void setOwner(Resource resource, Subject owner)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getStore().setOwner(resource, owner);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        coral.getStore().setOwner(resource, owner);
     }
 
     /** 
@@ -386,16 +242,8 @@ public class SessionCoralStore implements CoralStore
         Resource destinationParent,
         String destinationName)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            return coral.getStore().copyResource(source, destinationParent, destinationName);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        return coral.getStore().copyResource(source, destinationParent, destinationName);
     }
 
     /** 
@@ -406,15 +254,7 @@ public class SessionCoralStore implements CoralStore
         Resource destinationParent,
         String destinationName)
     {
-        session.checkOpen();
-        coral.setCurrentSession(session);
-        try
-        {
-            coral.getStore().copyTree(sourceRoot, destinationParent, destinationName);
-        }
-        finally
-        {
-            coral.setCurrentSession(null);
-        }
+        session.verify();
+        coral.getStore().copyTree(sourceRoot, destinationParent, destinationName);
     }
 }

@@ -34,11 +34,12 @@ import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.coral.store.CoralStore;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImplTest.java,v 1.1 2004-03-09 09:34:35 fil Exp $
+ * @version $Id: CoralSessionImplTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
  */
 public class CoralSessionImplTest extends MockObjectTestCase
 {
@@ -46,6 +47,8 @@ public class CoralSessionImplTest extends MockObjectTestCase
     private CoralCore coralCore;
     private Mock mockKeyedObjectPool;
     private KeyedObjectPool keyedObjectPool;
+    private Mock mockCoralStore;
+    private CoralStore coralStore;
     
     private CoralSessionImpl coralSession;
     
@@ -58,6 +61,9 @@ public class CoralSessionImplTest extends MockObjectTestCase
     {
         mockCoralCore = new Mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
+        mockCoralStore = new Mock(CoralStore.class);
+        coralStore = (CoralStore)mockCoralStore.proxy();
+        mockCoralCore.stub().method("getStore").will(returnValue(coralStore));
         mockKeyedObjectPool = new Mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
         
@@ -71,6 +77,8 @@ public class CoralSessionImplTest extends MockObjectTestCase
     
     public void testBasicLifecycle()
     {
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(coralSession));
         coralSession.open(principal, subject);
         
         mockKeyedObjectPool.expect(once()).method("returnObject").with(same(coralSession), same(principal)).isVoid();
@@ -87,6 +95,7 @@ public class CoralSessionImplTest extends MockObjectTestCase
         
         coralSession.getStore();
 
+        mockCoralCore.expect(once()).method("setCurrentSession").with(NULL).isVoid();
         coralSession.close();
         
         try
@@ -102,8 +111,11 @@ public class CoralSessionImplTest extends MockObjectTestCase
     
     public void testCrossThreadMischief()
     {
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(coralSession));
         coralSession.open(principal, subject);
         mockKeyedObjectPool.expect(once()).method("returnObject").with(same(coralSession), same(principal)).isVoid();
+        mockCoralCore.expect(once()).method("setCurrentSession").with(NULL).isVoid();
         coralSession.close();
         // session is closed and returned to the pool
         
@@ -112,6 +124,7 @@ public class CoralSessionImplTest extends MockObjectTestCase
             public void run()
             {
                 // another thread opens session, it gets pre-owned session instance
+                mockCoralCore.expect(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
                 coralSession.open(principal, subject);
                 synchronized(semaphore)
                 {
@@ -144,5 +157,38 @@ public class CoralSessionImplTest extends MockObjectTestCase
             assertEquals(IllegalStateException.class, e.getClass());
             assertEquals("attempted to use session from wrong thread", e.getMessage());
         }
+    }
+    
+    public void testCrossSessionMischief()
+        throws Exception
+    {
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(coralSession));
+        coralSession.open(principal, subject);
+        
+        CoralSessionImpl coralSession2 = new CoralSessionImpl(coralCore, keyedObjectPool);
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(coralSession2)).isVoid();
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(coralSession2));
+        coralSession2.open(principal, subject);
+        
+        try
+        {
+            // coralSession2 is now active, but we attempt an operation using old session
+            coralSession.getStore().getResource();
+            fail("exception expected");
+        }
+        catch(Exception e)
+        {
+            assertEquals(IllegalStateException.class, e.getClass());
+            assertEquals("another session is active for this thread."+
+            " Use makeCurrent() to switch", e.getMessage());            
+        }
+        
+        // switch explicitly        
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(coralSession)).isVoid();
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(coralSession));
+        coralSession.makeCurrent();
+        mockCoralStore.expect(once()).method("getResource").will(returnValue(null));
+        coralSession.getStore().getResource();
     }
 }

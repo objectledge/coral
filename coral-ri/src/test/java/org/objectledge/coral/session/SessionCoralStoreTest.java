@@ -37,7 +37,7 @@ import org.objectledge.coral.security.Role;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStoreTest.java,v 1.1 2004-03-08 11:34:06 fil Exp $
+ * @version $Id: SessionCoralStoreTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
  */
 public class SessionCoralStoreTest extends MockObjectTestCase
 {
@@ -62,6 +62,8 @@ public class SessionCoralStoreTest extends MockObjectTestCase
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);
         sessionCoralSecurity = new SessionCoralSecurity(coralCore, session);
     }
@@ -72,9 +74,7 @@ public class SessionCoralStoreTest extends MockObjectTestCase
     
     public void testGetRole()
     {
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
         mockCoralSecurity.expect(once()).method("getRole").will(returnValue(new Role[0]));
-        mockCoralCore.expect(once()).method("setCurrentSession").with(NULL).isVoid();
         sessionCoralSecurity.getRole();
     }
 }

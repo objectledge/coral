@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSecurityTest.java,v 1.1 2004-03-08 11:34:06 fil Exp $
+ * @version $Id: SessionCoralSecurityTest.java,v 1.2 2004-03-15 13:44:54 fil Exp $
  */
 public class SessionCoralSecurityTest extends MockObjectTestCase
 {
@@ -62,6 +62,8 @@ public class SessionCoralSecurityTest extends MockObjectTestCase
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);
+        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
+        mockCoralCore.stub().method("getCurrentSession").will(returnValue(session));
         session.open(null, null);
         sessionCoralStore = new SessionCoralStore(coralCore, session);
     }
@@ -72,9 +74,7 @@ public class SessionCoralSecurityTest extends MockObjectTestCase
     
     public void testGetResource()
     {
-        mockCoralCore.expect(once()).method("setCurrentSession").with(same(session)).isVoid();
         mockCoralStore.expect(once()).method("getResource").will(returnValue(new Resource[0]));
-        mockCoralCore.expect(once()).method("setCurrentSession").with(NULL).isVoid();
         sessionCoralStore.getResource();
     }
 }
