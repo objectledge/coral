@@ -35,6 +35,8 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
+import org.objectledge.coral.relation.CoralRelationManager;
+import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
@@ -44,7 +46,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.4 2004-03-16 13:38:13 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.5 2004-03-16 14:16:18 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -53,8 +55,10 @@ public class CoralSessionImpl
     private CoralSchema schema;
     private CoralSecurity security;
     private CoralStore store;
-    private CoralEventWhiteboard eventWhiteboard;
+    private CoralEventWhiteboard eventWhiteboard;    
     private CoralQuery query;
+    private CoralRelationManager relationManager;
+    private CoralRelationQuery relationQuery;
     
     private Subject subject;
     private Principal principal;
@@ -72,6 +76,8 @@ public class CoralSessionImpl
         security = new SessionCoralSecurity(coral, this);
         store = new SessionCoralStore(coral, this);
         eventWhiteboard = new SessionCoralEventWhiteboard(coral, this);
+        relationManager = new SessionCoralRelationManager(coral, this);
+        relationQuery = new SessionCoralRelationQuery(coral, this);
     }
 
     void open(Principal principal, Subject subject)
@@ -148,14 +154,6 @@ public class CoralSessionImpl
     /** 
      * {@inheritDoc}
      */
-    public CoralQuery getQuery()
-    {
-        return query;
-    }
-
-    /** 
-     * {@inheritDoc}
-     */
     public CoralSchema getSchema()
     {
         return schema;
@@ -177,6 +175,30 @@ public class CoralSessionImpl
         return store;
     }
 
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralQuery getQuery()
+    {
+        return query;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralRelationManager getRelationManager()
+    {
+        return relationManager;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralRelationQuery getRelationQuery()
+    {
+        return relationQuery;
+    }
+    
     /** 
      * {@inheritDoc}
      */

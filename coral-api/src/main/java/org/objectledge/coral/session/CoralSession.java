@@ -4,6 +4,8 @@ import java.security.Principal;
 
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
+import org.objectledge.coral.relation.CoralRelationManager;
+import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
@@ -12,7 +14,7 @@ import org.objectledge.coral.store.CoralStore;
 /**
  * An access point to the Coral document store.
  *
- * @version $Id: CoralSession.java,v 1.1 2004-03-16 13:38:11 fil Exp $
+ * @version $Id: CoralSession.java,v 1.2 2004-03-16 14:16:17 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSession
@@ -51,6 +53,20 @@ public interface CoralSession
      * @return an instance of {@link CoralQuery}.
      */
     public CoralQuery getQuery();
+
+    /**
+     * Returns a CoralRelationManager.
+     *
+     * @return a CoralRelationManager.
+     */
+    public CoralRelationManager getRelationManager();
+    
+    /**
+     * Returns a CoralRelationQuery.
+     *
+     * @return a CoralRelationQuery.
+     */
+    public CoralRelationQuery getRelationQuery();
 
     /**
      * Executes an RML Script.

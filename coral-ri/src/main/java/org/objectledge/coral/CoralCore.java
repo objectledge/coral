@@ -30,6 +30,8 @@ package org.objectledge.coral;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
+import org.objectledge.coral.relation.CoralRelationManager;
+import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
@@ -40,7 +42,7 @@ import org.objectledge.coral.store.CoralStore;
  * A bridge between interdependent Coral componentes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCore.java,v 1.5 2004-03-16 13:43:26 fil Exp $
+ * @version $Id: CoralCore.java,v 1.6 2004-03-16 14:16:18 fil Exp $
  */
 public interface CoralCore
 {
@@ -86,7 +88,21 @@ public interface CoralCore
      * 
      * @return a CoralQuery implementaion.
      */
-    public CoralQuery getQuery(); 
+    public CoralQuery getQuery();
+    
+    /**
+     * Returns a CoralRelationManager.
+     *
+     * @return a CoralRelationManager.
+     */
+    public CoralRelationManager getRelationManager();
+    
+    /**
+     * Returns a CoralRelationQuery.
+     *
+     * @return a CoralRelationQuery.
+     */
+    public CoralRelationQuery getRelationQuery();    
     
     // session //////////////////////////////////////////////////////////////////////////////////
     

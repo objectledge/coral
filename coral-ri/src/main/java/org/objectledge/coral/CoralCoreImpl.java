@@ -35,6 +35,10 @@ import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.CoralEventHubImpl;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
+import org.objectledge.coral.relation.CoralRelationManager;
+import org.objectledge.coral.relation.CoralRelationManagerImpl;
+import org.objectledge.coral.relation.CoralRelationQuery;
+import org.objectledge.coral.relation.query.CoralRelationQueryImpl;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.CoralSchemaImpl;
 import org.objectledge.coral.security.CoralSecurity;
@@ -53,7 +57,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.7 2004-03-16 13:43:26 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.8 2004-03-16 14:16:18 fil Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -63,6 +67,8 @@ public class CoralCoreImpl
     private CoralSecurity coralSecurity;
     private CoralStore coralStore;
     private CoralEventWhiteboard coralEventWhiteboard;
+    private CoralRelationManager coralRelationManager;
+    private CoralRelationQuery coralRelationQuery;
     
     private MutablePicoContainer container;
     
@@ -71,6 +77,7 @@ public class CoralCoreImpl
     /**
      * Constructs a Coral instance.
      * 
+     * @param parentContainer the container where Coral is deployed.
      * @param persistence the persitence subsystem.
      * @param cacheFactory the cache factory.
      * @param eventWhiteboardFactory the event whiteboard factory.
@@ -102,11 +109,19 @@ public class CoralCoreImpl
         container.registerComponentImplementation(CoralSchema.class, CoralSchemaImpl.class);
         container.registerComponentImplementation(CoralSecurity.class, CoralSecurityImpl.class);
         container.registerComponentImplementation(CoralStore.class, CoralStoreImpl.class);
+        container.registerComponentImplementation(CoralRelationManager.class, 
+            CoralRelationManagerImpl.class);
+        container.registerComponentImplementation(CoralRelationQuery.class, 
+            CoralRelationQueryImpl.class);
         // up it goes...
         coralRegistry = (CoralRegistry)container.getComponentInstance(CoralRegistry.class);
         coralSchema = (CoralSchema)container.getComponentInstance(CoralSchema.class);
         coralSecurity = (CoralSecurity)container.getComponentInstance(CoralSecurity.class);
         coralStore = (CoralStore)container.getComponentInstance(CoralStore.class);
+        coralRelationManager = (CoralRelationManager)container.
+            getComponentInstance(CoralRelationManager.class);
+        coralRelationQuery = (CoralRelationQuery)container.
+            getComponentInstance(CoralRelationQuery.class);
     }
 
     /** 
@@ -156,6 +171,22 @@ public class CoralCoreImpl
     {
         // TODO query support
         return null;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralRelationManager getRelationManager()
+    {
+        return coralRelationManager;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public CoralRelationQuery getRelationQuery()
+    {
+        return coralRelationQuery;
     }
     
     /** 
