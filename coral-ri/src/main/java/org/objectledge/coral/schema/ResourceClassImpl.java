@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.9 2004-02-25 14:45:05 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.10 2004-02-25 15:42:49 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -670,6 +670,7 @@ public class ResourceClassImpl
         }
         catch(ClassNotFoundException e)
         {
+            javaClass = null;
             throw new JavaClassException(e.getMessage(), e);
         }
     }
