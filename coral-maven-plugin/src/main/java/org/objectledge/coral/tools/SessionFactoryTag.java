@@ -27,25 +27,13 @@
 // 
 package org.objectledge.coral.tools;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import javax.sql.DataSource;
 
 import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.MissingAttributeException;
 import org.apache.commons.jelly.XMLOutput;
 import org.apache.maven.jelly.MavenJellyContext;
-import org.apache.maven.jelly.tags.BaseTagSupport;
-import org.apache.maven.plugin.UnknownPluginException;
-import org.apache.maven.project.Project;
-import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.DefaultConfiguration;
-import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.cache.DefaultCacheFactory;
 import org.objectledge.container.LedgeContainer;
@@ -72,14 +60,12 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.7 2004-06-25 11:21:53 fil Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.8 2004-12-23 06:15:18 rafal Exp $
  */
 public class SessionFactoryTag
-    extends BaseTagSupport
+    extends CoralPluginTag
 {
     private String var = "coralSessionFactory";
-    
-    private Logger log = getLog(SessionFactoryTag.class);
     
     private DataSource dataSource;
     
@@ -143,33 +129,6 @@ public class SessionFactoryTag
         getContext().setVariable(var, factory);
     }
 
-    private MavenJellyContext getPluginContext()
-        throws JellyTagException
-    {
-        Project project = getMavenContext().getProject();
-        String plugin = "coral-maven-plugin";
-        try
-        {
-            MavenJellyContext context = project.getPluginContext(plugin);
-            if(context == null)
-            {
-                throw new JellyTagException("context for plugin '" + plugin + "' in project '" + 
-                    project + "' is null" );
-            }
-            return context;
-        }
-        catch(UnknownPluginException e)
-        {
-            throw new JellyTagException("Plugin '" + plugin + "' in project '" + project + 
-                "' is not available" );
-        }
-        catch(Exception e)
-        {
-            throw new JellyTagException("Error loading plugin", e);
-        }
-    
-    }
-    
     /**
      * Returns a session factory instance.
      * 
@@ -245,46 +204,5 @@ public class SessionFactoryTag
         factory = new CoralSessionFactoryImpl(coralCore);
         container.registerComponentInstance(CoralSessionFactory.class, factory);
         return factory;
-    }
-    
-    private Logger getLog(Class cl)
-    {
-        return new Log4JLogger(org.apache.log4j.Logger.getLogger(cl));
-    }
-
-    /**
-     * Get the class loader.
-     * 
-     * @return the class loader.
-     * @throws MalformedURLException if url is invalid.
-     */
-    public ClassLoader getClassLoader() 
-        throws MalformedURLException
-    {
-        if(getMavenContext() != null)
-        {
-            String dependencyClasspath = getMavenContext().getProject().getDependencyClasspath();
-            
-            String buildDest = (String)getMavenContext().getVariable("maven.build.dest");
-            StringTokenizer st = new StringTokenizer(dependencyClasspath, 
-                System.getProperty("path.separator"));
-            List temp = new ArrayList(st.countTokens()+1);
-            while(st.hasMoreTokens())
-            {
-                temp.add(st.nextToken());
-            }
-            temp.add(buildDest+"/");
-            URL[] urls = new URL[temp.size()];
-            for(int i = 0; i<temp.size(); i++)
-            {
-                String element = (String)temp.get(i);
-                urls[i] = new URL("file://"+element);
-            }
-            return new URLClassLoader(urls, getClass().getClassLoader());
-        }
-        else
-        {
-            return getClass().getClassLoader();
-        }
-    }
+    }    
 }

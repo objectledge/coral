@@ -27,12 +27,6 @@
 // 
 package org.objectledge.coral.tools;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.sql.DataSource;
 
@@ -40,12 +34,6 @@ import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.MissingAttributeException;
 import org.apache.commons.jelly.XMLOutput;
 import org.apache.maven.jelly.MavenJellyContext;
-import org.apache.maven.jelly.tags.BaseTagSupport;
-import org.apache.maven.plugin.PluginManager;
-import org.apache.maven.plugin.UnknownPluginException;
-import org.apache.maven.project.Project;
-import org.jcontainer.dna.Logger;
-import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.container.LedgeContainer;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.filesystem.FileSystemProvider;
@@ -55,14 +43,12 @@ import org.picocontainer.MutablePicoContainer;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: LedgeContainerTag.java,v 1.2 2004-12-23 06:00:25 rafal Exp $
+ * @version $Id: LedgeContainerTag.java,v 1.3 2004-12-23 06:15:18 rafal Exp $
  */
 public class LedgeContainerTag
-    extends BaseTagSupport
+    extends CoralPluginTag
 {
     private String var = "ledgeContainer";
-    
-    private Logger log = getLog(LedgeContainerTag.class);
     
     private DataSource dataSource;
     
@@ -127,40 +113,6 @@ public class LedgeContainerTag
     }
 
     /**
-     * Retrieve MavenJellyContext of the coral-maven-plugin.
-     * 
-     * @return the MavenJellyContext.
-     * @throws JellyTagException if the context could not be retrieved.
-     */
-    protected MavenJellyContext getPluginContext()
-        throws JellyTagException
-    {
-        Project project = getMavenContext().getProject();
-        String plugin = "coral-maven-plugin";
-        try
-        {
-            PluginManager pluginManager = project.getContext().getMavenSession().getPluginManager();
-            MavenJellyContext context = pluginManager.getPluginContext( plugin );
-            if(context == null)
-            {
-                throw new JellyTagException("context for plugin '" + plugin + "' in project '" + 
-                    project + "' is null" );
-            }
-            return context;
-        }
-        catch(UnknownPluginException e)
-        {
-            throw new JellyTagException("Plugin '" + plugin + "' in project '" + project + 
-                "' is not available" );
-        }
-        catch(Exception e)
-        {
-            throw new JellyTagException("Error loading plugin", e);
-        }
-    
-    }
-    
-    /**
      * Returns a session factory instance.
      * 
      * @param ledgeBaseDir the fs base dir path with composition file.
@@ -191,52 +143,5 @@ public class LedgeContainerTag
         }
         container.registerComponentInstance(ClassLoader.class, cl);
         return container;
-    }
-    
-    /**
-     * Get the logger for the class.
-     * 
-     * @param cl the class.
-     * @return the Logger.
-     */
-    protected Logger getLog(Class cl)
-    {
-        return new Log4JLogger(org.apache.log4j.Logger.getLogger(cl));
-    }
-
-    /**
-     * Get the class loader.
-     * 
-     * @return the class loader.
-     * @throws MalformedURLException if url is invalid.
-     */
-    protected ClassLoader getClassLoader() 
-        throws MalformedURLException
-    {
-        if(getMavenContext() != null)
-        {
-            String dependencyClasspath = getMavenContext().getProject().getDependencyClasspath();
-            
-            String buildDest = (String)getMavenContext().getVariable("maven.build.dest");
-            StringTokenizer st = new StringTokenizer(dependencyClasspath, 
-                System.getProperty("path.separator"));
-            List temp = new ArrayList(st.countTokens()+1);
-            while(st.hasMoreTokens())
-            {
-                temp.add(st.nextToken());
-            }
-            temp.add(buildDest+"/");
-            URL[] urls = new URL[temp.size()];
-            for(int i = 0; i<temp.size(); i++)
-            {
-                String element = (String)temp.get(i);
-                urls[i] = new URL("file://"+element);
-            }
-            return new URLClassLoader(urls, getClass().getClassLoader());
-        }
-        else
-        {
-            return getClass().getClassLoader();
-        }
     }
 }

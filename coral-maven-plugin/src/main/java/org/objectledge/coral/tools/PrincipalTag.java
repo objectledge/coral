@@ -32,16 +32,15 @@ import java.security.Principal;
 import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.MissingAttributeException;
 import org.apache.commons.jelly.XMLOutput;
-import org.apache.maven.jelly.tags.BaseTagSupport;
 
 /**
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PrincipalTag.java,v 1.2 2004-04-30 07:02:51 fil Exp $
+ * @version $Id: PrincipalTag.java,v 1.3 2004-12-23 06:15:18 rafal Exp $
  */
 public class PrincipalTag
-    extends BaseTagSupport
+    extends CoralPluginTag
 {
     private String var;
     
