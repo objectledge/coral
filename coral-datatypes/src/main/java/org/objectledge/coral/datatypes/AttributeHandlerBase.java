@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.6 2004-12-23 04:10:58 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.7 2004-12-23 04:39:15 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -397,7 +397,7 @@ public abstract class AttributeHandlerBase
     protected Date parseDate(String string)
         throws IllegalArgumentException
     {
-        String pattern = string.contains(DATE_TIME_INDICATOR) ? DATE_TIME_FORMAT : DATE_FORMAT;
+        String pattern = string.indexOf(DATE_TIME_INDICATOR) > 0 ? DATE_TIME_FORMAT : DATE_FORMAT;
         /** DateFormat is not thread-safe */
         DateFormat format = new SimpleDateFormat(pattern);
         try
