@@ -245,7 +245,8 @@ $string.wrap("#createSignature()")
         }
         else
         {
-            throw new IllegalStateException("attribute value is undefined");
+            throw new IllegalStateException("value of attribute ${attr.name} is undefined"+
+			    " for resource #"+getId());
         }
     }
 
