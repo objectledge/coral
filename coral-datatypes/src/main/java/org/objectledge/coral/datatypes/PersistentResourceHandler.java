@@ -30,7 +30,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.7 2004-06-29 14:49:49 fil Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.8 2004-07-01 10:18:11 fil Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -71,81 +71,6 @@ public class PersistentResourceHandler
         }
         instance = (Persistent)instantiator.newInstance(resourceClass.getJavaClass());
         factory = instantiator.getPersistentFactory(resourceClass.getJavaClass());
-    }
-
-    /**
-     * Saves a new resource in the persistent storage.
-     *
-     * @param delegate the security delegate {@link Resource} object.
-     * @param attributes the initial values of the attributes, keyed with
-     *        {@link AttributeDefinition} objects.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @return the new resource.
-     * @throws ValueRequiredException if not all obligatory attributes are
-     *         provided.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     */
-    public Resource create(Resource delegate, Map attributes, Connection conn)
-        throws ValueRequiredException, SQLException
-    {
-        try
-        {
-            Resource resource = super.create(delegate, attributes, conn);
-            persistence.save((PersistentResource)resource);
-            return resource;
-        }
-        catch(Exception e)
-        {
-            throw new BackendException("failed to create resource", e);
-        }
-    }
-
-    /**
-     * Removes the resource from the persistent storage.
-     *
-     * @param resource the resource.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     */
-    public void delete(Resource resource, Connection conn)
-        throws SQLException
-    {
-        try
-        {
-            super.delete(resource, conn);
-            persistence.delete((PersistentResource)resource);
-        }
-        catch(Exception e)
-        {
-            throw new BackendException("failed to delete resource", e);
-        }
-    }
-
-    /**
-     * Updates the contents of the resource in the persistent storage.
-     *
-     * @param resource the resource.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     */
-    public void update(Resource resource, Connection conn)
-        throws SQLException
-    {
-        try
-        {
-            super.update(resource, conn);
-            persistence.save((PersistentResource)resource);
-        }
-        catch(Exception e)
-        {
-            throw new BackendException("failed to save resource", e);
-        }
     }
 
     // schema operations (not supported) /////////////////////////////////////
