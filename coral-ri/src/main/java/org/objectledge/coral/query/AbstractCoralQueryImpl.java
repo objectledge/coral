@@ -26,6 +26,8 @@ import org.objectledge.coral.script.parser.ASTequalityCondition;
 import org.objectledge.coral.script.parser.ASTfindResourceStatement;
 import org.objectledge.coral.script.parser.ASTorderByList;
 import org.objectledge.coral.script.parser.ASTorderBySpecifier;
+import org.objectledge.coral.script.parser.ASTselectList;
+import org.objectledge.coral.script.parser.ASTselectSpecifier;
 import org.objectledge.coral.script.parser.DefaultRMLVisitor;
 import org.objectledge.coral.script.parser.ParseException;
 import org.objectledge.coral.script.parser.RMLParser;
@@ -38,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * A common base class for {@link QueryService} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.3 2004-08-27 12:21:12 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.4 2004-08-30 07:02:32 rafal Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery
@@ -46,7 +48,7 @@ public abstract class AbstractCoralQueryImpl
     // instance variables ////////////////////////////////////////////////////
 
 	/** The coral session. */
-	private CoralCore coral;
+	protected CoralCore coral;
 	
     /** The entity resolver. */
     private RMLEntityResolver entities;
@@ -265,10 +267,10 @@ public abstract class AbstractCoralQueryImpl
         return new ResultColumnAttribute(rcm, ad);
     }
 
-    private ASTclassAndAliasSpecifier[] getItems(ASTclassAndAliasSpecifierList list)
+    protected ASTclassAndAliasSpecifier[] getItems(ASTclassAndAliasSpecifierList list)
     {
         int count = list.jjtGetNumChildren();
-        List items = new ArrayList();
+        List items = new ArrayList(count);
         for(int i=0; i<count; i++)
         {
             items.add(list.jjtGetChild(i));
@@ -278,10 +280,10 @@ public abstract class AbstractCoralQueryImpl
         return result;
     }
     
-    private ASTorderBySpecifier[] getItems(ASTorderByList list)
+    protected ASTorderBySpecifier[] getItems(ASTorderByList list)
     {
         int count = list.jjtGetNumChildren();
-        List items = new ArrayList();
+        List items = new ArrayList(count);
         for(int i=0; i<count; i++)
         {
             items.add(list.jjtGetChild(i));
@@ -290,8 +292,19 @@ public abstract class AbstractCoralQueryImpl
         items.toArray(result);
         return result;
     }
-
     
+    protected String[] getItems(ASTselectList list)
+    {
+    	int count = list.jjtGetNumChildren();
+    	String[] result = new String[count];
+    	for(int i=0; i<count; i++)
+    	{
+    		ASTselectSpecifier specifier = (ASTselectSpecifier)list.jjtGetChild(i);
+    		result[i] = specifier.getAttribute();
+    	}
+    	return result;
+    }
+
     /**
      * Build a list of {@link ResultColumn} objects from the query data.
      *
