@@ -41,7 +41,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeSQLInfoLoader.java,v 1.1 2004-07-08 15:06:20 rafal Exp $
+ * @version $Id: AttributeSQLInfoLoader.java,v 1.2 2004-08-23 11:59:24 rafal Exp $
  */
 public class AttributeSQLInfoLoader
 {
@@ -76,13 +76,18 @@ public class AttributeSQLInfoLoader
             throw new IOException("missing = at line "+lineNum);
         }
         String attributeClassName = line.substring(0, eq);
-        StringTokenizer st = new StringTokenizer(line.substring(eq+1),",");
         try
         {
             AttributeClass attributeClass = schema.getAttributeClass(attributeClassName);
-            String internalType = st.nextToken();
-            String externalTable = st.hasMoreTokens() ? st.nextToken() : null;
-            String externalTableKey = st.hasMoreTokens() ? st.nextToken() : null;
+            int i = eq;
+            int j = line.indexOf(',', i+1);
+            String internalType = j > i+1 ? line.substring(i+1, j) : null;
+            i = j;
+            j = line.indexOf(',', i+1);
+            String externalTable = j > i+1 ? line.substring(i+1, j) : null;
+            i = j;
+            j = line.length();            
+            String externalTableKey = j > i+1 ? line.substring(i+1, j) : null;
             AttributeSQLInfo sqlInfo = new AttributeSQLInfo(internalType, externalTable, 
                 externalTableKey);
             attributeClass.setSQLInfo(sqlInfo);
