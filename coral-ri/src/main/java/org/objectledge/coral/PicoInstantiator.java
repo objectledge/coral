@@ -42,7 +42,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * An implemention of the Instantiator interface using the PicoContainer.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PicoInstantiator.java,v 1.5 2004-05-04 12:45:50 fil Exp $
+ * @version $Id: PicoInstantiator.java,v 1.6 2005-02-04 02:30:34 rafal Exp $
  */
 public class PicoInstantiator 
     implements Instantiator
@@ -87,8 +87,7 @@ public class PicoInstantiator
     public Object newInstance(Class clazz) throws InstantiationException
     {
         ComponentAdapter adapter = new CustomizingConstructorComponentAdapter(clazz, clazz, null);
-        adapter.setContainer(container);
-        return adapter.getComponentInstance(); 
+        return adapter.getComponentInstance(container); 
     }
 
     /** 
@@ -103,8 +102,7 @@ public class PicoInstantiator
             Map.Entry entry = (Map.Entry)i.next();
             tempContainer.registerComponentInstance(entry.getKey(), entry.getValue());
         }
-        adapter.setContainer(tempContainer);
-        return adapter.getComponentInstance(); 
+        return adapter.getComponentInstance(tempContainer); 
     }
     
     /** 

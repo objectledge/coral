@@ -1,33 +1,5 @@
 <?xml version="1.0"?>
 <container>
-  <adapter-factory class="org.picocontainer.defaults.CachingComponentAdapterFactory">
-    <adapter-factory class="org.objectledge.pico.customization.CustomizingConstructorComponentAdapterFactory"/>
-  </adapter-factory>
-
-  <component class-key="org.nanocontainer.reflection.StringToObjectConverter"
-             class="org.objectledge.pico.LedgeStringToObjectConverter"/>
-    
-  <component class="org.objectledge.xml.XMLGrammarCache"/>
-  <component class="org.objectledge.xml.XMLValidator"/>
-
-  <component class="org.objectledge.configuration.ConfigurationFactory">
-    <component-parameter/>
-    <component-parameter/>
-    <constant-parameter value="/config"/>
-  </component>
-  <component class="org.objectledge.configuration.CustomizedConfigurationProvider"/>
-  <component-adapter class="org.objectledge.pico.customization.CustomizedComponentAdapter">
-    <constant-parameter class="java.lang.Class" value="org.jcontainer.dna.Configuration"/>
-    <component-parameter class-key="org.objectledge.configuration.CustomizedConfigurationProvider"/>
-  </component-adapter>
-
-  <component class="org.objectledge.logging.LoggingConfigurator"/>
-    
-  <component class="org.objectledge.logging.LoggerFactory"/>
-  <component-adapter class="org.objectledge.pico.customization.CustomizedComponentAdapter">
-    <constant-parameter class="java.lang.Class" value="org.jcontainer.dna.Logger"/>
-    <component-parameter class-key="org.objectledge.logging.LoggerFactory"/>
-  </component-adapter>
 
   <!-- basics -->
   
@@ -37,30 +9,30 @@
 
   <component class-key="org.objectledge.database.Transaction"
              class="org.objectledge.database.JotmTransaction">
-     <constant-parameter value="0"/>
-     <component-parameter/>
-     <component-parameter/>
-     <component-parameter/>
+     <parameter value="0"/>
+     <parameter/>
+     <parameter/>
+     <parameter/>
   </component>  
 
   <component class="org.objectledge.database.XaPoolDataSource"/>
   
   <component class="org.objectledge.database.ThreadDataSource">
-    <component-parameter class-key="org.objectledge.database.XaPoolDataSource"/>
-    <constant-parameter value="0"/>
-    <component-parameter/>
-    <component-parameter/>
+    <parameter class-key="org.objectledge.database.XaPoolDataSource"/>
+    <parameter value="0"/>
+    <parameter/>
+    <parameter/>
   </component>
   
   <component class="org.objectledge.database.IdGenerator">
-    <component-parameter class-key="org.objectledge.database.XaPoolDataSource"/>
+    <parameter class-key="org.objectledge.database.XaPoolDataSource"/>
   </component>
   
   <component class-key="org.objectledge.database.Database"
              class="org.objectledge.database.DefaultDatabase">
-    <component-parameter class-key="org.objectledge.database.ThreadDataSource"/>
-    <component-parameter/>
-    <component-parameter/>
+    <parameter class-key="org.objectledge.database.ThreadDataSource"/>
+    <parameter/>
+    <parameter/>
   </component>
   
   <component class-key="org.objectledge.database.persistence.Persistence"
@@ -71,19 +43,19 @@
   <component class="org.objectledge.database.ThreadDataSource$GuardValve"/>
   
   <component key="database-cleanup" class="org.objectledge.pipeline.SimplePipeline">
-    <sequence-parameter>
-      <component-parameter class-key="org.objectledge.database.Transaction$GuardValve"/>
-      <component-parameter class-key="org.objectledge.database.ThreadDataSource$GuardValve"/>
-    </sequence-parameter>
+    <sequence>
+      <parameter class-key="org.objectledge.database.Transaction$GuardValve"/>
+      <parameter class-key="org.objectledge.database.ThreadDataSource$GuardValve"/>
+    </sequence>
   </component>
   
   <!-- utility components -->
   
   <component class="org.objectledge.threads.ThreadPool">
-    <component-parameter key="database-cleanup"/>
-    <component-parameter/>
-    <component-parameter/>
-    <component-parameter/>
+    <parameter key="database-cleanup"/>
+    <parameter/>
+    <parameter/>
+    <parameter/>
   </component>
   
   <component class="org.objectledge.event.EventWhiteboardFactory"/>
@@ -99,14 +71,16 @@
   
   <!-- coral -->
   
+  <container key="coralContainer"/>
+  
   <component class-key="org.objectledge.coral.CoralCore" 
              class="org.objectledge.coral.CoralCoreImpl">
-    <component-parameter/>
-    <component-parameter/>
-    <component-parameter/>
-    <component-parameter/>
-    <component-parameter/>
-    <constant-parameter class="java.lang.Boolean" value="false"/>
+    <parameter key="coralContainer"/>
+    <parameter/>
+    <parameter/>
+    <parameter/>
+    <parameter/>
+    <parameter value="false"/>
   </component>           
   <component class-key="org.objectledge.coral.session.CoralSessionFactory" 
              class="org.objectledge.coral.session.CoralSessionFactoryImpl"/>
