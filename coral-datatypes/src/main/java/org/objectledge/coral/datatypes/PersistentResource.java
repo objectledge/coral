@@ -18,15 +18,14 @@ import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
-import org.objectledge.coral.security.PermissionAssignment;
-import org.objectledge.coral.security.Role;
-import org.objectledge.coral.security.Subject;
+import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
+import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 
@@ -34,24 +33,18 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.5 2004-06-29 09:32:51 fil Exp $
+ * @version $Id: PersistentResource.java,v 1.6 2004-07-01 10:17:17 fil Exp $
  */
 public class PersistentResource
-    implements Resource, Persistent
+    extends AbstractResource implements Persistent
 {
     // instance variables ////////////////////////////////////////////////////
 
-    /** the database service. */
-    protected Database database;
+    /** the persistence component. */
+    protected Persistence persistence;
     
-    /** the logging facility. */
-    protected Logger logger;
-
     /** the resource class. */
     protected ResourceClass resourceClass;
-
-    /** the security delegate object. */
-    protected Resource delegate;
 
     /** the unique id of the resource in it's db table. */
     protected long id = -1;
@@ -80,8 +73,7 @@ public class PersistentResource
      */
     public PersistentResource(Database database, Logger logger, ResourceClass resourceClass)
     {
-        this.database = database;
-        this.logger = logger;
+        super(database, logger);
         this.resourceClass = resourceClass;
         dbTable = resourceClass.getDbTable();
         keyColumns = new String[] { dbTable+"_id" };
@@ -89,29 +81,42 @@ public class PersistentResource
         
     // interface to PersistentResourceHandler ////////////////////////////////
     
-    /**
-     * Load the resource.
-     * 
-     * @param delegate the delegate.
-     */
-    public void loadResource(Resource delegate)
-    {
-        this.delegate = delegate;
-    }
+    synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, 
+        Object data)
+    	throws SQLException
+	{
+        super.retrieve(delegate, rClass, conn, data);
+        try
+        {
+            setData((InputRecord)data);
+        }
+        catch(PersistenceException e)
+        {
+            throw new BackendException("failed to restore resource state", e);
+        }
+	}
 
-    /**
-     * Create the resource.
-     * 
-     * @param delegate the delegate resource.
-     * @param attributes the attributes map.
-     * @param conn the connection.
-     * @throws ValueRequiredException if required attribute was not set.
-     * @throws SQLException if failed to create the resourceo in database.
-     */
-    public void createResource(Resource delegate, Map attributes, Connection conn)
-        throws ValueRequiredException, SQLException
+    synchronized void revert(ResourceClass rClass, Connection conn, Object data)
+        throws SQLException
     {
-        this.delegate = delegate;
+        super.revert(rClass, conn, data);
+        attributes.clear();
+        ids.clear();
+        try
+        {
+            setData((InputRecord)data);
+        }
+        catch(PersistenceException e)
+        {
+            throw new BackendException("failed to restore resource state", e);
+        }        
+    }    
+    
+    synchronized void create(Resource delegate, ResourceClass rClass, 
+        Map attributes, Connection conn)
+    	throws SQLException, ValueRequiredException, ConstraintViolationException
+	{
+        super.create(delegate, rClass, attributes, conn);
         AttributeDefinition[] attrs = delegate.getResourceClass().getAllAttributes();
         for(int i=0; i<attrs.length; i++)
         {
@@ -125,15 +130,7 @@ public class PersistentResource
             {
             	value = attributes.get(attr);
             } 
-            if(value == null)
-            {
-                if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
-                {
-                    throw new ValueRequiredException("value for REQUIRED attribute "+
-                                                     attr.getName()+" is missing");
-                }
-            }
-            else
+            if(value != null)
             {
                 AttributeHandler handler = attr.getAttributeClass().getHandler();
                 value = handler.toAttributeValue(value);
@@ -168,17 +165,34 @@ public class PersistentResource
                 }
             }
         }
-    }
+        try
+        {
+            persistence.save(this);
+        }
+        catch(PersistenceException e)
+        {
+            throw new BackendException("failed to store resource state", e);
+        }        
+	}
 
-    /**
-     * Delete the resource.
-     *  
-     * @param conn the connection.
-     * @throws SQLException if failed to delete.
-     */
-    public void deleteResource(Connection conn)
-        throws SQLException
-    {
+    synchronized void update(Connection conn)
+	    throws SQLException
+	{
+	    super.update(conn);
+        try
+        {
+            persistence.save(this);
+        }
+        catch(PersistenceException e)
+        {
+            throw new BackendException("failed to store resource state", e);
+        }        
+	}
+
+    synchronized void delete(Connection conn)
+	    throws SQLException
+	{
+	    super.delete(conn);
         Iterator i = ids.keySet().iterator();
         while(i.hasNext())
         {
@@ -196,160 +210,23 @@ public class PersistentResource
                 }
             }
         }
-    }
-
-    // Resource interface ////////////////////////////////////////////////////
-
-    /**
-     * Returns the numerical identifier of the entity.
-     * 
-     * @return the numerical identifier of the entity.
-     */
-    public long getId()
-    {
-        return delegate.getId();
-    }
-    
-    /**
-     * Returns the name of the entity.
-     *
-     * @return the name of the entity.
-     */
-    public String getName()
-    {
-        return delegate.getName();
-    }
-
-    /**
-     * Returns the path name of the resource.
-     *
-     * <p>The path name is composed of the names of all of the resource's
-     * parents, separated by / characters. If the top level parent (resource
-     * that has <code>null</code> parent) is the 'root' resource #1, the
-     * pathname will start with a /. Please note that the pathname can also
-     * denote other resources than this one, unless all resources in your
-     * system have unique names.</p>
-     *
-     * @return the pathname of the resource.
-     */
-    public String getPath()
-    {
-        return delegate.getPath();
-    }
-    
-    /**
-     * Returns the class this resource belongs to.
-     *
-     * @return the class this resource belongs to.
-     */
-    public ResourceClass getResourceClass()
-    {
-        return delegate.getResourceClass();
-    }
-
-    /**
-     * Returns the {@link Subject} that created this resource.
-     *
-     * @return the {@link Subject} that created this resource.
-     */
-    public Subject getCreatedBy()
-    {
-        return delegate.getCreatedBy();
-    }
-    
-    /**
-     * Returns the creation time for this resource.
-     *
-     * @return the creation time for this resource.
-     */
-    public Date getCreationTime()
-    {
-        return delegate.getCreationTime();
-    }
-
-    /**
-     * Returns the {@link Subject} that modified this resource most recently.
-     *
-     * @return the {@link Subject} that modified this resource most recently.
-     */
-    public Subject getModifiedBy()
-    {
-        return delegate.getModifiedBy();
-    }
-
-    /**
-     * Returns the last modification time for this resource.
-     *
-     * @return the last modification time for this resource.
-     */
-    public Date getModificationTime()
-    {
-        return delegate.getModificationTime();
-    }
-
-    /**
-     * Returns the owner of the resource.
-     *
-     * @return the owner of the resource.
-     */
-    public Subject getOwner()
-    {
-        return delegate.getOwner();
-    }
-
-    /**
-     * Returns the access control list for this resource.
-     *
-     * @return the access control list for this resource.
-     */
-    public PermissionAssignment[] getPermissionAssignments()
-    {
-        return delegate.getPermissionAssignments();
-    }
-
-    /**
-     * Returns the access control list entries for a specific role.
-     *
-     * @param role the role.
-     * @return the access control list entries for a specific role.
-     */
-    public PermissionAssignment[] getPermissionAssignments(Role role)
-    {
-        return delegate.getPermissionAssignments(role);
-    }
-
-    /**
-     * Returns the parent resource.
-     *
-     * <p><code>null</code> is returned for top-level (root)
-     * resources. Depending on the application one or more top-level resources
-     * exist in the system.</p>
-     *
-     * @return the parent resource.
-     */
-    public Resource getParent()
-    {
-        return delegate.getParent();
-    }
-
-    /**
-     * Returns the security delegate object.
-     *
-     * @return the security delegate object.
-     */
-    public Resource getDelegate()
-    {
-        return delegate;
-    }
+        try
+        {
+            persistence.delete(this);
+        }
+        catch(PersistenceException e)
+        {
+            throw new BackendException("failed to delete resource state", e);
+        }        
+	}    
 
     // attribute access //////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc}
      */
-    public boolean isDefined(AttributeDefinition attribute)
+    protected boolean isDefinedLocally(AttributeDefinition attribute)
     {
-        checkAttribute(attribute);
         if(modified.contains(attribute))
         {
             return attributes.get(attribute) != null;
@@ -370,10 +247,9 @@ public class PersistentResource
     /**
      * {@inheritDoc}
      */
-    public Object get(AttributeDefinition attribute)
+    protected Object getLocally(AttributeDefinition attribute)
         throws UnknownAttributeException
     {
-        checkAttribute(attribute);
         Object value = attributes.get(attribute);
         if(modified.contains(attribute))
         {
@@ -405,27 +281,8 @@ public class PersistentResource
     /**
      * {@inheritDoc}
      */
-    public void set(AttributeDefinition attribute, Object value)
-        throws UnknownAttributeException, ModificationNotPermitedException,
-               ValueRequiredException
+    protected void setLocally(AttributeDefinition attribute, Object value)
     {
-        checkAttribute(attribute);
-        if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
-        {
-            delegate.set(attribute, value);
-        }
-        if((attribute.getFlags() & AttributeFlags.READONLY) != 0)
-        {
-            throw new ModificationNotPermitedException("attribute "+attribute.getName()+
-                                                       " is declared READONLY");
-        }
-        if(value == null && (attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
-        {
-            throw new ValueRequiredException("attribute "+attribute.getName()+
-                                             "is declared as REQUIRED");
-        }
-        value = attribute.getAttributeClass().getHandler().toAttributeValue(value);
-        attribute.getAttributeClass().getHandler().checkDomain(attribute.getDomain(), value);
         attributes.put(attribute, value);
         modified.add(attribute);
     }
@@ -433,76 +290,25 @@ public class PersistentResource
     /**
      * {@inheritDoc}
      */
-    public void unset(AttributeDefinition attribute)
-        throws ValueRequiredException, UnknownAttributeException
+    protected void unsetLocally(AttributeDefinition attribute)
     {
-        checkAttribute(attribute);
-        if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
-        {
-            delegate.unset(attribute);
-        }
-        if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
-        {
-            throw new ValueRequiredException("attribute "+attribute.getName()+
-                                             "is declared as REQUIRED");
-        }
         attributes.remove(attribute);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void setModified(AttributeDefinition attribute)
-        throws UnknownAttributeException
-    {
-        checkAttribute(attribute);
         modified.add(attribute);
     }
+
+    protected Object loadAttribute(AttributeDefinition attribute, long aId)
+    {
+        if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
+        {
+            AttributeHandler handler = attribute.getAttributeClass().getHandler();
+            return handler.toAttributeValue(""+id);
+        }
+        else
+        {
+            return super.loadAttribute(attribute, aId);
+        }
+    }
     
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isModified(AttributeDefinition attribute)
-        throws UnknownAttributeException
-    {
-        checkAttribute(attribute);
-        return modified.contains(attribute);
-    }
-
-    // update & revert ///////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc}
-     */
-    public void update()
-        throws IllegalArgumentException, UnknownAttributeException
-    {
-        delegate.update();
-        try
-        {
-            delegate.getResourceClass().getHandler().update(this, null);
-        }
-        catch(SQLException e)
-        {
-            throw new BackendException("unexpected SQLException", e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void revert()
-    {
-        try
-        {
-            delegate.getResourceClass().getHandler().revert(this, null, null);
-        }
-        catch(SQLException e)
-        {
-            throw new BackendException("unexpected SQLException", e);
-        }
-    }
-
     // Persistent interface //////////////////////////////////////////////////
 
     /**
@@ -586,11 +392,10 @@ public class PersistentResource
                     }
                     else
                     {
-                        Long valueIdObj = (Long)ids.get(attribute);
-                        long valueId = valueIdObj != null ? valueIdObj.longValue() : -1;
-                        if(valueId != -1)
+                        Long id = (Long)ids.get(attribute);
+                        if(id != null)
                         {
-                            record.setLong(attribute.getName(), valueId);
+                            record.setLong(attribute.getName(), id.longValue());
                         }
                         else
                         {
@@ -600,12 +405,11 @@ public class PersistentResource
                 }
                 else
                 {
-                    Long valueIdObj = (Long)ids.get(attribute);
-                    long valueId = valueIdObj != null ? valueIdObj.longValue() : -1;
-                    valueId = updateAttribute(attribute, valueId, value);
-                    if(valueId != -1)
+                    Long id = (Long)ids.get(attribute);
+                    id = updateAttribute(attribute, id, value);
+                    if(id != null)
                     {
-                        record.setLong(attribute.getName(), valueId);
+                        record.setLong(attribute.getName(), id.longValue());
                     }
                     else
                     {
@@ -684,125 +488,5 @@ public class PersistentResource
     public void setSaved(long id)
     {
         this.id = id;
-    }
-
-    // implementation ////////////////////////////////////////////////////////
-
-    /**
-     * Checks if the specified attribute belongs to this resource's class.
-     *
-     * @param attribute the attribute.
-     * @throws UnknownAttributeException if attribute is unknown.
-     */
-    protected void checkAttribute(AttributeDefinition attribute)
-        throws UnknownAttributeException
-    {
-        if(delegate == null)
-        {
-            throw new IllegalStateException("cannot verity attribute against null delegate");
-        }
-        if(!(attribute.getDeclaringClass().equals(delegate.getResourceClass()) ||
-             attribute.getDeclaringClass().isParent(delegate.getResourceClass())))
-        {
-            throw new UnknownAttributeException("class "+delegate.getResourceClass().getName()+
-                                                "does not have a "+attribute.getName()+
-                                                " attribute declared by "+
-                                                attribute.getDeclaringClass().getName());
-        }
-    }
-
-    /**
-     * Loads an external attribute when it's value is requested.
-     *
-     * @param attribute the attribute.
-     * @param id value id.
-     * @return the object.
-     */
-    protected Object loadAttribute(AttributeDefinition attribute, long id)
-    {
-        AttributeHandler handler = attribute.getAttributeClass().getHandler();
-        if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
-        {
-            return handler.toAttributeValue(""+id);
-        }
-        Connection conn = null;
-        try
-        {
-            conn = database.getConnection();
-            return handler.retrieve(id, conn);
-        }
-        catch(Exception e)
-        {
-            throw new BackendException("failed to retrieve attribute value", e);
-        }
-        finally
-        {
-            if(conn != null)
-            {
-                try
-                {
-                    conn.close();
-                }
-                catch(SQLException ee)
-                {
-                    logger.error("failed to close connection", ee);
-                }
-            }
-        }
-    }
-
-    /**
-     * Update the attribute.
-     * 
-     * @param attribute the attribute.
-     * @param id the id.
-     * @param value the atribute value.
-     * @return the attribute identifier.
-     */
-    protected long updateAttribute(AttributeDefinition attribute, long id, Object value)
-    {
-        AttributeHandler handler = attribute.getAttributeClass().getHandler();
-        Connection conn = null;
-        try
-        {
-            conn = database.getConnection();
-            if(id != -1)
-            {
-                if(value == null)
-                {
-                    handler.delete(id, conn);
-                }
-                else
-                {
-                    handler.update(id, value, conn);
-                }
-            }
-            else
-            {
-                if(value != null)
-                {
-                    id = handler.create(value, conn);
-                }
-            }
-            return id;
-        }
-        catch(Exception e)
-        {
-            throw new BackendException("failed to update attribute value", e);
-        }
-        finally
-        {
-            if(conn != null)
-            {
-                try
-                {
-                    conn.close();
-                }
-                catch(SQLException ee)
-                {
-                    logger.error("failed to close connection", ee);
-                }
-            }
-        }
     }
 }
