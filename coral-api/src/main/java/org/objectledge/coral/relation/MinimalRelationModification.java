@@ -40,7 +40,7 @@ import org.objectledge.coral.relation.RelationModification.RemoveOperation;
  * This class holds a minimal representation of a {@link RelationModification}
  * for a given {@link Relation}.
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModification.java,v 1.3 2004-02-24 12:23:23 zwierzem Exp $
+ * @version $Id: MinimalRelationModification.java,v 1.4 2004-02-24 14:54:09 zwierzem Exp $
  */
 public class MinimalRelationModification
 {
@@ -179,19 +179,21 @@ public class MinimalRelationModification
 			else if(oper.hasId1())
 			{
 				Long id1 = new Long(oper.getId1());
-				long[] id2set = relation.get(id1.longValue());
-				for (int i = 0; i < id2set.length; i++)
-				{
-					remove(new RelationModification.RemoveOperation(id1, new Long(id2set[i])));
+				Set id2set = relation.get(id1.longValue());
+				for (Iterator iter = id2set.iterator(); iter.hasNext();)
+                {
+                    Long id2 = (Long) iter.next();
+					remove(new RelationModification.RemoveOperation(id1, id2));
 				}
 			}
 			else // if(oper.hasId2())
 			{
 				Long id2 = new Long(oper.getId2());
-				long[] id1set = relation.get(id2.longValue());
-				for (int i = 0; i < id1set.length; i++)
+				Set id1set = relation.get(id2.longValue());
+				for (Iterator iter = id1set.iterator(); iter.hasNext();)
 				{
-					remove(new RelationModification.RemoveOperation(new Long(id1set[i]), id2));
+					Long id1 = (Long) iter.next();
+					remove(new RelationModification.RemoveOperation(id1, id2));
 				}
 			}
 		}
