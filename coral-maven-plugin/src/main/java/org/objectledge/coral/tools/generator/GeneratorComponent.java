@@ -38,21 +38,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.jcontainer.dna.Logger;
-import org.jcontainer.dna.impl.DefaultConfiguration;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.templating.Template;
 import org.objectledge.templating.Templating;
 import org.objectledge.templating.TemplatingContext;
-import org.objectledge.templating.velocity.VelocityTemplating;
 
 /**
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.2 2004-03-30 08:34:06 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.3 2004-03-30 09:07:44 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -102,24 +99,26 @@ public class GeneratorComponent
     /**
      * Creates new GeneratorComponent instance.
      * 
-     * @param baseDir the component's working directory.
      * @param fileEncoding the character encoding to use for reading and writing files.
      * @param sourceFiles the path of source file list.
      * @param targetDir the target directory.
      * @param packagePrefices the comma separated list of package prefixes, for grouping.
      * @param licensePath the path to the license.
-     * @param logger the logger.
+     * @param fileSystem the file system to operate on.
+     * @param templating the templating component.
+     * @param schema the schema.
+     * @param loader the loader.
      * @throws Exception if the component could not be initialized.
      */
-    public GeneratorComponent(String baseDir, String fileEncoding, String sourceFiles, 
-        String targetDir, String packagePrefices, String licensePath, Logger logger)
+    public GeneratorComponent(String fileEncoding, String sourceFiles, 
+        String targetDir, String packagePrefices, String licensePath, FileSystem fileSystem,
+        Templating templating, Schema schema, RMLModelLoader loader)
         throws Exception
     {
-        fileSystem = FileSystem.getStandardFileSystem(baseDir);
-        schema = new Schema();
-        loader = new RMLModelLoader(schema);
-
-        initTemplating(logger);
+        this.fileSystem = fileSystem;
+        this.templating = templating;
+        this.schema = schema;
+        this.loader = loader;
         
         this.fileEncoding = fileEncoding;
         this.sourceFiles = sourceFiles;
@@ -139,6 +138,8 @@ public class GeneratorComponent
         {
             license = "";
         }
+        
+        initTemplating();
     }
 
     /**
@@ -163,25 +164,11 @@ public class GeneratorComponent
     /**
      * Initializes the Velocity templating component.
      *
-     * @param logger the logger to use.
-     * @throws Exception if the templating component could not be initialized.
+     * @throws Exception if the required templates are not available.
      */
-    void initTemplating(Logger logger)
+    void initTemplating()
         throws Exception
     {
-        DefaultConfiguration config = new DefaultConfiguration("config", "<generated>", "");
-        DefaultConfiguration configPaths = new DefaultConfiguration("paths", "<generated>", 
-            "config");
-        DefaultConfiguration configPathsPath = new DefaultConfiguration("path", "<generated>", 
-            "config/paths");
-        DefaultConfiguration configEncoding = new DefaultConfiguration("encoding", "<generated>",
-            "config");
-        configEncoding.setValue("UTF-8");
-        configPathsPath.setValue("/");
-        configPaths.addChild(configPathsPath);
-        config.addChild(configPaths);
-        config.addChild(configEncoding);
-        templating = new VelocityTemplating(config, logger, fileSystem);
         interfaceTemplate = templating.
             getTemplate("org/objectledge/coral/tools/generator/Interface");
         genericImplTemplate = templating.

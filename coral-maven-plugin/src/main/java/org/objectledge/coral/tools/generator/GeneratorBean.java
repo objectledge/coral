@@ -28,14 +28,19 @@
 package org.objectledge.coral.tools.generator;
 
 import org.jcontainer.dna.Logger;
+import org.jcontainer.dna.impl.DefaultConfiguration;
 import org.jcontainer.dna.impl.Log4JLogger;
+import org.objectledge.coral.tools.generator.model.Schema;
+import org.objectledge.filesystem.FileSystem;
+import org.objectledge.templating.Templating;
+import org.objectledge.templating.velocity.VelocityTemplating;
 
 
 /**
  * An interface between GeneratorComponent and Maven.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorBean.java,v 1.1 2004-03-30 08:17:51 fil Exp $
+ * @version $Id: GeneratorBean.java,v 1.2 2004-03-30 09:07:44 fil Exp $
  */
 public class GeneratorBean
 {
@@ -45,7 +50,7 @@ public class GeneratorBean
     private String targetDir;
     private String packagePrefices;
     private String licensePath;
-    
+
     /**
      * Creates new GeneratorBean instance.
      */
@@ -62,8 +67,17 @@ public class GeneratorBean
         throws Exception
     {
         Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
-        GeneratorComponent generator = new GeneratorComponent(baseDir, fileEncoding, sourceFiles, 
-            targetDir, packagePrefices, licensePath, logger);
+
+        FileSystem fileSystem = FileSystem.getStandardFileSystem(baseDir);
+        
+        Templating templating = initTemplating(fileSystem, logger);
+        
+        Schema schema = new Schema();
+        
+        RMLModelLoader loader = new RMLModelLoader(schema);
+
+        GeneratorComponent generator = new GeneratorComponent(fileEncoding, sourceFiles, 
+            targetDir, packagePrefices, licensePath, fileSystem, templating, schema, loader);
         generator.execute();
     }
 
@@ -127,5 +141,32 @@ public class GeneratorBean
     public void setTargetDir(String targetDir)
     {
         this.targetDir = targetDir;
+    }
+    
+    // implementation ///////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Initializes the Velocity templating component.
+     *
+     * @param logger the logger to use.
+     * @return the intialized templating component.
+     * @throws Exception if the templating component could not be initialized.
+     */
+    Templating initTemplating(FileSystem fileSystem, Logger logger)
+        throws Exception
+    {
+        DefaultConfiguration config = new DefaultConfiguration("config", "<generated>", "");
+        DefaultConfiguration configPaths = new DefaultConfiguration("paths", "<generated>", 
+            "config");
+        DefaultConfiguration configPathsPath = new DefaultConfiguration("path", "<generated>", 
+            "config/paths");
+        DefaultConfiguration configEncoding = new DefaultConfiguration("encoding", "<generated>",
+            "config");
+        configEncoding.setValue("UTF-8");
+        configPathsPath.setValue("/");
+        configPaths.addChild(configPathsPath);
+        config.addChild(configPaths);
+        config.addChild(configEncoding);
+        return new VelocityTemplating(config, logger, fileSystem);
     }
 }
