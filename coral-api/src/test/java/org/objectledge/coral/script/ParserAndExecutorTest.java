@@ -51,7 +51,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParserAndExecutorTest.java,v 1.5 2004-03-24 14:40:18 fil Exp $
+ * @version $Id: ParserAndExecutorTest.java,v 1.6 2004-04-30 13:00:15 fil Exp $
  */
 public class ParserAndExecutorTest extends LedgeTestCase
 {
@@ -469,9 +469,9 @@ public class ParserAndExecutorTest extends LedgeTestCase
             will(returnValue(resourceClass));
         mockCoralSchema.expect(once()).method("getResourceClass").with(eq("parent")).
             will(returnValue(parentResourceClass));
-        mockParentResourceClass.expect(once()).method("getAttribute").with(eq("v1")).
+        mockParentResourceClass.expect(once()).method("getAttribute").with(eq("a1")).
             will(returnValue(attributeDefinition1));
-        mockParentResourceClass.expect(once()).method("getAttribute").with(eq("v2")).
+        mockParentResourceClass.expect(once()).method("getAttribute").with(eq("a2")).
             will(returnValue(attributeDefinition2));
         mockCoralSchema.expect(once()).method("addParentClass").with(same(resourceClass), 
             same(parentResourceClass), and(mapElement(attributeDefinition1, eq("v1")), 
