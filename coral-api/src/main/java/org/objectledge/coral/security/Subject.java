@@ -6,7 +6,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: Subject.java,v 1.4 2004-03-03 10:27:31 fil Exp $
+ * @version $Id: Subject.java,v 1.5 2004-03-08 08:05:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Subject
@@ -14,6 +14,9 @@ public interface Subject
 {
     /** The identifier of the superuser subject. */
     public static final long ROOT = 1L;
+
+    /** The identifier of the anonymous subject. */
+    public static final long ANONYMOUS = 2L;
     
     /**
      * Returns the role assigments made for this <code>Subject</code>.
