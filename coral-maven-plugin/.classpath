@@ -4,6 +4,7 @@
     <classpathentry kind="src" path="src/main/java"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
     <classpathentry kind="src" path="/coral-api"/>
+    <classpathentry kind="src" path="/coral-datatypes"/>
     <classpathentry kind="src" path="src/test/java"/>
     <classpathentry kind="src" path="/ledge-components"/>
     <classpathentry kind="var"

@@ -27,19 +27,21 @@
 // 
 package org.objectledge.coral.tools.generator;
 
+import java.io.Reader;
+
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.ResourceClassFlags;
-import org.objectledge.coral.script.parser.RMLParserFactory;
 import org.objectledge.coral.tools.generator.model.Attribute;
 import org.objectledge.coral.tools.generator.model.AttributeClass;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.coral.tools.generator.model.Schema;
+import org.objectledge.filesystem.FileSystem;
 import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoaderTest.java,v 1.7 2004-03-28 09:01:01 fil Exp $
+ * @version $Id: RMLModelLoaderTest.java,v 1.8 2004-03-29 09:01:28 fil Exp $
  */
 public class RMLModelLoaderTest
     extends LedgeTestCase
@@ -274,5 +276,18 @@ public class RMLModelLoaderTest
             assertEquals("there were exceptions running the script", e.getMessage());
             assertEquals("numeric ids are not supported", e.getCause().getMessage());
         }
+    }
+    
+    // datatypes initial
+    
+    public void testDatatypesInitial()
+        throws Exception
+    {
+        FileSystem fs = getFileSystem();
+        Reader r = fs.getReader("rml/coral/CoralDatatypesInitial.rml", "UTF-8");
+        modelLoader.load(r);
+        ResourceClass rc = schema.getResourceClass("node");
+        assertEquals("long", rc.getAttribute("id").getAttributeClass().getName());
+        assertEquals("string", rc.getAttribute("name").getAttributeClass().getName());
     }
 }
