@@ -1,3 +1,5 @@
+$viewEnclosureTool.override('Page')##
+##
 $pageTool.addStyleLink('style/browser.css')
 <table width="100%">
   <tr>
