@@ -47,7 +47,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.24 2005-01-27 03:23:39 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.25 2005-02-04 02:29:03 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -67,6 +67,22 @@ implements Relation
 	private int resourceIdPairsNum = 0;
 
     // initialization -----------------------------------------------------------------------------
+
+    /**
+     * Creates a relationship from provided definition.
+     *
+     * @param persistence the persistence system
+     * @param store used to retrieve resources
+     * @param coralRelationManager used to retrieve relation definitions
+     */
+    public RelationImpl(Persistence persistence, CoralStore store, 
+        CoralRelationManager coralRelationManager)
+    {
+        super(persistence);
+
+        this.store = store;
+        this.coralRelationManager = coralRelationManager;
+    }
 
     /**
      * Creates a relationship from provided definition.
