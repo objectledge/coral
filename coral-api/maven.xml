@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.7 2004-07-09 11:39:12 rafal Exp $ -->
+<!-- $Id: maven.xml,v 1.8 2004-07-09 11:40:46 rafal Exp $ -->
 <project xmlns:j="jelly:core"
          xmlns:util="jelly:util"
          xmlns:ant="jelly:ant"
@@ -91,7 +91,6 @@
       <j:forEach var="srcFile" items="${srcFiles.iterator()}">
         <j:set var="relPath" value="${srcFile.path.substring(srcDir.path.length())}"/>
         <util:file var="dstFile" name="${dstDir}/${relPath}"/>
-        <echo>srcDir=${srcDir} srcFile=${srcFile} relPath=${relPath} dstDir=${dstDir} dstFile="${dstFile}</echo>
         <j:choose>
           <j:when test="${dstFile.exists()}">
             <util:loadText var="srcContent" file="${srcFile}"/>
