@@ -17,12 +17,12 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ResourceInheritance;
 import org.objectledge.coral.store.ResourceOwnership;
-import org.objectledge.event.EventForwarder;
+import org.objectledge.event.EventWhiteboard;
 
 /**
  * Convenience wrapper around <code>EventService</code> implementation.
  *
- * @version $Id: CoralEventWhiteboardImpl.java,v 1.3 2004-02-27 15:32:15 fil Exp $
+ * @version $Id: CoralEventWhiteboardImpl.java,v 1.4 2004-03-01 13:33:47 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralEventWhiteboardImpl
@@ -30,8 +30,8 @@ public class CoralEventWhiteboardImpl
 {
     // Member objects ////////////////////////////////////////////////////////
 
-    /** The {@link EventForwarder}. */
-    private EventForwarder whiteboard;
+    /** The {@link EventWhiteboard}. */
+    private EventWhiteboard whiteboard;
 
     /** {@link
      * PermissionAssociationChangeListener#permissionsChanged(PermissionAssociation,boolean)} */
@@ -113,7 +113,7 @@ public class CoralEventWhiteboardImpl
      *
      * @param arl the {@link ResourceServiceImpl}.
      */
-    CoralEventWhiteboardImpl(EventForwarder event)
+    CoralEventWhiteboardImpl(EventWhiteboard event)
     {
         this.whiteboard = event;
         

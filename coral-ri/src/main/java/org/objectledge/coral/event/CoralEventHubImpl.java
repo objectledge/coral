@@ -27,15 +27,15 @@
 // 
 package org.objectledge.coral.event;
 
-import org.objectledge.event.EventForwarder;
-import org.objectledge.event.EventSystem;
-import org.objectledge.event.InboundEventForwarder;
-import org.objectledge.event.OutboundEventForwarder;
+import org.objectledge.event.EventWhiteboard;
+import org.objectledge.event.EventWhiteboardFactory;
+import org.objectledge.event.InboundEventWhiteboard;
+import org.objectledge.event.OutboundEventWhiteboard;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventHubImpl.java,v 1.1 2004-03-01 13:19:25 fil Exp $
+ * @version $Id: CoralEventHubImpl.java,v 1.2 2004-03-01 13:33:47 fil Exp $
  */
 public class CoralEventHubImpl
     implements CoralEventHub
@@ -54,17 +54,17 @@ public class CoralEventHubImpl
      * @param eventWhiteboardFactory the event whiteboard factory.
      * @param bridge the event / notification bridge.
      */    
-    public CoralEventHubImpl(EventSystem eventWhiteboardFactory, CoralEventBridge bridge)
+    public CoralEventHubImpl(EventWhiteboardFactory eventWhiteboardFactory, CoralEventBridge bridge)
     {
-        EventForwarder inbound = eventWhiteboardFactory.getForwarder();
-        inboundEvents = new CoralEventWhiteboardImpl(new InboundEventForwarder(inbound));
-        EventForwarder outbound = eventWhiteboardFactory.getForwarder();
+        EventWhiteboard inbound = eventWhiteboardFactory.getForwarder();
+        inboundEvents = new CoralEventWhiteboardImpl(new InboundEventWhiteboard(inbound));
+        EventWhiteboard outbound = eventWhiteboardFactory.getForwarder();
         if(bridge != null)
         {
             bridge.attach(inbound, outbound);
         }
-        outboundEvents = new CoralEventWhiteboardImpl(new OutboundEventForwarder(outbound));
-        EventForwarder local = eventWhiteboardFactory.getForwarder();
+        outboundEvents = new CoralEventWhiteboardImpl(new OutboundEventWhiteboard(outbound));
+        EventWhiteboard local = eventWhiteboardFactory.getForwarder();
         localEvents = new CoralEventWhiteboardImpl(local);
         globalEvents = new CoralEventRedirector(inboundEvents, localEvents, outboundEvents);
     }    

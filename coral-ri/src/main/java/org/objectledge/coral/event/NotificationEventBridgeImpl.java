@@ -38,7 +38,7 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.PersistentFactory;
 import org.objectledge.database.persistence.PicoPersistentFactory;
-import org.objectledge.event.EventForwarder;
+import org.objectledge.event.EventWhiteboard;
 import org.objectledge.notification.Notification;
 import org.objectledge.notification.NotificationReceiver;
 import org.picocontainer.PicoContainer;
@@ -145,7 +145,7 @@ public class NotificationEventBridgeImpl
      * @param out events coming from this forwarder will be sent to the
      *        notification service.
      */
-    public void attach(EventForwarder in, EventForwarder out)
+    public void attach(EventWhiteboard in, EventWhiteboard out)
     {
         event = new CoralEventWhiteboardImpl(in);
         this.register(new CoralEventWhiteboardImpl(out));
@@ -156,7 +156,7 @@ public class NotificationEventBridgeImpl
     /**
      * Detachs the event forwarders from the notification service.
      * 
-     * @see #attach(EventForwarder,EventForwarder)
+     * @see #attach(EventWhiteboard,EventWhiteboard)
      */
     public void detach()
     {

@@ -28,12 +28,12 @@
 package org.objectledge.coral.event;
 
 import org.jmock.builder.MockObjectTestCase;
-import org.objectledge.event.EventForwarder;
+import org.objectledge.event.EventWhiteboard;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventHubImplTest.java,v 1.1 2004-03-01 13:19:37 fil Exp $
+ * @version $Id: CoralEventHubImplTest.java,v 1.2 2004-03-01 13:33:48 fil Exp $
  */
 public class CoralEventHubImplTest
     extends MockObjectTestCase
@@ -47,18 +47,18 @@ public class CoralEventHubImplTest
     private class PassthroughEventBridge
         implements CoralEventBridge
     {
-        private EventForwarder in;
+        private EventWhiteboard in;
         
-        private EventForwarder out;
+        private EventWhiteboard out;
         
-        public PassthroughEventBridge(EventForwarder in, EventForwarder out)
+        public PassthroughEventBridge(EventWhiteboard in, EventWhiteboard out)
         {
         }
         
         /** 
          * {@inheritDoc}
          */
-        public void attach(EventForwarder in, EventForwarder out)
+        public void attach(EventWhiteboard in, EventWhiteboard out)
         {
             // TODO Auto-generated method stub
 

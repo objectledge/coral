@@ -32,19 +32,19 @@ import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.Log4JLogger;
 import org.jmock.builder.Mock;
 import org.objectledge.context.Context;
-import org.objectledge.event.EventForwarder;
-import org.objectledge.event.EventSystem;
+import org.objectledge.event.EventWhiteboard;
+import org.objectledge.event.EventWhiteboardFactory;
 import org.objectledge.threads.ThreadPool;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventWhiteboardImplTest.java,v 1.1 2004-03-01 11:41:26 fil Exp $
+ * @version $Id: CoralEventWhiteboardImplTest.java,v 1.2 2004-03-01 13:33:48 fil Exp $
  */
 public class CoralEventWhiteboardImplTest extends CoralEventTestCase
 {
     private Mock mockEventWhiteboard;
-    private EventForwarder eventWhiteboard;
+    private EventWhiteboard eventWhiteboard;
     private CoralEventWhiteboard coralEventWhiteboard;
     private Object anchor = new Object();
     private ThreadPool threadPool;
@@ -53,8 +53,8 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
     public void setUp()
     {
         super.setUp();
-        mockEventWhiteboard = new Mock(EventForwarder.class);
-        eventWhiteboard = (EventForwarder)mockEventWhiteboard.proxy();
+        mockEventWhiteboard = new Mock(EventWhiteboard.class);
+        eventWhiteboard = (EventWhiteboard)mockEventWhiteboard.proxy();
         coralEventWhiteboard = new CoralEventWhiteboardImpl(eventWhiteboard);
 
         Context context = new Context();
@@ -62,8 +62,8 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
         BasicConfigurator.configure();
         Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
         threadPool = new ThreadPool(null, context, null, logger);
-        EventSystem eventWhiteboardFactory = new EventSystem(null, logger, threadPool);
-        EventForwarder realEventWhiteboard = eventWhiteboardFactory.getForwarder();
+        EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, logger, threadPool);
+        EventWhiteboard realEventWhiteboard = eventWhiteboardFactory.getForwarder();
         realCoralEventWhiteboard = new CoralEventWhiteboardImpl(realEventWhiteboard);
     }
     

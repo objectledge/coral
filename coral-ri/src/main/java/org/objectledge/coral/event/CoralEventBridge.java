@@ -27,13 +27,13 @@
 // 
 package org.objectledge.coral.event;
 
-import org.objectledge.event.EventForwarder;
+import org.objectledge.event.EventWhiteboard;
 
 /**
  * A bridge between Coral event system and the outside environment.
  *  
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventBridge.java,v 1.2 2004-03-01 13:18:42 fil Exp $
+ * @version $Id: CoralEventBridge.java,v 1.3 2004-03-01 13:33:47 fil Exp $
  */
 public interface CoralEventBridge
 {
@@ -43,12 +43,12 @@ public interface CoralEventBridge
      * @param in incoming events should be fired on this whiteboard.
      * @param out listeners to outbound events should be registered on this whiteboard.
      */
-    public abstract void attach(EventForwarder in, EventForwarder out);
+    public abstract void attach(EventWhiteboard in, EventWhiteboard out);
 
     /**
      * Detaches the event whiteboatrds from the Coral event system.
      * 
-     * @see #attach(EventForwarder,EventForwarder)
+     * @see #attach(EventWhiteboard,EventWhiteboard)
      */
     public abstract void detach();
 }
