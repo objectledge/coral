@@ -60,7 +60,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Implmentation of the Coral relation manager component.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.10 2005-01-26 08:05:26 rafal Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.11 2005-01-27 05:32:04 rafal Exp $
  */
 public class CoralRelationManagerImpl
     implements CoralRelationManager, PreloadingParticipant
@@ -341,60 +341,75 @@ public class CoralRelationManagerImpl
     private void preloadDefinitions()
         throws SQLException
     {
-        Connection conn = persistence.getDatabase().getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet result = stmt.executeQuery(
-            "SELECT relation_id, resource1, resource2 FROM coral_relation_data " +
-            "ORDER BY relation_id"
-        );
-        if(result.next())
+        Connection conn = null;
+        try 
         {
-            List<Long> temp = new ArrayList<Long>();
-            long lastId;
-            do
+            conn = persistence.getDatabase().getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet result = stmt.executeQuery(
+                "SELECT relation_id, resource1, resource2 FROM coral_relation_data " +
+                "ORDER BY relation_id"
+            );
+            if(result.next())
             {
+                List<Long> temp = new ArrayList<Long>();
+                long lastId;
                 do
                 {
-                    lastId = result.getLong(1);
-                    temp.add(result.getLong(2));
-                    temp.add(result.getLong(3));
+                    do
+                    {
+                        lastId = result.getLong(1);
+                        temp.add(result.getLong(2));
+                        temp.add(result.getLong(3));
+                    }
+                    while(result.next() && result.getLong(1) == lastId);
+                    long[] longs = new long[temp.size()];
+                    int i = 0;
+                    for(long item : temp)
+                    {
+                        longs[i++] = item;
+                    }
+                    preloadedData.put(lastId, longs);
+                    temp.clear();
                 }
-                while(result.next() && result.getLong(1) == lastId);
-                long[] longs = new long[temp.size()];
-                int i = 0;
-                for(long item : temp)
-                {
-                    longs[i++] = item;
-                }
-                preloadedData.put(lastId, longs);
-                temp.clear();
+                while(!result.isAfterLast());
             }
-            while(!result.isAfterLast());
+        }
+        finally
+        {
+            DatabaseUtils.close(conn);
         }
     }
     
     private long[] loadDefinition(long relationId)
         throws SQLException
     {
-        Connection conn = persistence.getDatabase().getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet result = stmt.executeQuery(
-            "SELECT resource1, resource2 FROM coral_relation_data WHERE relation_id = " + 
-            Long.toString(relationId)
-        );
-        List<Long> temp = new ArrayList<Long>();
-        while(result.next())
+        Connection conn = null;
+        try
         {
-            temp.add(result.getLong(1));
-            temp.add(result.getLong(1));
+            conn = persistence.getDatabase().getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet result = stmt
+                .executeQuery("SELECT resource1, resource2 FROM coral_relation_data WHERE relation_id = "
+                    + Long.toString(relationId));
+            List<Long> temp = new ArrayList<Long>();
+            while(result.next())
+            {
+                temp.add(result.getLong(1));
+                temp.add(result.getLong(1));
+            }
+            long[] longs = new long[temp.size()];
+            int i = 0;
+            for(long item : temp)
+            {
+                longs[i++] = item;
+            }
+            return longs;
         }
-        long[] longs = new long[temp.size()];
-        int i = 0;
-        for(long item : temp)
+        finally
         {
-            longs[i++] = item;
+            DatabaseUtils.close(conn);
         }
-        return longs;
     }
 
     /**
