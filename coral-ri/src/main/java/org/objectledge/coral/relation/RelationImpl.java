@@ -44,13 +44,14 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.18 2004-03-17 12:27:33 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.19 2004-03-17 15:34:30 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -197,6 +198,7 @@ implements Relation
 		super.setData(record);
 		
 		// read relation data from database &  prepare data contents
+		Connection conn = null;
         try
         {
         	int length = 1024; // number of elements in relation - should be retrieved from db
@@ -207,7 +209,7 @@ implements Relation
 			rel = new HashMap((int) ((float) length / 2.0 * 1.5));
 			invRel = new HashMap((int) ((float) length / 2.0 * 1.5));
 
-			Connection conn = database.getConnection();
+			conn = database.getConnection();
 	        Statement stmt = conn.createStatement();
 	        ResultSet rs = stmt.executeQuery(
 				"SELECT resource1,resource2 FROM " + getDataTable() + 
@@ -230,6 +232,10 @@ implements Relation
 		{
 			throw new PersistenceException("Cannot retrieve relation contents - relation '"+
 				getName() + "'", e);
+		}
+		finally
+		{
+			DatabaseUtils.close(conn);
 		}
 	}
 

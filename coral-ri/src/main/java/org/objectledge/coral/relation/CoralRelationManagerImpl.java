@@ -53,7 +53,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.5 2004-03-17 14:14:21 zwierzem Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.6 2004-03-17 15:34:15 zwierzem Exp $
  */
 public class CoralRelationManagerImpl implements CoralRelationManager
 {
@@ -283,17 +283,19 @@ public class CoralRelationManagerImpl implements CoralRelationManager
 		}
 		RelationImpl relationImpl = (RelationImpl) relation;
 
+		Connection conn = null;
         boolean shouldCommit = false;
         try
         {
             shouldCommit = database.beginTransaction();
 
-			Connection conn = database.getConnection();
+			conn = database.getConnection();
 
             // delete relation contents
 			Statement stmt = conn.createStatement();
 			stmt.execute(
-				"DELETE FROM "+relationImpl.getDataTable()+" WHERE relation_id = "+relationImpl.getId()
+				"DELETE FROM "+relationImpl.getDataTable()
+				+" WHERE relation_id = "+relationImpl.getId()
 			);
 
             relationRegistry.delete(relation);
@@ -324,6 +326,9 @@ public class CoralRelationManagerImpl implements CoralRelationManager
             }
             throw new BackendException("failed to delete relation", e);
         }
-
+		finally
+		{
+			DatabaseUtils.close(conn);
+		}
     }
 }
