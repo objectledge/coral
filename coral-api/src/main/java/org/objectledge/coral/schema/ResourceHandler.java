@@ -10,7 +10,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages persistency of resources belonging to a specific class .
  *
- * @version $Id: ResourceHandler.java,v 1.4 2004-04-01 08:54:15 fil Exp $
+ * @version $Id: ResourceHandler.java,v 1.5 2004-06-29 09:26:23 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceHandler
@@ -52,11 +52,13 @@ public interface ResourceHandler
      * @param delegate the security delegate {@link Resource} object.
      * @param conn the JDBC <code>Connection</code> to use. Needed to perform
      *        the operation as a part of a JDBC transaction.
+     * @param data implemntation dependent data passed across recursive calls to this method. 
+     *        An implementation must accept <code>null</code> value of this parameter.  
      * @return the resource object.
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public Resource retrieve(Resource delegate, Connection conn)
+    public Resource retrieve(Resource delegate, Connection conn, Object data)
         throws SQLException;
 
 
@@ -66,10 +68,12 @@ public interface ResourceHandler
      * @param resource the resource.
      * @param conn the JDBC <code>Connection</code> to use. Needed to perform
      *        the operation as a part of a JDBC transaction.
+     * @param data implemntation dependent data passed across recursive calls to this method. 
+     *        An implementation must accept <code>null</code> value of this parameter.  
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public void revert(Resource resource, Connection conn)
+    public void revert(Resource resource, Connection conn, Object data)
         throws SQLException;
 
     /**

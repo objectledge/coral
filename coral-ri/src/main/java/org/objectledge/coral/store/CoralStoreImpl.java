@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.12 2004-04-22 18:02:43 zwierzem Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.13 2004-06-29 09:26:26 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -235,8 +235,7 @@ public class CoralStoreImpl
                     res = (Resource)persistence.load(id,resourceFactory);
                     if(res != null)
                     {
-                        res = res.getResourceClass().getHandler().
-                            retrieve(res, conn);
+                        res = res.getResourceClass().getHandler().retrieve(res, conn, null);
                     }
                     else
                     {
@@ -1237,7 +1236,7 @@ public class CoralStoreImpl
             if(cached == null)
             {
                 ResourceHandler handler = res.getResourceClass().getHandler();
-                res = handler.retrieve(res, conn);
+                res = handler.retrieve(res, conn, null);
                 result.add(res);
                 resourceById.put(key, res);
             }

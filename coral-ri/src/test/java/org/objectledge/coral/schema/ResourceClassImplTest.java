@@ -47,7 +47,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.10 2004-05-28 10:04:09 fil Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.11 2004-06-29 09:26:26 fil Exp $
  */
 public class ResourceClassImplTest extends LedgeTestCase
 {
@@ -124,7 +124,7 @@ public class ResourceClassImplTest extends LedgeTestCase
         assertEquals(Object.class, rc.getJavaClass());
         assertEquals("<java class>", rc.getJavaClassName());
         mockResourceHandler.expects(once()).method("retrieve").with(eq(resource), eq(connection)).isVoid();
-        rc.getHandler().retrieve(resource, connection);
+        rc.getHandler().retrieve(resource, connection, null);
         assertEquals("<db table>", rc.getDbTable());
         assertEquals(303, rc.getFlags());
     }
@@ -269,7 +269,7 @@ public class ResourceClassImplTest extends LedgeTestCase
         assertEquals("<resource class>", rc.getName());
         assertEquals(Object.class, rc.getJavaClass());
         mockResourceHandler.expects(once()).method("retrieve").with(eq(resource), eq(connection)).isVoid();
-        rc.getHandler().retrieve(resource, connection);
+        rc.getHandler().retrieve(resource, connection, null);
         assertEquals("<db table>", rc.getDbTable());
         assertEquals(303, rc.getFlags());
     }
@@ -294,7 +294,7 @@ public class ResourceClassImplTest extends LedgeTestCase
         assertEquals("<resource class>", rc.getName());
         assertEquals(Object.class, rc.getJavaClass());
         mockResourceHandler.expects(once()).method("retrieve").with(eq(resource), eq(connection)).isVoid();
-        rc.getHandler().retrieve(resource, connection);
+        rc.getHandler().retrieve(resource, connection, null);
         assertNull(rc.getDbTable());
         assertEquals(303, rc.getFlags());
     }

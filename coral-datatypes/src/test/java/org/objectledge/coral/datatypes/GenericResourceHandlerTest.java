@@ -225,7 +225,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         
         mockStatement.expects(once()).method("executeQuery").with(eq(stmt)).will(returnValue(resultSet));
                 
-        handler.retrieve(resource, connection);
+        handler.retrieve(resource, connection, null);
     }
 
     /*
