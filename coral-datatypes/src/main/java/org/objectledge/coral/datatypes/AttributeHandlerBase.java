@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.13 2005-02-10 17:46:01 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.14 2005-04-01 09:25:35 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -94,11 +94,17 @@ public abstract class AttributeHandlerBase
     public void delete(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
-        Statement stmt = conn.createStatement();
-        checkExists(id, stmt);
-        stmt.execute(
-            "DELETE FROM "+getTable()+" WHERE data_key = "+id
-        );
+        Statement stmt = null;
+        try
+        {
+            stmt = conn.createStatement();
+            checkExists(id, stmt);
+            stmt.execute("DELETE FROM " + getTable() + " WHERE data_key = " + id);
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
         releaseId(id);
     }
     
@@ -350,13 +356,20 @@ public abstract class AttributeHandlerBase
     protected void checkExists(long id, Statement stmt)
         throws EntityDoesNotExistException, SQLException
     {
-        ResultSet rs = stmt.executeQuery(
-            "SELECT data_key FROM "+getTable()+" WHERE data_key = "+id
-        );
-        if(!rs.next())
+        ResultSet rs = null;
+        try
         {
-            throw new EntityDoesNotExistException(
-                "Item #"+id+" does not exist in table "+getTable());
+            rs = stmt.executeQuery("SELECT data_key FROM " + getTable()
+                + " WHERE data_key = " + id);
+            if(!rs.next())
+            {
+                throw new EntityDoesNotExistException("Item #" + id + " does not exist in table "
+                    + getTable());
+            }
+        }
+        finally
+        {
+            DatabaseUtils.close(rs);
         }
     }
 

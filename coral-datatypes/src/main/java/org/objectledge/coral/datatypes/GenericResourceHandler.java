@@ -18,12 +18,13 @@ import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.14 2005-01-21 06:54:55 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.15 2005-04-01 09:25:35 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -240,32 +241,34 @@ public class GenericResourceHandler
                                   Connection conn)
         throws SQLException
     {
-        Statement stmt1 = conn.createStatement();
-        Statement stmt2 = conn.createStatement();
-        ResultSet rs = stmt1.executeQuery(
-            "SELECT coral_resource.resource_id, data_key FROM "+
-            "coral_resource, coral_generic_resource "+
-            "WHERE resource_class_id = "+rc.getIdString()+
-            " AND attribute_definition_id = "+attr.getIdString()+
-            " AND coral_resource.resource_id = coral_generic_resource.resource_id"
-        );
-        while(rs.next())
+        Statement stmt = null;
+        ResultSet rs = null;
+        try
         {
-            long resId = rs.getLong(1);
-            long dataId = rs.getLong(2);
-            try
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT coral_resource.resource_id, data_key FROM "
+                + "coral_resource, coral_generic_resource " + "WHERE resource_class_id = "
+                + rc.getIdString() + " AND attribute_definition_id = " + attr.getIdString()
+                + " AND coral_resource.resource_id = coral_generic_resource.resource_id");
+            while(rs.next())
             {
-                attr.getAttributeClass().getHandler().delete(dataId, conn);
+                long resId = rs.getLong(1);
+                long dataId = rs.getLong(2);
+                try
+                {
+                    attr.getAttributeClass().getHandler().delete(dataId, conn);
+                }
+                catch(EntityDoesNotExistException e)
+                {
+                    throw new BackendException("internal error", e);
+                }
             }
-            catch(EntityDoesNotExistException e)
-            {
-                throw new BackendException("internal error", e);
-            }
-            stmt2.execute(
-                "DELETE FROM coral_generic_resource "+
-                "WHERE resource_id = "+resId+
-                "AND attribute_definition_id = "+attr.getIdString()
-            );
+            stmt.execute("DELETE FROM coral_generic_resource "
+                + "WHERE attribute_definition_id = " + attr.getIdString());
+        }
+        finally
+        {
+            DatabaseUtils.close(null, stmt, rs);
         }
         revert(rc, conn);
     }    
