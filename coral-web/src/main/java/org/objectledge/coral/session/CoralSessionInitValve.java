@@ -2,17 +2,17 @@ package org.objectledge.coral.session;
 
 import java.security.Principal;
 
+import org.objectledge.authentication.AuthenticationContext;
 import org.objectledge.context.Context;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.pipeline.Valve;
-import org.objectledge.web.mvc.MVCContext;
 
 /**
  * Coral session init valve.
  *  
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: CoralSessionInitValve.java,v 1.1 2004-06-23 14:11:03 pablo Exp $
+ * @version $Id: CoralSessionInitValve.java,v 1.2 2004-06-29 13:34:37 zwierzem Exp $
  */
 public class CoralSessionInitValve implements Valve 
 {
@@ -34,12 +34,13 @@ public class CoralSessionInitValve implements Valve
 	 */
 	public void process(Context context) throws ProcessingException
 	{
-		MVCContext mvcContext = MVCContext.getMVCContext(context);
-		if(mvcContext == null)
+		AuthenticationContext authenticationContext = 
+            AuthenticationContext.getAuthenticationContext(context);
+		if(authenticationContext == null)
 		{
-			throw new ProcessingException("failed to retrieve mvc context");
+			throw new ProcessingException("failed to retrieve authentication context");
 		}
-		Principal principal = mvcContext.getUserPrincipal();
+		Principal principal = authenticationContext.getUserPrincipal();
 		if(principal == null)
 		{
 			throw new ProcessingException("failed to retrieve principal from context");			
