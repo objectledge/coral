@@ -19,8 +19,8 @@ import org.objectledge.coral.store.Resource;
  * #getFiltered()} method and use the returned {@link FilteredQueryResults}
  * object instead.</p>
  *
- * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: QueryResults.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
+ * @version $Id: QueryResults.java,v 1.3 2004-05-14 11:19:10 fil Exp $
  */
 public interface QueryResults
 {

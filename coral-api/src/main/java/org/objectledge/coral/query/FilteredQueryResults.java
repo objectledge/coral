@@ -8,8 +8,8 @@ import org.objectledge.coral.schema.AttributeClass;
 /**
  * Represents the results of a query as tuples of Resource properties.
  *
- * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: FilteredQueryResults.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
+ * @version $Id: FilteredQueryResults.java,v 1.3 2004-05-14 11:19:10 fil Exp $
  */
 public interface FilteredQueryResults
 {

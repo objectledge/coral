@@ -7,8 +7,8 @@ import org.objectledge.coral.schema.AttributeClass;
  * Represents a query that is prepared once, and may be executed multiple
  * times.
  *
- * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: PreparedQuery.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
+ * @version $Id: PreparedQuery.java,v 1.3 2004-05-14 11:19:10 fil Exp $
  */
 public interface PreparedQuery
 {

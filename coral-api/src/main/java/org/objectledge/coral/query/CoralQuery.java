@@ -5,8 +5,8 @@ import org.objectledge.coral.script.parser.ASTfindResourceStatement;
 /**
  * Allows the application to perform queries on data contained in the Coral.
  *
- * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: CoralQuery.java,v 1.3 2004-03-18 11:34:33 fil Exp $
+ * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
+ * @version $Id: CoralQuery.java,v 1.4 2004-05-14 11:19:10 fil Exp $
  */
 public interface CoralQuery
 {

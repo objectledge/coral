@@ -3,8 +3,8 @@ package org.objectledge.coral.query;
 /**
  * Thrown to indicate that the query has syntactic or sematic errors.
  *
- * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: MalformedQueryException.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
+ * @version $Id: MalformedQueryException.java,v 1.2 2004-05-14 11:19:10 fil Exp $
  */
 public class MalformedQueryException
     extends Exception
