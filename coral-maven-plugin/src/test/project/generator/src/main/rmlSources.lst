@@ -5,3 +5,5 @@ src/main/rml/test/Test.rml
 src/main/rml/test/NoRequired.rml
 src/main/rml/test/Derived.rml
 src/main/rml/test/DerivedMultiple.rml
+src/main/rml/test/Excluded1.rml
+src/main/rml/test/Excluded2.rml

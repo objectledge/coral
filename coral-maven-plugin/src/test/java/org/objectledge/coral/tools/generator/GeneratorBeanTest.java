@@ -52,6 +52,8 @@ public class GeneratorBeanTest extends LedgeTestCase
         generatorBean.setFileEncoding("UTF-8");
         generatorBean.setHeaderFile("/LICENSE.txt");
         generatorBean.setImportGroups("java.,javax.,org.objectledge.");
+        generatorBean.setPackageIncludes("org.objectledge.coral.test*");
+        generatorBean.setPackageExcludes("org.objectledge.coral.test.excluded");        
         generatorBean.setSourceFiles("src/main/rmlSources.lst");
         generatorBean.setTargetDir("src/main/java");
         generatorBean.execute();

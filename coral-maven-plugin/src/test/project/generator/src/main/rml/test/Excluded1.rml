@@ -1,0 +1,7 @@
+CREATE RESOURCE CLASS coral.notincluded.Excluded1
+	JAVA CLASS org.objectledge.coral.notincluded.Excluded1
+	HANDLER CLASS org.objectledge.coral.datatypes.GenericResourceHandler
+	SUPERCLASSES ( coral.test.NoRequired )
+	ATTRIBUTES (
+		string e1
+	);

@@ -51,7 +51,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.8 2004-03-31 15:09:12 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.9 2004-04-01 08:04:19 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -100,6 +100,12 @@ public class GeneratorComponent
     
     /** PrintWriter for informational messages.*/
     private PrintStream out;
+    
+    /** packages to generate wrappers in. */
+    private List packageIncludes;
+    
+    /** packages to not generate wrappers in. */
+    private List packageExcludes;
 
     /**
      * Creates new GeneratorComponent instance.
@@ -108,6 +114,8 @@ public class GeneratorComponent
      * @param sourceFiles the path of source file list.
      * @param targetDir the target directory.
      * @param importGroups the comma separated list of package prefixes, for grouping.
+     * @param packageIncludes packages to include in generation.
+     * @param packageExcludes packages to exclude from generation
      * @param headerFile the path to the header file.
      * @param fileSystem the file system to operate on.
      * @param templating the templating component.
@@ -116,9 +124,10 @@ public class GeneratorComponent
      * @param out the PrintStream to write informational messages to.
      * @throws Exception if the component could not be initialized.
      */
-    public GeneratorComponent(String fileEncoding, String sourceFiles, 
-        String targetDir, String importGroups, String headerFile, FileSystem fileSystem,
-        Templating templating, Schema schema, RMLModelLoader loader, PrintStream out)
+    public GeneratorComponent(String fileEncoding, String sourceFiles, String targetDir, 
+        String importGroups, String packageIncludes, String packageExcludes, String headerFile, 
+        FileSystem fileSystem, Templating templating, Schema schema, RMLModelLoader loader, 
+        PrintStream out)
         throws Exception
     {
         this.fileSystem = fileSystem;
@@ -130,13 +139,10 @@ public class GeneratorComponent
         this.fileEncoding = fileEncoding;
         this.sourceFiles = sourceFiles;
         this.targetDir = targetDir;
+        this.importGroups = split(importGroups);
+        this.packageIncludes = split(packageIncludes);
+        this.packageExcludes = split(packageExcludes);
         
-        StringTokenizer st = new StringTokenizer(importGroups, ",");
-        while(st.hasMoreTokens())
-        {
-            this.importGroups.add(st.nextToken());
-        }
-
         if(fileSystem.exists(headerFile))
         {
             header = fileSystem.read(headerFile, fileEncoding);
@@ -334,7 +340,35 @@ public class GeneratorComponent
     {
         return targetDir+"/"+rc.getFQImplClassName().replace('.', '/')+".java";
     }
-
+    
+    List split(String string)
+    {
+        StringTokenizer st = new StringTokenizer(string, ",");
+        List list = new ArrayList(st.countTokens());  
+        while(st.hasMoreTokens())
+        {
+            list.add(st.nextToken());
+        }        
+        return list;
+    }
+    
+    boolean matches(String name, List preficesList)
+    {
+        for(Iterator i = preficesList.iterator(); i.hasNext();)
+        {
+            String prefix = (String)i.next();
+            if(prefix.charAt(prefix.length()-1) == '*')
+            {
+                return name.startsWith(prefix.substring(0, prefix.length()-1));
+            }
+            else
+            {
+                return name.equals(prefix);
+            }
+        }
+        return false;
+    }
+    
     void processClass(ResourceClass rc)
         throws Exception
     {
@@ -342,6 +376,17 @@ public class GeneratorComponent
         {
             out.println("  skipping "+rc.getName()+" (BUILTIN)");
             return;
+        }
+        if(!matches(rc.getPackageName(), packageIncludes)) 
+        {
+            out.println("  skipping "+rc.getName()+" (package "+rc.getPackageName()+
+                " not included)");
+            return;            
+        }
+        if(matches(rc.getPackageName(), packageExcludes))
+        {
+            out.println("  skipping "+rc.getName()+" (package "+rc.getPackageName()+" excluded)");
+            return;            
         }
 
         if(generateWrapper(rc, classInterfacePath(rc), interfaceTemplate))

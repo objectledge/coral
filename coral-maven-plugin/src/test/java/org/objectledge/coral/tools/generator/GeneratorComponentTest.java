@@ -43,7 +43,7 @@ import org.objectledge.utils.LedgeTestCase;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponentTest.java,v 1.3 2004-03-31 14:21:22 fil Exp $
+ * @version $Id: GeneratorComponentTest.java,v 1.4 2004-04-01 08:04:18 fil Exp $
  */
 public class GeneratorComponentTest
     extends LedgeTestCase
@@ -97,8 +97,8 @@ public class GeneratorComponentTest
         mockTemplating.stub().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Interface")).will(returnValue(interfaceTemplate));
         mockTemplating.stub().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/GenericImpl")).will(returnValue(genericImplTemplate));
         generatorComponent = new GeneratorComponent("UTF-8", "src/main/rml/files.lst",
-            "src/main/java", "java.,javax.,org.objectledge.", "LICENSE.txt", 
-            fileSystem, templating, schema, rmlModelLoader, System.out);
+            "src/main/java", "java.,javax.,org.objectledge.", "*", 
+            "", "LICENSE.txt", fileSystem, templating, schema, rmlModelLoader, System.out);
             
         testFileSystem = FileSystem.getStandardFileSystem("src/test/resources/generator");
     }

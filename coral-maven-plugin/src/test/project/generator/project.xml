@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.1 2004-03-31 12:10:13 fil Exp $ -->
+<!-- $Id: project.xml,v 1.2 2004-04-01 08:04:19 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
 
@@ -37,6 +37,7 @@
   <currentVersion>0.1-dev</currentVersion>
   
   <name>Coral Maven Plugin - Generator test</name>
+  <package>org.objectledge.coral.test</package>
 
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>

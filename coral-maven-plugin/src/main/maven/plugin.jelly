@@ -46,6 +46,8 @@
   <goal name="coral:generator">
     <m:pluginVar plugin="coral-maven-plugin" var="generatorFileEncoding" property="coral.generator.file.encoding"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorImportGroups" property="coral.generator.import.groups"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageIncludes" property="coral.generator.package.includes"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageExcludes" property="coral.generator.package.excludes"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorHeaderFile" property="coral.generator.header.file"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorSourcesList" property="coral.generator.sources.list"/>
     <j:set var="generatorTargetDirectory" value="${pom.build.sourceDirectory.substring(basedir.length())}"/>
@@ -54,6 +56,8 @@
       <echo>
         coral.generator.file.encoding=${generatorFileEncoding}
 	    coral.generator.import.groups=${generatorImportGroups}
+	    coral.generator.package.includes=${generatorPackageIncludes}
+	    coral.generator.package.excludes=${generatorPackageExcludes}
 	    coral.generator.header.file=${generatorHeaderFile}
 	    coral.generator.sources.list=${generatorSourcesList}
 	    coral.generator.target.directory=${generatorTargetDirectory}
@@ -63,6 +67,8 @@
       baseDir="${basedir}"
       fileEncoding="${generatorFileEncoding}"
       importGroups="${generatorImportGroups}"
+      packageIncludes="${generatorPackageIncludes}"
+      packageExcludes="${generatorPackageExcludes}"
       headerFile="${generatorHeaderFile}"
       sourceFiles="${generatorSourcesList}"
       targetDir="${generatorTargetDirectory}"/>

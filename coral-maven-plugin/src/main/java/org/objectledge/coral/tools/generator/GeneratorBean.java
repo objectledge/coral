@@ -40,7 +40,7 @@ import org.objectledge.templating.velocity.VelocityTemplating;
  * An interface between GeneratorComponent and Maven.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorBean.java,v 1.5 2004-03-31 15:09:12 fil Exp $
+ * @version $Id: GeneratorBean.java,v 1.6 2004-04-01 08:04:19 fil Exp $
  */
 public class GeneratorBean
 {
@@ -49,6 +49,8 @@ public class GeneratorBean
     private String sourceFiles;
     private String targetDir;
     private String importGroups;
+    private String packageIncludes;
+    private String packageExcludes;
     private String headerFile;
 
     /**
@@ -77,8 +79,8 @@ public class GeneratorBean
         RMLModelLoader loader = new RMLModelLoader(schema);
 
         GeneratorComponent generator = new GeneratorComponent(fileEncoding, sourceFiles, 
-            targetDir, importGroups, headerFile, fileSystem, templating, schema, loader,
-            System.out);
+            targetDir, importGroups, packageIncludes, packageExcludes, headerFile, 
+            fileSystem, templating, schema, loader, System.out);
         generator.execute();
     }
 
@@ -105,16 +107,6 @@ public class GeneratorBean
     }
     
     /**
-     * Sets the headerPath.
-     *
-     * @param headerFile The licensePath to set.
-     */
-    public void setHeaderFile(String headerFile)
-    {
-        this.headerFile = headerFile;
-    }
-    
-    /**
      * Sets the importGroups.
      *
      * @param importGroups The packagePrefices to set.
@@ -122,8 +114,38 @@ public class GeneratorBean
     public void setImportGroups(String importGroups)
     {
         this.importGroups = importGroups;
+    }    
+
+    /**
+     * Sets the packageExcludes.
+     *
+     * @param packageExcludes The packageExcludes to set.
+     */
+    public void setPackageExcludes(String packageExcludes)
+    {
+        this.packageExcludes = packageExcludes;
+    }
+
+    /**
+     * Sets the packageIncludes.
+     *
+     * @param packageIncludes The packageIncludes to set.
+     */
+    public void setPackageIncludes(String packageIncludes)
+    {
+        this.packageIncludes = packageIncludes;
     }
     
+    /**
+     * Sets the header file path.
+     *
+     * @param headerFile The headerFile to set.
+     */
+    public void setHeaderFile(String headerFile)
+    {
+        this.headerFile = headerFile;
+    }
+
     /**
      * Sets the sourceFiles.
      *
