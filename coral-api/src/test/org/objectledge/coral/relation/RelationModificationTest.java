@@ -36,7 +36,7 @@ import org.objectledge.coral.store.Resource;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModificationTest.java,v 1.2 2004-03-01 16:41:56 zwierzem Exp $
+ * @version $Id: RelationModificationTest.java,v 1.3 2004-03-01 16:44:23 zwierzem Exp $
  */
 public class RelationModificationTest  extends MockObjectTestCase
 {
@@ -133,9 +133,9 @@ public class RelationModificationTest  extends MockObjectTestCase
 		try
 		{
 			remOper2 = new RelationModification.RemoveOperation(null, null);
-			fail("NP exception expected");
+			fail("exception expected");
 		}
-		catch(NullPointerException e)
+		catch(IllegalArgumentException e)
 		{
 			// ok!
 		}
