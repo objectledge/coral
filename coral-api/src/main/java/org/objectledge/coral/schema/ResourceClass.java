@@ -7,7 +7,7 @@ import org.objectledge.coral.security.PermissionAssociation;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClass.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: ResourceClass.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceClass
@@ -158,6 +158,7 @@ public interface ResourceClass
      * Returns <code>true</code> if the specified permission is associated
      * with this resource class.
      *
+     * @param permission the permission.
      * @return <code>true</code> if the specified permission is associated
      * with this resource class.
      */

@@ -20,7 +20,7 @@ import org.objectledge.coral.store.Resource;
  * object instead.</p>
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: QueryResults.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: QueryResults.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  */
 public interface QueryResults
 {
@@ -149,7 +149,7 @@ public interface QueryResults
      *         1..columnCount range.
      */
     public ResourceClass getColumnType(int index)
-        throws IllegalArgumentException;
+        throws IndexOutOfBoundsException;
     
     /**
      * Returns the type of resources in the specified column.
@@ -239,6 +239,8 @@ public interface QueryResults
          * <p>The indices in the array are 0 based, on contrary to the general
          * indexing of QueryResults columns. Thus the valid indexes are 0
          * .. columnCount-1 inclusive.</p>
+         * 
+         * @return the contents of the current row as an array.
          */
         public Resource[] getArray();
 
@@ -248,6 +250,8 @@ public interface QueryResults
          * <p>The indices in the array are 0 based, on contrary to the general
          * indexing of QueryResults columns. Thus the valid indexes are 0
          * .. columnCount-1 inclusive.</p>
+         * 
+         * @return the contents of the current row as an Resource id array.
          */
         public long[] getIdArray();
    }

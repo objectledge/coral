@@ -7,7 +7,7 @@ import org.objectledge.coral.security.Subject;
  *
  * @see EventService#addListener(Class,Object,Object)
  * @see EventService#removeListener(Class,Object,Object)
- * @version $Id: SubjectChangeListener.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: SubjectChangeListener.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface SubjectChangeListener
@@ -15,7 +15,7 @@ public interface SubjectChangeListener
     /**
      * Called when <code>Subject</code>'s data change.
      *
-     * @param Subject the subject that changed.
+     * @param subject the subject that changed.
      */
     public void subjectChanged(Subject subject);
 }

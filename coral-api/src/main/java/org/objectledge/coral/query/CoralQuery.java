@@ -4,7 +4,7 @@ package org.objectledge.coral.query;
  * Allows the application to perform queries on data contained in the Coral.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: CoralQuery.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: CoralQuery.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  */
 public interface CoralQuery
 {
@@ -13,7 +13,7 @@ public interface CoralQuery
      *
      * @param query the query.
      * @return query resuls.
-     * @throws MalformedQuery exception if the query has syntactic or semantic
+     * @throws MalformedQueryException if the query has syntactic or semantic
      *         errors and thus cannot be executed.
      */
     public QueryResults executeQuery(String query)
@@ -30,7 +30,9 @@ public interface CoralQuery
      * non-null values. To test a resource's property for being defined
      * (i.e. not null), use the DEFINED operator.</p>
      *
-     * @throws MalformedQuery exception if the query has syntactic or semantic
+     * @param query the query.
+     * @return a prepared query object.
+     * @throws MalformedQueryException if the query has syntactic or semantic
      *         errors and thus cannot be executed.
      */
     public PreparedQuery prepareQuery(String query)

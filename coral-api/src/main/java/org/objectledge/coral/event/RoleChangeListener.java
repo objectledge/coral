@@ -7,7 +7,7 @@ import org.objectledge.coral.security.Role;
  *
  * @see EventService#addListener(Class,Object,Object)
  * @see EventService#removeListener(Class,Object,Object)
- * @version $Id: RoleChangeListener.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: RoleChangeListener.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface RoleChangeListener
@@ -15,7 +15,7 @@ public interface RoleChangeListener
     /**
      * Called when <code>Role</code>'s data change.
      *
-     * @param Role the role that changed.
+     * @param role the role that changed.
      */
     public void roleChanged(Role role);
 }

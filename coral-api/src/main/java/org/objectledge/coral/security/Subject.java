@@ -6,7 +6,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: Subject.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: Subject.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Subject
@@ -54,6 +54,7 @@ public interface Subject
      * Resource parent-child relationships along with {@link
      * PermissionAssignment#isInherited()} checks.</p>
      *
+     * @param resource the resource to get permissions on.
      * @return the <code>Permission</code>s that the <code>Subject</code> has
      * over a specific <code>Resurce</code>.
      */
@@ -67,6 +68,8 @@ public interface Subject
      * Resource parent-child relationships along with
      * {@link PermissionAssignment#isInherited()} checks.</p>
      *
+     * @param resource the resource.
+     * @param permission the permission.
      * @return <code>true</code> if the <code>Subject</code> has a specific
      * <code>Permission</code> on a <code>Resource</code>.
      */

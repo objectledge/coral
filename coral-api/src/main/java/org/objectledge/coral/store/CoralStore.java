@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStore.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: CoralStore.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralStore
@@ -71,7 +71,7 @@ public interface CoralStore
      *
      * @param name the name.
      * @return the resource
-     * @throws IllegalStateExcption if the name denotes multiple resources,
+     * @throws IllegalStateException if the name denotes multiple resources,
      *         or does not exist.
      */
     public Resource getUniqueResource(String name)
@@ -93,7 +93,7 @@ public interface CoralStore
      * @param parent the parent resource.
      * @param name the name.
      * @return the resource.
-     * @throws IllegalStateExcption if the name denotes multiple resources,
+     * @throws IllegalStateException if the name denotes multiple resources,
      *         or does not exist.
      */
     public Resource getUniqueResource(Resource parent, String name)
@@ -122,8 +122,8 @@ public interface CoralStore
      * 
      * @param path a pathname
      * @return a resource
-     * @throws EntityDoesNotExistException
-     * @throws AmbigousEntityNameException
+     * @throws EntityDoesNotExistException if the resource does not exist.
+     * @throws AmbigousEntityNameException if more than one resource is denoted by given pathname.
      */
     public Resource getUniqueResourceByPath(String path)
         throws EntityDoesNotExistException, AmbigousEntityNameException;
@@ -184,11 +184,11 @@ public interface CoralStore
      *
      * @param resource the resource to remove.
      * @throws EntityInUseException if the resource has subresources.
-     * @throws IllegalArgumenteException if the resource has not been saved in
+     * @throws IllegalArgumentException if the resource has not been saved in
      *         the persistent storage yet.
      */
     public void deleteResource(Resource resource)
-        throws EntityInUseException;
+        throws EntityInUseException, IllegalArgumentException;
 
     /**
      * Delete a subtree of resources recursively.
@@ -203,8 +203,10 @@ public interface CoralStore
      * /tmp where the administrator may remove them manually. Detecting this
      * requires explicit reference tracking.</p> 
      * 
-     * @res the root of the tree to delete.
+     * @param res the root of the tree to delete.
      * @return the number of deleted resources.
+     * @throws EntityInUseException if one or more of the resources to be deleted is referenced
+     *         from other resources.
      */
     public int deleteTree(Resource res)
         throws EntityInUseException;

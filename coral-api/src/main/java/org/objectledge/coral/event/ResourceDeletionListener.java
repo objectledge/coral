@@ -20,7 +20,7 @@ public interface ResourceDeletionListener
 	/**
 	 * Called when <code>Resource</code> is being deleted.
 	 *
-	 * @param Resource the resource that is being deleted.
+	 * @param resource the resource that is being deleted.
 	 */
 	public void resourceDeleted(Resource resource);
 }

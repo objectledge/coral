@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceOwnership;
 /**
  * Convenience wrapper around <code>EventService</code>
  *
- * @version $Id: CoralEventWiteboard.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: CoralEventWiteboard.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralEventWiteboard
@@ -450,7 +450,8 @@ public interface CoralEventWiteboard
      * Fires a resource tree change event.
      *
      * @param inheritance inheritance inforamtion..
-     * @param oldParent the old parent of the moved <code>Resource</code>.
+     * @param added <code>true</code> if the inheritacnce record was added,
+     * <code>false</code> if removed.
      */
     public void fireResourceTreeChangeEvent(
         ResourceInheritance inheritance, boolean added);
@@ -459,7 +460,8 @@ public interface CoralEventWiteboard
      * Fires a resource tree change event.
      *
      * @param ownership ownership information.
-     * @param oldParent the old parent of the moved <code>Resource</code>.
+     * @param added <code>true</code> if the ownership record was added,
+     * <code>false</code> if removed.
      */
     public void fireResourceOwnershipChangeEvent(
         ResourceOwnership ownership, boolean added);

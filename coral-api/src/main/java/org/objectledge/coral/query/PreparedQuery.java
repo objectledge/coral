@@ -8,7 +8,7 @@ import org.objectledge.coral.schema.AttributeClass;
  * times.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: PreparedQuery.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: PreparedQuery.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  */
 public interface PreparedQuery
 {
@@ -47,7 +47,8 @@ public interface PreparedQuery
      *         specified indedx in the query
      * @throws IllegalArgumentException if a <code>null</code> value is used.
      */
-    public void setParameter(int index, Entity value);
+    public void setParameter(int index, Entity value)
+        throws IndexOutOfBoundsException, IllegalArgumentException;
 
     /**
      * Assigns a value to the positional parameter.
@@ -63,7 +64,8 @@ public interface PreparedQuery
      *         specified indedx in the query
      * @throws IllegalArgumentException if a <code>null</code> value is used.
      */
-    public void setParameter(int index, AttributeClass type, Object value);
+    public void setParameter(int index, AttributeClass type, Object value)
+        throws IndexOutOfBoundsException, IllegalArgumentException;
 
     // convenience methods for the well known attribute types ////////////////
     
@@ -75,7 +77,19 @@ public interface PreparedQuery
      * @throws IndexOutOfBoundsException if there is parameter by the
      *         specified indedx in the query
      */
-    public void setParameter(int index, boolean value);
+    public void setParameter(int index, boolean value)
+        throws IndexOutOfBoundsException;
+        
+    /**
+     * Assigns a value to the positional parameter.
+     *
+     * @param index the parameter index.
+     * @param value the parameter value.
+     * @throws IndexOutOfBoundsException if there is parameter by the
+     *         specified indedx in the query
+     */
+    public void setParameter(int index, int value)
+        throws IndexOutOfBoundsException;    
 
     /**
      * Assigns a value to the positional parameter.
@@ -85,7 +99,8 @@ public interface PreparedQuery
      * @throws IndexOutOfBoundsException if there is parameter by the
      *         specified indedx in the query
      */
-    public void setParameter(int index, int value);
+    public void setParameter(int index, long value)
+        throws IndexOutOfBoundsException;
 
     /**
      * Assigns a value to the positional parameter.
@@ -95,15 +110,6 @@ public interface PreparedQuery
      * @throws IndexOutOfBoundsException if there is parameter by the
      *         specified indedx in the query
      */
-    public void setParameter(int index, long value);
-
-    /**
-     * Assigns a value to the positional parameter.
-     *
-     * @param index the parameter index.
-     * @param value the parameter value.
-     * @throws IndexOutOfBoundsException if there is parameter by the
-     *         specified indedx in the query
-     */
-    public void setParameter(int index, String value);
+    public void setParameter(int index, String value)
+        throws IndexOutOfBoundsException;
 }

@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
  * Contains attribute flag constants and methods for coverting them to
  * printable strings and back.
  *
- * @version $Id: AttributeFlags.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: AttributeFlags.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeFlags
@@ -61,7 +61,7 @@ public class AttributeFlags
     public static final int SYNTHETIC = 0x80;
 
     /** The printable names of the flags. */
-    private static final String[] flagNames = {
+    private static final String[] FLAG_NAMES = {
         "REQUIRED", "READONLY", "DESCRIPTIVE", "BUILTIN", 
         "INDEXABLE", "CLASS_UNIQUE", "SIBLINGS_UNIQUE", "SYNTHETIC"
     };
@@ -73,22 +73,23 @@ public class AttributeFlags
      */
     public String[] getFlagNames()
     {
-        return flagNames;
+        return FLAG_NAMES;
     }
 
     /**
      * Converts a flag value into a printable name.
      *
      * @param flag the flag.
+     * @return the flag name.
      */
     public static String flagName(int flag)
     {
-        for(int i=0; i<flagNames.length; i++)
+        for(int i=0; i<FLAG_NAMES.length; i++)
         {
             int f = 1<<i;
             if((flag & f) == flag)
             {
-                return flagNames[i];
+                return FLAG_NAMES[i];
             }
         }
         throw new IllegalArgumentException("flag 0x"+Integer.toString(flag, 16)+" undefined");
@@ -98,12 +99,13 @@ public class AttributeFlags
      * Converts a flag name into a value.
      *
      * @param name the name.
+     * @return the flag value.
      */
     public static int flagValue(String name)
     {
-        for(int i=0; i<flagNames.length; i++)
+        for(int i=0; i<FLAG_NAMES.length; i++)
         {
-            if(flagNames[i].equals(name))
+            if(FLAG_NAMES[i].equals(name))
             {
                 return 1<<i;
             }
@@ -115,16 +117,17 @@ public class AttributeFlags
      * Converts a flag vector into a string.
      *
      * @param flags the flag vector.
+     * @return string representation of flag vector.
      */
     public static String toString(int flags)
     {
         StringBuffer buff = new StringBuffer();
-        for(int i=0; i<flagNames.length; i++)
+        for(int i=0; i<FLAG_NAMES.length; i++)
         {
             int f = 1<<i;
             if((flags & f) == f)
             {
-                buff.append(flagNames[i]);
+                buff.append(FLAG_NAMES[i]);
                 buff.append(" ");
             }
         }
@@ -140,6 +143,7 @@ public class AttributeFlags
      * Converts a string into a flag vector.
      *
      * @param string the string.
+     * @return flag vector value.
      */
     public static int parseFlags(String string)
     {

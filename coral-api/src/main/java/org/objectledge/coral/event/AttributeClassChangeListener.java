@@ -7,7 +7,7 @@ import org.objectledge.coral.schema.AttributeClass;
  *
  * @see EventService#addListener(Class,Object,Object)
  * @see EventService#removeListener(Class,Object,Object)
- * @version $Id: AttributeClassChangeListener.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: AttributeClassChangeListener.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface AttributeClassChangeListener
@@ -15,7 +15,7 @@ public interface AttributeClassChangeListener
     /**
      * Called when <code>AttributeClass</code>'s data change.
      *
-     * @param AttributeClass the attributeClass that changed.
+     * @param attributeClass the attributeClass that changed.
      */
     public void attributeClassChanged(AttributeClass attributeClass);
 }

@@ -7,7 +7,7 @@ import org.objectledge.coral.schema.ResourceClass;
  * Each {@link ResourceClass} has an associated set of <code>Permission</code>s
  * that can be granted upon it's instances.
  *
- * @version $Id: Permission.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: Permission.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Permission
@@ -26,8 +26,9 @@ public interface Permission
      * Returns <code>true</code> if this permission is assoicated with the
      * specified resource class.
      *
+     * @param permission the resource class.
      * @return <code>true</code> if this permission is assoicated with the
      * specified resource class.
      */
-    public boolean isAssociatedWith(Permission permission);
+    public boolean isAssociatedWith(ResourceClass permission);
 }

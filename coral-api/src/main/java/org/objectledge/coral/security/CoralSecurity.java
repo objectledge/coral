@@ -10,7 +10,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurity.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: CoralSecurity.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSecurity
@@ -54,6 +54,7 @@ public interface CoralSecurity
      * Creates a {@link Subject}.
      *
      * @param name the name of the class.
+     * @return the newly crated subject.
      * @throws EntityExistsException if a subject with the given name already
      *         exists in the system.
      */
@@ -63,7 +64,7 @@ public interface CoralSecurity
     /**
      * Removes a {@link Subject}.
      *
-     * @param attributeClass the {@link AttributeClass}.
+     * @param subject the subject to delete.
      * @throws EntityInUseException if there any security grants perfored for
      *         or by the subject, or resouruces created or modified by the
      *         subject
@@ -76,6 +77,7 @@ public interface CoralSecurity
      *
      * @param subject the subject to rename.
      * @param name the new name of the subject.
+     * @throws EntityExistsException if a subject with the specified name already exists. 
      */
     public void setName(Subject subject, String name)
         throws EntityExistsException;
@@ -95,7 +97,8 @@ public interface CoralSecurity
      * @throws IllegalArgumentException if the <code>subordinate</code> has no
      *         supervisor set.
      */
-    public void unsetSupervisor(Subject subordinate);
+    public void unsetSupervisor(Subject subordinate)
+        throws IllegalArgumentException;
     
     // Roles /////////////////////////////////////////////////////////////////
 
@@ -135,7 +138,7 @@ public interface CoralSecurity
      *
      * @param name the name.
      * @return the role
-     * @throws IllegalStateExcption if the name denotes multiple roles,
+     * @throws IllegalStateException if the name denotes multiple roles,
      *         or does not exist.
      */
     public Role getUniqueRole(String name)
@@ -145,6 +148,7 @@ public interface CoralSecurity
      * Creates a {@link Role}.
      *
      * @param name the name of the <code>Role</code>
+     * @return newly created role.
      */
     public Role createRole(String name);
     
@@ -171,7 +175,7 @@ public interface CoralSecurity
      *
      * @param superRole the implicating / containing role.
      * @param subRole the implied / contained role.
-     * @throws CircularDependecnyException if the <code>subRole</code> is
+     * @throws CircularDependencyException if the <code>subRole</code> is
      *         actually a super role of the <code>superRole</code>.
      */
     public void addSubRole(Role superRole, Role subRole)
@@ -272,7 +276,7 @@ public interface CoralSecurity
      *
      * @param name the name.
      * @return the permission
-     * @throws IllegalStateExcption if the name denotes multiple permissions,
+     * @throws IllegalStateException if the name denotes multiple permissions,
      *         or does not exist.
      */
     public Permission getUniquePermission(String name)
@@ -281,7 +285,8 @@ public interface CoralSecurity
     /**
      * Creates a {@link Permission}.
      *
-     * @param name the name of the class
+     * @param name the name of the class.
+     * @return newly created permission.
      */
     public Permission createPermission(String name);
     
@@ -350,7 +355,9 @@ public interface CoralSecurity
      * @param resource the involved resource.
      * @param role the involved role.
      * @param permission the involved permission.
-     * @param grantor the subject that creates the assignment.
+     * @param revoker the subject that creates the assignment.
+     * @throws IllegalArgumentException if no such permission grant exits.
+     * @throws SecurityException if the revoker is not allowed to delete the assignment.
      */
     public void revoke(Resource resource, Role role, Permission permission,
                        Subject revoker)

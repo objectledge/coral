@@ -5,7 +5,7 @@ package org.objectledge.coral.schema;
  * Thrown to indicate various schema integrity problems caused by adding
  * attributes, parent resource classes, and attribute flags modifications.
  *
- * @version $Id: SchemaIntegrityException.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: SchemaIntegrityException.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SchemaIntegrityException
@@ -104,7 +104,7 @@ public class SchemaIntegrityException
     /** 
      * Construcs a new exception object with the specified detail message.
      *
-     * @param mgs the detail message.
+     * @param msg the detail message.
      */
     public SchemaIntegrityException(String msg)
     {
@@ -115,7 +115,7 @@ public class SchemaIntegrityException
      * Construcs a new exception object with the specified detail message
      * and background information.
      *
-     * @param mgs the detail message.
+     * @param msg the detail message.
      * @param type the exception type.
      * @param attribute the involved attribute.
      * @param resourceClass the involved resource class.

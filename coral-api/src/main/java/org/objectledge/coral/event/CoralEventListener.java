@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceOwnership;
 /**
  * Event multiplexer class.
  *
- * @version $Id: CoralEventListener.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: CoralEventListener.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class CoralEventListener
@@ -160,9 +160,8 @@ public abstract class CoralEventListener
      * Called when permission associations on a resource class / perimission
      * change. 
      *
-     * @param resource the resource.
-     * @param pa the permission association.
-     * @param added <code>true</code> if the permission was added,
+     * @param association the permission association.
+     * @param added <code>true</code> if the permission association was added,
      *        <code>false</code> if removed.
      */
     public void permissionsChanged(PermissionAssociation association, boolean added)
@@ -179,9 +178,8 @@ public abstract class CoralEventListener
     /**
      * Called when permission assignemts on the <code>resource</code> change.
      *
-     * @param resource the resource.
-     * @param pa the permission assignment.
-     * @param added <code>true</code> if the permission was added,
+     * @param assignment the permission assignment.
+     * @param added <code>true</code> if the permission assignment was added,
      *        <code>false</code> if removed.
      */
     public void permissionsChanged(PermissionAssignment assignment, boolean added)
@@ -274,8 +272,9 @@ public abstract class CoralEventListener
     /**
      * Called when the parent of the <code>resource</code> changes.
      *
-     * @param resource the resource.
-     * @param oldParent the former parent of the resource.
+     * @param item the resource inheritance record.
+     * @param added <code>true</code> if the relationship was added,
+     *        <code>false</code> if removed.
      */
     public void resourceTreeChanged(ResourceInheritance item, boolean added)
     {
@@ -305,7 +304,7 @@ public abstract class CoralEventListener
     /**
      * Called when <code>Subject</code>'s data change.
      *
-     * @param Subject the subject that changed.
+     * @param item the Subject that changed.
      */
     public void subjectChanged(Subject item)
     {
@@ -319,7 +318,7 @@ public abstract class CoralEventListener
     /**
      * Called when <code>Role</code>'s data change.
      *
-     * @param Role the role that changed.
+     * @param item the Role that changed.
      */
     public void roleChanged(Role item)
     {
@@ -333,7 +332,7 @@ public abstract class CoralEventListener
     /**
      * Called when <code>Permission</code>'s data change.
      *
-     * @param Permission the permission that changed.
+     * @param item the Permission that changed.
      */
     public void permissionChanged(Permission item)
     {
@@ -347,7 +346,7 @@ public abstract class CoralEventListener
     /**
      * Called when <code>Resource</code> is being created.
      *
-     * @param the newly created resorce.
+     * @param resource the newly created resorce.
      */
     public void resourceCreated(Resource resource)
     {
@@ -361,8 +360,8 @@ public abstract class CoralEventListener
     /**
      * Called when <code>Resource</code>'s data change.
      *
-     * @param Resource the resource that changed.
-     * @param Subject the subject that performed the change.
+     * @param item the resource that changed.
+     * @param subject the subject that performed the change.
      */
     public void resourceChanged(Resource item, Subject subject)
     {
@@ -376,8 +375,7 @@ public abstract class CoralEventListener
 	/**
 	 * Called when <code>Resource</code> is deleted.
 	 *
-	 * @param Resource the resource that changed.
-	 * @param Subject the subject that performed the change.
+	 * @param item the resource that was deleted.
 	 */
 	public void resourceDeleted(Resource item)
 	{
@@ -391,7 +389,7 @@ public abstract class CoralEventListener
     /**
      * Called when <code>ResourceClass</code>'s data change.
      *
-     * @param ResourceClass the resourceClass that changed.
+     * @param item the ResourceClass that changed.
      */
     public void resourceClassChanged(ResourceClass item)
     {
@@ -405,7 +403,7 @@ public abstract class CoralEventListener
     /**
      * Called when <code>AttributeClass</code>'s data change.
      *
-     * @param AttributeClass the attributeClass that changed.
+     * @param item the AttributeClass that changed.
      */
     public void attributeClassChanged(AttributeClass item)
     {
@@ -419,7 +417,7 @@ public abstract class CoralEventListener
     /**
      * Called when <code>AttributeDefinition</code>'s data change.
      *
-     * @param AttributeDefinition the attributeDefinition that changed.
+     * @param item the AttributeDefinition that changed.
      */
     public void attributeDefinitionChanged(AttributeDefinition item)
     {

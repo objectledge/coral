@@ -9,7 +9,7 @@ import org.objectledge.coral.schema.AttributeClass;
  * Represents the results of a query as tuples of Resource properties.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: FilteredQueryResults.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: FilteredQueryResults.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  */
 public interface FilteredQueryResults
 {
@@ -77,7 +77,7 @@ public interface FilteredQueryResults
      *         1..columnCount range.
      */
     public AttributeClass getColumnType(int index)
-        throws IllegalArgumentException;    
+        throws IndexOutOfBoundsException;    
 
     // nested inteface ///////////////////////////////////////////////////////
     
@@ -124,6 +124,8 @@ public interface FilteredQueryResults
          * <p>The indices in the array are 0 based, on contrary to the general
          * indexing of QueryResults columns. Thus the valid indexes are 0
          * .. columnCount-1 inclusive.</p>
+         * 
+         * @return the current row contents.
          */
         public Object[] getArray();
     }

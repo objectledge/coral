@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Represents a resource.
  *
- * @version $Id: Resource.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: Resource.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Resource
@@ -85,6 +85,7 @@ public interface Resource
     /**
      * Returns the access control list entries for a specific role.
      *
+     * @param role the role.
      * @return the access control list entries for a specific role.
      */
     public PermissionAssignment[] getPermissionAssignments(Role role);
@@ -108,7 +109,8 @@ public interface Resource
      * @throws UnknownAttributeException if <code>attribute</code> does not
      *         belong to the resource's class.
      */
-    public boolean isDefined(AttributeDefinition attribute);
+    public boolean isDefined(AttributeDefinition attribute)
+        throws UnknownAttributeException;
     
     /**
      * Retrieves the value of a specific attribute.
@@ -176,8 +178,7 @@ public interface Resource
      *
      * @param subject the subject that performs the update. 
      */
-    public void update(Subject subject)
-        throws IllegalArgumentException, UnknownAttributeException;
+    public void update(Subject subject);
 
     /**
      * Reverts the Resource object to the state present in the persistent

@@ -14,7 +14,7 @@ import org.objectledge.coral.store.Resource;
  *  or all resources (null anchor). </p>
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ResourceTreeDeletionListener.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: ResourceTreeDeletionListener.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  */
 public interface ResourceTreeDeletionListener
 {
@@ -22,7 +22,7 @@ public interface ResourceTreeDeletionListener
 	 * Called when <code>Resource</code> is being moved
 	 * to temp node during tree deletion.
 	 *
-	 * @param Resource the resource that is being moved.
+	 * @param resource the resource that is being moved.
 	 */
 	public void resourceTreeDeleted(Resource resource);
 }

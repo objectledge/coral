@@ -23,7 +23,7 @@ import org.objectledge.coral.store.Resource;
  * </ul>
  * </p>
  * 
- * @version $Id: AttributeHandler.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: AttributeHandler.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface AttributeHandler
@@ -133,7 +133,7 @@ public interface AttributeHandler
      * <p>The returned object's must be written to be safely used by multiple
      * threads at the same time.</p>
      *
-     * @returns a <code>Comparator</code> or <code>null</code> if the
+     * @return a <code>Comparator</code> or <code>null</code> if the
      *          attribute class does not have sensible comparison semantics.
      */
     public Comparator getComparator();
@@ -196,7 +196,7 @@ public interface AttributeHandler
      *
      * @param domain value domain constraint.
      * @param value an attribute value.
-     * @throws ConstraintViolationExcepion if the value does not fulfill the constraint.
+     * @throws ConstraintViolationException if the value does not fulfill the constraint.
      */
     public void checkDomain(String domain, Object value)
         throws ConstraintViolationException;
@@ -205,6 +205,8 @@ public interface AttributeHandler
     
     /**
      * Is a composite attribute (wraps the actual values iside an object).
+     * 
+     * @return <code>true</code> if the attribute is composite. 
      */
     public boolean isComposite();
     

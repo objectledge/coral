@@ -10,7 +10,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchema.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: CoralSchema.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSchema
@@ -111,7 +111,7 @@ public interface CoralSchema
      *         specify a valid JavaClass.
      */
     public void setHandlerClass(AttributeClass attributeClass, 
-                                String handlerClas)
+                                String handlerClass)
         throws JavaClassException;
     
     /**
@@ -134,20 +134,24 @@ public interface CoralSchema
      * @param attributeClass the class of the new attribute.
      * @param domain the value domain constraint.
      * @param flags the flags of the new Attribute.
+     * @return a newly created attribute instance.
      */
     public AttributeDefinition createAttribute(String name, AttributeClass attributeClass,
                                                String domain, int flags);
 
     /**
      * Returns all attributes defined by classes in the system.
+     * 
+     * @return all attributes defined by classes in the system.
      */
     public AttributeDefinition[] getAttribute();
 
     /**
      * Returns an attribute definition with the specified id.
      * 
-     * @param long attribute definition identifier.
+     * @param id the attribute definition identifier.
      * @return the attribute definition.
+     * @throws EntityDoesNotExistException if no attribute with given id exists.
      */
     public AttributeDefinition getAttribute(long id)
         throws EntityDoesNotExistException;
@@ -160,11 +164,11 @@ public interface CoralSchema
      *
      * @param resourceClass the resource class to modify.
      * @param attribute the attribute to remove.
-     * @param throws IllegalArgumentException if the attribute is not declared
+     * @throws IllegalArgumentException if the attribute is not declared
      *        by the resourceClass.
      */
-    public void deleteAttribute(ResourceClass resourceClass, 
-                                AttributeDefinition attribute);
+    public void deleteAttribute(ResourceClass resourceClass, AttributeDefinition attribute)
+        throws IllegalArgumentException;
 
     /**
      * Renames an attribute.
@@ -182,7 +186,7 @@ public interface CoralSchema
      *
      * @param attribute the attribute to modify.
      * @param flags the new value of flags.
-     * @throws SchemaIntegrityExcpetion if performing the operation would
+     * @throws SchemaIntegrityException if performing the operation would
      *         introduce schema incositencies.
      */
     public void setFlags(AttributeDefinition attribute, int flags)
@@ -254,7 +258,7 @@ public interface CoralSchema
     /**
      * Renames an <code>ResourceClass</code>.
      *
-     * @param <code>ResourceClass</code> the resource class to rename.
+     * @param resourceClass <code>ResourceClass</code> the resource class to rename.
      * @param name the new name.
      * @throws EntityExistsException if a resource class with that name already
      *         exists in the system.
@@ -293,7 +297,7 @@ public interface CoralSchema
      *         specify a valid JavaClass.
      */
     public void setHandlerClass(ResourceClass resourceClass, 
-                                String handlerClas)
+                                String handlerClass)
         throws JavaClassException;
 
     /**
@@ -304,7 +308,7 @@ public interface CoralSchema
      * @param value initial value of the attribute that should be set for
      *        existing resources of this class. May be <code>null</code> for
      *        non-REQUIRED attributes.
-     * @throws SchemaIntegrityExcpetion if performing the operation would
+     * @throws SchemaIntegrityException if performing the operation would
      *         introduce schema incositencies.
      * @throws ValueRequiredException if <code>null</code> value was provided
      *         for a REQUIRED attribute.
@@ -326,9 +330,7 @@ public interface CoralSchema
      *        may be <code>null</code>.
      * @throws CircularDependencyException if the <code>child</code> is
      *         actually a parent of <code>parent</code>
-     * @throws InvalidAttributeException if the <code>parent</code> is already
-     *         a parent of <code>child</code>
-     * @throws SchemaIntegrityExcpetion if performing the operation would
+     * @throws SchemaIntegrityException if performing the operation would
      *         introduce schema incositencies.
      * @throws ValueRequiredException if values for any of parent class
      *         REQUIRED attributes are missing from <code>attributes</code>

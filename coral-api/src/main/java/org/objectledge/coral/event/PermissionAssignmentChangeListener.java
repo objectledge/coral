@@ -8,7 +8,7 @@ import org.objectledge.coral.security.PermissionAssignment;
  *
  * @see EventService#addListener(Class,Object,Object)
  * @see EventService#removeListener(Class,Object,Object)
- * @version $Id: PermissionAssignmentChangeListener.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: PermissionAssignmentChangeListener.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface PermissionAssignmentChangeListener
@@ -16,9 +16,8 @@ public interface PermissionAssignmentChangeListener
     /**
      * Called when permission assignemts on the <code>resource</code> change.
      *
-     * @param resource the resource.
-     * @param pa the permission assignment.
-     * @param added <code>true</code> if the permission was added,
+     * @param assignment the permission assignment.
+     * @param added <code>true</code> if the permission assignment was added,
      *        <code>false</code> if removed.
      */
     public void permissionsChanged(PermissionAssignment assignment, boolean added);

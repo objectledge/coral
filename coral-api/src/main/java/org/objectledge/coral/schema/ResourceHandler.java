@@ -11,7 +11,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages persistency of resources belonging to a specific class .
  *
- * @version $Id: ResourceHandler.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: ResourceHandler.java,v 1.2 2004-02-18 15:08:21 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceHandler
@@ -182,7 +182,7 @@ public interface ResourceHandler
      * <p>This method may be called during deletion of a group of 
      * interdependant resources.</p>
      * 
-     * @param value attribute value.
+     * @param resource the resource to clear.
      */
     public void clearResourceReferences(Resource resource);
 }
