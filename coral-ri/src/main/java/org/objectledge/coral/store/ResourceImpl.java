@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.15 2004-09-27 09:12:52 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.16 2004-10-05 07:38:25 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -256,10 +256,10 @@ public class ResourceImpl
             record.setNull("parent");
         }
         record.setLong("created_by", creator.getId());
-        record.setDate("creation_time", created);
+        record.setTimestamp("creation_time", created);
         record.setLong("owned_by", owner.getId());
         record.setLong("modified_by", modifier.getId());
-        record.setDate("modification_time", modified);
+        record.setTimestamp("modification_time", modified);
     }
 
     /**
