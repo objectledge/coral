@@ -30,6 +30,7 @@ package org.objectledge.coral.tools.generator;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.objectledge.coral.schema.ResourceClassFlags;
+import org.objectledge.coral.tools.BatchLoader;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
@@ -51,7 +53,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.11 2004-04-01 08:08:28 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.12 2004-04-29 10:05:38 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -81,7 +83,10 @@ public class GeneratorComponent
     private Schema schema;
     
     /** The RML loader. */
-    private RMLModelLoader loader;
+    private RMLModelLoader rmlLoader;
+    
+    /** The batch loader. */
+    private BatchLoader batchLoader;
     
     /** The templating component. */
     private Templating templating;
@@ -133,7 +138,15 @@ public class GeneratorComponent
         this.fileSystem = fileSystem;
         this.templating = templating;
         this.schema = schema;
-        this.loader = loader;
+        this.rmlLoader = loader;
+        this.batchLoader = new BatchLoader(fileSystem, fileEncoding)
+        {
+            protected void load(Reader in)
+                throws Exception
+            {
+                rmlLoader.load(in);
+            }
+        };
         this.out = out;
         
         this.fileEncoding = fileEncoding;
@@ -298,44 +311,7 @@ public class GeneratorComponent
     void loadSources(String path)
         throws Exception
     {
-        if(!fileSystem.exists(path))
-        {
-            throw new IOException("missing listing file "+path);
-        }
-        LineNumberReader lnr = new LineNumberReader(fileSystem.
-            getReader(path, fileEncoding));
-        while(lnr.ready())
-        {
-            String line = lnr.readLine().trim();
-            if(line.length() == 0 || line.charAt(0) == '#')
-            {
-                continue;
-            }
-            if(line.startsWith("@include "))
-            {
-                String included = line.substring(9);
-                if(!fileSystem.exists(included))
-                {
-                    throw new IOException("missing include file "+included+" in "+path+
-                        " at line "+lnr.getLineNumber()); 
-                }
-                loadSources(included);
-                continue;
-            }
-            if(!fileSystem.exists(line))
-            {
-                throw new IOException("missing source file "+line+" in "+path+
-                    " at line "+lnr.getLineNumber());
-            }
-            try
-            {
-                loader.load(fileSystem.getReader(line, fileEncoding));
-            }
-            catch(Exception e)
-            {
-                throw new Exception("failed to load source file "+line, e);
-            }
-        }    
+        batchLoader.loadBatch(path);
     }
 
     String classInterfacePath(ResourceClass rc)
