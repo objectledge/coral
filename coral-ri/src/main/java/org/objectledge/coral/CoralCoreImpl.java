@@ -62,16 +62,17 @@ import org.objectledge.event.EventWhiteboardFactory;
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoContainer;
+import org.picocontainer.Startable;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
 /**
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.14 2005-01-21 06:48:37 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.15 2005-01-25 02:52:19 rafal Exp $
  */
 public class CoralCoreImpl
-    implements CoralCore
+    implements CoralCore, Startable
 {
     private CoralRegistry coralRegistry;
     private CoralSchema coralSchema;
@@ -83,6 +84,7 @@ public class CoralCoreImpl
     private CoralQuery coralQuery;
     private Instantiator instantiator;
     private RMLParserFactory rmlParserFactory;
+    private boolean preload;
     
     private MutablePicoContainer container;
     
@@ -150,7 +152,11 @@ public class CoralCoreImpl
         coralRelationQuery = (CoralRelationQuery)container.
             getComponentInstance(CoralRelationQuery.class);
         coralQuery = (CoralQuery)container.getComponentInstance(CoralQuery.class);
-
+        this.preload = preload;        
+    }
+    
+    public void start()
+    {
         if(preload)
         {
             List startupAdapters = container.getComponentAdaptersOfType(PreloadingParticipant.class);
@@ -170,6 +176,11 @@ public class CoralCoreImpl
                 throw new ComponentInitializationError("startup failed", e);
             }
         }
+    }
+    
+    public void stop()
+    {
+        
     }
 
     /** 
