@@ -30,6 +30,7 @@ package org.objectledge.coral.i18n;
 
 import java.util.Locale;
 
+import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.i18n.I18n;
 import org.objectledge.i18n.I18nTool;
@@ -40,7 +41,7 @@ import org.objectledge.templating.tools.ContextToolFactory;
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.2 2004-07-08 08:31:03 pablo Exp $
+ * @version $Id: CoralI18nTool.java,v 1.3 2004-07-12 17:31:26 zwierzem Exp $
  */
 public class CoralI18nTool extends I18nTool
 {
@@ -53,6 +54,17 @@ public class CoralI18nTool extends I18nTool
     public CoralI18nTool(I18n i18n, ContextToolFactory factory, Locale locale, String prefix)
     {
         super(i18n, factory, locale, prefix);
+    }
+
+    /**
+     * Get the localized name of the resource class.
+     * 
+     * @param resourceClass the resource class.
+     * @return the localized name of the resource class.
+     */
+    public String getName(ResourceClass resourceClass)
+    {
+        return get("resource."+resourceClass.getName(), resourceClass.getName());
     }
 
     /**
