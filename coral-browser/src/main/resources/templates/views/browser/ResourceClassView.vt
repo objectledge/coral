@@ -1,4 +1,4 @@
-$page_tool.addScriptLink('js/WinPopup.js')
+$pageTool.addScriptLink('js/WinPopup.js')
 
 <script type="text/javascript">
 <!--
