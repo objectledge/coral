@@ -42,7 +42,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * An implemention of the Instantiator interface using the PicoContainer.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PicoInstantiator.java,v 1.4 2004-03-16 13:33:34 fil Exp $
+ * @version $Id: PicoInstantiator.java,v 1.5 2004-05-04 12:45:50 fil Exp $
  */
 public class PicoInstantiator 
     implements Instantiator
@@ -65,13 +65,21 @@ public class PicoInstantiator
     public Class loadClass(String className) 
         throws ClassNotFoundException
     {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if(cl == null)
+        ClassLoader cl = null;
+        try
         {
-            cl = getClass().getClassLoader();
+            cl = Thread.currentThread().getContextClassLoader();
+            if(cl == null)
+            {
+                cl = getClass().getClassLoader();
+            }
+            return cl.loadClass(className);
         }
-        return cl.loadClass(className);
-    }
+        catch(ClassNotFoundException e)
+        {
+            throw new ClassNotFoundException("could not find "+className+" in "+cl, e);
+        }
+    }        
 
     /** 
      * {@inheritDoc}
