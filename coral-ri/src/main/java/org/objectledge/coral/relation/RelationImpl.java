@@ -27,10 +27,6 @@
 //
 package org.objectledge.coral.relation;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,8 +39,6 @@ import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
-import org.objectledge.database.Database;
-import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
@@ -53,7 +47,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.23 2005-01-26 06:33:54 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.24 2005-01-27 03:23:39 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -66,9 +60,9 @@ implements Relation
     private CoralRelationManager coralRelationManager;
 
     /** Map r1 -&gt; set of r2. */
-    private Map rel;
+    private Map rel = new HashMap();
     /** Map r2 -&gt; set of r1. */
-    private Map invRel;
+    private Map invRel = new HashMap();
 	/** Number of unique resource pairs. */
 	private int resourceIdPairsNum = 0;
 
@@ -81,7 +75,6 @@ implements Relation
      * @param store used to retrieve resources
      * @param coralRelationManager used to retrieve relation definitions
      * @param name name of the relation
-     * @param definition relation definition
      */
     public RelationImpl(Persistence persistence, CoralStore store, 
         CoralRelationManager coralRelationManager, String name)
