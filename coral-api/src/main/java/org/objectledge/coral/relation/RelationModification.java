@@ -37,7 +37,7 @@ import org.objectledge.coral.store.Resource;
  * A class representing a batch of {@link Relation} modifications.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModification.java,v 1.6 2004-03-02 10:03:47 zwierzem Exp $
+ * @version $Id: RelationModification.java,v 1.7 2004-03-02 17:15:02 zwierzem Exp $
  */
 public class RelationModification
 {
@@ -224,7 +224,7 @@ public class RelationModification
 		 */
 		public boolean equals(Object o)
 		{
-			if(o.getClass().equals(this.getClass()) && o instanceof ModificationOperation)
+			if(o instanceof ModificationOperation)
 			{
 				ModificationOperation lp = (ModificationOperation)o;
 				return (this.id1 == lp.id1) && (this.id2 == lp.id2);
