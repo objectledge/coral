@@ -29,6 +29,8 @@ package org.objectledge.session;
 
 import java.security.Principal;
 
+import org.apache.commons.pool.KeyedObjectPool;
+import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.event.CoralEventWhiteboard;
@@ -42,7 +44,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.2 2004-03-08 07:22:49 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.3 2004-03-08 08:06:46 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -55,15 +57,33 @@ public class CoralSessionImpl
     
     private Subject subject;
     private Principal principal;
+    
+    private KeyedObjectPool pool;
+    private boolean open;
 
-    CoralSessionImpl(CoralCore coral, Subject subject, Principal principal)
+    CoralSessionImpl(CoralCore coral, KeyedObjectPool pool)
     {
-        this.subject = subject;
-        this.principal = principal;
+        this.pool = pool;
+                
         schema = new SessionCoralSchema(coral, this);
         security = new SessionCoralSecurity(coral, this);
         store = new SessionCoralStore(coral, this);
-        eventWhiteboard = new SessionCoralEventWhiteboard(coral, this);        
+        eventWhiteboard = new SessionCoralEventWhiteboard(coral, this);
+    }
+
+    void open(Principal principal, Subject subject)
+    {
+        this.subject = subject;
+        this.principal = principal;
+        open = true;
+    }
+    
+    void checkOpen()
+    {
+        if(!open)
+        {
+            throw new IllegalStateException("session is closed");
+        }
     }
 
     /** 
@@ -71,7 +91,15 @@ public class CoralSessionImpl
      */
     public void close()
     {
-        // TODO Auto-generated method stub
+        open = false;
+        try
+        {
+            pool.returnObject(this, principal);
+        }
+        catch(Exception e)
+        {
+            throw new BackendException("failed to recycle session object");
+        }
     }
 
     /** 
