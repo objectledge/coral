@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractEntityTest.java,v 1.4 2004-05-28 10:04:12 fil Exp $
+ * @version $Id: AbstractEntityTest.java,v 1.5 2004-08-18 13:51:54 rafal Exp $
  */
 public class AbstractEntityTest extends LedgeTestCase
 {
@@ -99,16 +99,8 @@ public class AbstractEntityTest extends LedgeTestCase
         Entity blue1 = new BlueEntity((Persistence)mockPersistence.proxy(), "<blue 1>");
         ((AbstractEntity)blue1).setId(1);
         String s = blue1.toString();
-        int i1 = s.indexOf('@');
-        int i2 = s.indexOf(':');
-        assertTrue(i1 > 0);
-        assertTrue(i1 > 0);
-        String c = s.substring(0, i1);
-        String obj = s.substring(i1+1, i2);
-        String id = s.substring(i2+1);
-        assertEquals(blue1.getClass().getName(), c);
-        assertEquals(Integer.toString(System.identityHashCode(blue1), 16), obj);
-        assertEquals(Integer.toString(blue1.getClass().hashCode() ^ 0x11111111, 16), id);
+        assertTrue(s.indexOf("#1") > 0);
+        assertTrue(s.indexOf("<blue 1>") > 0);
     }
     
     public void testSetters()
