@@ -45,7 +45,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationTest.java,v 1.4 2005-01-18 11:01:15 rafal Exp $
+ * @version $Id: CoralRelationTest.java,v 1.5 2005-03-29 12:53:04 zwierzem Exp $
  */
 public class CoralRelationTest extends CoralTestCase
 {
@@ -139,7 +139,8 @@ public class CoralRelationTest extends CoralTestCase
 		}
 		
 		Relation[] relations = session.getRelationManager().getRelation();
-		assertEquals(relations.length, 2);
+		assertEquals(relations.length, 3);
+            // the org.objectledge.coral.relation.ResourceHierarchyRelationImpl is also returned
 		if(relations[0].equals(relation))
 		{
 			assertEquals(relations[1], relation2);
