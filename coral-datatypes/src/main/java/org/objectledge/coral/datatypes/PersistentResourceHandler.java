@@ -1,13 +1,17 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.ComponentInitializationError;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
@@ -15,6 +19,8 @@ import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
+import org.objectledge.database.persistence.DefaultInputRecord;
+import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
@@ -24,10 +30,10 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.5 2004-05-06 11:19:06 pablo Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.6 2004-06-29 09:31:50 fil Exp $
  */
 public class PersistentResourceHandler
-    extends ResourceHandlerBase
+    extends AbstractResourceHandler
 {
     // instance variables ////////////////////////////////////////////////////
 
@@ -36,6 +42,9 @@ public class PersistentResourceHandler
     
     /** The instance factory. */
     protected PersistentFactory factory;
+    
+    /** Persistent object instance for the purpose of query building. */
+    protected Persistent instance;
 
     /**
      * Constructor.
@@ -46,10 +55,11 @@ public class PersistentResourceHandler
      * @param persistence the persistence.
      * @param logger the logger.
      * @param instantiator the instantiator.
+     * @throws Exception if there is a problem instantiating an resource object.
      */
     public PersistentResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
          ResourceClass resourceClass, 
-         Persistence persistence, Logger logger, Instantiator instantiator)
+         Persistence persistence, Logger logger, Instantiator instantiator) throws Exception
     {
         super(coralSchema, coralSecurity, instantiator, resourceClass);
         this.persistence = persistence;
@@ -59,6 +69,7 @@ public class PersistentResourceHandler
             throw new ComponentInitializationError("resource class "+ resourceClass.getName()+
                                                     " has no DB TABLE set");
         }
+        instance = (Persistent)instantiator.newInstance(resourceClass.getJavaClass());
         factory = instantiator.getPersistentFactory(resourceClass.getJavaClass());
     }
 
@@ -81,9 +92,8 @@ public class PersistentResourceHandler
     {
         try
         {
-            PersistentResource resource = (PersistentResource)factory.newInstance();
-            resource.createResource(delegate, attributes, conn);
-            persistence.save(resource);
+            Resource resource = super.create(delegate, attributes, conn);
+            persistence.save((PersistentResource)resource);
             return resource;
         }
         catch(Exception e)
@@ -104,76 +114,14 @@ public class PersistentResourceHandler
     public void delete(Resource resource, Connection conn)
         throws SQLException
     {
-        checkResource(resource);
         try
         {
-            ((PersistentResource)resource).deleteResource(conn);
+            super.delete(resource, conn);
             persistence.delete((PersistentResource)resource);
         }
         catch(Exception e)
         {
             throw new BackendException("failed to delete resource", e);
-        }
-    }
-
-    /**
-     * Retrives a resource from the persistent storage.
-     *
-     * @param delegate the security delegate {@link Resource} object.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @return the resource object.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     */
-    public Resource retrieve(Resource delegate, Connection conn)
-        throws SQLException
-    {
-        try
-        {
-            List list = persistence.load("resource_id = "+delegate.getId(), factory);
-            if(list.size() == 0)
-            {
-                throw new BackendException("resource "+delegate.getId()+" is missing from db");
-            }
-            if(list.size() > 1)
-            {
-                throw new BackendException("resource id "+delegate.getId()+" not unique");
-            }
-            PersistentResource resource = (PersistentResource)list.get(0);
-            resource.loadResource(delegate);
-            return resource;
-        }
-        catch(Exception e)
-        {
-            if(e instanceof BackendException)
-            {
-                throw (BackendException)e;
-            }
-            throw new BackendException("failed to retrieve resource", e);
-        }
-    }
-
-    /**
-     * Reverts the state of a resource from the persistent storage.
-     *
-     * @param resource the resource.
-     * @param conn the JDBC <code>Connection</code> to use. Needed to perform
-     *        the operation as a part of a JDBC transaction.
-     * @throws SQLException in case of database problems. The caller metod
-     *         should consider rolling back the whole transaction.
-     */
-    public void revert(Resource resource, Connection conn)
-        throws SQLException
-    {
-        checkResource(resource);
-        try
-        {
-            persistence.revert((Persistent)resource);        
-        }
-        catch(Exception e)
-        {
-            throw new BackendException("failed to revert resource", e);
         }
     }
 
@@ -189,10 +137,10 @@ public class PersistentResourceHandler
     public void update(Resource resource, Connection conn)
         throws SQLException
     {
-        checkResource(resource);
         try
         {
-            persistence.save((Persistent)resource);
+            super.delete(resource, conn);
+            persistence.save((PersistentResource)resource);
         }
         catch(Exception e)
         {
@@ -295,12 +243,28 @@ public class PersistentResourceHandler
      *
      * @param resource the resource to check.
      */
-    private void checkResource(Resource resource)
+    protected void checkResource(Resource resource)
     {
         if(!(resource instanceof PersistentResource))
         {
             throw new ClassCastException("PersistenceResourceHanler won't operate on "+
                                          resource.getClass().getName());
         }
+    }
+    
+    protected Object getData(Resource delegate, Connection conn) throws SQLException
+    {
+        PreparedStatement statement = DefaultInputRecord.
+        	getSelectStatement(delegate.getId(), instance, conn);
+        ResultSet rs = statement.executeQuery();
+        InputRecord record = new DefaultInputRecord(rs);
+        Map data = new HashMap();
+        data.put(new Long(delegate.getId()), record);
+        return data;
+    }
+
+    protected Object getData(ResourceClass rc, Connection conn) throws SQLException
+    {
+        return null;
     }
 }
