@@ -45,7 +45,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationTest.java,v 1.2 2004-03-17 15:35:01 zwierzem Exp $
+ * @version $Id: CoralRelationTest.java,v 1.3 2004-03-18 17:20:50 zwierzem Exp $
  */
 public class CoralRelationTest extends CoralTestCase
 {
@@ -138,11 +138,50 @@ public class CoralRelationTest extends CoralTestCase
 			// ok
 		}
 		
+		Relation[] relations = session.getRelationManager().getRelation();
+		assertEquals(relations.length, 2);
+		if(relations[0].equals(relation))
+		{
+			assertEquals(relations[1], relation2);
+		}
+		else if(relations[0].equals(relation2))
+		{
+			assertEquals(relations[1], relation);
+		}
+		
+		session.getRelationManager().setName(relation2, "newRelation");
+		expectedTable = new DefaultTable("coral_relation",
+			coralRelationColumns);
+		expectedTable.addRow(new Object[] { new Long(relation2.getId()), "newRelation" });
+		expectedTable.addRow(new Object[] { new Long(relation.getId()), "relation" });
+
+		actualTable = databaseConnection.createQueryTable("coral_relation",
+			"SELECT * FROM coral_relation ORDER BY name");
+		databaseConnection.close();
+		assertEquals(expectedTable, actualTable);
+		try
+		{
+			session.getRelationManager().setName(relation2, "relation");
+			fail("should throw exception");
+		}
+		catch (EntityExistsException e)
+		{
+			// ok
+		}
+		
 		session.getRelationManager().deleteRelation(relation2);
 		expectedTable = new DefaultTable("coral_relation",
 			coralRelationColumns);
 		expectedTable.addRow(new Object[] { new Long(relation.getId()), "relation" });
 
+		actualTable = databaseConnection.createQueryTable("coral_relation",
+			"SELECT * FROM coral_relation ORDER BY name");            
+		databaseConnection.close();
+		assertEquals(expectedTable, actualTable);
+
+		session.getRelationManager().deleteRelation(relation.getInverted());
+		expectedTable = new DefaultTable("coral_relation",
+			coralRelationColumns);
 		actualTable = databaseConnection.createQueryTable("coral_relation",
 			"SELECT * FROM coral_relation ORDER BY name");            
 		databaseConnection.close();
