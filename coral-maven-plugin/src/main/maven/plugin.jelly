@@ -31,6 +31,7 @@
   xmlns:m="jelly:maven"
   xmlns:define="jelly:define"
   xmlns:sql="jelly:sql"
+  xmlns:util="jelly:util"
   xmlns:coral="coral">
 
   <!--
@@ -147,28 +148,36 @@
     <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageExcludes" property="coral.generator.package.excludes"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorHeaderFile" property="coral.generator.header.file"/>
     <m:pluginVar plugin="coral-maven-plugin" var="generatorSourcesList" property="coral.generator.sources.list"/>
-    <j:set var="generatorTargetDirectory" value="${pom.build.sourceDirectory.substring(basedir.length())}"/>
-    <m:paramCheck value="${generatorSourcesList}" message="coral.generator.sources.list undefined" fail="true"/>
-    <j:if test="${maven.debugOn}">
-      <echo>
-        coral.generator.file.encoding=${generatorFileEncoding}
-	    coral.generator.import.groups=${generatorImportGroups}
-	    coral.generator.package.includes=${generatorPackageIncludes}
-	    coral.generator.package.excludes=${generatorPackageExcludes}
-	    coral.generator.header.file=${generatorHeaderFile}
-	    coral.generator.sources.list=${generatorSourcesList}
-	    coral.generator.target.directory=${generatorTargetDirectory}
-	  </echo>
-	</j:if>
-    <coral:generator
-      baseDir="${basedir}"
-      fileEncoding="${generatorFileEncoding}"
-      importGroups="${generatorImportGroups}"
-      packageIncludes="${generatorPackageIncludes}"
-      packageExcludes="${generatorPackageExcludes}"
-      headerFile="${generatorHeaderFile}"
-      sourceFiles="${generatorSourcesList}"
-      targetDir="${generatorTargetDirectory}"/>
+    <j:choose>
+      <j:when test="${empty(pom.build.sourceDirectory)}">
+        <echo>No Java sources defined - aborting</echo>
+      </j:when>
+      <j:when test="${empty(generatorSourcesList)}">
+        <echo>No RML sources defined - aborting</echo>
+      </j:when>
+      <j:otherwise>
+	    <j:if test="${maven.debugOn}">
+	      <echo>
+	        coral.generator.file.encoding=${generatorFileEncoding}
+		    coral.generator.import.groups=${generatorImportGroups}
+		    coral.generator.package.includes=${generatorPackageIncludes}
+		    coral.generator.package.excludes=${generatorPackageExcludes}
+		    coral.generator.header.file=${generatorHeaderFile}
+		    coral.generator.sources.list=${generatorSourcesList}
+		    coral.generator.target.directory=${pom.build.sourceDirectory}
+		  </echo>
+		</j:if>
+	    <coral:generator
+	      baseDir="${basedir}"
+	      fileEncoding="${generatorFileEncoding}"
+	      importGroups="${generatorImportGroups}"
+	      packageIncludes="${generatorPackageIncludes}"
+	      packageExcludes="${generatorPackageExcludes}"
+	      headerFile="${generatorHeaderFile}"
+	      sourceFiles="${generatorSourcesList}"
+	      targetDir="${pom.build.sourceDirectory}"/>
+      </j:otherwise>
+    </j:choose>
   </goal>
 
   <!-- // database initializer ////////////////////////////////////////////////////////////// -->
