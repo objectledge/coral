@@ -28,15 +28,24 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.1 2004-04-23 13:04:01 fil Exp $ -->
-<project>
+<!-- $Id: maven.xml,v 1.2 2004-04-26 13:20:29 fil Exp $ -->
+<project
+  xmlns:j="jelly:core"
+  xmlns:sql="jelly:sql"
+  xmlns:coral="coral">
+
   <preGoal name="java:compile">
     <attainGoal name="coral:generator"/>
   </preGoal>
   
   <goal name="plugin:testPluginFeature">
     <attainGoal name="coral:init"/>
-    <echo>init successful</echo>
+    <coral:dataSource var="coralDs"/>
+    <sql:query var="result" dataSource="${coralDs}" sql="SELECT * FROM coral_resource_class"/>
+    <j:if test="${result.rowCount() == 0}">
+      <fail>database initialization failed</fail>
+    </j:if>
+    <echo>database initialization successful</echo>
   </goal>
 </project>
 
