@@ -28,10 +28,10 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.7 2004-05-06 10:55:25 pablo Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.8 2004-06-29 09:29:54 fil Exp $
  */
 public class GenericResourceHandler
-    extends ResourceHandlerBase
+    extends AbstractResourceHandler
 {
     // Member objects ////////////////////////////////////////////////////////
 
@@ -54,89 +54,6 @@ public class GenericResourceHandler
     }
 
     // Resource handler interface ////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc}
-     */
-    public Resource create(Resource delegate, Map attributes, Connection conn)
-        throws ValueRequiredException, SQLException
-    {
-        checkDelegate(delegate);
-        GenericResource res = instantiate(resourceClass);
-        res.create(delegate, resourceClass, attributes, conn);
-        addToCache(res);
-        return res;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void delete(Resource resource, Connection conn)
-        throws SQLException
-    {
-        checkResource(resource);
-        ((GenericResource)resource).delete(conn);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Resource retrieve(Resource delegate, Connection conn)
-        throws SQLException
-    {
-        checkDelegate(delegate);
-        GenericResource res = instantiate(resourceClass);
-        Map dataKeyMap = getDataKeys(delegate, conn);
-        res.retrieve(delegate, resourceClass, conn, dataKeyMap);
-        addToCache(res);
-        return res;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Resource retrieve(Resource delegate, Connection conn, Map dataKeyMap)
-        throws SQLException
-    {
-        checkDelegate(delegate);
-        GenericResource res = instantiate(resourceClass);
-        res.retrieve(delegate, resourceClass, conn, dataKeyMap);
-        addToCache(res);
-        return res;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void revert(Resource resource, Connection conn)
-        throws SQLException
-    {
-        Resource delegate = resource.getDelegate();
-        checkDelegate(delegate);
-        Map dataKeyMap = getDataKeys(delegate, conn);
-        ((GenericResource)resource).revert(resourceClass, conn, dataKeyMap);        
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void revert(Resource resource, Connection conn, Map dataKeyMap)
-        throws SQLException
-    {
-        Resource delegate = resource.getDelegate();
-        checkDelegate(delegate);
-        ((GenericResource)resource).revert(resourceClass, conn, dataKeyMap);        
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void update(Resource resource, Connection conn)
-        throws SQLException
-    {
-        checkResource(resource);
-        ((GenericResource)resource).update(conn);
-    }
 
     /**
      * {@inheritDoc}
@@ -198,81 +115,6 @@ public class GenericResourceHandler
     }
 
     // private ///////////////////////////////////////////////////////////////
-
-    /**
-     * Checks if the passed resource is really a {@link GenericResource}.
-     *
-     * @param resource the resource to check.
-     */
-    private void checkResource(Resource resource)
-    {
-        if(!(resource instanceof GenericResource))
-        {
-            throw new ClassCastException("GenericResourceHanler won't operate on "+
-                                         resource.getClass().getName());
-        }
-    }
-
-    /**
-     * Chekcks if the passed delegate object specifies {@link GenericResource}
-     * as the javaClass.
-     *
-     * @param delegate the delegate to check.
-     */
-    private void checkDelegate(Resource delegate)
-    {
-        if((delegate.getResourceClass().getJavaClass().getModifiers() & Modifier.INTERFACE) != 0)
-        {
-            throw new ClassCastException(delegate.getResourceClass().getName()+" specifies "+
-                delegate.getResourceClass().getJavaClass()+" as implementation class");
-        }
-        if(!GenericResource.class.isAssignableFrom(delegate.getResourceClass().getJavaClass()))
-        {
-            throw new ClassCastException("GenericResourceHandler won't operate on "+
-                                         delegate.getResourceClass().getName());
-        }
-    }
-
-    /**
-     * Adds the loaded/created resource to the internal cache.
-     *
-     * @param res the resource to add to the cache.
-     */
-    private void addToCache(GenericResource res)
-    {
-        // we use WeakHashMap to emulate WeakSet
-        Map rset = (Map)cache.get(res.getResourceClass0());
-        if(rset == null)
-        {
-            rset = new WeakHashMap();
-            cache.put(res.getResourceClass(), rset);
-        }
-        rset.put(res, null);
-    }
-
-    /**
-     * Reverts all cached resources of the specific class.
-     *
-     * @param rc the resource class to revert.
-     * @param conn the JDBC connection to use.
-     */
-    private synchronized void revert(ResourceClass rc, Connection conn)
-        throws SQLException
-    {
-        Map rset = (Map)cache.get(rc);
-        if(rset != null)
-        {
-            // we'll get too much but this shouldn't be a problem.
-            Map dataKeyMap = getDataKeys(conn);
-            Set orig = new HashSet(rset.keySet());
-            Iterator i = orig.iterator();
-            while(i.hasNext())
-            {
-                GenericResource r = (GenericResource)i.next();
-                r.revert(r.getResourceClass0(), conn, dataKeyMap);
-            }
-        }
-    }
 
     /**
      * Add attribute to all existing resources of a specific class.
@@ -495,7 +337,7 @@ public class GenericResourceHandler
      * @return the map of data keys.
      * @throws SQLException if happens.
      */    
-    public Map getDataKeys(Resource delegate, Connection conn)
+    public Object getData(Resource delegate, Connection conn)
         throws SQLException
     {       
         Map keyMap = new HashMap();
@@ -533,7 +375,7 @@ public class GenericResourceHandler
      * @return the map of data keys.
      * @throws SQLException if happens.
      */    
-    public Map getDataKeys(Connection conn)
+    public Object getData(ResourceClass rc, Connection conn)
         throws SQLException
     {
         Map keyMap = new HashMap();
