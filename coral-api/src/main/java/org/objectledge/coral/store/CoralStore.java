@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStore.java,v 1.6 2005-01-17 09:55:30 rafal Exp $
+ * @version $Id: CoralStore.java,v 1.7 2005-02-08 20:34:34 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralStore
@@ -164,8 +164,8 @@ public interface CoralStore
      * @param parent the parent of the new resource (may be
      * <code>null</code>).
      * @param resourceClass the class of the new resource.
-     * @param attributes the mapping of {@link AttributeDefinition} objects
-     *        into initial values of the attributes.
+     * @param attributes the mapping of {@link org.objectledge.coral.schema.AttributeDefinition} 
+     *        objects into initial values of the attributes.
      * @return the newly created resource.
      * @throws UnknownAttributeException if the <code>attribute</code> map
      *         contains a key that does not belong to

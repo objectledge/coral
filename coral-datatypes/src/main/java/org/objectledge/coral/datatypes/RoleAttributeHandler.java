@@ -9,10 +9,10 @@ import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
 
 /**
- * Handles persistency of {@link Role} refereces.
+ * Handles persistency of {@link org.objectledge.coral.security.Role} refereces.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RoleAttributeHandler.java,v 1.5 2005-01-18 12:39:12 rafal Exp $
+ * @version $Id: RoleAttributeHandler.java,v 1.6 2005-02-08 20:33:42 rafal Exp $
  */
 public class RoleAttributeHandler
     extends EntityAttributeHandler

@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.Persistence;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurityImpl.java,v 1.7 2005-01-18 10:55:28 rafal Exp $
+ * @version $Id: CoralSecurityImpl.java,v 1.8 2005-02-08 20:34:45 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSecurityImpl
@@ -44,7 +44,7 @@ public class CoralSecurityImpl
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Constructs the {@link SecurityService} implementation.
+     * Constructs the {@link CoralSecurity} implementation.
      *
      * @param persistence the persistence subsystem
      * @param coralEventHub the even hub.
@@ -320,10 +320,6 @@ public class CoralSecurityImpl
      *   <li>The <code>grantor</code> has the involved <code>role</code>
      *   himself, whith {@link RoleAssignment#isGrantingAllowed() grantingAllowed} flag
      *   set to true, or is a superuser (has the {@link Role#ROOT} role)</li>
-     *   <li>The <code>subject</code> is a {@link
-     *   Subject#isSubordinate(Subject) subordinate} of the
-     *   <code>grantor</code>, or the <code>grantor</code> is a
-     *   superuser.</li> 
      *   <li>the <code>role</code> is not the {@link Role#NOBODY} role.</li>
      * </ul>
      * 
@@ -377,9 +373,7 @@ public class CoralSecurityImpl
      * Revokes a {@link Role} from the {@link Subject}.
      *
      * <p>Revocation is possible if the <code>revoker</code> granted the role
-     * earlier, or <code>subject</code> is a {@link
-     * Subject#isSubordinate(Subject)} of the <code>revoker</code>, or
-     * <code>revoker</code> is the superuser (has {@link Role#ROOT} role).</p>
+     * earlier, or <code>revoker</code> is the superuser (has {@link Role#ROOT} role).</p>
      * 
      * @param role the involved role.
      * @param subject the involved subject.

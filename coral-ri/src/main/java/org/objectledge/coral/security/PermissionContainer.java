@@ -18,7 +18,7 @@ import org.objectledge.coral.store.ResourceInheritance;
  * A helper class for managing a set of permissions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionContainer.java,v 1.6 2005-01-17 11:30:09 rafal Exp $
+ * @version $Id: PermissionContainer.java,v 1.7 2005-02-08 20:34:45 rafal Exp $
  */
 public class PermissionContainer
     implements PermissionAssignmentChangeListener,
@@ -50,8 +50,7 @@ public class PermissionContainer
      * Constructs a permission container.
      *
      * @param coralEventHub the CoralEventHub.
-     * @param coralRegistry the CoralRegistry.
-     * 
+     * @param coral the Coral core component.
      * @param roles a RoleContainer.
      */
     PermissionContainer(CoralEventHub coralEventHub, CoralCore coral, 

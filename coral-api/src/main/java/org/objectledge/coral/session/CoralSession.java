@@ -15,22 +15,22 @@ import org.objectledge.coral.store.CoralStore;
 /**
  * An access point to the Coral document store.
  *
- * @version $Id: CoralSession.java,v 1.5 2005-01-25 06:34:02 rafal Exp $
+ * @version $Id: CoralSession.java,v 1.6 2005-02-08 20:34:30 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSession
 {
     /**
-     * Returns an instance of {@link SchemaService}.
+     * Returns an instance of {@link CoralSchema}.
      *
-     * @return an instance of {@link SchemaService}.
+     * @return an instance of {@link CoralSchema}.
      */
     public CoralSchema getSchema();
 
     /**
-     * Returns an instance of {@link SecurityService}.
+     * Returns an instance of {@link CoralSecurity}.
      *
-     * @return an instance of {@link SecurityService}.
+     * @return an instance of {@link CoralSecurity}.
      */
     public CoralSecurity getSecurity();
     

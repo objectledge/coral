@@ -10,7 +10,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages persistency of resources belonging to a specific class .
  *
- * @version $Id: ResourceHandler.java,v 1.6 2005-01-20 13:09:30 rafal Exp $
+ * @version $Id: ResourceHandler.java,v 1.7 2005-02-08 20:34:28 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceHandler
@@ -166,7 +166,7 @@ public interface ResourceHandler
      * 
      * <p>The references mad throgh non-REQUIRED nor READONLY refernces
      * may be auto-cleared by the handler with 
-     * {@link #clearResourceReferernces()} method. These references
+     * {@link #clearResourceReferences(Resource)} method. These references
      * may or may not be included in the result, depending on the clearable 
      * parameter.</p> 
      * 

@@ -46,7 +46,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * Base class for all Query tree visitors.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: AbstractQueryVisitor.java,v 1.5 2004-03-09 14:33:48 zwierzem Exp $
+ * @version $Id: AbstractQueryVisitor.java,v 1.6 2005-02-08 20:34:47 rafal Exp $
  */
 public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 {
@@ -210,7 +210,7 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 	public abstract Object doVisit(ASTIntersectionExpression node, Object data);
 
 	/**
-	 * Performs {@link #doVisit(ASTRelationMapExpression,Object)} logic in subclasses.
+	 * Performs {@link #visit(ASTRelationMapExpression,Object)} logic in subclasses.
 	 * 
 	 * @param node visited node
 	 * @param data additional data storage
@@ -220,7 +220,7 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
     public abstract Object doVisit(ASTRelationMapExpression node, Object data, Relation relation);
 
 	/**
-	 * Performs {@link #doVisit(ASTTransitiveRelationMapExpression,Object)} logic in subclasses.
+	 * Performs {@link #visit(ASTTransitiveRelationMapExpression,Object)} logic in subclasses.
 	 * 
 	 * @param node visited node
 	 * @param data additional data storage

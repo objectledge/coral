@@ -42,7 +42,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.26 2005-01-26 03:30:57 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.27 2005-02-08 20:34:43 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -81,7 +81,7 @@ public class CoralStoreImpl
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Constructs the {@link StoreService} implementation.
+     * Constructs the {@link CoralStore} implementation.
      * 
      * @param cacheFactory the cache factory.
      * @param persistence the persistence subsystem.

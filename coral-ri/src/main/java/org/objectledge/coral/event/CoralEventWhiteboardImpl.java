@@ -22,7 +22,7 @@ import org.objectledge.event.EventWhiteboard;
 /**
  * Convenience wrapper around <code>EventService</code> implementation.
  *
- * @version $Id: CoralEventWhiteboardImpl.java,v 1.5 2004-03-09 15:46:47 fil Exp $
+ * @version $Id: CoralEventWhiteboardImpl.java,v 1.6 2005-02-08 20:35:02 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralEventWhiteboardImpl
@@ -91,7 +91,7 @@ public class CoralEventWhiteboardImpl
 	private Method resourceDeletion;
 	
 	/** {@link
-	 * ResourceTreeDeletionListener#resourceDeleted(Resource)} */
+	 * ResourceTreeDeletionListener#resourceTreeDeleted(Resource)} */
 	private Method resourceTreeDeletion;
 	
     /** {@link

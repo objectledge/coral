@@ -57,7 +57,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.12 2005-01-25 03:12:19 rafal Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.13 2005-02-08 20:34:58 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -74,7 +74,7 @@ public class CoralRegistryImpl
     
     // Member objects ////////////////////////////////////////////////////////
 
-    /** The {@link PersistenceService}. */
+    /** The {@link Persistence}. */
     private Persistence persistence;
     
     /** The logger. */
@@ -106,8 +106,7 @@ public class CoralRegistryImpl
     /** The <code>PersistentFactory</code> for <code>PermissionAssignment</code> objects. */
     private PersistentFactory permissionAssignmentFactory;      
 
-    /** The <code>PersistentFactory</code> for <code>Subject</code> objects. Used by 
-     *  {@link #getSubordinates(Subject)} method only.*/
+    /** The <code>PersistentFactory</code> for <code>Subject</code> objects. */
     private PersistentFactory subjectFactory;      
 
     // caches
@@ -181,7 +180,7 @@ public class CoralRegistryImpl
     // Initialization ////////////////////////////////////////////////////////
 
     /**
-     * Constructs the {@link RegistryService} implementation.
+     * Constructs the {@link CoralRegistry} implementation.
      * 
      * @param persistence the persistence subsystem
      * @param cacheFactory the cache factory.

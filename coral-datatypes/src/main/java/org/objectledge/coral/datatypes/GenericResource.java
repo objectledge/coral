@@ -25,7 +25,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.15 2005-01-18 10:08:42 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.16 2005-02-08 20:33:42 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -210,9 +210,8 @@ public class GenericResource
     }
 
     /**
-     * Called from {@link GenericResourceHandler} and {@link #update(Subject)}.
+     * Called from {@link GenericResourceHandler} and {@link #update()} method.
      *
-     * @param subject the subject that performs the update. 
      * @param conn the JDBC connection to use.
      */
     synchronized void update(Connection conn)

@@ -39,7 +39,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RedBlueAssignment.java,v 1.2 2004-03-05 11:52:16 fil Exp $
+ * @version $Id: RedBlueAssignment.java,v 1.3 2005-02-08 20:34:56 rafal Exp $
  */
 public class RedBlueAssignment 
     extends AbstractAssignment
@@ -57,7 +57,6 @@ public class RedBlueAssignment
     private BlueEntity blue;
 
     /**
-     * @param security
      */
     public RedBlueAssignment(CoralCore coral, Persistence persistence, 
         RedBlueEntityFactory redBlueEntityFactory)
@@ -68,7 +67,6 @@ public class RedBlueAssignment
     }
 
     /**
-     * @param security
      * @param grantor
      * @param grantTime
      */

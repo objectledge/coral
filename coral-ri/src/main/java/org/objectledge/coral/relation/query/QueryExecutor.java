@@ -43,10 +43,11 @@ import org.objectledge.coral.relation.query.parser.ASTTransitiveRelationMapExpre
 import org.objectledge.coral.relation.query.parser.SimpleNode;
 
 /**
- * Query executor executes a parsed query and returns the set of queried {@link Resource} ids.
+ * Query executor executes a parsed query and returns the set of queried {@link 
+ * org.objectledge.coral.store.Resource} ids.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: QueryExecutor.java,v 1.5 2004-02-25 10:57:20 zwierzem Exp $
+ * @version $Id: QueryExecutor.java,v 1.6 2005-02-08 20:34:47 rafal Exp $
  */
 public class QueryExecutor extends AbstractQueryVisitor
 {

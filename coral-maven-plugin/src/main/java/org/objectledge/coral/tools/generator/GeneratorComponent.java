@@ -55,7 +55,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.28 2004-12-23 06:44:06 rafal Exp $
+ * @version $Id: GeneratorComponent.java,v 1.29 2005-02-08 20:34:04 rafal Exp $
  */
 public class GeneratorComponent
 {
@@ -620,10 +620,12 @@ public class GeneratorComponent
     }
     
     /**
-     * @param rc
-     * @param hints
-     * @return
-     * @throws Exception
+     * Processes field hint into name/type pair list.
+     * 
+     * @param rc the resource class.
+     * @param hints global hint map.
+     * @return list of maps with "name" and "type" keys.
+     * @throws Exception if the hint list is malformed
      */
     private List processFieldHint(ResourceClass rc, Map hints) throws Exception
     {

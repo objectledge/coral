@@ -24,7 +24,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.15 2005-01-25 03:12:13 rafal Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.16 2005-02-08 20:34:50 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -45,7 +45,7 @@ public class CoralSchemaImpl
     // Initialization ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Constructs the {@link SchemaService} implementation.
+     * Constructs the {@link CoralSchema} implementation.
      * 
      * @param persistence the persistence subsystem.
      * @param instantiator the instantiator.
@@ -496,7 +496,7 @@ public class CoralSchemaImpl
      * Sets the database table that will hold the data for the resoureces of
      * that class. 
      *
-     * @param resoureceClass the {@link ResoureceClass}.
+     * @param resoureceClass the {@link ResourceClass}.
      * @param dbTable the database table that will hold the data for the
      *        resoureces of that class (allows sharing handler classes betweeen
      *        resourece types).

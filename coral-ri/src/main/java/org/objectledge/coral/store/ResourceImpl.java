@@ -33,10 +33,11 @@ import org.objectledge.database.persistence.PersistenceException;
  * aspects of the <code>Resource</code> interface. Attribute-related methods
  * of this class throw <code>UnsupportedOperationException</code>. Instances
  * of this class are passed to 
- * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
- * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
+ * {@link org.objectledge.coral.schema.ResourceHandler#create(Resource,Map,java.sql.Connection)} 
+ * and {@link org.objectledge.coral.schema.ResourceHandler#retrieve(Resource,
+ * java.sql.Connection,Object)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.19 2005-01-19 06:09:19 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.20 2005-02-08 20:34:43 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl

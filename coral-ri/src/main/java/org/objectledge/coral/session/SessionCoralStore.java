@@ -45,7 +45,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStore.java,v 1.5 2005-01-17 09:55:35 rafal Exp $
+ * @version $Id: SessionCoralStore.java,v 1.6 2005-02-08 20:34:52 rafal Exp $
  */
 public class SessionCoralStore implements CoralStore
 {
@@ -56,7 +56,7 @@ public class SessionCoralStore implements CoralStore
      * Creates a session local CoralStore wrapper.
      * 
      * @param coral the coral component hub.
-     * @param coralSession the coral session.
+     * @param session the coral session.
      */
     SessionCoralStore(CoralCore coral, CoralSessionImpl session)
     {

@@ -38,7 +38,7 @@ import org.objectledge.coral.script.parser.ASTfindResourceStatement;
  * Session local CoralQuery wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralQuery.java,v 1.4 2004-08-27 11:28:29 rafal Exp $
+ * @version $Id: SessionCoralQuery.java,v 1.5 2005-02-08 20:34:52 rafal Exp $
  */
 public class SessionCoralQuery
     implements CoralQuery
@@ -50,7 +50,7 @@ public class SessionCoralQuery
      * Creates a session local CoralQuery wrapper.
      * 
      * @param coral the coral component hub.
-     * @param coralSession the coral session.
+     * @param session the coral session.
      */
     SessionCoralQuery(CoralCore coral, CoralSessionImpl session)
     {

@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * Session private wrapper for the Coral relation query component.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralRelationQuery.java,v 1.2 2004-12-27 03:06:02 rafal Exp $
+ * @version $Id: SessionCoralRelationQuery.java,v 1.3 2005-02-08 20:34:52 rafal Exp $
  */
 public class SessionCoralRelationQuery implements CoralRelationQuery
 {
@@ -51,7 +51,7 @@ public class SessionCoralRelationQuery implements CoralRelationQuery
      * Creates a session local CoralStore wrapper.
      * 
      * @param coral the coral component hub.
-     * @param coralSession the coral session.
+     * @param session the coral session.
      */
     SessionCoralRelationQuery(CoralCore coral, CoralSessionImpl session)
     {

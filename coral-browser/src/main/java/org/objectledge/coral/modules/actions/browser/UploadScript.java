@@ -14,7 +14,7 @@ import org.objectledge.web.mvc.MVCContext;
  * Upload script.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: UploadScript.java,v 1.2 2005-02-06 22:30:48 pablo Exp $
+ * @version $Id: UploadScript.java,v 1.3 2005-02-08 20:33:06 rafal Exp $
  */
 public class UploadScript extends BaseBrowserAction
 {
@@ -25,7 +25,6 @@ public class UploadScript extends BaseBrowserAction
      * Action constructor.
      * 
      * @param logger the logger.
-     * @param coralSessionFactory the coral session factory.
      * @param fileUpload the file upload manager.
      */
     public UploadScript(Logger logger, FileUpload fileUpload)

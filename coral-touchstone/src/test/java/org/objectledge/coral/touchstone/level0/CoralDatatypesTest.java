@@ -54,7 +54,7 @@ import org.objectledge.parameters.Parameters;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralDatatypesTest.java,v 1.6 2004-12-23 03:51:30 rafal Exp $
+ * @version $Id: CoralDatatypesTest.java,v 1.7 2005-02-08 20:34:17 rafal Exp $
  */
 public class CoralDatatypesTest extends CoralTestCase
 {
@@ -495,7 +495,12 @@ public class CoralDatatypesTest extends CoralTestCase
     }
 
     /**
-     * @return
+     * Constructs a Date object using GregorianCalendar.
+     * 
+     * @param year the year.
+     * @param month the month.
+     * @param day the day of month.
+     * @return a Date object.
      */
     private Date createDate(int year, int month, int day)
     {

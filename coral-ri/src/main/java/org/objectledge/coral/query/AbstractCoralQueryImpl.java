@@ -37,10 +37,10 @@ import org.objectledge.coral.store.Resource;
 
 
 /**
- * A common base class for {@link QueryService} implemnetations.
+ * A common base class for {@link CoralQuery} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.10 2005-01-18 10:45:39 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.11 2005-02-08 20:34:41 rafal Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery

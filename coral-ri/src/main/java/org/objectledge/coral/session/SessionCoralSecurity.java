@@ -44,7 +44,7 @@ import org.objectledge.coral.store.Resource;
  * A session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSecurity.java,v 1.3 2004-03-15 13:44:53 fil Exp $
+ * @version $Id: SessionCoralSecurity.java,v 1.4 2005-02-08 20:34:52 rafal Exp $
  */
 public class SessionCoralSecurity implements CoralSecurity
 {
@@ -55,7 +55,7 @@ public class SessionCoralSecurity implements CoralSecurity
      * Creates a session local CoralStore wrapper.
      * 
      * @param coral the coral component hub.
-     * @param coralSession the coral session.
+     * @param session the coral session.
      */
     SessionCoralSecurity(CoralCore coral, CoralSessionImpl session)
     {

@@ -5,9 +5,9 @@ import org.objectledge.coral.store.ResourceOwnership;
 /**
  * Is notified of resource ownership changes.
  *
- * @see EventService#addListener(Class,Object,Object)
- * @see EventService#removeListener(Class,Object,Object)
- * @version $Id: ResourceOwnershipChangeListener.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @see org.objectledge.event.EventWhiteboard#addListener(Class,Object,Object)
+ * @see org.objectledge.event.EventWhiteboard#removeListener(Class,Object,Object)
+ * @version $Id: ResourceOwnershipChangeListener.java,v 1.2 2005-02-08 20:34:21 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceOwnershipChangeListener

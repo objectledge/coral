@@ -1963,7 +1963,7 @@ public class RMLExecutor
     /**
      * Prints out a table separator composedof + and - characters.
      *
-     * @param widht the widths of table columns.
+     * @param width the widths of table columns.
      */
     private void sep(int[] width)
     {

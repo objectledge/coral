@@ -10,7 +10,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurity.java,v 1.4 2004-03-08 09:17:31 fil Exp $
+ * @version $Id: CoralSecurity.java,v 1.5 2005-02-08 20:34:36 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSecurity
@@ -182,10 +182,6 @@ public interface CoralSecurity
      *   <li>The <code>grantor</code> has the involved <code>role</code>
      *   himself, whith {@link RoleAssignment#isGrantingAllowed() grantingAllowed} flag
      *   set to true, or is a superuser (has the {@link Role#ROOT} role)</li>
-     *   <li>The <code>subject</code> is a {@link
-     *   Subject#isSubordinate(Subject) subordinate} of the
-     *   <code>grantor</code>, or the <code>grantor</code> is a
-     *   superuser.</li> 
      *   <li>the <code>role</code> is not the {@link Role#NOBODY} role.</li>
      * </ul>
      * 
@@ -202,9 +198,7 @@ public interface CoralSecurity
      * Revokes a {@link Role} from the {@link Subject}.
      *
      * <p>Revocation is possible if the <code>revoker</code> granted the role
-     * earlier, or <code>subject</code> is a {@link
-     * Subject#isSubordinate(Subject)} of the <code>revoker</code>, or
-     * <code>revoker</code> is the superuser (has {@link Role#ROOT} role).</p>
+     * earlier, or <code>revoker</code> is the superuser (has {@link Role#ROOT} role).</p>
      * 
      * @param role the involved role.
      * @param subject the involved subject.

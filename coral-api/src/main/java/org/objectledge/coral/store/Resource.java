@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Represents a resource.
  *
- * @version $Id: Resource.java,v 1.4 2005-01-19 06:09:27 rafal Exp $
+ * @version $Id: Resource.java,v 1.5 2005-02-08 20:34:34 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Resource
@@ -200,8 +200,8 @@ public interface Resource
      * <p>This method is of no intrest to the end-users. It's important to the
      * implementors of concrete resource classes only. It should return the same
      * <code>ResourceObject</code> that was passed to the {@link
-     * ResourceHandler#create(Resource,Map,Connection)} method upon creation of
-     * the resource.</p>
+     * org.objectledge.coral.schema.ResourceHandler#create(Resource,java.util.Map,
+     * java.sql.Connection)} method upon creation of the resource.</p>
      *
      * @return the security delegate object.
      */

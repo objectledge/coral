@@ -10,9 +10,9 @@ import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
- * An implementation of {@link org.objectledge.security.RoleAssignment} interface.
+ * An implementation of {@link org.objectledge.coral.security.RoleAssignment} interface.
  *
- * @version $Id: RoleAssignmentImpl.java,v 1.8 2004-03-15 09:02:48 fil Exp $
+ * @version $Id: RoleAssignmentImpl.java,v 1.9 2005-02-08 20:34:45 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleAssignmentImpl

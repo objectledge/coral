@@ -12,13 +12,13 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Represents assigment of a {@link org.objectledge.coral.security.Permission} on a 
- * {@link org.objectledge.store.Resource} to a {@link org.objectledge.coral.security.Role}.
+ * {@link org.objectledge.coral.store.Resource} to a {@link org.objectledge.coral.security.Role}.
  *
  * <p><code>PermissionAssignment</code> objects are returned from {@link
- * org.objectledge.store.Resource#getPermissionAssignments()} method. They experss security
+ * org.objectledge.coral.store.Resource#getPermissionAssignments()} method. They experss security
  * constraints placed upon a specific resource (and optionally it's sub-resources). </p> 
  *
- * @version $Id: PermissionAssignmentImpl.java,v 1.7 2004-03-09 15:46:46 fil Exp $
+ * @version $Id: PermissionAssignmentImpl.java,v 1.8 2005-02-08 20:34:45 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssignmentImpl

@@ -6,10 +6,10 @@ import org.objectledge.coral.security.PermissionAssociation;
  * Is notified of permission association changes on a particular, or all
  * resourceClass / permission.
  *
- * @see EventService#addListener(Class,Object,Object)
- * @see EventService#removeListener(Class,Object,Object)
+ * @see org.objectledge.event.EventWhiteboard#addListener(Class,Object,Object)
+ * @see org.objectledge.event.EventWhiteboard#removeListener(Class,Object,Object)
  *
- * @version $Id: PermissionAssociationChangeListener.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: PermissionAssociationChangeListener.java,v 1.3 2005-02-08 20:34:21 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface PermissionAssociationChangeListener
