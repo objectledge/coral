@@ -19,7 +19,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistency of <code>java.util.Date</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateAttributeHandler.java,v 1.5 2004-10-05 07:41:24 rafal Exp $
+ * @version $Id: DateAttributeHandler.java,v 1.6 2004-12-23 04:10:58 rafal Exp $
  */
 public class DateAttributeHandler
     extends AttributeHandlerBase
@@ -125,7 +125,7 @@ public class DateAttributeHandler
      */
     protected Object fromString(String string)
     {
-        return new Date(string);
+        return parseDate(string);
     }
 
     /**

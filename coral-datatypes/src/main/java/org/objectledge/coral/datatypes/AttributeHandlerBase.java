@@ -4,7 +4,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -22,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.5 2004-12-21 08:31:55 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.6 2004-12-23 04:10:58 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -53,6 +57,16 @@ public abstract class AttributeHandlerBase
     /** <code>true</code> if attribute value comparison is not supported. */
     protected boolean comparatorNotSupported = false;
 
+    /** SimpleDateFormat pattern used for parsing date strings. */
+    public static final String DATE_FORMAT = "yyyy/MM/dd";
+    
+    /** SimpleDateFormat pattern used for parsing date + time strings. */
+    public static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+    
+    /** If date specification contains this substring DATE_TIME_FORMAT will be used for parsing,
+     *  otherwise DATE_FORMAT will be used. */
+    public static final String DATE_TIME_INDICATOR = ":";
+    
     /**
      * The base constructor.
      * 
@@ -372,6 +386,30 @@ public abstract class AttributeHandlerBase
 	{
 		return DatabaseUtils.unescapeSqlString(string);
 	}
+    
+    /**
+     * Parse date/time string.
+     * 
+     * @param string the date string.
+     * @return the date.
+     * @throws IllegalArgumentException if the string does not conform to the expected pattern.
+     */
+    protected Date parseDate(String string)
+        throws IllegalArgumentException
+    {
+        String pattern = string.contains(DATE_TIME_INDICATOR) ? DATE_TIME_FORMAT : DATE_FORMAT;
+        /** DateFormat is not thread-safe */
+        DateFormat format = new SimpleDateFormat(pattern);
+        try
+        {
+            return format.parse(string);
+        }
+        catch(ParseException e)
+        {
+            throw new IllegalArgumentException(string+" does not conform to "+pattern+" pattern",
+                e);
+        }
+    }
 
     /**
      * Return a new Comparator, or null if not supported.

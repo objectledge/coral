@@ -18,7 +18,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link DateRange} objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateRangeAttributeHandler.java,v 1.6 2004-10-05 07:39:10 rafal Exp $
+ * @version $Id: DateRangeAttributeHandler.java,v 1.7 2004-12-23 04:10:58 rafal Exp $
  */
 public class DateRangeAttributeHandler
     extends AttributeHandlerBase
@@ -114,8 +114,8 @@ public class DateRangeAttributeHandler
         {
             throw new IllegalArgumentException("Two dates spearated with '::' expected");
         }
-        Date date1 = new Date(string.substring(0,pos));
-        Date date2 = new Date(string.substring(pos+2));
+        Date date1 = parseDate(string.substring(0,pos));
+        Date date2 = parseDate(string.substring(pos+2));
         return new DateRange(date1, date2);
     }
 
