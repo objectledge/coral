@@ -18,7 +18,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link DateRange} objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateRangeAttributeHandler.java,v 1.7 2004-12-23 04:10:58 rafal Exp $
+ * @version $Id: DateRangeAttributeHandler.java,v 1.8 2005-01-17 11:38:22 rafal Exp $
  */
 public class DateRangeAttributeHandler
     extends AttributeHandlerBase
@@ -73,7 +73,8 @@ public class DateRangeAttributeHandler
             throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "
                                                    +getTable());
         }
-        return new DateRange(rs.getTimestamp(1), rs.getTimestamp(2));
+        return new DateRange(new Date(rs.getTimestamp(1).getTime()), 
+            new Date(rs.getTimestamp(2).getTime()));
     }
 
     /**
