@@ -23,6 +23,8 @@ $imports.add($attr.getFQJavaType())##
 $imports.add($parent.getFQInterfaceClassName())##
 #end
 ##
+$license##
+
 package $class.packageName;
 
 $imports##
@@ -56,7 +58,8 @@ public interface ${class.interfaceClassName}
      * @throws IllegalStateException if the value of the attribute is 
      *         undefined.
      */
-    public ${attr.javaType} get${attr.javaName}();
+    public ${attr.javaType} get${attr.javaName}()
+		throws IllegalStateException;
 #if(!$attr.readonly)
 
     /**
