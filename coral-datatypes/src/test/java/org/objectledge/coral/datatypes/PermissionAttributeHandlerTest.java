@@ -31,8 +31,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeHandler;
@@ -41,12 +40,13 @@ import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  *
  */
-public class PermissionAttributeHandlerTest extends MockObjectTestCase
+public class PermissionAttributeHandlerTest extends LedgeTestCase
 {
     private Mock mockDatabase;
     private Database database;
@@ -74,19 +74,19 @@ public class PermissionAttributeHandlerTest extends MockObjectTestCase
     public void setUp() throws Exception
     {
         super.setUp();
-        mockDatabase = new Mock(Database.class);
+        mockDatabase = mock(Database.class);
         mockDatabase.stub().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
-        mockPermission = new Mock(Permission.class);
+        mockPermission = mock(Permission.class);
         mockPermission.stub().method("getId").will(returnValue(1L));
         mockPermission.stub().method("getName").will(returnValue("foo"));
         permission = (Permission)mockPermission.proxy();
 
-        mockCoralStore = new Mock(CoralStore.class);
+        mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
-        mockCoralSchema = new Mock(CoralSchema.class);
+        mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
-        mockCoralSecurity = new Mock(CoralSecurity.class);
+        mockCoralSecurity = mock(CoralSecurity.class);
         mockCoralSecurity.stub().method("getPermission").with(eq("foo")).will(returnValue(new Permission[]{permission}));
         mockCoralSecurity.stub().method("getPermission").with(eq(1L)).will(returnValue(permission));
         mockCoralSecurity.stub().method("getPermission").with(eq("bar")).will(throwException(new IllegalArgumentException("foo")));
@@ -94,18 +94,18 @@ public class PermissionAttributeHandlerTest extends MockObjectTestCase
         mockCoralSecurity.stub().method("getPermission").with(eq("foo0")).will(returnValue(new Permission[3]));
         mockCoralSecurity.stub().method("getPermission").with(eq("foo2")).will(returnValue(new Permission[0]));
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
-        mockAttributeClass = new Mock(AttributeClass.class);
+        mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stub().method("getJavaClass").will(returnValue(Permission.class));
         mockAttributeClass.stub().method("getName").will(returnValue("permission"));
         mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_permission"));
         handler = new PermissionAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
-        mockStatement = new Mock(Statement.class);
+        mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
-        mockConnection = new Mock(Connection.class);
+        mockConnection = mock(Connection.class);
         mockConnection.stub().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
-        mockResultSet = new Mock(ResultSet.class);
+        mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
 

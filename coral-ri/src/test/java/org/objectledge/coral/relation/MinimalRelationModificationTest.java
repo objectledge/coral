@@ -34,18 +34,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModificationTest.java,v 1.3 2004-03-17 14:15:32 zwierzem Exp $
+ * @version $Id: MinimalRelationModificationTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
  */
-public class MinimalRelationModificationTest extends MockObjectTestCase
+public class MinimalRelationModificationTest extends LedgeTestCase
 {
-	private Mock mockResource1 = new Mock(Resource.class);
-	private Mock mockResource2 = new Mock(Resource.class);
+	private Mock mockResource1 = mock(Resource.class);
+	private Mock mockResource2 = mock(Resource.class);
 	
     public static void main(String[] args)
     {

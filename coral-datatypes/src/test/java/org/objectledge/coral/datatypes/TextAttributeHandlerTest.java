@@ -31,8 +31,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeHandler;
@@ -40,12 +39,13 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  *
  */
-public class TextAttributeHandlerTest extends MockObjectTestCase
+public class TextAttributeHandlerTest extends LedgeTestCase
 {
     private Mock mockDatabase;
     private Database database;
@@ -70,28 +70,28 @@ public class TextAttributeHandlerTest extends MockObjectTestCase
     public void setUp() throws Exception
     {
         super.setUp();
-        mockDatabase = new Mock(Database.class);
+        mockDatabase = mock(Database.class);
         mockDatabase.stub().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
 
-        mockCoralStore = new Mock(CoralStore.class);
+        mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
-        mockCoralSchema = new Mock(CoralSchema.class);
+        mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
-        mockCoralSecurity = new Mock(CoralSecurity.class);
+        mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
-        mockAttributeClass = new Mock(AttributeClass.class);
+        mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stub().method("getJavaClass").will(returnValue(String.class));
         mockAttributeClass.stub().method("getName").will(returnValue("text"));
         mockAttributeClass.stub().method("getDbTable").will(returnValue("coral_attribute_text"));
         handler = new TextAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
-        mockStatement = new Mock(Statement.class);
+        mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
-        mockConnection = new Mock(Connection.class);
+        mockConnection = mock(Connection.class);
         mockConnection.stub().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
-        mockResultSet = new Mock(ResultSet.class);
+        mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
         mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
     }

@@ -27,21 +27,21 @@
 // 
 package org.objectledge.coral.schema;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassInheritanceImplTest.java,v 1.2 2004-03-05 11:52:15 fil Exp $
+ * @version $Id: ResourceClassInheritanceImplTest.java,v 1.3 2004-03-24 14:40:10 fil Exp $
  */
-public class ResourceClassInheritanceImplTest extends MockObjectTestCase
+public class ResourceClassInheritanceImplTest extends LedgeTestCase
 {
     private Mock mockPersistence;
     private Persistence persistence;
@@ -62,22 +62,22 @@ public class ResourceClassInheritanceImplTest extends MockObjectTestCase
     
     public void setUp()
     {
-        mockPersistence = new Mock(Persistence.class);
+        mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
-        mockInputRecord = new Mock(InputRecord.class);
+        mockInputRecord = mock(InputRecord.class);
         inputRecord = (InputRecord)mockInputRecord.proxy();
-        mockOutputRecord = new Mock(OutputRecord.class);
+        mockOutputRecord = mock(OutputRecord.class);
         outputRecord = (OutputRecord)mockOutputRecord.proxy();
-        mockCoralSchema = new Mock(CoralSchema.class);
+        mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
-        mockParentClass = new Mock(ResourceClass.class, "parent");
+        mockParentClass = mock(ResourceClass.class, "parent");
         parentClass = (ResourceClass)mockParentClass.proxy();
-        mockChildClass = new Mock(ResourceClass.class, "child");
+        mockChildClass = mock(ResourceClass.class, "child");
         childClass = (ResourceClass)mockChildClass.proxy();
-        mockChildClass2 = new Mock(ResourceClass.class, "child 2");
+        mockChildClass2 = mock(ResourceClass.class, "child 2");
         childClass2 = (ResourceClass)mockChildClass2.proxy();
     }
     

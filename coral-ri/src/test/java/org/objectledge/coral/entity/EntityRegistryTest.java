@@ -34,21 +34,21 @@ import java.util.List;
 import java.util.Set;
 
 import org.jcontainer.dna.Logger;
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistentFactory;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: EntityRegistryTest.java,v 1.3 2004-03-05 12:09:19 fil Exp $
+ * @version $Id: EntityRegistryTest.java,v 1.4 2004-03-24 14:40:13 fil Exp $
  */
 public class EntityRegistryTest
-    extends MockObjectTestCase
+    extends LedgeTestCase
 {
     private Mock mockDatabase;
     private Database database;
@@ -66,21 +66,21 @@ public class EntityRegistryTest
     
     public void setUp()
     {
-        mockDatabase = new Mock(Database.class);
+        mockDatabase = mock(Database.class);
         database = (Database)mockDatabase.proxy();
-        mockPersistence = new Mock(Persistence.class);
+        mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
         mockPersistence.stub().method("getDatabase").will(returnValue(database));
-        mockCacheFactory = new Mock(CacheFactory.class);
+        mockCacheFactory = mock(CacheFactory.class);
         mockCacheFactory.stub().method("getInstance").will(returnValue(new HashMap()));
         cacheFactory = (CacheFactory)mockCacheFactory.proxy();
-        mockInstantiator = new Mock(Instantiator.class);
+        mockInstantiator = mock(Instantiator.class);
         instantiator = (Instantiator)mockInstantiator.proxy();
-        mockRedEntityPersistentFactory = new Mock(PersistentFactory.class, "mockRedEntityPersistentFactory");
+        mockRedEntityPersistentFactory = mock(PersistentFactory.class, "mockRedEntityPersistentFactory");
         redEntityPersistentFactory = (PersistentFactory)mockRedEntityPersistentFactory.proxy();
         mockInstantiator.stub().method("getPersistentFactory").with(eq(RedEntity.class)).will(returnValue(redEntityPersistentFactory));
         mockRedEntityPersistentFactory.stub().method("newInstance").will(returnValue(new RedEntity(persistence)));
-        mockLogger = new Mock(Logger.class);
+        mockLogger = mock(Logger.class);
         log = (Logger)mockLogger.proxy();
         redEntity = new RedEntity(persistence);
     }

@@ -32,9 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
-import org.jmock.Constraint;
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.CoralRegistry;
@@ -46,14 +44,14 @@ import org.objectledge.coral.event.ResourceClassChangeListener;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.Persistent;
-import org.objectledge.utils.*;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.9 2004-03-19 13:55:24 fil Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.10 2004-03-24 14:40:10 fil Exp $
  */
-public class CoralSchemaImplTest extends MockObjectTestCase
+public class CoralSchemaImplTest extends LedgeTestCase
 {
     private Mock mockDatabase;
     private Database database;
@@ -106,29 +104,29 @@ public class CoralSchemaImplTest extends MockObjectTestCase
     {
         super.setUp();
         
-        mockDatabase = new Mock(Database.class);
+        mockDatabase = mock(Database.class);
         database = (Database)mockDatabase.proxy();
-        mockConnection = new Mock(Connection.class);
+        mockConnection = mock(Connection.class);
         connection = (Connection)mockConnection.proxy();
-        mockPersistence = new Mock(Persistence.class);
+        mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
         mockPersistence.stub().method("getDatabase").will(returnValue(database));        
-        mockInstantiator = new Mock(Instantiator.class);
+        mockInstantiator = mock(Instantiator.class);
         instantiator = (Instantiator)mockInstantiator.proxy();
-        mockCoralRegistry = new Mock(CoralRegistry.class);
+        mockCoralRegistry = mock(CoralRegistry.class);
         coralRegistry = (CoralRegistry)mockCoralRegistry.proxy();
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralCore.stub().method("getRegistry").will(returnValue(coralRegistry));
-        mockCoralEventHub = new Mock(CoralEventHub.class);
+        mockCoralEventHub = mock(CoralEventHub.class);
         coralEventHub = (CoralEventHub)mockCoralEventHub.proxy();
-        mockLocalEventWhiteboard = new Mock(CoralEventWhiteboard.class, "localEventWhiteboard");
+        mockLocalEventWhiteboard = mock(CoralEventWhiteboard.class, "localEventWhiteboard");
         localEventWhiteboard = (CoralEventWhiteboard)mockLocalEventWhiteboard.proxy();
-        mockOutboundEventWhiteboard = new Mock(CoralEventWhiteboard.class, "outboundEventWhiteboard");
+        mockOutboundEventWhiteboard = mock(CoralEventWhiteboard.class, "outboundEventWhiteboard");
         outboundEventWhiteboard = (CoralEventWhiteboard)mockOutboundEventWhiteboard.proxy();
-        mockInboundEventWhiteboard = new Mock(CoralEventWhiteboard.class, "inboundEventWhiteboard");
+        mockInboundEventWhiteboard = mock(CoralEventWhiteboard.class, "inboundEventWhiteboard");
         inboundEventWhiteboard = (CoralEventWhiteboard)mockInboundEventWhiteboard.proxy();
-        mockLogger = new Mock(Logger.class);
+        mockLogger = mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
         
         coralSchema = new CoralSchemaImpl(persistence, instantiator, coralCore, 
@@ -139,24 +137,24 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         mockCoralEventHub.stub().method("getOutbound").will(returnValue(outboundEventWhiteboard));
         mockCoralEventHub.stub().method("getInbound").will(returnValue(inboundEventWhiteboard));
         
-        mockAttributeClass = new Mock(AttributeClass.class);
+        mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockAttributeHandler = new Mock(AttributeHandler.class);
+        mockAttributeHandler = mock(AttributeHandler.class);
         attributeHandler = (AttributeHandler)mockAttributeHandler.proxy();
-        mockOtherAttributeHandler = new Mock(OtherAttributeHandler.class);
+        mockOtherAttributeHandler = mock(OtherAttributeHandler.class);
         otherAttributeHandler = (AttributeHandler)mockOtherAttributeHandler.proxy();
         mockAttributeClass.stub().method("getHandler").will(returnValue(attributeHandler));
-        mockAttributeDefinition = new Mock(AttributeDefinition.class);
+        mockAttributeDefinition = mock(AttributeDefinition.class);
         attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
-        mockResourceClass = new Mock(ResourceClass.class);
+        mockResourceClass = mock(ResourceClass.class);
         resourceClass = (ResourceClass)mockResourceClass.proxy();
-        mockParentResourceClass = new Mock(ResourceClass.class, "mockParentResourceClass");
+        mockParentResourceClass = mock(ResourceClass.class, "mockParentResourceClass");
         parentResourceClass = (ResourceClass)mockParentResourceClass.proxy();
-        mockChildResourceClass = new Mock(ResourceClass.class, "mockChildResourceClass");
+        mockChildResourceClass = mock(ResourceClass.class, "mockChildResourceClass");
         childResourceClass = (ResourceClass)mockChildResourceClass.proxy();
-        mockResourceHandler = new Mock(ResourceHandler.class);
+        mockResourceHandler = mock(ResourceHandler.class);
         resourceHandler = (ResourceHandler)mockResourceHandler.proxy();
-        mockOtherResourceHandler = new Mock(OtherResourceHandler.class);
+        mockOtherResourceHandler = mock(OtherResourceHandler.class);
         otherResourceHandler = (ResourceHandler)mockOtherResourceHandler.proxy();
     }
     
@@ -523,12 +521,5 @@ public class CoralSchemaImplTest extends MockObjectTestCase
         mockOutboundEventWhiteboard.expect(once()).method("fireResourceClassInheritanceChangeEvent").with(eq(rci), eq(false));
         mockConnection.expect(once()).method("close");       
         coralSchema.deleteParentClass(childResourceClass, parentResourceClass);
-    }
-    
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    
-    private Constraint mapElement(Object key, Constraint c)
-    {
-        return new MapElement(key, c);
     }
 }

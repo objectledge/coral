@@ -27,8 +27,7 @@
 // 
 package org.objectledge.coral.schema;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -38,13 +37,14 @@ import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeDefinitionImplTest.java,v 1.3 2004-03-09 15:46:46 fil Exp $
+ * @version $Id: AttributeDefinitionImplTest.java,v 1.4 2004-03-24 14:40:10 fil Exp $
  */
-public class AttributeDefinitionImplTest extends MockObjectTestCase
+public class AttributeDefinitionImplTest extends LedgeTestCase
 {
     private Mock mockPersistence;   
     private Persistence persistence;
@@ -67,23 +67,23 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
 
     public void setUp()
     {
-        mockPersistence = new Mock(Persistence.class);
+        mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
-        mockInputRecord = new Mock(InputRecord.class);
+        mockInputRecord = mock(InputRecord.class);
         inputRecord = (InputRecord)mockInputRecord.proxy();
-        mockOutputRecord = new Mock(OutputRecord.class);
+        mockOutputRecord = mock(OutputRecord.class);
         outputRecord = (OutputRecord)mockOutputRecord.proxy();
-        mockCoralSchema = new Mock(CoralSchema.class);
+        mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
-        mockAttributeClass = new Mock(AttributeClass.class);
+        mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockResourceClass = new Mock(ResourceClass.class);
+        mockResourceClass = mock(ResourceClass.class);
         resourceClass = (ResourceClass)mockResourceClass.proxy();
-        mockCoralEventHub = new Mock(CoralEventHub.class);
+        mockCoralEventHub = mock(CoralEventHub.class);
         coralEventHub = (CoralEventHub)mockCoralEventHub.proxy();
-        mockCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);
+        mockCoralEventWhiteboard = mock(CoralEventWhiteboard.class);
         coralEventWhiteboard = (CoralEventWhiteboard)mockCoralEventWhiteboard.proxy();
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
     }

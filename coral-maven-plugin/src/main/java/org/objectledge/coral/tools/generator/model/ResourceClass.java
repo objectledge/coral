@@ -44,7 +44,7 @@ import org.objectledge.coral.schema.ResourceClassFlags;
  * Represents a Coral ResourceClass.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClass.java,v 1.6 2004-03-23 16:16:40 fil Exp $
+ * @version $Id: ResourceClass.java,v 1.7 2004-03-24 14:40:07 fil Exp $
  */
 public class ResourceClass
     extends Entity
@@ -64,6 +64,13 @@ public class ResourceClass
     private List attributeOrder;
     
     // constructors /////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Protected no-arg constructor, to allow mocking.
+     */
+    protected ResourceClass()
+    {
+    }
     
     /**
      * Construcs an instance of the ResourceClass.

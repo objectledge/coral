@@ -30,8 +30,7 @@ package org.objectledge.coral.security;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.CoralEventHub;
@@ -45,14 +44,15 @@ import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.Persistent;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityImplTest.java,v 1.4 2004-03-08 09:17:30 fil Exp $
+ * @version $Id: CoralSecurityImplTest.java,v 1.5 2004-03-24 14:40:13 fil Exp $
  */
 public class CoralSecurityImplTest 
-    extends MockObjectTestCase
+    extends LedgeTestCase
 {
     private Mock mockPersistence;
     private Persistence persistence;
@@ -99,26 +99,26 @@ public class CoralSecurityImplTest
     {
         super.setUp();
         
-        mockPersistence = new Mock(Persistence.class);
+        mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
-        mockCoralRegistry = new Mock(CoralRegistry.class);
+        mockCoralRegistry = mock(CoralRegistry.class);
         coralRegistry = (CoralRegistry)mockCoralRegistry.proxy();
-        mockCoralEventHub = new Mock(CoralEventHub.class);
+        mockCoralEventHub = mock(CoralEventHub.class);
         coralEventHub = (CoralEventHub)mockCoralEventHub.proxy();
-        mockLocalEventWhiteboard = new Mock(CoralEventWhiteboard.class, "localEventWhiteboard");
+        mockLocalEventWhiteboard = mock(CoralEventWhiteboard.class, "localEventWhiteboard");
         localEventWhiteboard = (CoralEventWhiteboard)mockLocalEventWhiteboard.proxy();
         mockCoralEventHub.stub().method("getLocal").will(returnValue(localEventWhiteboard));
-        mockOutboundEventWhiteboard = new Mock(CoralEventWhiteboard.class, "outboundEventWhiteboard");
+        mockOutboundEventWhiteboard = mock(CoralEventWhiteboard.class, "outboundEventWhiteboard");
         outboundEventWhiteboard = (CoralEventWhiteboard)mockOutboundEventWhiteboard.proxy();
         mockCoralEventHub.stub().method("getOutbound").will(returnValue(outboundEventWhiteboard));
-        mockInboundEventWhiteboard = new Mock(CoralEventWhiteboard.class, "inboundEventWhiteboard");
+        mockInboundEventWhiteboard = mock(CoralEventWhiteboard.class, "inboundEventWhiteboard");
         inboundEventWhiteboard = (CoralEventWhiteboard)mockInboundEventWhiteboard.proxy();
         mockCoralEventHub.stub().method("getInbound").will(returnValue(inboundEventWhiteboard));
-        mockCoralSchema = new Mock(CoralSchema.class);
+        mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
-        mockCoralStore = new Mock(CoralStore.class);
+        mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralCore.stub().method("getRegistry").will(returnValue(coralRegistry));
         mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
@@ -126,23 +126,23 @@ public class CoralSecurityImplTest
         
         coralSecurity = new CoralSecurityImpl(persistence, coralEventHub, coralCore);
         
-        mockSubject = new Mock(Subject.class);
+        mockSubject = mock(Subject.class);
         subject = (Subject)mockSubject.proxy();
-        mockRole = new Mock(Role.class);
+        mockRole = mock(Role.class);
         role = (Role)mockRole.proxy();
-        mockSuperRole = new Mock(Role.class, "mockSuperRole");
+        mockSuperRole = mock(Role.class, "mockSuperRole");
         superRole = (Role)mockSuperRole.proxy();
-        mockSubRole = new Mock(Role.class, "mockSubRole");
+        mockSubRole = mock(Role.class, "mockSubRole");
         subRole = (Role)mockSubRole.proxy();
-        mockRootSubject = new Mock(Subject.class, "mockRootSubject");
+        mockRootSubject = mock(Subject.class, "mockRootSubject");
         rootSubject = (Subject)mockRootSubject.proxy();
-        mockRootRole = new Mock(Role.class, "mockRootRole");
+        mockRootRole = mock(Role.class, "mockRootRole");
         rootRole = (Role)mockRootRole.proxy();
-        mockPermission = new Mock(Permission.class);
+        mockPermission = mock(Permission.class);
         permission = (Permission)mockPermission.proxy();
-        mockResourceClass = new Mock(ResourceClass.class);
+        mockResourceClass = mock(ResourceClass.class);
         resourceClass = (ResourceClass)mockResourceClass.proxy();
-        mockResource = new Mock(Resource.class);
+        mockResource = mock(Resource.class);
         resource = (Resource)mockResource.proxy();
     }
     

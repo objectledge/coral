@@ -28,18 +28,18 @@
 package org.objectledge.coral.session;
 
 import org.apache.commons.pool.KeyedObjectPool;
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Role;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStoreTest.java,v 1.3 2004-03-18 15:24:16 fil Exp $
+ * @version $Id: SessionCoralStoreTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
  */
-public class SessionCoralStoreTest extends MockObjectTestCase
+public class SessionCoralStoreTest extends LedgeTestCase
 {
     private Mock mockCoralCore;
     private CoralCore coralCore;
@@ -53,14 +53,14 @@ public class SessionCoralStoreTest extends MockObjectTestCase
     
     public void setUp()
     {
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
-        mockCoralSecurity = new Mock(CoralSecurity.class);
+        mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockCoralCore.stub().method("getSecurity").will(returnValue(coralSecurity));
         mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
         mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
-        mockKeyedObjectPool = new Mock(KeyedObjectPool.class);
+        mockKeyedObjectPool = mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
 
         session = new CoralSessionImpl(coralCore, keyedObjectPool);

@@ -28,20 +28,18 @@
 package org.objectledge.coral.session;
 
 import org.apache.commons.pool.KeyedObjectPool;
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
-import org.objectledge.coral.script.parser.RMLParserFactory;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralEventWhiteboardTest.java,v 1.3 2004-03-18 15:24:16 fil Exp $
+ * @version $Id: SessionCoralEventWhiteboardTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
  */
-public class SessionCoralEventWhiteboardTest extends MockObjectTestCase
+public class SessionCoralEventWhiteboardTest extends LedgeTestCase
 {
     private Mock mockCoralCore;
     private CoralCore coralCore;
@@ -60,12 +58,12 @@ public class SessionCoralEventWhiteboardTest extends MockObjectTestCase
     
     public void setUp()
     {
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
-        mockCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);
+        mockCoralEventWhiteboard = mock(CoralEventWhiteboard.class);
         coralEventWhiteboard = (CoralEventWhiteboard)mockCoralEventWhiteboard.proxy();
         mockCoralCore.stub().method("getEventWhiteboard").will(returnValue(coralEventWhiteboard));
-        mockKeyedObjectPool = new Mock(KeyedObjectPool.class);
+        mockKeyedObjectPool = mock(KeyedObjectPool.class);
         keyedObjectPool = (KeyedObjectPool)mockKeyedObjectPool.proxy();
         mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
         mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
@@ -76,7 +74,7 @@ public class SessionCoralEventWhiteboardTest extends MockObjectTestCase
         session.open(null, null);
         sessionCoralEventWhiteboard = new SessionCoralEventWhiteboard(coralCore, session);
         
-        mockPermissionAssignmentChangeListener = new Mock(PermissionAssignmentChangeListener.class);
+        mockPermissionAssignmentChangeListener = mock(PermissionAssignmentChangeListener.class);
         permissionAssignmentChangeListener = (PermissionAssignmentChangeListener)mockPermissionAssignmentChangeListener.proxy();
     }
     

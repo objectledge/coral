@@ -29,18 +29,18 @@ package org.objectledge.coral.session;
 
 import java.security.Principal;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImplTest.java,v 1.4 2004-03-18 15:23:39 fil Exp $
+ * @version $Id: CoralSessionFactoryImplTest.java,v 1.5 2004-03-24 14:40:11 fil Exp $
  */
-public class CoralSessionFactoryImplTest extends MockObjectTestCase
+public class CoralSessionFactoryImplTest extends LedgeTestCase
 {
     private Mock mockCoralCore;
     private CoralCore coralCore;
@@ -64,33 +64,33 @@ public class CoralSessionFactoryImplTest extends MockObjectTestCase
 
     public void setUp()
     {
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralCore.stub().method("getInstantiator").will(returnValue(null));
         mockCoralCore.stub().method("getRMLParserFactory").will(returnValue(null));        
         
         coralSessionFactoryImpl = new CoralSessionFactoryImpl(coralCore);
         
-        mockPrincipal = new Mock(Principal.class);
+        mockPrincipal = mock(Principal.class);
         principal = (Principal)mockPrincipal.proxy();
         mockPrincipal.stub().method("getName").will(returnValue("<user>"));
-        mockCoralSecurity = new Mock(CoralSecurity.class);
+        mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockCoralCore.stub().method("getSecurity").will(returnValue(coralSecurity));
-        mockSubject = new Mock(Subject.class);
+        mockSubject = mock(Subject.class);
         subject = (Subject)mockSubject.proxy();
         mockCoralSecurity.stub().method("getSubject").with(eq("<user>")).will(returnValue(subject));
-        mockRootSubject = new Mock(Subject.class);
+        mockRootSubject = mock(Subject.class);
         rootSubject = (Subject)mockRootSubject.proxy();
-        mockRootPrincipal = new Mock(Principal.class, "rootPrincipal");
+        mockRootPrincipal = mock(Principal.class, "rootPrincipal");
         rootPrincipal = (Principal)mockRootPrincipal.proxy();
         mockRootPrincipal.stub().method("getName").will(returnValue("<root>"));
         mockRootSubject.stub().method("getPrincipal").will(returnValue(rootPrincipal));
         mockCoralSecurity.stub().method("getSubject").with(eq(Subject.ROOT)).will(returnValue(rootSubject));
         mockCoralSecurity.stub().method("getSubject").with(eq("<root>")).will(returnValue(rootSubject));
-        mockAnonymousSubject = new Mock(Subject.class);
+        mockAnonymousSubject = mock(Subject.class);
         anonymousSubject = (Subject)mockAnonymousSubject.proxy();
-        mockAnonymousPrincipal = new Mock(Principal.class, "anonymousPrincipal");
+        mockAnonymousPrincipal = mock(Principal.class, "anonymousPrincipal");
         anonymousPrincipal = (Principal)mockAnonymousPrincipal.proxy();
         mockAnonymousPrincipal.stub().method("getName").will(returnValue("<anonymous>"));
         mockAnonymousSubject.stub().method("getPrincipal").will(returnValue(anonymousPrincipal));

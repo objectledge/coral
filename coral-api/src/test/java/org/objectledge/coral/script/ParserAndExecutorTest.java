@@ -30,8 +30,8 @@ package org.objectledge.coral.script;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 
-import org.jmock.Constraint;
-import org.jmock.builder.Mock;
+import org.jmock.Mock;
+import org.jmock.core.Constraint;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -51,7 +51,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParserAndExecutorTest.java,v 1.4 2004-03-23 09:56:33 fil Exp $
+ * @version $Id: ParserAndExecutorTest.java,v 1.5 2004-03-24 14:40:18 fil Exp $
  */
 public class ParserAndExecutorTest extends LedgeTestCase
 {
@@ -86,36 +86,36 @@ public class ParserAndExecutorTest extends LedgeTestCase
     public void setUp()
         throws Exception
     {
-        mockCoralSchema = new Mock(CoralSchema.class);
+        mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
-        mockCoralSecurity = new Mock(CoralSecurity.class);
+        mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
-        mockCoralStore = new Mock(CoralStore.class);
+        mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
-        mockCoralQuery = new Mock(CoralQuery.class);
+        mockCoralQuery = mock(CoralQuery.class);
         coralQuery = (CoralQuery)mockCoralQuery.proxy();
-        mockCoralSession = new Mock(CoralSession.class);
+        mockCoralSession = mock(CoralSession.class);
         coralSession = (CoralSession)mockCoralSession.proxy();
         mockCoralSession.stub().method("getSchema").will(returnValue(coralSchema));
         mockCoralSession.stub().method("getSecurity").will(returnValue(coralSecurity));
         mockCoralSession.stub().method("getStore").will(returnValue(coralStore));
         mockCoralSession.stub().method("getQuery").will(returnValue(coralQuery));
-        mockCoralSessionFactory = new Mock(CoralSessionFactory.class);
+        mockCoralSessionFactory = mock(CoralSessionFactory.class);
         
         executor = new RMLExecutor(coralSession, new OutputStreamWriter(System.out), 
             coralSessionFactory);
             
-        mockAttributeClass = new Mock(AttributeClass.class);
+        mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
-        mockResourceClass = new Mock(ResourceClass.class);
+        mockResourceClass = mock(ResourceClass.class);
         resourceClass = (ResourceClass)mockResourceClass.proxy();
-        mockParentResourceClass = new Mock(ResourceClass.class, "mockParentResourceClass");
+        mockParentResourceClass = mock(ResourceClass.class, "mockParentResourceClass");
         parentResourceClass = (ResourceClass)mockParentResourceClass.proxy();
-        mockAttributeDefinition1 = new Mock(AttributeDefinition.class, "mockAttributeDefinition1");
+        mockAttributeDefinition1 = mock(AttributeDefinition.class, "mockAttributeDefinition1");
         attributeDefinition1 = (AttributeDefinition)mockAttributeDefinition1.proxy();
-        mockAttributeDefinition2 = new Mock(AttributeDefinition.class, "mockAttributeDefinition2");
+        mockAttributeDefinition2 = mock(AttributeDefinition.class, "mockAttributeDefinition2");
         attributeDefinition2 = (AttributeDefinition)mockAttributeDefinition2.proxy();
-        mockPermission = new Mock(Permission.class);
+        mockPermission = mock(Permission.class);
         permission = (Permission)mockPermission.proxy();
     }
     

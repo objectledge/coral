@@ -27,9 +27,8 @@
 // 
 package org.objectledge.coral.schema;
 
-import org.jmock.Constraint;
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
+import org.jmock.core.Constraint;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.InstantiationException;
@@ -41,14 +40,15 @@ import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
-import org.objectledge.utils.*;
+import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.utils.MapElement;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.8 2004-03-19 13:55:24 fil Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.9 2004-03-24 14:40:10 fil Exp $
  */
-public class ResourceClassImplTest extends MockObjectTestCase
+public class ResourceClassImplTest extends LedgeTestCase
 {
     private Mock mockPersistence;   
     private Persistence persistence;
@@ -71,24 +71,24 @@ public class ResourceClassImplTest extends MockObjectTestCase
 
     public void setUp()
     {
-        mockPersistence = new Mock(Persistence.class);
+        mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
-        mockInputRecord = new Mock(InputRecord.class);
+        mockInputRecord = mock(InputRecord.class);
         inputRecord = (InputRecord)mockInputRecord.proxy();
-        mockOutputRecord = new Mock(OutputRecord.class);
+        mockOutputRecord = mock(OutputRecord.class);
         outputRecord = (OutputRecord)mockOutputRecord.proxy();
-        mockInstantiator = new Mock(Instantiator.class);
+        mockInstantiator = mock(Instantiator.class);
         instantiator = (Instantiator)mockInstantiator.proxy();
-        mockCoralEventHub = new Mock(CoralEventHub.class);
+        mockCoralEventHub = mock(CoralEventHub.class);
         coralEventHub = (CoralEventHub)mockCoralEventHub.proxy();
-        mockCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);
+        mockCoralEventWhiteboard = mock(CoralEventWhiteboard.class);
         coralEventWhiteboard = (CoralEventWhiteboard)mockCoralEventWhiteboard.proxy();
-        mockCoralRegistry = new Mock(CoralRegistry.class);
+        mockCoralRegistry = mock(CoralRegistry.class);
         coralRegistry = (CoralRegistry)mockCoralRegistry.proxy();
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralCore.stub().method("getRegistry").will(returnValue(coralRegistry));
-        mockResourceHandler = new Mock(ResourceHandler.class);
+        mockResourceHandler = mock(ResourceHandler.class);
         resourceHandler = (ResourceHandler)mockResourceHandler.proxy();
     }
     
@@ -123,8 +123,8 @@ public class ResourceClassImplTest extends MockObjectTestCase
     public void testMissingHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willThrow(new ClassNotFoundException("<handler class>"));
+        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(throwException(new ClassNotFoundException("<handler class>")));
         try
         {
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
@@ -142,9 +142,9 @@ public class ResourceClassImplTest extends MockObjectTestCase
     public void testUninstantiableHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willReturn(ResourceHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).willThrow(new InstantiationException("<handler class>", new Exception("unavailable")));
+        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(throwException(new InstantiationException("<handler class>", new Exception("unavailable"))));
         try
         {
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
@@ -162,9 +162,9 @@ public class ResourceClassImplTest extends MockObjectTestCase
     public void testNotImplementingHandlerClass()
         throws Exception
     {
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).willReturn(Object.class);
-        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).willReturn(ResourceHandler.class);
-        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).willReturn(new Object());
+        mockInstantiator.expect(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
+        mockInstantiator.expect(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expect(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(new Object()));
         try
         {        
             new ResourceClassImpl(persistence, instantiator, coralEventHub,
@@ -544,12 +544,5 @@ public class ResourceClassImplTest extends MockObjectTestCase
     public void testPermissionRemovedFromParent()
     {
         // TODO implement test
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    
-    private Constraint mapElement(Object key, Constraint c)
-    {
-        return new MapElement(key, c);
     }
 }

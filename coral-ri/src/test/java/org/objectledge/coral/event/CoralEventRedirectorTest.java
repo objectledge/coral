@@ -27,12 +27,12 @@
 // 
 package org.objectledge.coral.event;
 
-import org.jmock.builder.Mock;
+import org.jmock.Mock;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventRedirectorTest.java,v 1.2 2004-03-01 15:34:53 fil Exp $
+ * @version $Id: CoralEventRedirectorTest.java,v 1.3 2004-03-24 14:40:12 fil Exp $
  */
 public class CoralEventRedirectorTest extends CoralEventTestCase
 {
@@ -49,11 +49,11 @@ public class CoralEventRedirectorTest extends CoralEventTestCase
         throws Exception
     {
         super.setUp();
-        mockInboundCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);
+        mockInboundCoralEventWhiteboard = mock(CoralEventWhiteboard.class);
         inboundCoralEventWhiteboard = (CoralEventWhiteboard)mockInboundCoralEventWhiteboard.proxy();
-        mockOutboundCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);
+        mockOutboundCoralEventWhiteboard = mock(CoralEventWhiteboard.class);
         outboundCoralEventWhiteboard = (CoralEventWhiteboard)mockOutboundCoralEventWhiteboard.proxy();
-        mockLocalCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);
+        mockLocalCoralEventWhiteboard = mock(CoralEventWhiteboard.class);
         localCoralEventWhiteboard = (CoralEventWhiteboard)mockLocalCoralEventWhiteboard.proxy();
         
         coralEventRedirector = new CoralEventRedirector(inboundCoralEventWhiteboard, 

@@ -33,8 +33,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.jcontainer.dna.Logger;
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
@@ -45,12 +44,13 @@ import org.objectledge.parameters.DefaultParameters;
 import org.objectledge.parameters.Parameters;
 import org.objectledge.parameters.db.DBParameters;
 import org.objectledge.parameters.db.DBParametersManager;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  *
  */
-public class ParametersAttributeHandlerTest extends MockObjectTestCase
+public class ParametersAttributeHandlerTest extends LedgeTestCase
 {
     private Mock mockDatabase;
     private Database database;
@@ -85,38 +85,38 @@ public class ParametersAttributeHandlerTest extends MockObjectTestCase
     public void setUp() throws Exception
     {
         super.setUp();
-        mockResultSet = new Mock(ResultSet.class);
+        mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
-        mockStatement = new Mock(Statement.class);
+        mockStatement = mock(Statement.class);
         mockStatement.stub().method("executeQuery").will(returnValue(resultSet));
         statement = (Statement)mockStatement.proxy();
-        mockPreparedStatement = new Mock(PreparedStatement.class);
+        mockPreparedStatement = mock(PreparedStatement.class);
         mockPreparedStatement.stub().method("executeBatch").will(returnValue(new int[0]));
         //mockPreparedStatement.stub().method("executeQuery").will(returnValue(resultSet));
         preparedStatement = (PreparedStatement)mockPreparedStatement.proxy();
 
-        mockConnection = new Mock(Connection.class);
+        mockConnection = mock(Connection.class);
         mockConnection.stub().method("createStatement").will(returnValue(statement));
         mockConnection.stub().method("prepareStatement").will(returnValue(preparedStatement));
         mockConnection.stub().method("close");
         connection = (Connection)mockConnection.proxy();
 
-        mockDatabase = new Mock(Database.class);
+        mockDatabase = mock(Database.class);
         mockDatabase.stub().method("getConnection").will(returnValue(connection));
         database = (Database)mockDatabase.proxy();
-        mockLogger = new Mock(Logger.class);
+        mockLogger = mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
 
-        mockParametersManager = new Mock(DBParametersManager.class);
+        mockParametersManager = mock(DBParametersManager.class);
         parametersManager = (DBParametersManager)mockParametersManager.proxy();
 
-        mockCoralStore = new Mock(CoralStore.class);
+        mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
-        mockCoralSchema = new Mock(CoralSchema.class);
+        mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
-        mockCoralSecurity = new Mock(CoralSecurity.class);
+        mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
-        mockAttributeClass = new Mock(AttributeClass.class);
+        mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stub().method("getJavaClass").will(returnValue(Parameters.class));
         mockAttributeClass.stub().method("getName").will(returnValue("parameters"));

@@ -49,8 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityInUseException;
@@ -69,12 +68,13 @@ import org.objectledge.database.Database;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.3 2004-03-18 15:23:10 fil Exp $
+ * @version $Id: RelationImplTest.java,v 1.4 2004-03-24 14:40:11 fil Exp $
  */
-public class RelationImplTest extends MockObjectTestCase
+public class RelationImplTest extends LedgeTestCase
 {
     private Mock mockDatabase;
     private Database database;
@@ -93,9 +93,9 @@ public class RelationImplTest extends MockObjectTestCase
 
     private RelationImpl relation;
 
-	private Mock mockResource1 = new Mock(Resource.class);
+	private Mock mockResource1 = mock(Resource.class);
 	private Resource resource1 = (Resource) mockResource1.proxy();
-	private Mock mockResource2 = new Mock(Resource.class);
+	private Mock mockResource2 = mock(Resource.class);
 	private Resource resource2 = (Resource) mockResource2.proxy();
 
     public static void main(String[] args)
@@ -109,19 +109,19 @@ public class RelationImplTest extends MockObjectTestCase
 
         coralStore = new MockCoralStore();
 
-        mockInputRecord = new Mock(InputRecord.class);
+        mockInputRecord = mock(InputRecord.class);
         mockInputRecord.stub().method("getLong").will(returnValue(10L));
         mockInputRecord.stub().method("getString").will(returnValue("relation name2"));
         inputRecord = (InputRecord)mockInputRecord.proxy();
 
-        mockStatement = new Mock(Statement.class);
+        mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
 
-        mockConnection = new Mock(Connection.class);
+        mockConnection = mock(Connection.class);
         mockConnection.stub().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();
 
-        mockDatabase = new Mock(Database.class);
+        mockDatabase = mock(Database.class);
         mockDatabase.stub().method("getNextId").will(returnValue(1L));
         mockDatabase.stub().method("getConnection").will(returnValue(connection));
         database = (Database)mockDatabase.proxy();

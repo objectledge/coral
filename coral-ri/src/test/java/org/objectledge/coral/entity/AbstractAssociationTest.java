@@ -27,18 +27,18 @@
 // 
 package org.objectledge.coral.entity;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractAssociationTest.java,v 1.1 2004-02-24 14:40:10 fil Exp $
+ * @version $Id: AbstractAssociationTest.java,v 1.2 2004-03-24 14:40:13 fil Exp $
  */
-public class AbstractAssociationTest extends MockObjectTestCase
+public class AbstractAssociationTest extends LedgeTestCase
 {
     private Mock mockPersistence;
     
@@ -50,9 +50,9 @@ public class AbstractAssociationTest extends MockObjectTestCase
     
     public void setUp()
     {
-        mockPersistence = new Mock(Persistence.class);
-        mockInputRecord = new Mock(InputRecord.class);
-        mockOutputRecord = new Mock(OutputRecord.class);
+        mockPersistence = mock(Persistence.class);
+        mockInputRecord = mock(InputRecord.class);
+        mockOutputRecord = mock(OutputRecord.class);
         factory = new RedBlueEntityFactory((Persistence)mockPersistence.proxy());
     }
     

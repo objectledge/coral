@@ -30,7 +30,7 @@ package org.objectledge.coral.event;
 import org.apache.log4j.BasicConfigurator;
 import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.Log4JLogger;
-import org.jmock.builder.Mock;
+import org.jmock.Mock;
 import org.objectledge.context.Context;
 import org.objectledge.event.EventWhiteboard;
 import org.objectledge.event.EventWhiteboardFactory;
@@ -39,7 +39,7 @@ import org.objectledge.threads.ThreadPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventWhiteboardImplTest.java,v 1.4 2004-03-01 15:34:53 fil Exp $
+ * @version $Id: CoralEventWhiteboardImplTest.java,v 1.5 2004-03-24 14:40:12 fil Exp $
  */
 public class CoralEventWhiteboardImplTest extends CoralEventTestCase
 {
@@ -54,7 +54,7 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
         throws Exception
     {
         super.setUp();
-        mockEventWhiteboard = new Mock(EventWhiteboard.class);
+        mockEventWhiteboard = mock(EventWhiteboard.class);
         eventWhiteboard = (EventWhiteboard)mockEventWhiteboard.proxy();
         coralEventWhiteboard = new CoralEventWhiteboardImpl(eventWhiteboard);
 

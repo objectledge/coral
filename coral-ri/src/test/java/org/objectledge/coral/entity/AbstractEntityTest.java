@@ -27,19 +27,19 @@
 // 
 package org.objectledge.coral.entity;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractEntityTest.java,v 1.2 2004-02-24 14:44:09 fil Exp $
+ * @version $Id: AbstractEntityTest.java,v 1.3 2004-03-24 14:40:13 fil Exp $
  */
-public class AbstractEntityTest extends MockObjectTestCase
+public class AbstractEntityTest extends LedgeTestCase
 {
     private Mock mockPersistence;
     
@@ -49,9 +49,9 @@ public class AbstractEntityTest extends MockObjectTestCase
     
     public void setUp()
     {
-        mockPersistence = new Mock(Persistence.class);
-        mockInputRecord = new Mock(InputRecord.class);
-        mockOutputRecord = new Mock(OutputRecord.class);
+        mockPersistence = mock(Persistence.class);
+        mockInputRecord = mock(InputRecord.class);
+        mockOutputRecord = mock(OutputRecord.class);
     }
     
     public void testCreation()

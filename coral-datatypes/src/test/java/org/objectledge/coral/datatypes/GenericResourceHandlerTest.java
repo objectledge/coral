@@ -35,8 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -49,6 +48,7 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.Database;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
@@ -56,7 +56,7 @@ import org.objectledge.database.Database;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class GenericResourceHandlerTest extends MockObjectTestCase
+public class GenericResourceHandlerTest extends LedgeTestCase
 {
     private Mock mockDatabase;
     private Database database;
@@ -102,25 +102,25 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
     public void setUp() throws Exception
     {
         super.setUp();
-        mockDatabase = new Mock(Database.class);
+        mockDatabase = mock(Database.class);
         database = (Database)mockDatabase.proxy();
-        mockLogger = new Mock(Logger.class);
+        mockLogger = mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
 
-        mockSubject = new Mock(Subject.class);
+        mockSubject = mock(Subject.class);
         subject = (Subject)mockSubject.proxy();
         
-        mockAttributeHandler = new Mock(AttributeHandler.class);
+        mockAttributeHandler = mock(AttributeHandler.class);
         mockAttributeHandler.stub().method("toAttributeValue").will(returnValue("foo"));
         mockAttributeHandler.stub().method("checkDomain");
         mockAttributeHandler.stub().method("shouldRetrieveAfterCreate").will(returnValue(false));
         attributeHandler = (AttributeHandler)mockAttributeHandler.proxy();        
         
-        mockAttributeClass = new Mock(AttributeClass.class);
+        mockAttributeClass = mock(AttributeClass.class);
         mockAttributeClass.stub().method("getHandler").will(returnValue(attributeHandler));
         attributeClass = (AttributeClass)mockAttributeClass.proxy();        
         
-        mockAttributeDefinition = new Mock(AttributeDefinition.class);
+        mockAttributeDefinition = mock(AttributeDefinition.class);
         mockAttributeDefinition.stub().method("getFlags").will(returnValue(1));
         mockAttributeDefinition.stub().method("getName").will(returnValue("description"));
         mockAttributeDefinition.stub().method("getAttributeClass").will(returnValue(attributeClass));
@@ -128,13 +128,13 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
         mockAttributeDefinition.stub().method("getId").will(returnValue(1L));
         attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
         
-        mockCoralStore = new Mock(CoralStore.class);
+        mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
-        mockCoralSecurity = new Mock(CoralSecurity.class);
+        mockCoralSecurity = mock(CoralSecurity.class);
         mockCoralSecurity.stub().method("getSubject").will(returnValue(subject));
         
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
-        mockResourceClass = new Mock(ResourceClass.class);
+        mockResourceClass = mock(ResourceClass.class);
         mockResourceClass.stub().method("getJavaClass").will(returnValue(NodeResourceImpl.class));
         mockResourceClass.stub().method("getName").will(returnValue("node"));
         mockResourceClass.stub().method("getAttribute").will(returnValue(attributeDefinition));
@@ -142,30 +142,30 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
         mockResourceClass.stub().method("getDeclaredAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
         resourceClass = (ResourceClass)mockResourceClass.proxy();
         
-        mockCoralSchema = new Mock(CoralSchema.class);
+        mockCoralSchema = mock(CoralSchema.class);
         mockCoralSchema.stub().method("getResourceClass").will(returnValue(resourceClass));
         mockCoralSchema.stub().method("getAttribute").with(eq(1L)).will(returnValue(attributeDefinition));
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         
         node = new NodeResourceImpl(database, logger, coralSchema);
         
-        mockInstantiator = new Mock(Instantiator.class);
+        mockInstantiator = mock(Instantiator.class);
         mockInstantiator.stub().method("newInstance").will(returnValue(node));
         instantiator = (Instantiator)mockInstantiator.proxy();
         
-        mockResource = new Mock(Resource.class);
+        mockResource = mock(Resource.class);
         mockResource.stub().method("getResourceClass").will(returnValue(resourceClass));
         mockResource.stub().method("getId").will(returnValue(1L));
         resource = (Resource)mockResource.proxy();
 
-        mockResultSet = new Mock(ResultSet.class);
+        mockResultSet = mock(ResultSet.class);
         mockResultSet.stub().method("close");
         resultSet = (ResultSet)mockResultSet.proxy();
         
-        mockStatement = new Mock(Statement.class);
+        mockStatement = mock(Statement.class);
         mockStatement.stub().method("close");
         statement = (Statement)mockStatement.proxy();
-        mockConnection = new Mock(Connection.class);
+        mockConnection = mock(Connection.class);
         mockConnection.stub().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();              
                 

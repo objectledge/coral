@@ -27,18 +27,18 @@
 //
 package org.objectledge.coral.relation;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.relation.RelationModification.AddOperation;
 import org.objectledge.coral.relation.RelationModification.ClearOperation;
 import org.objectledge.coral.relation.RelationModification.RemoveOperation;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModificationTest.java,v 1.1 2004-03-18 13:26:43 fil Exp $
+ * @version $Id: RelationModificationTest.java,v 1.2 2004-03-24 14:40:18 fil Exp $
  */
-public class RelationModificationTest  extends MockObjectTestCase
+public class RelationModificationTest  extends LedgeTestCase
 {
 	private Mock mockResource1;
 	private Mock mockResource2;
@@ -50,8 +50,8 @@ public class RelationModificationTest  extends MockObjectTestCase
 
 	public void setUp()
 	{
-		mockResource1 = new Mock(Resource.class);
-		mockResource2 = new Mock(Resource.class);
+		mockResource1 = mock(Resource.class);
+		mockResource2 = mock(Resource.class);
 	}
 
 	public void testRelationModification()

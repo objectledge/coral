@@ -28,12 +28,12 @@
 package org.objectledge.coral.event;
 
 import org.jcontainer.dna.Logger;
-import org.jmock.builder.Mock;
+import org.jmock.Mock;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventLoggerTest.java,v 1.3 2004-03-01 15:34:53 fil Exp $
+ * @version $Id: CoralEventLoggerTest.java,v 1.4 2004-03-24 14:40:12 fil Exp $
  */
 public class CoralEventLoggerTest 
     extends CoralEventTestCase
@@ -52,11 +52,11 @@ public class CoralEventLoggerTest
         throws Exception
     {
         super.setUp();
-        mockCoralEventHub = new Mock(CoralEventHub.class);
+        mockCoralEventHub = mock(CoralEventHub.class);
         coralEventHub = (CoralEventHub)mockCoralEventHub.proxy();
-        mockCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);
+        mockCoralEventWhiteboard = mock(CoralEventWhiteboard.class);
         coralEventWhiteboard = (CoralEventWhiteboard)mockCoralEventWhiteboard.proxy();
-        mockLogger = new Mock(Logger.class);
+        mockLogger = mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
         mockCoralEventHub.expect(once()).method("getGlobal").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expect(atLeastOnce()).method(stringContains("add"));

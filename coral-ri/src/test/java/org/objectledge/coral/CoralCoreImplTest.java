@@ -32,8 +32,7 @@ import java.util.HashMap;
 import org.apache.log4j.BasicConfigurator;
 import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.Log4JLogger;
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.context.Context;
 import org.objectledge.coral.security.Subject;
@@ -42,15 +41,16 @@ import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
 import org.objectledge.threads.ThreadPool;
+import org.objectledge.utils.LedgeTestCase;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImplTest.java,v 1.5 2004-03-16 13:43:26 fil Exp $
+ * @version $Id: CoralCoreImplTest.java,v 1.6 2004-03-24 14:40:13 fil Exp $
  */
-public class CoralCoreImplTest extends MockObjectTestCase
+public class CoralCoreImplTest extends LedgeTestCase
 {
     private Mock mockDatabase;
     private Database database;
@@ -73,12 +73,12 @@ public class CoralCoreImplTest extends MockObjectTestCase
     {
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
-        mockDatabase = new Mock(Database.class);
+        mockDatabase = mock(Database.class);
         database = (Database)mockDatabase.proxy();
-        mockPersistence = new Mock(Persistence.class);
+        mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
         mockPersistence.stub().method("getDatabase").will(returnValue(database));
-        mockCacheFactory = new Mock(CacheFactory.class);
+        mockCacheFactory = mock(CacheFactory.class);
         cacheFactory = (CacheFactory)mockCacheFactory.proxy();
         mockCacheFactory.stub().method("getInstance").will(returnValue(new HashMap()));
         logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));        
@@ -88,9 +88,9 @@ public class CoralCoreImplTest extends MockObjectTestCase
         
         coralCore = new CoralCoreImpl(emptyContainer, persistence, cacheFactory, eventWhiteboardFactory, logger);
 
-        mockCoralSession = new Mock(CoralSession.class);
+        mockCoralSession = mock(CoralSession.class);
         coralSession = (CoralSession)mockCoralSession.proxy();
-        mockSubject = new Mock(Subject.class);
+        mockSubject = mock(Subject.class);
         subject = (Subject)mockSubject.proxy();               
     }
     

@@ -30,8 +30,7 @@ package org.objectledge.coral.entity;
 import java.util.HashMap;
 
 import org.jcontainer.dna.Logger;
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
@@ -54,13 +53,14 @@ import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistentFactory;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralRegistryTest.java,v 1.5 2004-03-05 12:09:19 fil Exp $
+ * @version $Id: CoralRegistryTest.java,v 1.6 2004-03-24 14:40:13 fil Exp $
  */
-public class CoralRegistryTest extends MockObjectTestCase
+public class CoralRegistryTest extends LedgeTestCase
 {
     private Mock mockDatabase;
     private Database database;
@@ -98,93 +98,93 @@ public class CoralRegistryTest extends MockObjectTestCase
     
     public void setUp()
     {
-        mockDatabase = new Mock(Database.class);
+        mockDatabase = mock(Database.class);
         database = (Database)mockDatabase.proxy();
-        mockPersistence = new Mock(Persistence.class);
+        mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
         mockPersistence.stub().method("getDatabase").will(returnValue(database));
-        mockCacheFactory = new Mock(CacheFactory.class);
+        mockCacheFactory = mock(CacheFactory.class);
         cacheFactory = (CacheFactory)mockCacheFactory.proxy();
-        mockCoralEventHub = new Mock(CoralEventHub.class);
+        mockCoralEventHub = mock(CoralEventHub.class);
         coralEventHub = (CoralEventHub)mockCoralEventHub.proxy();
-        mockCoralEventWhiteboard = new Mock(CoralEventWhiteboard.class);
+        mockCoralEventWhiteboard = mock(CoralEventWhiteboard.class);
         coralEventWhiteboard = (CoralEventWhiteboard)mockCoralEventWhiteboard.proxy();
-        mockCoralSchema = new Mock(CoralSchema.class);
+        mockCoralSchema = mock(CoralSchema.class);
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
-        mockCoralSecurity = new Mock(CoralSecurity.class);
+        mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
-        mockCoralStore = new Mock(CoralStore.class);
+        mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralCore.stub().method("getSchema").will(returnValue(coralSchema));
         mockCoralCore.stub().method("getSecurity").will(returnValue(coralSecurity));
         mockCoralCore.stub().method("getStore").will(returnValue(coralStore));
-        mockInstantiator = new Mock(Instantiator.class);
+        mockInstantiator = mock(Instantiator.class);
         instantiator = (Instantiator)mockInstantiator.proxy();
         
-        mockResourceClassInheritanceImplPersistentFactory = new Mock(PersistentFactory.class, "mockResourceClassInheritanceImplPersistentFactory");
+        mockResourceClassInheritanceImplPersistentFactory = mock(PersistentFactory.class, "mockResourceClassInheritanceImplPersistentFactory");
         mockResourceClassInheritanceImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new ResourceClassInheritanceImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(ResourceClassInheritanceImpl.class)).
             will(returnValue(mockResourceClassInheritanceImplPersistentFactory.proxy()));
-        mockAttributeDefinitionImplPersistentFactory = new Mock(PersistentFactory.class, "mockAttributeDefinitionImplPersistentFactory");
+        mockAttributeDefinitionImplPersistentFactory = mock(PersistentFactory.class, "mockAttributeDefinitionImplPersistentFactory");
         mockAttributeDefinitionImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new AttributeDefinitionImpl(persistence, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(AttributeDefinitionImpl.class)).
             will(returnValue(mockAttributeDefinitionImplPersistentFactory.proxy()));
-        mockRoleImplicationImplPersistentFactory = new Mock(PersistentFactory.class, "mockRoleImplicationImplImplPersistentFactory");
+        mockRoleImplicationImplPersistentFactory = mock(PersistentFactory.class, "mockRoleImplicationImplImplPersistentFactory");
         mockRoleImplicationImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new RoleImplicationImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(RoleImplicationImpl.class)).
             will(returnValue(mockRoleImplicationImplPersistentFactory.proxy()));
-        mockRoleAssignmentImplPersistentFactory = new Mock(PersistentFactory.class, "mockRoleAssignmentImplPersistentFactory");
+        mockRoleAssignmentImplPersistentFactory = mock(PersistentFactory.class, "mockRoleAssignmentImplPersistentFactory");
         mockRoleAssignmentImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new RoleAssignmentImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(RoleAssignmentImpl.class)).
             will(returnValue(mockRoleAssignmentImplPersistentFactory.proxy()));
-        mockPermissionAssignmentImplPersistentFactory = new Mock(PersistentFactory.class, "mockPermissionAssociationImplPersistentFactory");
+        mockPermissionAssignmentImplPersistentFactory = mock(PersistentFactory.class, "mockPermissionAssociationImplPersistentFactory");
         mockPermissionAssignmentImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new PermissionAssignmentImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(PermissionAssignmentImpl.class)).
             will(returnValue(mockPermissionAssignmentImplPersistentFactory.proxy()));
-        mockPermissionAssociationImplPersistentFactory = new Mock(PersistentFactory.class, "mockPermissionAssignmentImplPersistentFactory");
+        mockPermissionAssociationImplPersistentFactory = mock(PersistentFactory.class, "mockPermissionAssignmentImplPersistentFactory");
         mockPermissionAssociationImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new PermissionAssociationImpl(coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(PermissionAssociationImpl.class)).
             will(returnValue(mockPermissionAssociationImplPersistentFactory.proxy()));
 
-        mockSubjectImplPersistentFactory = new Mock(PersistentFactory.class, "mockSubjectImplPersistentFactory");
+        mockSubjectImplPersistentFactory = mock(PersistentFactory.class, "mockSubjectImplPersistentFactory");
         mockSubjectImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new SubjectImpl(persistence, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(SubjectImpl.class)).
             will(returnValue(mockSubjectImplPersistentFactory.proxy()));
 
-        mockRoleImplPersistentFactory = new Mock(PersistentFactory.class, "mockRoleImplPersistentFactory");
+        mockRoleImplPersistentFactory = mock(PersistentFactory.class, "mockRoleImplPersistentFactory");
         mockRoleImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new RoleImpl(persistence, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(RoleImpl.class)).
             will(returnValue(mockRoleImplPersistentFactory.proxy()));
 
-        mockPermissionImplPersistentFactory = new Mock(PersistentFactory.class, "mockPermissionImplPersistentFactory");
+        mockPermissionImplPersistentFactory = mock(PersistentFactory.class, "mockPermissionImplPersistentFactory");
         mockPermissionImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new PermissionImpl(persistence, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(PermissionImpl.class)).
             will(returnValue(mockPermissionImplPersistentFactory.proxy()));
 
-        mockResourceClassImplPersistentFactory = new Mock(PersistentFactory.class, "mockResourceClassImplPersistentFactory");
+        mockResourceClassImplPersistentFactory = mock(PersistentFactory.class, "mockResourceClassImplPersistentFactory");
         mockResourceClassImplPersistentFactory.stub().method("newInstance").
             will(returnValue(new ResourceClassImpl(persistence, instantiator, coralEventHub, coralCore)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(ResourceClassImpl.class)).
             will(returnValue(mockResourceClassImplPersistentFactory.proxy()));
 
-        mockAttributeClassImplPeristentFactory = new Mock(PersistentFactory.class, "mockAttributeClassImplPersistentFactory");
+        mockAttributeClassImplPeristentFactory = mock(PersistentFactory.class, "mockAttributeClassImplPersistentFactory");
         mockAttributeClassImplPeristentFactory.stub().method("newInstance").
             will(returnValue(new AttributeClassImpl(persistence, instantiator, coralEventHub)));
         mockInstantiator.stub().method("getPersistentFactory").with(eq(AttributeClassImpl.class)).
             will(returnValue(mockAttributeClassImplPeristentFactory.proxy()));
 
-        mockLogger = new Mock(Logger.class);        
+        mockLogger = mock(Logger.class);        
         logger = (Logger)mockLogger.proxy();
     }
     

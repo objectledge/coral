@@ -27,8 +27,7 @@
 // 
 package org.objectledge.coral.event;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.ResourceClass;
@@ -43,15 +42,16 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ResourceInheritance;
 import org.objectledge.coral.store.ResourceOwnership;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * An abstract test case that mocks a full set of objects used by event related classes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventTestCase.java,v 1.3 2004-03-01 15:34:53 fil Exp $
+ * @version $Id: CoralEventTestCase.java,v 1.4 2004-03-24 14:40:12 fil Exp $
  */
 public abstract class CoralEventTestCase
-    extends MockObjectTestCase
+    extends LedgeTestCase
 {
     protected Mock mockPermissionAssociationChangeListener;
     protected PermissionAssociationChangeListener permissionAssoicationChangeListener;
@@ -147,95 +147,95 @@ public abstract class CoralEventTestCase
     public void setUp()
         throws Exception
     {
-        mockPermissionAssociationChangeListener = new Mock(PermissionAssociationChangeListener.class);
+        mockPermissionAssociationChangeListener = mock(PermissionAssociationChangeListener.class);
         permissionAssoicationChangeListener = (PermissionAssociationChangeListener)mockPermissionAssociationChangeListener.proxy();
-        mockPermissionAssociation = new Mock(PermissionAssociation.class);
+        mockPermissionAssociation = mock(PermissionAssociation.class);
         permissionAssociation = (PermissionAssociation)mockPermissionAssociation.proxy();
 
-        mockPermissionAssignmentChangeListener = new Mock(PermissionAssignmentChangeListener.class);
+        mockPermissionAssignmentChangeListener = mock(PermissionAssignmentChangeListener.class);
         permissionAssignmentChangeListener = (PermissionAssignmentChangeListener)mockPermissionAssignmentChangeListener.proxy();
-        mockPermissionAssignment = new Mock(PermissionAssignment.class);
+        mockPermissionAssignment = mock(PermissionAssignment.class);
         permissionAssignment = (PermissionAssignment)mockPermissionAssignment.proxy();
 
-        mockRoleAssignmentChangeListener = new Mock(RoleAssignmentChangeListener.class);
+        mockRoleAssignmentChangeListener = mock(RoleAssignmentChangeListener.class);
         roleAssignmentChangeListener = (RoleAssignmentChangeListener)mockRoleAssignmentChangeListener.proxy();
-        mockRoleAssignment = new Mock(RoleAssignment.class);
+        mockRoleAssignment = mock(RoleAssignment.class);
         roleAssignment = (RoleAssignment)mockRoleAssignment.proxy();
 
-        mockRoleImplicationChangeListener = new Mock(RoleImplicationChangeListener.class);
+        mockRoleImplicationChangeListener = mock(RoleImplicationChangeListener.class);
         roleImplicationChangeListener = (RoleImplicationChangeListener)mockRoleImplicationChangeListener.proxy();
-        mockRoleImplication = new Mock(RoleImplication.class);
+        mockRoleImplication = mock(RoleImplication.class);
         roleImplication = (RoleImplication)mockRoleImplication.proxy();
 
-        mockResourceClassInheritanceChangeListener = new Mock(ResourceClassInheritanceChangeListener.class);
+        mockResourceClassInheritanceChangeListener = mock(ResourceClassInheritanceChangeListener.class);
         resourceClassInheritanceChangeListener = (ResourceClassInheritanceChangeListener)mockResourceClassInheritanceChangeListener.proxy();
-        mockResourceClassInheritance = new Mock(ResourceClassInheritance.class);
+        mockResourceClassInheritance = mock(ResourceClassInheritance.class);
         resourceClassInheritance = (ResourceClassInheritance)mockResourceClassInheritance.proxy();
 
-        mockResourceClassAttributesChangeListener = new Mock(ResourceClassAttributesChangeListener.class);
+        mockResourceClassAttributesChangeListener = mock(ResourceClassAttributesChangeListener.class);
         resourceClassAttributesChangeListener = (ResourceClassAttributesChangeListener)mockResourceClassAttributesChangeListener.proxy();
-        mockAttributeDefinition = new Mock(AttributeDefinition.class);
+        mockAttributeDefinition = mock(AttributeDefinition.class);
         attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
         
-        mockResourceTreeChangeListener = new Mock(ResourceTreeChangeListener.class);
+        mockResourceTreeChangeListener = mock(ResourceTreeChangeListener.class);
         resourceTreeChangeListener = (ResourceTreeChangeListener)mockResourceTreeChangeListener.proxy();
-        mockResourceInheritance = new Mock(ResourceInheritance.class);
+        mockResourceInheritance = mock(ResourceInheritance.class);
         resourceInheritance = (ResourceInheritance)mockResourceInheritance.proxy();
         
-        mockResourceOwnershipChangeListener = new Mock(ResourceOwnershipChangeListener.class);
+        mockResourceOwnershipChangeListener = mock(ResourceOwnershipChangeListener.class);
         resourceOwnershipChangeListener = (ResourceOwnershipChangeListener)mockResourceOwnershipChangeListener.proxy();
-        mockResourceOwnership = new Mock(ResourceOwnership.class);
+        mockResourceOwnership = mock(ResourceOwnership.class);
         resourceOwnership = (ResourceOwnership)mockResourceOwnership.proxy();
         
-        mockSubjectChangeListener = new Mock(SubjectChangeListener.class);
+        mockSubjectChangeListener = mock(SubjectChangeListener.class);
         subjectChangeListener = (SubjectChangeListener)mockSubjectChangeListener.proxy();
-        mockSubject = new Mock(Subject.class);
+        mockSubject = mock(Subject.class);
         subject = (Subject)mockSubject.proxy();
         
-        mockRoleChangeListener = new Mock(RoleChangeListener.class);
+        mockRoleChangeListener = mock(RoleChangeListener.class);
         roleChangeListener = (RoleChangeListener)mockRoleChangeListener.proxy();
-        mockRole = new Mock(Role.class);
+        mockRole = mock(Role.class);
         role = (Role)mockRole.proxy();
-        mockParentRole = new Mock(Role.class);
+        mockParentRole = mock(Role.class);
         parentRole = (Role)mockParentRole.proxy();
-        mockChildRole = new Mock(Role.class);
+        mockChildRole = mock(Role.class);
         childRole = (Role)mockChildRole.proxy();
 
-        mockPermissionChangeListener = new Mock(PermissionChangeListener.class);
+        mockPermissionChangeListener = mock(PermissionChangeListener.class);
         permissionChangeListener = (PermissionChangeListener)mockPermissionChangeListener.proxy();
-        mockPermission = new Mock(Permission.class);
+        mockPermission = mock(Permission.class);
         permission = (Permission)mockPermission.proxy();
         
-        mockResourceCreationListener = new Mock(ResourceCreationListener.class);
+        mockResourceCreationListener = mock(ResourceCreationListener.class);
         resourceCreationListener = (ResourceCreationListener)mockResourceCreationListener.proxy();
-        mockResourceChangeListener = new Mock(ResourceChangeListener.class);
+        mockResourceChangeListener = mock(ResourceChangeListener.class);
         resourceChangeListener = (ResourceChangeListener)mockResourceChangeListener.proxy();
-        mockResourceDeletionListener = new Mock(ResourceDeletionListener.class);
+        mockResourceDeletionListener = mock(ResourceDeletionListener.class);
         resourceDeletionListener = (ResourceDeletionListener)mockResourceDeletionListener.proxy();        
-        mockResourceTreeDeletionListener = new Mock(ResourceTreeDeletionListener.class);
+        mockResourceTreeDeletionListener = mock(ResourceTreeDeletionListener.class);
         resourceTreeDeletionListener = (ResourceTreeDeletionListener)mockResourceTreeDeletionListener.proxy();        
-        mockResource = new Mock(Resource.class);
+        mockResource = mock(Resource.class);
         resource = (Resource)mockResource.proxy();
-        mockParentResource = new Mock(Resource.class);
+        mockParentResource = mock(Resource.class);
         parentResource = (Resource)mockParentResource.proxy();
-        mockChildResource = new Mock(Resource.class);
+        mockChildResource = mock(Resource.class);
         childResource = (Resource)mockChildResource.proxy();
                 
-        mockResourceClassChangeListener = new Mock(ResourceClassChangeListener.class);
+        mockResourceClassChangeListener = mock(ResourceClassChangeListener.class);
         resourceClassChangeListener = (ResourceClassChangeListener)mockResourceClassChangeListener.proxy();                 
-        mockResourceClass = new Mock(ResourceClass.class);
+        mockResourceClass = mock(ResourceClass.class);
         resourceClass = (ResourceClass)mockResourceClass.proxy();
-        mockParentResourceClass = new Mock(ResourceClass.class);
+        mockParentResourceClass = mock(ResourceClass.class);
         parentResourceClass = (ResourceClass)mockParentResourceClass.proxy();
-        mockChildResourceClass = new Mock(ResourceClass.class);
+        mockChildResourceClass = mock(ResourceClass.class);
         childResourceClass = (ResourceClass)mockChildResourceClass.proxy();
         
-        mockAttributeClassChangeListener = new Mock(AttributeClassChangeListener.class);
+        mockAttributeClassChangeListener = mock(AttributeClassChangeListener.class);
         attributeClassChangeListener = (AttributeClassChangeListener)mockAttributeClassChangeListener.proxy();
-        mockAttributeClass = new Mock(AttributeClass.class);
+        mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         
-        mockAttributeDefinitionChangeListener = new Mock(AttributeDefinitionChangeListener.class);
+        mockAttributeDefinitionChangeListener = mock(AttributeDefinitionChangeListener.class);
         attributeDefinitionChangeListener = (AttributeDefinitionChangeListener)mockAttributeDefinitionChangeListener.proxy();
     }
 }

@@ -29,8 +29,7 @@ package org.objectledge.coral.entity;
 
 import java.util.Date;
 
-import org.jmock.builder.Mock;
-import org.jmock.builder.MockObjectTestCase;
+import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
@@ -38,13 +37,14 @@ import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
+import org.objectledge.utils.LedgeTestCase;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractAssignmentTest.java,v 1.2 2004-03-05 11:52:17 fil Exp $
+ * @version $Id: AbstractAssignmentTest.java,v 1.3 2004-03-24 14:40:13 fil Exp $
  */
-public class AbstractAssignmentTest extends MockObjectTestCase
+public class AbstractAssignmentTest extends LedgeTestCase
 {
     private Mock mockPersistence;
     private Persistence persistence;
@@ -64,21 +64,21 @@ public class AbstractAssignmentTest extends MockObjectTestCase
     
     public void setUp()
     {
-        mockPersistence = new Mock(Persistence.class);
+        mockPersistence = mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
-        mockInputRecord = new Mock(InputRecord.class);
+        mockInputRecord = mock(InputRecord.class);
         inputRecord = (InputRecord)mockInputRecord.proxy();
-        mockOutputRecord = new Mock(OutputRecord.class);
+        mockOutputRecord = mock(OutputRecord.class);
         outputRecord = (OutputRecord)mockOutputRecord.proxy();
-        mockCoralSecurity = new Mock(CoralSecurity.class);
+        mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
-        mockCoralCore = new Mock(CoralCore.class);
+        mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralCore.stub().method("getSecurity").will(returnValue(coralSecurity));
         factory = new RedBlueEntityFactory(persistence);
-        mockSubject = new Mock(Subject.class);
+        mockSubject = mock(Subject.class);
         subject = (Subject)mockSubject.proxy();
-        mockOtherSubject = new Mock(Subject.class, "mockOtherSubject");
+        mockOtherSubject = mock(Subject.class, "mockOtherSubject");
         otherSubject = (Subject)mockSubject.proxy();
     }
     
