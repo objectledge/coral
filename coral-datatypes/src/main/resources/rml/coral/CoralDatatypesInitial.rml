@@ -125,7 +125,7 @@ CREATE ATTRIBUTE CLASS weak_resource_list
 # node class
 	
 CREATE RESOURCE CLASS BUILTIN node
-	JAVA CLASS org.objectledge.coral.datatypes.Node
+	JAVA CLASS org.objectledge.coral.datatypes.NodeResource
 	HANDLER CLASS org.objectledge.coral.datatypes.GenericResourceHandler
 	ATTRIBUTES 	(
 		REQUIRED BUILTIN long id,
@@ -137,5 +137,6 @@ CREATE RESOURCE CLASS BUILTIN node
 		REQUIRED BUILTIN subject created_by,
 		BUILTIN subject modified_by,
 		REQUIRED BUILTIN date creation_time,
-		BUILTIN date modification_time
+		BUILTIN date modification_time,
+		string description
 	);
