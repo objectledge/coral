@@ -9,7 +9,7 @@ import org.objectledge.database.persistence.PersistentObject;
 /**
  * A base of all Coral entitity implementations.
  *
- * @version $Id: AbstractEntity.java,v 1.7 2005-01-17 11:18:37 rafal Exp $
+ * @version $Id: AbstractEntity.java,v 1.8 2005-01-17 11:58:37 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractEntity
@@ -24,6 +24,12 @@ public abstract class AbstractEntity
     /** The numerical identifier of the entity. */
     protected long id;
     
+    /** The numerical identifier of the entity as a Java object. */
+    protected Long idObject;
+    
+    /** The numerical identifier of the entity as a string. */
+    protected String idString;
+
     /** The name of the entity. */
     protected String name;
     
@@ -201,6 +207,26 @@ public abstract class AbstractEntity
     }
     
     /**
+     * Returns the numerical identifier of the entity as a Java object.
+     * 
+     * @return the numerical identifier of the entity as a Java object.
+     */
+    public Long getIdObject()
+    {
+        return idObject;
+    }
+
+    /**
+     * Returns the numerical identifier of the entity as a string.
+     * 
+     * @return the numerical identifier of the entity as a string.
+     */
+    public String getIdString()
+    {
+        return idString;
+    }
+
+    /**
      * Returns the name of the entity.
      *
      * @return the name of the entity.
@@ -237,6 +263,8 @@ public abstract class AbstractEntity
     
     private void computeHashCode()
     {
+        idObject = new Long(id);
+        idString = idObject.toString();
         hashCode = getClass().hashCode() ^ (int)(id * 0x11111111); 
     }
 }

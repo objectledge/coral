@@ -10,7 +10,7 @@ package org.objectledge.coral.entity;
  * required to be unique, but in certain situations, uniqueness of names is also
  * desired to avoid confusion. </p>
  *
- * @version $Id: Entity.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: Entity.java,v 1.2 2005-01-17 11:58:32 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Entity
@@ -22,6 +22,20 @@ public interface Entity
      */
     public long getId();
     
+    /**
+     * Returns the numerical identifier of the entity as a Java object.
+     * 
+     * @return the numerical identifier of the entity as a Java object.
+     */
+    public Long getIdObject();
+
+    /**
+     * Returns the numerical identifier of the entity as a string.
+     * 
+     * @return the numerical identifier of the entity as a string.
+     */
+    public String getIdString();
+
     /**
      * Returns the name of the entity.
      *

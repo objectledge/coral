@@ -72,7 +72,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.6 2004-05-28 10:04:12 fil Exp $
+ * @version $Id: RelationImplTest.java,v 1.7 2005-01-17 11:58:44 rafal Exp $
  */
 public class RelationImplTest extends LedgeTestCase
 {
@@ -1680,6 +1680,26 @@ public class RelationImplTest extends LedgeTestCase
 			return id;
 		}
 
+        /**
+         * Returns the numerical identifier of the entity as a Java object.
+         * 
+         * @return the numerical identifier of the entity as a Java object.
+         */
+        public Long getIdObject()
+        {
+            return new Long(id);
+        }
+
+        /**
+         * Returns the numerical identifier of the entity as a string.
+         * 
+         * @return the numerical identifier of the entity as a string.
+         */
+        public String getIdString()
+        {
+            return Long.toString(id);
+        }
+        
 		// uimplemented methods -------------------------------------------------------------------
 
         /**

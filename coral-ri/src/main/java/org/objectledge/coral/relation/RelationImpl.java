@@ -53,7 +53,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.20 2004-12-27 03:06:15 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.21 2005-01-17 11:58:50 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -492,6 +492,26 @@ implements Relation
             return RelationImpl.this.getId();
         }
 
+        /**
+         * Returns the numerical identifier of the entity as a Java object.
+         * 
+         * @return the numerical identifier of the entity as a Java object.
+         */
+        public Long getIdObject()
+        {
+            return RelationImpl.this.getIdObject();
+        }
+
+        /**
+         * Returns the numerical identifier of the entity as a string.
+         * 
+         * @return the numerical identifier of the entity as a string.
+         */
+        public String getIdString()
+        {
+            return RelationImpl.this.getIdString();
+        }
+        
         /**
          * {@inheritDoc}
          */

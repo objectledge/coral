@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.14 2004-12-27 03:05:44 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.15 2005-01-17 11:59:27 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -299,6 +299,26 @@ public abstract class AbstractResource implements Resource
     public long getId()
     {
         return delegate.getId();
+    }
+
+    /**
+     * Returns the numerical identifier of the entity as a Java object.
+     * 
+     * @return the numerical identifier of the entity as a Java object.
+     */
+    public Long getIdObject()
+    {
+        return delegate.getIdObject();
+    }
+
+    /**
+     * Returns the numerical identifier of the entity as a string.
+     * 
+     * @return the numerical identifier of the entity as a string.
+     */
+    public String getIdString()
+    {
+        return delegate.getIdString();
     }
     
     /**

@@ -40,7 +40,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModificationTest.java,v 1.2 2004-05-28 10:04:04 fil Exp $
+ * @version $Id: MinimalRelationModificationTest.java,v 1.3 2005-01-17 11:58:22 rafal Exp $
  */
 public class MinimalRelationModificationTest extends LedgeTestCase
 {
@@ -354,7 +354,27 @@ public class MinimalRelationModificationTest extends LedgeTestCase
         {
             return 0;
         }
+        
+        /**
+         * Returns the numerical identifier of the entity as a Java object.
+         * 
+         * @return the numerical identifier of the entity as a Java object.
+         */
+        public Long getIdObject()
+        {
+            return null;
+        }
 
+        /**
+         * Returns the numerical identifier of the entity as a string.
+         * 
+         * @return the numerical identifier of the entity as a string.
+         */
+        public String getIdString()
+        {
+            return null;
+        }
+        
         /**
          * {@inheritDoc}
          */
@@ -435,6 +455,26 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 				return 0L;
 			}
 
+            /**
+             * Returns the numerical identifier of the entity as a Java object.
+             * 
+             * @return the numerical identifier of the entity as a Java object.
+             */
+            public Long getIdObject()
+            {
+                return null;
+            }
+
+            /**
+             * Returns the numerical identifier of the entity as a string.
+             * 
+             * @return the numerical identifier of the entity as a string.
+             */
+            public String getIdString()
+            {
+                return null;
+            }
+            
 			/**
 			 * {@inheritDoc}
 			 */
