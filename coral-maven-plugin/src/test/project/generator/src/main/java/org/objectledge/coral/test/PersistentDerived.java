@@ -28,45 +28,57 @@
  
 package org.objectledge.coral.test;
 
-import org.objectledge.coral.datatypes.PresistentResource;
+import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.store.ValueRequiredException;
 
 /**
- * Defines the accessor methods of <code>coral.test.PersistentNode</code> Coral resource class.
+ * Defines the accessor methods of <code>coral.test.PersistentDerived</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
-public interface PersistentNode
+public interface PersistentDerived
     extends Resource
 {
     // constants /////////////////////////////////////////////////////////////
 
     /** The name of the ARL resource class. */    
-    public static final String CLASS_NAME = "coral.test.PersistentNode";
+    public static final String CLASS_NAME = "coral.test.PersistentDerived";
 
     // public interface //////////////////////////////////////////////////////
- 
+	
     /**
-     * Returns the value of the <code>description</code> attribute.
+     * Returns the value of the <code>i1</code> attribute.
      *
-     * @return the value of the the <code>description</code> attribute.
+     * @return the value of the the <code>i1</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
      */
-    public String getDescription();
+    public int getI1();
 
     /**
-     * Sets the value of the <code>description</code> attribute.
+     * Sets the value of the <code>i1</code> attribute.
      *
-     * @param value the value of the <code>description</code> attribute,
-     *        or <code>null</code> to remove value.
+     * @param value the value of the <code>i1</code> attribute.
      */
-    public void setDescription(String value);   
-   
-	/**
-	 * Checks if the value of the <code>description</code> attribute is defined.
-	 *
-	 * @return <code>true</code> if the value of the <code>description</code> attribute is defined.
-	 */
-    public boolean isDescriptionDefined();
-  
+    public void setI1(int value);
+    
+    /**
+     * Returns the value of the <code>s1</code> attribute.
+     *
+     * @return the value of the the <code>s1</code> attribute.
+     */
+    public String getS1();
+ 
+    /**
+     * Sets the value of the <code>s1</code> attribute.
+     *
+     * @param value the value of the <code>s1</code> attribute.
+     * @throws ValueRequiredException if you attempt to set a <code>null</code> 
+     *         value.
+     */
+    public void setS1(String value)
+        throws ValueRequiredException;
+     
     // @custom methods ///////////////////////////////////////////////////////
 }

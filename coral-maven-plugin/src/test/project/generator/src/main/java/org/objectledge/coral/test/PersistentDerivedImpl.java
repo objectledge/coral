@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.objectledge.coral.BackendException;
-import org.objectledge.coral.datatypes.PresistentResource;
+import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
@@ -46,23 +46,26 @@ import org.objectledge.database.Database;
 import org.jcontainer.dna.Logger;
 
 /**
- * An implementation of <code>coral.test.PersistentNode</code> Coral resource class.
+ * An implementation of <code>coral.test.PersistentDerived</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
-public class PersistentNodeImpl
-    extends PresistentResource
-    implements PersistentNode
+public class PersistentDerivedImpl
+    extends PersistentResource
+    implements PersistentDerived
 {
     // instance variables ////////////////////////////////////////////////////
 
-    /** The AttributeDefinition object for the <code>description</code> attribute. */
-    private AttributeDefinition descriptionDef;
+    /** The AttributeDefinition object for the <code>i1</code> attribute. */
+    private AttributeDefinition i1Def;
+
+    /** The AttributeDefinition object for the <code>s1</code> attribute. */
+    private AttributeDefinition s1Def;
 
     // initialization /////////////////////////////////////////////////////////
 
     /**
-     * Creates a blank <code>coral.test.PersistentNode</code> resource wrapper.
+     * Creates a blank <code>coral.test.PersistentDerived</code> resource wrapper.
      *
      * <p>This constructor should be used by the handler class only. Use 
      * <code>load()</code> and <code>create()</code> methods to create
@@ -72,13 +75,14 @@ public class PersistentNodeImpl
      * @param database the Database.
      * @param logger the Logger.
      */
-    public PersistentNodeImpl(CoralSchema schema, Database database, Logger logger)
+    public PersistentDerivedImpl(CoralSchema schema, Database database, Logger logger)
     {
         super(schema, database, logger);
         try
         {
-            ResourceClass rc = schema.getResourceClass("coral.test.PersistentNode");
-            descriptionDef = rc.getAttribute("description");
+            ResourceClass rc = schema.getResourceClass("coral.test.PersistentDerived");
+            i1Def = rc.getAttribute("i1");
+            s1Def = rc.getAttribute("s1");
         }
         catch(EntityDoesNotExistException e)
         {
@@ -89,7 +93,7 @@ public class PersistentNodeImpl
     // static methods ////////////////////////////////////////////////////////
 
     /**
-     * Retrieves a <code>coral.test.PersistentNode</code> resource instance from the store.
+     * Retrieves a <code>coral.test.PersistentDerived</code> resource instance from the store.
      *
      * <p>This is a simple wrapper of StoreService.getResource() method plus
      * the typecast.</p>
@@ -99,46 +103,49 @@ public class PersistentNodeImpl
      * @return a resource instance.
      * @throws EntityDoesNotExistException if the resource with the given id does not exist.
      */
-    public static PersistentNode getPersistentNode(CoralSession session, long id)
+    public static PersistentDerived getPersistentDerived(CoralSession session, long id)
         throws EntityDoesNotExistException
     {
         Resource res = session.getStore().getResource(id);
-        if(!(res instanceof PersistentNode))
+        if(!(res instanceof PersistentDerived))
         {
             throw new IllegalArgumentException("resource #"+id+" is "+
                                                res.getResourceClass().getName()+
-                                               " not coral.test.PersistentNode");
+                                               " not coral.test.PersistentDerived");
         }
-        return (PersistentNode)res;
+        return (PersistentDerived)res;
     }
 
     /**
-     * Creates a new <code>coral.test.PersistentNode</code> resource instance.
+     * Creates a new <code>coral.test.PersistentDerived</code> resource instance.
      *
      * @param session the CoralSession
      * @param name the name of the new resource
      * @param parent the parent resource.
-     * @return a new PersistentNode instance.
+     * @param i1 the i1 attribute
+     * @param s1 the s1 attribute
+     * @return a new PersistentDerived instance.
+     * @throws ValueRequiredException if one of the required attribues is undefined.
      */
-    public static PersistentNode createPersistentNode(CoralSession session, String name, Resource parent)
+    public static PersistentDerived createPersistentDerived(CoralSession session, String name, Resource parent, 
+        int i1, String s1)
+        throws ValueRequiredException
     {
         try
         {
-            ResourceClass rc = session.getSchema().getResourceClass("coral.test.PersistentNode");
+            ResourceClass rc = session.getSchema().getResourceClass("coral.test.PersistentDerived");
             Map attrs = new HashMap();
+            attrs.put(rc.getAttribute("i1"), new Integer(i1));
+            attrs.put(rc.getAttribute("s1"), s1);
             Resource res = session.getStore().createResource(name, parent, rc, attrs);
-            if(!(res instanceof PersistentNode))
+            if(!(res instanceof PersistentDerived))
             {
                 throw new BackendException("incosistent schema: created object is "+
                                            res.getClass().getName());
             }
-            return (PersistentNode)res;
+            return (PersistentDerived)res;
         }
         catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
-        catch(ValueRequiredException e)
         {
             throw new BackendException("incompatible schema change", e);
         }
@@ -147,51 +154,34 @@ public class PersistentNodeImpl
     // public interface //////////////////////////////////////////////////////
  
     /**
-     * Returns the value of the <code>description</code> attribute.
+     * Returns the value of the <code>i1</code> attribute.
      *
-     * @return the value of the <code>description</code> attribute.
+     * @return the value of the <code>i1</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
      */
-    public String getDescription()
+    public int getI1()
     {
-        return (String)get(descriptionDef);
-    }
-    
-    /**
-     * Returns the value of the <code>description</code> attribute.
-     *
-     * @param defaultValue the value to return if the attribute is undefined.
-     * @return the value of the <code>description</code> attribute.
-     */
-    public String getDescription(String defaultValue)
-    {
-        if(isDefined(descriptionDef))
+        if(isDefined(i1Def))
         {
-            return (String)get(descriptionDef);
+            return ((Integer)get(i1Def)).intValue();
         }
         else
         {
-            return defaultValue;
+            throw new BackendException("incompatible schema change");
         }
     }    
 
     /**
-     * Sets the value of the <code>description</code> attribute.
+     * Sets the value of the <code>i1</code> attribute.
      *
-     * @param value the value of the <code>description</code> attribute,
-     *        or <code>null</code> to remove value.
+     * @param value the value of the <code>i1</code> attribute.
      */
-    public void setDescription(String value)
+    public void setI1(int value)
     {
         try
         {
-            if(value != null)
-            {
-                set(descriptionDef, value);
-            }
-            else
-            {
-                unset(descriptionDef);
-            }
+            set(i1Def, new Integer(value));
         }
         catch(ModificationNotPermitedException e)
         {
@@ -202,16 +192,44 @@ public class PersistentNodeImpl
             throw new BackendException("incompatible schema change",e);
         }
     }
-   
-	/**
-	 * Checks if the value of the <code>description</code> attribute is defined.
-	 *
-	 * @return <code>true</code> if the value of the <code>description</code> attribute is defined.
-	 */
-    public boolean isDescriptionDefined()
-	{
-	    return isDefined(descriptionDef);
-	}
-  
+    
+    /**
+     * Returns the value of the <code>s1</code> attribute.
+     *
+     * @return the value of the <code>s1</code> attribute.
+     */
+    public String getS1()
+    {
+        return (String)get(s1Def);
+    }
+ 
+    /**
+     * Sets the value of the <code>s1</code> attribute.
+     *
+     * @param value the value of the <code>s1</code> attribute.
+     * @throws ValueRequiredException if you attempt to set a <code>null</code> 
+     *         value.
+     */
+    public void setS1(String value)
+        throws ValueRequiredException
+    {
+        try
+        {
+            if(value != null)
+            {
+                set(s1Def, value);
+            }
+            else
+            {
+                throw new ValueRequiredException("attribute s1 "+
+                                                 "is declared as REQUIRED");
+            }
+        }
+        catch(ModificationNotPermitedException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+    }
+     
     // @custom methods ///////////////////////////////////////////////////////
 }

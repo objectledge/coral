@@ -1,0 +1,7 @@
+CREATE RESOURCE CLASS coral.test.PersistentDerived
+	JAVA CLASS org.objectledge.coral.test.PersistentDerivedImpl
+	HANDLER CLASS org.objectledge.coral.datatypes.PersistentResourceHandler
+	ATTRIBUTES 	(
+		REQUIRED string s1,
+		REQUIRED integer i1
+	);

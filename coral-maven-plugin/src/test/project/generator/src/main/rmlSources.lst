@@ -10,3 +10,5 @@ src/main/rml/test/Excluded2.rml
 
 src/main/rml/test/GenericNode.rml
 src/main/rml/test/PersistentNode.rml
+
+src/main/rml/test/PersistentDerived.rml

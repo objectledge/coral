@@ -1,6 +1,6 @@
 CREATE RESOURCE CLASS coral.test.PersistentNode
 	JAVA CLASS org.objectledge.coral.test.PersistentNodeImpl
-	HANDLER CLASS org.objectledge.coral.datatypes.GenericResourceHandler
+	HANDLER CLASS org.objectledge.coral.datatypes.PresistentResourceHandler
 	ATTRIBUTES 	(
 		REQUIRED BUILTIN long id,
 		REQUIRED BUILTIN string name,
