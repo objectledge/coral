@@ -45,7 +45,7 @@ public interface NoRequired
     public static final String CLASS_NAME = "coral.test.NoRequired";
 
     // public interface //////////////////////////////////////////////////////
-
+	
     /**
      * Returns the value of the <code>i4</code> attribute.
      *
@@ -55,6 +55,16 @@ public interface NoRequired
      */
     public int getI4()
 		throws IllegalStateException;
+
+	/**
+     * Returns the value of the <code>i4</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>i4</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public int getI4(int defaultValue);
 
     /**
      * Sets the value of the <code>i4</code> attribute.

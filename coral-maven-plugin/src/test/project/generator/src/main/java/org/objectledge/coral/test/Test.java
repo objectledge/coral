@@ -46,7 +46,7 @@ public interface Test
     public static final String CLASS_NAME = "coral.test.Test";
 
     // public interface //////////////////////////////////////////////////////
-
+	
     /**
      * Returns the value of the <code>i1</code> attribute.
      *
@@ -56,6 +56,16 @@ public interface Test
      */
     public int getI1()
 		throws IllegalStateException;
+
+	/**
+     * Returns the value of the <code>i1</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>i1</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public int getI1(int defaultValue);
 
     /**
      * Sets the value of the <code>i1</code> attribute.
@@ -68,7 +78,7 @@ public interface Test
      * Removes the value of the <code>i1</code> attribute.
      */
     public void unsetI1();
-   
+   	
     /**
      * Returns the value of the <code>i2</code> attribute.
      *
@@ -76,8 +86,7 @@ public interface Test
      * @throws IllegalStateException if the value of the attribute is 
      *         undefined.
      */
-    public int getI2()
-		throws IllegalStateException;
+    public int getI2();
 
     /**
      * Sets the value of the <code>i2</code> attribute.
@@ -85,7 +94,7 @@ public interface Test
      * @param value the value of the <code>i2</code> attribute.
      */
     public void setI2(int value);
-   
+   	
     /**
      * Returns the value of the <code>i3</code> attribute.
      *
@@ -95,6 +104,16 @@ public interface Test
      */
     public int getI3()
 		throws IllegalStateException;
+
+	/**
+     * Returns the value of the <code>i3</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>i3</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public int getI3(int defaultValue);
    
     /**
      * Returns the value of the <code>s1</code> attribute.

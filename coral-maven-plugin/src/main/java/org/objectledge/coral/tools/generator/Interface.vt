@@ -69,7 +69,18 @@ public interface ${class.interfaceClassName}
     // public interface //////////////////////////////////////////////////////
 #foreach($attr in $attributes)
 #if($attr.primitive)
-
+#if($attr.required)
+	
+    /**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @return the value of the the <code>${attr.name}</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public ${attr.javaType} get${attr.javaName}();
+#else
+	
     /**
      * Returns the value of the <code>${attr.name}</code> attribute.
      *
@@ -79,6 +90,17 @@ public interface ${class.interfaceClassName}
      */
     public ${attr.javaType} get${attr.javaName}()
 		throws IllegalStateException;
+
+	/**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>${attr.name}</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public ${attr.javaType} get${attr.javaName}(${attr.javaType} defaultValue);
+#end
 #if(!$attr.readonly)
 
     /**
