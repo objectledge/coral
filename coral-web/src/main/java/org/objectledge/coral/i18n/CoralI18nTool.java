@@ -41,7 +41,7 @@ import org.objectledge.i18n.I18nTool;
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.11 2005-02-14 18:13:59 pablo Exp $
+ * @version $Id: CoralI18nTool.java,v 1.12 2005-02-14 19:33:21 pablo Exp $
  */
 public class CoralI18nTool extends I18nTool
 {
@@ -78,7 +78,7 @@ public class CoralI18nTool extends I18nTool
      */
     public String getName(ResourceClass resourceClass)
     {
-        return get(coralI18nHelper.getNameKey(resourceClass), resourceClass.getName());
+        return coralI18nHelper.getName(locale, resourceClass);
     }
 
     /**
@@ -89,7 +89,7 @@ public class CoralI18nTool extends I18nTool
      */
     public String getName(Resource resource)
     {
-        return get(coralI18nHelper.getNameKey(resource), resource.getName());
+        return coralI18nHelper.getName(locale, resource);
     }
    
 }
