@@ -24,7 +24,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.16 2005-02-08 20:34:50 rafal Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.17 2005-04-04 11:37:01 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -607,6 +607,7 @@ public class CoralSchemaImpl
         boolean shouldCommit = false;
         try
         {
+            persistence.getDatabase().setTransactionTimeout(10 * 60);
             shouldCommit = persistence.getDatabase().beginTransaction();
             conn = persistence.getDatabase().getConnection();
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, false);
