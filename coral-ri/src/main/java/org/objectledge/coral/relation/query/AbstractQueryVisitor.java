@@ -45,7 +45,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * Base class for all Query tree visitors.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: AbstractQueryVisitor.java,v 1.3 2004-02-24 16:12:29 zwierzem Exp $
+ * @version $Id: AbstractQueryVisitor.java,v 1.4 2004-02-24 17:09:53 zwierzem Exp $
  */
 public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 {
@@ -160,7 +160,8 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 		{
 			throw new Error("RelationMapExpression must have 2 children");
 		}
-		Object result = doVisit(node, data);
+		Relation relation = getRelation(node, data);
+		Object result = doVisit(node, data, relation);
 		parentMappings--;
 		return result;
     }
@@ -176,7 +177,8 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 		{
 			throw new Error("RelationMapExpression must have 2 children");
 		}
-        Object result = doVisit(node, data);
+		Relation relation = getRelation(node, data);
+        Object result = doVisit(node, data, relation);
 		parentMappings--;
 		return result;
     }
@@ -206,16 +208,28 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 	 * 
 	 * @param node visited node
 	 * @param data additional data storage
+	 * @param relation defined for this mapping node
 	 * @return the visit results 
 	 */
-	public abstract Object doVisit(ASTRelationMapExpression node, Object data);
+    public abstract Object doVisit(ASTRelationMapExpression node, Object data, Relation relation);
 
 	/**
 	 * Performs {@link #doVisit(ASTTransitiveRelationMapExpression,Object)} logic in subclasses.
 	 * 
 	 * @param node visited node
 	 * @param data additional data storage
+	 * @param relation defined for this mapping node
 	 * @return the visit results 
 	 */
-	public abstract Object doVisit(ASTTransitiveRelationMapExpression node, Object data);
+    public abstract Object doVisit(
+        ASTTransitiveRelationMapExpression node,
+        Object data,
+        Relation relation);
+	
+	// implementation -----------------------------------------------------------------------------
+
+	private Relation getRelation(SimpleNode node, Object data)
+	{
+		return (Relation) node.jjtGetChild(0).jjtAccept(this, data);
+	}
 }

@@ -46,7 +46,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * Query executor executes a parsed query and returns the set of queried {@link Resource} ids.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: QueryExecutor.java,v 1.3 2004-02-24 16:12:29 zwierzem Exp $
+ * @version $Id: QueryExecutor.java,v 1.4 2004-02-24 17:09:53 zwierzem Exp $
  */
 public class QueryExecutor extends AbstractQueryVisitor
 {
@@ -132,11 +132,11 @@ public class QueryExecutor extends AbstractQueryVisitor
 	 * 
 	 * @param node visited node
 	 * @param data additional data storage
+	 * @param relation defined for this mapping node
 	 * @return the resulting {@link IdSet} 
 	 */
-	public Object doVisit(ASTRelationMapExpression node, Object data)
+	public Object doVisit(ASTRelationMapExpression node, Object data, Relation relation)
 	{
-		Relation relation = getRelation(node, data);
 		Set mapSet = getMapSet(node, data).getSet();
 		Set resultSet = new HashSet(mapSet.size());
 		for (Iterator iter = mapSet.iterator(); iter.hasNext();)
@@ -154,11 +154,11 @@ public class QueryExecutor extends AbstractQueryVisitor
 	 * 
 	 * @param node visited node
 	 * @param data additional data storage
+	 * @param relation defined for this mapping node
 	 * @return the resulting {@link IdSet} 
 	 */
-	public Object doVisit(ASTTransitiveRelationMapExpression node, Object data)
+	public Object doVisit(ASTTransitiveRelationMapExpression node, Object data, Relation relation)
 	{
-		Relation relation = getRelation(node, data);
 		Set mapSet = getMapSet(node, data).getSet();
 		Set resultSet = new HashSet(mapSet.size());
 		for (Iterator iter = mapSet.iterator(); iter.hasNext();)
@@ -170,11 +170,6 @@ public class QueryExecutor extends AbstractQueryVisitor
 	}
 
 	// implementation -------------------------------------------------------------------------
-
-	private Relation getRelation(SimpleNode node, Object data)
-	{
-		return (Relation) node.jjtGetChild(0).jjtAccept(this, data);
-	}
 
 	private IdSet getMapSet(SimpleNode node, Object data)
 	{
