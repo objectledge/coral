@@ -184,13 +184,13 @@ void RelationIdentifier() #void :
 
 void RelationName() :
 {
-    ASTResourceIdentifierPath node = (ASTResourceIdentifierPath)jjtThis;
+    ASTRelationName node = (ASTRelationName)jjtThis;
     Token t;
 }
 {
     t = <IDENTIFIER_NAME>
     {
-	node.identifier = t.image;
+	node.relationName = t.image;
     }
 }
 

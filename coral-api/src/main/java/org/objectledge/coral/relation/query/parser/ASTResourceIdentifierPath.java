@@ -3,6 +3,9 @@
 package org.objectledge.coral.relation.query.parser;
 
 public class ASTResourceIdentifierPath extends SimpleNode {
+
+  String identifier;
+
   public ASTResourceIdentifierPath(int id) {
     super(id);
   }
@@ -15,5 +18,9 @@ public class ASTResourceIdentifierPath extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RelationQueryParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+
+  public String getIdentifier() {
+	return identifier;
   }
 }

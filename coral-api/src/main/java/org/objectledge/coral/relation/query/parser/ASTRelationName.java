@@ -3,6 +3,9 @@
 package org.objectledge.coral.relation.query.parser;
 
 public class ASTRelationName extends SimpleNode {
+
+  String relationName;
+
   public ASTRelationName(int id) {
     super(id);
   }
@@ -15,5 +18,9 @@ public class ASTRelationName extends SimpleNode {
   /** Accept the visitor. **/
   public Object jjtAccept(RelationQueryParserVisitor visitor, Object data) {
     return visitor.visit(this, data);
+  }
+  
+  public String getRelationName() {
+	return relationName;
   }
 }

@@ -352,7 +352,7 @@ void RelationName() :
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
 /*@egen*/
-    ASTResourceIdentifierPath node = (ASTResourceIdentifierPath)jjtn000;
+    ASTRelationName node = (ASTRelationName)jjtn000;
     Token t;
 }
 {/*@bgen(jjtree) RelationName */
@@ -365,7 +365,7 @@ void RelationName() :
     }
 /*@egen*/
     {
-	node.identifier = t.image;
+	node.relationName = t.image;
     }/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {

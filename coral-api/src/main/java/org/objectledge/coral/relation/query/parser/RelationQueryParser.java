@@ -287,13 +287,13 @@ public class RelationQueryParser/*@bgen(jjtree)*/implements RelationQueryParserT
  /*@bgen(jjtree) RelationName */
     ASTRelationName jjtn000 = new ASTRelationName(this, JJTRELATIONNAME);
     boolean jjtc000 = true;
-    jjtree.openNodeScope(jjtn000);ASTResourceIdentifierPath node = (ASTResourceIdentifierPath)jjtn000;
+    jjtree.openNodeScope(jjtn000);ASTRelationName node = (ASTRelationName)jjtn000;
     Token t;
     try {
       t = jj_consume_token(IDENTIFIER_NAME);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
-        node.identifier = t.image;
+        node.relationName = t.image;
     } finally {
       if (jjtc000) {
         jjtree.closeNodeScope(jjtn000, true);
