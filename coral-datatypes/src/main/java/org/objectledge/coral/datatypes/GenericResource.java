@@ -34,7 +34,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.6 2004-05-06 13:00:46 pablo Exp $
+ * @version $Id: GenericResource.java,v 1.7 2004-06-29 09:32:51 fil Exp $
  */
 public class GenericResource
     implements Resource
@@ -531,8 +531,8 @@ public class GenericResource
             conn = database.getConnection();
             GenericResourceHandler handler = (GenericResourceHandler)delegate.
                 getResourceClass().getHandler();
-            Map dataKeyMap = handler.getDataKeys(delegate, conn); 
-            revert(null, conn, dataKeyMap);
+            Object data = handler.getData(delegate, conn); 
+            revert(null, conn, data);
             database.commitTransaction(controler);
         }
         catch(SQLException e)
@@ -576,9 +576,10 @@ public class GenericResource
     // Package private ///////////////////////////////////////////////////////
 
     synchronized void retrieve(Resource delegate, ResourceClass rClass, 
-                                 Connection conn, Map dataKeyMap)
+                                 Connection conn, Object data)
         throws SQLException
     {
+        Map dataKeyMap = (Map)data;
         this.delegate = delegate;
         if(rClass == null)
         {
@@ -589,16 +590,7 @@ public class GenericResource
         for(int i=0; i<parentClasses.length; i++)
         {
             ResourceClass parent = parentClasses[i];
-            Resource instance;
-            if(parent.getHandler() instanceof GenericResourceHandler)
-            {
-                instance = ((GenericResourceHandler)parent.getHandler()).
-                    retrieve(delegate, conn, dataKeyMap);
-            }
-            else
-            {
-                instance = parent.getHandler().retrieve(delegate, conn);
-            }
+            Resource instance = parent.getHandler().retrieve(delegate, conn, dataKeyMap);
             parents.put(parent, instance);
             AttributeDefinition[] hosted = parent.getAllAttributes();
             for(int j=0; j<hosted.length; j++)
@@ -628,9 +620,10 @@ public class GenericResource
         }
     }
 
-    synchronized void revert(ResourceClass rClass, Connection conn, Map dataKeyMap)
+    synchronized void revert(ResourceClass rClass, Connection conn, Object data)
         throws SQLException
     {
+        Map dataKeyMap = (Map)data;
         attributes.clear();
         ids.clear();
         attributeMap.clear();
@@ -648,19 +641,11 @@ public class GenericResource
             if(parents.containsKey(parent))
             {
                 instance = (Resource)parents.get(parent);
-                if(parent.getHandler() instanceof GenericResourceHandler)
-                {
-                    ((GenericResourceHandler)parent.getHandler()).
-                        revert(instance, conn, dataKeyMap);
-                }
-                else
-                {
-                    parent.getHandler().revert(instance, conn);
-                }
+                parent.getHandler().revert(instance, conn, dataKeyMap);
             }
             else
             {
-                instance = parent.getHandler().retrieve(delegate, conn);
+                instance = parent.getHandler().retrieve(delegate, conn, dataKeyMap);
                 parents.put(parent, instance);
             }
             AttributeDefinition[] hosted = parent.getAllAttributes();

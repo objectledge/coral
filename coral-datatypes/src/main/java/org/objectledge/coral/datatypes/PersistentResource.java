@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.4 2004-05-06 13:13:07 pablo Exp $
+ * @version $Id: PersistentResource.java,v 1.5 2004-06-29 09:32:51 fil Exp $
  */
 public class PersistentResource
     implements Resource, Persistent
@@ -495,7 +495,7 @@ public class PersistentResource
     {
         try
         {
-            delegate.getResourceClass().getHandler().revert(this, null);
+            delegate.getResourceClass().getHandler().revert(this, null, null);
         }
         catch(SQLException e)
         {
