@@ -193,7 +193,8 @@ public class TestImpl
         }
         else
         {
-            throw new IllegalStateException("attribute value is undefined");
+            throw new IllegalStateException("value of attribute i1 is undefined"+
+			    " for resource #"+getId());
         }
     }
 
@@ -315,7 +316,8 @@ public class TestImpl
         }
         else
         {
-            throw new IllegalStateException("attribute value is undefined");
+            throw new IllegalStateException("value of attribute i3 is undefined"+
+			    " for resource #"+getId());
         }
     }
 
