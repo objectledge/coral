@@ -4,6 +4,7 @@
 
   <table width="100%" class="adminNavi" cellspacing="0">
     <tr>
+      #linkCell('admin' 'CONSOLE' $link.view("browser.Console"))
       <td class="inscription" width="95%" align="right">Abstract Resource Layer Browser: &nbsp;</td>
       #linkCell('admin' 'ZASOBY' $link.view("browser.ResourceView"))
       <td class="separator">|</td>
