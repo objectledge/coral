@@ -48,7 +48,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.8 2004-04-01 08:54:22 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.9 2004-06-28 07:55:55 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -131,7 +131,7 @@ public class CoralSessionImpl
         }
         try
         {
-            pool.returnObject(this, principal);
+            pool.returnObject(principal, this);
         }
         catch(Exception e)
         {
