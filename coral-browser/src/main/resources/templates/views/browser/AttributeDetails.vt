@@ -75,7 +75,7 @@
                   </form>
                 </tr>
               </table>
-            #elseif($attrDef.attributeClass.name == 'resource_list')
+            #elseif($attrDef.attributeClass.name == 'resource_list' || $attr_def.attributeClass.name == 'weak_resource_list')
               <table>
                 <tr>
                   <th>Resource</th>
