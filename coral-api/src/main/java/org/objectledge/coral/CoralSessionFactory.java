@@ -29,11 +29,13 @@ package org.objectledge.coral;
 
 import java.security.Principal;
 
+import org.objectledge.coral.entity.EntityDoesNotExistException;
+
 /**
  * A factory of Coral sessions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactory.java,v 1.1 2004-02-18 14:21:27 fil Exp $
+ * @version $Id: CoralSessionFactory.java,v 1.2 2004-03-08 08:06:20 fil Exp $
  */
 public interface CoralSessionFactory
 {
@@ -42,6 +44,22 @@ public interface CoralSessionFactory
      * 
      * @param user the user.
      * @return the session.
+     * @throws EntityDoesNotExistException if the user does not have a corresponding Coral Subject.
      */
-    public CoralSession getSession(Principal user);
+    public CoralSession getSession(Principal user)
+        throws EntityDoesNotExistException;
+        
+    /**
+     * Creates a session for the superuser.
+     *
+     * @return the superuser session. 
+     */
+    public CoralSession getRootSession();
+
+    /**
+     * Creates a session for the anonymous user.
+     *
+     * @return the anonymous session. 
+     */
+    public CoralSession getAnonymousSession();        
 }
