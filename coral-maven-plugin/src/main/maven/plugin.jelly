@@ -230,6 +230,7 @@
     <m:pluginVar plugin="coral-maven-plugin" var="coralRmlFileEncoding" property="coral.rml.file.encoding"/>
     <m:pluginVar plugin="coral-maven-plugin" var="coralRmlSubject" property="coral.rml.subject"/>
     <m:pluginVar plugin="coral-maven-plugin" var="coralRmlSources" property="coral.rml.sources"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="ledgeBaseDir" property="ledge.basedir"/>
     <j:if test="${maven.debugOn}">
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
@@ -244,7 +245,7 @@
 	  </echo>
 	</j:if>
     <coral:dataSource var="coralDataSource"/>
-    <coral:sessionFactory var="coralSessionFactory" dataSource="${coralDataSource}"/>
+    <coral:sessionFactory var="coralSessionFactory" dataSource="${coralDataSource}" ledgeBaseDir="${ledgeBaseDir}" />
     <coral:principal variable="coralPrincipal" name="${coralRmlSubject}"/>
     <j:set var="coralSession" value="${coralSessionFactory.getSession(coralPrincipal)}"/>
     <coral:rmlRunner session="${coralSession}" sourcesList="${coralRmlSources}" 

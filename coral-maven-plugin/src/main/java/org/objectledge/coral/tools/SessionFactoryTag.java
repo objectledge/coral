@@ -48,6 +48,7 @@ import org.jcontainer.dna.impl.DefaultConfiguration;
 import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.cache.DefaultCacheFactory;
+import org.objectledge.container.LedgeContainer;
 import org.objectledge.context.Context;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.CoralCoreImpl;
@@ -61,6 +62,8 @@ import org.objectledge.database.Transaction;
 import org.objectledge.database.persistence.DefaultPersistence;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
+import org.objectledge.filesystem.FileSystem;
+import org.objectledge.filesystem.FileSystemProvider;
 import org.objectledge.threads.ThreadPool;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
@@ -69,7 +72,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.5 2004-05-06 13:45:49 pablo Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.6 2004-05-26 17:23:46 pablo Exp $
  */
 public class SessionFactoryTag
     extends BaseTagSupport
@@ -80,6 +83,8 @@ public class SessionFactoryTag
     
     private DataSource dataSource;
     
+    private String ledgeBaseDir = "";
+    
     /**
      * Sets the var.
      *
@@ -88,6 +93,16 @@ public class SessionFactoryTag
     public void setVariable(String var)
     {
         this.var = var;
+    }
+
+    /**
+     * Sets the ledge base dir.
+     *
+     * @param ledgeBaseDir the ledge base dir path to set.
+     */
+    public void setLedgeBaseDir(String ledgeBaseDir)
+    {
+        this.ledgeBaseDir = ledgeBaseDir;
     }
 
     /**
@@ -117,7 +132,7 @@ public class SessionFactoryTag
         {
             try
             {
-                factory = getSessionFactory();
+                factory = getSessionFactory(ledgeBaseDir);
             }
             catch(Exception e)
             {
@@ -158,19 +173,39 @@ public class SessionFactoryTag
     /**
      * Returns a session factory instance.
      * 
+     * @param ledgeBaseDir the fs base dir path with composition file.
      * @return a session factory instance.
      * @throws Exception if the factory could not be initialized.
      */
-    public CoralSessionFactory getSessionFactory()
+    public CoralSessionFactory getSessionFactory(String ledgeBaseDir)
         throws Exception
     {
         checkAttribute(dataSource, "dataSource");
-        ClassLoader cl = getClassLoader(); 
-        
-        MutablePicoContainer container = new DefaultPicoContainer();
+        ClassLoader cl = getClassLoader();
+        MutablePicoContainer container = null;
         Thread.currentThread().setContextClassLoader(cl);
+        if(ledgeBaseDir != null && ledgeBaseDir.length()> 0)
+        {
+            FileSystemProvider lfs = new org.objectledge.filesystem.
+                LocalFileSystemProvider("local", ledgeBaseDir);
+            FileSystemProvider cfs = new org.objectledge.filesystem.
+                ClasspathFileSystemProvider("classpath", cl);
+            FileSystem fs = new FileSystem(new FileSystemProvider[] { lfs, cfs }, 4096, 65536);
+            LedgeContainer ledgeContainer = 
+                new LedgeContainer(fs, "config/", cl);
+            container = ledgeContainer.getContainer();
+        }
+        else
+        {
+            container = new DefaultPicoContainer();
+        }
         container.registerComponentInstance(ClassLoader.class, cl);
-
+        CoralSessionFactory factory = (CoralSessionFactory)container.
+            getComponentInstance(CoralSessionFactory.class);
+        if(factory != null)
+        {
+            return factory;
+        }       
         IdGenerator idGenerator = new IdGenerator(dataSource);
         Context context = new Context();
         Transaction transaction = new JotmTransaction(0, context, getLog(Transaction.class));
@@ -207,7 +242,7 @@ public class SessionFactoryTag
             getLog(EventWhiteboardFactory.class), threadPool);
         CoralCore coralCore = new CoralCoreImpl(container, persistence, cacheFactory, 
             eventWhiteboardFactory, getLog(CoralCore.class));
-        CoralSessionFactory factory = new CoralSessionFactoryImpl(coralCore);
+        factory = new CoralSessionFactoryImpl(coralCore);
         container.registerComponentInstance(CoralSessionFactory.class, factory);
         return factory;
     }
@@ -229,6 +264,7 @@ public class SessionFactoryTag
         if(getMavenContext() != null)
         {
             String dependencyClasspath = getMavenContext().getProject().getDependencyClasspath();
+            
             String buildDest = (String)getMavenContext().getVariable("maven.build.dest");
             StringTokenizer st = new StringTokenizer(dependencyClasspath, 
                 System.getProperty("path.separator"));
