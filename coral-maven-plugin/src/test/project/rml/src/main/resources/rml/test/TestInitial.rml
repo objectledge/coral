@@ -1,4 +1,6 @@
 CREATE RESOURCE 'fred' 
 	RESOURCE CLASS 'coral.test.Test' 
 	PARENT 1 
-	ATTRIBUTES ( attr = 'ahoj przygodo!');
+	ATTRIBUTES ( greeting = 'ahoj przygodo!');
+	
+CREATE ROLE 'coral.test.TestRole';
