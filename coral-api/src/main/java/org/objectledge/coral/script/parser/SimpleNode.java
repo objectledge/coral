@@ -12,7 +12,7 @@ public class SimpleNode implements Node {
   Token lastToken;
   
   String entityName;
-  long entityId;
+  long entityId = -1;
   
   String name;
   String value;
