@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassTest.java,v 1.6 2004-07-08 13:48:24 rafal Exp $
+ * @version $Id: ResourceClassTest.java,v 1.7 2004-07-09 07:57:00 rafal Exp $
  */
 public class ResourceClassTest extends LedgeTestCase
 {   
@@ -88,7 +88,7 @@ public class ResourceClassTest extends LedgeTestCase
     
     public void testGetPackageName()
     {
-        assertEquals("org.objectledge.datatypes", resourceClass.getPackageName());
+        assertEquals("org.objectledge.coral.datatypes", resourceClass.getPackageName());
     }
 
     public void testGetImplClassName()
@@ -98,7 +98,7 @@ public class ResourceClassTest extends LedgeTestCase
 
     public void testGetFQImplClassName()
     {
-        assertEquals("org.objectledge.datatypes.NodeImpl", resourceClass.getFQImplClassName());
+        assertEquals("org.objectledge.coral.datatypes.NodeImpl", resourceClass.getFQImplClassName());
     }
 
     public void testGetInterfaceClassName()
@@ -108,7 +108,7 @@ public class ResourceClassTest extends LedgeTestCase
 
     public void testGetFQInterfaceClassName()
     {
-        assertEquals("org.objectledge.datatypes.Node", resourceClass.getFQInterfaceClassName());
+        assertEquals("org.objectledge.coral.datatypes.Node", resourceClass.getFQInterfaceClassName());
     }
     
     public void testSetJavaClassName()
@@ -119,11 +119,11 @@ public class ResourceClassTest extends LedgeTestCase
         assertEquals("UnqualifiedImpl", resourceClass.getImplClassName());
         assertEquals("Unqualified", resourceClass.getFQInterfaceClassName());
         assertEquals("UnqualifiedImpl", resourceClass.getFQImplClassName());
-        resourceClass.setJavaClassName("org.objectledge.datatypes.NodeImpl");
+        resourceClass.setJavaClassName("org.objectledge.coral.datatypes.NodeImpl");
         assertEquals("Node", resourceClass.getInterfaceClassName());
         assertEquals("NodeImpl", resourceClass.getImplClassName());
-        assertEquals("org.objectledge.datatypes.Node", resourceClass.getFQInterfaceClassName());
-        assertEquals("org.objectledge.datatypes.NodeImpl", resourceClass.getFQImplClassName());
+        assertEquals("org.objectledge.coral.datatypes.Node", resourceClass.getFQInterfaceClassName());
+        assertEquals("org.objectledge.coral.datatypes.NodeImpl", resourceClass.getFQImplClassName());
     }
     
     public void testGetDbTable()

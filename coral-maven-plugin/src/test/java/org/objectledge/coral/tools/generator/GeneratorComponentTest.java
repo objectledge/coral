@@ -45,7 +45,7 @@ import org.objectledge.utils.LedgeTestCase;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponentTest.java,v 1.7 2004-07-08 13:48:21 rafal Exp $
+ * @version $Id: GeneratorComponentTest.java,v 1.8 2004-07-09 07:57:00 rafal Exp $
  */
 public class GeneratorComponentTest
     extends LedgeTestCase
@@ -106,7 +106,7 @@ public class GeneratorComponentTest
         mockFileSystem.stubs().method("exists").with(eq("LICENSE.txt")).will(returnValue(true));
         mockFileSystem.stubs().method("read").with(eq("LICENSE.txt"),eq("UTF-8")).will(returnValue("//license"));
         mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Interface")).will(returnValue(interfaceTemplate));
-        mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/GenericImpl")).will(returnValue(genericImplTemplate));
+        mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Implementation")).will(returnValue(genericImplTemplate));
         generatorComponent = new GeneratorComponent("UTF-8", "src/main/rml/files.lst",
             "src/main/java", "java.,javax.,org.objectledge.", "*", 
             "", "LICENSE.txt", fileSystem, templating, schema, rmlModelLoader, System.out);
