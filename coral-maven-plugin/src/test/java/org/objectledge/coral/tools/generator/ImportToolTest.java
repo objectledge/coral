@@ -35,7 +35,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ImportToolTest.java,v 1.1 2004-03-28 09:48:57 fil Exp $
+ * @version $Id: ImportToolTest.java,v 1.2 2004-03-31 10:03:00 fil Exp $
  */
 public class ImportToolTest extends LedgeTestCase
 {
@@ -55,7 +55,7 @@ public class ImportToolTest extends LedgeTestCase
         importTool.add("pl.caltha.test.TestResource");
         String out = importTool.toString();
         assertEquals(
-            "org.objectledge.coral.store.Resource;\n" +            "\n", out);        
+            "import org.objectledge.coral.store.Resource;\n" +            "\n", out);        
     }
     
     public void testSubPackage()
@@ -65,8 +65,8 @@ public class ImportToolTest extends LedgeTestCase
         importTool.add("pl.caltha.test.other.OtherResource");
         String out = importTool.toString();
         assertEquals(
-            "org.objectledge.coral.store.Resource;\n" +
-            "\n" +            "pl.caltha.test.other.OtherResource;\n" +            "\n", out);        
+            "import org.objectledge.coral.store.Resource;\n" +
+            "\n" +            "import pl.caltha.test.other.OtherResource;\n" +            "\n", out);        
     }
     
     public void testJavaLang()
@@ -76,7 +76,7 @@ public class ImportToolTest extends LedgeTestCase
         importTool.add("java.lang.Integer");
         String out = importTool.toString();
         assertEquals(
-            "org.objectledge.coral.store.Resource;\n" +
+            "import org.objectledge.coral.store.Resource;\n" +
             "\n", out);        
     }
 
@@ -87,7 +87,7 @@ public class ImportToolTest extends LedgeTestCase
         importTool.add("java.util.Date");
         String out = importTool.toString();
         assertEquals(
-            "java.util.Date;\n" +            "\n" +            "org.objectledge.coral.store.Resource;\n" +
+            "import java.util.Date;\n" +            "\n" +            "import org.objectledge.coral.store.Resource;\n" +
             "\n", out);        
     }
 }

@@ -36,7 +36,7 @@ import java.util.List;
  * A tool for generating pretty-printed import lists in Java source files.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ImportTool.java,v 1.1 2004-03-28 09:48:55 fil Exp $
+ * @version $Id: ImportTool.java,v 1.2 2004-03-31 10:02:59 fil Exp $
  */
 public class ImportTool
 {
@@ -113,7 +113,7 @@ public class ImportTool
                 for(Iterator i = group.iterator(); i.hasNext();)
                 {
                     String className = (String)i.next();
-                    buff.append(className).append(";\n");
+                    buff.append("import ").append(className).append(";\n");
                 }
                 buff.append("\n");
             }
