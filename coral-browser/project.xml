@@ -100,15 +100,6 @@
       <url>http://dna.codehaus.org</url>
     </dependency>
     <dependency>
-      <groupId>javamail</groupId>
-      <artifactId>javamail</artifactId>
-      <version>1.2</version>
-      <properties>
-        <war.bundle>true</war.bundle>
-      </properties>
-      <url>http://java.sun.com/products/javamail/index.jsp</url>
-    </dependency>
-    <dependency>
       <groupId>jaf</groupId>
       <artifactId>activation</artifactId>
       <version>1.0.2</version>
