@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.objectledge.coral.BackendException;
-import org.objectledge.coral.datatypes.PresistentResource;
+import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
@@ -51,7 +51,7 @@ import org.jcontainer.dna.Logger;
  * @author Coral Maven plugin
  */
 public class PersistentNodeImpl
-    extends PresistentResource
+    extends PersistentResource
     implements PersistentNode
 {
     // instance variables ////////////////////////////////////////////////////

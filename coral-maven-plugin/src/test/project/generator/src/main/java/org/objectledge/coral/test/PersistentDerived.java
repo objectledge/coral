@@ -28,7 +28,6 @@
  
 package org.objectledge.coral.test;
 
-import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 
@@ -38,7 +37,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * @author Coral Maven plugin
  */
 public interface PersistentDerived
-    extends Resource
+    extends Resource, Persistent
 {
     // constants /////////////////////////////////////////////////////////////
 

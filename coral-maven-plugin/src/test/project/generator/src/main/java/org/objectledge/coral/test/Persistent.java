@@ -28,45 +28,92 @@
  
 package org.objectledge.coral.test;
 
+import java.util.Date;
+
 import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.parameters.Parameters;
 
 /**
- * Defines the accessor methods of <code>coral.test.PersistentNode</code> Coral resource class.
+ * Defines the accessor methods of <code>coral.test.Persistent</code> Coral resource class.
  *
  * @author Coral Maven plugin
  */
-public interface PersistentNode
+public interface Persistent
     extends Resource
 {
     // constants /////////////////////////////////////////////////////////////
 
     /** The name of the ARL resource class. */    
-    public static final String CLASS_NAME = "coral.test.PersistentNode";
+    public static final String CLASS_NAME = "coral.test.Persistent";
 
     // public interface //////////////////////////////////////////////////////
  
     /**
-     * Returns the value of the <code>description</code> attribute.
+     * Returns the value of the <code>d1</code> attribute.
      *
-     * @return the value of the the <code>description</code> attribute.
+     * @return the value of the the <code>d1</code> attribute.
      */
-    public String getDescription();
+    public Date getD1();
 
     /**
-     * Sets the value of the <code>description</code> attribute.
+     * Sets the value of the <code>d1</code> attribute.
      *
-     * @param value the value of the <code>description</code> attribute,
+     * @param value the value of the <code>d1</code> attribute,
      *        or <code>null</code> to remove value.
      */
-    public void setDescription(String value);   
+    public void setD1(Date value);   
    
 	/**
-	 * Checks if the value of the <code>description</code> attribute is defined.
+	 * Checks if the value of the <code>d1</code> attribute is defined.
 	 *
-	 * @return <code>true</code> if the value of the <code>description</code> attribute is defined.
+	 * @return <code>true</code> if the value of the <code>d1</code> attribute is defined.
 	 */
-    public boolean isDescriptionDefined();
+    public boolean isD1Defined();
+ 
+    /**
+     * Returns the value of the <code>p1</code> attribute.
+     *
+     * @return the value of the the <code>p1</code> attribute.
+     */
+    public Parameters getP1();
+
+    /**
+     * Sets the value of the <code>p1</code> attribute.
+     *
+     * @param value the value of the <code>p1</code> attribute,
+     *        or <code>null</code> to remove value.
+     */
+    public void setP1(Parameters value);   
+   
+	/**
+	 * Checks if the value of the <code>p1</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>p1</code> attribute is defined.
+	 */
+    public boolean isP1Defined();
+ 
+    /**
+     * Returns the value of the <code>res1</code> attribute.
+     *
+     * @return the value of the the <code>res1</code> attribute.
+     */
+    public Resource getRes1();
+
+    /**
+     * Sets the value of the <code>res1</code> attribute.
+     *
+     * @param value the value of the <code>res1</code> attribute,
+     *        or <code>null</code> to remove value.
+     */
+    public void setRes1(Resource value);   
+   
+	/**
+	 * Checks if the value of the <code>res1</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>res1</code> attribute is defined.
+	 */
+    public boolean isRes1Defined();
   
     // @custom methods ///////////////////////////////////////////////////////
 }
