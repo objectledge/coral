@@ -12,6 +12,7 @@ import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.AbstractEntity;
+import org.objectledge.coral.event.AttributeDefinitionChangeListener;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssociationChangeListener;
 import org.objectledge.coral.event.ResourceClassAttributesChangeListener;
@@ -27,7 +28,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.19 2004-12-23 02:22:36 rafal Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.20 2005-01-19 08:00:53 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -35,6 +36,7 @@ public class ResourceClassImpl
     implements ResourceClass,
                ResourceClassInheritanceChangeListener,
                ResourceClassAttributesChangeListener,
+               AttributeDefinitionChangeListener,
                PermissionAssociationChangeListener,
                ResourceClassChangeListener
 
@@ -606,6 +608,25 @@ public class ResourceClassImpl
             attributeMap = attributeMapCopy;
         }
     }
+    
+    // AttributeDefinitionChangeListener ////////////////////////////////////////////////////////
+    
+    /**
+     * Called when <code>AttributeDefinition</code>'s data change.
+     *
+     * @param attributeDefinition the attribute that changed.
+     */
+    public synchronized void attributeDefinitionChanged(AttributeDefinition attributeDefinition)
+    {
+        if(attributeMap.containsValue(attributeDefinition))
+        {
+             if(!attributeMap.containsKey(attributeDefinition.getName()))
+             {
+                 attributeMap.values().remove(attributeDefinition);
+                 attributeMap.put(attributeDefinition.getName(), attributeDefinition);
+             }
+        }
+    }    
 
     // PermissionAssignmentChangeListener interface /////////////////////////////////////////////
 
@@ -901,8 +922,9 @@ public class ResourceClassImpl
             Iterator i = ads.iterator();
             while(i.hasNext())
             {
-                AttributeDefinition ad = (AttributeDefinition)i.next();
-                attributeMap.put(ad.getName(), ad);
+                AttributeDefinition attr = (AttributeDefinition)i.next();
+                coralEventHub.getGlobal().addAttributeDefinitionChangeListener(this, attr);
+                attributeMap.put(attr.getName(), attr);
             }
             Set rcs = parentClasses;
             Iterator j = rcs.iterator();
@@ -918,6 +940,7 @@ public class ResourceClassImpl
                     while(i.hasNext())
                     {
                         AttributeDefinition attr = (AttributeDefinition)i.next();
+                        coralEventHub.getGlobal().addAttributeDefinitionChangeListener(this, attr);
                         attributeMap.put(attr.getName(), attr);
                     }
                 }

@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.11 2004-12-23 07:15:32 rafal Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.12 2005-01-19 08:00:53 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -290,7 +290,7 @@ public class CoralSchemaImpl
         try
         {
             coral.getRegistry().renameAttributeDefinition(attribute, name);
-            coralEventHub.getOutbound().fireAttributeDefinitionChangeEvent(attribute);
+            coralEventHub.getGlobal().fireAttributeDefinitionChangeEvent(attribute);
         }
         catch(Exception e)
         {
@@ -320,7 +320,7 @@ public class CoralSchemaImpl
         {
             throw new BackendException("Failed to update Attribute", e);
         }
-        coralEventHub.getOutbound().fireAttributeDefinitionChangeEvent(attribute);
+        coralEventHub.getGlobal().fireAttributeDefinitionChangeEvent(attribute);
     }
 
     /**
@@ -340,7 +340,7 @@ public class CoralSchemaImpl
         {
             throw new BackendException("Failed to update Attribute", e);
         }
-        coralEventHub.getOutbound().fireAttributeDefinitionChangeEvent(attribute);
+        coralEventHub.getGlobal().fireAttributeDefinitionChangeEvent(attribute);
     }
                         
     // Resource classes //////////////////////////////////////////////////////
