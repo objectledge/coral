@@ -39,6 +39,7 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.CoralSchemaImpl;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.CoralSecurityImpl;
+import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.CoralStoreImpl;
 import org.objectledge.database.persistence.Persistence;
@@ -49,7 +50,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.4 2004-03-08 07:22:28 fil Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.5 2004-03-08 08:33:04 fil Exp $
  */
 public class CoralCoreImpl
     implements CoralCore
@@ -169,5 +170,21 @@ public class CoralCoreImpl
         CoralSession previous = (CoralSession)currentSession.get();
         currentSession.set(session);
         return previous;
+    }
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public Subject getCurrentSubject() throws IllegalStateException
+    {
+        CoralSession session = getCurrentSession();
+        if(session == null)
+        {
+            throw new IllegalStateException("thread is not associated with a Subject");
+        }
+        else
+        {
+            return session.getUserSubject();
+        }
     }
 }

@@ -32,13 +32,14 @@ import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
+import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
 
 /**
  * A bridge between interdependent Coral componentes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCore.java,v 1.3 2004-03-05 14:11:04 fil Exp $
+ * @version $Id: CoralCore.java,v 1.4 2004-03-08 08:33:04 fil Exp $
  */
 public interface CoralCore
 {
@@ -102,4 +103,13 @@ public interface CoralCore
      * @return the associated session, may be <code>null</code>.
      */
     public CoralSession getCurrentSession();
+    
+    /**
+     * Returns the Subject assocaited with the calling thread.
+     *
+     * @return the Subject assocaited with the calling thread.
+     * @throws IllegalStateException if the thread is not assocaited with a Subject.
+     */
+    public Subject getCurrentSubject()
+        throws IllegalStateException;
 }
