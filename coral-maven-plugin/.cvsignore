@@ -4,3 +4,4 @@ velocity.log
 bin
 target
 .settings
+build.properties
