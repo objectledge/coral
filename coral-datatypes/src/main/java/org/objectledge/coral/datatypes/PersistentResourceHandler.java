@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.9 2004-07-22 16:35:46 zwierzem Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.10 2004-08-20 10:05:28 rafal Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -60,12 +60,14 @@ public class PersistentResourceHandler
     {
         super(coralSchema, coralSecurity, instantiator, resourceClass);
         this.persistence = persistence;
+        /*
         if(resourceClass.getDbTable() == null ||
            resourceClass.getDbTable().length() == 0)
         {
             throw new ComponentInitializationError("resource class "+ resourceClass.getName()+
                                                     " has no DB TABLE set");
         }
+        */
         instance = (Persistent)instantiator.newInstance(resourceClass.getJavaClass());
         factory = instantiator.getPersistentFactory(resourceClass.getJavaClass());
     }
