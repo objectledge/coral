@@ -34,11 +34,11 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ import org.objectledge.utils.StringUtils;
  * Performs importing data from old style ARL schema database to brand new CORAL scheme.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ARLImporterComponent.java,v 1.10 2005-01-28 02:46:57 rafal Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.11 2005-02-01 23:50:08 pablo Exp $
  */
 public class ARLImporterComponent
 {
@@ -715,7 +715,7 @@ public class ARLImporterComponent
         PreparedStatement stmt = targetConn.prepareStatement(stmtContent);
         int size = 0;
         boolean rootAssignment = false;
-        Date rootAssignmentDate = null;
+        Timestamp rootAssignmentDate = null;
         System.out.print("\nLoading role assignment:");
         while(rs.next())
         {
@@ -725,16 +725,16 @@ public class ARLImporterComponent
             if(subjectId == 1 && roleId == 1)
             {
                 rootAssignment = true;
-                rootAssignmentDate = rs.getDate("grant_time");
+                rootAssignmentDate = rs.getTimestamp("grant_time");
                 continue;
             }
             long grantor = rs.getLong("grantor");
-            Date grantTime = rs.getDate("grant_time");
+            Timestamp grantTime = rs.getTimestamp("grant_time");
             boolean grantingAllowed = rs.getBoolean("granting_allowed");
             stmt.setLong(1, subjectId);
             stmt.setLong(2, roleId);
             stmt.setLong(3, grantor);
-            stmt.setDate(4, grantTime);
+            stmt.setTimestamp(4, grantTime);
             stmt.setBoolean(5, grantingAllowed);
             stmt.addBatch();
             size++;
@@ -760,7 +760,7 @@ public class ARLImporterComponent
             stmt.setLong(1, 1);
             stmt.setLong(2, 1);
             stmt.setLong(3, 1);
-            stmt.setDate(4, rootAssignmentDate);
+            stmt.setTimestamp(4, rootAssignmentDate);
             stmt.setBoolean(5, true);
             stmt.addBatch();
             try
@@ -912,7 +912,7 @@ public class ARLImporterComponent
         PreparedStatement stmt = targetConn.prepareStatement(stmtContent);
         int size = 0;
         boolean rootAssignment = false;
-        Date rootAssignmentDate = null;
+        Timestamp rootAssignmentDate = null;
         System.out.print("\nLoading permission assignment:");
         while(rs.next())
         {
@@ -936,13 +936,13 @@ public class ARLImporterComponent
             }
             boolean isInherited = rs.getBoolean("is_inherited");
             long grantor = rs.getLong("grantor");
-            Date grantTime = rs.getDate("grant_time");
+            Timestamp grantTime = rs.getTimestamp("grant_time");
             stmt.setLong(1, resourceId);
             stmt.setLong(2, roleId);
             stmt.setLong(3, pId.longValue());
             stmt.setBoolean(4, isInherited);
             stmt.setLong(5, grantor);
-            stmt.setDate(6, grantTime);
+            stmt.setTimestamp(6, grantTime);
             stmt.addBatch();
             size++;
         }
@@ -1339,9 +1339,9 @@ public class ARLImporterComponent
             {
                 continue;
             }
-            Date data = rs.getDate("data");
+            Timestamp data = rs.getTimestamp("data");
             stmt.setLong(1, dataKey);
-            stmt.setDate(2, data);
+            stmt.setTimestamp(2, data);
             stmt.addBatch();
             size++;
         }
@@ -1386,11 +1386,12 @@ public class ARLImporterComponent
             {
                 continue;
             }
-            Date startDate = rs.getDate("start_date");
-            Date endDate = rs.getDate("end_date");
+            
+            Timestamp startDate = rs.getTimestamp("start_date");
+            Timestamp endDate = rs.getTimestamp("end_date");
             stmt.setLong(1, dataKey);
-            stmt.setDate(2, startDate);
-            stmt.setDate(3, endDate);
+            stmt.setTimestamp(2, startDate);
+            stmt.setTimestamp(3, endDate);
             stmt.addBatch();
             size++;
         }
@@ -1922,13 +1923,13 @@ public class ARLImporterComponent
 
         private long createdBy;
 
-        private Date creationTime;
+        private Timestamp creationTime;
 
         private long ownedBy;
 
         private long modifiedBy;
 
-        private Date modificationTime;
+        private Timestamp modificationTime;
 
         public ResourceData(ResultSet rs)
             throws Exception
@@ -1948,10 +1949,10 @@ public class ARLImporterComponent
             parentLong = new Long(parent);
             name = rs.getString("name");
             createdBy = rs.getLong("created_by");
-            creationTime = rs.getDate("creation_time");
+            creationTime = rs.getTimestamp("creation_time");
             ownedBy = rs.getLong("owned_by");
             modifiedBy = rs.getLong("modified_by");
-            modificationTime = rs.getDate("modification_time");
+            modificationTime = rs.getTimestamp("modification_time");
         }
 
         public void addBatch(PreparedStatement stmt)
@@ -1969,10 +1970,10 @@ public class ARLImporterComponent
             }
             stmt.setString(4, name);
             stmt.setLong(5, createdBy);
-            stmt.setDate(6, creationTime);
+            stmt.setTimestamp(6, creationTime);
             stmt.setLong(7, ownedBy);
             stmt.setLong(8, modifiedBy);
-            stmt.setDate(9, modificationTime);
+            stmt.setTimestamp(9, modificationTime);
             stmt.addBatch();
         }
 
