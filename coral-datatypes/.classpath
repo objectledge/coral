@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+    <classpathentry exported="true" kind="var" path="CLOVER_RUNTIME"/>
     <classpathentry kind="src" path="src/main/java"/>
+    <classpathentry kind="src" path="src/test/java"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
     <classpathentry kind="src" path="/coral-api"/>
     <classpathentry kind="src" path="/coral-ri"/>
     <classpathentry kind="src" path="/ledge-components"/>
     <classpathentry kind="var"
         path="MAVEN_REPO/dna/jars/dna-api-1.1-rc2.jar" sourcepath="MAVEN_REPO/dna/sources/dna-api-1.1-rc2-src.zip"/>
+    <classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
+    <classpathentry kind="var"
+        path="MAVEN_REPO/jmock/jars/jmock-20040220-211330.jar" sourcepath="MAVEN_REPO/jmock/sources/jmock-20040220-211330-src.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
