@@ -40,7 +40,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModificationTest.java,v 1.5 2005-02-09 22:02:20 rafal Exp $
+ * @version $Id: MinimalRelationModificationTest.java,v 1.6 2005-02-11 13:00:07 rafal Exp $
  */
 public class MinimalRelationModificationTest extends LedgeTestCase
 {
@@ -61,8 +61,14 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 		// 3:4
 		// 0:4
 		assertEquals(added.length, 2);
-		if(added[0][0] == 0) assertEquals(added[1][0], 3);
-		if(added[0][0] == 3) assertEquals(added[1][0], 0);
+		if(added[0][0] == 0) 
+        {
+            assertEquals(added[1][0], 3);
+        }
+		if(added[0][0] == 3) 
+        { 
+            assertEquals(added[1][0], 0);
+        }
 		assertEquals(added[0][1], 4);
 		assertEquals(added[1][1], 4);
 
@@ -74,18 +80,36 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 		assertEquals(removed.length, 3);
 		if(removed[0][0] == 1)
 		{
-			if(removed[1][0] == 2) assertEquals(removed[2][0], 3);
-			if(removed[1][0] == 3) assertEquals(removed[2][0], 2);
+		    if(removed[1][0] == 2) 
+		    {
+                assertEquals(removed[2][0], 3);
+		    }
+			if(removed[1][0] == 3) 
+			{
+                assertEquals(removed[2][0], 2);
+            }
     	} 
 		if(removed[0][0] == 2)
 		{
-			if(removed[1][0] == 1) assertEquals(removed[2][0], 3);
-			if(removed[1][0] == 3) assertEquals(removed[2][0], 1);
+			if(removed[1][0] == 1)
+			{
+			    assertEquals(removed[2][0], 3);
+			}
+			if(removed[1][0] == 3)
+			{
+                assertEquals(removed[2][0], 1);
+            }
 		} 
 		if(removed[0][0] == 3)
 		{
-			if(removed[1][0] == 1) assertEquals(removed[2][0], 2);
-			if(removed[1][0] == 2) assertEquals(removed[2][0], 1);
+			if(removed[1][0] == 1)
+			{
+                assertEquals(removed[2][0], 2);
+            }
+			if(removed[1][0] == 2)
+			{
+                assertEquals(removed[2][0], 1);
+            }
 		}
 		assertEquals(removed[0][1], 6);
 		assertEquals(removed[1][1], 6);
@@ -162,8 +186,14 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 		// 3:4
 		// 0:4
 		assertEquals(added.length, 2);
-		if(added[0][1] == 0) assertEquals(added[1][1], 3);
-		if(added[0][1] == 3) assertEquals(added[1][1], 0);
+		if(added[0][1] == 0)
+		{
+            assertEquals(added[1][1], 3);
+        }
+		if(added[0][1] == 3)
+		{ 
+            assertEquals(added[1][1], 0);
+        }
 		assertEquals(added[0][0], 4);
 		assertEquals(added[1][0], 4);
 
@@ -175,18 +205,36 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 		assertEquals(removed.length, 3);
 		if(removed[0][1] == 1)
 		{
-			if(removed[1][1] == 2) assertEquals(removed[2][1], 3);
-			if(removed[1][1] == 3) assertEquals(removed[2][1], 2);
+			if(removed[1][1] == 2)
+			{
+                assertEquals(removed[2][1], 3);
+            }
+			if(removed[1][1] == 3)
+			{
+			    assertEquals(removed[2][1], 2);
+			}
 		} 
 		if(removed[0][1] == 2)
 		{
-			if(removed[1][1] == 1) assertEquals(removed[2][1], 3);
-			if(removed[1][1] == 3) assertEquals(removed[2][1], 1);
+			if(removed[1][1] == 1)
+			{   
+                assertEquals(removed[2][1], 3);
+            }
+			if(removed[1][1] == 3)
+			{ 
+                assertEquals(removed[2][1], 1);
+            }
 		} 
 		if(removed[0][1] == 3)
 		{
-			if(removed[1][1] == 1) assertEquals(removed[2][1], 2);
-			if(removed[1][1] == 2) assertEquals(removed[2][1], 1);
+			if(removed[1][1] == 1)
+			{ 
+                assertEquals(removed[2][1], 2);
+            }
+			if(removed[1][1] == 2)
+			{
+			    assertEquals(removed[2][1], 1);
+			}
 		}
 		assertEquals(removed[0][0], 6);
 		assertEquals(removed[1][0], 6);

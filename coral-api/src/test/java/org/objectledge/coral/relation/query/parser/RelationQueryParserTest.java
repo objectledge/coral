@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationQueryParserTest.java,v 1.1 2004-03-18 13:26:43 fil Exp $
+ * @version $Id: RelationQueryParserTest.java,v 1.2 2005-02-11 13:00:20 rafal Exp $
  */
 public class RelationQueryParserTest extends TestCase
 {
@@ -100,8 +100,14 @@ public class RelationQueryParserTest extends TestCase
 			nodeNum++;
 			int numChildren = node.jjtGetNumChildren();
 			assertFalse(numChildren < 2);
-			if(nodeNum == 1) assertEquals(numChildren, 2);
-			if(nodeNum == 9) assertEquals(numChildren, 3);
+			if(nodeNum == 1) 
+			{
+			    assertEquals(numChildren, 2);
+			}
+			if(nodeNum == 9) 
+			{
+                assertEquals(numChildren, 3);
+            }
 			return visitChildren(node, data);
         }
 
@@ -113,7 +119,10 @@ public class RelationQueryParserTest extends TestCase
 			nodeNum++;
 			int numChildren = node.jjtGetNumChildren();
 			assertFalse(numChildren < 2);
-			if(nodeNum == 6) assertEquals(numChildren, 3);
+			if(nodeNum == 6)
+			{
+			    assertEquals(numChildren, 3);
+			}
 			return visitChildren(node, data);
         }
 
@@ -157,8 +166,14 @@ public class RelationQueryParserTest extends TestCase
         {
 			nodeNum++;
 			assertEquals(node.jjtGetNumChildren(), 0);
-			if(nodeNum == 4) assertEquals(node.getRelationName(), "Name of Relation 1");
-			if(nodeNum == 8) assertEquals(node.getRelationName(), "Name of Relation 2");
+			if(nodeNum == 4)
+			{ 
+                assertEquals(node.getRelationName(), "Name of Relation 1");
+            }
+			if(nodeNum == 8)
+			{
+                assertEquals(node.getRelationName(), "Name of Relation 2");
+            }
 			return null;
         }
 
@@ -169,9 +184,18 @@ public class RelationQueryParserTest extends TestCase
         {
 			nodeNum++;
 			assertEquals(node.jjtGetNumChildren(), 0);
-			if(nodeNum == 5) assertEquals(node.getIdentifier(), "12345");
-			if(nodeNum == 13) assertEquals(node.getIdentifier(), "98765");
-			if(nodeNum == 14) assertEquals(node.getIdentifier(), "1");
+			if(nodeNum == 5)
+			{
+                assertEquals(node.getIdentifier(), "12345");
+            }
+			if(nodeNum == 13)
+			{
+			    assertEquals(node.getIdentifier(), "98765");
+			}
+			if(nodeNum == 14)
+			{
+                assertEquals(node.getIdentifier(), "1");
+            }
 			return null;
         }
 
@@ -182,9 +206,18 @@ public class RelationQueryParserTest extends TestCase
         {
 			nodeNum++;
 			assertEquals(node.jjtGetNumChildren(), 0);
-			if(nodeNum == 10) assertEquals(node.getIdentifier(), "/r/es/our-ce_pa.t,h");
-			if(nodeNum == 11) assertEquals(node.getIdentifier(), "/res2");
-			if(nodeNum == 12) assertEquals(node.getIdentifier(), "/res3");
+			if(nodeNum == 10) 
+			{ 
+                assertEquals(node.getIdentifier(), "/r/es/our-ce_pa.t,h");
+            }
+			if(nodeNum == 11) 
+			{ 
+			    assertEquals(node.getIdentifier(), "/res2");
+			}
+			if(nodeNum == 12) 
+			{
+			    assertEquals(node.getIdentifier(), "/res3");
+			}
             return null;
         }
         
