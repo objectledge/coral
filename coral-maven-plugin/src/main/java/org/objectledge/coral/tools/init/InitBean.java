@@ -36,11 +36,13 @@ import org.objectledge.filesystem.FileSystem;
  * A Bean that intializes a JDBC database for use as Coral data backend.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: InitBean.java,v 1.5 2004-12-27 02:33:48 rafal Exp $
+ * @version $Id: InitBean.java,v 1.6 2005-02-16 20:03:31 rafal Exp $
  */
 public class InitBean
 {
     private DataSource dataSource;
+    
+    private final FileSystem fs = FileSystem.getClasspathFileSystem(); 
     
     /**
      * Sets the dataSource.
@@ -60,34 +62,56 @@ public class InitBean
     public void run()
         throws Exception
     {
-        FileSystem fs = FileSystem.getClasspathFileSystem();
-        if(!DatabaseUtils.hasTable(dataSource, "ledge_id_table"))
+        if(!hasTable("ledge_id_table"))
         {
-            DatabaseUtils.runScript(dataSource, 
-                fs.getReader("sql/database/IdGenerator.sql", "UTF-8"));   
-        }
-        if(!DatabaseUtils.hasTable(dataSource, "ledge_parameters"))
-        {
-            DatabaseUtils.runScript(dataSource, 
-                fs.getReader("sql/parameters/db/DBParameters.sql", "UTF-8"));   
-        }
-        if(!DatabaseUtils.hasTable(dataSource, "coral_resource_class"))
-        {        
-            DatabaseUtils.runScript(dataSource, 
-                fs.getReader("sql/coral/CoralRITables.sql", "UTF-8"));   
-            DatabaseUtils.runScript(dataSource, 
-                fs.getReader("sql/coral/CoralDatatypesTables.sql", "UTF-8"));               
+            runScript("sql/database/IdGeneratorTables.sql");
         }
         else
         {
-            DatabaseUtils.runScript(dataSource, 
-                fs.getReader("sql/coral/CoralDatatypesCleanup.sql", "UTF-8"));               
-            DatabaseUtils.runScript(dataSource, 
-                fs.getReader("sql/coral/CoralRICleanup.sql", "UTF-8"));   
+            runScript("sql/database/IdGeneratorCleanup.sql");
         }
-        DatabaseUtils.runScript(dataSource, 
-            fs.getReader("sql/coral/CoralRIInitial.sql", "UTF-8"));   
-        DatabaseUtils.runScript(dataSource, 
-            fs.getReader("sql/coral/CoralDatatypesInitial.sql", "UTF-8"));        
+        
+        if(!hasTable("ledge_parameters"))
+        {
+            runScript("sql/parameters/db/DBParametersTables.sql");
+        }
+        else
+        {
+            runScript("sql/parameters/db/DBParametersCleanup.sql");
+        }
+        
+        if(!hasTable("ledge_scheduler"))
+        {
+            runScript("sql/scheduler/db/DBSchedulerTables.sql");
+        }
+        else
+        {
+            runScript("sql/scheduler/db/DBSchedulerCleanup.sql");
+        }
+        
+        if(!hasTable("coral_resource_class"))
+        {
+            runScript("sql/coral/CoralRITables.sql");
+            runScript("sql/coral/CoralDatatypesTables.sql");
+        }
+        else
+        {
+            runScript("sql/coral/CoralDatatypesCleanup.sql");
+            runScript("sql/coral/CoralRICleanup.sql");
+        }
+        runScript("sql/coral/CoralRIInitial.sql");
+        runScript("sql/coral/CoralDatatypesInitial.sql");
+    }
+    
+    private boolean hasTable(String table)
+        throws Exception
+    {
+        return DatabaseUtils.hasTable(dataSource, table);
+    }
+    
+    private void runScript(String path)
+        throws Exception
+    {
+        DatabaseUtils.runScript(dataSource, fs.getReader(path, "UTF-8"));        
     }
 }
