@@ -5,13 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.ComponentInitializationError;
-import org.objectledge.coral.BackendException;
-import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
@@ -30,7 +27,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.8 2004-07-01 10:18:11 fil Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.9 2004-07-22 16:35:46 zwierzem Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler

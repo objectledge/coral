@@ -19,7 +19,6 @@ import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.store.ConstraintViolationException;
-import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
@@ -33,7 +32,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.6 2004-07-01 10:17:17 fil Exp $
+ * @version $Id: PersistentResource.java,v 1.7 2004-07-22 16:35:46 zwierzem Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent

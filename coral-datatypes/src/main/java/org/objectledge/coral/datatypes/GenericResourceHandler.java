@@ -1,16 +1,11 @@
 package org.objectledge.coral.datatypes;
 
-import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
@@ -28,7 +23,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.8 2004-06-29 09:29:54 fil Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.9 2004-07-22 16:35:46 zwierzem Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler

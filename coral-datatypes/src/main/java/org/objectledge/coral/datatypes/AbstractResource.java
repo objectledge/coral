@@ -31,7 +31,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,7 +40,6 @@ import java.util.Set;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
-import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
@@ -62,7 +60,7 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.10 2004-07-01 11:27:22 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.11 2004-07-22 16:35:46 zwierzem Exp $
  */
 public abstract class AbstractResource implements Resource
 {

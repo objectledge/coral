@@ -3,12 +3,8 @@ package org.objectledge.coral.datatypes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
@@ -18,11 +14,7 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.schema.ResourceClassInheritance;
-import org.objectledge.coral.schema.ResourceHandler;
 import org.objectledge.coral.schema.UnknownAttributeException;
-import org.objectledge.coral.security.PermissionAssignment;
-import org.objectledge.coral.security.Role;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
@@ -34,7 +26,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.11 2004-07-01 09:00:01 fil Exp $
+ * @version $Id: GenericResource.java,v 1.12 2004-07-22 16:35:46 zwierzem Exp $
  */
 public class GenericResource
     extends AbstractResource

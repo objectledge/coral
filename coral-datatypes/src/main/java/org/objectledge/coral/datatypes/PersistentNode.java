@@ -28,7 +28,6 @@
  
 package org.objectledge.coral.datatypes;
 
-import org.objectledge.coral.datatypes.GenericResource;
 import org.objectledge.coral.store.Resource;
 
 /**

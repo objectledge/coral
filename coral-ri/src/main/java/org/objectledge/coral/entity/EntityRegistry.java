@@ -19,7 +19,6 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
-import org.objectledge.utils.StringUtils;
 
 /**
  * This class manages 'by id' 'by name' and 'all' registires for a specific

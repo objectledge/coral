@@ -31,19 +31,15 @@ package org.objectledge.coral.datatypes;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
-import org.objectledge.coral.datatypes.GenericResource;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
-import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
-
-import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.PersistentNode</code> Coral resource class.

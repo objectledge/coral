@@ -6,11 +6,9 @@ import java.util.Map;
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.store.CoralStore;
-import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
@@ -19,7 +17,7 @@ import org.objectledge.database.Database;
  * An implementation of <code>coral.Node</code> Coral resource class.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: NodeImpl.java,v 1.3 2004-07-09 12:26:07 rafal Exp $
+ * @version $Id: NodeImpl.java,v 1.4 2004-07-22 16:35:46 zwierzem Exp $
  */
 public class NodeImpl
     extends GenericResource
