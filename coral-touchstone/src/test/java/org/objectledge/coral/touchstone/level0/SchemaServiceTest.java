@@ -27,6 +27,10 @@
 // 
 package org.objectledge.coral.touchstone.level0;
 
+import org.dbunit.dataset.Column;
+import org.dbunit.dataset.DefaultTable;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.datatype.DataType;
 import org.objectledge.coral.CoralSession;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.ResourceClass;
@@ -35,17 +39,51 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SchemaServiceTest.java,v 1.2 2004-03-12 09:15:50 fil Exp $
+ * @version $Id: SchemaServiceTest.java,v 1.3 2004-03-12 11:46:19 fil Exp $
  */
 public class SchemaServiceTest
     extends CoralTestCase
 {
+    private Column[] coralAttributeClassColumns = new Column[] {
+        new Column("attribute_class_id", DataType.BIGINT),
+        new Column("name", DataType.VARCHAR),
+        new Column("java_class_name", DataType.VARCHAR),
+        new Column("handler_class_name", DataType.VARCHAR),
+        new Column("db_table_name", DataType.VARCHAR)
+    };
+    
     public void testBuiltinAttributeClasses()
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
         AttributeClass[] classes = session.getSchema().getAttributeClass();
         session.close();
         assertTrue(classes.length > 0);
+    }
+    
+    public void testCreateAttributeClass()
+        throws Exception
+    {
+        CoralSession session = coralSessionFactory.getAnonymousSession();
+        session.getSchema().createAttributeClass("alt_integer", "java.lang.Integer", 
+            "org.objectledge.coral.datatypes.IntegerAttributeHandler", "coral_attribute_integer");
+        DefaultTable expectedTable = new DefaultTable("alt_integer_attribute_class",
+            coralAttributeClassColumns);
+        expectedTable.addRow(new Object[] { new Integer(17), "alt_integer", "java.lang.Integer",
+            "org.objectledge.coral.datatypes.IntegerAttributeHandler", "coral_attribute_integer"});
+        ITable actualTable = databaseConnection.createQueryTable("alt_integer_attribute_class",
+            "SELECT * FROM coral_attribute_class WHERE name = 'alt_integer'");
+        databaseConnection.close();
+        assertEquals(expectedTable, actualTable);
+
+        AttributeClass ac = session.getSchema().getAttributeClass("alt_integer");
+
+        session.getSchema().deleteAttributeClass(ac);
+        expectedTable = new DefaultTable("alt_integer_attribute_class",
+             coralAttributeClassColumns);
+        actualTable = databaseConnection.createQueryTable("alt_integer_attribute_class",
+             "SELECT * FROM coral_attribute_class WHERE name = 'alt_integer'");                    
+        databaseConnection.close();
+        assertEquals(expectedTable, actualTable);
     }
     
     public void testBuiltinResourceClasses()
