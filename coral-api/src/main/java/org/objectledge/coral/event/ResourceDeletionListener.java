@@ -21,6 +21,7 @@ public interface ResourceDeletionListener
 	 * Called when <code>Resource</code> is being deleted.
 	 *
 	 * @param resource the resource that is being deleted.
+     * @throws Exception if there is a problem handling the event.
 	 */
 	public void resourceDeleted(Resource resource)
         throws Exception;
