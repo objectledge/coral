@@ -41,7 +41,7 @@ import org.objectledge.templating.tools.ContextToolFactory;
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralI18nTool.java,v 1.3 2004-07-12 17:31:26 zwierzem Exp $
+ * @version $Id: CoralI18nTool.java,v 1.4 2004-07-16 14:31:22 zwierzem Exp $
  */
 public class CoralI18nTool extends I18nTool
 {
@@ -64,7 +64,7 @@ public class CoralI18nTool extends I18nTool
      */
     public String getName(ResourceClass resourceClass)
     {
-        return get("resource."+resourceClass.getName(), resourceClass.getName());
+        return get(getNameKey(resourceClass), resourceClass.getName());
     }
 
     /**
@@ -75,6 +75,28 @@ public class CoralI18nTool extends I18nTool
      */
     public String getName(Resource resource)
     {
-        return get("resource."+resource.getResourceClass().getName()+"."+resource.getName(), resource.getName());
+        return get(getNameKey(resource), resource.getName());
+    }
+    
+    /**
+     * Get the localization key for the name of the resource class.
+     * 
+     * @param resourceClass the resource class.
+     * @return the key for the name of the resource class.
+     */
+    public static String getNameKey(ResourceClass resourceClass)
+    {
+        return "resource."+resourceClass.getName();
+    }
+
+    /**
+     * Get the localization key for the name of the resource.
+     * 
+     * @param resource the resource.
+     * @return the key for the name of the resource.
+     */
+    public static String getNameKey(Resource resource)
+    {
+        return "resource."+resource.getResourceClass().getName()+"."+resource.getName();
     }
 }
