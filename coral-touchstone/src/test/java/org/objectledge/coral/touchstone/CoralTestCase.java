@@ -47,7 +47,7 @@ import org.objectledge.filesystem.FileSystem;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralTestCase.java,v 1.8 2004-03-16 13:38:12 fil Exp $
+ * @version $Id: CoralTestCase.java,v 1.9 2005-02-16 20:01:01 rafal Exp $
  */
 public abstract class CoralTestCase extends TestCase
 {
@@ -71,11 +71,11 @@ public abstract class CoralTestCase extends TestCase
             getComponentInstanceOfType(ThreadDataSource.class);
         if(!DatabaseUtils.hasTable(ds, "ledge_id_table"))
         {
-            DatabaseUtils.runScript(ds, fs.getReader("sql/database/IdGenerator.sql", "UTF-8"));   
+            DatabaseUtils.runScript(ds, fs.getReader("sql/database/IdGeneratorTables.sql", "UTF-8"));   
         }
         if(!DatabaseUtils.hasTable(ds, "ledge_parameters"))
         {
-            DatabaseUtils.runScript(ds, fs.getReader("sql/parameters/db/DBParameters.sql", "UTF-8"));   
+            DatabaseUtils.runScript(ds, fs.getReader("sql/parameters/db/DBParametersTables.sql", "UTF-8"));   
         }
         if(!DatabaseUtils.hasTable(ds, "coral_resource_class"))
         {        
