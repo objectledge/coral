@@ -18,7 +18,7 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>  
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceList.java,v 1.3 2004-05-06 13:02:21 pablo Exp $
+ * @version $Id: ResourceList.java,v 1.4 2005-01-17 11:20:23 rafal Exp $
  */
 public class ResourceList
     extends AbstractList
@@ -293,11 +293,23 @@ public class ResourceList
     }
     
     /**
-     * {@inheritDoc}
+     * Simple implemenation that prints out member ids.
+     * 
+     * @return string representation of the list.
      */
     public String toString()
     {
-        return "";
+        StringBuffer buff = new StringBuffer();
+        buff.append('[');
+        for(int i = 0; i < size; i++)
+        {
+            buff.append(ids[i]);
+            if(i < size - 1)
+            {
+                buff.append(", ");
+            }
+        }
+        buff.append(']');
+        return buff.toString();
     }
-    
 }

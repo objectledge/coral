@@ -15,7 +15,7 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: WeakResourceList.java,v 1.2 2004-05-06 13:02:08 pablo Exp $
+ * @version $Id: WeakResourceList.java,v 1.3 2005-01-17 11:20:23 rafal Exp $
  */
 public class WeakResourceList
     extends ResourceList
@@ -137,4 +137,33 @@ public class WeakResourceList
         size--;
         return old;
     }
+    
+    /**
+     * Simple implemenation that prints out member ids.
+     * 
+     * @return string representation of the list.
+     */
+    public String toString()
+    {
+        StringBuffer buff = new StringBuffer();
+        buff.append('[');
+        for(int i = 0; i < size; i++)
+        {
+            try
+            {
+                coralStore.getResource(ids[i]);
+                buff.append(ids[i]);
+            }
+            catch(EntityDoesNotExistException e)
+            {
+                buff.append("deleted");
+            }
+            if(i < size-1)
+            {
+                buff.append(", ");
+            }
+        }
+        buff.append(']');
+        return buff.toString();
+    }        
 }
