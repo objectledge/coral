@@ -9,7 +9,7 @@ function select(path, id)
 }
 </script>
 
-#set($tableLink = $link.set('table_id', $table.id).set('domain',$data.getParameters().get('domain').asString('')))
+#set($tableLink = $link.set('tableId', $table.id).set('domain',$data.getParameters().get('domain').asString('')))
 <table class="genericItemTree" cellpadding="0" cellspacing="0">
   <tr>
     <th>Resource tree #if($domainClass) - choose resource for class $domainClass.name #end</th>
