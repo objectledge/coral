@@ -43,7 +43,7 @@ import org.objectledge.database.persistence.Persistence;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.2 2004-02-23 10:51:19 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.3 2004-02-23 11:00:06 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -198,16 +198,26 @@ implements Relation
         return false;
     }
 
-    // storage api --------------------------------------------------------------------------------
+    // peristence api -----------------------------------------------------------------------------
 
+	/** The key columns. */
+	private static final String[] KEY_COLUMNS = { "relation_id" };
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getTable()
+	{
+		return "arl_relation";
+	}
+    
 	/**
 	 * {@inheritDoc}
 	 */
 	public String[] getKeyColumns()
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+		return KEY_COLUMNS;
+	}           
 
     // implementation -----------------------------------------------------------------------------
 
