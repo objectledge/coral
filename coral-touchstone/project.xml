@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.4 2004-05-13 14:09:51 fil Exp $ -->
+<!-- $Id: project.xml,v 1.5 2004-05-14 11:38:44 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -101,7 +101,7 @@
       <groupId>dna</groupId>
       <artifactId>dna-api</artifactId>
       <version>1.1-rc2</version>
-      <url>http://dna.jcontainer.org</url>
+      <url>http://dna.codehaus.org</url>
     </dependency>    
     <dependency>
       <groupId>commons-pool</groupId>
@@ -112,19 +112,19 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.8</version>
-      <url>http://jakarta.apache.org/log4j/docs/index.html</url>
+      <url>http://logging.apache.org/log4j/docs/</url>
     </dependency>
     <dependency>
       <groupId>dna</groupId>
       <artifactId>dna-impl</artifactId>
       <version>1.1-rc2</version>
-      <url>http://dna.jcontainer.org</url>
+      <url>http://dna.codehaus.org</url>
     </dependency>
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
       <version>2.1</version>
-      <url>http://jakarta.apache.org/commons/collections.html</url>
+      <url>http://jakarta.apache.org/commons/collections</url>
     </dependency>
     <dependency>
       <groupId>jing</groupId>
