@@ -46,7 +46,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * operations needed to perform a query.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: QueryComplexityCalculator.java,v 1.1 2004-02-24 17:10:15 zwierzem Exp $
+ * @version $Id: QueryComplexityCalculator.java,v 1.2 2004-02-26 14:32:22 zwierzem Exp $
  */
 public class QueryComplexityCalculator extends AbstractQueryVisitor
 {
@@ -112,6 +112,10 @@ public class QueryComplexityCalculator extends AbstractQueryVisitor
 	{
 		int mapSetComplexity = getMapSetComplexity(node, data);
 		int mappingComplexity = (int)(relation.getAvgMappingSize() * ((float)mapSetComplexity));
+		if(externalSetSize != -1 && this.parentMappings == 1) // this is the "leaf" mapping
+		{
+			mappingComplexity = Math.min(mappingComplexity, externalSetSize);
+		}
 		return new Integer(mappingComplexity);
 	}
 
@@ -124,6 +128,10 @@ public class QueryComplexityCalculator extends AbstractQueryVisitor
 		float avgMappingSize = relation.getAvgMappingSize();
 		int mappingComplexity =
 			(int)(avgMappingSize * Math.log(avgMappingSize) * ((float)mapSetComplexity));
+		if(externalSetSize != -1 && this.parentMappings == 1) // this is the "leaf" mapping
+		{
+			mappingComplexity = Math.min(mappingComplexity, externalSetSize);
+		}
 		return new Integer(mappingComplexity);
 	}
 
@@ -136,7 +144,12 @@ public class QueryComplexityCalculator extends AbstractQueryVisitor
 	 */
 	public Object visit(ASTResourceIdentifierId node, Object data)
 	{
-		return getSize(node.getIdentifier());
+		int complexity = getSize(node.getIdentifier()); 
+		if(externalSetSize != -1 && this.parentMappings == 0) // this is the unmapped id "leaf"
+		{
+			complexity = Math.min(complexity, externalSetSize);
+		}
+		return new Integer(complexity);
 	}
 
 	/**
@@ -148,7 +161,12 @@ public class QueryComplexityCalculator extends AbstractQueryVisitor
 	 */
 	public Object visit(ASTResourceIdentifierPath node, Object data)
 	{
-		return getSize(node.getIdentifier());
+		int complexity = getSize(node.getIdentifier()); 
+		if(externalSetSize != -1 && this.parentMappings == 0) // this is the unmapped id "leaf"
+		{
+			complexity = Math.min(complexity, externalSetSize);
+		}
+		return new Integer(complexity);
 	}
 
 	// implementation -------------------------------------------------------------------------
@@ -174,14 +192,14 @@ public class QueryComplexityCalculator extends AbstractQueryVisitor
 		resultSet.addAll(localResult);
 	}
 
-	private Integer getSize(String identifier)
+	private int getSize(String identifier)
 	{
 		int size = setSize(identifier);
 		if(externalSetSize > -1)
 		{
 			size = (size < externalSetSize) ? size : externalSetSize;
 		}
-		return new Integer(size);
+		return size;
 	}
 
 	private int setSize(String identifier)
