@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
  * {@link RmlRunnerBean}.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RmlRunnerBeanTest.java,v 1.5 2004-05-27 11:39:26 fil Exp $
+ * @version $Id: RmlRunnerBeanTest.java,v 1.6 2005-02-16 16:21:08 rafal Exp $
  */
 public class RmlRunnerBeanTest 
     extends LedgeTestCase
@@ -57,7 +57,7 @@ public class RmlRunnerBeanTest
         
         SessionFactoryTag sessionFactoryTag = new SessionFactoryTag();
         sessionFactoryTag.setDataSource(dataSource);
-        CoralSessionFactory coralSessionFactory = sessionFactoryTag.getSessionFactory("");
+        CoralSessionFactory coralSessionFactory = sessionFactoryTag.getSessionFactory();
         CoralSession coralSession = coralSessionFactory.getRootSession();
         
         RmlRunnerBean rmlRunnerBean = new RmlRunnerBean();

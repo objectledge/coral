@@ -23,5 +23,8 @@
 	<classpathentry kind="src" path="/ledge-container"/>
 	<classpathentry sourcepath="MAVEN_REPO/nanocontainer/sources/nanocontainer-1.0-beta-1.pico-1.1-src.zip" kind="var" path="MAVEN_REPO/nanocontainer/jars/nanocontainer-1.0-beta-1.pico-1.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jmock/jars/jmock-cglib-1.0.0.RC1.jar"/>
+	<classpathentry kind="src" path="/ledge-lgpl"/>
+	<classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-1.0.1b.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-jelly/jars/commons-jelly-tags-sql-1.0-SNAPSHOT.20030210.064311.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -36,7 +36,6 @@ import org.apache.maven.jelly.MavenJellyContext;
 import org.jcontainer.dna.impl.DefaultConfiguration;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.cache.DefaultCacheFactory;
-import org.objectledge.container.LedgeContainer;
 import org.objectledge.context.Context;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.CoralCoreImpl;
@@ -50,26 +49,30 @@ import org.objectledge.database.Transaction;
 import org.objectledge.database.persistence.DefaultPersistence;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
-import org.objectledge.filesystem.FileSystem;
-import org.objectledge.filesystem.FileSystemProvider;
+import org.objectledge.parameters.db.DBParametersManager;
+import org.objectledge.parameters.db.DefaultDBParametersManager;
 import org.objectledge.threads.ThreadPool;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
 /**
- * A tag for opening Coral sessions from within a Jelly script.
- *
- * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionFactoryTag.java,v 1.11 2005-01-25 06:31:35 rafal Exp $
+ * A tag for opening Coral sessions from within a Jelly script. 
+ * 
+ * <p> If a Pico container is bound under
+ * <code>coral.ledgeCongtainer</code> variable, it is used for getting the session factory.
+ * Otherwise, the session factory is provided by a Coral instance built on-the-fly. The session
+ * factory is bound in the context under <code>coral.sessionFactory</code> variable for future use
+ * (will be returned from consequtive invocations). </p>
+ * 
+ * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski </a>
+ * @version $Id: SessionFactoryTag.java,v 1.12 2005-02-16 16:20:49 rafal Exp $
  */
 public class SessionFactoryTag
     extends CoralPluginTag
 {
-    private String var = "coralSessionFactory";
+    private String variable = "coralSessionFactory";
     
     private DataSource dataSource;
-    
-    private String ledgeBaseDir = "";
     
     /**
      * Sets the var.
@@ -78,17 +81,7 @@ public class SessionFactoryTag
      */
     public void setVariable(String var)
     {
-        this.var = var;
-    }
-
-    /**
-     * Sets the ledge base dir.
-     *
-     * @param ledgeBaseDir the ledge base dir path to set.
-     */
-    public void setLedgeBaseDir(String ledgeBaseDir)
-    {
-        this.ledgeBaseDir = ledgeBaseDir;
+        this.variable = var;
     }
 
     /**
@@ -107,66 +100,51 @@ public class SessionFactoryTag
     public void doTag(XMLOutput out) throws MissingAttributeException, JellyTagException
     {
         String pluginContextVariable = "coral.sessionFactory";
-        if(dataSource == null)
-        {
-            throw new MissingAttributeException("dataSource attribute undefined");
-        }
         MavenJellyContext context = getPluginContext();
         CoralSessionFactory factory = (CoralSessionFactory)context.
             getVariable(pluginContextVariable);
         if(factory == null)
         {
-            try
+            MutablePicoContainer container = (MutablePicoContainer)context.
+                getVariable("coral.ledgeContainer");
+            if(container == null)
             {
-                factory = getSessionFactory(ledgeBaseDir);
+                try
+                {
+                    factory = getSessionFactory();
+                }
+                catch(Exception e)
+                {
+                    throw new JellyTagException("failed to initialize Coral", e);
+                }
             }
-            catch(Exception e)
+            else
             {
-                throw new JellyTagException("failed to initialize Coral", e);
+                factory = (CoralSessionFactory)container.getComponentInstance(
+                    CoralSessionFactory.class);
             }
             context.setVariable(pluginContextVariable, factory);
         }
-        getContext().setVariable(var, factory);
+        getContext().setVariable(variable, factory);
     }
 
     /**
-     * Returns a session factory instance.
+     * Returns a session factory from Coral insatnce composed by hand.
      * 
-     * @param ledgeBaseDir the fs base dir path with composition file.
      * @return a session factory instance.
      * @throws Exception if the factory could not be initialized.
      */
-    public CoralSessionFactory getSessionFactory(String ledgeBaseDir)
+    public CoralSessionFactory getSessionFactory()
         throws Exception
     {
+        System.out.println("ledge.basedir not defined - using hardcoded Coral composition");
         checkAttribute(dataSource, "dataSource");
-        ClassLoader cl = getClassLoader();
-        MutablePicoContainer container = null;
-        Thread.currentThread().setContextClassLoader(cl);
-        if(ledgeBaseDir != null && ledgeBaseDir.length()> 0)
-        {
-            FileSystemProvider lfs = new org.objectledge.filesystem.
-                LocalFileSystemProvider("local", ledgeBaseDir);
-            FileSystemProvider cfs = new org.objectledge.filesystem.
-                ClasspathFileSystemProvider("classpath", cl);
-            FileSystem fs = new FileSystem(new FileSystemProvider[] { lfs, cfs }, 4096, 65536);
-            LedgeContainer ledgeContainer = 
-                new LedgeContainer(fs, "config/", cl);
-            container = ledgeContainer.getContainer();
-        }
-        else
-        {
-            container = new DefaultPicoContainer();
-        }
-        container.registerComponentInstance(ClassLoader.class, cl);
-        CoralSessionFactory factory = (CoralSessionFactory)container.
-            getComponentInstance(CoralSessionFactory.class);
-        if(factory != null)
-        {
-            return factory;
-        }       
+        MutablePicoContainer container = new DefaultPicoContainer();
         IdGenerator idGenerator = new IdGenerator(dataSource);
         Context context = new Context();
+        ClassLoader cl = getClassLoader();
+        Thread.currentThread().setContextClassLoader(cl);
+        container.registerComponentInstance(ClassLoader.class, cl);
         Transaction transaction = new JotmTransaction(0, context, getLog(Transaction.class), null);
         Database database = new DefaultDatabase(dataSource, idGenerator, transaction); 
         Persistence persistence = new DefaultPersistence(database, getLog(Persistence.class));
@@ -199,10 +177,15 @@ public class SessionFactoryTag
             threadPool, null, null);
         EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, 
             getLog(EventWhiteboardFactory.class), threadPool);
+        DBParametersManager dbParameterManager = new DefaultDBParametersManager(database,
+            getLog(DBParametersManager.class));
+        container.registerComponentInstance(DBParametersManager.class, dbParameterManager);
+        
         CoralCore coralCore = new CoralCoreImpl(container, persistence, cacheFactory, 
             eventWhiteboardFactory, getLog(CoralCore.class), false);
-        factory = new CoralSessionFactoryImpl(coralCore, getLog(CoralCore.class));
+        CoralSessionFactory factory = new CoralSessionFactoryImpl(coralCore, 
+            getLog(CoralCore.class));
         container.registerComponentInstance(CoralSessionFactory.class, factory);
         return factory;
-    }    
+    }
 }

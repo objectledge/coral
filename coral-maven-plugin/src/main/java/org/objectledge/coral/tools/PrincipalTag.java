@@ -37,12 +37,12 @@ import org.apache.commons.jelly.XMLOutput;
  * A tag for instatntiating java.security.Principal objects in a Jelly script.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PrincipalTag.java,v 1.4 2004-12-27 02:34:10 rafal Exp $
+ * @version $Id: PrincipalTag.java,v 1.5 2005-02-16 16:20:50 rafal Exp $
  */
 public class PrincipalTag
     extends CoralPluginTag
 {
-    private String var;
+    private String variable;
     
     private String name;
     
@@ -63,7 +63,7 @@ public class PrincipalTag
      */
     public void setVariable(String var)
     {
-        this.var = var;
+        this.variable = var;
     }
     
     /**
@@ -91,7 +91,7 @@ public class PrincipalTag
     public void doTag(XMLOutput out) 
         throws MissingAttributeException, JellyTagException
     {
-        checkAttribute(var, "variable");
-        getContext().setVariable(var, getPrincipal());
+        checkAttribute(variable, "variable");
+        getContext().setVariable(variable, getPrincipal());
     }
 }

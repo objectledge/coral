@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.3 2004-05-04 12:47:48 fil Exp $ -->
+<!-- $Id: maven.xml,v 1.4 2005-02-16 16:21:12 rafal Exp $ -->
 <project
   xmlns:j="jelly:core"
   xmlns:coral="coral">
@@ -43,8 +43,8 @@
     <attainGoal name="coral:init"/>
     <attainGoal name="coral:run-rml"/>
 
-    <coral:dataSource var="coralDataSource"/>
-    <coral:sessionFactory var="coralSessionFactory" dataSource="${coralDataSource}"/>
+    <coral:dataSource variable="coralDataSource"/>
+    <coral:sessionFactory dataSource="${coralDataSource}"/>
     <j:set var="session" value="${coralSessionFactory.getRootSession()}"/>
     <j:set var="fred" value="${session.store.getUniqueResourceByPath('/fred')}"/>
     <j:if test="${!fred.greeting.equals('ahoj przygodo!')}">

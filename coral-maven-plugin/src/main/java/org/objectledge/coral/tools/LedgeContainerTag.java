@@ -28,8 +28,6 @@
 package org.objectledge.coral.tools;
 
 
-import javax.sql.DataSource;
-
 import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.MissingAttributeException;
 import org.apache.commons.jelly.XMLOutput;
@@ -43,14 +41,12 @@ import org.picocontainer.MutablePicoContainer;
  * A tag for instantiating a Ledge Container in a Jelly script.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: LedgeContainerTag.java,v 1.4 2004-12-27 02:34:09 rafal Exp $
+ * @version $Id: LedgeContainerTag.java,v 1.5 2005-02-16 16:20:50 rafal Exp $
  */
 public class LedgeContainerTag
     extends CoralPluginTag
 {
-    private String var = "ledgeContainer";
-    
-    private DataSource dataSource;
+    private String variable = "ledgeContainer";
     
     private String ledgeBaseDir = "";
     
@@ -61,7 +57,7 @@ public class LedgeContainerTag
      */
     public void setVariable(String var)
     {
-        this.var = var;
+        this.variable = var;
     }
 
     /**
@@ -75,72 +71,52 @@ public class LedgeContainerTag
     }
 
     /**
-     * Sets the dataSource.
-     *
-     * @param dataSource The dataSource to set.
-     */
-    public void setDataSource(DataSource dataSource)
-    {
-        this.dataSource = dataSource;
-    }
-        
-    /**
      * {@inheritDoc}
      */
     public void doTag(XMLOutput out) throws MissingAttributeException, JellyTagException
     {
         String pluginContextVariable = "coral.ledgeContainer";
-        if(dataSource == null)
-        {
-            throw new MissingAttributeException("dataSource attribute undefined");
-        }
-        MavenJellyContext context = getPluginContext();
-        MutablePicoContainer container = (MutablePicoContainer)context.
+        MavenJellyContext pluginContext = getPluginContext();
+        MutablePicoContainer container = (MutablePicoContainer)pluginContext.
             getVariable(pluginContextVariable);
+        String effectiveLedgeBaseDir = this.ledgeBaseDir.length() > 0 ? this.ledgeBaseDir :
+            (String)pluginContext.getVariable("ledge.basedir");
         if(container == null)
         {
             try
             {
-                container = getLedgeContainer(ledgeBaseDir);
+                container = getLedgeContainer(effectiveLedgeBaseDir);
             }
             catch(Exception e)
             {
-                throw new JellyTagException("failed to initialize Coral", e);
+                throw new JellyTagException("failed to initialize ObjectLedge", e);
             }
-            context.setVariable(pluginContextVariable, container);
+            pluginContext.setVariable(pluginContextVariable, container);
         }
-        getContext().setVariable(var, container);
+        getContext().setVariable(variable, container);
     }
 
     /**
      * Returns a session factory instance.
      * 
-     * @param ledgeBaseDir the fs base dir path with composition file.
-     * @return a session factory instance.
+     * @param ledgeBaseDir the ledge base directory.
+     * @return container instance.
      * @throws Exception if the factory could not be initialized.
      */
     public MutablePicoContainer getLedgeContainer(String ledgeBaseDir)
         throws Exception
     {
-        checkAttribute(dataSource, "dataSource");
         ClassLoader cl = getClassLoader();
         MutablePicoContainer container = null;
         Thread.currentThread().setContextClassLoader(cl);
-        if(ledgeBaseDir != null && ledgeBaseDir.length()> 0)
-        {
-            FileSystemProvider lfs = new org.objectledge.filesystem.
-                LocalFileSystemProvider("local", ledgeBaseDir);
-            FileSystemProvider cfs = new org.objectledge.filesystem.
-                ClasspathFileSystemProvider("classpath", cl);
-            FileSystem fs = new FileSystem(new FileSystemProvider[] { lfs, cfs }, 4096, 65536);
-            LedgeContainer ledgeContainer = 
-                new LedgeContainer(fs, "config/", cl);
-            container = ledgeContainer.getContainer();
-        }
-        else
-        {
-            throw new Exception("the ledge base dir cannot be empty");
-        }
+        FileSystemProvider lfs = new org.objectledge.filesystem.
+            LocalFileSystemProvider("local", ledgeBaseDir);
+        FileSystemProvider cfs = new org.objectledge.filesystem.
+            ClasspathFileSystemProvider("classpath", cl);
+        FileSystem fs = new FileSystem(new FileSystemProvider[] { lfs, cfs }, 4096, 65536);
+        LedgeContainer ledgeContainer = 
+            new LedgeContainer(fs, "config/", cl);
+        container = ledgeContainer.getContainer();
         container.registerComponentInstance(ClassLoader.class, cl);
         return container;
     }

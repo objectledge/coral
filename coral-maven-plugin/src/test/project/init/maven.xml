@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.3 2004-04-28 14:03:09 fil Exp $ -->
+<!-- $Id: maven.xml,v 1.4 2005-02-16 16:21:05 rafal Exp $ -->
 <project
   xmlns:j="jelly:core"
   xmlns:sql="jelly:sql"
@@ -36,7 +36,7 @@
   
   <goal name="plugin:testPluginFeature">
     <attainGoal name="coral:init"/>
-    <coral:dataSource var="coralDs"/>
+    <coral:dataSource variable="coralDs"/>
     <sql:query var="result" dataSource="${coralDs}" sql="SELECT * FROM coral_resource_class"/>
     <j:if test="${result.rowCount() == 0}">
       <fail>database initialization failed</fail>

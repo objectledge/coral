@@ -92,6 +92,10 @@
      |
      | @param var the name of the variable to put DataSource object into.
      -->
+    <define:bean name="dataSource"
+      className="org.objectledge.coral.tools.DataSourceTag">
+    </define:bean>
+    <!--
     <define:tag name="dataSource">
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
@@ -101,6 +105,7 @@
         userName="${coralDbUser}"/>
       <j:set var="${var}" scope="parent" value="${coralDataSource}"/>
     </define:tag>
+    -->
 
     <!--
      | Instantiates arl DataSource, based upon arl.db.url, arl.db.user and arl.db.password settings.
@@ -247,7 +252,7 @@
         coral.db.password=${coralDbPassword}        
 	  </echo>
 	</j:if>
-    <coral:dataSource var="initDataSource"/>
+    <coral:dataSource variable="initDataSource"/>
     <coral:init dataSource="${initDataSource}"/>
   </goal>
 
@@ -269,7 +274,7 @@
         coral.sql.file.encoding=${coralSqlFileEncoding}
 	  </echo>
 	</j:if>
-    <coral:dataSource var="coralDataSource"/>
+    <coral:dataSource variable="coralDataSource"/>
     <coral:sqlRunner dataSource="${coralDataSource}" sourcesList="${coralSqlSources}" 
       fileEncoding="${coralSqlFileEncoding}" baseDir="${basedir}"/>
   </goal>
@@ -295,12 +300,18 @@
         coral.rml.file.encoding=${coralRmlFileEncoding}
 	  </echo>
 	</j:if>
-    <coral:dataSource var="coralDataSource"/>
-    <coral:sessionFactory var="coralSessionFactory" dataSource="${coralDataSource}" ledgeBaseDir="${ledgeBaseDir}" />
+    <coral:dataSource variable="coralDataSource"/>
+    <coral:sessionFactory dataSource="${coralDataSource}"/>
     <coral:principal variable="coralPrincipal" name="${coralRmlSubject}"/>
     <j:set var="coralSession" value="${coralSessionFactory.getSession(coralPrincipal)}"/>
     <coral:rmlRunner session="${coralSession}" sourcesList="${coralRmlSources}" 
       fileEncoding="${coralRmlFileEncoding}" baseDir="${basedir}"/>
+  </goal>
+  
+  <!-- // container loader /////////////////////////////////////////////////////////////////// -->
+  
+  <goal name="coral:start-container">
+    <coral:ledgeContainer/>
   </goal>
   
 </project>

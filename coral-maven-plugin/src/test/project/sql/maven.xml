@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.1 2004-05-04 13:56:24 fil Exp $ -->
+<!-- $Id: maven.xml,v 1.2 2005-02-16 16:21:10 rafal Exp $ -->
 <project
   xmlns:j="jelly:core"
   xmlns:sql="jelly:sql"
@@ -37,7 +37,7 @@
   <goal name="plugin:testPluginFeature">
     <attainGoal name="coral:run-sql"/>
 
-    <coral:dataSource var="coralDataSource"/>
+    <coral:dataSource variable="coralDataSource"/>
     <sql:query var="result" dataSource="${coralDataSource}" sql="SELECT * FROM test_table"/>
 
     <j:if test="${result.rowCount != 1}">
