@@ -319,6 +319,10 @@ public class EntityRegistry
             }
             throw ex;
         }
+        catch(EntityExistsException e)
+        {
+        	throw e;
+        }
         catch(Exception ex)
         {
             try
