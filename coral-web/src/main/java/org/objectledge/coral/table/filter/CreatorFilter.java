@@ -1,24 +1,25 @@
-package org.objectledge.coral.table;
+package org.objectledge.coral.table.filter;
 
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.table.filter.*;
 
 /**
  * This is a filter for filtering resources upon their owner subject.
  *
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
- * @version $Id: ModifierFilter.java,v 1.1 2004-03-23 11:44:30 pablo Exp $
+ * @version $Id: CreatorFilter.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
  */
-public class ModifierFilter
+public class CreatorFilter
     extends SubjectFilter
 {
-    public ModifierFilter(Subject modifierSubject)
+    public CreatorFilter(Subject creatorSubject)
     {
-        super(modifierSubject);
+        super(creatorSubject);
     }
 
     protected Subject getSubject(Resource r)
     {
-        return r.getModifiedBy();
+        return r.getCreatedBy();
     }
 }

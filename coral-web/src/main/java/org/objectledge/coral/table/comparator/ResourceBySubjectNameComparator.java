@@ -1,4 +1,4 @@
-package org.objectledge.coral.table;
+package org.objectledge.coral.table.comparator;
 
 import java.util.Locale;
 
@@ -10,7 +10,7 @@ import org.objectledge.coral.store.Resource;
  * to a resource.
  *
  * @author <a href="mailto:damian@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceBySubjectNameComparator.java,v 1.1 2004-03-23 11:44:30 pablo Exp $
+ * @version $Id: ResourceBySubjectNameComparator.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
  */
 public abstract class ResourceBySubjectNameComparator
     extends BaseStringComparator

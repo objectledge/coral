@@ -9,6 +9,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.table.comparator.*;
 import org.objectledge.table.ExtendedTableModel;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableException;
@@ -22,7 +23,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.2 2004-03-26 09:52:04 fil Exp $
+ * @version $Id: CoralTableModel.java,v 1.3 2004-04-22 12:56:23 zwierzem Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {

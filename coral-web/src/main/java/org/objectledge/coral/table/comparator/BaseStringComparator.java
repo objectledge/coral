@@ -1,4 +1,4 @@
-package org.objectledge.coral.table;
+package org.objectledge.coral.table.comparator;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -9,7 +9,7 @@ import java.util.Locale;
  * It provides localisation for string comparisons.
  *
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
- * @version $Id: BaseStringComparator.java,v 1.1 2004-03-23 11:44:30 pablo Exp $
+ * @version $Id: BaseStringComparator.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
  */
 public abstract class BaseStringComparator
     implements Comparator

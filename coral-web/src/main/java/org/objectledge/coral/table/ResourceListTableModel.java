@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.table.comparator.*;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableException;
 import org.objectledge.table.generic.ListTableModel;
@@ -16,7 +17,7 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.1 2004-03-23 11:44:30 pablo Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.2 2004-04-22 12:56:23 zwierzem Exp $
  */
 public class ResourceListTableModel extends ListTableModel
 {

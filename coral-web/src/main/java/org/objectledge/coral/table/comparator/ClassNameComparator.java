@@ -1,4 +1,4 @@
-package org.objectledge.coral.table;
+package org.objectledge.coral.table.comparator;
 
 import java.util.Locale;
 
@@ -6,7 +6,7 @@ import org.objectledge.coral.schema.ResourceClass;
 
 /**
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ClassNameComparator.java,v 1.1 2004-03-23 11:44:30 pablo Exp $ 
+ * @version $Id: ClassNameComparator.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $ 
  */
 public class ClassNameComparator extends BaseStringComparator
 {

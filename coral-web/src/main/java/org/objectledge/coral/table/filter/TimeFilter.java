@@ -1,4 +1,4 @@
-package org.objectledge.coral.table;
+package org.objectledge.coral.table.filter;
 
 import java.util.Date;
 
@@ -11,7 +11,7 @@ import org.objectledge.table.TableFilter;
  * contstructor parameters.
  *
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
- * @version $Id: TimeFilter.java,v 1.1 2004-03-23 11:44:30 pablo Exp $
+ * @version $Id: TimeFilter.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
  */
 public abstract class TimeFilter
     implements TableFilter

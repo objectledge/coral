@@ -1,4 +1,4 @@
-package org.objectledge.coral.table;
+package org.objectledge.coral.table.comparator;
 
 import java.util.Comparator;
 
@@ -8,7 +8,7 @@ import org.objectledge.coral.store.Resource;
  * This is a comparator for comparing resource ids.
  *
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
- * @version $Id: IdComparator.java,v 1.1 2004-03-23 11:44:30 pablo Exp $
+ * @version $Id: IdComparator.java,v 1.1 2004-04-22 12:56:23 zwierzem Exp $
  */
 public class IdComparator
     implements Comparator

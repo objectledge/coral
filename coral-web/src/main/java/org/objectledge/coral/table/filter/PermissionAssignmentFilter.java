@@ -1,4 +1,4 @@
-package org.objectledge.coral.table;
+package org.objectledge.coral.table.filter;
 
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.Subject;
@@ -10,7 +10,7 @@ import org.objectledge.table.TableFilter;
  * assignments.
  *
  * @author <a href="mailto:damian@caltha.pl">Damian Gajda</a>
- * @version $Id: PermissionAssignmentFilter.java,v 1.1 2004-03-23 11:44:30 pablo Exp $
+ * @version $Id: PermissionAssignmentFilter.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
  */
 public class PermissionAssignmentFilter
     implements TableFilter

@@ -1,4 +1,4 @@
-package org.objectledge.coral.table;
+package org.objectledge.coral.table.comparator;
 
 import java.util.Locale;
 
@@ -8,7 +8,7 @@ import org.objectledge.coral.security.Subject;
  * This is a base comparator for comparing subjects by names.
  *
  * @author <a href="mailto:damian@caltha.pl">Damian Gajda</a>
- * @version $Id: SubjectNameComparator.java,v 1.1 2004-03-23 11:44:30 pablo Exp $
+ * @version $Id: SubjectNameComparator.java,v 1.1 2004-04-22 12:56:24 zwierzem Exp $
  */
 public class SubjectNameComparator
     extends BaseStringComparator

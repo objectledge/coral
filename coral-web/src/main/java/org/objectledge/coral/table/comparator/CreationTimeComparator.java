@@ -1,14 +1,14 @@
-package org.objectledge.coral.table;
+package org.objectledge.coral.table.comparator;
 
 import org.objectledge.coral.store.Resource;
 
 /**
- * This comparator compares modification dates of resources.
+ * This comparator compares creation times of resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ModificationTimeComparator.java,v 1.1 2004-03-23 11:44:30 pablo Exp $
+ * @version $Id: CreationTimeComparator.java,v 1.1 2004-04-22 12:56:23 zwierzem Exp $
  */
-public class ModificationTimeComparator
+public class CreationTimeComparator
     extends TimeComparator
 {
 	public int compare(Object o1, Object o2)
@@ -21,6 +21,6 @@ public class ModificationTimeComparator
 		Resource r1 = (Resource)o1;
 		Resource r2 = (Resource)o2;
 
-		return compareDates(r1.getModificationTime(), r2.getModificationTime());
+		return compareDates(r1.getCreationTime(), r2.getCreationTime());
 	}
 }
