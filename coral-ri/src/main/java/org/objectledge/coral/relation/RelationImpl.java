@@ -43,7 +43,7 @@ import org.objectledge.database.persistence.Persistence;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.6 2004-02-24 14:56:03 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.7 2004-02-24 17:09:08 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -159,7 +159,16 @@ implements Relation
         return false;
     }
 
-    // peristence api -----------------------------------------------------------------------------
+	/**
+	 * {@inheritDoc}
+	 */
+	public float getAvgMappingSize()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+    // persistence api ----------------------------------------------------------------------------
 
     /** The key columns. */
     private static final String[] KEY_COLUMNS = { "relation_id" };
@@ -224,7 +233,7 @@ implements Relation
     }
 
     /**
-     * Add a ordered pair to the relationship's definition.
+     * Add an ordered pair to the relationship's definition.
      *
      * @param id1 the first element of the pair.
      * @param id2 the second element of the pair.
@@ -409,5 +418,14 @@ implements Relation
         {
             return RelationImpl.this.getName();
         }
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public float getAvgMappingSize()
+		{
+			// TODO Auto-generated method stub
+			return 0;
+		}
     }
 }
