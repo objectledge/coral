@@ -1,0 +1,30 @@
+
+#macro(select_resource  $attribute_names $form $element_names )
+$page_tool.addScriptLink('script/Browser.js')
+javascript:selectEntity('$attribute_names', '$form', '$element_names', '$link.view('browser.ChooseResource')')##
+#end
+
+#macro(select_resource_by_domain  $attribute_names $form $element_names $domain)
+$page_tool.addScriptLink('script/Browser.js')
+javascript:selectEntity('$attribute_names', '$form', '$element_names', '$link.view('browser.ChooseResource').set('domain',$domain)')##
+#end
+
+#macro(select_resource_class  $attribute_names $form $element_names )
+$page_tool.addScriptLink('script/Browser.js')
+javascript:selectEntity('$attribute_names', '$form', '$element_names', '$link.view('browser.ChooseResourceClass')')##
+#end
+
+#macro(select_permission  $attribute_names $form $element_names )
+$page_tool.addScriptLink('script/Browser.js')
+javascript:selectEntity('$attribute_names', '$form', '$element_names', '$link.view('browser.ChoosePermission')')##
+#end
+
+#macro(select_role $attribute_names $form $element_names )
+$page_tool.addScriptLink('script/Browser.js')
+javascript:selectEntity('$attribute_names', '$form', '$element_names', '$link.view('browser.ChooseRole')')##
+#end
+
+#macro(select_subject $attribute_names $form $element_names )
+$page_tool.addScriptLink('script/Browser.js')
+javascript:selectEntity('$attribute_names', '$form', '$element_names', '$link.view('browser.ChooseSubject')')##
+#end
