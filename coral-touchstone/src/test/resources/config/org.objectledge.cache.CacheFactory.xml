@@ -30,13 +30,13 @@
 <config>
   <implementation type="foo" class="java.util.HashMap"/>
   <implementation type="CustomMap" class="org.objectledge.cache.impl.LRUMapImpl"/>
-  <alias name="arl.byName">
+  <alias name="coral.byName">
     <config>HashMap()</config>    
   </alias>
-  <alias name="arl.byId">
+  <alias name="coral.byId">
     <config>HashMap()</config>    
   </alias>
-  <alias name="arl.all">
+  <alias name="coral.all">
     <config>HashMap()</config>    
   </alias>
 </config>
