@@ -37,9 +37,12 @@ import org.objectledge.coral.store.Resource;
 
 /**
  * Natural tree-realation of the resources.
+ * 
+ * <p>The "forwards" relation expresses resource -> it's children relationship. The
+ * "reverse"/inverted relation expresses resource -> it's parent relationship.</p>
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceHierarchyRelationImpl.java,v 1.1 2005-03-23 12:04:16 rafal Exp $
+ * @version $Id: ResourceHierarchyRelationImpl.java,v 1.2 2005-03-29 08:26:09 rafal Exp $
  */
 public class ResourceHierarchyRelationImpl
     implements Relation
@@ -52,15 +55,26 @@ public class ResourceHierarchyRelationImpl
 
     private static final String NAME = "resource_hierarchy";
 
-    private CoralStore store;
+    private final CoralStore store;
+    
+    private final Relation inverted = new InvertedResourceHierarchyRelationImpl();
 
+    /**
+     * Creates new ResourceHierarchyRelationImpl instance.
+     * 
+     * @param coralStore Coral store this relation instance reflects.
+     */
+    public ResourceHierarchyRelationImpl(CoralStore coralStore)
+    {
+        this.store = coralStore;
+    }
+    
     /**
      * {@inheritDoc}
      */
     public Relation getInverted()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return inverted;
     }
 
     /**
@@ -68,7 +82,6 @@ public class ResourceHierarchyRelationImpl
      */
     public boolean isInverted()
     {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -86,13 +99,13 @@ public class ResourceHierarchyRelationImpl
     public Set get(long id)
     {
         Resource r;
-        Resource[] res;
+        Resource[] children;
         try
         {
             r = store.getResource(id);
-            res = store.getResource(r);
-            Set s = new HashSet(res.length);
-            for(Resource rx : res)
+            children = store.getResource(r);
+            Set s = new HashSet(children.length);
+            for(Resource rx : children)
             {
                 s.add(rx.getIdObject());
             }
@@ -218,9 +231,7 @@ public class ResourceHierarchyRelationImpl
                 Resource r = store.getResource(id);
                 if(r.getParent() != null)
                 {
-                    Set s = new HashSet(1);
-                    s.add(r.getParent().getIdObject());
-                    return s;
+                    return Collections.singleton(r.getParent().getIdObject());
                 }
                 return Collections.EMPTY_SET;
             }
