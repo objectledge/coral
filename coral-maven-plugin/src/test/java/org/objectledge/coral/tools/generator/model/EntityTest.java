@@ -32,7 +32,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: EntityTest.java,v 1.1 2004-03-24 14:40:06 fil Exp $
+ * @version $Id: EntityTest.java,v 1.2 2004-03-25 13:35:44 fil Exp $
  */
 public class EntityTest extends LedgeTestCase
 {
@@ -43,9 +43,9 @@ public class EntityTest extends LedgeTestCase
     
     public void setUp()
     {
-        entityA = new Entity("A", 0);
-        entityB = new Entity("B", 0);
-        entityAcopy = new Entity("A", 0);
+        entityA = new SomeEntity("A", 0);
+        entityB = new SomeEntity("B", 0);
+        entityAcopy = new SomeEntity("A", 0);
         otherEntity = new OtherEntity("A", 0);
     }
     
@@ -114,6 +114,14 @@ public class EntityTest extends LedgeTestCase
         entityAcopy.setName("B");
         assertTrue(entityAcopy.equals(entityB));
         assertFalse(entityAcopy.equals(entityA));        
+    }
+
+    private static class SomeEntity extends Entity
+    {
+        public SomeEntity(String name, int flags)
+        {
+            super(name, flags);
+        }
     }
     
     private static class OtherEntity extends Entity
