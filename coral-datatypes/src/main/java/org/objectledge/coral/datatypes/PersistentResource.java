@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.3 2004-04-01 08:54:27 fil Exp $
+ * @version $Id: PersistentResource.java,v 1.4 2004-05-06 13:13:07 pablo Exp $
  */
 public class PersistentResource
     implements Resource, Persistent
@@ -89,11 +89,25 @@ public class PersistentResource
         
     // interface to PersistentResourceHandler ////////////////////////////////
     
+    /**
+     * Load the resource.
+     * 
+     * @param delegate the delegate.
+     */
     public void loadResource(Resource delegate)
     {
         this.delegate = delegate;
     }
 
+    /**
+     * Create the resource.
+     * 
+     * @param delegate the delegate resource.
+     * @param attributes the attributes map.
+     * @param conn the connection.
+     * @throws ValueRequiredException if required attribute was not set.
+     * @throws SQLException if failed to create the resourceo in database.
+     */
     public void createResource(Resource delegate, Map attributes, Connection conn)
         throws ValueRequiredException, SQLException
     {
@@ -156,6 +170,12 @@ public class PersistentResource
         }
     }
 
+    /**
+     * Delete the resource.
+     *  
+     * @param conn the connection.
+     * @throws SQLException if failed to delete.
+     */
     public void deleteResource(Connection conn)
         throws SQLException
     {
@@ -290,6 +310,7 @@ public class PersistentResource
     /**
      * Returns the access control list entries for a specific role.
      *
+     * @param role the role.
      * @return the access control list entries for a specific role.
      */
     public PermissionAssignment[] getPermissionAssignments(Role role)
@@ -323,13 +344,8 @@ public class PersistentResource
 
     // attribute access //////////////////////////////////////////////////////
 
-    /** 
-     * Checks if the specified attribute of the resource is defined.
-     *
-     * @param attribute the attribute to check.
-     * @return <code>true</code> if the specified attribute is defined.
-     * @throws UnknownAttributeException if <code>attribute</code> does not
-     *         belong to the resource's class.
+    /**
+     * {@inheritDoc}
      */
     public boolean isDefined(AttributeDefinition attribute)
     {
@@ -352,12 +368,7 @@ public class PersistentResource
     }
     
     /**
-     * Retrieves the value of a specific attribute.
-     * 
-     * @param attribute the attribute to retrieve.
-     * @return the value of the attribute, or <code>null</code> if undefined.
-     * @throws UnknownAttributeException if <code>attribute</code> does not
-     *         belong to the resource's class.
+     * {@inheritDoc}
      */
     public Object get(AttributeDefinition attribute)
         throws UnknownAttributeException
@@ -392,17 +403,7 @@ public class PersistentResource
     }
     
     /**
-     * Sets the value of a specific attribute.
-     * 
-     * @param attribute the attribute to set.
-     * @param value the value of the attribute.
-     * @throws UnknownAttributeException if <code>attribute</code> does not
-     *         belong to the resource's class.
-     * @throws ModificationNotPermitedException if the attribute is
-     *         <code>READONLY</code>.
-     * @throws ValueRequiredException if <code>attribute</code> is
-     *         <code>REQUIRED</code> and <code>value</code> is
-     *         <code>null</code>.
+     * {@inheritDoc}
      */
     public void set(AttributeDefinition attribute, Object value)
         throws UnknownAttributeException, ModificationNotPermitedException,
@@ -430,13 +431,7 @@ public class PersistentResource
     }
 
     /**
-     * Removes the value of the specified attribute.
-     *
-     * @param attribute the attribute to remove.
-     * @throws ValueRequiredException if the attribute is required for this
-     *         resource type.
-     * @throws UnknownAttributeException if <code>attribute</code> does not
-     *         belong to the resource's class.
+     * {@inheritDoc}
      */
     public void unset(AttributeDefinition attribute)
         throws ValueRequiredException, UnknownAttributeException
@@ -455,11 +450,7 @@ public class PersistentResource
     }
     
     /**
-     * Sets the modified flag for the specified attribute.
-     *
-     * @param attribute the attribute to mark as modified.
-     * @throws UnknownAttributeException if <code>attribute</code> does not
-     *         belong to the resource's class.
+     * {@inheritDoc}
      */
     public void setModified(AttributeDefinition attribute)
         throws UnknownAttributeException
@@ -469,12 +460,7 @@ public class PersistentResource
     }
     
     /**
-     * Checks the modified flag for the specified resource.
-     *
-     * @param attribute the attribute to check.
-     * @return <code>true</code> if the attribute was modified.
-     * @throws UnknownAttributeException if <code>attribute</code> does not
-     *         belong to the resource's class.
+     * {@inheritDoc}
      */
     public boolean isModified(AttributeDefinition attribute)
         throws UnknownAttributeException
@@ -486,7 +472,7 @@ public class PersistentResource
     // update & revert ///////////////////////////////////////////////////////
 
     /**
-     * Updates the image of the resource in the persistent storage.
+     * {@inheritDoc}
      */
     public void update()
         throws IllegalArgumentException, UnknownAttributeException
@@ -503,8 +489,7 @@ public class PersistentResource
     }
 
     /**
-     * Reverts the Resource object to the state present in the persistent
-     * storage. 
+     * {@inheritDoc}
      */
     public void revert()
     {
@@ -521,19 +506,15 @@ public class PersistentResource
     // Persistent interface //////////////////////////////////////////////////
 
     /**
-     * Returns the name of the table this type is mapped to.
-     *
-     * @return the name of the table.
+     * {@inheritDoc}
      */
     public String getTable()
     {
         return dbTable;
     }
     
-    /** 
-     * Returns the names of the key columns.
-     *
-     * @return the names of the key columns.
+    /**
+     * {@inheritDoc}
      */
     public String[] getKeyColumns()
     {
@@ -541,12 +522,7 @@ public class PersistentResource
     }
 
     /**
-     * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
-     * @param record the record to store state into.
+     * {@inheritDoc}
      */
     public void getData(OutputRecord record)
         throws PersistenceException
@@ -641,12 +617,7 @@ public class PersistentResource
     }
     
     /**
-     * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     * 
-     * @param record the record to read state from.
+     * {@inheritDoc}
      */
     public void setData(InputRecord record)
         throws PersistenceException
@@ -721,6 +692,7 @@ public class PersistentResource
      * Checks if the specified attribute belongs to this resource's class.
      *
      * @param attribute the attribute.
+     * @throws UnknownAttributeException if attribute is unknown.
      */
     protected void checkAttribute(AttributeDefinition attribute)
         throws UnknownAttributeException
@@ -744,6 +716,7 @@ public class PersistentResource
      *
      * @param attribute the attribute.
      * @param id value id.
+     * @return the object.
      */
     protected Object loadAttribute(AttributeDefinition attribute, long id)
     {
@@ -778,6 +751,14 @@ public class PersistentResource
         }
     }
 
+    /**
+     * Update the attribute.
+     * 
+     * @param attribute the attribute.
+     * @param id the id.
+     * @param value the atribute value.
+     * @return the attribute identifier.
+     */
     protected long updateAttribute(AttributeDefinition attribute, long id, Object value)
     {
         AttributeHandler handler = attribute.getAttributeClass().getHandler();
