@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassTest.java,v 1.2 2004-03-25 13:33:20 fil Exp $
+ * @version $Id: ResourceClassTest.java,v 1.3 2004-03-31 13:57:13 fil Exp $
  */
 public class ResourceClassTest extends LedgeTestCase
 {   
@@ -305,11 +305,16 @@ public class ResourceClassTest extends LedgeTestCase
         resourceClass.deleteParentClass(parentResourceClass);
         assertTrue(resourceClass.getDeclaredParentClasses().isEmpty());
         assertTrue(resourceClass.getAllParentClasses().isEmpty());
+        
         mockAttribute1.expect(once()).method("setDeclaringClass").with(same(resourceClass));
+        mockAttribute1.stub().method("getDeclaringClass").will(returnValue(resourceClass));
+        mockAttribute1.stub().method("getName").will(returnValue("attribute"));
         resourceClass.addAttribute(attribute1);
-        mockGrandParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.singletonList(attribute1)));
-        mockGrandParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.singletonList(attribute1)));
-        mockGrandParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.singletonList(attribute1)));
+        mockAttribute2.stub().method("getDeclaringClass").will(returnValue(grandParentResourceClass));
+        mockAttribute2.stub().method("getName").will(returnValue("attribute"));
+        mockGrandParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.singletonList(attribute2)));
+        mockGrandParentResourceClass.stub().method("getDeclaredParentClasses").will(returnValue(Collections.EMPTY_LIST));
+        mockGrandParentResourceClass.stub().method("getAllParentClasses").will(returnValue(Collections.EMPTY_LIST));
         try
         {
             resourceClass.addParentClass(grandParentResourceClass);
@@ -317,6 +322,7 @@ public class ResourceClassTest extends LedgeTestCase
         }
         catch(Exception e)
         {
+            e.printStackTrace();
             assertEquals(SchemaIntegrityException.class, e.getClass());
         }
     }
@@ -369,15 +375,9 @@ public class ResourceClassTest extends LedgeTestCase
         mockGrandParentResourceClass.stub().method("getDeclaredAttributes").will(returnValue(Collections.EMPTY_LIST));
         mockGrandParentResourceClass.stub().method("getAllAttributes").will(returnValue(Collections.EMPTY_LIST));
         resourceClass.addParentClass(grandParentResourceClass);
-        try
-        {
-            resourceClass.getImplParentClass();
-            fail("should throw");
-        }
-        catch(Exception e)
-        {
-            assertEquals("unable to determine implementaion parent class, use @extend", e.getMessage());
-        }
+        
+        assertEquals(grandParentResourceClass, resourceClass.getImplParentClass());
+        
         resourceClass.setImplParentClass(parentResourceClass);
         assertEquals(parentResourceClass, resourceClass.getImplParentClass());                
     }
