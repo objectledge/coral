@@ -23,6 +23,7 @@ import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
+import org.objectledge.database.persistence.DefaultPersistence;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -33,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.8 2004-08-17 12:36:31 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.9 2004-08-23 11:46:30 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -43,9 +44,6 @@ public class PersistentResource
     /** the persistence component. */
     protected Persistence persistence;
     
-    /** the resource class. */
-    protected ResourceClass resourceClass;
-
     /** the unique id of the resource in it's db table. */
     protected long id = -1;
 
@@ -74,6 +72,9 @@ public class PersistentResource
     public PersistentResource(CoralSchema coralSchema, Database database, Logger logger)
     {
         super(database, logger);
+        // it would be better to have it passed through constructor. OTOH persistence is lightweitght
+        // and stateless so it's not much of a problem.
+        persistence = new DefaultPersistence(database, logger);
     }
         
     // interface to PersistentResourceHandler ////////////////////////////////
@@ -306,6 +307,15 @@ public class PersistentResource
         }
     }
     
+    protected void initAttributeMap(Resource delegate, ResourceClass resourceClass)
+    {
+    	super.initAttributeMap(delegate, resourceClass);
+    	System.out.println("initAttributeMap "+resourceClass.getName()+" DB TABLE "+resourceClass.getDbTable());
+    	dbTable = resourceClass.getDbTable();
+    	keyColumns = new String[1];
+    	keyColumns[0] = dbTable+"_id";
+    }
+    
     // Persistent interface //////////////////////////////////////////////////
 
     /**
@@ -330,7 +340,7 @@ public class PersistentResource
     public void getData(OutputRecord record)
         throws PersistenceException
     {
-        AttributeDefinition[] attrs = resourceClass.getAllAttributes();
+        AttributeDefinition[] attrs = facetClass.getAllAttributes();
         record.setLong(getTable()+"_id", id);
         record.setLong("resource_id", delegate.getId());
         for(int i=0; i<attrs.length; i++)
@@ -424,7 +434,7 @@ public class PersistentResource
         throws PersistenceException
     {
         id = record.getLong(getTable()+"_id");
-        AttributeDefinition[] attrs = resourceClass.getAllAttributes();
+        AttributeDefinition[] attrs = facetClass.getAllAttributes();
         for(int i=0; i<attrs.length; i++)
         {
             AttributeDefinition attribute = attrs[i];
