@@ -27,7 +27,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.4 2004-03-12 09:37:58 fil Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.5 2004-03-16 11:06:22 fil Exp $
  */
 public class GenericResourceHandler
     extends ResourceHandlerBase
@@ -499,8 +499,8 @@ public class GenericResourceHandler
             "SELECT coral_resource.resource_id, data_key FROM "+
             "coral_resource, coral_generic_resource "+
             "WHERE resource_class_id = "+rc.getId()+
-            "AND attribute_definition_id = "+attr.getId()+
-            "AND coral_resource.resource_id = coral_generic_resource.resource_id"
+            " AND attribute_definition_id = "+attr.getId()+
+            " AND coral_resource.resource_id = coral_generic_resource.resource_id"
         );
         while(rs.next())
         {
@@ -545,7 +545,7 @@ public class GenericResourceHandler
             "SELECT coral_resource.resource_id, attribute_definition_id, data_key FROM "+
             "coral_resource, coral_generic_resource "+
             "WHERE resource_class_id = "+rc.getId()+
-            "AND coral_resource.resource_id = coral_generic_resource.resource_id"
+            " AND coral_resource.resource_id = coral_generic_resource.resource_id"
         );
         while(rs.next())
         {
