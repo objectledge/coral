@@ -32,10 +32,10 @@ import java.util.StringTokenizer;
 import org.objectledge.utils.StringUtils;
 
 /**
- * 
+ * Simple string tool for usage inside class templates.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: StringTool.java,v 1.1 2004-12-21 10:48:43 rafal Exp $
+ * @version $Id: StringTool.java,v 1.2 2004-12-27 04:43:27 rafal Exp $
  */
 public class StringTool
 {
