@@ -33,11 +33,15 @@ import java.security.Principal;
 import org.apache.commons.pool.KeyedObjectPool;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
+import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.schema.CoralSchema;
+import org.objectledge.coral.script.CoralScript;
+import org.objectledge.coral.script.CoralScriptImpl;
+import org.objectledge.coral.script.parser.RMLParserFactory;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
@@ -46,7 +50,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.5 2004-03-16 14:16:18 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.6 2004-03-18 15:21:42 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -55,7 +59,8 @@ public class CoralSessionImpl
     private CoralSchema schema;
     private CoralSecurity security;
     private CoralStore store;
-    private CoralEventWhiteboard eventWhiteboard;    
+    private CoralEventWhiteboard eventWhiteboard;
+    private CoralScript script;    
     private CoralQuery query;
     private CoralRelationManager relationManager;
     private CoralRelationQuery relationQuery;
@@ -76,6 +81,7 @@ public class CoralSessionImpl
         security = new SessionCoralSecurity(coral, this);
         store = new SessionCoralStore(coral, this);
         eventWhiteboard = new SessionCoralEventWhiteboard(coral, this);
+        script = new CoralScriptImpl(this, coral.getInstantiator(), coral.getRMLParserFactory());
         relationManager = new SessionCoralRelationManager(coral, this);
         relationQuery = new SessionCoralRelationQuery(coral, this);
     }
@@ -137,10 +143,9 @@ public class CoralSessionImpl
     /** 
      * {@inheritDoc}
      */
-    public String executeScript(String script)
+    public CoralScript getScript()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return script;
     }
 
     /** 

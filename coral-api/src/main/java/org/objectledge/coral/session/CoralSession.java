@@ -7,6 +7,7 @@ import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.schema.CoralSchema;
+import org.objectledge.coral.script.CoralScript;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
@@ -14,7 +15,7 @@ import org.objectledge.coral.store.CoralStore;
 /**
  * An access point to the Coral document store.
  *
- * @version $Id: CoralSession.java,v 1.2 2004-03-16 14:16:17 fil Exp $
+ * @version $Id: CoralSession.java,v 1.3 2004-03-18 15:21:42 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSession
@@ -69,12 +70,11 @@ public interface CoralSession
     public CoralRelationQuery getRelationQuery();
 
     /**
-     * Executes an RML Script.
+     * Returns a CoralScript front end.
      *
-     * @param script the script contents.
-     * @return execution results report.
+     * @return a CoralScript front end.
      */
-    public String executeScript(String script);
+    public CoralScript getScript();
 
     /**
      * Returns the user that owns this session.
