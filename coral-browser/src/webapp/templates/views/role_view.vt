@@ -1,0 +1,168 @@
+<script type="text/javascript">
+<!--
+function addRole()
+{
+  document.addrole.submit();
+}
+
+function grantRole()
+{
+  document.grantrole.submit();
+}
+
+function addSubRole()
+{
+  document.addsubrole.submit();
+}
+
+function addSuperRole()
+{
+  document.addsuperrole.submit();
+}
+
+function revokeRole(subject, url)
+{
+    if(confirm("Czy napewno chcesz odebraæ bie¿±c± role u¿ytkownikowi '"+subject+"'?"))
+    {
+        document.location.href = url;
+    }
+}
+
+function deleteRole(name, url)
+{
+    if(confirm("Czy napewno chcesz usun±æ role '"+name+"'\npamiêtaj ¿e operacja nie mo¿e byæ cofniêta!"))
+    {
+        document.location.href = url;
+    }
+}
+
+//-->
+</script>
+
+#result_inline_message("results.arlbrowser")
+<table class="genericItemTree" width="100%" cellpadding="0" cellspacing="0">
+  #if($role)
+  <tr>
+    <th>Szczegó³y roli '$role.name'</th>
+    <th>
+    <a href="javascript:deleteRole('$role.name','$link.action('DeleteRole').set('role_id',$role.id)');">usuñ</a>
+    </th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <table>
+        <tr>
+          <th>Zasób</th>
+          <th>Prawo</th>
+          <th>Rekursywne</th>
+        </tr>
+      #foreach($pa in $role.permissionAssignments)
+        <tr>
+          <td><a href="$link.view('ResourceView').set('res_id',$pa.resource.id)">$pa.resource.name</a> ($pa.resource.path)</td>
+          <td><a href="$link.view('PermissionView').set('perm_id',$pa.permission.id)">$pa.permission.name</a></td>
+          <td>#if($pa.isInherited())
+               tak
+              #else
+               nie
+              #end
+          </td>
+        </tr>
+      #end
+      </table>
+      <table>
+        <tr>
+          <th>Role nadrzêdne</th>
+        </tr>
+      #foreach($impl in $role.implications)
+        #if($impl.subRole == $role)
+        <tr>
+          <td><a href="$link.view('RoleView').set('role_id',$impl.superRole.id)">$impl.superRole.name</a></td>
+        </tr>
+        #end
+      #end
+        <tr>
+          <form name="addsuperrole" method="post" action='$link.action('AddSuperRole')'>
+          <input type="hidden" name="role_id" value="$role.id" >
+          <td><input type="text" name="role_name" value="" >
+            <a href="javascript:addSuperRole()">dodaj nadrzêdn± rolê</a>
+          </td>
+          </form>
+        </tr>
+      </table>
+      <table>
+        <tr>
+          <th>Role poddrzêdne</th>
+        </tr>
+      #foreach($impl in $role.implications)
+        #if($impl.superRole == $role)
+        <tr>
+          <td><a href="$link.view('RoleView').set('role_id',$impl.subRole.id)">$impl.subRole.name</a></td>
+        </tr>
+        #end
+      #end
+        <tr>
+          <form name="addsubrole" method="post" action='$link.action('AddSubRole')'>
+          <input type="hidden" name="role_id" value="$role.id">
+          <td><input type="text" name="role_name" value="" >
+            <a href="javascript:addSubRole()">dodaj podrzêdn± rolê</a>
+          </td>
+          </form>
+        </tr>
+      </table>
+      <table>
+        <tr>
+          <th colspan="3">Osoby którym przydzielono role</th>
+        </tr>
+        <tr>
+          <th>U¿ytkownik</th>
+          <th>Czy mo¿e przydzielaæ innym osobom</th>
+          <th>&nbsp;</th>
+        </tr>
+      #foreach($ra in $role.roleAssignments)
+        <tr>
+          <td><a href="$link.view('SubjectView').set('sub_id',$ra.subject.id)">$ra.subject.name</a></td>
+          <td>
+            #if($ra.isGrantingAllowed())
+            tak
+            #else
+            nie
+            #end
+          </td>
+          <td>
+           <a href="javascript:revokeRole('$ra.subject.name','$link.action('RevokeRole').set('role_id',$role.id).set('sub_id',$ra.subject.id)');">usuñ</a>
+         </tr>
+      #end
+        <tr>
+          <th colspan="3">Przydziel role:</th>
+        </tr>
+        <tr>
+          <form name="grantrole" method="post" action='$link.action('GrantRole')'>
+          <input type="hidden" name="role_id" value="$role.id" >
+          <td><input type="text" name="sub_name" value="" ></td>
+          <td><input type="checkbox" name="granting_allowed" value="true" ></td>
+          <td>
+            <a href="javascript:grantRole()">przydziel role</a>
+          </td>
+          </form>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+<a href="$link.view('AddRole')">Dodaj role</a>
+    </td>
+  </tr>
+  #else
+  <tr>
+    <th>Wybie¿ role</th>
+  </tr>
+  <tr>
+    <form name="addrole" method="post" action='$link.action('AddRole')'>
+      <td><input type="text" name="role_name" value="" maxlength="40">
+      <a href="javascript:addrole()">dodaj role</a>
+      </td>
+    </form>
+  </tr>
+  #end
+</table>

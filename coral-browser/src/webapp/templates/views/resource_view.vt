@@ -1,0 +1,129 @@
+<script type="text/javascript">
+<!--
+function revokePermission(role, permission, url)
+{
+    if(confirm("Czy napewno chcesz odebraæ roli '"+role+"' prawo '"+permission+"' na tym zasobie?"))
+    {
+        document.location.href = url;
+    }
+}
+
+function deleteResource(name, url)
+{
+    if(confirm("Czy napewno chcesz usun±æ zasób '"+name+"'\npamiêtaj ¿e operacja nie mo¿e byæ cofniêta!"))
+    {
+        document.location.href = url;
+    }
+}
+
+function fSub(action)
+{
+  document.form1.action = action;
+  document.form1.submit();
+}
+//-->
+</script>
+
+#result_inline_message("results.arlbrowser")
+<table class="genericItemTree" width="100%" cellpadding="0" cellspacing="0">
+  #if($resource)
+  <tr>
+    <th>Szczegó³y zasobu '$resource.path' klasy
+     <a href="$link.view('ResourceClassView').set('res_class_id',$resource.resourceClass.id)">
+     '$resource.resourceClass.name'
+     </a>
+    </th>
+    <th>
+      <a href="javascript:deleteResource('$resource.name','$link.action('DeleteResource').set('res_id',$resource.id)');">usuñ</a>|
+      <a href="javascript:deleteResource('$resource.name','$link.action('DeleteResourceRecursive').set('res_id',$resource.id)');">usuñ rekursywnie</a>
+    </th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <table>
+        <tr>
+          <th>Zdefiniowany w klasie</th>
+          <th>Nazwa</th>
+          <th>Klasa</th>
+          <th>Domena</th>
+          <th>Warto¶æ</th>
+        </tr>
+      #foreach($attr in $resource.resourceClass.allAttributes)
+        <tr>
+          <td><a href="$link.view('ResourceClassView').set('res_class_id',$attr.declaringClass.id)">$attr.declaringClass.name</a></td>
+          <td><a href="$link.view('AttributeDetails').set('res_id',$resource.id).set('attr_name',$attr.name)">$attr.name</a></td>
+          <td>$attr.attributeClass.name</td>
+          <td>
+            #if($attr.domain)
+              <a href="$link.view('ResourceClassView').set('res_class_id',$attr.declaringClass.id)">
+                $attr.domain
+              </a>
+            #else
+             -
+            #end
+          </td>
+          <td>
+            #if($resource.isDefined($attr) && $resource.get($attr))
+              $attr.attributeClass.handler.toPrintableString($resource.get($attr))
+            #else
+              -
+            #end
+          </td>
+        </tr>
+      #end
+      </table>
+      <table>
+        <tr>
+          <th>Rola</th>
+          <th>Prawo</th>
+          <th>Rekursywne</th>
+          <th>&nbsp;</th>
+        </tr>
+      #foreach($pa in $resource.permissionAssignments)
+        <tr>
+          <td><a href="$link.view('RoleView').set('role_id',$pa.role.id)">$pa.role.name</a></td>
+          <td><a href="$link.view('PermissionView').set('perm_id',$pa.permission.id)">$pa.permission.name</a></td>
+          <td>#if($pa.isInherited())
+               tak
+              #else
+               nie
+              #end
+          </td>
+          <td>
+            <a href="javascript:revokePermission('$pa.role.name','$pa.permission.name','$link.action('RevokePermission').set('role_id',$pa.role.id).set('res_id',$resource.id).set('perm_id',$pa.permission.id)');">usuñ</a>
+          </td>
+        </tr>
+      #end
+        <tr>
+          <th colspan="4">Przydziel prawa:</th>
+        </tr>
+        <tr>
+          <form name="form1" method="post" action='$link.action('AddPermission')'>
+          <input type="hidden" name="res_id" value="$resource.id" >
+          <td><input type="text" name="role_name" value="">
+            <a href="#select_role("name" "form1" "role_name")">wybierz</a>
+          </td>
+          <td>
+          <select name="perm_name">
+          #foreach($association in $resource.resourceClass.permissionAssociations)
+          <option value="$association.permission.name">$association.permission.name</option>
+          #end
+          </select>
+          ##<input type="text" name="perm_name" value="">
+          </td>
+          <td><input type="checkbox" name="recursive" value="true" ></td>
+          <td>
+          <a href="javascript:fSub('$link.action('GrantPermission')')">przydziel prawo</a>
+          </td>
+          </form>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  #else
+  <tr>
+    <th>Wybierz zasób</th>
+  </tr>
+  #end
+</table>
+

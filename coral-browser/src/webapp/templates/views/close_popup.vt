@@ -1,0 +1,19 @@
+#####
+## NAME: Simple close popup screen
+## AUTHOR: <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
+## VER: $Id: close_popup.vt,v 1.1 2004-03-22 20:28:55 pablo Exp $
+## DESCR:
+## STATUS: final
+#####
+<script type="text/javascript">
+<!--
+function closePopup()
+{
+  #if($data.getParameters().get('reload').asString('false') == 'true')
+  window.opener.location.href=window.opener.location.href;   
+  #end
+  window.close();
+}
+closePopup();
+-->
+</script>
