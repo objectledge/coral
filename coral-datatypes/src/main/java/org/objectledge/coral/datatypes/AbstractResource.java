@@ -62,7 +62,7 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.7 2004-07-01 08:52:08 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.8 2004-07-01 09:48:21 fil Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -798,9 +798,9 @@ public abstract class AbstractResource implements Resource
      * @param attribute the attribute.
      * @param id the id.
      * @param value the atribute value.
-     * @return the attribute identifier.
+     * @return the attribute identifier, or null.
      */
-    protected void updateAttribute(AttributeDefinition attribute, Long idObj, Object value)
+    protected Long updateAttribute(AttributeDefinition attribute, Long idObj, Object value)
     {
         long id = idObj != null ? idObj.longValue() : -1;
         AttributeHandler handler = attribute.getAttributeClass().getHandler();
@@ -808,7 +808,7 @@ public abstract class AbstractResource implements Resource
         try
         {
             conn = database.getConnection();
-            if(id != -1)
+            if(id != -1L)
             {
                 if(value == null)
                 {
@@ -817,6 +817,7 @@ public abstract class AbstractResource implements Resource
                 else
                 {
                     handler.update(id, value, conn);
+                    return idObj;
                 }
             }
             else
@@ -824,8 +825,10 @@ public abstract class AbstractResource implements Resource
                 if(value != null)
                 {
                     id = handler.create(value, conn);
+                    return new Long(id);
                 }
             }
+            return null;
         }
         catch(Exception e)
         {
