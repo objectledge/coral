@@ -25,6 +25,12 @@ public abstract class BaseBrowserAction
         super(logger, sessionFactory);
     }
 
+    /**
+     * Prepare some usefull components, also it opens new coral session,
+     * so do not forget to close it before the end of the processing.
+     * 
+     * @param context the context.
+     */
     public void prepare(Context context)
     {
         coralSession = coralSessionFactory.getRootSession();

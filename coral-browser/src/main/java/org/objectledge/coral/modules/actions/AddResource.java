@@ -15,10 +15,9 @@ import org.objectledge.pipeline.ProcessingException;
  * Add resource action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddResource.java,v 1.1 2004-03-22 20:21:35 pablo Exp $
+ * @version $Id: AddResource.java,v 1.2 2004-03-23 12:07:18 pablo Exp $
  */
-public class AddResource 
-    extends BaseBrowserAction
+public class AddResource extends BaseBrowserAction
 {
     /**
      * Action constructor.
@@ -29,50 +28,49 @@ public class AddResource
     public AddResource(Logger logger, CoralSessionFactory coralSessionFactory)
     {
         super(logger, coralSessionFactory);
-    }    
-    
+    }
+
     /**
      * Performs the action.
      */
-    public void process(Context context)
-            throws ProcessingException    
+    public void process(Context context) throws ProcessingException
     {
-        prepare(context);
-        String resClassName = parameters.get("res_class_name","");
-        if (resClassName.length() == 0)
-        {
-            //TODO:
-            //route(data, "AddResource", "class_empty");
-            return;
-        }
-        String name = parameters.get("name","");
-        if (name.length() == 0)
-        {
-            //route(data, "AddResource", "name_empty");
-            return;
-        }
-        String parentPath = parameters.get("parent","");
-        if (parentPath.length() == 0)
-        {
-            //route(data, "AddResource", "parent_empty");
-            return;
-        }
-
-        /*
-        String value = data.getParameters().get("value").asString("");
-        String[] keys = data.getParameters().getKeys();
-        int flags = 0;
-        for(int i = 0; i < keys.length; i++)
-        {
-            if(keys[i].startsWith("flag_"))
-            {
-                String flagName = keys[i].substring(5,keys[i].length());
-                flags = flags + AttributeFlags.flagValue(flagName);
-            }
-        }
-        */
         try
         {
+            prepare(context);
+            String resClassName = parameters.get("res_class_name", "");
+            if (resClassName.length() == 0)
+            {
+                //TODO:
+                //route(data, "AddResource", "class_empty");
+                return;
+            }
+            String name = parameters.get("name", "");
+            if (name.length() == 0)
+            {
+                //route(data, "AddResource", "name_empty");
+                return;
+            }
+            String parentPath = parameters.get("parent", "");
+            if (parentPath.length() == 0)
+            {
+                //route(data, "AddResource", "parent_empty");
+                return;
+            }
+
+            /*
+            String value = data.getParameters().get("value").asString("");
+            String[] keys = data.getParameters().getKeys();
+            int flags = 0;
+            for(int i = 0; i < keys.length; i++)
+            {
+                if(keys[i].startsWith("flag_"))
+                {
+                    String flagName = keys[i].substring(5,keys[i].length());
+                    flags = flags + AttributeFlags.flagValue(flagName);
+                }
+            }
+            */
             ResourceClass resourceClass = coralSession.getSchema().getResourceClass(resClassName);
             Resource parent = coralSession.getStore().getUniqueResourceByPath(parentPath);
             HashMap attr = new HashMap();
@@ -82,9 +80,9 @@ public class AddResource
             {
                 if (((attrDef[i].getFlags() & AttributeFlags.SYNTHETIC) == 0) && !attrDef[i].getDeclaringClass().getName().equals("node"))
                 {
-                    if (parameters.getBoolean("defined_" + attrDef[i].getName(),false))
+                    if (parameters.getBoolean("defined_" + attrDef[i].getName(), false))
                     {
-                        String attrValue = parameters.get("attr_" + attrDef[i].getName(),"");
+                        String attrValue = parameters.get("attr_" + attrDef[i].getName(), "");
                         try
                         {
                             attr.put(attrDef[i], attrDef[i].getAttributeClass().getHandler().toAttributeValue(attrValue));
@@ -104,7 +102,7 @@ public class AddResource
                     {
                         if ((attrDef[i].getFlags() & AttributeFlags.REQUIRED) != 0)
                         {
-							templatingContext.put("trace", "Required attribute '" + attrDef[i].getName() + "' not defined");
+                            templatingContext.put("trace", "Required attribute '" + attrDef[i].getName() + "' not defined");
                             //route(data, "AddResource", "exception");
                             return;
                         }

@@ -13,10 +13,9 @@ import org.objectledge.pipeline.ProcessingException;
  * Add attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddAttribute.java,v 1.1 2004-03-22 20:21:35 pablo Exp $
+ * @version $Id: AddAttribute.java,v 1.2 2004-03-23 12:07:18 pablo Exp $
  */
-public class AddAttribute
-    extends BaseBrowserAction
+public class AddAttribute extends BaseBrowserAction
 {
     /**
      * Action constructor.
@@ -34,58 +33,58 @@ public class AddAttribute
      *   
      * @param context the context.
      */
-    public void process(Context context) throws ProcessingException    
+    public void process(Context context) throws ProcessingException
     {
-        prepare(context);
-        String attrName = parameters.get("attr_name","");
-        if(attrName.length() == 0)
-        {
-            throw new ProcessingException("Attribute name not found");
-        }
-        long resClassId = parameters.getLong("res_class_id",-1L);
-        if(resClassId == -1L)
-        {
-            throw new ProcessingException("Resource class id not found");
-        }
-        long attrClassId = parameters.getLong("attr_class_id",-1L);
-        if(attrClassId == -1L)
-        {
-            throw new ProcessingException("Attribute class id not found");
-        }
-        boolean setDomain = parameters.getBoolean("set_domain",false);
-        String domain = null;
-        if(setDomain)
-        {
-            domain = parameters.get("domain","");
-        }
-		boolean setValue = parameters.getBoolean("set_value",false);
-        String value = parameters.get("value","");
-        String[] keys = parameters.getParameterNames();
-        int flags = 0;
-        for(int i = 0; i < keys.length; i++)
-        {
-            if(keys[i].startsWith("flag_"))
-            {
-                String flagName = keys[i].substring(5,keys[i].length());
-                flags = flags + AttributeFlags.flagValue(flagName);
-            }
-        }
         try
         {
+            prepare(context);
+            String attrName = parameters.get("attr_name", "");
+            if (attrName.length() == 0)
+            {
+                throw new ProcessingException("Attribute name not found");
+            }
+            long resClassId = parameters.getLong("res_class_id", -1L);
+            if (resClassId == -1L)
+            {
+                throw new ProcessingException("Resource class id not found");
+            }
+            long attrClassId = parameters.getLong("attr_class_id", -1L);
+            if (attrClassId == -1L)
+            {
+                throw new ProcessingException("Attribute class id not found");
+            }
+            boolean setDomain = parameters.getBoolean("set_domain", false);
+            String domain = null;
+            if (setDomain)
+            {
+                domain = parameters.get("domain", "");
+            }
+            boolean setValue = parameters.getBoolean("set_value", false);
+            String value = parameters.get("value", "");
+            String[] keys = parameters.getParameterNames();
+            int flags = 0;
+            for (int i = 0; i < keys.length; i++)
+            {
+                if (keys[i].startsWith("flag_"))
+                {
+                    String flagName = keys[i].substring(5, keys[i].length());
+                    flags = flags + AttributeFlags.flagValue(flagName);
+                }
+            }
             AttributeClass attrClass = coralSession.getSchema().getAttributeClass(attrClassId);
             AttributeDefinition attrDefinition = coralSession.getSchema().createAttribute(attrName, attrClass, domain, flags);
             ResourceClass resourceClass = coralSession.getSchema().getResourceClass(resClassId);
             Object defaultValue = null;
-            if(setValue)
-            { 
-            	defaultValue = attrClass.getHandler().toAttributeValue(value);
-            } 
+            if (setValue)
+            {
+                defaultValue = attrClass.getHandler().toAttributeValue(value);
+            }
             coralSession.getSchema().addAttribute(resourceClass, attrDefinition, defaultValue);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            logger.error("ARLException: ",e);
-            templatingContext.put("result","exception");
+            logger.error("ARLException: ", e);
+            templatingContext.put("result", "exception");
             //context.put("trace",StringUtils.stackTrace(e));
             //route(data, "AddAttribute", "exception");
             return;
@@ -94,10 +93,6 @@ public class AddAttribute
         {
             coralSession.close();
         }
-        templatingContext.put("result","added_successfully");
+        templatingContext.put("result", "added_successfully");
     }
 }
-
-
-
-

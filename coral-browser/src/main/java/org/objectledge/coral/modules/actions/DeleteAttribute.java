@@ -11,10 +11,9 @@ import org.objectledge.pipeline.ProcessingException;
  * Delete attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: DeleteAttribute.java,v 1.1 2004-03-22 20:21:35 pablo Exp $
+ * @version $Id: DeleteAttribute.java,v 1.2 2004-03-23 12:07:18 pablo Exp $
  */
-public class DeleteAttribute
-    extends BaseBrowserAction
+public class DeleteAttribute extends BaseBrowserAction
 {
     /**
      * Action constructor.
@@ -25,35 +24,33 @@ public class DeleteAttribute
     public DeleteAttribute(Logger logger, CoralSessionFactory coralSessionFactory)
     {
         super(logger, coralSessionFactory);
-    }    
-    
-    
+    }
+
     /**
      * Performs the action.
      */
-    public void process(Context context)
-            throws ProcessingException    
+    public void process(Context context) throws ProcessingException
     {
         prepare(context);
-        long resClassId = parameters.getLong("res_class_id",-1L);
-        String attrName = parameters.get("attr_name","");
-        if(attrName.length() == 0)
-        {
-            throw new ProcessingException("Attribute name not found");
-        }
-        if(resClassId == -1L)
-        {
-            throw new ProcessingException("Resource class id not found");
-        }
         try
         {
+            long resClassId = parameters.getLong("res_class_id", -1L);
+            String attrName = parameters.get("attr_name", "");
+            if (attrName.length() == 0)
+            {
+                throw new ProcessingException("Attribute name not found");
+            }
+            if (resClassId == -1L)
+            {
+                throw new ProcessingException("Resource class id not found");
+            }
             ResourceClass resourceClass = coralSession.getSchema().getResourceClass(resClassId);
             coralSession.getSchema().deleteAttribute(resourceClass, resourceClass.getAttribute(attrName));
         }
-        catch(EntityDoesNotExistException e)
+        catch (EntityDoesNotExistException e)
         {
-            logger.error("ARLException: ",e);
-            templatingContext.put("result","exception");
+            logger.error("ARLException: ", e);
+            templatingContext.put("result", "exception");
             //context.put("trace",StringUtils.stackTrace(e));
             return;
         }
@@ -61,10 +58,6 @@ public class DeleteAttribute
         {
             coralSession.close();
         }
-        templatingContext.put("result","deleted_successfully");
+        templatingContext.put("result", "deleted_successfully");
     }
 }
-
-
-
-

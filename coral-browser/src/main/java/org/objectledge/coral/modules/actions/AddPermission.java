@@ -9,10 +9,9 @@ import org.objectledge.pipeline.ProcessingException;
  * Add role action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddPermission.java,v 1.1 2004-03-22 20:21:35 pablo Exp $
+ * @version $Id: AddPermission.java,v 1.2 2004-03-23 12:07:18 pablo Exp $
  */
-public class AddPermission
-    extends BaseBrowserAction
+public class AddPermission extends BaseBrowserAction
 {
     /**
      * Action constructor.
@@ -24,39 +23,34 @@ public class AddPermission
     {
         super(logger, coralSessionFactory);
     }
-    
+
     /**
      * Performs the action.
      */
-    public void process(Context context)
-        throws ProcessingException
+    public void process(Context context) throws ProcessingException
     {
-        prepare(context);        
-        String permissionName = parameters.get("permission_name","");
-        if(permissionName.length() == 0)
-        {
-            templatingContext.put("result","invalid_name");
-            return;
-        }
         try
         {
+            prepare(context);
+            String permissionName = parameters.get("permission_name", "");
+            if (permissionName.length() == 0)
+            {
+                templatingContext.put("result", "invalid_name");
+                return;
+            }
             coralSession.getSecurity().createPermission(permissionName);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            logger.error("ARLException: ",e);
+            logger.error("ARLException: ", e);
             //templatingContext.put("trace",StringUtils.stackTrace(e));
-            templatingContext.put("result","exception");
+            templatingContext.put("result", "exception");
             return;
         }
         finally
         {
             coralSession.close();
         }
-        templatingContext.put("result","added_successfully");
+        templatingContext.put("result", "added_successfully");
     }
 }
-
-
-
-
