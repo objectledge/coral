@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a concrete attribute of an resource class.
  *
- * @version $Id: AttributeDefinitionImpl.java,v 1.13 2004-03-09 15:46:47 fil Exp $
+ * @version $Id: AttributeDefinitionImpl.java,v 1.14 2004-12-23 02:22:36 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeDefinitionImpl
@@ -271,9 +271,11 @@ public class AttributeDefinitionImpl
     /** 
      * Sets the name of this attribute.
      * 
+	 * <p>Needed because AbstractEntityt.setName(String) is not visible in this package.</p>
+     *
      * @param name the new name of the attribute.
      */
-    void setName(String name)
+    void setAttributeName(String name)
     {
         this.name = name;    
     }

@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.9 2004-03-19 12:16:24 fil Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.10 2004-12-23 02:22:36 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -294,7 +294,7 @@ public class CoralSchemaImpl
         }
         catch(Exception e)
         {
-            ((AttributeDefinitionImpl)attribute).setName(oldName);
+            ((AttributeDefinitionImpl)attribute).setAttributeName(oldName);
             throw new BackendException("failed to update attribute's persitent image", e);
         }
     }

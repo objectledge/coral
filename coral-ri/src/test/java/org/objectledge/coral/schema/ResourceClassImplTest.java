@@ -47,7 +47,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.12 2004-06-29 11:14:28 fil Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.13 2004-12-23 02:22:29 rafal Exp $
  */
 public class ResourceClassImplTest extends LedgeTestCase
 {
@@ -193,7 +193,7 @@ public class ResourceClassImplTest extends LedgeTestCase
     {
         ResourceClassImpl rc = createResourceClass("<db table>");
         assertEquals("<resource class>", rc.getName());
-        rc.setName("<other resource class>");
+        rc.setClassName("<other resource class>");
         assertEquals("<other resource class>", rc.getName());
         assertEquals(Object.class, rc.getJavaClass());
         mockInstantiator.expects(once()).method("loadClass").with(eq("<missing class>")).will(throwException(new ClassNotFoundException("<missing class>")));

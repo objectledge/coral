@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.16 2004-10-05 07:38:25 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.17 2004-12-23 02:22:33 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -702,9 +702,13 @@ public class ResourceImpl
     }
 
     /**
-     * {@inheritDoc}
+     * Sets the name of the resource.
+	 *
+	 * <p>Needed because AbstractEntityt.setName(String) is not visible in this package.</p>
+     *
+     * @param name the new name of the resource.
      */
-    void setName(String name)
+    void setResourceName(String name)
     {
         this.name = name;
     }

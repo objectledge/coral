@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.15 2004-08-10 10:33:51 zwierzem Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.16 2004-12-23 02:22:33 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -1028,7 +1028,7 @@ public class CoralStoreImpl
                 ResourceImpl delegate = (ResourceImpl)resource.getDelegate();
                 try
                 {
-                    ((ResourceImpl)delegate).setName(name);
+                    ((ResourceImpl)delegate).setResourceName(name);
                     persistence.save(delegate);
                     Set rs = (Set)resourceByName.get(oldName);
                     if(rs != null)
@@ -1062,7 +1062,7 @@ public class CoralStoreImpl
                 }
                 catch(PersistenceException e)
                 {
-                    delegate.setName(oldName);
+                    delegate.setResourceName(oldName);
                     throw new BackendException("failed to update the resource object");
                 }
             }

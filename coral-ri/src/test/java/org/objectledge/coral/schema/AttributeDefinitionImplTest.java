@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeDefinitionImplTest.java,v 1.5 2004-05-28 10:04:09 fil Exp $
+ * @version $Id: AttributeDefinitionImplTest.java,v 1.6 2004-12-23 02:22:29 rafal Exp $
  */
 public class AttributeDefinitionImplTest extends LedgeTestCase
 {
@@ -287,7 +287,7 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
         def.setFlags(909);
         assertEquals(909, def.getFlags());
         assertEquals("<attribute>", def.getName());
-        def.setName("<other attribute>");
+        def.setAttributeName("<other attribute>");
         assertEquals("<other attribute>", def.getName());
         assertEquals("<domain>", def.getDomain());
         def.setDomain(null);
