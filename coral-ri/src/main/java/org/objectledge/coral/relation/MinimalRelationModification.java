@@ -28,8 +28,10 @@
 package org.objectledge.coral.relation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.objectledge.coral.relation.RelationModification.AddOperation;
@@ -37,16 +39,19 @@ import org.objectledge.coral.relation.RelationModification.ClearOperation;
 import org.objectledge.coral.relation.RelationModification.RemoveOperation;
 
 /**
- * This class holds a minimal representation of a {@link RelationModification}
+ * This class constructs and holds a minimal representation of a {@link RelationModification}
  * for a given {@link Relation}.
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModification.java,v 1.4 2004-03-02 17:18:31 zwierzem Exp $
+ * @version $Id: MinimalRelationModification.java,v 1.5 2004-03-03 16:19:06 zwierzem Exp $
  */
 public class MinimalRelationModification
 {
 	private boolean clear = false;
 	private Set added = new HashSet(128);
 	private Set removed = new HashSet(128);
+	
+	private Map addsByLeftId = new HashMap(128);
+	private Map addsByRightId = new HashMap(128);
 	
 	/**
 	 * Constructs a minimal representation of a {@link RelationModification}
@@ -137,6 +142,8 @@ public class MinimalRelationModification
 		{
 			added.clear();
 			removed.clear();
+			addsByLeftId.clear();
+			addsByRightId.clear();
 			clear = true;
 		}
 
@@ -151,6 +158,24 @@ public class MinimalRelationModification
 			}
 			else if(!relation.hasRef(oper.getId1(), oper.getId2()))
 			{
+				Long leftId = new Long(oper.getId1());
+				Set ops = (Set) addsByLeftId.get(leftId);
+				if(ops == null)
+				{
+					ops = new HashSet();
+					addsByLeftId.put(leftId, ops);
+				}
+				ops.add(oper);
+
+				Long rightId = new Long(oper.getId2());
+				ops = (Set) addsByRightId.get(rightId);
+				if(ops == null)
+				{
+					ops = new HashSet();
+					addsByRightId.put(rightId, ops);
+				}
+				ops.add(oper);
+
 				added.add(oper);
 			}
 		}
@@ -173,6 +198,18 @@ public class MinimalRelationModification
                     Long id2 = (Long) iter.next();
 					remove(new RelationModification.RemoveOperation(id1, id2));
 				}
+
+				Set ops = (Set) addsByLeftId.get(id1);
+				if(ops != null)
+				{
+					for (Iterator iter = ops.iterator(); iter.hasNext();)
+					{
+						RelationModification.AddOperation addOper = 
+							(RelationModification.AddOperation) iter.next();
+						remove(new RelationModification.RemoveOperation(
+							id1, new Long(addOper.getId2())));
+					}
+				}
 			}
 			else // if(oper.hasId2())
 			{
@@ -183,6 +220,18 @@ public class MinimalRelationModification
 					Long id1 = (Long) iter.next();
 					remove(new RelationModification.RemoveOperation(id1, id2));
 				}
+
+				Set ops = (Set) addsByRightId.get(id2);
+				if(ops != null)
+				{
+					for (Iterator iter = ops.iterator(); iter.hasNext();)
+					{
+						RelationModification.AddOperation addOper = 
+							(RelationModification.AddOperation) iter.next();
+						remove(new RelationModification.RemoveOperation(
+							new Long(addOper.getId1()), id2));
+					}
+				}
 			}
 		}
 
@@ -190,9 +239,17 @@ public class MinimalRelationModification
 		{
 			if(added.contains(oper))
 			{
+				Long leftId = new Long(oper.getId1());
+				Set ops = (Set) addsByLeftId.get(leftId);
+				ops.remove(oper);
+
+				Long rightId = new Long(oper.getId2());
+				ops = (Set) addsByRightId.get(rightId);
+				ops.remove(oper);
+
 				added.remove(oper);
 			}
-			else if(relation.hasRef(oper.getId1(), oper.getId2()))
+			else if(!clear && relation.hasRef(oper.getId1(), oper.getId2()))
 			{
 				removed.add(oper);
 			}
