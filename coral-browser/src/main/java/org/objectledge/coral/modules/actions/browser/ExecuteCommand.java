@@ -9,7 +9,7 @@ import org.objectledge.pipeline.ProcessingException;
  * Add attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ExecuteCommand.java,v 1.1 2004-05-06 11:55:46 pablo Exp $
+ * @version $Id: ExecuteCommand.java,v 1.2 2004-06-16 12:51:56 pablo Exp $
  */
 public class ExecuteCommand extends BaseBrowserAction
 {
@@ -38,7 +38,8 @@ public class ExecuteCommand extends BaseBrowserAction
             if(command.length()>0)
             {
                 String result = coralSession.getScript().runScript(command);
-                templatingContext.put("command", result);
+                templatingContext.put("command", command);
+                templatingContext.put("command_result", result);
             }
         }
         catch (Exception e)
