@@ -32,6 +32,7 @@ import org.jcontainer.dna.impl.DefaultConfiguration;
 import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
+import org.objectledge.filesystem.FileSystemProvider;
 import org.objectledge.templating.Templating;
 import org.objectledge.templating.velocity.VelocityTemplating;
 
@@ -40,7 +41,7 @@ import org.objectledge.templating.velocity.VelocityTemplating;
  * An interface between GeneratorComponent and Maven.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorBean.java,v 1.8 2004-08-23 15:06:22 rafal Exp $
+ * @version $Id: GeneratorBean.java,v 1.9 2004-10-14 11:26:01 rafal Exp $
  */
 public class GeneratorBean
 {
@@ -74,7 +75,14 @@ public class GeneratorBean
     {
         Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
 
-        FileSystem fileSystem = FileSystem.getStandardFileSystem(baseDir);
+        FileSystemProvider lfs = new org.objectledge.filesystem.
+	        LocalFileSystemProvider("local", baseDir);
+	    FileSystemProvider cfs = new org.objectledge.filesystem.
+	        ClasspathFileSystemProvider("classpath", 
+	        FileSystem.class.getClassLoader());
+	    // standard FS allows only 64k in memory files.
+        FileSystem fileSystem = new FileSystem(new FileSystemProvider[] { lfs, cfs }, 
+            4096, 250000);
         
         Templating templating = initTemplating(fileSystem, logger);
         
