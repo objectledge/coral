@@ -70,7 +70,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.16 2005-01-25 09:26:08 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.17 2005-01-28 01:04:35 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore, Startable
@@ -160,11 +160,15 @@ public class CoralCoreImpl
         this.preload = preload;        
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void start()
     {
         if(preload)
         {
-            List startupAdapters = container.getComponentAdaptersOfType(PreloadingParticipant.class);
+            List startupAdapters = container.
+                getComponentAdaptersOfType(PreloadingParticipant.class);
             Set<PreloadingParticipant> participants = 
                 new HashSet<PreloadingParticipant>(startupAdapters.size());
             for(Object adapter : startupAdapters)
@@ -183,6 +187,9 @@ public class CoralCoreImpl
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void stop()
     {
         

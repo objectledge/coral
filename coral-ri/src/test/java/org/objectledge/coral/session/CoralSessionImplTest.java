@@ -39,7 +39,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImplTest.java,v 1.10 2005-01-25 09:26:05 rafal Exp $
+ * @version $Id: CoralSessionImplTest.java,v 1.11 2005-01-28 01:04:12 rafal Exp $
  */
 public class CoralSessionImplTest extends LedgeTestCase
 {
@@ -150,7 +150,8 @@ public class CoralSessionImplTest extends LedgeTestCase
                 semaphore.wait();
             }
             catch(InterruptedException e)
-            {               
+            {        
+                fail("unexpected exception");
             }
         }
         // do evil - attempt to run an operation on a stale session reference that was possibly

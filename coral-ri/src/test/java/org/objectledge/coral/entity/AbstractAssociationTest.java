@@ -36,7 +36,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractAssociationTest.java,v 1.3 2004-05-28 10:04:12 fil Exp $
+ * @version $Id: AbstractAssociationTest.java,v 1.4 2005-01-28 01:04:08 rafal Exp $
  */
 public class AbstractAssociationTest extends LedgeTestCase
 {
@@ -60,8 +60,8 @@ public class AbstractAssociationTest extends LedgeTestCase
     {
         RedEntity red1 = factory.getRed(1);
         BlueEntity blue2 = factory.getBlue(2);
-        RedBlueAssociation as = new RedBlueAssociation((Persistence)mockPersistence.proxy(), factory, 
-            red1, blue2);
+        RedBlueAssociation as = new RedBlueAssociation((Persistence)mockPersistence.proxy(), 
+            factory, red1, blue2);
         assertEquals(1, as.getRed().getId());    
         assertEquals(2, as.getBlue().getId());        
     }

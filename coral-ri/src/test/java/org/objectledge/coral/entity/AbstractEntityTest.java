@@ -37,7 +37,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractEntityTest.java,v 1.5 2004-08-18 13:51:54 rafal Exp $
+ * @version $Id: AbstractEntityTest.java,v 1.6 2005-01-28 01:04:08 rafal Exp $
  */
 public class AbstractEntityTest extends LedgeTestCase
 {
@@ -130,8 +130,10 @@ public class AbstractEntityTest extends LedgeTestCase
     public void testLoading() throws PersistenceException
     {
         BlueEntity blue = new BlueEntity((Persistence)mockPersistence.proxy());
-        mockInputRecord.expects(once()).method("getLong").with(eq("blue_entity_id")).will(returnValue(1L));
-        mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<blue 1>"));
+        mockInputRecord.expects(once()).method("getLong").
+            with(eq("blue_entity_id")).will(returnValue(1L));
+        mockInputRecord.expects(once()).method("getString").
+            with(eq("name")).will(returnValue("<blue 1>"));
         blue.setData((InputRecord)mockInputRecord.proxy());
         assertEquals(1L, blue.getId());
         assertEquals("<blue 1>", blue.getName());        

@@ -43,7 +43,7 @@ import org.objectledge.threads.ThreadPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventHubImplTest.java,v 1.5 2004-05-28 10:04:11 fil Exp $
+ * @version $Id: CoralEventHubImplTest.java,v 1.6 2005-01-28 01:04:16 rafal Exp $
  */
 public class CoralEventHubImplTest
     extends CoralEventTestCase
@@ -58,14 +58,14 @@ public class CoralEventHubImplTest
     
     private Method permissionAssociationsChanged;
 
-    Mock mockLocalPermissionAssociationChangeListener;
-    PermissionAssociationChangeListener localPermissionAssociationChangeListener; 
-    Mock mockGlobalPermissionAssociationChangeListener;
-    PermissionAssociationChangeListener globalPermissionAssociationChangeListener; 
-    Mock mockOutboundPermissionAssociationChangeListener;
-    PermissionAssociationChangeListener outboundPermissionAssociationChangeListener; 
-    Mock mockInboundPermissionAssociationChangeListener;
-    PermissionAssociationChangeListener inboundPermissionAssociationChangeListener; 
+    private Mock mockLocalPermissionAssociationChangeListener;
+    private PermissionAssociationChangeListener localPermissionAssociationChangeListener; 
+    private Mock mockGlobalPermissionAssociationChangeListener;
+    private PermissionAssociationChangeListener globalPermissionAssociationChangeListener; 
+    private Mock mockOutboundPermissionAssociationChangeListener;
+    private PermissionAssociationChangeListener outboundPermissionAssociationChangeListener; 
+    private Mock mockInboundPermissionAssociationChangeListener;
+    private PermissionAssociationChangeListener inboundPermissionAssociationChangeListener; 
     
     public void setUp()
         throws Exception
@@ -83,26 +83,48 @@ public class CoralEventHubImplTest
         outboundBridge = passthroughEventBridge.getOutbound();
         coralEventHub = new CoralEventHubImpl(eventWhiteboardFactory, passthroughEventBridge);
 
-        mockLocalPermissionAssociationChangeListener = mock(PermissionAssociationChangeListener.class, "localPermissionAssociationChangeListener");
-        localPermissionAssociationChangeListener = (PermissionAssociationChangeListener)mockLocalPermissionAssociationChangeListener.proxy(); 
-        mockGlobalPermissionAssociationChangeListener = mock(PermissionAssociationChangeListener.class, "globalPermissionAssociationChangeListener");
-        globalPermissionAssociationChangeListener = (PermissionAssociationChangeListener)mockGlobalPermissionAssociationChangeListener.proxy(); 
-        mockOutboundPermissionAssociationChangeListener = mock(PermissionAssociationChangeListener.class, "outboundPermissionAssociationChangeListener");
-        outboundPermissionAssociationChangeListener = (PermissionAssociationChangeListener)mockOutboundPermissionAssociationChangeListener.proxy(); 
-        mockInboundPermissionAssociationChangeListener = mock(PermissionAssociationChangeListener.class, "inboundPermissionAssociationChangeListener");
-        inboundPermissionAssociationChangeListener = (PermissionAssociationChangeListener)mockInboundPermissionAssociationChangeListener.proxy(); 
+        mockLocalPermissionAssociationChangeListener = 
+            mock(PermissionAssociationChangeListener.class, 
+                "localPermissionAssociationChangeListener");
+        localPermissionAssociationChangeListener = 
+            (PermissionAssociationChangeListener)mockLocalPermissionAssociationChangeListener.
+                proxy(); 
+        mockGlobalPermissionAssociationChangeListener = 
+            mock(PermissionAssociationChangeListener.class, 
+                "globalPermissionAssociationChangeListener");
+        globalPermissionAssociationChangeListener = 
+            (PermissionAssociationChangeListener)mockGlobalPermissionAssociationChangeListener.
+                proxy(); 
+        mockOutboundPermissionAssociationChangeListener = 
+            mock(PermissionAssociationChangeListener.class, 
+                "outboundPermissionAssociationChangeListener");
+        outboundPermissionAssociationChangeListener = 
+            (PermissionAssociationChangeListener)mockOutboundPermissionAssociationChangeListener.
+                proxy(); 
+        mockInboundPermissionAssociationChangeListener = 
+            mock(PermissionAssociationChangeListener.class, 
+                "inboundPermissionAssociationChangeListener");
+        inboundPermissionAssociationChangeListener = 
+            (PermissionAssociationChangeListener)mockInboundPermissionAssociationChangeListener.
+                proxy(); 
 
-        coralEventHub.getLocal().addPermissionAssociationChangeListener(localPermissionAssociationChangeListener, permission);
-        coralEventHub.getGlobal().addPermissionAssociationChangeListener(globalPermissionAssociationChangeListener, permission);
-        coralEventHub.getInbound().addPermissionAssociationChangeListener(localPermissionAssociationChangeListener, permission);
-        outboundBridge.addListener(PermissionAssociationChangeListener.class, outboundPermissionAssociationChangeListener, permission);
+        coralEventHub.getLocal().addPermissionAssociationChangeListener(
+            localPermissionAssociationChangeListener, permission);
+        coralEventHub.getGlobal().addPermissionAssociationChangeListener(
+            globalPermissionAssociationChangeListener, permission);
+        coralEventHub.getInbound().addPermissionAssociationChangeListener(
+            localPermissionAssociationChangeListener, permission);
+        outboundBridge.addListener(PermissionAssociationChangeListener.class,
+            outboundPermissionAssociationChangeListener, permission);
 
-        mockPermissionAssociation.stubs().method("getResourceClass").will(returnValue(resourceClass));
+        mockPermissionAssociation.stubs().method("getResourceClass").will(
+            returnValue(resourceClass));
         mockPermissionAssociation.stubs().method("getPermission").will(returnValue(permission));
         
 
-        permissionAssociationsChanged = PermissionAssociationChangeListener.class.
-            getDeclaredMethod("permissionsChanged", new Class[] {PermissionAssociation.class, Boolean.TYPE });
+        permissionAssociationsChanged = PermissionAssociationChangeListener.class
+            .getDeclaredMethod("permissionsChanged", new Class[] { PermissionAssociation.class,
+                            Boolean.TYPE });
 
     }
     
@@ -170,17 +192,22 @@ public class CoralEventHubImplTest
     
     public void testInbound()
     {
-        mockLocalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
-        mockGlobalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockLocalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged")
+            .with(same(permissionAssociation), eq(true));
+        mockGlobalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged")
+            .with(same(permissionAssociation), eq(true));
 
-        inboundBridge.fireEvent(permissionAssociationsChanged, new Object[] {permissionAssociation, Boolean.TRUE}, permission);
+        inboundBridge.fireEvent(permissionAssociationsChanged, new Object[] {
+                        permissionAssociation, Boolean.TRUE }, permission);
         // inboundBridge -> eventHub.inbound, eventHub.global
     }
     
     public void testLocal()
     {
-        mockLocalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
-        mockGlobalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockLocalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged")
+            .with(same(permissionAssociation), eq(true));
+        mockGlobalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged")
+            .with(same(permissionAssociation), eq(true));
 
         coralEventHub.getLocal().firePermissionAssociationChangeEvent(permissionAssociation, true);
         // eventHub.local -> eventHub.local, eventHub.global       
@@ -188,9 +215,12 @@ public class CoralEventHubImplTest
     
     public void testGlobal()
     {
-        mockLocalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
-        mockGlobalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
-        mockOutboundPermissionAssociationChangeListener.expects(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockLocalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged")
+            .with(same(permissionAssociation), eq(true));
+        mockGlobalPermissionAssociationChangeListener.expects(once()).method("permissionsChanged")
+            .with(same(permissionAssociation), eq(true));
+        mockOutboundPermissionAssociationChangeListener.expects(once())
+            .method("permissionsChanged").with(same(permissionAssociation), eq(true));
 
         coralEventHub.getGlobal().firePermissionAssociationChangeEvent(permissionAssociation, true);
         // eventHub.global -> eventHub.local, eventHub.global, outboundBridge               

@@ -33,9 +33,9 @@ import org.objectledge.database.persistence.Persistence;
 class BlueEntity
     extends AbstractEntity
 {
-    private static String[] KEY_COLUMNS = { "blue_entity_id" };
+    private static final String[] KEY_COLUMNS = { "blue_entity_id" };
     
-    private static String TABLE = "blue_entity";
+    private static final String TABLE = "blue_entity";
 
     public BlueEntity(Persistence persistence)
     {

@@ -27,24 +27,9 @@
 //
 package org.objectledge.coral.relation;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.Ref;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -72,7 +57,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.10 2005-01-26 06:33:57 rafal Exp $
+ * @version $Id: RelationImplTest.java,v 1.11 2005-01-28 01:04:42 rafal Exp $
  */
 public class RelationImplTest extends LedgeTestCase
 {
@@ -139,7 +124,7 @@ public class RelationImplTest extends LedgeTestCase
         assertEquals(relation.getId(), -1L);
         assertEquals(relation.getName(), "relation name");
 
-        mockCoralRelationManager.expects(once()).method("getRelationDefinition").with(eq(relation)).will(returnValue(relationDefinition));
+        mockCoralRelationManager.expects(once()).method("getRelationDefinition").with(eq(relation)).will(returnValue(RELATION_DEFINITION));
         try
         {
             relation.setData(inputRecord);
@@ -180,18 +165,36 @@ public class RelationImplTest extends LedgeTestCase
 		assertEquals(resRelatedTo1.length, 3);
 		if(resRelatedTo1[0].getId() == 4L)
 		{
-			if(resRelatedTo1[1].getId() == 5L) assertEquals(resRelatedTo1[2].getId(), 6L);
-			if(resRelatedTo1[2].getId() == 5L) assertEquals(resRelatedTo1[1].getId(), 6L);
+			if(resRelatedTo1[1].getId() == 5L)
+            {
+                assertEquals(resRelatedTo1[2].getId(), 6L);
+            }
+			if(resRelatedTo1[2].getId() == 5L)
+            {
+                assertEquals(resRelatedTo1[1].getId(), 6L);
+            }
 		} 
 		if(resRelatedTo1[0].getId() == 5L)
 		{
-			if(resRelatedTo1[1].getId() == 4L) assertEquals(resRelatedTo1[2].getId(), 6L);
-			if(resRelatedTo1[2].getId() == 4L) assertEquals(resRelatedTo1[1].getId(), 6L);
+			if(resRelatedTo1[1].getId() == 4L) 
+            {
+                assertEquals(resRelatedTo1[2].getId(), 6L);
+            }
+			if(resRelatedTo1[2].getId() == 4L) 
+            {
+                assertEquals(resRelatedTo1[1].getId(), 6L);
+            }
 		} 
 		if(resRelatedTo1[0].getId() == 6L)
 		{
-			if(resRelatedTo1[1].getId() == 4L) assertEquals(resRelatedTo1[2].getId(), 5L);
-			if(resRelatedTo1[2].getId() == 4L) assertEquals(resRelatedTo1[1].getId(), 5L);
+			if(resRelatedTo1[1].getId() == 4L)
+            {
+                assertEquals(resRelatedTo1[2].getId(), 5L);
+            }
+			if(resRelatedTo1[2].getId() == 4L) 
+            {
+                assertEquals(resRelatedTo1[1].getId(), 5L);
+            }
 		} 
 
 		mockResource1.expects(atLeastOnce()).method("getIdObject").will(returnValue(new Long(100L)));
@@ -243,19 +246,37 @@ public class RelationImplTest extends LedgeTestCase
 		assertEquals(resRelatedTo6.length, 3);
 		if(resRelatedTo6[0].getId() == 1L)
 		{
-			if(resRelatedTo6[1].getId() == 2L) assertEquals(resRelatedTo6[2].getId(), 3L);
-			if(resRelatedTo6[2].getId() == 2L) assertEquals(resRelatedTo6[1].getId(), 3L);
+			if(resRelatedTo6[1].getId() == 2L) 
+            {
+                assertEquals(resRelatedTo6[2].getId(), 3L);
+            }
+			if(resRelatedTo6[2].getId() == 2L)
+            {
+                assertEquals(resRelatedTo6[1].getId(), 3L);
+            }
 		} 
 		if(resRelatedTo6[0].getId() == 2L)
-		{
-			if(resRelatedTo6[1].getId() == 1L) assertEquals(resRelatedTo6[2].getId(), 3L);
-			if(resRelatedTo6[2].getId() == 1L) assertEquals(resRelatedTo6[1].getId(), 3L);
-		} 
-		if(resRelatedTo6[0].getId() == 3L)
-		{
-			if(resRelatedTo6[1].getId() == 2L) assertEquals(resRelatedTo6[2].getId(), 1L);
-			if(resRelatedTo6[2].getId() == 2L) assertEquals(resRelatedTo6[1].getId(), 1L);
-		} 
+        {
+            if(resRelatedTo6[1].getId() == 1L)
+            {
+                assertEquals(resRelatedTo6[2].getId(), 3L);
+            }
+            if(resRelatedTo6[2].getId() == 1L)
+            {
+                assertEquals(resRelatedTo6[1].getId(), 3L);
+            }
+        }
+        if(resRelatedTo6[0].getId() == 3L)
+        {
+            if(resRelatedTo6[1].getId() == 2L)
+            {
+                assertEquals(resRelatedTo6[2].getId(), 1L);
+            }
+            if(resRelatedTo6[2].getId() == 2L)
+            {
+                assertEquals(resRelatedTo6[1].getId(), 1L);
+            }
+        } 
 
 		mockResource1.expects(atLeastOnce()).method("getIdObject").will(returnValue(new Long(100L)));
 		resRelatedTo100 = invRelation.get(resource1);
@@ -350,7 +371,7 @@ public class RelationImplTest extends LedgeTestCase
 		assertFalse(relation.getInverted().hasRef(4L, 1L));
     }
 
-    private static final long[] relationDefinition = {
+    private static final long[] RELATION_DEFINITION = {
         1L, 4L, 1L, 5L, 1L, 6L,
         2L, 5L, 2L, 6L,
         3L, 6L

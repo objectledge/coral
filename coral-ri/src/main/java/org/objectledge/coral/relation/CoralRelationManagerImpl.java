@@ -51,7 +51,6 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityRegistry;
 import org.objectledge.coral.event.CoralEventHub;
-import org.objectledge.database.Database;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistentFactory;
@@ -60,7 +59,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Implmentation of the Coral relation manager component.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.11 2005-01-27 05:32:04 rafal Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.12 2005-01-28 01:04:29 rafal Exp $
  */
 public class CoralRelationManagerImpl
     implements CoralRelationManager, PreloadingParticipant
@@ -390,8 +389,8 @@ public class CoralRelationManagerImpl
             conn = persistence.getDatabase().getConnection();
             Statement stmt = conn.createStatement();
             ResultSet result = stmt
-                .executeQuery("SELECT resource1, resource2 FROM coral_relation_data WHERE relation_id = "
-                    + Long.toString(relationId));
+                .executeQuery("SELECT resource1, resource2 FROM coral_relation_data WHERE" +
+                        " relation_id = " + Long.toString(relationId));
             List<Long> temp = new ArrayList<Long>();
             while(result.next())
             {

@@ -42,7 +42,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractAssignmentTest.java,v 1.5 2004-10-13 11:52:41 rafal Exp $
+ * @version $Id: AbstractAssignmentTest.java,v 1.6 2005-01-28 01:04:08 rafal Exp $
  */
 public class AbstractAssignmentTest extends LedgeTestCase
 {
@@ -151,7 +151,7 @@ public class AbstractAssignmentTest extends LedgeTestCase
         mockOutputRecord.expects(once()).method("setLong").with(eq("red_id"), eq(1L));
         mockOutputRecord.expects(once()).method("setLong").with(eq("blue_id"), eq(2L));
         mockOutputRecord.expects(once()).method("setLong").with(eq("grantor"), eq(3L));
-        mockOutputRecord.expects(once()).method("setTimestamp").with(eq("grant_time"), eq(date));                
+        mockOutputRecord.expects(once()).method("setTimestamp").with(eq("grant_time"), eq(date));
         RedBlueAssignment red1blue1 = new RedBlueAssignment(coralCore, persistence, factory, 
             red1, blue2, subject, date);
         red1blue1.getData(outputRecord);
@@ -167,8 +167,10 @@ public class AbstractAssignmentTest extends LedgeTestCase
         mockInputRecord.expects(once()).method("getLong").with(eq("red_id")).will(returnValue(1L));
         mockInputRecord.expects(once()).method("getLong").with(eq("blue_id")).will(returnValue(2L));
         mockInputRecord.expects(once()).method("getLong").with(eq("grantor")).will(returnValue(3L));
-        mockInputRecord.expects(once()).method("getDate").with(eq("grant_time")).will(returnValue(date));                
-        mockCoralSecurity.expects(once()).method("getSubject").with(eq(3L)).will(returnValue(subject));
+        mockInputRecord.expects(once()).method("getDate").
+            with(eq("grant_time")).will(returnValue(date));                
+        mockCoralSecurity.expects(once()).method("getSubject").
+            with(eq(3L)).will(returnValue(subject));
         rb.setData(inputRecord);
         assertEquals(1L, rb.getRed().getId());
         assertEquals(2L, rb.getBlue().getId());
@@ -181,7 +183,8 @@ public class AbstractAssignmentTest extends LedgeTestCase
     {
         RedBlueAssignment rb = new RedBlueAssignment(coralCore, persistence, factory);
         mockInputRecord.expects(once()).method("getLong").with(eq("grantor")).will(returnValue(3L));
-        mockCoralSecurity.expects(once()).method("getSubject").with(eq(3L)).will(throwException(new EntityDoesNotExistException("subject not found")));
+        mockCoralSecurity.expects(once()).method("getSubject").
+            with(eq(3L)).will(throwException(new EntityDoesNotExistException("subject not found")));
         try
         {
             rb.setData(inputRecord);

@@ -45,7 +45,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: EntityRegistryTest.java,v 1.5 2004-05-28 10:04:12 fil Exp $
+ * @version $Id: EntityRegistryTest.java,v 1.6 2005-01-28 01:04:08 rafal Exp $
  */
 public class EntityRegistryTest
     extends LedgeTestCase
@@ -76,10 +76,13 @@ public class EntityRegistryTest
         cacheFactory = (CacheFactory)mockCacheFactory.proxy();
         mockInstantiator = mock(Instantiator.class);
         instantiator = (Instantiator)mockInstantiator.proxy();
-        mockRedEntityPersistentFactory = mock(PersistentFactory.class, "mockRedEntityPersistentFactory");
+        mockRedEntityPersistentFactory = 
+            mock(PersistentFactory.class, "mockRedEntityPersistentFactory");
         redEntityPersistentFactory = (PersistentFactory)mockRedEntityPersistentFactory.proxy();
-        mockInstantiator.stubs().method("getPersistentFactory").with(eq(RedEntity.class)).will(returnValue(redEntityPersistentFactory));
-        mockRedEntityPersistentFactory.stubs().method("newInstance").will(returnValue(new RedEntity(persistence)));
+        mockInstantiator.stubs().method("getPersistentFactory").with(eq(RedEntity.class)).
+            will(returnValue(redEntityPersistentFactory));
+        mockRedEntityPersistentFactory.stubs().method("newInstance").
+            will(returnValue(new RedEntity(persistence)));
         mockLogger = mock(Logger.class);
         log = (Logger)mockLogger.proxy();
         redEntity = new RedEntity(persistence);
@@ -103,7 +106,7 @@ public class EntityRegistryTest
     {
         EntityRegistry reg = createRegistry();
         List list = new ArrayList(0);
-        mockPersistence.expects(once()).method("load").with(NULL, ANYTHING).will(returnValue(list));        
+        mockPersistence.expects(once()).method("load").with(NULL, ANYTHING).will(returnValue(list));
         assertEquals(0, reg.get().size());
         // no load this time
         reg.get();
@@ -113,7 +116,8 @@ public class EntityRegistryTest
         throws Exception
     {
         EntityRegistry reg = createRegistry();
-        mockPersistence.expects(once()).method("load").with(eq(1L), ANYTHING).will(returnValue(redEntity));
+        mockPersistence.expects(once()).method("load").with(eq(1L), ANYTHING).will(
+            returnValue(redEntity));
         assertSame(redEntity, reg.get(1L));
         // no load this time
         assertSame(redEntity, reg.get(1L));
@@ -125,7 +129,8 @@ public class EntityRegistryTest
         EntityRegistry reg = createRegistry();
         List list = new ArrayList(1);
         list.add(redEntity);
-        mockPersistence.expects(once()).method("load").with(eq("name = 'fred'"), ANYTHING).will(returnValue(list));
+        mockPersistence.expects(once()).method("load").with(eq("name = 'fred'"), ANYTHING).will(
+            returnValue(list));
         Set result = reg.get("fred");
         assertEquals(1, result.size());
         assertTrue(result.contains(redEntity));        
@@ -139,7 +144,8 @@ public class EntityRegistryTest
         EntityRegistry reg = createRegistry();
         List list = new ArrayList(1);
         list.add(redEntity);
-        mockPersistence.expects(once()).method("load").with(eq("name = 'fred'"), ANYTHING).will(returnValue(list));
+        mockPersistence.expects(once()).method("load").with(eq("name = 'fred'"), ANYTHING).will(
+            returnValue(list));
         assertSame(redEntity, reg.getUnique("fred"));
         // no load this time
         reg.getUnique("fred");
@@ -162,7 +168,8 @@ public class EntityRegistryTest
         redEntity.setId(1L);
         redEntity.setName("fred");
         mockDatabase.expects(once()).method("beginTransaction").will(returnValue(true));
-        mockPersistence.expects(once()).method("exists").with(eq(redEntity.getTable()), eq("name = 'fred'")).will(returnValue(false));
+        mockPersistence.expects(once()).method("exists").with(eq(redEntity.getTable()), 
+            eq("name = 'fred'")).will(returnValue(false));
         mockPersistence.expects(once()).method("save").with(same(redEntity));
         mockDatabase.expects(once()).method("commitTransaction").with(eq(true)).isVoid();        
         reg.addUnique(redEntity);
@@ -190,7 +197,8 @@ public class EntityRegistryTest
     {
         EntityRegistry reg = createRegistry();
         mockDatabase.expects(once()).method("beginTransaction").will(returnValue(true));
-        mockPersistence.expects(once()).method("exists").with(eq(redEntity.getTable()), eq("name = 'george'")).will(returnValue(false));
+        mockPersistence.expects(once()).method("exists").with(eq(redEntity.getTable()), 
+            eq("name = 'george'")).will(returnValue(false));
         mockPersistence.expects(once()).method("save").with(same(redEntity));
         mockDatabase.expects(once()).method("commitTransaction").with(eq(true)).isVoid();        
         reg.renameUnique(redEntity, "george");
