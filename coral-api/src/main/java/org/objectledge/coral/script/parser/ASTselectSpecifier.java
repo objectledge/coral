@@ -16,4 +16,9 @@ public class ASTselectSpecifier extends SimpleNode {
   public Object jjtAccept(RMLVisitor visitor, Object data) {
     return visitor.visit(this, data);
   }
+  
+  public String getAttribute()
+  {
+  	return attributeName;
+  }
 }

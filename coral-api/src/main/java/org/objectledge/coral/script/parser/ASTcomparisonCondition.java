@@ -31,4 +31,9 @@ public class ASTcomparisonCondition extends SimpleNode {
   {
   	return literalRHS;
   }
+
+  public int getOperator()
+  {
+  	return operator;
+  }
 }
