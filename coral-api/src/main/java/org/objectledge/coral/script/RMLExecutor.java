@@ -97,6 +97,7 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.utils.StackTrace;
 
 /**
  * Executes RML statemetns.
@@ -1836,7 +1837,7 @@ public class RMLExecutor
      */
     private void wrap(Throwable t)
     {
-        t.printStackTrace(out);
+        out.print(new StackTrace(t));
         out.flush();
     }
 
