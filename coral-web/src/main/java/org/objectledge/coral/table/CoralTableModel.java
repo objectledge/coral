@@ -5,11 +5,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
-import org.objectledge.coral.table.comparator.*;
+import org.objectledge.coral.table.comparator.CreationTimeComparator;
+import org.objectledge.coral.table.comparator.CreatorNameComparator;
+import org.objectledge.coral.table.comparator.IdComparator;
+import org.objectledge.coral.table.comparator.ModificationTimeComparator;
+import org.objectledge.coral.table.comparator.ModifierNameComparator;
+import org.objectledge.coral.table.comparator.NameComparator;
+import org.objectledge.coral.table.comparator.OwnerNameComparator;
+import org.objectledge.coral.table.comparator.PathComparator;
 import org.objectledge.table.ExtendedTableModel;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableException;
@@ -23,21 +29,17 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.5 2004-06-14 13:55:02 fil Exp $
+ * @version $Id: CoralTableModel.java,v 1.6 2004-06-15 14:28:27 zwierzem Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {
-    /** logging */
-    protected Logger logger;
-
     /** coral session */
     protected CoralSession coralSession;
 
     protected HashMap comparatorByColumnName = new HashMap();
 
-    public CoralTableModel(CoralSession coralSession, Logger logger, Locale locale)
+    public CoralTableModel(CoralSession coralSession, Locale locale)
     {
-        this.logger = logger;
         this.coralSession = coralSession;
 
         /**
@@ -118,7 +120,7 @@ public class CoralTableModel implements ExtendedTableModel
             }
             catch(TableException e)
             {
-                throw new RuntimeException("Problem creating a column object: "+e.getMessage());
+                throw new RuntimeException("Problem creating a column object", e);
             }
         }
         return columns;
@@ -159,7 +161,7 @@ public class CoralTableModel implements ExtendedTableModel
         }
         catch(EntityDoesNotExistException e)
         {
-            logger.error("Coral Exception ",e);
+            throw new RuntimeException("Problem getting a resource object", e);
         }
         return resource;
     }
