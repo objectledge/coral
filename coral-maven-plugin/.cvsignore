@@ -3,3 +3,4 @@ maven.log
 velocity.log
 bin
 target
+.settings
