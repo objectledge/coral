@@ -20,7 +20,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * Each {@link ResourceClass} has an associated set of <code>Permission</code>s
  * that can be granted upon it's instances.
  *
- * @version $Id: PermissionImpl.java,v 1.6 2004-03-03 07:46:46 fil Exp $
+ * @version $Id: PermissionImpl.java,v 1.7 2004-03-03 12:39:40 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionImpl
@@ -76,6 +76,7 @@ public class PermissionImpl
         super(persistence, name);
         this.coralEventHub = coralEventHub;
         this.coralRegistry = coralRegistry;
+        coralEventHub.getInbound().addPermissionChangeListener(this, this);
     }
 
     // Persistent interface /////////////////////////////////////////////////////////////////////
@@ -131,7 +132,7 @@ public class PermissionImpl
         throws PersistenceException
     {
         super.setData(record);
-        coralEventHub.getInbound().addPermissionAssociationChangeListener(this, this);
+        coralEventHub.getInbound().addPermissionChangeListener(this, this);
     }
 
     // PermissionChangeListener interface ///////////////////////////////////////////////////////
