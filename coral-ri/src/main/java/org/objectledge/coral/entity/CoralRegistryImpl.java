@@ -3,6 +3,7 @@ package org.objectledge.coral.entity;
 // JDBC
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
+import org.objectledge.coral.StartupParticipant;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.PermissionAssociationChangeListener;
@@ -55,7 +57,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.9 2005-01-18 10:47:08 rafal Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.10 2005-01-20 11:40:32 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -65,7 +67,8 @@ public class CoralRegistryImpl
                RoleAssignmentChangeListener,
                RoleImplicationChangeListener,
                ResourceClassInheritanceChangeListener,
-               ResourceClassAttributesChangeListener
+               ResourceClassAttributesChangeListener,
+               StartupParticipant
 {
 
     
@@ -2005,4 +2008,342 @@ public class CoralRegistryImpl
             throw new BackendException("internal error", e);
         }
     }
+    
+    // preloading ///////////////////////////////////////////////////////////////////////////////
+
+    private static final int[] STARTUP_PHASES = {1, 3};
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int[] getPhases()
+    {
+        return STARTUP_PHASES;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void startup(int phase)
+    {
+        if(phase == 1)
+        {
+            preloadRegistryPhase1();
+        }
+        else if(phase == 3)
+        {
+            preloadRegistryPhase2();
+        }
+        else
+        {
+            throw new IllegalArgumentException("unexpected phase "+phase);
+        }
+    }
+    
+    private void preloadRegistryPhase1()
+    {
+        long time = System.currentTimeMillis();
+        log.info("preloading entity registry phase 1");
+        attributeClassRegistry.get();
+        resourceClassRegistry.get();
+        attributeDefinitionRegistry.get();
+        preloadAttributeDefinitions();
+        preloadResourceClassInheritance();
+        roleRegistry.get();
+        subjectRegistry.get();
+        permissionRegistry.get();
+        preloadRoleImplications();
+        preloadRoleAssignments();
+        preloadPermissionAssociations();
+        time = System.currentTimeMillis() - time;
+        log.info("finished preloading registry phase 1 in "+time+"ms");
+    }
+
+    private void preloadRegistryPhase2()
+    {
+        long time = System.currentTimeMillis();
+        log.info("preloading entity registry phase 2");
+        preloadPermissionAssignments();
+        time = System.currentTimeMillis() - time;
+        log.info("finished preloading registry phase 2 in "+time+"ms");
+    }
+
+    private void preloadResourceClassInheritance()
+    {
+        synchronized(resourceClassLock)
+        {
+            List list;
+            try
+            {
+                list = persistence.load(null, resourceClassInheritanceFactory);
+            }
+            catch(PersistenceException e)
+            {
+                throw new BackendException("Failed to load ResuourceClassInheritance", e);
+            }
+            Iterator i = list.iterator();
+            while(i.hasNext())
+            {
+                ResourceClassInheritance item = (ResourceClassInheritance)i.next();
+                HashSet items = (HashSet)resourceClassInheritanceByResourceClass.
+                    get(item.getParent());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    resourceClassInheritanceByResourceClass.put(item.getParent(), items);
+                }
+                items.add(item);
+                items = (HashSet)resourceClassInheritanceByResourceClass.get(item.getChild());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    resourceClassInheritanceByResourceClass.put(item.getChild(), items);
+                }
+                items.add(item);
+            }
+            i = resourceClassRegistry.get().iterator();
+            while(i.hasNext())
+            {
+                ResourceClass rc = (ResourceClass)i.next();
+                if(!resourceClassInheritanceByResourceClass.containsKey(rc))
+                {
+                    resourceClassInheritanceByResourceClass.put(rc, new HashSet());
+                }
+            }
+        }
+    }
+    
+    private void preloadAttributeDefinitions()
+    {
+        synchronized(resourceClassLock)
+        {
+            Iterator i = attributeDefinitionRegistry.get().iterator();
+            while(i.hasNext())
+            {
+                AttributeDefinition item = (AttributeDefinition)i.next();
+                ResourceClass owner = item.getDeclaringClass();
+                HashSet items = (HashSet)attributeDefinitionByResourceClass.get(owner);
+                if(items == null)
+                {
+                    items = new HashSet();
+                    attributeDefinitionByResourceClass.put(owner, items);
+                }
+                items.add(item);
+            }
+            i = resourceClassRegistry.get().iterator();
+            while(i.hasNext())
+            {
+                ResourceClass rc = (ResourceClass)i.next();
+                if(!attributeDefinitionByResourceClass.containsKey(rc))
+                {
+                    attributeDefinitionByResourceClass.put(rc, new HashSet());
+                }
+            }
+        }
+    }    
+
+    private void preloadRoleImplications()
+    {
+        synchronized(roleLock)
+        {
+            List list;
+            try
+            {
+                list = persistence.load(null, roleImplicationFactory);
+            }
+            catch(PersistenceException e)
+            {
+                throw new BackendException("Failed to load RoleImplications", e);
+            }
+            Iterator i = list.iterator();
+            while(i.hasNext())
+            {
+                RoleImplication item = (RoleImplication)i.next();
+                HashSet items = (HashSet)roleImplicationByRole.get(item.getSubRole());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    roleImplicationByRole.put(item.getSubRole(), items);
+                }
+                items.add(item);
+                items = (HashSet)roleImplicationByRole.get(item.getSuperRole());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    roleImplicationByRole.put(item.getSuperRole(), items);
+                }
+                items.add(item);
+            }
+            i = roleRegistry.get().iterator();
+            while(i.hasNext())
+            {
+                Role r = (Role)i.next();
+                if(!roleImplicationByRole.containsKey(r))
+                {
+                    roleImplicationByRole.put(r, new HashSet());
+                }
+            }
+        }
+    }
+
+    private void preloadRoleAssignments()
+    {
+        synchronized(roleLock)
+        {
+            List list;
+            try
+            {
+                list = persistence.load(null, roleAssignmentFactory);
+            }
+            catch(PersistenceException e)
+            {
+                throw new BackendException("Failed to load RoleAssignments", e);
+            }
+            Iterator i = list.iterator();
+            while(i.hasNext())
+            {
+                RoleAssignment item = (RoleAssignment)i.next();
+                HashSet items = (HashSet)roleAssignmentBySubject.get(item.getSubject());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    roleAssignmentBySubject.put(item.getSubject(), items);
+                }
+                items.add(item);
+                items = (HashSet)roleAssignmentByRole.get(item.getRole());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    roleAssignmentByRole.put(item.getRole(), items);
+                }
+                items.add(item);
+            }
+            i = subjectRegistry.get().iterator();
+            while(i.hasNext())
+            {
+                Subject s = (Subject)i.next();
+                if(!roleAssignmentBySubject.containsKey(s))
+                {
+                    roleAssignmentBySubject.put(s, new HashSet());
+                }
+            }
+            i = roleRegistry.get().iterator();
+            while(i.hasNext())
+            {
+                Role r = (Role)i.next();
+                if(!roleAssignmentByRole.containsKey(r))
+                {
+                    roleAssignmentByRole.put(r, new HashSet());
+                }
+            }
+        }
+    }    
+
+    private void preloadPermissionAssociations()
+    {
+        synchronized(permissionLock)
+        {
+            List list;
+            try
+            {
+                list = persistence.load(null, permissionAssociationFactory);
+            }
+            catch(PersistenceException e)
+            {
+                throw new BackendException("Failed to load PermissionAssociations", e);
+            }
+            Iterator i = list.iterator();
+            while(i.hasNext())
+            {
+                PermissionAssociation item = (PermissionAssociation)i.next();
+                HashSet items = (HashSet)permissionAssociationByResourceClass.
+                    get(item.getResourceClass());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    permissionAssociationByResourceClass.put(item.getResourceClass(), items);
+                }
+                items.add(item);
+                items = (HashSet)permissionAssociationByPermission.get(item.getPermission());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    permissionAssociationByPermission.put(item.getPermission(), items);
+                }
+                items.add(item);
+            }
+            i = resourceClassRegistry.get().iterator();
+            while(i.hasNext())
+            {
+                ResourceClass rc = (ResourceClass)i.next();
+                if(!permissionAssociationByResourceClass.containsKey(rc))
+                {
+                    permissionAssociationByResourceClass.put(rc, new HashSet());
+                }
+            }
+            i = permissionRegistry.get().iterator();
+            while(i.hasNext())
+            {
+                Permission p = (Permission)i.next();
+                if(!permissionAssociationByPermission.containsKey(p))
+                {
+                    permissionAssociationByPermission.put(p, new HashSet());
+                }
+            }
+        }
+    }
+    
+    private void preloadPermissionAssignments()
+    {
+        synchronized(permissionLock)
+        {
+            List list;
+            try
+            {
+                list = persistence.load(null, permissionAssignmentFactory);
+            }
+            catch(PersistenceException e)
+            {
+                throw new BackendException("Failed to load PermissionAssignments", e);
+            }
+            Iterator i = list.iterator();
+            while(i.hasNext())
+            {
+                PermissionAssignment item = (PermissionAssignment)i.next();
+                HashSet items = (HashSet)permissionAssignmentByResource.get(item.getResource());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    permissionAssignmentByResource.put(item.getResource(), items);
+                }
+                items.add(item);
+                items = (HashSet)permissionAssignmentByRole.get(item.getRole());
+                if(items == null)
+                {
+                    items = new HashSet();
+                    permissionAssignmentByRole.put(item.getRole(), items);
+                }
+                items.add(item);
+            }
+            i = Arrays.asList(coral.getStore().getResource()).iterator();
+            while(i.hasNext())
+            {
+                Resource r = (Resource)i.next();
+                if(!permissionAssignmentByResource.containsKey(r))
+                {
+                    permissionAssignmentByResource.put(r, new HashSet());
+                }
+            }
+            i = roleRegistry.get().iterator();
+            while(i.hasNext())
+            {
+                Role r = (Role)i.next();
+                if(!permissionAssignmentByRole.containsKey(r))
+                {
+                    permissionAssignmentByRole.put(r, new HashSet());
+                }
+            }
+        }
+    }
+    
 }
