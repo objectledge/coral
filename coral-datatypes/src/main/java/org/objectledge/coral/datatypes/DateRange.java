@@ -6,7 +6,7 @@ import java.util.Date;
  * Represents a date range.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateRange.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: DateRange.java,v 1.2 2004-05-06 13:01:53 pablo Exp $
  */
 public class DateRange
 {
@@ -22,7 +22,8 @@ public class DateRange
     /**
      * Constructs a Date attribute.
      *
-     * @param value the value of the attribute.
+     * @param start the start date.
+     * @param end the end date.
      */
     public DateRange(Date start, Date end)
     {
@@ -55,7 +56,7 @@ public class DateRange
     /**
      * Returns <code>true</code> if the range contains the specified date.
      *
-     * @param data the date to check.
+     * @param date the date to check.
      * @return <code>true</code> if the range contains the specified date.
      */
     public boolean contains(Date date)

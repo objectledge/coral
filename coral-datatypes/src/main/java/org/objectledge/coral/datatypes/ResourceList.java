@@ -18,7 +18,7 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>  
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceList.java,v 1.2 2004-03-10 21:49:58 pablo Exp $
+ * @version $Id: ResourceList.java,v 1.3 2004-05-06 13:02:21 pablo Exp $
  */
 public class ResourceList
     extends AbstractList
@@ -47,6 +47,8 @@ public class ResourceList
 
     /**
      * Creates an empty list.
+     * 
+     * @param coralStore the coral store.
      */
     public ResourceList(CoralStore coralStore)
     {
@@ -59,6 +61,7 @@ public class ResourceList
      *
      * <p>The collection should contain Resource or Long objects.</p>
      *
+     * @param coralStore the coral store.
      * @param elements the collection of resources or identifiers.
      */
     public ResourceList(CoralStore coralStore, Collection elements)
@@ -100,11 +103,19 @@ public class ResourceList
 
     // List implementation ///////////////////////////////////////////////////
 
+    /**
+     * Get the size.
+     * 
+     * @return the size.
+     */
     public int size()
     {
         return size;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Object get(int index)
         throws IndexOutOfBoundsException
     {
@@ -121,7 +132,10 @@ public class ResourceList
             throw new BackendException("resource #"+ids[index]+" dissappeared", e);
         }
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     public void add(int index, Object object)
         throws IndexOutOfBoundsException, ClassCastException
     {
@@ -172,7 +186,10 @@ public class ResourceList
         size++;
         modCount++;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */    
     public Object set(int index, Object object)
         throws IndexOutOfBoundsException, ClassCastException
     {
@@ -206,6 +223,9 @@ public class ResourceList
         return old;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Object remove(int index)
         throws IndexOutOfBoundsException
     {
@@ -240,7 +260,7 @@ public class ResourceList
     }
     
     /**
-     * Remove a range of entries
+     * Remove a range of entries.
      * 
      * @param fromIndex range start (inclusive)
      * @param toIndex range end (exclusive)
@@ -272,6 +292,9 @@ public class ResourceList
         modCount++;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public String toString()
     {
         return "";

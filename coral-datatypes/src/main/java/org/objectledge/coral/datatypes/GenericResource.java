@@ -34,7 +34,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.5 2004-04-01 08:54:27 fil Exp $
+ * @version $Id: GenericResource.java,v 1.6 2004-05-06 13:00:46 pablo Exp $
  */
 public class GenericResource
     implements Resource
@@ -87,7 +87,7 @@ public class GenericResource
      *
      * <p>This implementation returns the hashcode of the delegate.</p>
      *
-     * @returns the hashcode of the object.
+     * @return the hashcode of the object.
      */
     public int hashCode()
     {
@@ -231,6 +231,7 @@ public class GenericResource
     /**
      * Returns the access control list entries for a specific role.
      *
+     * @param role the role.
      * @return the access control list entries for a specific role.
      */
     public PermissionAssignment[] getPermissionAssignments(Role role)
@@ -349,6 +350,7 @@ public class GenericResource
      * @throws ValueRequiredException if <code>attribute</code> is
      *         <code>REQUIRED</code> and <code>value</code> is
      *         <code>null</code>.
+     * @throws ConstraintViolationException if contraints are being violated.
      */
     public synchronized void set(AttributeDefinition attribute, Object value)
         throws UnknownAttributeException, ModificationNotPermitedException,
@@ -472,7 +474,7 @@ public class GenericResource
     /**
      * Updates the image of the resource in the persistent storage.
      *
-     * @param subject the subject that performs the update. 
+     * @throws UnknownAttributeException if attribute is unknown. 
      */
     public synchronized void update()
         throws UnknownAttributeException

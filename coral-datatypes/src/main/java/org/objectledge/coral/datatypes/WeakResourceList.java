@@ -15,13 +15,15 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: WeakResourceList.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: WeakResourceList.java,v 1.2 2004-05-06 13:02:08 pablo Exp $
  */
 public class WeakResourceList
     extends ResourceList
 {
     /**
      * Creates an empty list.
+     * 
+     * @param coralStore the coral store.
      */
     public WeakResourceList(CoralStore coralStore)
     {
@@ -33,6 +35,7 @@ public class WeakResourceList
 	 *
 	 * <p>The collection should contain Resource or Long objects.</p>
 	 *
+     * @param coralStore the coral store.
 	 * @param elements the collection of resources or identifiers.
 	 */
 	public WeakResourceList(CoralStore coralStore, Collection elements)
@@ -43,6 +46,9 @@ public class WeakResourceList
     
     // List implementation ///////////////////////////////////////////////////
     
+    /**
+     * {@inheritDoc}
+     */
     public Object get(int index)
         throws IndexOutOfBoundsException
     {
@@ -60,6 +66,9 @@ public class WeakResourceList
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public Object set(int index, Object object)
         throws IndexOutOfBoundsException, ClassCastException
     {
@@ -93,6 +102,9 @@ public class WeakResourceList
         return old;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Object remove(int index)
         throws IndexOutOfBoundsException
     {

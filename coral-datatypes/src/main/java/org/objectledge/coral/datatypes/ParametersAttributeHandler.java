@@ -25,7 +25,7 @@ import org.objectledge.parameters.db.DBParametersManager;
  * labeo-experimental.</p>
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParametersAttributeHandler.java,v 1.2 2004-03-10 21:49:58 pablo Exp $
+ * @version $Id: ParametersAttributeHandler.java,v 1.3 2004-05-06 13:01:24 pablo Exp $
  */
 public class ParametersAttributeHandler
     extends AttributeHandlerBase
@@ -42,6 +42,7 @@ public class ParametersAttributeHandler
      * @param coralSecurity the security.
      * @param coralSchema the scheam.
      * @param attributeClass the attribute class.
+     * @param dbParametersManager the parameters manager.
      */
     public ParametersAttributeHandler(Database database, CoralStore coralStore,
                                    CoralSecurity coralSecurity, CoralSchema coralSchema,
@@ -169,12 +170,7 @@ public class ParametersAttributeHandler
     // meta information //////////////////////////////////////////////////////
 
     /**
-     * Provideds a hint to the ResorceHandler class that it should not cache
-     * the data value used to create the attribute, but re-retrieve the value
-     * from the AttributeHandler and cache that one instead.
-     *
-     * @return <code>false</code> if the data value used for creating the
-     *         resource can be safely cached.
+     * {@inheritDoc}
      */
     public boolean shouldRetrieveAfterCreate()
     {
@@ -182,7 +178,7 @@ public class ParametersAttributeHandler
     }
 
     /**
-     * Is a composite attribute (wraps the actual values iside an object).
+     * {@inheritDoc}
      */
     public boolean isComposite()
     {
