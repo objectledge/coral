@@ -90,7 +90,7 @@ INSERT INTO coral_attribute_class VALUES(
 INSERT INTO coral_attribute_class VALUES(
 		8, 
 		'resource_class',
-		'org.objectledge.coral.schema.ResorceClass', 
+		'org.objectledge.coral.schema.ResourceClass', 
 		'org.objectledge.coral.datatypes.ResourceClassAttributeHandler',
 		'coral_attribute_resource_class');
 
