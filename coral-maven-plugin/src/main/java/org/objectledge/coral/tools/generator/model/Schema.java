@@ -39,7 +39,7 @@ import org.objectledge.coral.entity.EntityExistsException;
  * Represents a Coral Schema.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Schema.java,v 1.6 2004-03-24 15:39:46 fil Exp $
+ * @version $Id: Schema.java,v 1.7 2004-05-07 10:07:21 fil Exp $
  */
 public class Schema
 {
@@ -136,7 +136,7 @@ public class Schema
         ResourceClass result = (ResourceClass)resourceClasses.get(name); 
         if(result == null)
         {
-            throw new EntityDoesNotExistException("attribute class "+name+" not found"); 
+            throw new EntityDoesNotExistException("resource class "+name+" not found"); 
         }
         return result;
     }
