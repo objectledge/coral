@@ -10,7 +10,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchema.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: CoralSchema.java,v 1.3 2004-03-02 12:18:19 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSchema
@@ -182,15 +182,20 @@ public interface CoralSchema
         throws SchemaIntegrityException;
 
     /**
+     * Changes the domain of the attribute.
+     *
+     * @param attribute the attribute to modify.
+     * @param domain the new domain of the attirbute.
+     */
+    public void setDomain(AttributeDefinition attribute, String domain);
+
+    /**
      * Changes the flags of the attribute.
      *
      * @param attribute the attribute to modify.
      * @param flags the new value of flags.
-     * @throws SchemaIntegrityException if performing the operation would
-     *         introduce schema incositencies.
      */
-    public void setFlags(AttributeDefinition attribute, int flags)
-        throws SchemaIntegrityException;
+    public void setFlags(AttributeDefinition attribute, int flags);
                         
     // Resource classes //////////////////////////////////////////////////////
 
