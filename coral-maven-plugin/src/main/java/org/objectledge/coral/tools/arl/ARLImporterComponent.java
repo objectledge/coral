@@ -58,7 +58,7 @@ import org.objectledge.utils.StringUtils;
  * Performs importing data from old style ARL schema database to brand new CORAL scheme.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ARLImporterComponent.java,v 1.9 2005-01-26 03:32:34 rafal Exp $
+ * @version $Id: ARLImporterComponent.java,v 1.10 2005-01-28 02:46:57 rafal Exp $
  */
 public class ARLImporterComponent
 {
@@ -146,7 +146,12 @@ public class ARLImporterComponent
     /**
      * Performs arl importing.
      * 
+     * @param mappingFile the path of configuration file
+     * @param arlSchema should ARL core schema be imported?
+     * @param appSchema should application schema (resource classes, permissions) be imported?
+     * @param appData should application data (subjects, roles, resources, grants) be imported?
      * @throws Exception if the generation fails for some reason.
+     * @return unused true value (?)
      */
     public boolean execute(String mappingFile, boolean arlSchema, boolean appSchema, 
         boolean appData)
@@ -1669,7 +1674,7 @@ public class ARLImporterComponent
             + "rc.resource_class_id = ad.resource_class_id AND " + "ad.attribute_class_id = "
             + acId;
         rs = sourceStmt.executeQuery(query);
-        Map adMap = new HashMap();
+        Map xrefToRelation = new HashMap();
         while(rs.next())
         {
             String className = rs.getString("name");
@@ -1677,10 +1682,10 @@ public class ARLImporterComponent
             long adId = rs.getLong("attribute_definition_id");
             String relationName = resolveCrossReference(className, attributeName);
             System.out.println("XREF Mapping: " + adId + " => " + relationName);
-            adMap.put(new Long(adId), relationName);
+            xrefToRelation.put(new Long(adId), relationName);
         }
 
-        Iterator it = adMap.keySet().iterator();
+        Iterator it = xrefToRelation.keySet().iterator();
         int relationId = 0;
         query = "SELECT cr.resource1, cr.resource2, gr.data_key AS grdatakey FROM "
             + "arl_attribute_cross_reference cr, " + "arl_generic_resource gr WHERE "
@@ -1688,7 +1693,7 @@ public class ARLImporterComponent
         while(it.hasNext())
         {
             Long adId = (Long)it.next();
-            String relationName = (String)adMap.get(adId);
+            String relationName = (String)xrefToRelation.get(adId);
             /**
              if(relationName.trim().equals("IGNORE"))
              {
@@ -1901,29 +1906,29 @@ public class ARLImporterComponent
      */
     private class ResourceData
     {
-        long resourceId;
+        private long resourceId;
 
-        Long resourceIdLong;
+        private Long resourceIdLong;
 
-        long resourceClassId;
+        private long resourceClassId;
 
-        Long resourceClassIdLong;
+        private Long resourceClassIdLong;
 
-        long parent;
+        private long parent;
 
-        Long parentLong;
+        private Long parentLong;
 
-        String name;
+        private String name;
 
-        long createdBy;
+        private long createdBy;
 
-        Date creationTime;
+        private Date creationTime;
 
-        long ownedBy;
+        private long ownedBy;
 
-        long modifiedBy;
+        private long modifiedBy;
 
-        Date modificationTime;
+        private Date modificationTime;
 
         public ResourceData(ResultSet rs)
             throws Exception
