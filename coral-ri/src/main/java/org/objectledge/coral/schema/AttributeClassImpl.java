@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.1 2004-02-20 12:54:24 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.2 2004-02-20 13:32:52 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -22,7 +22,7 @@ public class AttributeClassImpl
     implements AttributeClass,
                AttributeClassChangeListener
 {
-    // Memeber variables /////////////////////////////////////////////////////
+    // Instance variables ///////////////////////////////////////////////////////////////////////
     
     /** Instantiator. */
     private Instantiator instantiator;
@@ -39,7 +39,7 @@ public class AttributeClassImpl
     /** The associated database table. */
     private String dbTable;
     
-    // Initialization ////////////////////////////////////////////////////////
+    // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Constructs a {@link AttributeClassImpl}.
@@ -82,7 +82,7 @@ public class AttributeClassImpl
         setHandlerClass(handlerClass);
     }
 
-    // Persistent interface //////////////////////////////////////////////////
+    // Persistent interface /////////////////////////////////////////////////////////////////////
 
     /** The key columns. */
     private static final String[] KEY_COLUMNS = { "attribute_class_id" };
@@ -151,7 +151,7 @@ public class AttributeClassImpl
         eventHub.getInbound().addAttributeClassChangeListener(this, this);
     }
     
-    // AttributeClassChangeListener interface ///////////////////////////////////////
+    // AttributeClassChangeListener interface ///////////////////////////////////////////////////
 
     /**
      * Called when <code>AttributeClass</code>'s data change.
@@ -173,7 +173,7 @@ public class AttributeClassImpl
         }
     }
 
-    // AttributeClass interface //////////////////////////////////////////////
+    // AttributeClass interface /////////////////////////////////////////////////////////////////
 
     /**
      * Returns the Java class that is associated with this resource attribute
@@ -210,7 +210,7 @@ public class AttributeClassImpl
         return dbTable;
     }
     
-    // Package private setter methods ////////////////////////////////////////
+    // Package private setter methods ///////////////////////////////////////////////////////////
 
     /**
      * Sets the Java class that is associated with this resource attribute

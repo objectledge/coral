@@ -9,14 +9,14 @@ import org.objectledge.database.persistence.PersistentObject;
 /**
  * A base of all ARL entitity implementations.
  *
- * @version $Id: AbstractEntity.java,v 1.1 2004-02-20 12:25:02 fil Exp $
+ * @version $Id: AbstractEntity.java,v 1.2 2004-02-20 13:32:51 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractEntity
     extends PersistentObject
     implements Entity
 {
-    // Member objects ////////////////////////////////////////////////////////
+    // Instance variables ///////////////////////////////////////////////////////////////////////
 
     /** The persistence system. */
     protected Persistence persistence;
@@ -27,7 +27,7 @@ public abstract class AbstractEntity
     /** The name of the entity. */
     protected String name;
 
-    // Initialization ////////////////////////////////////////////////////////
+    // Initialization ///////////////////////////////////////////////////////////////////////////
     
     /**
      * Constructs an entity
@@ -54,7 +54,7 @@ public abstract class AbstractEntity
         this.name = null;
     }
 
-    // Hashing & equality ////////////////////////////////////////////////////
+    // Hashing & equality ///////////////////////////////////////////////////////////////////////
 
     /**
      * Returs the hashcode for this entity.
@@ -109,7 +109,7 @@ public abstract class AbstractEntity
         return buff.toString();
     }
 
-    // Persistent interface //////////////////////////////////////////////////
+    // Persistent interface /////////////////////////////////////////////////////////////////////
 
     /** 
      * Returns the name of the primary key column.
@@ -168,7 +168,7 @@ public abstract class AbstractEntity
         this.id = id;
     }
 
-    // Entity inteface ///////////////////////////////////////////////////////
+    // Entity inteface //////////////////////////////////////////////////////////////////////////
     
     /**
      * Returns the numerical identifier of the entity.
@@ -190,7 +190,7 @@ public abstract class AbstractEntity
         return name;
     }
     
-    // Package private setter methods ////////////////////////////////////////
+    // Package private setter methods ///////////////////////////////////////////////////////////
 
     /**
      * Sets the numerical identifier of the entity.

@@ -11,15 +11,14 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Base of {@link Assignment} implementations.
  *
- * @version $Id: AbstractAssignment.java,v 1.1 2004-02-20 12:25:02 fil Exp $
+ * @version $Id: AbstractAssignment.java,v 1.2 2004-02-20 13:32:51 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractAssignment
     extends AbstractAssociation
     implements Assignment
 {
-    // Member objects ////////////////////////////////////////////////////////
-
+    // Member objects ///////////////////////////////////////////////////////////////////////////
 
     /** CoralSecurity. */
     protected CoralSecurity security;
@@ -30,7 +29,7 @@ public abstract class AbstractAssignment
     /** Grant time*/
     protected Date grantTime;
 
-    // Initialization ////////////////////////////////////////////////////////
+    // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Constructs an assignment.
@@ -55,7 +54,7 @@ public abstract class AbstractAssignment
         this.grantTime = grantTime;
     }
 
-    // Persistent interface //////////////////////////////////////////////////
+    // Persistent interface /////////////////////////////////////////////////////////////////////
 
     /**
      * Stores the fields of the object into the specified record.
@@ -100,7 +99,7 @@ public abstract class AbstractAssignment
         grantTime = record.getDate("grant_time");
     }
 
-    // Assignment interface /////////////////////////////////////////////////
+    // Assignment interface /////////////////////////////////////////////////////////////////////
     
     /**
      * Returns the {@link Subject} that created this assignment.
@@ -122,7 +121,7 @@ public abstract class AbstractAssignment
         return grantTime;
     }
     
-    // implementation specific ///////////////////////////////////////////////
+    // implementation specific //////////////////////////////////////////////////////////////////
 
     /**
      * Sets the {@link Subject} that created this assignment.
