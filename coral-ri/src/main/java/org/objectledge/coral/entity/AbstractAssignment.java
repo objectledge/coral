@@ -11,7 +11,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Base of {@link Assignment} implementations.
  *
- * @version $Id: AbstractAssignment.java,v 1.2 2004-02-20 13:32:51 fil Exp $
+ * @version $Id: AbstractAssignment.java,v 1.3 2004-02-23 09:15:20 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractAssignment
@@ -21,7 +21,7 @@ public abstract class AbstractAssignment
     // Member objects ///////////////////////////////////////////////////////////////////////////
 
     /** CoralSecurity. */
-    protected CoralSecurity security;
+    protected CoralSecurity coralSecurity;
 
     /** The grantor */
     protected Subject grantor;
@@ -38,7 +38,7 @@ public abstract class AbstractAssignment
      */
     public AbstractAssignment(CoralSecurity security) 
     {
-        this.security = security;
+        this.coralSecurity = security;
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class AbstractAssignment
         long grantorId = record.getLong("grantor");
         try
         {
-            grantor = security.getSubject(grantorId);
+            grantor = coralSecurity.getSubject(grantorId);
         }
         catch(EntityDoesNotExistException e)
         {
