@@ -6,7 +6,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: Subject.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: Subject.java,v 1.3 2004-02-19 11:02:22 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Subject
@@ -16,7 +16,7 @@ public interface Subject
     public static final long ROOT = 1L;
     
     /**
-     * Returns the role assigments made for this <code>Subject.</code>
+     * Returns the role assigments made for this <code>Subject</code>.
      *
      * <p>Use this method to acquire information about explicit role grants.</p>
      *

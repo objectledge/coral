@@ -8,7 +8,7 @@ import org.objectledge.coral.store.Resource;
  * Permission}s upon {@link Resource}s are in turn assigned to
  * <code>Role</code>s. 
  *
- * @version $Id: Role.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: Role.java,v 1.3 2004-02-19 11:02:22 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Role
@@ -104,7 +104,7 @@ public interface Role
     
     /**
      * Returns <code>PermissionAssignments</code> defined for this role on a
-     * particular <code>Resource</code>
+     * particular <code>Resource</code>.
      *
      * <p>Use this method to acquire information about explicit permission
      * grants on a specific resource.</p> 
