@@ -33,7 +33,7 @@ import org.jmock.builder.Mock;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventLoggerTest.java,v 1.1 2004-02-27 12:41:33 fil Exp $
+ * @version $Id: CoralEventLoggerTest.java,v 1.2 2004-02-27 15:21:14 fil Exp $
  */
 public class CoralEventLoggerTest 
     extends CoralEventTestCase
@@ -196,6 +196,14 @@ public class CoralEventLoggerTest
         
         mockLogger.expect(once()).method("info").with(eq("Coral event: ResourceDeletion(#1, false)"));
         coralEventLogger.resourceDeleted(resource);                
+    }
+
+    public void testResourceTreeDeleted()
+    {
+        mockResource.expect(once()).method("getId").will(returnValue(1L));
+        
+        mockLogger.expect(once()).method("info").with(eq("Coral event: ResourceTreeDeletion(#1, false)"));
+        coralEventLogger.resourceTreeDeleted(resource);                
     }
     
     public void testResourceClassChanged()
