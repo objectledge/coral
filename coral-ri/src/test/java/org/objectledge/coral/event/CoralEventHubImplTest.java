@@ -27,32 +27,124 @@
 // 
 package org.objectledge.coral.event;
 
-import org.jmock.builder.MockObjectTestCase;
+import java.lang.reflect.Method;
+
+import org.apache.log4j.BasicConfigurator;
+import org.jcontainer.dna.Logger;
+import org.jcontainer.dna.impl.Log4JLogger;
+import org.jmock.builder.Mock;
+import org.objectledge.context.Context;
+import org.objectledge.coral.security.PermissionAssociation;
+import org.objectledge.event.DelegatingEventWhiteboard;
 import org.objectledge.event.EventWhiteboard;
+import org.objectledge.event.EventWhiteboardFactory;
+import org.objectledge.threads.ThreadPool;
 
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventHubImplTest.java,v 1.2 2004-03-01 13:33:48 fil Exp $
+ * @version $Id: CoralEventHubImplTest.java,v 1.3 2004-03-01 15:35:02 fil Exp $
  */
 public class CoralEventHubImplTest
-    extends MockObjectTestCase
+    extends CoralEventTestCase
 {
+    private CoralEventHub coralEventHub;
+    
+    private ThreadPool threadPool;
+    
+    private EventWhiteboard inboundBridge;
+    
+    private EventWhiteboard outboundBridge;
+    
+    private Method permissionAssociationsChanged;
+
+    Mock mockLocalPermissionAssociationChangeListener;
+    PermissionAssociationChangeListener localPermissionAssociationChangeListener; 
+    Mock mockGlobalPermissionAssociationChangeListener;
+    PermissionAssociationChangeListener globalPermissionAssociationChangeListener; 
+    Mock mockOutboundPermissionAssociationChangeListener;
+    PermissionAssociationChangeListener outboundPermissionAssociationChangeListener; 
+    Mock mockInboundPermissionAssociationChangeListener;
+    PermissionAssociationChangeListener inboundPermissionAssociationChangeListener; 
+    
     public void setUp()
         throws Exception
     {
-        super.setUp(); 
+        super.setUp();
+        
+        BasicConfigurator.resetConfiguration();
+        BasicConfigurator.configure();
+        Logger log = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
+        threadPool = new ThreadPool(null, new Context(), null, log);
+        EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, log,
+             threadPool);
+        PassthroughEventBridge passthroughEventBridge = new PassthroughEventBridge();
+        inboundBridge = passthroughEventBridge.getInbound();
+        outboundBridge = passthroughEventBridge.getOutbound();
+        coralEventHub = new CoralEventHubImpl(eventWhiteboardFactory, passthroughEventBridge);
+
+        mockLocalPermissionAssociationChangeListener = new Mock(PermissionAssociationChangeListener.class, "localPermissionAssociationChangeListener");
+        localPermissionAssociationChangeListener = (PermissionAssociationChangeListener)mockLocalPermissionAssociationChangeListener.proxy(); 
+        mockGlobalPermissionAssociationChangeListener = new Mock(PermissionAssociationChangeListener.class, "globalPermissionAssociationChangeListener");
+        globalPermissionAssociationChangeListener = (PermissionAssociationChangeListener)mockGlobalPermissionAssociationChangeListener.proxy(); 
+        mockOutboundPermissionAssociationChangeListener = new Mock(PermissionAssociationChangeListener.class, "outboundPermissionAssociationChangeListener");
+        outboundPermissionAssociationChangeListener = (PermissionAssociationChangeListener)mockOutboundPermissionAssociationChangeListener.proxy(); 
+        mockInboundPermissionAssociationChangeListener = new Mock(PermissionAssociationChangeListener.class, "inboundPermissionAssociationChangeListener");
+        inboundPermissionAssociationChangeListener = (PermissionAssociationChangeListener)mockInboundPermissionAssociationChangeListener.proxy(); 
+
+        coralEventHub.getLocal().addPermissionAssociationChangeListener(localPermissionAssociationChangeListener, permission);
+        coralEventHub.getGlobal().addPermissionAssociationChangeListener(globalPermissionAssociationChangeListener, permission);
+        coralEventHub.getInbound().addPermissionAssociationChangeListener(localPermissionAssociationChangeListener, permission);
+        outboundBridge.addListener(PermissionAssociationChangeListener.class, outboundPermissionAssociationChangeListener, permission);
+
+        mockPermissionAssociation.stub().method("getResourceClass").will(returnValue(resourceClass));
+        mockPermissionAssociation.stub().method("getPermission").will(returnValue(permission));
+        
+
+        permissionAssociationsChanged = PermissionAssociationChangeListener.class.
+            getDeclaredMethod("permissionsChanged", new Class[] {PermissionAssociation.class, Boolean.TYPE });
+
+    }
+    
+    public void tearDown()
+    {
+        threadPool.stop();
     }
     
     private class PassthroughEventBridge
         implements CoralEventBridge
     {
-        private EventWhiteboard in;
+        private DelegatingEventWhiteboard in;
         
-        private EventWhiteboard out;
+        private DelegatingEventWhiteboard out;
         
-        public PassthroughEventBridge(EventWhiteboard in, EventWhiteboard out)
+        /**
+         * Creates a passthrough bridge;
+         */
+        public PassthroughEventBridge()
         {
+            in = new DelegatingEventWhiteboard(null);
+            out = new DelegatingEventWhiteboard(null);
+        }
+
+        /**
+         * Returns the inbound forwarder.
+         * 
+         * @return the inbound forwarder.
+         */        
+        public EventWhiteboard getInbound()
+        {
+            return in;
+        }
+        
+        /**
+         * Returns the outbound forwarder.
+         * 
+         * @return the outbound forwarder.
+         */        
+        public EventWhiteboard getOutbound()
+        {
+            return out;
         }
         
         /** 
@@ -60,8 +152,8 @@ public class CoralEventHubImplTest
          */
         public void attach(EventWhiteboard in, EventWhiteboard out)
         {
-            // TODO Auto-generated method stub
-
+            this.in.swap(in);
+            this.out.swap(out);
         }
 
         /** 
@@ -69,8 +161,38 @@ public class CoralEventHubImplTest
          */
         public void detach()
         {
-            // TODO Auto-generated method stub
-
+            in.swap(null);
+            out.swap(null);
         }
+    }
+    
+    // tests ////////////////////////////////////////////////////////////////////////////////////
+    
+    public void testInbound()
+    {
+        mockLocalPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockGlobalPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+
+        inboundBridge.fireEvent(permissionAssociationsChanged, new Object[] {permissionAssociation, Boolean.TRUE}, permission);
+        // inboundBridge -> eventHub.inbound, eventHub.global
+    }
+    
+    public void testLocal()
+    {
+        mockLocalPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockGlobalPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+
+        coralEventHub.getLocal().firePermissionAssociationChangeEvent(permissionAssociation, true);
+        // eventHub.local -> eventHub.local, eventHub.global       
+    }
+    
+    public void testGlobal()
+    {
+        mockLocalPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockGlobalPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+        mockOutboundPermissionAssociationChangeListener.expect(once()).method("permissionsChanged").with(same(permissionAssociation), eq(true));
+
+        coralEventHub.getGlobal().firePermissionAssociationChangeEvent(permissionAssociation, true);
+        // eventHub.global -> eventHub.local, eventHub.global, outboundBridge               
     }
 }
