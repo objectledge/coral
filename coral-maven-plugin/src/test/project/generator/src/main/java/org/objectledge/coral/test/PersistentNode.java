@@ -28,6 +28,10 @@
  
 package org.objectledge.coral.test;
 
+import java.util.Date;
+
+import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 
 /**
@@ -42,6 +46,72 @@ public interface PersistentNode
 
     /** The name of the ARL resource class. */    
     public static final String CLASS_NAME = "coral.test.PersistentNode";
- 
+     /**
+     * Returns the path name of the resource.
+     *
+     * <p>The path name is composed of the names of all of the resource's
+     * parents, separated by / characters. If the top level parent (resource
+     * that has <code>null</code> parent) is the 'root' resource #1, the
+     * pathname will start with a /. Please note that the pathname can also
+     * denote other resources than this one, unless all resources in your
+     * system have unique names.</p>
+     *
+     * @return the pathname of the resource.
+     */
+    public String getPath();
+    
+    /**
+     * Returns the parent resource.
+     *
+     * <p><code>null</code> is returned for top-level (root)
+     * resources. Depending on the application one or more top-level resources
+     * exist in the system.</p>
+     *
+     * @return the parent resource.
+     */
+    public Resource getParent();
+
+	/**
+     * Returns the class this resource belongs to.
+     *
+     * @return the class this resource belongs to.
+     */
+    public ResourceClass getResourceClass();
+
+    /**
+     * Returns the owner of the resource.
+     *
+     * @return the owner of the resource.
+     */
+    public Subject getOwner();	
+
+	/**
+     * Returns the {@link Subject} that created this resource.
+     *
+     * @return the {@link Subject} that created this resource.
+     */
+    public Subject getCreatedBy();
+    
+    /**
+     * Returns the creation time for this resource.
+     *
+     * @return the creation time for this resource.
+     */
+    public Date getCreationTime();
+
+    /**
+     * Returns the {@link Subject} that modified this resource most recently.
+     *
+     * @return the {@link Subject} that modified this resource most recently.
+     */
+    public Subject getModifiedBy();
+
+    /**
+     * Returns the last modification time for this resource.
+     *
+     * @return the last modification time for this resource.
+     */
+    public Date getModificationTime();
+
     // @custom methods ///////////////////////////////////////////////////////
 }

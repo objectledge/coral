@@ -55,7 +55,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.26 2004-12-21 10:48:43 rafal Exp $
+ * @version $Id: GeneratorComponent.java,v 1.27 2004-12-23 03:35:21 rafal Exp $
  */
 public class GeneratorComponent
 {
@@ -579,6 +579,7 @@ public class GeneratorComponent
         else
         {
             context.put("implParentClass", resolvePrimaryParentClass(rc));
+            context.put("emitBuiltins", Boolean.TRUE);
         }
         
         context.put("imports", imports);
