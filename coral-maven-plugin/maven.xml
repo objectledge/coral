@@ -28,13 +28,35 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.1 2004-03-22 11:54:50 fil Exp $ -->
+<!-- $Id: maven.xml,v 1.2 2004-03-31 13:25:51 fil Exp $ -->
 <project xmlns:j="jelly:core"
-         xmlns:ant="jelly:ant">
+         xmlns:m="jelly:maven"
+         xmlns:util="jelly:util">
+         
   <postGoal name="xdoc:register-reports">
     <attainGoal name="maven-findbugs-plugin:register"/>
-    <!--
     <attainGoal name="maven-clover-plugin:register"/>
-    -->
   </postGoal>
+
+  <postGoal name="plugin:install">
+    <!-- run in separate process, so that plugin cache is regenerated -->
+    <exec 
+      executable="maven"
+      failOnError="true">
+      <arg value="-d ${basedir}"/>
+      <j:if test="${!maven.mode.online}">
+        <arg value="-o"/>
+      </j:if>
+      <arg value="plugin:testPluginFeatures"/>
+    </exec>
+  </postGoal>
+ 
+  <goal name="plugin:testPluginFeatures">
+    <m:reactor 
+      basedir="src/test/project"
+      includes="*/project.xml"
+      goals="clean,plugin:testPluginFeature"
+      ignoreFailures="false"/>
+  </goal>
+  
 </project>
