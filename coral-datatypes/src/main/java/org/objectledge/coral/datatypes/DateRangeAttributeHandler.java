@@ -18,7 +18,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link DateRange} objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateRangeAttributeHandler.java,v 1.5 2004-05-06 13:41:12 pablo Exp $
+ * @version $Id: DateRangeAttributeHandler.java,v 1.6 2004-10-05 07:39:10 rafal Exp $
  */
 public class DateRangeAttributeHandler
     extends AttributeHandlerBase
@@ -51,8 +51,8 @@ public class DateRangeAttributeHandler
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO "+getTable()+
             "(data_key, start_date, end_date) VALUES (?, ?, ?)");
         stmt.setLong(1, id);
-        stmt.setDate(2, new java.sql.Date(((DateRange)value).getStart().getTime()));
-        stmt.setDate(3, new java.sql.Date(((DateRange)value).getEnd().getTime()));
+        stmt.setTimestamp(2, new java.sql.Timestamp(((DateRange)value).getStart().getTime()));
+        stmt.setTimestamp(3, new java.sql.Timestamp(((DateRange)value).getEnd().getTime()));
         stmt.execute();
         stmt.close();
         return id;
@@ -87,8 +87,8 @@ public class DateRangeAttributeHandler
         stmt.close();
         PreparedStatement pstmt = conn.prepareStatement("UPDATE "+getTable()+
             " SET start_date = ?, end_date = ? WHERE data_key = ?");
-        pstmt.setDate(1, new java.sql.Date(((DateRange)value).getStart().getTime()));
-        pstmt.setDate(2, new java.sql.Date(((DateRange)value).getEnd().getTime()));
+        pstmt.setTimestamp(1, new java.sql.Timestamp(((DateRange)value).getStart().getTime()));
+        pstmt.setTimestamp(2, new java.sql.Timestamp(((DateRange)value).getEnd().getTime()));
         pstmt.setLong(3, id);
         pstmt.execute();
         pstmt.close();

@@ -19,7 +19,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistency of <code>java.util.Date</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DateAttributeHandler.java,v 1.4 2004-05-06 13:25:27 pablo Exp $
+ * @version $Id: DateAttributeHandler.java,v 1.5 2004-10-05 07:41:24 rafal Exp $
  */
 public class DateAttributeHandler
     extends AttributeHandlerBase
@@ -52,7 +52,7 @@ public class DateAttributeHandler
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO "+getTable()+
             "(data_key, data) VALUES (?, ?)");
         stmt.setLong(1, id);
-        stmt.setDate(2, new java.sql.Date(((Date)value).getTime()));
+        stmt.setTimestamp(2, new java.sql.Timestamp(((Date)value).getTime()));
         stmt.execute();
         return id;
     }
@@ -89,7 +89,7 @@ public class DateAttributeHandler
             checkExists(id, stmt);
             pstmt = conn.prepareStatement("UPDATE "+getTable()+" SET data = ?"+
                 " WHERE data_key = ?");
-            pstmt.setDate(1, new java.sql.Date(((Date)value).getTime()));
+            pstmt.setTimestamp(1, new java.sql.Timestamp(((Date)value).getTime()));
             pstmt.setLong(2, id);
             pstmt.execute();
         }
