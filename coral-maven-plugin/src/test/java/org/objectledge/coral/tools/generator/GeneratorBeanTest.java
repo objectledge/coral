@@ -43,26 +43,17 @@ public class GeneratorBeanTest extends LedgeTestCase
         generatorBean = new GeneratorBean();
     }
     
-    public void testInitTemplating()
+    public void testIntegartion()
         throws Exception
     {
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
-        Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
-        FileSystem fileSystem = FileSystem.getStandardFileSystem(".");
-        Templating templating = generatorBean.initTemplating(fileSystem, logger);
-        templating.getTemplate("org/objectledge/coral/tools/generator/Interface");
-        templating.getTemplate("org/objectledge/coral/tools/generator/GenericImpl");
-    }
-    
-    public void testSetters()
-    {
-        // guess i'm a coverage junkie
-        generatorBean.setBaseDir(null);
-        generatorBean.setFileEncoding(null);
-        generatorBean.setLicensePath(null);
-        generatorBean.setPackagePrefices(null);
-        generatorBean.setSourceFiles(null);
-        generatorBean.setTargetDir(null);
+        generatorBean.setBaseDir("src/test/project/generator");
+        generatorBean.setFileEncoding("UTF-8");
+        generatorBean.setLicensePath("/LICENSE.txt");
+        generatorBean.setPackagePrefices("java.,javax.,org.objectledge.");
+        generatorBean.setSourceFiles("src/main/rmlSources.lst");
+        generatorBean.setTargetDir("src/main/java");
+        generatorBean.execute();
     }
 }

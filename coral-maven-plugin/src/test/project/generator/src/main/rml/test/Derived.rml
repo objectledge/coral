@@ -1,0 +1,7 @@
+CREATE RESOURCE CLASS coral.test.Derived
+	JAVA CLASS org.objectledge.coral.test.Derived
+	HANDLER CLASS org.objectledge.coral.datatypes.GenericResourceHandler
+	SUPERCLASSES ( coral.test.NoRequired )
+	ATTRIBUTES (
+		string s5
+	);

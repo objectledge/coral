@@ -1,0 +1,7 @@
+# from classpath
+rml/coral/CoralDatatypesInitial.rml
+# local
+src/main/rml/test/Test.rml
+src/main/rml/test/NoRequired.rml
+src/main/rml/test/Derived.rml
+src/main/rml/test/DerivedMultiple.rml
