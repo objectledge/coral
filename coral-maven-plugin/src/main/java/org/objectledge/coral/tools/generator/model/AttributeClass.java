@@ -31,7 +31,7 @@ package org.objectledge.coral.tools.generator.model;
  * Represents a Coral AttributeClass
  *  
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClass.java,v 1.3 2004-03-24 15:19:14 fil Exp $
+ * @version $Id: AttributeClass.java,v 1.4 2004-07-08 15:06:20 rafal Exp $
  */
 public class AttributeClass
     extends Entity
@@ -43,6 +43,9 @@ public class AttributeClass
     
     /** The actual java class of the attribute. */
     private Class javaClass;
+    
+    /** SQL info for the attribute class. */
+    private AttributeSQLInfo sqlInfo;
     
     // constructors /////////////////////////////////////////////////////////////////////////////
 
@@ -88,6 +91,16 @@ public class AttributeClass
         return javaClass;
     }
     
+    /**
+     * Returns the SQL Information for the attribute class.
+     * 
+     * @return the SQL Information for the attribute class.
+     */
+    public AttributeSQLInfo getSQLInfo()
+    {
+        return sqlInfo;
+    }
+
     // mutators /////////////////////////////////////////////////////////////////////////////////
     
     /**
@@ -101,5 +114,15 @@ public class AttributeClass
     {
         this.javaClassName = javaClassName; 
         javaClass = Class.forName(javaClassName);
+    }
+    
+    /**
+     * Sets the SQL information for the attribute class.
+     * 
+     * @param sqlInfo the SQL information for the attribute class.
+     */
+    public void setSQLInfo(AttributeSQLInfo sqlInfo)
+    {
+        this.sqlInfo = sqlInfo;
     }
 }

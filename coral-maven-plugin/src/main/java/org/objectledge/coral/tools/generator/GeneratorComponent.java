@@ -54,7 +54,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.20 2004-07-08 13:48:23 rafal Exp $
+ * @version $Id: GeneratorComponent.java,v 1.21 2004-07-08 15:06:20 rafal Exp $
  */
 public class GeneratorComponent
 {
@@ -211,6 +211,7 @@ public class GeneratorComponent
         throws Exception
     {
         loadSources(sourceFiles);
+        loadSQLInfo("sql/coral/CoralDatatypesAttributes.properties");
         List resourceClasses = schema.getResourceClasses();
         for(Iterator i = resourceClasses.iterator(); i.hasNext();)
         {
@@ -346,6 +347,25 @@ public class GeneratorComponent
         throws Exception
     {
         batchLoader.loadBatch(path);
+    }
+    
+    void loadSQLInfo(String path)
+    	throws Exception
+    {
+        if(!fileSystem.exists(path))
+        {
+            throw new Exception("missing attribute SQL info file "+path);
+        }
+        Reader reader = fileSystem.getReader(path, fileEncoding);
+        try
+        {
+            AttributeSQLInfoLoader sqlInfoLoader = new AttributeSQLInfoLoader(schema);
+            sqlInfoLoader.load(reader);
+        }
+        catch(IOException e)
+        {
+            throw new Exception("failed to load atrribute SQL info file "+path, e);
+        }
     }
 
     String classInterfacePath(ResourceClass rc)
