@@ -40,7 +40,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionFactoryImpl.java,v 1.4 2004-03-18 11:33:52 fil Exp $
+ * @version $Id: CoralSessionFactoryImpl.java,v 1.5 2004-06-28 07:58:35 fil Exp $
  */
 public class CoralSessionFactoryImpl implements CoralSessionFactory
 {
@@ -56,7 +56,9 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
     public CoralSessionFactoryImpl(CoralCore coral)
     {
         this.coral = coral;
-        pool = new GenericKeyedObjectPool(new Factory());
+        GenericKeyedObjectPool.Config poolConfig = new GenericKeyedObjectPool.Config();
+        poolConfig.whenExhaustedAction = GenericKeyedObjectPool.WHEN_EXHAUSTED_GROW;
+        pool = new GenericKeyedObjectPool(new Factory(), poolConfig);
     }
     
     /** 
