@@ -28,6 +28,8 @@
 package org.objectledge.coral.touchstone.level0;
 
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
 
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTable;
@@ -45,7 +47,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationTest.java,v 1.5 2005-03-29 12:53:04 zwierzem Exp $
+ * @version $Id: CoralRelationTest.java,v 1.6 2005-03-29 13:23:19 rafal Exp $
  */
 public class CoralRelationTest extends CoralTestCase
 {
@@ -138,17 +140,11 @@ public class CoralRelationTest extends CoralTestCase
 			// ok
 		}
 		
-		Relation[] relations = session.getRelationManager().getRelation();
-		assertEquals(relations.length, 3);
-            // the org.objectledge.coral.relation.ResourceHierarchyRelationImpl is also returned
-		if(relations[0].equals(relation))
-		{
-			assertEquals(relations[1], relation2);
-		}
-		else if(relations[0].equals(relation2))
-		{
-			assertEquals(relations[1], relation);
-		}
+		List<Relation> relations = Arrays.asList(session.getRelationManager().getRelation());
+        // coral.ResourceHierarchy relation is also returned
+		assertEquals(relations.size(), 3);
+        assertTrue(relations.contains(relation));
+        assertTrue(relations.contains(relation2));
 		
 		session.getRelationManager().setName(relation2, "newRelation");
 		expectedTable = new DefaultTable("coral_relation",
