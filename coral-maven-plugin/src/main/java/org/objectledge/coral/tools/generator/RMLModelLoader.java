@@ -28,6 +28,7 @@
 package org.objectledge.coral.tools.generator;
 
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +72,7 @@ import org.objectledge.coral.tools.generator.model.Schema;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLModelLoader.java,v 1.1 2004-03-22 14:52:05 fil Exp $
+ * @version $Id: RMLModelLoader.java,v 1.2 2004-03-22 15:10:26 fil Exp $
  */
 public class RMLModelLoader
 {
@@ -114,9 +115,22 @@ public class RMLModelLoader
     }
 
     /**
+     * Processes a script.
+     * 
+     * @param in the script in String form.
+     * @throws Exception if there is a problem parsing or executing the script.
+     */
+    public void process(String in)
+        throws Exception
+    {
+        process(new StringReader(in));
+    }
+
+
+    /**
      * 
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
-     * @version $Id: RMLModelLoader.java,v 1.1 2004-03-22 14:52:05 fil Exp $
+     * @version $Id: RMLModelLoader.java,v 1.2 2004-03-22 15:10:26 fil Exp $
      */
     private class RMLVisistor extends DefaultRMLVisitor
     {
