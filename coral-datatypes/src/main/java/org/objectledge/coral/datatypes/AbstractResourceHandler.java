@@ -28,7 +28,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.4 2004-08-23 08:27:09 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.5 2004-12-21 08:31:55 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -281,6 +281,7 @@ public abstract class AbstractResourceHandler
      *
      * @param rc the resource class to revert.
      * @param conn the JDBC connection to use.
+     * @throws SQLException if the database operation fails.
      */
     protected synchronized void revert(ResourceClass rc, Connection conn)
         throws SQLException
@@ -300,7 +301,23 @@ public abstract class AbstractResourceHandler
         }
     }
     
+    /**
+     * Retrieve attribute information for a specific resource.
+     * 
+     * @param delegate the security delegate object.
+     * @param conn database connection.
+     * @return opaque data object.
+     * @throws SQLException if information retrieval fails.
+     */
     protected abstract Object getData(Resource delegate, Connection conn) throws SQLException;
 
+    /**
+     * Retrieve attribute information for resources of a specific class.
+     * 
+     * @param rc the resource class.
+     * @param conn database connection.
+     * @return opaque data object.
+     * @throws SQLException if information retrieval fails.
+     */
     protected abstract Object getData(ResourceClass rc, Connection conn) throws SQLException;
 }

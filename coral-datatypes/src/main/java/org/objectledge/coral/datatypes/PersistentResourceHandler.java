@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
-import org.objectledge.ComponentInitializationError;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
@@ -27,7 +26,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.12 2004-08-27 08:33:59 rafal Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.13 2004-12-21 08:31:55 rafal Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -164,11 +163,16 @@ public class PersistentResourceHandler
         }
     }
     
-    protected Object getData(Resource delegate, Connection conn) throws SQLException
+    /**
+     * {@inheritDoc}
+     */
+    protected Object getData(Resource delegate, Connection conn) 
+        throws SQLException
     {
     	try
 		{
-    		Persistent instance = (Persistent)instantiator.newInstance(resourceClass.getJavaClass());
+    		Persistent instance = (Persistent)instantiator.
+                newInstance(resourceClass.getJavaClass());
     		((PersistentResource)instance).initPersistence(delegate.getResourceClass());
             PreparedStatement statement = DefaultInputRecord.
         		getSelectStatement("resource_id = "+delegate.getId(), instance, conn);
@@ -185,10 +189,14 @@ public class PersistentResourceHandler
 		}
     	catch(org.objectledge.coral.InstantiationException e)
 		{
-    		throw (SQLException)new SQLException("failed to instantiate helper instance").initCause(e);
+    		throw (SQLException)new SQLException("failed to instantiate helper instance").
+                initCause(e);
 		}
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected Object getData(ResourceClass rc, Connection conn) throws SQLException
     {
         return null;

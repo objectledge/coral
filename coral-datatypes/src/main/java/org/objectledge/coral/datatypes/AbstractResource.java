@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.12 2004-08-23 11:42:33 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.13 2004-12-21 08:31:55 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -190,7 +190,8 @@ public abstract class AbstractResource implements Resource
         return facetClass;
     }
     
-    synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, Object data)
+    synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, 
+        Object data)
     	throws SQLException
     {
         ResourceClass[] parentClasses = getDirectParentClasses(rClass);
@@ -658,6 +659,12 @@ public abstract class AbstractResource implements Resource
 
     // implementation ///////////////////////////////////////////////////////////////////////////
     
+    /**
+     * Initialize attribute map of the resource wrapper.
+     * 
+     * @param delegate the security delegate object.
+     * @param rClass the resource class facet this wrapper represents.
+     */
     protected void initAttributeMap(Resource delegate, ResourceClass rClass)
     {
         this.delegate = delegate;
@@ -741,14 +748,44 @@ public abstract class AbstractResource implements Resource
     
     // subclass contract ////////////////////////////////////////////////////////////////////////
     
+    /**
+     * Check if the attribute value is defined in this wrapper.
+     * 
+     * @param attr the attribute defintion.
+     * @return <code>true</code> if the attribute value is defined in this wrapper.
+     */
     protected abstract boolean isDefinedLocally(AttributeDefinition attr);
 
+    /**
+     * Retrieve the attribute value defined in this wrapper.
+     * 
+     * @param attribute the attribute defintion.
+     * @return the attribute value is defined in this wrapper.
+     */
     protected abstract Object getLocally(AttributeDefinition attribute);
 
+    /**
+     * Set the attribute value in this wrapper.
+     * 
+     * @param attribute the attribute defintion.
+     * @param value the attribute value.
+     */
     protected abstract void setLocally(AttributeDefinition attribute, Object value);
 
+    /**
+     * Unset the attribute value in this wrapper.
+     * 
+     * @param attribute the attribute defintion.
+     */
     protected abstract void unsetLocally(AttributeDefinition attribute);
 
+    /**
+     * Lazy-load attribute value.
+     * 
+     * @param attribute the attribute definition.
+     * @param aId attribute value id.
+     * @return attribute value.
+     */
     protected Object loadAttribute(AttributeDefinition attribute, long aId)
     {
         Connection conn = null;
@@ -790,12 +827,7 @@ public abstract class AbstractResource implements Resource
     }
 
     /**
-     * Update the attribute.
-     * 
-     * @param attribute the attribute.
-     * @param id the id.
-     * @param value the atribute value.
-     * @return the attribute identifier, or null.
+     * {@inheritDoc}
      */
     protected Long updateAttribute(AttributeDefinition attribute, Long idObj, Object value)
     {

@@ -23,7 +23,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.9 2004-07-22 16:35:46 zwierzem Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.10 2004-12-21 08:31:55 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -364,12 +364,8 @@ public class GenericResourceHandler
     }
 
     /**
-     * Retrieve the data keys.
-     * 
-     * @param conn the connection.
-     * @return the map of data keys.
-     * @throws SQLException if happens.
-     */    
+     * {@inheritDoc}
+     */
     public Object getData(ResourceClass rc, Connection conn)
         throws SQLException
     {

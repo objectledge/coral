@@ -34,7 +34,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.14 2004-10-25 14:24:24 pablo Exp $
+ * @version $Id: PersistentResource.java,v 1.15 2004-12-21 08:31:55 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -65,15 +65,15 @@ public class PersistentResource
     /**
      * Constructor.
      * 
+     * @param coralSchema the Coral Schema
      * @param database the database.
      * @param logger the logger.
-     * @param resourceClass the resource class.
      */
     public PersistentResource(CoralSchema coralSchema, Database database, Logger logger)
     {
         super(database, logger);
-        // it would be better to have it passed through constructor. OTOH persistence is lightweitght
-        // and stateless so it's not much of a problem.
+        // it would be better to have it passed through constructor. OTOH persistence is 
+        // lightweitght and stateless so it's not much of a problem.
         persistence = new DefaultPersistence(database, logger);
     }
         
@@ -295,6 +295,9 @@ public class PersistentResource
         modified.add(attribute);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected Object loadAttribute(AttributeDefinition attribute, long aId)
     {
         if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
@@ -308,6 +311,9 @@ public class PersistentResource
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     protected void initAttributeMap(Resource delegate, ResourceClass resourceClass)
     {
     	super.initAttributeMap(delegate, resourceClass);
@@ -404,10 +410,10 @@ public class PersistentResource
                     }
                     else
                     {
-                        Long id = (Long)ids.get(attribute);
-                        if(id != null)
+                        Long attrId = (Long)ids.get(attribute);
+                        if(attrId != null)
                         {
-                            record.setLong(attribute.getName(), id.longValue());
+                            record.setLong(attribute.getName(), attrId.longValue());
                         }
                         else
                         {
@@ -417,11 +423,11 @@ public class PersistentResource
                 }
                 else
                 {
-                    Long id = (Long)ids.get(attribute);
-                    id = updateAttribute(attribute, id, value);
-                    if(id != null)
+                    Long attrId = (Long)ids.get(attribute);
+                    attrId = updateAttribute(attribute, attrId, value);
+                    if(attrId != null)
                     {
-                        record.setLong(attribute.getName(), id.longValue());
+                        record.setLong(attribute.getName(), attrId.longValue());
                     }
                     else
                     {

@@ -16,9 +16,7 @@ import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
-import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.ConstraintViolationException;
-import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
@@ -27,7 +25,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.13 2004-08-23 13:35:03 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.14 2004-12-21 08:31:55 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -43,6 +41,7 @@ public class GenericResource
     /**
      * Constructor.
      * 
+     * @param coralSchema the Coral Schema.
      * @param database the database.
      * @param logger the logger.
      */
@@ -53,6 +52,9 @@ public class GenericResource
 
     // Resource interface - attributes (implemented here) ////////////////////
 
+    /**
+     * {@inheritDoc}
+     */
     protected synchronized boolean isDefinedLocally(AttributeDefinition attribute)
         throws UnknownAttributeException
     {
@@ -66,6 +68,9 @@ public class GenericResource
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     protected synchronized Object getLocally(AttributeDefinition attribute)
         throws UnknownAttributeException
     {
@@ -97,18 +102,7 @@ public class GenericResource
     }
     
     /**
-     * Sets the value of a specific attribute.
-     * 
-     * @param attribute the attribute to set.
-     * @param value the value of the attribute.
-     * @throws UnknownAttributeException if <code>attribute</code> does not
-     *         belong to the resource's class.
-     * @throws ModificationNotPermitedException if <code>attribute</code> is
-     *         <code>READONLY</code>.
-     * @throws ValueRequiredException if <code>attribute</code> is
-     *         <code>REQUIRED</code> and <code>value</code> is
-     *         <code>null</code>.
-     * @throws ConstraintViolationException if contraints are being violated.
+     * {@inheritDoc}
      */
     protected synchronized void setLocally(AttributeDefinition attribute, Object value)
     {
@@ -117,13 +111,7 @@ public class GenericResource
     }
 
     /**
-     * Removes the value of the specified attribute.
-     *
-     * @param attribute the attribute to remove.
-     * @throws ValueRequiredException if the attribute is required for this
-     *         resource type.
-     * @throws UnknownAttributeException if <code>attribute</code> does not
-     *         belong to the resource's class.
+     * {@inheritDoc}
      */
     protected synchronized void unsetLocally(AttributeDefinition attribute)
     {
