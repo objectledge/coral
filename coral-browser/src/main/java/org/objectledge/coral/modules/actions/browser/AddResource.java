@@ -15,7 +15,7 @@ import org.objectledge.pipeline.ProcessingException;
  * Add resource action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddResource.java,v 1.2 2004-03-28 09:30:53 pablo Exp $
+ * @version $Id: AddResource.java,v 1.3 2004-04-22 18:00:25 zwierzem Exp $
  */
 public class AddResource extends BaseBrowserAction
 {
@@ -82,7 +82,7 @@ public class AddResource extends BaseBrowserAction
             AttributeDefinition[] attrDef = resourceClass.getAllAttributes();
             for (int i = 0; i < attrDef.length; i++)
             {
-                if (((attrDef[i].getFlags() & AttributeFlags.SYNTHETIC) == 0) && !attrDef[i].getDeclaringClass().getName().equals("node"))
+                if (((attrDef[i].getFlags() & AttributeFlags.SYNTHETIC) == 0) && !attrDef[i].getDeclaringClass().getName().equals("coral.Node"))
                 {
                     if (parameters.getBoolean("defined_" + attrDef[i].getName(), false))
                     {

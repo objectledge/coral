@@ -41,7 +41,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.11 2004-04-15 12:13:14 pablo Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.12 2004-04-22 18:02:43 zwierzem Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -975,7 +975,7 @@ public class CoralStoreImpl
             try
             {
                 Resource rootResource = getResource(1);
-                ResourceClass rc = coral.getSchema().getResourceClass("node");
+                ResourceClass rc = coral.getSchema().getResourceClass("coral.Node");
                 return createResource("tmp", rootResource, rc, new HashMap());
             }
             catch(Exception ee)
