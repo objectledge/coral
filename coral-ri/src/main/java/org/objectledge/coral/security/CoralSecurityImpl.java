@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.Persistence;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurityImpl.java,v 1.6 2004-12-27 05:17:23 rafal Exp $
+ * @version $Id: CoralSecurityImpl.java,v 1.7 2005-01-18 10:55:28 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSecurityImpl
@@ -591,7 +591,7 @@ public class CoralSecurityImpl
             {
                 throw new SecurityException(grantor.getName()+" is not allowed to "+
                                             "grant permissions on resource #"+
-                                            resource.getId());
+                                            resource.getIdString());
             }
         }
         if(!resource.getResourceClass().isAssociatedWith(permission))
@@ -625,7 +625,7 @@ public class CoralSecurityImpl
         {
             throw new SecurityException("role "+role.getName()+" does not have "+
                                         permission.getName()+" on resource #"+
-                                        resource.getId());
+                                        resource.getIdString());
         }
         if(!revoker.hasRole(getRootRole()))
         {
@@ -648,7 +648,7 @@ public class CoralSecurityImpl
             {
                 throw new SecurityException(revoker.getName()+" is not allowed to revoke "+
                                             permission.getName()+" permission from role "+
-                                            role.getName()+" on resource #"+resource.getId());
+                                            role.getName()+" on resource #"+resource.getIdString());
             }
         }
         PermissionAssignment item = new PermissionAssignmentImpl(coral, 

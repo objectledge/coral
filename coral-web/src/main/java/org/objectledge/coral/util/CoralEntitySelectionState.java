@@ -24,7 +24,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: CoralEntitySelectionState.java,v 1.3 2004-07-15 10:31:19 pablo Exp $
+ * @version $Id: CoralEntitySelectionState.java,v 1.4 2005-01-18 11:03:40 rafal Exp $
  */
 public abstract class CoralEntitySelectionState
 {
@@ -150,7 +150,7 @@ public abstract class CoralEntitySelectionState
         {
             Entity r = (Entity)(i.next());
             String value = (String)(initialState.get(r));
-            Long id = new Long(r.getId());
+            Long id = r.getIdObject();
             state.put(id, value);
         }
 
@@ -237,7 +237,7 @@ public abstract class CoralEntitySelectionState
      */
     public void remove(Entity entity)
     {
-		remove(entity.getId());
+		remove(entity.getIdObject());
     }
 
     /**
@@ -267,7 +267,7 @@ public abstract class CoralEntitySelectionState
      */
     public String getValue(Entity entity)
     {
-        return getValue(entity.getId());
+        return getValue(entity.getIdObject());
     }
 
 	/**

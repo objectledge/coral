@@ -53,7 +53,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.21 2005-01-17 11:58:50 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.22 2005-01-18 10:57:52 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -215,7 +215,7 @@ implements Relation
 	        Statement stmt = conn.createStatement();
 	        ResultSet rs = stmt.executeQuery(
 				"SELECT resource1,resource2 FROM " + getDataTable() + 
-				" WHERE relation_id = " + getId());
+				" WHERE relation_id = " + getIdString());
 	        while (rs.next())
 	        {
 	            Long r1k = new Long(rs.getLong(1));
@@ -379,7 +379,7 @@ implements Relation
      */
     private Resource[] get(Map relation, Resource r)
     {
-        Set set = (Set)relation.get(new Long(r.getId()));
+        Set set = (Set)relation.get(r.getIdObject());
         if(set != null)
         {
             return instantiate(set);

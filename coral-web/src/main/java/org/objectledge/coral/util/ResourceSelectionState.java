@@ -19,7 +19,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: ResourceSelectionState.java,v 1.2 2004-08-02 14:06:07 pablo Exp $
+ * @version $Id: ResourceSelectionState.java,v 1.3 2005-01-18 11:03:40 rafal Exp $
  */
 public class ResourceSelectionState 
 	extends CoralEntitySelectionState
@@ -67,7 +67,7 @@ public class ResourceSelectionState
             Resource res = (Resource)(i.next());
             while(res != null && res.getId() != rootId)
             {
-                expandedIds.add(Long.toString(res.getId()));
+                expandedIds.add(res.getIdString());
                 res = res.getParent();
             }
         }

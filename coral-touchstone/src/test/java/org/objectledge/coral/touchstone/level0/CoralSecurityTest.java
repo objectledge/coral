@@ -45,7 +45,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityTest.java,v 1.7 2004-08-30 07:49:26 rafal Exp $
+ * @version $Id: CoralSecurityTest.java,v 1.8 2005-01-18 11:01:15 rafal Exp $
  */
 public class CoralSecurityTest
     extends CoralTestCase
@@ -215,7 +215,7 @@ public class CoralSecurityTest
         session.getSecurity().addPermission(nodeClass, permission);           
         DefaultTable expectedTable = new DefaultTable("coral_permission_association",
             coralPermissionAssociationColumns);
-        expectedTable.addRow(new Object[] { new Long(nodeClass.getId()), new Long(permission.getId()) });
+        expectedTable.addRow(new Object[] { nodeClass.getIdObject(), permission.getIdObject() });
         ITable actualTable = databaseConnection.createDataSet().
             getTable("coral_permission_association");
         databaseConnection.close();
@@ -250,10 +250,10 @@ public class CoralSecurityTest
         session.getSecurity().grant(role, subject, true);
         DefaultTable expectedTable = new DefaultTable("coral_role_assignment",
             coralRoleAssignmentColumns);
-        expectedTable.addRow(new Object[] { new Long(subject.getId()), new Long(role.getId()), new Long(1), "1" });
+        expectedTable.addRow(new Object[] { subject.getIdObject(), role.getIdObject(), new Long(1), "1" });
         ITable actualTable = databaseConnection.createQueryTable("coral_role_assignment",
             "SELECT subject_id, role_id, grantor, granting_allowed FROM coral_role_assignment"+
-            " WHERE role_id = "+role.getId());
+            " WHERE role_id = "+role.getIdString());
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
         
@@ -262,7 +262,7 @@ public class CoralSecurityTest
             coralRoleAssignmentColumns);
         actualTable = databaseConnection.createQueryTable("coral_role_assignment",
             "SELECT subject_id, role_id, grantor, granting_allowed FROM coral_role_assignment"+
-            " WHERE role_id = "+role.getId());                    
+            " WHERE role_id = "+role.getIdString());                    
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
         session.close();                        
@@ -280,10 +280,10 @@ public class CoralSecurityTest
         session.getSecurity().grant(resource, role, permission, true);
         DefaultTable expectedTable = new DefaultTable("coral_permission_assignment",
             coralPermissionAssignmentColumns);
-        expectedTable.addRow(new Object[] { new Long(resource.getId()), new Long(role.getId()),  new Long(permission.getId()), "1", new Long(1) });
+        expectedTable.addRow(new Object[] { resource.getIdObject(), role.getIdObject(),  permission.getIdObject(), "1", new Long(1) });
         ITable actualTable = databaseConnection.createQueryTable("coral_permission_assignment",
             "SELECT resource_id, role_id, permission_id, is_inherited, grantor FROM coral_permission_assignment"+
-            " WHERE role_id = "+role.getId());
+            " WHERE role_id = "+role.getIdString());
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
         
@@ -292,7 +292,7 @@ public class CoralSecurityTest
             coralPermissionAssignmentColumns);
         actualTable = databaseConnection.createQueryTable("coral_permission_assignment",
             "SELECT resource_id, role_id, permission_id, is_inherited, grantor FROM coral_permission_assignment"+
-            " WHERE role_id = "+role.getId());
+            " WHERE role_id = "+role.getIdString());
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
         session.close();                        

@@ -49,7 +49,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSchemaImplTest.java,v 1.11 2004-05-28 10:04:09 fil Exp $
+ * @version $Id: CoralSchemaImplTest.java,v 1.12 2005-01-18 10:57:53 rafal Exp $
  */
 public class CoralSchemaImplTest extends LedgeTestCase
 {
@@ -492,8 +492,8 @@ public class CoralSchemaImplTest extends LedgeTestCase
         mockChildResourceClass.stubs().method("isParent").with(same(parentResourceClass)).will(returnValue(false));
         mockParentResourceClass.stubs().method("getFlags").will(returnValue(0));
         mockParentResourceClass.stubs().method("getAllAttributes").will(returnValue(new AttributeDefinition[0]));
-        mockParentResourceClass.stubs().method("getId").will(returnValue(1L));
-        mockChildResourceClass.stubs().method("getId").will(returnValue(2L));
+        mockParentResourceClass.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockChildResourceClass.stubs().method("getIdObject").will(returnValue(new Long(2L)));
         mockChildResourceClass.stubs().method("getHandler").will(returnValue(resourceHandler));
         mockDatabase.expects(once()).method("beginTransaction").will(returnValue(true));
         ResourceClassInheritance rci = new ResourceClassInheritanceImpl(coralCore, parentResourceClass, childResourceClass);

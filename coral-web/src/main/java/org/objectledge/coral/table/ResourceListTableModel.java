@@ -23,7 +23,7 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.5 2004-10-11 09:06:24 zwierzem Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.6 2005-01-18 11:03:32 rafal Exp $
  */
 public class ResourceListTableModel extends ListTableModel
 {
@@ -83,7 +83,7 @@ public class ResourceListTableModel extends ListTableModel
             for(Iterator i = list.iterator(); i.hasNext();)
             {
                 Resource res = (Resource)(i.next());
-                resourcesById.put(Long.toString(res.getId()), res);
+                resourcesById.put(res.getIdString(), res);
             }
         }
         return resourcesById.get(id);
@@ -101,6 +101,6 @@ public class ResourceListTableModel extends ListTableModel
         {
             return "-1";
         }
-        return Long.toString(((Resource)child).getId());
+        return ((Resource)child).getIdString();
     }
 }

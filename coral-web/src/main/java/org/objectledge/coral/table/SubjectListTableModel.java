@@ -17,7 +17,7 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: SubjectListTableModel.java,v 1.2 2004-10-11 09:06:24 zwierzem Exp $
+ * @version $Id: SubjectListTableModel.java,v 1.3 2005-01-18 11:03:32 rafal Exp $
  */
 public class SubjectListTableModel extends ListTableModel
 {
@@ -63,7 +63,7 @@ public class SubjectListTableModel extends ListTableModel
             for(Iterator i = list.iterator(); i.hasNext();)
             {
                 Subject res = (Subject)(i.next());
-                subjectsById.put(Long.toString(res.getId()), res);
+                subjectsById.put(res.getIdString(), res);
             }
         }
         return subjectsById.get(id);
@@ -81,6 +81,6 @@ public class SubjectListTableModel extends ListTableModel
         {
             return "-1";
         }
-        return Long.toString(((Subject)child).getId());
+        return ((Subject)child).getIdString();
     }
 }

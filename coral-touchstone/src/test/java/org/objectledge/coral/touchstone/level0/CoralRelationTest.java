@@ -45,7 +45,7 @@ import org.objectledge.database.DatabaseUtils;
 /**
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationTest.java,v 1.3 2004-03-18 17:20:50 zwierzem Exp $
+ * @version $Id: CoralRelationTest.java,v 1.4 2005-01-18 11:01:15 rafal Exp $
  */
 public class CoralRelationTest extends CoralTestCase
 {
@@ -114,8 +114,8 @@ public class CoralRelationTest extends CoralTestCase
 
 		DefaultTable expectedTable = new DefaultTable("coral_relation",
 			coralRelationColumns);
-		expectedTable.addRow(new Object[] { new Long(relation.getId()), "relation" });
-		expectedTable.addRow(new Object[] { new Long(relation2.getId()), "relation2" });
+		expectedTable.addRow(new Object[] { relation.getIdObject(), "relation" });
+		expectedTable.addRow(new Object[] { relation2.getIdObject(), "relation2" });
 
 		ITable actualTable = databaseConnection.createQueryTable("coral_relation",
 			"SELECT * FROM coral_relation ORDER BY name");            
@@ -152,8 +152,8 @@ public class CoralRelationTest extends CoralTestCase
 		session.getRelationManager().setName(relation2, "newRelation");
 		expectedTable = new DefaultTable("coral_relation",
 			coralRelationColumns);
-		expectedTable.addRow(new Object[] { new Long(relation2.getId()), "newRelation" });
-		expectedTable.addRow(new Object[] { new Long(relation.getId()), "relation" });
+		expectedTable.addRow(new Object[] { relation2.getIdObject(), "newRelation" });
+		expectedTable.addRow(new Object[] { relation.getIdObject(), "relation" });
 
 		actualTable = databaseConnection.createQueryTable("coral_relation",
 			"SELECT * FROM coral_relation ORDER BY name");
@@ -172,7 +172,7 @@ public class CoralRelationTest extends CoralTestCase
 		session.getRelationManager().deleteRelation(relation2);
 		expectedTable = new DefaultTable("coral_relation",
 			coralRelationColumns);
-		expectedTable.addRow(new Object[] { new Long(relation.getId()), "relation" });
+		expectedTable.addRow(new Object[] { relation.getIdObject(), "relation" });
 
 		actualTable = databaseConnection.createQueryTable("coral_relation",
 			"SELECT * FROM coral_relation ORDER BY name");            
@@ -218,7 +218,7 @@ public class CoralRelationTest extends CoralTestCase
     	
         DefaultTable expectedTable = new DefaultTable("coral_relation_data",
             coralRelationDataColumns);
-        Long relId = new Long(relation.getId());
+        Long relId = relation.getIdObject();
         expectedTable.addRow(new Object[] { relId, new Long(1), new Long(4) });
 		expectedTable.addRow(new Object[] { relId, new Long(1), new Long(5) });
 		expectedTable.addRow(new Object[] { relId, new Long(1), new Long(6) });

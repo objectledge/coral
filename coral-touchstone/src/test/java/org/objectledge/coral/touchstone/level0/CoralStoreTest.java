@@ -41,7 +41,7 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralStoreTest.java,v 1.3 2004-04-22 18:03:16 zwierzem Exp $
+ * @version $Id: CoralStoreTest.java,v 1.4 2005-01-18 11:01:15 rafal Exp $
  */
 public class CoralStoreTest
     extends CoralTestCase
@@ -77,8 +77,8 @@ public class CoralStoreTest
         Resource resource = session.getStore().createResource("resource", root, nodeClass, new HashMap());
         
         DefaultTable expectedTable = new DefaultTable("resource", coralResourceColumns);
-        expectedTable.addRow(new Object[] { new Long(resource.getId()), new Long(nodeClass.getId()),
-            new Long(root.getId()), "resource", new Long(2), new Long(2), new Long(2)});
+        expectedTable.addRow(new Object[] { resource.getIdObject(), nodeClass.getIdObject(),
+            root.getIdObject(), "resource", new Long(2), new Long(2), new Long(2)});
         ITable actualTable = databaseConnection.createQueryTable("resource",
             "SELECT resource_id, resource_class_id, parent, name, created_by, owned_by, modified_by FROM coral_resource"+
             " WHERE name = 'resource'");

@@ -30,7 +30,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.8 2004-08-19 12:15:36 zwierzem Exp $
+ * @version $Id: CoralTableModel.java,v 1.9 2005-01-18 11:03:32 rafal Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {
@@ -179,6 +179,6 @@ public class CoralTableModel implements ExtendedTableModel
         {
             return "-1";
         }
-        return Long.toString(((Resource)child).getId());
+        return ((Resource)child).getIdString();
     }
 }
