@@ -51,7 +51,7 @@ import org.objectledge.templating.TemplatingContext;
  * Performs wrapper generation.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GeneratorComponent.java,v 1.10 2004-04-01 08:06:30 fil Exp $
+ * @version $Id: GeneratorComponent.java,v 1.11 2004-04-01 08:08:28 fil Exp $
  */
 public class GeneratorComponent
 {
@@ -327,7 +327,14 @@ public class GeneratorComponent
                 throw new IOException("missing source file "+line+" in "+path+
                     " at line "+lnr.getLineNumber());
             }
-            loader.load(fileSystem.getReader(line, fileEncoding));
+            try
+            {
+                loader.load(fileSystem.getReader(line, fileEncoding));
+            }
+            catch(Exception e)
+            {
+                throw new Exception("failed to load source file "+line, e);
+            }
         }    
     }
 
