@@ -37,11 +37,11 @@ import org.objectledge.coral.store.Resource;
  * A class representing a batch of {@link Relation} modifications.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationModification.java,v 1.10 2005-02-10 17:46:02 rafal Exp $
+ * @version $Id: RelationModification.java,v 1.11 2005-03-31 14:00:19 pablo Exp $
  */
 public class RelationModification
 {
-	private List operations = new ArrayList(128);
+	private List<ModificationOperation> operations = new ArrayList<ModificationOperation>(128);
 	 
     // basic api ----------------------------------------------------------------------------------
 
@@ -100,6 +100,21 @@ public class RelationModification
     /**
      * Add a number of pairs to the relationship's definition.
      *
+     * @param r1 the first element of the pairs.
+     * @param ress second elements of the pairs.
+     */
+    public void add(Resource r1, List<Resource> ress)
+    {
+        Long id1 = r1.getIdObject();
+        for (Resource res: ress)
+        {
+            add(id1, res.getIdObject());
+        }
+    }
+    
+    /**
+     * Add a number of pairs to the relationship's definition.
+     *
      * @param ress first elements of the pairs.
      * @param r2 the second element of the pairs.
      */
@@ -112,6 +127,21 @@ public class RelationModification
         }
     }
 
+    /**
+     * Add a number of pairs to the relationship's definition.
+     *
+     * @param ress first elements of the pairs.
+     * @param r2 the second element of the pairs.
+     */
+    public void add(List<Resource> ress, Resource r2)
+    {
+        Long id2 = r2.getIdObject();
+        for (Resource res:ress)
+        {
+            add(res.getIdObject(), id2);
+        }
+    }
+    
     /**
      * Delete a ordered pair from the relationship's definition.
      *
