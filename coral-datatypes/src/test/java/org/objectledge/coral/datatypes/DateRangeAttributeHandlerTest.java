@@ -85,7 +85,7 @@ public class DateRangeAttributeHandlerTest extends MockObjectTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stub().method("getJavaClass").will(returnValue(DateRange.class));
         mockAttributeClass.stub().method("getName").will(returnValue("date_range"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_date_range"));
+        mockAttributeClass.stub().method("getDbTable").will(returnValue("coral_attribute_date_range"));
         handler = new DateRangeAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = new Mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
@@ -105,7 +105,7 @@ public class DateRangeAttributeHandlerTest extends MockObjectTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_date_range" + 
+        String stmt = "INSERT INTO " + "coral_attribute_date_range" + 
             "(data_key, start_date, end_date) VALUES (1, '"+range.getStart().toString()+
             "', '"+range.getEnd().toString()+"')";        
         mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
@@ -115,7 +115,7 @@ public class DateRangeAttributeHandlerTest extends MockObjectTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expect(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_date_range SET"+
+        String stmt2 = "UPDATE coral_attribute_date_range SET"+
         " start_date = '"+range.getStart().toString()+", end_date = '"+ range.getEnd().toString() 
         +"' WHERE data_key = 1";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));

@@ -41,7 +41,7 @@ import org.objectledge.notification.Notification;
 import org.objectledge.notification.NotificationReceiver;
 
 /**
- * The bridge between Notification service and ARLEventService
+ * The bridge between Notification service and CoralEventWhiteboard
  *
  */
 public class NotificationEventBridgeImpl
@@ -53,7 +53,7 @@ public class NotificationEventBridgeImpl
     /** The notification service. */
     private Notification notification;
     
-    /** The ARLEventService. */
+    /** The CoralEventWhiteboard */
     private CoralEventWhiteboard event;
 
     /** The Persistence subsystem. */
@@ -75,8 +75,8 @@ public class NotificationEventBridgeImpl
     /** The channel prameter key ('channel') */
     public static final String CHANNEL_KEY = "channel";
 
-    /** The default notification channel. ('ARL:1.0') */
-    public static final String CHANNEL_DEFAULT = "ARL:1.0";
+    /** The default notification channel. ('CORAL:1.0') */
+    public static final String CHANNEL_DEFAULT = "CORAL:1.0";
 
     /** Flow control variable. */
     private boolean connected = false;
@@ -238,7 +238,7 @@ public class NotificationEventBridgeImpl
     {
         // log
         StringBuffer buff = new StringBuffer();
-        buff.append("Remote ARL event: ");
+        buff.append("Remote Coral event: ");
         buff.append(type);
         buff.append("(#");
         buff.append(entity1);

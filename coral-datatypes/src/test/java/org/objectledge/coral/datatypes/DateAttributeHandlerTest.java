@@ -87,7 +87,7 @@ public class DateAttributeHandlerTest extends MockObjectTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stub().method("getJavaClass").will(returnValue(Date.class));
         mockAttributeClass.stub().method("getName").will(returnValue("date"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_date"));
+        mockAttributeClass.stub().method("getDbTable").will(returnValue("coral_attribute_date"));
         handler = new DateAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = new Mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
@@ -107,10 +107,10 @@ public class DateAttributeHandlerTest extends MockObjectTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_date" + "(data_key, data) VALUES (1, '"+currentDate.toString()+"')";
+        String stmt = "INSERT INTO " + "coral_attribute_date" + "(data_key, data) VALUES (1, '"+currentDate.toString()+"')";
         mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(currentDate, connection);
-        String stmt2 = "INSERT INTO arl_attribute_date(data_key, data) VALUES (1, '"+currentDate.toString()+"')";
+        String stmt2 = "INSERT INTO coral_attribute_date(data_key, data) VALUES (1, '"+currentDate.toString()+"')";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.create(currentDate, connection);
     }
@@ -118,7 +118,7 @@ public class DateAttributeHandlerTest extends MockObjectTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expect(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_date SET data = '"+currentDate.toString()+"' WHERE data_key = 1";
+        String stmt2 = "UPDATE coral_attribute_date SET data = '"+currentDate.toString()+"' WHERE data_key = 1";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, currentDate, connection);
         mockResultSet.expect(once()).method("next").will(returnValue(false));

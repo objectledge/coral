@@ -10,7 +10,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents implication relationship between two roles.
  *
- * @version $Id: RoleImplicationImpl.java,v 1.5 2004-03-05 11:52:15 fil Exp $
+ * @version $Id: RoleImplicationImpl.java,v 1.6 2004-03-09 15:46:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImplicationImpl
@@ -93,7 +93,7 @@ public class RoleImplicationImpl
      */
     public String getTable()
     {
-        return "arl_role_implication";
+        return "coral_role_implication";
     }
 
     /** The key columns */

@@ -20,7 +20,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * Each {@link ResourceClass} has an associated set of <code>Permission</code>s
  * that can be granted upon it's instances.
  *
- * @version $Id: PermissionImpl.java,v 1.9 2004-03-05 11:52:15 fil Exp $
+ * @version $Id: PermissionImpl.java,v 1.10 2004-03-09 15:46:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionImpl
@@ -91,7 +91,7 @@ public class PermissionImpl
      */
     public String getTable()
     {
-        return "arl_permission";
+        return "coral_permission";
     }
     
     /** 

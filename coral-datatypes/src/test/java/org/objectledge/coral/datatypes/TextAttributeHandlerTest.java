@@ -84,7 +84,7 @@ public class TextAttributeHandlerTest extends MockObjectTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stub().method("getJavaClass").will(returnValue(String.class));
         mockAttributeClass.stub().method("getName").will(returnValue("text"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_text"));
+        mockAttributeClass.stub().method("getDbTable").will(returnValue("coral_attribute_text"));
         handler = new TextAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = new Mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
@@ -103,10 +103,10 @@ public class TextAttributeHandlerTest extends MockObjectTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_text" + "(data_key, data) VALUES (1, '1000')";
+        String stmt = "INSERT INTO " + "coral_attribute_text" + "(data_key, data) VALUES (1, '1000')";
         mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create("1000", connection);
-        String stmt2 = "INSERT INTO arl_attribute_text(data_key, data) VALUES (1, '1000')";
+        String stmt2 = "INSERT INTO coral_attribute_text(data_key, data) VALUES (1, '1000')";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.create("1000", connection);
     }
@@ -114,7 +114,7 @@ public class TextAttributeHandlerTest extends MockObjectTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expect(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_text SET data = '1000' WHERE data_key = 1";
+        String stmt2 = "UPDATE coral_attribute_text SET data = '1000' WHERE data_key = 1";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, "1000", connection);
         mockResultSet.expect(once()).method("next").will(returnValue(false));

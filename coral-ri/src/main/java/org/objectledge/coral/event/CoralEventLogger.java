@@ -5,7 +5,7 @@ import org.jcontainer.dna.Logger;
 /**
  * Logs incoming Coral events.
  *
- * @version $Id: CoralEventLogger.java,v 1.2 2004-02-27 12:41:03 fil Exp $
+ * @version $Id: CoralEventLogger.java,v 1.3 2004-03-09 15:46:47 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralEventLogger
@@ -18,7 +18,7 @@ public class CoralEventLogger
     // Initialization ////////////////////////////////////////////////////////////////////////////
     
     /**
-     * Constructs an {@link ARLEventLogger} and registers it with the {@link
+     * Constructs an {@link CoralEventLogger} and registers it with the {@link
      * EventService}.
      *
      * @param coralEventHub the event hub.

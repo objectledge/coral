@@ -42,7 +42,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeDefinitionImplTest.java,v 1.2 2004-03-05 11:52:14 fil Exp $
+ * @version $Id: AttributeDefinitionImplTest.java,v 1.3 2004-03-09 15:46:46 fil Exp $
  */
 public class AttributeDefinitionImplTest extends MockObjectTestCase
 {
@@ -120,7 +120,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
         mockOutputRecord.expect(once()).method("setString").with(eq("domain"), eq("<domain>"));
         mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"), eq(303));
         def.getData(outputRecord);
-        assertEquals("arl_attribute_definition", def.getTable());
+        assertEquals("coral_attribute_definition", def.getTable());
     }
 
     public void testStoringNullDomain()
@@ -140,7 +140,7 @@ public class AttributeDefinitionImplTest extends MockObjectTestCase
         mockOutputRecord.expect(once()).method("setNull").with(eq("domain"));
         mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"), eq(303));
         def.getData(outputRecord);
-        assertEquals("arl_attribute_definition", def.getTable());
+        assertEquals("coral_attribute_definition", def.getTable());
     }
     
     public void testLoading()

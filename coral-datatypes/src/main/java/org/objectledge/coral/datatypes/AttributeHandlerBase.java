@@ -22,7 +22,7 @@ import org.objectledge.utils.StringUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.1 2004-03-02 09:51:01 pablo Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.2 2004-03-09 15:46:49 fil Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -465,7 +465,7 @@ public abstract class AttributeHandlerBase
     }
 
     /**
-     * Compares ARL entities by name.
+     * Compares Coral entities by name.
      */
     public static class EntityComparator
         implements Comparator

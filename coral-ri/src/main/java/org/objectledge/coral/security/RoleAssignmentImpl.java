@@ -12,7 +12,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * An implementation of {@link org.objectledge.security.RoleAssignment} interface.
  *
- * @version $Id: RoleAssignmentImpl.java,v 1.6 2004-03-05 11:52:15 fil Exp $
+ * @version $Id: RoleAssignmentImpl.java,v 1.7 2004-03-09 15:46:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleAssignmentImpl
@@ -101,7 +101,7 @@ public class RoleAssignmentImpl
      */
     public String getTable()
     {
-        return "arl_role_assignment";
+        return "coral_role_assignment";
     }
 
     /** 

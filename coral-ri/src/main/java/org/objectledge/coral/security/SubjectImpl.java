@@ -17,7 +17,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: SubjectImpl.java,v 1.9 2004-03-05 11:52:15 fil Exp $
+ * @version $Id: SubjectImpl.java,v 1.10 2004-03-09 15:46:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SubjectImpl
@@ -88,7 +88,7 @@ public class SubjectImpl
      */
     public String getTable()
     {
-        return "arl_subject";
+        return "coral_subject";
     }
     
     /** 

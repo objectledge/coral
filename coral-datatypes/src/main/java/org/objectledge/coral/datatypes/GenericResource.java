@@ -34,7 +34,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.2 2004-03-08 09:17:28 fil Exp $
+ * @version $Id: GenericResource.java,v 1.3 2004-03-09 15:46:49 fil Exp $
  */
 public class GenericResource
     implements Resource
@@ -754,7 +754,7 @@ public class GenericResource
                 long newId = handler.create(value, conn);
                 ids.put(attr, new Long(newId));
                 stmt.execute(
-                    "INSERT INTO arl_generic_resource "+
+                    "INSERT INTO coral_generic_resource "+
                     "(resource_id, attribute_definition_id, data_key) "+
                     "VALUES ("+delegate.getId()+", "+attr.getId()+", "+
                     newId+")"
@@ -809,7 +809,7 @@ public class GenericResource
                     {
                         long newId = handler.create(value, conn);
                         stmt.execute(
-                            "INSERT INTO arl_generic_resource "+
+                            "INSERT INTO coral_generic_resource "+
                             "(resource_id, attribute_definition_id, data_key) "+
                             "VALUES ("+delegate.getId()+", "+attr.getId()+", "+
                             newId+")"
@@ -841,7 +841,7 @@ public class GenericResource
                             throw new BackendException("Internal error", e);
                         }
                         stmt.execute(
-                            "DELETE FROM arl_generic_resource "+
+                            "DELETE FROM coral_generic_resource "+
                             "WHERE resource_id = "+delegate.getId()+
                             " AND attribute_definition_id = "+attr.getId()
                         );
@@ -888,7 +888,7 @@ public class GenericResource
                 {
                     throw new BackendException("internal error", e);
                 }
-                stmt.execute("DELETE FROM arl_generic_resource WHERE "+
+                stmt.execute("DELETE FROM coral_generic_resource WHERE "+
                              " resource_id = "+delegate.getId()+
                              " AND attribute_definition_id = "+attr.getId());
             }

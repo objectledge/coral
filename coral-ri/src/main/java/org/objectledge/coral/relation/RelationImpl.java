@@ -50,7 +50,7 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.12 2004-03-09 14:49:57 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.13 2004-03-09 15:46:47 fil Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -164,7 +164,7 @@ implements Relation
      */
     public String getTable()
     {
-        return "arl_relation";
+        return "coral_relation";
     }
 
     /**

@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * org.objectledge.store.Resource#getPermissionAssignments()} method. They experss security
  * constraints placed upon a specific resource (and optionally it's sub-resources). </p> 
  *
- * @version $Id: PermissionAssignmentImpl.java,v 1.6 2004-03-05 11:52:15 fil Exp $
+ * @version $Id: PermissionAssignmentImpl.java,v 1.7 2004-03-09 15:46:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssignmentImpl
@@ -120,7 +120,7 @@ public class PermissionAssignmentImpl
      */
     public String getTable()
     {
-        return "arl_permission_assignment";
+        return "coral_permission_assignment";
     }
     
     /** 

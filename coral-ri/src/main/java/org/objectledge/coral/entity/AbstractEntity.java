@@ -7,9 +7,9 @@ import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.PersistentObject;
 
 /**
- * A base of all ARL entitity implementations.
+ * A base of all Coral entitity implementations.
  *
- * @version $Id: AbstractEntity.java,v 1.2 2004-02-20 13:32:51 fil Exp $
+ * @version $Id: AbstractEntity.java,v 1.3 2004-03-09 15:46:47 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public abstract class AbstractEntity

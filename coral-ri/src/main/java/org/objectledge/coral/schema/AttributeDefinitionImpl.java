@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a concrete attribute of an resource class.
  *
- * @version $Id: AttributeDefinitionImpl.java,v 1.12 2004-03-05 11:52:16 fil Exp $
+ * @version $Id: AttributeDefinitionImpl.java,v 1.13 2004-03-09 15:46:47 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeDefinitionImpl
@@ -100,7 +100,7 @@ public class AttributeDefinitionImpl
      */
     public String getTable()
     {
-        return "arl_attribute_definition";
+        return "coral_attribute_definition";
     }
     
     /** 

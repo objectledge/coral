@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * An implementaion of {@link org.objectledge.coral.security.Role} interface.
  *
- * @version $Id: RoleImpl.java,v 1.10 2004-03-05 11:52:15 fil Exp $
+ * @version $Id: RoleImpl.java,v 1.11 2004-03-09 15:46:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImpl
@@ -111,7 +111,7 @@ public class RoleImpl
      */
     public String getTable()
     {
-        return "arl_role";
+        return "coral_role";
     }
     
     /** 

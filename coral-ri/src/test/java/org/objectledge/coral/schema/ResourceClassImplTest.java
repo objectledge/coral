@@ -44,7 +44,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassImplTest.java,v 1.3 2004-03-05 11:52:14 fil Exp $
+ * @version $Id: ResourceClassImplTest.java,v 1.4 2004-03-09 15:46:46 fil Exp $
  */
 public class ResourceClassImplTest extends MockObjectTestCase
 {
@@ -220,7 +220,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         mockOutputRecord.expect(once()).method("setString").with(eq("db_table"),eq("<db table>"));
         mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"),eq(303));
         rc.getData(outputRecord);
-        assertEquals("arl_resource_class", rc.getTable());
+        assertEquals("coral_resource_class", rc.getTable());
     }
 
     public void testStoringNullDbTable()
@@ -234,7 +234,7 @@ public class ResourceClassImplTest extends MockObjectTestCase
         mockOutputRecord.expect(once()).method("setNull").with(eq("db_table"));
         mockOutputRecord.expect(once()).method("setInteger").with(eq("flags"),eq(303));
         rc.getData(outputRecord);
-        assertEquals("arl_resource_class", rc.getTable());
+        assertEquals("coral_resource_class", rc.getTable());
     }
     
     public void testLoading()

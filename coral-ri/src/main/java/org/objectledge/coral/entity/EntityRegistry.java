@@ -130,9 +130,9 @@ public class EntityRegistry
             }
             kind = buff.toString();
         }
-        byId = caching.getInstance("arl."+kind+".byId", "arl.byId");
-        byName = caching.getInstance("arl."+kind+".byName", "arl.byName");
-        all = caching.getInstance("arl."+kind+".all", "arl.all");
+        byId = caching.getInstance("coral."+kind+".byId", "coral.byId");
+        byName = caching.getInstance("coral."+kind+".byName", "coral.byName");
+        all = caching.getInstance("coral."+kind+".all", "coral.all");
     }
 
     /**

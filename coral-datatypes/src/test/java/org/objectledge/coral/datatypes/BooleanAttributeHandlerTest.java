@@ -84,7 +84,7 @@ public class BooleanAttributeHandlerTest extends MockObjectTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stub().method("getJavaClass").will(returnValue(Boolean.class));
         mockAttributeClass.stub().method("getName").will(returnValue("boolean"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_boolean"));
+        mockAttributeClass.stub().method("getDbTable").will(returnValue("coral_attribute_boolean"));
         booleanHandler = new BooleanAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = new Mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
@@ -104,7 +104,7 @@ public class BooleanAttributeHandlerTest extends MockObjectTestCase
     public void testDelete() throws Exception
     {
         mockResultSet.expect(once()).method("next").will(returnValue(true));
-        String stmt = "DELETE FROM arl_attribute_boolean WHERE data_key = 1";
+        String stmt = "DELETE FROM coral_attribute_boolean WHERE data_key = 1";
         mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         booleanHandler.delete(1, connection);
     }
@@ -112,10 +112,10 @@ public class BooleanAttributeHandlerTest extends MockObjectTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_boolean" + "(data_key, data) VALUES (" + 1 + ", " + 1 + ")";
+        String stmt = "INSERT INTO " + "coral_attribute_boolean" + "(data_key, data) VALUES (" + 1 + ", " + 1 + ")";
         mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         booleanHandler.create(new Boolean(true), connection);
-        String stmt2 = "INSERT INTO arl_attribute_boolean(data_key, data) VALUES (1, 0)";
+        String stmt2 = "INSERT INTO coral_attribute_boolean(data_key, data) VALUES (1, 0)";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         booleanHandler.create(new Boolean(false), connection);
     }
@@ -123,11 +123,11 @@ public class BooleanAttributeHandlerTest extends MockObjectTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expect(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_boolean SET data = 1 WHERE data_key = 1";
+        String stmt2 = "UPDATE coral_attribute_boolean SET data = 1 WHERE data_key = 1";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         booleanHandler.update(1,Boolean.TRUE,connection);
         mockResultSet.expect(once()).method("next").will(returnValue(true));
-        stmt2 = "UPDATE arl_attribute_boolean SET data = 0 WHERE data_key = 1";
+        stmt2 = "UPDATE coral_attribute_boolean SET data = 0 WHERE data_key = 1";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         booleanHandler.update(1,Boolean.FALSE,connection);
         mockResultSet.expect(once()).method("next").will(returnValue(false));

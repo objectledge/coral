@@ -55,7 +55,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.6 2004-03-09 14:33:30 zwierzem Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.7 2004-03-09 15:46:47 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -67,6 +67,8 @@ public class CoralRegistryImpl
                ResourceClassInheritanceChangeListener,
                ResourceClassAttributesChangeListener
 {
+
+    
     // Member objects ////////////////////////////////////////////////////////
 
     /** The {@link PersistenceService}. */
@@ -267,7 +269,7 @@ public class CoralRegistryImpl
     }   
 
     /**
-     * Registers as the listener for ARL events.
+     * Registers as the listener for Coral events.
      */
     private void setupListener()
     {
@@ -345,8 +347,8 @@ public class CoralRegistryImpl
         try
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
-            int attrs = persistence.count("arl_attribute_definition", 
-                                              "attribute_class_id = "+item.getId());
+            int attrs = persistence.count("coral_attribute_definition", 
+                "attribute_class_id = "+item.getId());
             if(attrs > 0)
             {
                 throw new EntityInUseException("Attribute class "+item.getName()+" is used by "+
@@ -453,16 +455,16 @@ public class CoralRegistryImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             // Check for resources
-            int resources = persistence.count("arl_resource", 
-                                                  "resource_class_id = "+item.getId());
+            int resources = persistence.count("coral_resource", 
+                "resource_class_id = "+item.getId());
             if(resources > 0)
             {
                 throw new EntityInUseException(resources+" resources of the class "+
                                                item.getName()+" exist");
             }
 
-            int children = persistence.count("arl_resource_class_inheritance",
-                                                 "parent = "+item.getId());
+            int children = persistence.count("coral_resource_class_inheritance",
+                "parent = "+item.getId());
             if(children > 0)
             {
                 throw new EntityInUseException(children+" child classes of the class "+
@@ -804,39 +806,39 @@ public class CoralRegistryImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             // check for subordinates
-            int subordinates = persistence.count("arl_subject", 
-                                       "supervisor = "+item.getId());
+            int subordinates = persistence.count("coral_subject", 
+               "supervisor = "+item.getId());
             if(subordinates > 0)
             {
                 throw new EntityInUseException(item.getName()+" has "+
                                                subordinates+" subordinates");
             }
             // check for created resources
-            int created = persistence.count("arl_resource", 
-                                  "created_by = "+item.getId());
+            int created = persistence.count("coral_resource", 
+                "created_by = "+item.getId());
             if(created > 0)
             {
                 throw new EntityInUseException(item.getName()+
                                                " has created "+created+" resources");
             }
             // check for owned resources
-            int owned = persistence.count("arl_resource", 
-                                "owned_by = "+item.getId());
+            int owned = persistence.count("coral_resource", 
+                "owned_by = "+item.getId());
             if(owned > 0)
             {
                 throw new EntityInUseException(item.getName()+
                                                " owns "+owned+" resources");
             }
             // check for modified resources
-            int modified = persistence.count("arl_resource",
-                                   "modified_by = "+item.getId());
+            int modified = persistence.count("coral_resource",
+                "modified_by = "+item.getId());
             if(modified > 0)
             {
                     throw new EntityInUseException(item.getName()+
                                                    " has modified "+modified+" resources");
             }
             // check for granted role assignments
-            int grantedRoles = persistence.count("arl_role_assignment", 
+            int grantedRoles = persistence.count("coral_role_assignment", 
                  "grantor = "+item.getId());
             if(grantedRoles > 0)
             {
@@ -844,7 +846,7 @@ public class CoralRegistryImpl
                     " has made "+grantedRoles+" role grants");
             }
             // check for granted permission assignments
-            int grantedPermissions = persistence.count("arl_permission_assignment", 
+            int grantedPermissions = persistence.count("coral_permission_assignment", 
                  "grantor = "+item.getId());
             if(grantedPermissions > 0)
             {
@@ -974,23 +976,23 @@ public class CoralRegistryImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             // check for sub roles
-            int subRoles = persistence.count("arl_role_implication", 
-                                                 "super_role = "+item.getId());
+            int subRoles = persistence.count("coral_role_implication", 
+                "super_role = "+item.getId());
             if(subRoles > 0)
             {
                 throw new EntityInUseException("Role "+item.getName()+" has "+subRoles+
-                                               " subroles");
+                    " subroles");
             }
             // check for role assignments
-            int subjects = persistence.count("arl_role_assignment", 
-                                                 "role_id = "+item.getId());
+            int subjects = persistence.count("coral_role_assignment", 
+                "role_id = "+item.getId());
             if(subjects > 0)
             {
                 throw new EntityInUseException("Role "+item.getName()+" has been assigned to "+
                                                subjects+" subjects");
             }
             // check for permission assignemts
-            int assignments = persistence.count("arl_permission_assignment", 
+            int assignments = persistence.count("coral_permission_assignment", 
                                                     "role_id = "+item.getId());
             if(assignments > 0)
             {
@@ -1119,7 +1121,7 @@ public class CoralRegistryImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             // check for assignments
-            int assignments = persistence.count("arl_permission_assignment", 
+            int assignments = persistence.count("coral_permission_assignment", 
                                                     "permission_id = "+item.getId());
             if(assignments > 0)
             {
@@ -1127,7 +1129,7 @@ public class CoralRegistryImpl
                                                assignments+" active assignments");
             }
             // check for associations
-            int associations = persistence.count("arl_permission_association",
+            int associations = persistence.count("coral_permission_association",
                                                      "permission_id = "+item.getId());
             if(assignments > 0)
             {

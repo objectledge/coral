@@ -27,7 +27,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.2 2004-03-08 09:17:28 fil Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.3 2004-03-09 15:46:49 fil Exp $
  */
 public class GenericResourceHandler
     extends ResourceHandlerBase
@@ -409,7 +409,7 @@ public class GenericResourceHandler
         }
         Statement stmt1 = conn.createStatement();
         ResultSet rs = stmt1.executeQuery(
-            "SELECT resource_id FROM arl_resource WHERE resource_class_id = "+
+            "SELECT resource_id FROM coral_resource WHERE resource_class_id = "+
             rc.getId());
         
         // if there are resources to modify, and the attribute is REQUIRED
@@ -434,7 +434,7 @@ public class GenericResourceHandler
                     long resId = rs.getLong(1);
                     long atId = attr.getAttributeClass().getHandler().create(value, conn);
                     stmt2.execute(
-                        "INSERT INTO arl_generic_resource "+
+                        "INSERT INTO coral_generic_resource "+
                         "(resource_id, attribute_definition_id, data_key) "+
                         "VALUES ("+resId+", "+attr.getId()+", "+atId+")"
                     );
@@ -460,7 +460,7 @@ public class GenericResourceHandler
         Statement stmt1 = conn.createStatement();
         Statement stmt2 = conn.createStatement();
         ResultSet rs = stmt1.executeQuery(
-            "SELECT resource_id FROM arl_resource WHERE resource_class_id = "+
+            "SELECT resource_id FROM coral_resource WHERE resource_class_id = "+
             rc.getId());
 
         // if there are resources to modify, check if values for all REQUIRED
@@ -502,7 +502,7 @@ public class GenericResourceHandler
                 {
                     long atId = attr[i].getAttributeClass().getHandler().create(value, conn);
                     stmt2.execute(
-                        "INSERT INTO arl_generic_resource "+
+                        "INSERT INTO coral_generic_resource "+
                         "(resource_id, attribute_definition_id, data_key) "+
                         "VALUES ("+resId+", "+attr[i].getId()+", "+atId+")"
                     );
@@ -526,11 +526,11 @@ public class GenericResourceHandler
         Statement stmt1 = conn.createStatement();
         Statement stmt2 = conn.createStatement();
         ResultSet rs = stmt1.executeQuery(
-            "SELECT arl_resource.resource_id, data_key FROM "+
-            "arl_resource, arl_generic_resource "+
+            "SELECT coral_resource.resource_id, data_key FROM "+
+            "coral_resource, coral_generic_resource "+
             "WHERE resource_class_id = "+rc.getId()+
             "AND attribute_definition_id = "+attr.getId()+
-            "AND arl_resource.resource_id = arl_generic_resource.resource_id"
+            "AND coral_resource.resource_id = coral_generic_resource.resource_id"
         );
         while(rs.next())
         {
@@ -545,7 +545,7 @@ public class GenericResourceHandler
                 throw new BackendException("internal error", e);
             }
             stmt2.execute(
-                "DELETE FROM arl_generic_resource "+
+                "DELETE FROM coral_generic_resource "+
                 "WHERE resource_id = "+resId+
                 "AND attribute_definition_id = "+attr.getId()
             );
@@ -572,10 +572,10 @@ public class GenericResourceHandler
         Statement stmt1 = conn.createStatement();
         Statement stmt2 = conn.createStatement();
         ResultSet rs = stmt1.executeQuery(
-            "SELECT arl_resource.resource_id, attribute_definition_id, data_key FROM "+
-            "arl_resource, arl_generic_resource "+
+            "SELECT coral_resource.resource_id, attribute_definition_id, data_key FROM "+
+            "coral_resource, coral_generic_resource "+
             "WHERE resource_class_id = "+rc.getId()+
-            "AND arl_resource.resource_id = arl_generic_resource.resource_id"
+            "AND coral_resource.resource_id = coral_generic_resource.resource_id"
         );
         while(rs.next())
         {
@@ -594,7 +594,7 @@ public class GenericResourceHandler
                     throw new BackendException("internal error", e);
                 }
                 stmt2.execute(
-                    "DELETE FROM arl_generic_resource "+
+                    "DELETE FROM coral_generic_resource "+
                     "WHERE resource_id = "+resId+
                     "AND attribute_definition_id = "+atId
                 );
@@ -611,7 +611,7 @@ public class GenericResourceHandler
         keyMap.put(new Long(delegate.getId()), dataKeys);
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
-            "SELECT attribute_definition_id, data_key FROM arl_generic_resource WHERE "+
+            "SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE "+
             "resource_id = "+delegate.getId()
         );
         try
@@ -640,7 +640,7 @@ public class GenericResourceHandler
         Map keyMap = new HashMap();
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
-            "SELECT resource_id, attribute_definition_id, data_key FROM arl_generic_resource "+
+            "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
             "ORDER BY resource_id"
         );
         Map dataKeys = null;

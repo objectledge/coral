@@ -84,7 +84,7 @@ public class LongAttributeHandlerTest extends MockObjectTestCase
         attributeClass = (AttributeClass)mockAttributeClass.proxy();
         mockAttributeClass.stub().method("getJavaClass").will(returnValue(Long.class));
         mockAttributeClass.stub().method("getName").will(returnValue("long"));
-        mockAttributeClass.stub().method("getDbTable").will(returnValue("arl_attribute_long"));
+        mockAttributeClass.stub().method("getDbTable").will(returnValue("coral_attribute_long"));
         handler = new LongAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
         mockStatement = new Mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
@@ -103,10 +103,10 @@ public class LongAttributeHandlerTest extends MockObjectTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_long" + "(data_key, data) VALUES (1, 1000)";
+        String stmt = "INSERT INTO " + "coral_attribute_long" + "(data_key, data) VALUES (1, 1000)";
         mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(new Long(1000), connection);
-        String stmt2 = "INSERT INTO arl_attribute_long(data_key, data) VALUES (1, 1000)";
+        String stmt2 = "INSERT INTO coral_attribute_long(data_key, data) VALUES (1, 1000)";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.create(new Long(1000), connection);
     }
@@ -114,7 +114,7 @@ public class LongAttributeHandlerTest extends MockObjectTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expect(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_long SET data = 1000 WHERE data_key = 1";
+        String stmt2 = "UPDATE coral_attribute_long SET data = 1000 WHERE data_key = 1";
         mockStatement.expect(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1,new Long(1000),connection);
         mockResultSet.expect(once()).method("next").will(returnValue(false));

@@ -22,7 +22,7 @@ import org.objectledge.event.EventWhiteboard;
 /**
  * Convenience wrapper around <code>EventService</code> implementation.
  *
- * @version $Id: CoralEventWhiteboardImpl.java,v 1.4 2004-03-01 13:33:47 fil Exp $
+ * @version $Id: CoralEventWhiteboardImpl.java,v 1.5 2004-03-09 15:46:47 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralEventWhiteboardImpl
@@ -109,9 +109,9 @@ public class CoralEventWhiteboardImpl
     // Initialization ////////////////////////////////////////////////////////
 
     /**
-     * Constructs the {@link ARLEventService} implementation.
+     * Constructs the {@link CoralEventWhiteboard} implementation.
      *
-     * @param arl the {@link ResourceServiceImpl}.
+     * @param event an event whiteboard.
      */
     CoralEventWhiteboardImpl(EventWhiteboard event)
     {
@@ -180,7 +180,7 @@ public class CoralEventWhiteboardImpl
         }
     }
 
-    // ARLEventService interface /////////////////////////////////////////////
+    // CoralEventWhiteboard interface ///////////////////////////////////////////////////////////
 
     // listener registration /////////////////////////////////////////////////
 

@@ -17,10 +17,10 @@ import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
 
 /**
- * An implementation of <code>node</code> ARL resource class.
+ * An implementation of <code>node</code> Coral resource class.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: NodeResourceImpl.java,v 1.2 2004-03-08 09:17:28 fil Exp $
+ * @version $Id: NodeResourceImpl.java,v 1.3 2004-03-09 15:46:49 fil Exp $
  */
 public class NodeResourceImpl
     extends GenericResource

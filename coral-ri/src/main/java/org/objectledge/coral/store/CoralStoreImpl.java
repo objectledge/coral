@@ -40,7 +40,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.6 2004-03-08 09:17:29 fil Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.7 2004-03-09 15:46:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -112,9 +112,9 @@ public class CoralStoreImpl
     private void setupCache(CacheFactory cacheFactory, String kind)
         throws ConfigurationException
     {
-        resourceById = cacheFactory.getInstance("arl."+kind+".byId", "arl.byId");
-        resourceByName = cacheFactory.getInstance("arl."+kind+".byName", "arl.byName");
-        resourceSet = cacheFactory.getInstance("arl."+kind+".all", "arl.all");
+        resourceById = cacheFactory.getInstance("coral."+kind+".byId", "coral.byId");
+        resourceByName = cacheFactory.getInstance("coral."+kind+".byName", "coral.byName");
+        resourceSet = cacheFactory.getInstance("coral."+kind+".all", "coral.all");
     }
     
     // Resources /////////////////////////////////////////////////////////////
@@ -865,7 +865,7 @@ public class CoralStoreImpl
                                 }
                                 else
                                 {
-                                    count = persistence.count("arl_resource", "parent = "+
+                                    count = persistence.count("coral_resource", "parent = "+
                                                                   resource.getId());
                                 }
                                 if(count != 0)

@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.8 2004-03-08 09:17:29 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.9 2004-03-09 15:46:46 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -150,7 +150,7 @@ public class ResourceImpl
      */
     public String getTable()
     {
-        return "arl_resource";
+        return "coral_resource";
     }
     
     /** 

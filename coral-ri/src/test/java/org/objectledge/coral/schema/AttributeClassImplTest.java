@@ -45,7 +45,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeClassImplTest.java,v 1.1 2004-02-24 12:50:06 fil Exp $
+ * @version $Id: AttributeClassImplTest.java,v 1.2 2004-03-09 15:46:46 fil Exp $
  */
 public class AttributeClassImplTest extends MockObjectTestCase
 {
@@ -185,7 +185,7 @@ public class AttributeClassImplTest extends MockObjectTestCase
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy(), 
             "<class name>", "<java class>", "<handler class>", "<db table>");
         Persistent p = (Persistent)ac;    
-        assertEquals("arl_attribute_class", p.getTable());
+        assertEquals("coral_attribute_class", p.getTable());
         mockOutputRecord.expect(once()).method("setLong").with(eq("attribute_class_id"), eq(-1L));
         mockOutputRecord.expect(once()).method("setString").with(eq("name"), eq("<class name>"));        
         mockOutputRecord.expect(once()).method("setString").with(eq("db_table_name"), eq("<db table>"));

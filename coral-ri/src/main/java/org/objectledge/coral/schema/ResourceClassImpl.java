@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.14 2004-03-05 11:52:16 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.15 2004-03-09 15:46:47 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -154,7 +154,7 @@ public class ResourceClassImpl
      */
     public String getTable()
     {
-        return "arl_resource_class";
+        return "coral_resource_class";
     }
     
     

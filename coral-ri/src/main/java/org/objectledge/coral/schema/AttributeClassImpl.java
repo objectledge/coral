@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.8 2004-03-05 10:17:02 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.9 2004-03-09 15:46:47 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -103,7 +103,7 @@ public class AttributeClassImpl
      */
     public String getTable()
     {
-        return "arl_attribute_class";
+        return "coral_attribute_class";
     }
     
     /** 
