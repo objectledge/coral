@@ -29,6 +29,8 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,9 +38,12 @@ import org.jcontainer.dna.Logger;
 import org.jmock.builder.Mock;
 import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.coral.Instantiator;
+import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
+import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.schema.ResourceClassInheritance;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
@@ -75,17 +80,21 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
     private Instantiator instantiator;
     private Mock mockResourceClass;
     private ResourceClass resourceClass;
+    private Mock mockAttributeClass;
+    private AttributeClass attributeClass;
+    private Mock mockAttributeHandler;
+    private AttributeHandler attributeHandler;
+    
+    
     private Mock mockAttributeDefinition;
     private AttributeDefinition attributeDefinition;
 
     private Mock mockConnection;
     private Connection connection;
-    /*
     private Mock mockStatement;
     private Statement statement;
     private Mock mockResultSet;
     private ResultSet resultSet;
-    */
     // not mock  
     private GenericResourceHandler handler;
     private NodeResourceImpl node;
@@ -101,7 +110,22 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
         mockSubject = new Mock(Subject.class);
         subject = (Subject)mockSubject.proxy();
         
+        mockAttributeHandler = new Mock(AttributeHandler.class);
+        mockAttributeHandler.stub().method("toAttributeValue").will(returnValue("foo"));
+        mockAttributeHandler.stub().method("checkDomain");
+        mockAttributeHandler.stub().method("shouldRetrieveAfterCreate").will(returnValue(false));
+        attributeHandler = (AttributeHandler)mockAttributeHandler.proxy();        
+        
+        mockAttributeClass = new Mock(AttributeClass.class);
+        mockAttributeClass.stub().method("getHandler").will(returnValue(attributeHandler));
+        attributeClass = (AttributeClass)mockAttributeClass.proxy();        
+        
         mockAttributeDefinition = new Mock(AttributeDefinition.class);
+        mockAttributeDefinition.stub().method("getFlags").will(returnValue(1));
+        mockAttributeDefinition.stub().method("getName").will(returnValue("description"));
+        mockAttributeDefinition.stub().method("getAttributeClass").will(returnValue(attributeClass));
+        mockAttributeDefinition.stub().method("getDomain").will(returnValue(""));
+        mockAttributeDefinition.stub().method("getId").will(returnValue(1L));
         attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
         
         mockCoralStore = new Mock(CoralStore.class);
@@ -114,25 +138,38 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
         mockResourceClass.stub().method("getJavaClass").will(returnValue(NodeResourceImpl.class));
         mockResourceClass.stub().method("getName").will(returnValue("node"));
         mockResourceClass.stub().method("getAttribute").will(returnValue(attributeDefinition));
+        mockResourceClass.stub().method("getInheritance").will(returnValue(new ResourceClassInheritance[0]));
+        mockResourceClass.stub().method("getDeclaredAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
         resourceClass = (ResourceClass)mockResourceClass.proxy();
         
         mockCoralSchema = new Mock(CoralSchema.class);
         mockCoralSchema.stub().method("getResourceClass").will(returnValue(resourceClass));
+        mockCoralSchema.stub().method("getAttribute").with(eq(1L)).will(returnValue(attributeDefinition));
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         
+        node = new NodeResourceImpl(database, logger, coralSchema);
+        
         mockInstantiator = new Mock(Instantiator.class);
+        mockInstantiator.stub().method("newInstance").will(returnValue(node));
         instantiator = (Instantiator)mockInstantiator.proxy();
         
         mockResource = new Mock(Resource.class);
         mockResource.stub().method("getResourceClass").will(returnValue(resourceClass));
+        mockResource.stub().method("getId").will(returnValue(1L));
         resource = (Resource)mockResource.proxy();
-        
 
+        mockResultSet = new Mock(ResultSet.class);
+        mockResultSet.stub().method("close");
+        resultSet = (ResultSet)mockResultSet.proxy();
+        
+        mockStatement = new Mock(Statement.class);
+        mockStatement.stub().method("close");
+        statement = (Statement)mockStatement.proxy();
         mockConnection = new Mock(Connection.class);
-        //mockConnection.stub().method("createStatement").will(returnValue(statement));
+        mockConnection.stub().method("createStatement").will(returnValue(statement));
         connection = (Connection)mockConnection.proxy();              
-              
-        node = new NodeResourceImpl(database, logger, coralSchema);
+                
+        
         handler = new GenericResourceHandler(coralSchema, coralSecurity, instantiator, resourceClass);
                                              
     }
@@ -143,11 +180,28 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
         assertNotNull(handler);
     }
 
-    public void testCreate()
+    public void testCreateAndDelete()
         throws Exception
     {
+        String stmt = "INSERT INTO coral_generic_resource (resource_id, attribute_definition_id, data_key) VALUES (1, 1, 1)";
         Map attributes = new HashMap();
-        //handler.create(resource, attributes, connection);
+        attributes.put(attributeDefinition, "foo");
+        mockAttributeHandler.expect(once()).method("create").with(eq("foo"),ANYTHING).will(returnValue(1L));
+        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        NodeResource newResource = (NodeResource)handler.create(resource, attributes, connection);
+        assertEquals(newResource.getDescription(),"foo");
+        handler.update(newResource, connection);
+        newResource.setDescription("bar");
+        mockAttributeHandler.expect(once()).method("update").with(eq(1L),eq("foo"),ANYTHING).will(returnValue(1L));
+        handler.update(newResource, connection);
+        mockAttributeHandler.expect(once()).method("delete").with(eq(newResource.getId()),ANYTHING).will(returnValue(1L));
+        stmt = "DELETE FROM coral_generic_resource WHERE  resource_id = 1 AND attribute_definition_id = 1";
+        mockStatement.expect(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        
+        
+        
+        
+        handler.delete(newResource, connection);
     }
 
     public void testDelete()
@@ -160,7 +214,18 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
      * Test for Resource retrieve(Resource, Connection)
      */
     public void testRetrieveResourceConnection()
+        throws Exception
     {
+        String stmt = "SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE resource_id = 1";
+        //mockResultSet.expect(once()).method("next").will(returnValue(true));
+        mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
+        mockResultSet.expect(once()).method("getLong").will(returnValue(1L));
+        mockResultSet.expect(once()).method("next").will(returnValue(false));
+        //mockCoralSchema.expect(once()).method("getAttribute").will(returnValue())
+        
+        mockStatement.expect(once()).method("executeQuery").with(eq(stmt)).will(returnValue(resultSet));
+                
+        handler.retrieve(resource, connection);
     }
 
     /*
@@ -175,16 +240,13 @@ public class GenericResourceHandlerTest extends MockObjectTestCase
      */
     public void testRevertResourceConnection()
     {
+        
     }
 
     /*
      * Test for void revert(Resource, Connection, Map)
      */
     public void testRevertResourceConnectionMap()
-    {
-    }
-
-    public void testUpdate()
     {
     }
 
