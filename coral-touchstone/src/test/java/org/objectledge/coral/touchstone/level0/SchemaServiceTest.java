@@ -27,6 +27,8 @@
 // 
 package org.objectledge.coral.touchstone.level0;
 
+import java.util.HashMap;
+
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.ITable;
@@ -39,12 +41,13 @@ import org.objectledge.coral.touchstone.CoralTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SchemaServiceTest.java,v 1.4 2004-03-12 12:01:40 fil Exp $
+ * @version $Id: SchemaServiceTest.java,v 1.5 2004-03-12 12:29:45 fil Exp $
  */
 public class SchemaServiceTest
     extends CoralTestCase
 {
-    private Column[] coralAttributeClassColumns = new Column[] {
+    private Column[] coralAttributeClassColumns = new Column[] 
+    {
         new Column("attribute_class_id", DataType.BIGINT),
         new Column("name", DataType.VARCHAR),
         new Column("java_class_name", DataType.VARCHAR),
@@ -52,13 +55,20 @@ public class SchemaServiceTest
         new Column("db_table_name", DataType.VARCHAR)
     };
 
-    private Column[] coralResourceClassColumns = new Column[] {
+    private Column[] coralResourceClassColumns = new Column[] 
+    {
         new Column("resource_class_id", DataType.BIGINT),
         new Column("name", DataType.VARCHAR),
         new Column("java_class_name", DataType.VARCHAR),
         new Column("handler_class_name", DataType.VARCHAR),
         new Column("db_table_name", DataType.VARCHAR),
         new Column("flags", DataType.INTEGER)
+    };
+    
+    private Column[] coralResourceClassInheritanceColums = new Column[] 
+    {
+        new Column("parent", DataType.BIGINT),
+        new Column("child", DataType.BIGINT)       
     };
     
     public void testBuiltinAttributeClasses()
@@ -77,7 +87,7 @@ public class SchemaServiceTest
             "org.objectledge.coral.datatypes.IntegerAttributeHandler", "coral_attribute_integer");
         DefaultTable expectedTable = new DefaultTable("alt_integer_attribute_class",
             coralAttributeClassColumns);
-        expectedTable.addRow(new Object[] { new Integer(17), "alt_integer", "java.lang.Integer",
+        expectedTable.addRow(new Object[] { new Long(17), "alt_integer", "java.lang.Integer",
             "org.objectledge.coral.datatypes.IntegerAttributeHandler", "coral_attribute_integer"});
         ITable actualTable = databaseConnection.createQueryTable("alt_integer_attribute_class",
             "SELECT * FROM coral_attribute_class WHERE name = 'alt_integer'");
@@ -112,7 +122,7 @@ public class SchemaServiceTest
             "org.objectledge.coral.datatypes.GenericResourceHandler", null, 0);
         DefaultTable expectedTable = new DefaultTable("alt_node_resource_class",
             coralResourceClassColumns);
-        expectedTable.addRow(new Object[] { new Integer(2), "alt_node", "org.objectledge.coral.datatypes.NodeResourceImpl", 
+        expectedTable.addRow(new Object[] { new Long(2), "alt_node", "org.objectledge.coral.datatypes.NodeResourceImpl", 
             "org.objectledge.coral.datatypes.GenericResourceHandler", null, new Integer(0)});
         ITable actualTable = databaseConnection.createQueryTable("alt_node_resource_class",
             "SELECT * FROM coral_resource_class WHERE name = 'alt_node'");
@@ -120,6 +130,7 @@ public class SchemaServiceTest
         assertEquals(expectedTable, actualTable);
 
         ResourceClass rc = session.getSchema().getResourceClass("alt_node");
+        assertEquals(2, rc.getId());
 
         session.getSchema().deleteResourceClass(rc);
         expectedTable = new DefaultTable("alt_node_resource_class",
@@ -128,5 +139,33 @@ public class SchemaServiceTest
              "SELECT * FROM coral_resource_class WHERE name = 'alt_node'");                    
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
-    }    
+        session.close();
+    }
+    
+    public void testResourceClassInheritanceOperations()
+        throws Exception
+    { 
+        CoralSession session = coralSessionFactory.getAnonymousSession();
+        ResourceClass nodeClass = session.getSchema().getResourceClass("node");
+        ResourceClass altNodeClass = session.getSchema().createResourceClass("alt_node", 
+            "org.objectledge.coral.datatypes.NodeResourceImpl", 
+            "org.objectledge.coral.datatypes.GenericResourceHandler", null, 0);
+        assertEquals(2, altNodeClass.getId());
+        session.getSchema().addParentClass(altNodeClass, nodeClass, new HashMap());
+        DefaultTable expectedTable = new DefaultTable("coral_resource_class_inheritance",
+            coralResourceClassInheritanceColums);
+        expectedTable.addRow(new Object[] { new Long(1), new Long(2) });
+        ITable actualTable = databaseConnection.createDataSet().
+            getTable("coral_resource_class_inheritance");
+        databaseConnection.close();
+        assertEquals(expectedTable, actualTable);
+        
+        session.getSchema().deleteParentClass(altNodeClass, nodeClass);
+        expectedTable = new DefaultTable("coral_resource_class_inheritance",
+            coralResourceClassInheritanceColums);
+        actualTable = databaseConnection.createDataSet().
+            getTable("coral_resource_class_inheritance");
+        databaseConnection.close();
+        assertEquals(expectedTable, actualTable);            
+    }
 }
