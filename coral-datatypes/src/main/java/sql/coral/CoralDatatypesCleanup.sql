@@ -54,4 +54,5 @@ DELETE FROM ledge_id_table WHERE table_name = 'coral_attribute_class';
 DELETE FROM ledge_id_table WHERE table_name = 'coral_resource_class';
 DELETE FROM ledge_id_table WHERE table_name = 'coral_attribute_definition';
 DELETE FROM ledge_id_table WHERE table_name = 'coral_resource';
+DELETE FROM ledge_id_table WHERE table_name LIKE 'coral_attribute_%';
 
