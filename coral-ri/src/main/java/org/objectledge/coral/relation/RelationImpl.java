@@ -50,7 +50,7 @@ import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.15 2004-03-11 12:58:33 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.16 2004-03-11 13:03:17 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -156,7 +156,7 @@ implements Relation
 		int numSets = relation.keySet().size();
 		if(numSets != 0)
 		{
-			return resourceIdPairsNum / (float) numSets;
+			return (float) resourceIdPairsNum / (float) numSets;
 		}
 		else
 		{
