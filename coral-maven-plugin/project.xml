@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.14 2004-05-27 10:36:21 fil Exp $ -->
+<!-- $Id: project.xml,v 1.15 2004-05-27 12:24:32 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -167,17 +167,17 @@
     <dependency>
       <groupId>jotm</groupId>
       <artifactId>jotm</artifactId>
-      <version>1.4.3</version>
+      <version>1.5.3</version>
     </dependency>
     <dependency>
       <groupId>jotm</groupId>
       <artifactId>jotm_jrmp_stubs</artifactId>
-      <version>1.4.3</version>
+      <version>1.5.3</version>
     </dependency>
     <dependency>
-      <groupId>jotm</groupId>
-      <artifactId>jonas_timer</artifactId>
-      <version>1.4.3</version>
+      <groupId>connector</groupId>
+      <artifactId>connector</artifactId>
+      <version>1.5</version>
     </dependency>
     <dependency>
       <groupId>carol</groupId>

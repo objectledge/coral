@@ -120,7 +120,7 @@
     <dependency>
       <groupId>jotm</groupId>
       <artifactId>jotm</artifactId>
-      <version>1.4.3</version>
+      <version>1.5.3</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
@@ -128,15 +128,15 @@
     <dependency>
       <groupId>jotm</groupId>
       <artifactId>jotm_jrmp_stubs</artifactId>
-      <version>1.4.3</version>
+      <version>1.5.3</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
     </dependency>
     <dependency>
-      <groupId>jotm</groupId>
-      <artifactId>jonas_timer</artifactId>
-      <version>1.4.3</version>
+      <groupId>connector</groupId>
+      <artifactId>connector</artifactId>
+      <version>1.5</version>
       <properties>
         <war.bundle>true</war.bundle>
       </properties>
