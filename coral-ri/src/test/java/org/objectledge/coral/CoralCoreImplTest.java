@@ -37,6 +37,7 @@ import org.jmock.builder.MockObjectTestCase;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.context.Context;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
 import org.objectledge.threads.ThreadPool;
@@ -46,10 +47,12 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImplTest.java,v 1.3 2004-03-12 07:39:45 fil Exp $
+ * @version $Id: CoralCoreImplTest.java,v 1.4 2004-03-12 09:14:43 fil Exp $
  */
 public class CoralCoreImplTest extends MockObjectTestCase
 {
+    private Mock mockDatabase;
+    private Database database;
     private Mock mockPersistence;
     private Persistence persistence;
     private Mock mockCacheFactory;
@@ -69,8 +72,11 @@ public class CoralCoreImplTest extends MockObjectTestCase
     {
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
+        mockDatabase = new Mock(Database.class);
+        database = (Database)mockDatabase.proxy();
         mockPersistence = new Mock(Persistence.class);
         persistence = (Persistence)mockPersistence.proxy();
+        mockPersistence.stub().method("getDatabase").will(returnValue(database));
         mockCacheFactory = new Mock(CacheFactory.class);
         cacheFactory = (CacheFactory)mockCacheFactory.proxy();
         mockCacheFactory.stub().method("getInstance").will(returnValue(new HashMap()));
