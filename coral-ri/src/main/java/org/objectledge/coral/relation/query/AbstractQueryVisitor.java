@@ -27,6 +27,7 @@
 //
 package org.objectledge.coral.relation.query;
 
+import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.relation.Relation;
@@ -45,7 +46,7 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
  * Base class for all Query tree visitors.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: AbstractQueryVisitor.java,v 1.4 2004-02-24 17:09:53 zwierzem Exp $
+ * @version $Id: AbstractQueryVisitor.java,v 1.5 2004-03-09 14:33:48 zwierzem Exp $
  */
 public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 {
@@ -121,6 +122,11 @@ public abstract class AbstractQueryVisitor implements RelationQueryParserVisitor
 		{
 			throw new RuntimeException("Relation '"+node.getRelationName()+"' does not exist");
 		}
+		catch (AmbigousEntityNameException e)
+        {
+			throw new RuntimeException(
+				"There are many relations named '"+node.getRelationName()+"'");
+        }
 	}
 
 	/**

@@ -27,6 +27,7 @@
 //
 package org.objectledge.coral.relation;
 
+import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 
@@ -34,7 +35,7 @@ import org.objectledge.coral.entity.EntityExistsException;
  * Acts as a management interface for {@link Relation} creation and deletion. 
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManager.java,v 1.1 2004-02-20 09:15:48 zwierzem Exp $
+ * @version $Id: CoralRelationManager.java,v 1.2 2004-03-09 14:33:02 zwierzem Exp $
  */
 public interface CoralRelationManager
 {
@@ -63,9 +64,11 @@ public interface CoralRelationManager
 	 * @return the relation.
      * @throws EntityDoesNotExistException if the <code>Relation</code>
      *         with the specified name does not exist.
+     * @throws AmbigousEntityNameException if there is more than one <code>Relation</code>
+     *         with the specified name.
 	 */
 	public Relation getRelation(String name)
-		throws EntityDoesNotExistException;
+		throws EntityDoesNotExistException, AmbigousEntityNameException;
 
 	/**
 	 * Creates a relation image in the persistent storage.
@@ -83,7 +86,8 @@ public interface CoralRelationManager
 	 * @param relation the relation to rename.
 	 * @param name the new name of the relation.
 	 */
-	public void setName(Relation relation, String name);
+	public void setName(Relation relation, String name)
+		throws EntityExistsException;
 
 	/**
 	 * Updates a relation image in the persistent storage unsing provided
