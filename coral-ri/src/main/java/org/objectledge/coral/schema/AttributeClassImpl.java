@@ -14,7 +14,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents an attribute type.
  *
- * @version $Id: AttributeClassImpl.java,v 1.6 2004-02-24 11:29:26 fil Exp $
+ * @version $Id: AttributeClassImpl.java,v 1.7 2004-02-24 12:38:17 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class AttributeClassImpl
@@ -30,8 +30,14 @@ public class AttributeClassImpl
     /** The CoralEventHub. */
     private CoralEventHub coralEventHub;
     
+    /** name of the Java class. */
+    private String javaClassName;
+    
     /** The associated Java class. */
     private Class javaClass;
+
+    /** name of the handler class. */
+    private String handlerClassName;
     
     /** The associated {@link org.objectledge.coral.schema.AttributeHandler}. */
     private AttributeHandler handler;
@@ -82,6 +88,7 @@ public class AttributeClassImpl
         setDbTable(dbTable);
         setJavaClass(javaClass);
         setHandlerClass(handlerClass);
+        coralEventHub.getInbound().addAttributeClassChangeListener(this, this);
     }
 
     // Persistent interface /////////////////////////////////////////////////////////////////////
@@ -123,8 +130,8 @@ public class AttributeClassImpl
     {
         super.getData(record);
         record.setString("db_table_name", dbTable);
-        record.setString("java_class_name", javaClass.getName());
-        record.setString("handler_class_name", handler.getClass().getName());
+        record.setString("java_class_name", javaClassName);
+        record.setString("handler_class_name", handlerClassName);
     }
 
     /**
@@ -162,7 +169,7 @@ public class AttributeClassImpl
      */
     public void attributeClassChanged(AttributeClass attributeClass)
     {
-        if(attributeClass.equals(this))
+        if(this.equals(attributeClass))
         {
             try
             {
@@ -170,7 +177,7 @@ public class AttributeClassImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("failed to revert entity state");
+                throw new BackendException("failed to revert entity state", e);
             }
         }
     }
@@ -224,6 +231,7 @@ public class AttributeClassImpl
     void setJavaClass(String className)
         throws JavaClassException
     {
+        javaClassName = className;
         try
         {
             javaClass = instantiator.loadClass(className);
@@ -244,6 +252,7 @@ public class AttributeClassImpl
     void setHandlerClass(String className)
         throws JavaClassException
     {
+        handlerClassName = className;
         try
         {
             Class handlerClass = instantiator.loadClass(className);
