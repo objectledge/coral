@@ -5,7 +5,6 @@ import java.util.Set;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.CoralRegistry;
-import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.RoleAssignmentChangeListener;
 import org.objectledge.coral.event.SubjectChangeListener;
@@ -18,7 +17,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: SubjectImpl.java,v 1.6 2004-03-03 07:46:46 fil Exp $
+ * @version $Id: SubjectImpl.java,v 1.7 2004-03-03 10:27:30 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SubjectImpl
@@ -45,9 +44,6 @@ public class SubjectImpl
     /** The role assignments for this subject. */
     private Set roleAssignments = null;
 
-    /** The supervisor of this subject. */
-    private Subject supervisor = null;
-
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
@@ -73,19 +69,19 @@ public class SubjectImpl
      * @param persistence the Peristence subsystem.
      * @param coralEventHub the CoralEventHub.
      * @param coralRegistry the CoralRegistry.
+     * @param coralSecurity the CoralSecurity.
      * 
      * @param name the name of the subject.
-     * @param supervisor the supervisor of the subject.
      */
     public SubjectImpl(Persistence persistence, CoralEventHub coralEventHub, 
         CoralRegistry coralRegistry, CoralSecurity coralSecurity,  
-        String name, Subject supervisor)
+        String name)
     {
         super(persistence, name);
         this.coralEventHub = coralEventHub;
         this.coralRegistry = coralRegistry;
         this.coralSecurity = coralSecurity;
-        this.supervisor = supervisor;
+        coralEventHub.getInbound().addSubjectChangeListener(this, this);
     }
 
     // Persistent interface ////////////////////////////////////////////////////////////////////
@@ -126,14 +122,6 @@ public class SubjectImpl
         throws PersistenceException
     {
         super.getData(record);
-        if(supervisor != null)
-        {
-            record.setLong("supervisor", supervisor.getId());
-        }
-        else
-        {
-            record.setNull("supervisor");
-        }
     }
 
     /**
@@ -149,18 +137,6 @@ public class SubjectImpl
         throws PersistenceException
     {
         super.setData(record);
-        if(!record.isNull("supervisor"))
-        {
-            long superId = record.getLong("supervisor");
-            try
-            {
-                setSupervisor(coralSecurity.getSubject(superId));
-            }
-            catch(EntityDoesNotExistException e)
-            {
-                throw new PersistenceException("Failed to load Subject #"+id, e);
-            }
-        }
         coralEventHub.getInbound().addSubjectChangeListener(this, this);
     }
 
@@ -262,38 +238,6 @@ public class SubjectImpl
     }
 
     /**
-     * Checks if the given subject is a subordinate of this subject.
-     *
-     * @param subject the subject to check.
-     * @return <core>true</code> if the given subject is a subordinate of this
-     * subject. 
-     */
-    public boolean isSubordinate(Subject subject)
-    {
-        return supervisor.equals(subject);
-    }
-    
-    /**
-     * Returns all subordinates of this subject.
-     *
-     * @return all subordinates of this subject.
-     */
-    public Subject[] getSubordinates()
-    {
-        return coralRegistry.getSubordinates(this);
-    }
-
-    /**
-     * Returns the supervisor of this subject.
-     *
-     * @return the supervisor of this subject.
-     */
-    public Subject getSupervisor()
-    {
-        return supervisor;
-    }
-
-    /**
      * Returns all Resources that are owned by this Subject.
      *
      * <p>This method takes Resource parent-child relationships into
@@ -374,18 +318,6 @@ public class SubjectImpl
                 }
             }
         }
-    }
-
-    // implementation specific //////////////////////////////////////////////////////////////////
-
-    /**
-     * Sets the supervisor of this subject.
-     *
-     * @return the supervisor of this subject.
-     */
-    void setSupervisor(Subject supervisor)
-    {
-        this.supervisor = supervisor;
     }
 
     // private //////////////////////////////////////////////////////////////////////////////////

@@ -20,7 +20,7 @@ import org.objectledge.coral.store.Resource;
  * {@link org.objectledge.coral.entity.Assignment} and 
  * {@link org.objectledge.coral.entity.Association} objects.
  * 
- * @version $Id: CoralRegistry.java,v 1.2 2004-02-23 13:50:27 fil Exp $
+ * @version $Id: CoralRegistry.java,v 1.3 2004-03-03 10:27:30 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralRegistry
@@ -564,14 +564,6 @@ public interface CoralRegistry
     public void deletePermissionAssignment(PermissionAssignment item);
 
     // Non-cached cross-reference information ////////////////////////////////
-
-    /**
-     * Returns all subordinates of a Subject.
-     *
-     * @param subject the supervisor.
-     * @return all subordintaes of the supervisor.
-     */
-    public Subject[] getSubordinates(Subject subject);
     
     /**
      * Returns all resoruces created by a Subject.

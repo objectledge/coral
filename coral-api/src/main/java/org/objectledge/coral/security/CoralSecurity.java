@@ -10,7 +10,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurity.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: CoralSecurity.java,v 1.3 2004-03-03 10:27:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSecurity
@@ -81,24 +81,6 @@ public interface CoralSecurity
      */
     public void setName(Subject subject, String name)
         throws EntityExistsException;
-
-    /**
-     * Creates a supervisor -- subordinate relationship.
-     *
-     * @param subordinate the subordinate.
-     * @param supervisor the supervisor.
-     */
-    public void setSupervisor(Subject subordinate, Subject supervisor);
-
-    /**
-     * Removes a supervisor -- subordinate relationship.
-     *
-     * @param subordinate the subordinate.
-     * @throws IllegalArgumentException if the <code>subordinate</code> has no
-     *         supervisor set.
-     */
-    public void unsetSupervisor(Subject subordinate)
-        throws IllegalArgumentException;
     
     // Roles /////////////////////////////////////////////////////////////////
 

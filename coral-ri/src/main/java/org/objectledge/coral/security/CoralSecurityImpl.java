@@ -16,13 +16,11 @@ import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
-import org.objectledge.database.persistence.Persistent;
 
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurityImpl.java,v 1.1 2004-03-03 07:47:04 fil Exp $
+ * @version $Id: CoralSecurityImpl.java,v 1.2 2004-03-03 10:27:30 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSecurityImpl
@@ -128,7 +126,7 @@ public class CoralSecurityImpl
         throws EntityExistsException
     {
         Subject subject = new SubjectImpl(persistence, coralEventHub, coralRegistry, this, 
-            name, null);
+            name);
         coralRegistry.addSubject(subject);
         return subject;
     }
@@ -159,45 +157,6 @@ public class CoralSecurityImpl
     {
         coralRegistry.renameSubject(subject, name);
         coralEventHub.getOutbound().fireSubjectChangeEvent(subject);
-    }
-
-    /**
-     * Creates a supervisor -- subordinate relationship.
-     *
-     * @param subordinate the subordinate.
-     * @param supervisor the supervisor.
-     */
-    public void setSupervisor(Subject subordinate, Subject supervisor)
-    {
-        ((SubjectImpl)subordinate).setSupervisor(supervisor);
-        try
-        {
-            persistence.save((Persistent)subordinate);
-        }
-        catch(PersistenceException e)
-        {
-            throw new BackendException("Failed to update Subject", e);
-        }
-        coralEventHub.getOutbound().fireSubjectChangeEvent(subordinate);
-    }
-
-    /**
-     * Removes a supervisor -- subordinate relationship.
-     *
-     * @param subordinate the subordinate.
-     */
-    public void unsetSupervisor(Subject subordinate)
-    {
-        ((SubjectImpl)subordinate).setSupervisor(null);
-        try
-        {
-            persistence.save((Persistent)subordinate);
-        }
-        catch(PersistenceException e)
-        {
-            throw new BackendException("Failed to update Subject", e);
-        }
-        coralEventHub.getOutbound().fireSubjectChangeEvent(subordinate);
     }
     
     // Roles ////////////////////////////////////////////////////////////////////////////////////
@@ -420,16 +379,6 @@ public class CoralSecurityImpl
                                             " is not allowed to grant "+
                                             role.getName()+" role");
             }
-            /*
-              FIXME: this is disabled until many-to-many supervision
-              relationships are implemented.
-            if(!subject.isSubordinate(grantor))
-            {
-                throw new SecurityException(grantor.getName()+
-                                            " is not allowed to grant roles to "+
-                                            subject.getName());
-            } 
-            */
         }
         if(role.equals(getNobodyRole()))
         {
@@ -482,15 +431,6 @@ public class CoralSecurityImpl
                                             " revoke role "+role.getName()+" from "+
                                             subject.getName());
             }
-            /*
-              FIXME: this is disabled until many-to-many supervision
-              relationships are implemented.
-            if(!subject.isSubordinate(revoker))
-            {
-                throw new SecurityException(revoker.getName()+" is not allowed to "+
-                                            " revoke roles from "+subject.getName());
-            }            
-            */
         }
         coralRegistry.deleteRoleAssignment(item);
     }

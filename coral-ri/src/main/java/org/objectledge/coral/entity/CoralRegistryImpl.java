@@ -59,7 +59,7 @@ import org.picocontainer.PicoContainer;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.1 2004-02-26 17:09:21 fil Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.2 2004-03-03 10:27:30 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -1915,32 +1915,6 @@ public class CoralRegistryImpl
 
     // Non-cached cross-reference information ////////////////////////////////
 
-    /**
-     * {@inheritDoc}
-     */
-    public Subject[] getSubordinates(Subject subject)
-    {
-        try
-        {
-            List list = persistence.load("supervisor = "+subject.getId(),
-                                             subjectFactory);
-            Subject[] result = new Subject[list.size()];
-            for(int i=0; i<list.size(); i++)
-            {
-                result[i] = getSubject(((Subject)list.get(i)).getId());
-            }
-            return result;
-        }
-        catch(PersistenceException e)
-        {
-            throw new BackendException("failed to load subjects", e);
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("internal error", e);
-        }
-    }
-    
     /**
      * {@inheritDoc}
      */

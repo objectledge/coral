@@ -6,7 +6,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * A representation of an user or application accessing the resource store.
  *
- * @version $Id: Subject.java,v 1.3 2004-02-19 11:02:22 fil Exp $
+ * @version $Id: Subject.java,v 1.4 2004-03-03 10:27:31 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Subject
@@ -74,29 +74,6 @@ public interface Subject
      * <code>Permission</code> on a <code>Resource</code>.
      */
     public boolean hasPermission(Resource resource, Permission permission);
-
-    /**
-     * Checks if the given subject is a subordinate of this subject.
-     *
-     * @param subject the subject to check.
-     * @return <core>true</code> if the given subject is a subordinate of this
-     * subject. 
-     */
-    public boolean isSubordinate(Subject subject);
-    
-    /**
-     * Returns the supervisor of this subject.
-     *
-     * @return the supervisor of this subject.
-     */
-    public Subject getSupervisor();
-
-    /**
-     * Returns all subordinates of this subject.
-     *
-     * @return all subordinates of this subject.
-     */
-    public Subject[] getSubordinates();
 
     /**
      * Returns all Resources that are owned by this Subject.
