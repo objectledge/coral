@@ -22,7 +22,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceListAttributeHandler.java,v 1.2 2004-03-10 21:49:58 pablo Exp $
+ * @version $Id: ResourceListAttributeHandler.java,v 1.3 2004-03-15 16:35:42 fil Exp $
  */
 public class ResourceListAttributeHandler
     extends AttributeHandlerBase
@@ -148,12 +148,14 @@ public class ResourceListAttributeHandler
             "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES ("+
             id+", ?, ?)"
         );
+        boolean nonEmpty = false;
         if(value instanceof ResourceList)
         {
             long[] ids = ((ResourceList)value).getIds();
             int size = ((ResourceList)value).size();
             for(int i=0; i<size; i++)
             {
+                nonEmpty = true;
                 pstmt.setInt(1, i);
                 pstmt.setLong(2, ids[i]);
                 pstmt.addBatch();
@@ -165,6 +167,7 @@ public class ResourceListAttributeHandler
             int position = 0;
             while(i.hasNext())
             {
+                nonEmpty = true;
                 Object v = i.next();
                 if(v instanceof Resource)
                 {
@@ -188,7 +191,10 @@ public class ResourceListAttributeHandler
             "DELETE FROM "+getTable()+
             " WHERE data_key = "+id
         );
-        pstmt.executeBatch();
+        if(nonEmpty)
+        {
+            pstmt.executeBatch();
+        }
     }
 
     /**
