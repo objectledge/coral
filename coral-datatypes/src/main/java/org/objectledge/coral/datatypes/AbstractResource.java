@@ -62,7 +62,7 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.9 2004-07-01 11:24:54 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.10 2004-07-01 11:27:22 fil Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -76,7 +76,7 @@ public abstract class AbstractResource implements Resource
     protected Resource delegate;
     
     /** The resource class this object holds attributes of. */
-    protected ResourceClass componentResourceClass;
+    protected ResourceClass facetClass;
     
     /** Set of AttributeDefinitions of the modified attributes. */
     protected Set modified = new HashSet();
@@ -88,7 +88,7 @@ public abstract class AbstractResource implements Resource
     private Map attributeMap = new HashMap();    
     
     /** ResourceClass -> parent class instance. */
-    private Map parents = new HashMap();
+    private Map facets = new HashMap();
     
     /**
      * Constructor.
@@ -187,9 +187,9 @@ public abstract class AbstractResource implements Resource
         return delegate;
     }    
     
-    ResourceClass getComponentResourceClass()
+    ResourceClass getFacetClass()
     {
-        return componentResourceClass;
+        return facetClass;
     }
     
     synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, Object data)
@@ -200,7 +200,7 @@ public abstract class AbstractResource implements Resource
         {
             ResourceClass parent = parentClasses[i];
             Resource instance = parent.getHandler().retrieve(delegate, conn, data);
-            parents.put(parent, instance);
+            facets.put(parent, instance);
         }
         initAttributeMap(delegate, rClass);
     }
@@ -213,7 +213,7 @@ public abstract class AbstractResource implements Resource
         {
             ResourceClass parent = parentClasses[i];
             Resource instance = parent.getHandler().create(delegate, attributes, conn);
-            parents.put(parent, instance);
+            facets.put(parent, instance);
         }
         AttributeDefinition[] declared = rClass.getDeclaredAttributes();
         for(int i=0; i<declared.length; i++)
@@ -246,15 +246,15 @@ public abstract class AbstractResource implements Resource
 	    {
 	        ResourceClass parent = parentClasses[i];
 	        Resource instance;
-	        if(parents.containsKey(parent))
+	        if(facets.containsKey(parent))
 	        {
-	            instance = (Resource)parents.get(parent);
+	            instance = (Resource)facets.get(parent);
 	            parent.getHandler().revert(instance, conn, data);
 	        }
 	        else
 	        {
 	            instance = parent.getHandler().retrieve(delegate, conn, data);
-	            parents.put(parent, instance);
+	            facets.put(parent, instance);
 	        }
 	    }
 	    initAttributeMap(delegate, rClass);
@@ -281,11 +281,11 @@ public abstract class AbstractResource implements Resource
 	synchronized void delete(Connection conn)
 	    throws SQLException
 	{
-	    Iterator i = parents.keySet().iterator();
+	    Iterator i = facets.keySet().iterator();
 	    while(i.hasNext())
 	    {
 	        ResourceClass parentClass = (ResourceClass)i.next();
-	        Resource parent = (Resource)parents.get(parentClass);
+	        Resource parent = (Resource)facets.get(parentClass);
 	        parentClass.getHandler().delete(parent, conn);
 	    }
 	}
@@ -668,12 +668,12 @@ public abstract class AbstractResource implements Resource
         {
             rClass = delegate.getResourceClass();
         }
-        this.componentResourceClass = rClass;
+        this.facetClass = rClass;
         ResourceClass[] parentClasses = getDirectParentClasses(rClass);
         for(int i=0; i<parentClasses.length; i++)
         {
             ResourceClass parent = parentClasses[i];
-            Resource instance = (Resource)parents.get(parent);
+            Resource instance = (Resource)facets.get(parent);
             AttributeDefinition[] hosted = parent.getAllAttributes();
             for(int j=0; j<hosted.length; j++)
             {

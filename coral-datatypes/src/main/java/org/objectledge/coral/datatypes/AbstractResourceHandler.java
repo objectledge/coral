@@ -28,7 +28,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.2 2004-06-29 12:28:50 fil Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.3 2004-07-01 11:27:22 fil Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -267,7 +267,7 @@ public abstract class AbstractResourceHandler
     protected void addToCache(AbstractResource res)
     {
         // we use WeakHashMap to emulate WeakSet
-        Map rset = (Map)cache.get(res.getComponentResourceClass());
+        Map rset = (Map)cache.get(res.getFacetClass());
         if(rset == null)
         {
             rset = new WeakHashMap();
@@ -295,7 +295,7 @@ public abstract class AbstractResourceHandler
             while(i.hasNext())
             {
                 AbstractResource r = (AbstractResource)i.next();
-                r.revert(r.getComponentResourceClass(), conn, data);
+                r.revert(r.getFacetClass(), conn, data);
             }
         }
     }
