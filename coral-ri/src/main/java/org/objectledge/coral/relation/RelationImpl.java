@@ -27,6 +27,7 @@
 //
 package org.objectledge.coral.relation;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,7 +43,7 @@ import org.objectledge.database.persistence.Persistence;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.5 2004-02-24 12:45:49 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.6 2004-02-24 14:56:03 zwierzem Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -132,7 +133,7 @@ implements Relation
     /**
      * {@inheritDoc}
      */
-    public long[] get(long id)
+    public Set get(long id)
     {
         return get(rel, id);
     }
@@ -304,23 +305,16 @@ implements Relation
     /**
      * Return an array of ids contained in the map under given id.
      */
-    private long[] get(Map relation, long id)
+    private Set get(Map relation, long id)
     {
         Set set = (Set)relation.get(new Long(id));
         if(set != null)
         {
-            long[] ids = new long[set.size()];
-            int i = 0;
-            for (Iterator iter = set.iterator(); iter.hasNext(); i++)
-            {
-                Long element = (Long) iter.next();
-                ids[i] = element.longValue();
-            }
-            return ids;
+        	return Collections.unmodifiableSet(set);
         }
         else
         {
-            return new long[0];
+            return Collections.EMPTY_SET;
         }
     }
 
@@ -379,7 +373,7 @@ implements Relation
         /**
          * {@inheritDoc}
          */
-        public long[] get(long id)
+        public Set get(long id)
         {
             return RelationImpl.this.get(invRel, id);
         }
