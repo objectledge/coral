@@ -75,4 +75,15 @@ public abstract class BaseCoralView
         						 MVCContext mvcContext, 
         						 I18nContext i18nContext, CoralSession coralSession)
         throws ProcessingException;
+
+    /**
+     * Retrieve coral session from context.
+     * 
+     * @param context the context.
+     * @return the coral session.
+     */
+    protected CoralSession getCoralSession(Context context)
+    {
+        return (CoralSession)context.getAttribute(CoralSession.class);
+    }
 }
