@@ -1,1 +1,0 @@
-maven -o war:install-snapshot

@@ -28,11 +28,11 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.7 2004-04-28 14:03:41 fil Exp $ -->
+<!-- $Id: project.xml,v 1.8 2004-05-13 14:09:52 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
-  <extend>../coral-reactor/shared/project.xml</extend>
+  <extend>../coral-common/project.xml</extend>
 
   <!-- project info -->
   

@@ -28,14 +28,14 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.3 2004-03-22 08:39:56 fil Exp $ -->
+<!-- $Id: maven.xml,v 1.4 2004-05-13 14:09:50 fil Exp $ -->
 <project xmlns:j="jelly:core"
          xmlns:ant="jelly:ant">
 
   <goal name="coral:javacc">
-    <j:set var="javaccSources" value="${build.javacc.sourceDirectory}"/>
+    <j:set var="javaccSources" value="${maven.javacc.sourceDirectory}"/>
     <j:if test="${empty(javaccSources)}">
-    <j:set var="javaccSources" value="${build.javacc.sourceDirectory}"/>
+      <j:set var="javaccSources" value="${pom.build.sourceDirectory}"/>
     </j:if>
     <!-- jjt grammars -->
     <fileScanner var="treeFiles">
@@ -62,10 +62,7 @@
   <preGoal name="java:compile">
     <attainGoal name="coral:javacc"/>
   </preGoal>
-  <postGoal name="xdoc:register-reports">
-    <attainGoal name="maven-findbugs-plugin:register"/>
-    <attainGoal name="maven-clover-plugin:register"/>
-  </postGoal>
+
 </project>
 
 

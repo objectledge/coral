@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- $Id: project.xml,v 1.1 2004-02-19 10:55:00 fil Exp $ -->
+<!-- $Id: project.xml,v 1.2 2004-05-13 14:09:45 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
-  <extend>shared/project.xml</extend>
+  <extend>../coral-common/project.xml</extend>
 
   <!-- project info -->
   

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id: maven.xml,v 1.1 2004-05-13 14:09:49 fil Exp $ -->
+<project xmlns:j="jelly:core"
+         xmlns:ant="jelly:ant"
+         xmlns:util="jelly:util">
+
+  <preGoal name="jar:jar">
+    <attainGoal name="ledge:index-jar"/>
+  </preGoal>         
+
+  <!-- reports -->
+         
+  <j:if test="${!empty(pom.build.unitTestSourceDirectory)}">
+    <util:file var="testDir" name="${pom.build.unitTestSourceDirectory}"/>
+    <j:if test="${file.exists()}">
+      <attainGoal name="maven-clover-plugin:register"/>
+    </j:if>
+  </j:if>
+   
+  <j:if test="${context.getVariable('maven.mode.online') == true}">
+    <postGoal name="xdoc:register-reports">
+      <attainGoal name="maven-statcvs-plugin:register"/>
+    </postGoal>
+  </j:if>
+   
+</project>         

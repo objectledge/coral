@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-2"?>
 <project>
   <pomVersion>3</pomVersion>
-  <extend>../ledge-reactor/shared/project.xml</extend>
+  <extend>../coral-common/project.xml</extend>
 
   <name>Coral browser</name>
   <id>coral-browser</id>
@@ -229,8 +229,9 @@
     <sourceDirectory>src/main/java</sourceDirectory>
     <resources>
       <resource>
-        <directory>src/jar-resources</directory>
+        <directory>src/main/resources</directory>
       </resource>
     </resources>
   </build>
+  
 </project>  

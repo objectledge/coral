@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- $Id: project.xml,v 1.1 2004-02-19 10:55:01 fil Exp $ -->
+<!-- $Id: project.xml,v 1.1 2004-05-13 14:09:49 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
 
@@ -8,19 +8,19 @@
   <organization>
     <name>objectledge.org</name>
     <url>http://objectledge.org/</url>
-    <logo>/images/caltha-logo.gif</logo>
+    <logo>http://objectledge.org/images/caltha-logo.gif</logo>
   </organization>
   <!-- logo -->
   <inceptionYear>2003</inceptionYear>
   <package>org.objectledge.coral</package>
   <issueTrackingUrl>http://objectledge.org/jira/secure/BrowseProject.jspa?id=10030</issueTrackingUrl>
    
-  <url>http://objectledge.org/</url>
+  <url>http://coral.objectledge.org/</url>
   
   <siteAddress>coral.objectledge.org</siteAddress>
   <siteDirectory>/home/caltha/objectledge/coral/www</siteDirectory>
-  <distributionSite>objectledge.org</distributionSite>
-  <distributionDirectory>/home/caltha/objectledge/builds</distributionDirectory>
+  <distributionSite>coral.objectledge.org</distributionSite>
+  <distributionDirectory>/home/caltha/objectledge/coral/builds</distributionDirectory>
 
   <repository>
     <developerConnection>scm:cvs:ext:${maven.username}@cvs.caltha.pl:/cvsroot/${pom.groupId}:${pom.artifactId}</developerConnection>
@@ -121,5 +121,20 @@
   </developers>
 
   <!-- contributors -->
+
+  <reports>
+    <report>maven-license-plugin</report>
+    <report>maven-changes-plugin</report>
+    <report>maven-tasklist-plugin</report>
+    <report>maven-javadoc-plugin</report>
+    <report>maven-jxr-plugin</report>
+    <report>maven-jdepend-plugin</report>
+    <report>maven-checkstyle-plugin</report>
+    <report>maven-junit-report-plugin</report>
+    <report>maven-pmd-plugin</report>
+    <report>maven-simian-plugin</report>
+    <report>maven-faq-plugin</report>    
+    <report>maven-findbugs-plugin</report>
+  </reports>
   
 </project>

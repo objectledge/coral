@@ -28,11 +28,11 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.5 2004-03-29 07:14:54 fil Exp $ -->
+<!-- $Id: project.xml,v 1.6 2004-05-13 14:09:53 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
-  <extend>../coral-reactor/shared/project.xml</extend>
+  <extend>../coral-common/project.xml</extend>
 
   <!-- project info -->
   
@@ -43,7 +43,7 @@
   <name>Coral Datatypes</name>
   <shortDescription>
     Coral Datatypes module provides implementations of the AttributeHandler and ResourceHandler part of the Coral API.  
-   </shortDescription>
+  </shortDescription>
   
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
