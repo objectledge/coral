@@ -42,7 +42,7 @@ import org.objectledge.coral.store.CoralStore;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.1 2004-03-05 15:05:55 fil Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.2 2004-03-08 07:22:49 fil Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -51,6 +51,7 @@ public class CoralSessionImpl
     private CoralSecurity security;
     private CoralStore store;
     private CoralEventWhiteboard eventWhiteboard;
+    private CoralQuery query;
     
     private Subject subject;
     private Principal principal;
@@ -61,7 +62,8 @@ public class CoralSessionImpl
         this.principal = principal;
         schema = new SessionCoralSchema(coral, this);
         security = new SessionCoralSecurity(coral, this);
-        store = new SessionCoralStore(coral, this);        
+        store = new SessionCoralStore(coral, this);
+        eventWhiteboard = new SessionCoralEventWhiteboard(coral, this);        
     }
 
     /** 
@@ -86,8 +88,7 @@ public class CoralSessionImpl
      */
     public CoralEventWhiteboard getEvent()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return eventWhiteboard;
     }
 
     /** 
@@ -95,8 +96,7 @@ public class CoralSessionImpl
      */
     public CoralQuery getQuery()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return query;
     }
 
     /** 
