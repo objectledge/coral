@@ -47,7 +47,7 @@ import org.objectledge.filesystem.FileSystem;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralTestCase.java,v 1.6 2004-03-12 12:29:30 fil Exp $
+ * @version $Id: CoralTestCase.java,v 1.7 2004-03-15 16:36:18 fil Exp $
  */
 public abstract class CoralTestCase extends TestCase
 {
@@ -97,6 +97,7 @@ public abstract class CoralTestCase extends TestCase
     }
     
     public void tearDown()
+        throws Exception
     {
         container.killContainer();
     }
