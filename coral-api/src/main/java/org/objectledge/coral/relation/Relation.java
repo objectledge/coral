@@ -38,7 +38,7 @@ import org.objectledge.coral.store.Resource;
  * </p>  
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: Relation.java,v 1.3 2004-02-23 12:27:44 zwierzem Exp $
+ * @version $Id: Relation.java,v 1.4 2004-02-24 12:22:54 zwierzem Exp $
  */
 public interface Relation extends Entity
 {
@@ -47,14 +47,14 @@ public interface Relation extends Entity
 	 *
 	 * @return the reverse view of this relationship.
 	 */
-	public Relation getReverse();
+	public Relation getInverted();
 
 	/**
 	 * Returns <code>true</code> if this is the reverse view of the relationship.
 	 * 
 	 * @return <code>true</code> if this is the reverse view of the relationship.
 	 */
-	public boolean isReverse();
+	public boolean isInverted();
 
 	// reading ------------------------------------------------------------------------------------
 
