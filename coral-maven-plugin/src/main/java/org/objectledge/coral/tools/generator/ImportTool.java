@@ -31,18 +31,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * A tool for generating pretty-printed import lists in Java source files.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ImportTool.java,v 1.2 2004-03-31 10:02:59 fil Exp $
+ * @version $Id: ImportTool.java,v 1.3 2004-03-31 12:05:40 fil Exp $
  */
 public class ImportTool
 {
     private String packageName;
     private List prefices;
-    private List imports = new ArrayList();
+    private Set imports = new TreeSet();
 
     /**
      * Creates an import tool instance.
