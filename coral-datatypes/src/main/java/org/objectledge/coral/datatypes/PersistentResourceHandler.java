@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.10 2004-08-20 10:05:28 rafal Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.11 2004-08-20 10:43:39 rafal Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -40,9 +40,6 @@ public class PersistentResourceHandler
     /** The instance factory. */
     protected PersistentFactory factory;
     
-    /** Persistent object instance for the purpose of query building. */
-    protected Persistent instance;
-
     /**
      * Constructor.
      * 
@@ -60,15 +57,6 @@ public class PersistentResourceHandler
     {
         super(coralSchema, coralSecurity, instantiator, resourceClass);
         this.persistence = persistence;
-        /*
-        if(resourceClass.getDbTable() == null ||
-           resourceClass.getDbTable().length() == 0)
-        {
-            throw new ComponentInitializationError("resource class "+ resourceClass.getName()+
-                                                    " has no DB TABLE set");
-        }
-        */
-        instance = (Persistent)instantiator.newInstance(resourceClass.getJavaClass());
         factory = instantiator.getPersistentFactory(resourceClass.getJavaClass());
     }
 
@@ -178,13 +166,21 @@ public class PersistentResourceHandler
     
     protected Object getData(Resource delegate, Connection conn) throws SQLException
     {
-        PreparedStatement statement = DefaultInputRecord.
+    	try
+		{
+    		Persistent instance = (Persistent)instantiator.newInstance(resourceClass.getJavaClass());
+            PreparedStatement statement = DefaultInputRecord.
         	getSelectStatement(delegate.getId(), instance, conn);
-        ResultSet rs = statement.executeQuery();
-        InputRecord record = new DefaultInputRecord(rs);
-        Map data = new HashMap();
-        data.put(new Long(delegate.getId()), record);
-        return data;
+            ResultSet rs = statement.executeQuery();
+            InputRecord record = new DefaultInputRecord(rs);
+            Map data = new HashMap();
+            data.put(new Long(delegate.getId()), record);
+            return data;
+		}
+    	catch(org.objectledge.coral.InstantiationException e)
+		{
+    		throw (SQLException)new SQLException("failed to instantiate helper instance").initCause(e);
+		}
     }
 
     protected Object getData(ResourceClass rc, Connection conn) throws SQLException
