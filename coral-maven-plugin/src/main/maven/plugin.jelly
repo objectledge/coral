@@ -112,6 +112,17 @@
       className="org.objectledge.coral.tools.SessionFactoryTag">
     </define:bean>
 
+
+    <!--
+     | Instantiates Ledge container.
+     |
+     | @param dataSource the data source to use.
+     | @param var the variable to store ledge container into (ledgeContainer, by default).
+     -->
+    <define:bean name="ledgeContainer"
+      className="org.objectledge.coral.tools.LedgeContainerTag">
+    </define:bean>
+
     <!--
      | Instantiates a dummy Principal
      |
