@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.9 2004-05-27 12:31:36 fil Exp $ -->
+<!-- $Id: project.xml,v 1.10 2004-05-27 15:55:49 fil Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -88,13 +88,13 @@
     <dependency>
       <groupId>picocontainer</groupId>
       <artifactId>picocontainer</artifactId>
-      <version>1.0-RC-1-SNAPSHOT</version>
+      <version>1.0-RC-1</version>
       <url>http://picocontainer.org/</url>
     </dependency>
     <dependency>
       <groupId>nanocontainer</groupId>
       <artifactId>nanocontainer</artifactId>
-      <version>1.0-beta-1-SNAPSHOT</version>
+      <version>cheddar</version>
       <url>http://nanocontainer.org/</url>
     </dependency>
     <dependency>

@@ -15,12 +15,12 @@
 	<classpathentry kind="var" path="MAVEN_REPO/velocity/jars/velocity-1.4.jar"/>
 	<classpathentry sourcepath="MAVEN_REPO/log4j/sources/log4j-1.2.8-source.zip" kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar"/>
 	<classpathentry kind="src" path="/coral-ri"/>
-	<classpathentry sourcepath="MAVEN_REPO/picocontainer/sources/picocontainer-1.0-RC-1-SNAPSHOT-src.zip" kind="var" path="MAVEN_REPO/picocontainer/jars/picocontainer-1.0-RC-1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/picocontainer/jars/picocontainer-1.0-RC-1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/maven/jars/maven-jelly-tags-20040429.235300.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-jelly/jars/commons-jelly-20030902.160215.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/maven/jars/maven-1.0-rc3.jar"/>
 	<classpathentry sourcepath="MAVEN_REPO/hsqldb/sources/hsqldb-1.7.2-rc6a-src.zip" kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.7.2-rc6a-jdk1.4.jar"/>
 	<classpathentry kind="src" path="/ledge-container"/>
-	<classpathentry sourcepath="MAVEN_REPO/nanocontainer/sources/nanocontainer-1.0-beta-1-SNAPSHOT-src.zip" kind="var" path="MAVEN_REPO/nanocontainer/jars/nanocontainer-1.0-beta-1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/nanocontainer/jars/nanocontainer-cheddar.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
