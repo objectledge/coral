@@ -22,7 +22,7 @@ import org.objectledge.event.EventForwarder;
 /**
  * Convenience wrapper around <code>EventService</code> implementation.
  *
- * @version $Id: CoralEventWhiteboardImpl.java,v 1.1 2004-02-27 09:30:28 fil Exp $
+ * @version $Id: CoralEventWhiteboardImpl.java,v 1.2 2004-02-27 15:23:35 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralEventWhiteboardImpl
@@ -50,7 +50,8 @@ public class CoralEventWhiteboardImpl
     private Method roleImplicationChange;
     
     /** {@link
-     * ResourceClassInheritanceChangeListener#inheritanceChanged(ResourceClassInheritance,boolean)} */
+     * ResourceClassInheritanceChangeListener#inheritanceChanged(ResourceClassInheritance,boolean)}
+     */
     private Method resourceClassInheritanceChange;
     
     /** {@link
