@@ -33,12 +33,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.entity.EntityExistsException;
 
 /**
  * Represents a Coral Schema.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: Schema.java,v 1.5 2004-03-23 11:33:41 fil Exp $
+ * @version $Id: Schema.java,v 1.6 2004-03-24 15:39:46 fil Exp $
  */
 public class Schema
 {
@@ -79,9 +80,17 @@ public class Schema
      * Adds an attribute class to the model.
      * 
      * @param attributeClass the attribute class.
+     * @throws EntityExistsException if the schema already contains a resource class with the same
+     *         name as the class being added.
      */
     public void addAttributeClass(AttributeClass attributeClass)
+        throws EntityExistsException
     {
+        if(attributeClasses.containsKey(attributeClass.getName()))
+        {
+            throw new EntityExistsException("attribute class "+attributeClass.getName()+
+                " already exists");
+        }
         attributeClasses.put(attributeClass.getName(), attributeClass);
     }
     
@@ -89,9 +98,16 @@ public class Schema
      * Deletes the attribute class from the model.
      * 
      * @param attributeClass the attribute class.
+     * @throws EntityDoesNotExistException if the attribute class is not present in the schema.
      */
     public void deleteAttributeClass(AttributeClass attributeClass)
+        throws EntityDoesNotExistException
     {
+        if(!attributeClasses.values().contains(attributeClass))
+        {
+            throw new EntityDoesNotExistException("attribute class "+attributeClass.getName()+
+                " is not present in the schema");
+        }
         attributeClasses.values().remove(attributeClass);
     }
     
@@ -129,9 +145,17 @@ public class Schema
      * Adds a resource class to the model.
      * 
      * @param resourceClass the resource class.
+     * @throws EntityExistsException if the schema already contains a resource class with the same
+     *         name as the class being added.
      */
     public void addResourceClass(ResourceClass resourceClass)
+        throws EntityExistsException
     {
+        if(resourceClasses.containsKey(resourceClass.getName()))
+        {
+            throw new EntityExistsException("resource class "+resourceClass.getName()+
+                " already exists");
+        }
         resourceClasses.put(resourceClass.getName(), resourceClass);
     }
 
@@ -139,9 +163,16 @@ public class Schema
      * Deletes the resource class from the model.
      * 
      * @param resourceClass the resource class.
+     * @throws EntityDoesNotExistException if the attribute class is not present in the schema.
      */
     public void deleteResourceClass(ResourceClass resourceClass)
+        throws EntityDoesNotExistException
     {
+        if(!resourceClasses.values().contains(resourceClass))
+        {
+            throw new EntityDoesNotExistException("resource class "+resourceClass.getName()+
+                " is not present in the schema");
+        }
         resourceClasses.values().remove(resourceClass);
     }
 }
