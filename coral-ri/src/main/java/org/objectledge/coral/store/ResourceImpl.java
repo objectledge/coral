@@ -36,7 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * {@link org.objectledge.coral.store.ResourceHandler#create(Resource,Map,Connection)} and
  * {@link org.objectledge.coral.store.ResourceHandler#retrieve(Resource,Connection)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.12 2004-06-29 12:18:04 fil Exp $
+ * @version $Id: ResourceImpl.java,v 1.13 2004-06-29 12:31:20 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -604,7 +604,7 @@ public class ResourceImpl
      */
     public Resource getDelegate()
     {
-        throw new UnsupportedOperationException("this is a security delegate object");
+        return null;
     }
 
     // PermissionAssignmentChangeListener interface //////////////////////////

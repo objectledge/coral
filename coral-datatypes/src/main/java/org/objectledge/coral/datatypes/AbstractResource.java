@@ -62,7 +62,7 @@ import org.objectledge.database.Database;
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.5 2004-06-29 12:18:15 fil Exp $
+ * @version $Id: AbstractResource.java,v 1.6 2004-06-29 12:31:21 fil Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -130,13 +130,14 @@ public abstract class AbstractResource implements Resource
     {
         if(obj != null && (obj instanceof Resource))
         {
-            if(obj instanceof AbstractResource)
+            Resource res = (Resource)obj;
+            if(res.getDelegate() == null)
             {
-                return delegate.equals(((Resource)obj).getDelegate());
+                return delegate.equals(res);
             }
             else
             {
-                return delegate.equals((Resource)obj);
+                return delegate.equals(res.getDelegate());
             }
         }
         return false;
