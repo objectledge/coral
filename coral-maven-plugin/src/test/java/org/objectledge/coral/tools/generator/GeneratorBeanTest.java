@@ -27,6 +27,7 @@
 // 
 package org.objectledge.coral.tools.generator;
 
+import org.apache.log4j.BasicConfigurator;
 import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.filesystem.FileSystem;
@@ -45,6 +46,8 @@ public class GeneratorBeanTest extends LedgeTestCase
     public void testInitTemplating()
         throws Exception
     {
+        BasicConfigurator.resetConfiguration();
+        BasicConfigurator.configure();
         Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
         FileSystem fileSystem = FileSystem.getStandardFileSystem(".");
         Templating templating = generatorBean.initTemplating(fileSystem, logger);
