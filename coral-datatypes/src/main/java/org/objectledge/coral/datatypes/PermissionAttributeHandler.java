@@ -17,7 +17,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link Permission} references.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionAttributeHandler.java,v 1.2 2004-05-06 13:38:43 pablo Exp $
+ * @version $Id: PermissionAttributeHandler.java,v 1.3 2005-01-18 10:08:40 rafal Exp $
  */
 public class PermissionAttributeHandler
     extends AttributeHandlerBase
@@ -48,7 +48,7 @@ public class PermissionAttributeHandler
         Statement stmt = conn.createStatement();
         stmt.execute(
             "INSERT INTO "+getTable()+"(data_key, ref) VALUES ("+
-            id+", "+((Permission)value).getId()+")"
+            id+", "+((Permission)value).getIdString()+")"
         );
         return id;
     }
@@ -82,7 +82,7 @@ public class PermissionAttributeHandler
         checkExists(id, stmt);
         stmt.execute(
             "UPDATE "+getTable()+" SET ref = "+
-            ((Permission)value).getId()+
+            ((Permission)value).getIdString()+
             " WHERE data_key = "+id
         );
     }

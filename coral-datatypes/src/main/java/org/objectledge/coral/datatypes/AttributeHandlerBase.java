@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.8 2004-12-23 04:44:51 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.9 2005-01-18 10:08:41 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -205,7 +205,7 @@ public abstract class AttributeHandlerBase
         checkValue(value);
         if(value instanceof Entity)
         {
-            return Long.toString(((Entity)value).getId());
+            return ((Entity)value).getIdString();
         }
         else
         {

@@ -78,7 +78,8 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
         mockDatabase.stubs().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
         mockPermission = mock(Permission.class);
-        mockPermission.stubs().method("getId").will(returnValue(1L));
+        mockPermission.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockPermission.stubs().method("getIdString").will(returnValue("1"));
         mockPermission.stubs().method("getName").will(returnValue("foo"));
         permission = (Permission)mockPermission.proxy();
 
@@ -118,7 +119,7 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_permission" + "(data_key, ref) VALUES (1, " + permission.getId() + ")";
+        String stmt = "INSERT INTO " + "arl_attribute_permission" + "(data_key, ref) VALUES (1, " + permission.getIdString() + ")";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(permission, connection);
     }
@@ -126,7 +127,7 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_permission SET ref = " + permission.getId() + " WHERE data_key = 1";
+        String stmt2 = "UPDATE arl_attribute_permission SET ref = " + permission.getIdString() + " WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, permission, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));
@@ -223,7 +224,7 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
 
     public void testToExternalString()
     {
-        assertEquals(""+permission.getId(), handler.toExternalString(permission));
+        assertEquals(permission.getIdString(), handler.toExternalString(permission));
     }
 
     public void testCheckDomainString()

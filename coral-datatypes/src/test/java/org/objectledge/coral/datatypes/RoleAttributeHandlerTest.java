@@ -78,7 +78,8 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
         mockDatabase.stubs().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
         mockRole = mock(Role.class);
-        mockRole.stubs().method("getId").will(returnValue(1L));
+        mockRole.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockRole.stubs().method("getIdString").will(returnValue("1"));
         mockRole.stubs().method("getName").will(returnValue("foo"));
         role = (Role)mockRole.proxy();
 
@@ -118,7 +119,7 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_role" + "(data_key, ref) VALUES (1, " + role.getId() + ")";
+        String stmt = "INSERT INTO " + "arl_attribute_role" + "(data_key, ref) VALUES (1, " + role.getIdString() + ")";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(role, connection);
     }
@@ -126,7 +127,7 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_role SET ref = " + role.getId() + " WHERE data_key = 1";
+        String stmt2 = "UPDATE arl_attribute_role SET ref = " + role.getIdString() + " WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, role, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));
@@ -223,7 +224,7 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
 
     public void testToExternalString()
     {
-        assertEquals(""+role.getId(), handler.toExternalString(role));
+        assertEquals(role.getIdString(), handler.toExternalString(role));
     }
 
     public void testCheckDomainString()

@@ -25,7 +25,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.14 2004-12-21 08:31:55 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.15 2005-01-18 10:08:42 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -127,7 +127,7 @@ public class GenericResource
     {
         super.retrieve(delegate, rClass, conn, data);
         Map dataKeyMap = (Map)data;
-        Map dataKeys = (Map)dataKeyMap.get(new Long(delegate.getId()));
+        Map dataKeys = (Map)dataKeyMap.get(delegate.getIdObject());
         if(dataKeys != null)
         {
             AttributeDefinition[] declared = rClass.getDeclaredAttributes();
@@ -149,7 +149,7 @@ public class GenericResource
         attributes.clear();
         ids.clear();
         Map dataKeyMap = (Map)data;
-        Map dataKeys = (Map)dataKeyMap.get(new Long(delegate.getId()));
+        Map dataKeys = (Map)dataKeyMap.get(delegate.getIdObject());
         if(dataKeys != null)
         {
             AttributeDefinition[] declared = rClass.getDeclaredAttributes();
@@ -186,7 +186,7 @@ public class GenericResource
 		            stmt.execute(
 		                "INSERT INTO coral_generic_resource "+
 		                "(resource_id, attribute_definition_id, data_key) "+
-		                "VALUES ("+delegate.getId()+", "+attr.getId()+", "+
+		                "VALUES ("+delegate.getIdString()+", "+attr.getIdString()+", "+
 		                newId+")"
 		            );
 		            if(handler.shouldRetrieveAfterCreate())
@@ -240,7 +240,7 @@ public class GenericResource
 	                        stmt.execute(
 	                            "INSERT INTO coral_generic_resource "+
 	                            "(resource_id, attribute_definition_id, data_key) "+
-	                            "VALUES ("+delegate.getId()+", "+attr.getId()+", "+
+	                            "VALUES ("+delegate.getIdString()+", "+attr.getIdString()+", "+
 	                            newId+")"
 	                        );
 	                        ids.put(attr, new Long(newId));
@@ -271,8 +271,8 @@ public class GenericResource
 	                        }
 	                        stmt.execute(
 	                            "DELETE FROM coral_generic_resource "+
-	                            "WHERE resource_id = "+delegate.getId()+
-	                            " AND attribute_definition_id = "+attr.getId()
+	                            "WHERE resource_id = "+delegate.getIdString()+
+	                            " AND attribute_definition_id = "+attr.getIdString()
 	                        );
 	                        ids.remove(attr);
 	                    }
@@ -304,8 +304,8 @@ public class GenericResource
                     throw new BackendException("internal error", e);
                 }
                 stmt.execute("DELETE FROM coral_generic_resource WHERE "+
-                             " resource_id = "+delegate.getId()+
-                             " AND attribute_definition_id = "+attr.getId());
+                             " resource_id = "+delegate.getIdString()+
+                             " AND attribute_definition_id = "+attr.getIdString());
             }
         }
     }

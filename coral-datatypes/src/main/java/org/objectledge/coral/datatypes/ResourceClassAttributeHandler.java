@@ -17,7 +17,7 @@ import org.objectledge.database.Database;
  * Handles persistency of {@link ResourceClass} references.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceClassAttributeHandler.java,v 1.3 2004-05-06 13:38:43 pablo Exp $
+ * @version $Id: ResourceClassAttributeHandler.java,v 1.4 2005-01-18 10:08:41 rafal Exp $
  */
 public class ResourceClassAttributeHandler
     extends AttributeHandlerBase
@@ -50,7 +50,7 @@ public class ResourceClassAttributeHandler
         Statement stmt = conn.createStatement();
         stmt.execute(
             "INSERT INTO "+getTable()+"(data_key, ref) VALUES ("+
-            id+", "+((ResourceClass)value).getId()+")"
+            id+", "+((ResourceClass)value).getIdString()+")"
         );
         return id;
     }
@@ -83,7 +83,7 @@ public class ResourceClassAttributeHandler
         checkExists(id, stmt);
         stmt.execute(
             "UPDATE "+getTable()+" SET ref = "+
-            ((ResourceClass)value).getId()+
+            ((ResourceClass)value).getIdString()+
             " WHERE data_key = "+id
         );
     }

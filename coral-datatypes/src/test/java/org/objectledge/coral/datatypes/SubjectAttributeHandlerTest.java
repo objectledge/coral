@@ -78,7 +78,8 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
         mockDatabase.stubs().method("getNextId").will(returnValue(1L));
         database = (Database)mockDatabase.proxy();
         mockSubject = mock(Subject.class);
-        mockSubject.stubs().method("getId").will(returnValue(1L));
+        mockSubject.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockSubject.stubs().method("getIdString").will(returnValue("1"));
         mockSubject.stubs().method("getName").will(returnValue("foo"));
         subject = (Subject)mockSubject.proxy();
 
@@ -114,7 +115,7 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_subject" + "(data_key, ref) VALUES (1, " + subject.getId() + ")";
+        String stmt = "INSERT INTO " + "arl_attribute_subject" + "(data_key, ref) VALUES (1, " + subject.getIdString() + ")";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(subject, connection);
     }
@@ -122,7 +123,7 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_subject SET ref = " + subject.getId() + " WHERE data_key = 1";
+        String stmt2 = "UPDATE arl_attribute_subject SET ref = " + subject.getIdString() + " WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, subject, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));
@@ -201,7 +202,7 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
 
     public void testToExternalString()
     {
-        assertEquals(""+subject.getId(), handler.toExternalString(subject));
+        assertEquals(subject.getIdString(), handler.toExternalString(subject));
     }
 
     public void testCheckDomainString()

@@ -23,7 +23,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.10 2004-12-21 08:31:55 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.11 2005-01-18 10:08:41 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -131,7 +131,7 @@ public class GenericResourceHandler
         Statement stmt1 = conn.createStatement();
         ResultSet rs = stmt1.executeQuery(
             "SELECT resource_id FROM coral_resource WHERE resource_class_id = "+
-            rc.getId());
+            rc.getIdString());
         
         // if there are resources to modify, and the attribute is REQUIRED
         // make sure that a value is present.
@@ -157,7 +157,7 @@ public class GenericResourceHandler
                     stmt2.execute(
                         "INSERT INTO coral_generic_resource "+
                         "(resource_id, attribute_definition_id, data_key) "+
-                        "VALUES ("+resId+", "+attr.getId()+", "+atId+")"
+                        "VALUES ("+resId+", "+attr.getIdString()+", "+atId+")"
                     );
                 }
             }
@@ -182,7 +182,7 @@ public class GenericResourceHandler
         Statement stmt2 = conn.createStatement();
         ResultSet rs = stmt1.executeQuery(
             "SELECT resource_id FROM coral_resource WHERE resource_class_id = "+
-            rc.getId());
+            rc.getIdString());
 
         // if there are resources to modify, check if values for all REQUIRED
         // attributes are present 
@@ -225,7 +225,7 @@ public class GenericResourceHandler
                     stmt2.execute(
                         "INSERT INTO coral_generic_resource "+
                         "(resource_id, attribute_definition_id, data_key) "+
-                        "VALUES ("+resId+", "+attr[i].getId()+", "+atId+")"
+                        "VALUES ("+resId+", "+attr[i].getIdString()+", "+atId+")"
                     );
                 }
             }
@@ -249,8 +249,8 @@ public class GenericResourceHandler
         ResultSet rs = stmt1.executeQuery(
             "SELECT coral_resource.resource_id, data_key FROM "+
             "coral_resource, coral_generic_resource "+
-            "WHERE resource_class_id = "+rc.getId()+
-            " AND attribute_definition_id = "+attr.getId()+
+            "WHERE resource_class_id = "+rc.getIdString()+
+            " AND attribute_definition_id = "+attr.getIdString()+
             " AND coral_resource.resource_id = coral_generic_resource.resource_id"
         );
         while(rs.next())
@@ -268,7 +268,7 @@ public class GenericResourceHandler
             stmt2.execute(
                 "DELETE FROM coral_generic_resource "+
                 "WHERE resource_id = "+resId+
-                "AND attribute_definition_id = "+attr.getId()
+                "AND attribute_definition_id = "+attr.getIdString()
             );
         }
         revert(rc, conn);
@@ -288,14 +288,14 @@ public class GenericResourceHandler
         Map atMap = new HashMap();
         for(int i=0; i<attrs.length; i++)
         {
-            atMap.put(new Long(attrs[i].getId()), attrs[i]);
+            atMap.put(attrs[i].getIdObject(), attrs[i]);
         }
         Statement stmt1 = conn.createStatement();
         Statement stmt2 = conn.createStatement();
         ResultSet rs = stmt1.executeQuery(
             "SELECT coral_resource.resource_id, attribute_definition_id, data_key FROM "+
             "coral_resource, coral_generic_resource "+
-            "WHERE resource_class_id = "+rc.getId()+
+            "WHERE resource_class_id = "+rc.getIdString()+
             " AND coral_resource.resource_id = coral_generic_resource.resource_id"
         );
         while(rs.next())
@@ -337,11 +337,11 @@ public class GenericResourceHandler
     {       
         Map keyMap = new HashMap();
         Map dataKeys = new HashMap();
-        keyMap.put(new Long(delegate.getId()), dataKeys);
+        keyMap.put(delegate.getIdObject(), dataKeys);
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
             "SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE "+
-            "resource_id = "+delegate.getId()
+            "resource_id = "+delegate.getIdString()
         );
         try
         {

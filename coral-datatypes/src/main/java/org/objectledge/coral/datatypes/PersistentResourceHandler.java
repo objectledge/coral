@@ -26,7 +26,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.13 2004-12-21 08:31:55 rafal Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.14 2005-01-18 10:08:42 rafal Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -175,16 +175,16 @@ public class PersistentResourceHandler
                 newInstance(resourceClass.getJavaClass());
     		((PersistentResource)instance).initPersistence(delegate.getResourceClass());
             PreparedStatement statement = DefaultInputRecord.
-        		getSelectStatement("resource_id = "+delegate.getId(), instance, conn);
+        		getSelectStatement("resource_id = "+delegate.getIdString(), instance, conn);
             ResultSet rs = statement.executeQuery();
             InputRecord record = new DefaultInputRecord(rs);
             if(!rs.next())
             {
             	throw new SQLException("missing data for "+delegate.getResourceClass().getName()+
-            				" WHERE resource_id = "+delegate.getId());
+            				" WHERE resource_id = "+delegate.getIdString());
             }
             Map data = new HashMap();
-            data.put(new Long(delegate.getId()), record);
+            data.put(delegate.getIdObject(), record);
             return data;
 		}
     	catch(org.objectledge.coral.InstantiationException e)

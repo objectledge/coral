@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.15 2005-01-17 11:59:27 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.16 2005-01-18 10:08:40 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -169,7 +169,7 @@ public abstract class AbstractResource implements Resource
         buff.append(' ');
         buff.append(getPath());
         buff.append(" #");
-        buff.append(getId());
+        buff.append(getIdString());
         buff.append(" @");
         buff.append(Integer.toString(System.identityHashCode(this), 16));
         return buff.toString();
@@ -827,7 +827,7 @@ public abstract class AbstractResource implements Resource
             {
                 throw new BackendException("failed to retrieve attribute value " +
                     "(attribute definition = "+attribute.getName()+
-                    " , attribute id = "+aId+") for resource: "+delegate.getId() , e);
+                    " , attribute id = "+aId+") for resource: "+delegate.getIdString() , e);
             }
         }
         finally

@@ -125,7 +125,8 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockAttributeDefinition.stubs().method("getName").will(returnValue("description"));
         mockAttributeDefinition.stubs().method("getAttributeClass").will(returnValue(attributeClass));
         mockAttributeDefinition.stubs().method("getDomain").will(returnValue(""));
-        mockAttributeDefinition.stubs().method("getId").will(returnValue(1L));
+        mockAttributeDefinition.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockAttributeDefinition.stubs().method("getIdString").will(returnValue("1"));
         attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
         
         mockCoralStore = mock(CoralStore.class);
@@ -155,6 +156,8 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         
         mockResource = mock(Resource.class);
         mockResource.stubs().method("getResourceClass").will(returnValue(resourceClass));
+        mockResource.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockResource.stubs().method("getIdString").will(returnValue("1"));
         mockResource.stubs().method("getId").will(returnValue(1L));
         resource = (Resource)mockResource.proxy();
 

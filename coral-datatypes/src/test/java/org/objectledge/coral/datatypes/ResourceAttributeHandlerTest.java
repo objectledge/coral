@@ -90,7 +90,9 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
         mockLogger = mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
         mockResource = mock(Resource.class);
-        mockResource.stubs().method("getId").will(returnValue(1L));
+        mockResource.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockResource.stubs().method("getIdString").will(returnValue("1"));
+        mockResource.stubs().method("getName").will(returnValue("foo"));
         mockResource.stubs().method("getName").will(returnValue("foo"));
         mockResource.stubs().method("getPath").will(returnValue("/foo"));
         resource = (Resource)mockResource.proxy();
@@ -148,7 +150,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "arl_attribute_resource" + "(data_key, ref) VALUES (1, " + resource.getId() + ")";
+        String stmt = "INSERT INTO " + "arl_attribute_resource" + "(data_key, ref) VALUES (1, " + resource.getIdString() + ")";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(resource, connection);
     }
@@ -156,7 +158,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE arl_attribute_resource SET ref = " + resource.getId() + " WHERE data_key = 1";
+        String stmt2 = "UPDATE arl_attribute_resource SET ref = " + resource.getIdString() + " WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         handler.update(1, resource, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));
@@ -253,7 +255,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
 
     public void testToExternalString()
     {
-        assertEquals(""+resource.getId(), handler.toExternalString(resource));
+        assertEquals(resource.getIdString(), handler.toExternalString(resource));
     }
 
     public void testCheckDomainString()

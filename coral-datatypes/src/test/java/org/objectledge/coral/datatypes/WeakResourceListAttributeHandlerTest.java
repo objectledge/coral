@@ -111,6 +111,7 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
         
         mockResource = mock(Resource.class);
         mockResource.stubs().method("getId").will(returnValue(1L));
+        mockResource.stubs().method("getIdObject").will(returnValue(new Long(1L)));
         mockResource.stubs().method("getName").will(returnValue("foo"));
         mockResource.stubs().method("getPath").will(returnValue("/foo"));
         resource = (Resource)mockResource.proxy();
