@@ -37,7 +37,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * and {@link org.objectledge.coral.schema.ResourceHandler#retrieve(Resource,
  * java.sql.Connection,Object)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.21 2005-02-21 15:48:36 zwierzem Exp $
+ * @version $Id: ResourceImpl.java,v 1.22 2005-03-18 10:26:13 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -465,6 +465,16 @@ public class ResourceImpl
         return parentId;
     }
 
+    /**
+     * Returns immediate children of the resource.
+     * 
+     * @return the immediate children of the resource.
+     */
+    public Resource[] getChildren()
+    {
+        return coral.getStore().getResource(this);
+    }
+    
     /** 
      * Checks if the specified attribute of the resource is defined.
      *

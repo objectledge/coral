@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.20 2005-02-21 15:44:16 zwierzem Exp $
+ * @version $Id: AbstractResource.java,v 1.21 2005-03-18 10:26:12 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -486,6 +486,16 @@ public abstract class AbstractResource implements Resource
     {
         return delegate.getParentId();
     }
+
+    /**
+     * Returns immediate children of the resource.
+     * 
+     * @return the immediate children of the resource.
+     */
+    public Resource[] getChildren()
+    {
+        return delegate.getChildren();
+    }   
     
     // Resource interface - attributes //////////////////////////////////////////////////////////
     

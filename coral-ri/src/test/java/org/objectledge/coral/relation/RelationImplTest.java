@@ -57,7 +57,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.12 2005-02-11 11:30:37 rafal Exp $
+ * @version $Id: RelationImplTest.java,v 1.13 2005-03-18 10:26:14 rafal Exp $
  */
 public class RelationImplTest extends LedgeTestCase
 {
@@ -684,6 +684,14 @@ public class RelationImplTest extends LedgeTestCase
          * {@inheritDoc}
          */
         public long getParentId()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Resource[] getChildren()
         {
             throw new UnsupportedOperationException();
         }

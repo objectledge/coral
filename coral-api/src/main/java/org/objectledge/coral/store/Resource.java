@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Represents a resource.
  *
- * @version $Id: Resource.java,v 1.5 2005-02-08 20:34:34 rafal Exp $
+ * @version $Id: Resource.java,v 1.6 2005-03-18 10:26:09 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface Resource
@@ -111,6 +111,13 @@ public interface Resource
      */
     public long getParentId();
 
+    /**
+     * Returns immediate children of the resource.
+     * 
+     * @return the immediate children of the resource.
+     */
+    public Resource[] getChildren();
+    
     /** 
      * Checks if the specified attribute of the resource is defined.
      *
