@@ -27,7 +27,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.5 2004-02-23 13:50:27 fil Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.6 2004-02-25 13:47:00 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -135,6 +135,7 @@ public class ResourceClassImpl
         setDbTable(dbTable);
         setHandlerClass(handlerClass);
         setFlags(flags);
+        coralEventHub.getInbound().addResourceClassChangeListener(this, this);
     }
     
     // Persistent interface /////////////////////////////////////////////////////////////////////
@@ -216,6 +217,7 @@ public class ResourceClassImpl
         {
             throw new PersistenceException("Failed to load ResourceClass #"+id, e);
         }
+        coralEventHub.getInbound().addResourceClassChangeListener(this, this);
     }
 
     // ResourceClassChangeListener interface ////////////////////////////////////////////////////
