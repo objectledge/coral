@@ -35,7 +35,7 @@ import org.objectledge.coral.entity.EntityExistsException;
  * Acts as a management interface for {@link Relation} creation and deletion. 
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManager.java,v 1.2 2004-03-09 14:33:02 zwierzem Exp $
+ * @version $Id: CoralRelationManager.java,v 1.3 2004-03-17 11:20:00 zwierzem Exp $
  */
 public interface CoralRelationManager
 {
@@ -85,6 +85,7 @@ public interface CoralRelationManager
 	 *
 	 * @param relation the relation to rename.
 	 * @param name the new name of the relation.
+	 * @throws EntityExistsException if a relation with a given name already exists.
 	 */
 	public void setName(Relation relation, String name)
 		throws EntityExistsException;
