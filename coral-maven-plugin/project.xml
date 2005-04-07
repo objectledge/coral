@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.27 2005-04-06 14:19:28 zwierzem Exp $ -->
+<!-- $Id: project.xml,v 1.28 2005-04-07 09:38:06 zwierzem Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -221,7 +221,7 @@
     <dependency>
       <groupId>velocity</groupId>
       <artifactId>velocity</artifactId>
-      <version>1.5-dev</version>
+      <version>1.5-dev-20050406</version>
       <url>http://jakarta.apache.org/velocity/</url>
     </dependency>
     <dependency>
