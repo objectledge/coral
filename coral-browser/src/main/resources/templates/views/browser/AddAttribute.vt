@@ -10,7 +10,7 @@ function fSub(action)
 
 #result_inline_message("results.arlbrowser")
 <form name="form1" method="post" action=''>
-  <input type="hidden" name="res_class_id" value="$data.getParameters().get('res_class_id').asString('-1')" maxlength="10">
+  <input type="hidden" name="res_class_id" value="$data.getParameters().get('res_class_id', '-1')" maxlength="10">
   <table width="100%" class="genericScreen" cellspacing="0">
     <tr>
       <th colspan="2"><b>Add attribute to class: $resourceClass.name</b></td>
