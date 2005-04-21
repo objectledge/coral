@@ -37,7 +37,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * and {@link org.objectledge.coral.schema.ResourceHandler#retrieve(Resource,
  * java.sql.Connection,Object)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.23 2005-03-23 11:50:22 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.24 2005-04-21 05:27:44 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -642,7 +642,7 @@ public class ResourceImpl
         }
         catch(PersistenceException e)
         {
-            throw new BackendException("failed to update resource's persitent image");
+            throw new BackendException("failed to update resource's persitent image", e);
         }
         try
         {
