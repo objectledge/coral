@@ -37,7 +37,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * and {@link org.objectledge.coral.schema.ResourceHandler#retrieve(Resource,
  * java.sql.Connection,Object)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.24 2005-04-21 05:27:44 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.25 2005-05-05 08:27:07 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -445,7 +445,7 @@ public class ResourceImpl
                 catch(EntityDoesNotExistException e)
                 {
                     throw new BackendException("corrupted data parent resource #"+parentId+
-                        " does not exist");
+                        " does not exist", e);
                 }
             }
         }
@@ -536,7 +536,7 @@ public class ResourceImpl
         catch(Exception e)
         {
             throw new BackendException("failed to invoke method for builtin attribute "+
-                attribute.getName());
+                attribute.getName(), e);
         }
     }
     

@@ -20,7 +20,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * Each {@link ResourceClass} has an associated set of <code>Permission</code>s
  * that can be granted upon it's instances.
  *
- * @version $Id: PermissionImpl.java,v 1.11 2005-02-08 20:34:45 rafal Exp $
+ * @version $Id: PermissionImpl.java,v 1.12 2005-05-05 08:27:08 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionImpl
@@ -152,7 +152,7 @@ public class PermissionImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("failed to revert entity state");
+                throw new BackendException("failed to revert entity state", e);
             }
         }
     }

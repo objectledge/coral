@@ -24,7 +24,7 @@ import org.objectledge.parameters.db.DBParametersManager;
  * <code>DBParametersManager</code>, currenty in ledge-components.</p>
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParametersAttributeHandler.java,v 1.6 2005-01-26 08:07:29 rafal Exp $
+ * @version $Id: ParametersAttributeHandler.java,v 1.7 2005-05-05 08:27:12 rafal Exp $
  */
 public class ParametersAttributeHandler
     extends AttributeHandlerBase
@@ -161,7 +161,7 @@ public class ParametersAttributeHandler
         catch(DBParametersException e)
         {
             ///CLOVER:OFF
-            throw new BackendException("failed to delete container");
+            throw new BackendException("failed to delete container", e);
             ///CLOVER:ON
         }
     }

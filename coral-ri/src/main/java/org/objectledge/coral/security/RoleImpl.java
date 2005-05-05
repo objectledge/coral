@@ -21,7 +21,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * An implementaion of {@link org.objectledge.coral.security.Role} interface.
  *
- * @version $Id: RoleImpl.java,v 1.11 2004-03-09 15:46:46 fil Exp $
+ * @version $Id: RoleImpl.java,v 1.12 2005-05-05 08:27:08 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImpl
@@ -172,7 +172,7 @@ public class RoleImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("failed to revert entity state");
+                throw new BackendException("failed to revert entity state", e);
             }
         }
     }

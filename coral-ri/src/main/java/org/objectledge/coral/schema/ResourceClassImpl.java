@@ -28,7 +28,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.20 2005-01-19 08:00:53 rafal Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.21 2005-05-05 08:27:09 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -243,7 +243,7 @@ public class ResourceClassImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("failed to revert entity state");
+                throw new BackendException("failed to revert entity state", e);
             }
         }
     }

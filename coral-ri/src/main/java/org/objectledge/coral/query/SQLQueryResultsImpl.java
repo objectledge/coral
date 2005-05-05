@@ -23,7 +23,7 @@ import org.objectledge.coral.store.Resource;
  * containg tuples of resource identifiers.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLQueryResultsImpl.java,v 1.2 2004-12-22 07:54:49 rafal Exp $
+ * @version $Id: SQLQueryResultsImpl.java,v 1.3 2005-05-05 08:27:04 rafal Exp $
  */
 public class SQLQueryResultsImpl
     implements QueryResults
@@ -221,7 +221,7 @@ public class SQLQueryResultsImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new BackendException("resource missing");
+            throw new BackendException("resource missing", e);
         }
     }
 
@@ -266,7 +266,7 @@ public class SQLQueryResultsImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new BackendException("resource missing");
+            throw new BackendException("resource missing", e);
         }
     }
 

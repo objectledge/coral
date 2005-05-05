@@ -50,7 +50,7 @@ import org.objectledge.utils.TracingException;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.14 2005-01-25 09:26:15 rafal Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.15 2005-05-05 08:27:10 rafal Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -175,7 +175,7 @@ public class CoralSessionImpl
         }
         catch(Exception e)
         {
-            throw new BackendException("failed to recycle session object");
+            throw new BackendException("failed to recycle session object", e);
         }
     }
     

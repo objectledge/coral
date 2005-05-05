@@ -42,7 +42,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.27 2005-02-08 20:34:43 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.28 2005-05-05 08:27:07 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -1071,7 +1071,7 @@ public class CoralStoreImpl
                 catch(PersistenceException e)
                 {
                     delegate.setResourceName(oldName);
-                    throw new BackendException("failed to update the resource object");
+                    throw new BackendException("failed to update the resource object", e);
                 }
             }
         }
@@ -1151,7 +1151,7 @@ public class CoralStoreImpl
                 catch(PersistenceException e)
                 {
                     delegate.setParent(oldParent);
-                    throw new BackendException("failed to update the resource object");
+                    throw new BackendException("failed to update the resource object", e);
                 }
             }
         }
@@ -1198,7 +1198,7 @@ public class CoralStoreImpl
                 catch(PersistenceException e)
                 {
                     delegate.setParent(oldParent);
-                    throw new BackendException("failed to update the resource object");
+                    throw new BackendException("failed to update the resource object", e);
                 }
             }
         }
@@ -1226,7 +1226,7 @@ public class CoralStoreImpl
         catch(PersistenceException e)
         {
             delegate.setOwner(oldOwner);
-            throw new BackendException("failed to update the resource object");
+            throw new BackendException("failed to update the resource object", e);
         }
     }
 
