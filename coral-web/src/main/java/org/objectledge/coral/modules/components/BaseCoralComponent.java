@@ -43,7 +43,11 @@ public abstract class BaseCoralComponent
         }
         catch(Exception e)
         {
-            throw new BuildException("Failed to build the view",e);
+			if(template != null)
+			{
+				throw new BuildException("Failed to build the component with template: "+template.getName(),e);
+			}
+			throw new BuildException("Failed to build the component",e);
         }
     }    
 
