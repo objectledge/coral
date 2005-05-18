@@ -30,30 +30,30 @@ package org.objectledge.coral.security;
 import java.security.Principal;
 
 import org.objectledge.authentication.UserUnknownException;
-import org.objectledge.context.Context;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.security.RoleChecking;
 
 /**
  * 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralRoleChecking.java,v 1.1 2005-05-06 09:32:58 rafal Exp $
+ * @version $Id: CoralRoleChecking.java,v 1.1 2005-05-18 06:53:04 pablo Exp $
  */
 public class CoralRoleChecking
     implements RoleChecking
 {
-    private final Context context;
+    private final CoralSessionFactory coralSessionFactory;
 
     /**
      * Creates new CoralRoleChecking instance.
      * 
-     * @param contextArg the request context.
+     * @param coralSessionFactory the coral session factory.
      */
-    public CoralRoleChecking(Context contextArg)
+    public CoralRoleChecking(CoralSessionFactory coralSessionFactory)
     {
-        this.context = contextArg;
+        this.coralSessionFactory = coralSessionFactory;
     }
     
     /**
@@ -62,7 +62,7 @@ public class CoralRoleChecking
     public String[] getRoles(Principal user)
         throws UserUnknownException
     {
-        CoralSession current = (CoralSession)context.getAttribute(CoralSession.class);
+        CoralSession current = coralSessionFactory.getCurrentSession();
         if(current == null)
         {
             throw new IllegalStateException("no Coral session is active. "+
