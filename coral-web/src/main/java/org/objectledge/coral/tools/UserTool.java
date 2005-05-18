@@ -9,13 +9,14 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.parameters.Parameters;
+import org.objectledge.parameters.directory.DirectoryParameters;
 
 /**
  * A user data object used to access various user properties.
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: UserTool.java,v 1.1 2005-03-01 10:30:35 zwierzem Exp $
+ * @version $Id: UserTool.java,v 1.2 2005-05-18 08:07:50 pablo Exp $
  */
 public class UserTool
 {
@@ -63,7 +64,7 @@ public class UserTool
 	public Parameters getPersonalData()
 		throws Exception
 	{
-		return userManager.getPersonalData(new DefaultPrincipal(getSubject().getName()));
+		return new DirectoryParameters(userManager.getPersonalData(new DefaultPrincipal(getSubject().getName())));
 	}
 
     /**
