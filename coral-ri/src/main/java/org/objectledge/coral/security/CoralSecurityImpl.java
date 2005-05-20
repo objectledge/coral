@@ -18,7 +18,7 @@ import org.objectledge.database.persistence.Persistence;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurityImpl.java,v 1.9 2005-02-21 15:48:35 zwierzem Exp $
+ * @version $Id: CoralSecurityImpl.java,v 1.10 2005-05-20 05:35:53 pablo Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSecurityImpl
@@ -260,7 +260,7 @@ public class CoralSecurityImpl
             return;
         }
         // check for dependency loop
-        ArrayList stack = new ArrayList();
+        ArrayList<Role> stack = new ArrayList<Role>();
         stack.add(subRole);
         while(stack.size() > 0)
         {
@@ -615,7 +615,17 @@ public class CoralSecurityImpl
         throws SecurityException
     {
         Subject revoker = coral.getCurrentSubject();
-        if(!role.hasPermission(resource, permission))
+		PermissionAssignment[] pas = resource.getPermissionAssignments(role);
+		boolean found = false;
+		for(PermissionAssignment pa:pas)
+		{
+			if(pa.getPermission().equals(permission))
+			{
+				found = true;
+				break;
+			}
+		}
+        if(!found)
         {
             throw new SecurityException("role "+role.getName()+" does not have "+
                                         permission.getName()+" on resource #"+
