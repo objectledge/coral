@@ -38,13 +38,19 @@ import org.objectledge.templating.tools.ContextToolFactory;
  * Context tool factory component to build the user tool.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: UserToolFactory.java,v 1.1 2005-03-01 10:30:35 zwierzem Exp $
+ * @version $Id: UserToolFactory.java,v 1.2 2005-05-20 00:46:07 rafal Exp $
  */
 public class UserToolFactory implements ContextToolFactory
 {
     private Context context;
     private UserManager userManager;
 
+    /**
+     * Creates a new UserToolFactory instance.
+     * 
+     * @param context request Context component.
+     * @param userManager UserManager component.
+     */
     public UserToolFactory(Context context, UserManager userManager)
     {
         this.context = context;

@@ -16,7 +16,7 @@ import org.objectledge.parameters.directory.DirectoryParameters;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: UserTool.java,v 1.2 2005-05-18 08:07:50 pablo Exp $
+ * @version $Id: UserTool.java,v 1.3 2005-05-20 00:46:06 rafal Exp $
  */
 public class UserTool
 {
@@ -24,7 +24,13 @@ public class UserTool
     private AuthenticationContext authenticationContext;
     private CoralSession coralSession;
     
-
+    /**
+     * Creates a new UserTool instance.
+     *  
+     * @param coralSession current Coral session
+     * @param userManager UserManager component.
+     * @param authenticationContex current AuthenticationContext.
+     */
 	public UserTool(CoralSession coralSession, UserManager userManager,
         AuthenticationContext authenticationContex)
 	{

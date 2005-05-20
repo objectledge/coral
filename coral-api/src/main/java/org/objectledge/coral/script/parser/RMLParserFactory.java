@@ -28,7 +28,6 @@
 package org.objectledge.coral.script.parser;
 
 import java.io.Reader;
-import java.io.StringReader;
 
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.ObjectPool;
@@ -37,7 +36,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RMLParserFactory.java,v 1.2 2004-03-23 11:32:06 fil Exp $
+ * @version $Id: RMLParserFactory.java,v 1.3 2005-05-20 00:46:20 rafal Exp $
  */
 public class RMLParserFactory
 {
