@@ -13,7 +13,7 @@ import org.objectledge.coral.event.RoleImplicationChangeListener;
  * A helper class for managing a set of roles.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: RoleContainer.java,v 1.7 2004-03-05 11:52:15 fil Exp $
+ * @version $Id: RoleContainer.java,v 1.8 2005-05-20 05:36:56 pablo Exp $
  */
 public class RoleContainer
     implements RoleImplicationChangeListener
@@ -27,17 +27,17 @@ public class RoleContainer
     private CoralCore coral;
 
     /** Expliclitly assigned roles. */
-    private Set explicitRoles = new HashSet();
+    private Set<Role> explicitRoles = new HashSet<Role>();
 
     /** Explicitly and implicitly assigned roles. */
-    private Set matchingRoles;
+    private Set<Role> matchingRoles;
     
     /** Direct and indirect super roles of the roles assigned explicitly. */
-    private Set superRoles;
+    private Set<Role> superRoles;
     
     /** Direct and indirect sub roles of the roles assignmed explicitly -- the
         implicitly assignmed roles. */
-    private Set subRoles;
+    private Set<Role> subRoles;
 
     /** peer permission container */
     private PermissionContainer permissions;
@@ -124,7 +124,7 @@ public class RoleContainer
      * 
      * @return the superroles of roles in this set.
      */
-    public Set getSuperRoles()
+    public Set<Role> getSuperRoles()
     {
         return buildSuperRoles();
     }
@@ -134,7 +134,7 @@ public class RoleContainer
      * 
      * @return the subroles of roles in this set.
      */
-    public Set getSubRoles()
+    public Set<Role> getSubRoles()
     {
         return buildSubRoles();
     }
@@ -144,7 +144,7 @@ public class RoleContainer
      * 
      * @return the roles equivalent to those in this set.
      */
-    public Set getMatchingRoles()
+    public Set<Role> getMatchingRoles()
     {
         return buildMatchingRoles();
     }
@@ -217,12 +217,12 @@ public class RoleContainer
 
     // private //////////////////////////////////////////////////////////////////////////////////
 
-    private synchronized Set buildSuperRoles()
+    private synchronized Set<Role> buildSuperRoles()
     {
         if(superRoles == null)
         {
-            Set sup = new HashSet();
-            ArrayList stack = new ArrayList();
+            Set<Role> sup = new HashSet<Role>();
+            ArrayList<Role> stack = new ArrayList<Role>();
             stack.addAll(explicitRoles);
             while(stack.size() > 0)
             {
@@ -249,12 +249,12 @@ public class RoleContainer
         return superRoles;
     }
 
-    private synchronized Set buildSubRoles()
+    private synchronized Set<Role> buildSubRoles()
     {
         if(subRoles == null)
         {
-            Set sub = new HashSet();
-            ArrayList stack = new ArrayList();
+            Set<Role> sub = new HashSet<Role>();
+            ArrayList<Role> stack = new ArrayList<Role>();
             stack.addAll(explicitRoles);
             while(stack.size() > 0)
             {
@@ -281,11 +281,11 @@ public class RoleContainer
         return subRoles;
     }
 
-    private synchronized Set buildMatchingRoles()
+    private synchronized Set<Role> buildMatchingRoles()
     {
         if(matchingRoles == null)
         {
-            Set match = new HashSet();
+            Set<Role> match = new HashSet<Role>();
             match.addAll(explicitRoles);
             match.addAll(buildSubRoles());
             matchingRoles = match;
