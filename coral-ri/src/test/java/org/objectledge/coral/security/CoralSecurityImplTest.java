@@ -49,7 +49,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityImplTest.java,v 1.8 2005-02-10 17:47:16 rafal Exp $
+ * @version $Id: CoralSecurityImplTest.java,v 1.9 2005-05-23 01:00:55 rafal Exp $
  */
 public class CoralSecurityImplTest 
     extends LedgeTestCase
@@ -433,6 +433,8 @@ public class CoralSecurityImplTest
         mockPermission.stubs().method("getIdObject").will(returnValue(new Long(1L)));
         PermissionAssignment pa = new PermissionAssignmentImpl(coralCore,
             rootSubject, resource, role, permission, false);
+        mockResource.stubs().method("getPermissionAssignments").with(same(role)).will(
+            returnValue(new PermissionAssignment[] { pa }));
         mockCoralRegistry.expects(once()).method("deletePermissionAssignment").with(eq(pa));
         coralSecurity.revoke(resource, role, permission);
     }
