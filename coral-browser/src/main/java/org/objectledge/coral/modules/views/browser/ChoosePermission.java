@@ -17,15 +17,16 @@ import org.objectledge.table.TableTool;
 import org.objectledge.table.generic.ListTableModel;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
  * The role choose screen.
  */
 public class ChoosePermission extends BaseBrowserView
 {
-    public ChoosePermission(Context context, Logger logger, TableStateManager tableStateManager)
+    public ChoosePermission(Context context, PolicySystem policySystemArg, Logger logger, TableStateManager tableStateManager)
     {
-        super(context, logger, tableStateManager);
+        super(context, policySystemArg, logger, tableStateManager);
     }
 
     public void process(Parameters parameters, TemplatingContext templatingContext, 

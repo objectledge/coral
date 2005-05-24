@@ -12,15 +12,16 @@ import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.table.TableStateManager;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
  * The add attribute screen.
  */
 public class AddAttribute extends BaseBrowserView
 {
-    public AddAttribute(Context context, Logger logger, TableStateManager tableStateManager)
+    public AddAttribute(Context context, PolicySystem policySystemArg, Logger logger, TableStateManager tableStateManager)
     {
-        super(context, logger, tableStateManager);
+        super(context, policySystemArg, logger, tableStateManager);
     }
 
     public void process(Parameters parameters, TemplatingContext templatingContext, 

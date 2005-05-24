@@ -13,20 +13,21 @@ import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
  * Add resource action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddResource.java,v 1.4 2005-02-06 22:30:48 pablo Exp $
+ * @version $Id: AddResource.java,v 1.5 2005-05-24 05:40:28 pablo Exp $
  */
 public class AddResource extends BaseBrowserAction
 {
 
     
-    public AddResource(Logger logger)
+    public AddResource(PolicySystem policySystemArg, Logger logger)
     {
-        super(logger);
+        super(policySystemArg, logger);
     }
     /**
      * Performs the action.

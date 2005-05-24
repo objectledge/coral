@@ -16,15 +16,16 @@ import org.objectledge.table.TableTool;
 import org.objectledge.table.generic.ListTableModel;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
  * The subject view screen.
  */
 public class ChooseSubject extends BaseBrowserView
 {
-    public ChooseSubject(Context context, Logger logger, TableStateManager tableStateManager)
+    public ChooseSubject(Context context, PolicySystem policySystemArg, Logger logger, TableStateManager tableStateManager)
     {
-        super(context, logger, tableStateManager);
+        super(context, policySystemArg, logger, tableStateManager);
     }
 
     public void process(Parameters parameters, TemplatingContext templatingContext, 

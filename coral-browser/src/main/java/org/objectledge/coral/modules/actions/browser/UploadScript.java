@@ -10,12 +10,13 @@ import org.objectledge.upload.FileUpload;
 import org.objectledge.upload.UploadContainer;
 import org.objectledge.upload.UploadLimitExceededException;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
  * Upload script.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: UploadScript.java,v 1.4 2005-03-14 13:19:26 zwierzem Exp $
+ * @version $Id: UploadScript.java,v 1.5 2005-05-24 05:40:28 pablo Exp $
  */
 public class UploadScript extends BaseBrowserAction
 {
@@ -28,9 +29,9 @@ public class UploadScript extends BaseBrowserAction
      * @param logger the logger.
      * @param fileUpload the file upload manager.
      */
-    public UploadScript(Logger logger, FileUpload fileUpload)
+    public UploadScript(Logger logger, PolicySystem policySystemArg, FileUpload fileUpload)
     {
-        super(logger);
+        super(policySystemArg, logger);
     	this.fileUpload = fileUpload;        
     }
 

@@ -10,19 +10,20 @@ import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
  * Delete permission action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: DeletePermission.java,v 1.2 2005-02-06 22:30:48 pablo Exp $
+ * @version $Id: DeletePermission.java,v 1.3 2005-05-24 05:40:28 pablo Exp $
  */
 public class DeletePermission
     extends BaseBrowserAction
 {
-    public DeletePermission(Logger logger)
+    public DeletePermission(PolicySystem policySystemArg, Logger logger)
     {
-        super(logger);
+        super(policySystemArg, logger);
     }
     
     /**

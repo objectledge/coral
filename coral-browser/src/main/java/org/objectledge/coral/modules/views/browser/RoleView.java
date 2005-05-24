@@ -11,15 +11,16 @@ import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.table.TableStateManager;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
  * The role view screen.
  */
 public class RoleView extends BaseBrowserView
 {
-    public RoleView(Context context, Logger logger, TableStateManager tableStateManager)
+    public RoleView(Context context, PolicySystem policySystemArg, Logger logger, TableStateManager tableStateManager)
     {
-        super(context, logger, tableStateManager);
+        super(context, policySystemArg, logger, tableStateManager);
     }
     
     public void process(Parameters parameters, TemplatingContext templatingContext, 

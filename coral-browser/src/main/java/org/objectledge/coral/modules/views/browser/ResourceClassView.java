@@ -11,6 +11,7 @@ import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.table.TableStateManager;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
  * The resource class view screen.
@@ -18,9 +19,9 @@ import org.objectledge.web.mvc.MVCContext;
 public class ResourceClassView
     extends BaseBrowserView
 {
-    public ResourceClassView(Context context, Logger logger, TableStateManager tableStateManager)
+    public ResourceClassView(Context context, PolicySystem policySystemArg, Logger logger, TableStateManager tableStateManager)
     {
-        super(context, logger, tableStateManager);
+        super(context, policySystemArg, logger, tableStateManager);
     }
     
     public void process(Parameters parameters, TemplatingContext templatingContext, 

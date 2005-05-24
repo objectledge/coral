@@ -8,18 +8,19 @@ import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.utils.StackTrace;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
  * Add attribute action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: ExecuteCommand.java,v 1.6 2005-02-06 22:30:48 pablo Exp $
+ * @version $Id: ExecuteCommand.java,v 1.7 2005-05-24 05:40:28 pablo Exp $
  */
 public class ExecuteCommand extends BaseBrowserAction
 {
-    public ExecuteCommand(Logger logger)
+    public ExecuteCommand(PolicySystem policySystemArg, Logger logger)
     {
-        super(logger);
+        super(policySystemArg, logger);
     }
 
     /**
