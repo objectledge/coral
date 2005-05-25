@@ -5,12 +5,14 @@ package org.objectledge.coral.schema;
  * Thrown to indicate various schema integrity problems caused by adding
  * attributes, parent resource classes, and attribute flags modifications.
  *
- * @version $Id: SchemaIntegrityException.java,v 1.3 2004-12-23 07:18:34 rafal Exp $
+ * @version $Id: SchemaIntegrityException.java,v 1.4 2005-05-25 07:55:47 pablo Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class SchemaIntegrityException
     extends Exception
 {
+	public static final long serialVersionUID = 0L;
+	
     /** Value returned by {@link #getType()} for exceptions of unknown
      *  origin. */
     public static final int UNKNOWN = 0;

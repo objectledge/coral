@@ -31,10 +31,12 @@ package org.objectledge.coral;
  * Thrown when an object could not be instantiated, because of unmet dependendecies.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: InstantiationException.java,v 1.1 2004-03-16 13:33:31 fil Exp $
+ * @version $Id: InstantiationException.java,v 1.2 2005-05-25 07:55:38 pablo Exp $
  */
 public class InstantiationException extends Exception
 {
+	public static final long serialVersionUID = 0L;
+	
     /**
      * Creates a new instance of the exception.
      * 

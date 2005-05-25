@@ -4,11 +4,13 @@ package org.objectledge.coral.query;
  * Thrown to indicate that the query has syntactic or sematic errors.
  *
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: MalformedQueryException.java,v 1.2 2004-05-14 11:19:10 fil Exp $
+ * @version $Id: MalformedQueryException.java,v 1.3 2005-05-25 07:55:44 pablo Exp $
  */
 public class MalformedQueryException
     extends Exception
 {
+	public static final long serialVersionUID = 0L;
+	
     /**
      * Constructs a new exception object with a specified detail message. 
      *

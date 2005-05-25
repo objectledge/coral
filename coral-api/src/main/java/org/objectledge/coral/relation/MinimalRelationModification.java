@@ -34,24 +34,25 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.objectledge.coral.relation.RelationModification.ClearOperation;
 import org.objectledge.coral.relation.RelationModification.AddOperation;
-import org.objectledge.coral.relation.RelationModification.RemoveOperation; 
+import org.objectledge.coral.relation.RelationModification.ClearOperation;
+import org.objectledge.coral.relation.RelationModification.ModificationOperation;
+import org.objectledge.coral.relation.RelationModification.RemoveOperation;
 
 /**
  * This class constructs and holds a minimal representation of a {@link RelationModification}
  * for a given {@link Relation}.
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModification.java,v 1.7 2005-04-11 06:32:25 pablo Exp $
+ * @version $Id: MinimalRelationModification.java,v 1.8 2005-05-25 07:55:55 pablo Exp $
  */
 public class MinimalRelationModification
 {
 	private boolean clear = false;
-	private Set added = new HashSet(128);
-	private Set removed = new HashSet(128);
+	private Set<ModificationOperation> added = new HashSet<ModificationOperation>(128);
+	private Set<ModificationOperation> removed = new HashSet<ModificationOperation>(128);
 	
-	private Map addsByLeftId = new HashMap(128);
-	private Map addsByRightId = new HashMap(128);
+	private Map<Long, Set> addsByLeftId = new HashMap<Long, Set>(128);
+	private Map<Long, Set> addsByRightId = new HashMap<Long, Set>(128);
 	
 	/**
 	 * Constructs a minimal representation of a {@link RelationModification}
@@ -159,19 +160,19 @@ public class MinimalRelationModification
 			else if(clear || (!clear && !relation.hasRef(oper.getId1(), oper.getId2())))
 			{
 				Long leftId = new Long(oper.getId1());
-				Set ops = (Set) addsByLeftId.get(leftId);
+				Set<ModificationOperation> ops = (Set<ModificationOperation>) addsByLeftId.get(leftId);
 				if(ops == null)
 				{
-					ops = new HashSet();
+					ops = new HashSet<ModificationOperation>();
 					addsByLeftId.put(leftId, ops);
 				}
 				ops.add(oper);
 
 				Long rightId = new Long(oper.getId2());
-				ops = (Set) addsByRightId.get(rightId);
+				ops = (Set<ModificationOperation>) addsByRightId.get(rightId);
 				if(ops == null)
 				{
-					ops = new HashSet();
+					ops = new HashSet<ModificationOperation>();
 					addsByRightId.put(rightId, ops);
 				}
 				ops.add(oper);

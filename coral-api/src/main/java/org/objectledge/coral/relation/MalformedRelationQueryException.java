@@ -4,11 +4,13 @@ package org.objectledge.coral.relation;
  * Thrown to indicate that the query has syntactic or sematic errors.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MalformedRelationQueryException.java,v 1.1 2004-02-20 09:15:48 zwierzem Exp $
+ * @version $Id: MalformedRelationQueryException.java,v 1.2 2005-05-25 07:55:55 pablo Exp $
  */
 public class MalformedRelationQueryException
     extends Exception
 {
+	public static final long serialVersionUID = 0L;
+	
     /**
      * Constructs a new exception object with a specified detail message. 
      *

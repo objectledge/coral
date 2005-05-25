@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * A common base class for {@link CoralQuery} implemnetations.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: AbstractCoralQueryImpl.java,v 1.12 2005-05-05 08:27:04 rafal Exp $
+ * @version $Id: AbstractCoralQueryImpl.java,v 1.13 2005-05-25 07:59:13 pablo Exp $
  */
 public abstract class AbstractCoralQueryImpl
     implements CoralQuery
@@ -881,6 +881,8 @@ public abstract class AbstractCoralQueryImpl
     protected class WrappedMalformedQueryException
         extends RuntimeException
     {
+		public static final long serialVersionUID = 0L;
+		
         private MalformedQueryException e;
 
         /**

@@ -5,12 +5,14 @@ package org.objectledge.coral.schema;
  * {@link AttributeDefinition} belonging to a wrong {@link ResourceClass} to one of
  * their methods.
  * 
- * @version $Id: UnknownAttributeException.java,v 1.2 2005-02-08 20:34:28 rafal Exp $
+ * @version $Id: UnknownAttributeException.java,v 1.3 2005-05-25 07:55:47 pablo Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class UnknownAttributeException
     extends RuntimeException
 {
+	public static final long serialVersionUID = 0L;
+	
     /**
      * Constructs a new exception object with a specified detail message.
      *
