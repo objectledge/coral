@@ -15,7 +15,7 @@ import org.objectledge.web.mvc.security.PolicySystem;
  * Add relation action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddRelation.java,v 1.3 2005-05-24 05:40:28 pablo Exp $
+ * @version $Id: AddRelation.java,v 1.4 2005-05-30 09:44:25 zwierzem Exp $
  */
 public class AddRelation
     extends BaseBrowserAction
@@ -45,7 +45,7 @@ public class AddRelation
 			Resource resource1 = coralSession.getStore().getResource(res1);
 			Resource resource2 = coralSession.getStore().getResource(res2);
 			AttributeDefinition attrDefinition = resource.getResourceClass().getAttribute(attrName);
-            //TODO....move from crossreference to relationg
+            //TODO http://objectledge.org/jira/browse/CORAL-68 ....move from crossreference to relationg
 			//CrossReference refs = (CrossReference)resource.get(attrDefinition);
 			//refs.put(resource1, resource2);
 			//resource.set(attrDefinition, refs);

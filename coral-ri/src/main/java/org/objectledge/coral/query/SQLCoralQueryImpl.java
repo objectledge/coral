@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.9 2005-02-21 15:48:31 zwierzem Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.10 2005-05-30 09:47:03 zwierzem Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -48,7 +48,7 @@ public class SQLCoralQueryImpl
     {
         attributesMap.put("id", "resource_id");
         attributesMap.put("owner", "owned_by");
-        //TODO add other attribute name mapping
+        //TODO http://objectledge.org/jira/browse/CORAL-72 add other attribute name mapping
     }
     
     

@@ -232,12 +232,14 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         handler.retrieve(resource, connection, null);
     }
 
+
+    // TODO implement tests below http://objectledge.org/jira/browse/CORAL-71
+
     /*
      * Test for Resource retrieve(Resource, Connection, Map)
      */
     public void testRetrieveResourceConnectionMap()
     {
-        // TODO implement
     }
 
     /*
@@ -245,7 +247,6 @@ public class GenericResourceHandlerTest extends LedgeTestCase
      */
     public void testRevertResourceConnection()
     {
-        // TODO implement        
     }
 
     /*
@@ -253,27 +254,22 @@ public class GenericResourceHandlerTest extends LedgeTestCase
      */
     public void testRevertResourceConnectionMap()
     {
-        // TODO implement
     }
 
     public void testAddAttribute()
     {
-        // TODO implement
     }
 
     public void testDeleteAttribute()
     {
-        // TODO implement
     }
 
     public void testAddParentClass()
     {
-        // TODO implement
     }
 
     public void testDeleteParentClass()
     {
-        // TODO implement
     }
 
     /*
@@ -281,7 +277,6 @@ public class GenericResourceHandlerTest extends LedgeTestCase
      */
     public void testGetDataKeysResourceConnection()
     {
-        // TODO implement
     }
 
     /*
@@ -289,6 +284,5 @@ public class GenericResourceHandlerTest extends LedgeTestCase
      */
     public void testGetDataKeysConnection()
     {
-        // TODO implement
     }
 }

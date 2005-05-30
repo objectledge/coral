@@ -59,7 +59,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Implmentation of the Coral relation manager component.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.15 2005-03-29 08:27:00 rafal Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.16 2005-05-30 09:47:05 zwierzem Exp $
  */
 public class CoralRelationManagerImpl
     implements CoralRelationManager, PreloadingParticipant
@@ -85,7 +85,7 @@ public class CoralRelationManagerImpl
      * 
      * @param persistence used to modify relation metadata
      * @param cacheFactory used to create caches for relation objects
-     * @param coralEventHub TODO may be used to clean relations on resource deletions
+     * @param coralEventHub TODO http://objectledge.org/jira/browse/CORAL-73 may be used to clean relations on resource deletions
      * @param coral used to get coral facilities
      * @param instantiator used to instantiate relation objects
      * @param log for loggin errors and alike

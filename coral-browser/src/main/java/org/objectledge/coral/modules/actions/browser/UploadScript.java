@@ -16,7 +16,7 @@ import org.objectledge.web.mvc.security.PolicySystem;
  * Upload script.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: UploadScript.java,v 1.6 2005-05-30 08:16:34 rafal Exp $
+ * @version $Id: UploadScript.java,v 1.7 2005-05-30 09:44:25 zwierzem Exp $
  */
 public class UploadScript extends BaseBrowserAction
 {
@@ -50,7 +50,7 @@ public class UploadScript extends BaseBrowserAction
         }
         catch(UploadLimitExceededException e)
         {
-            // TODO Inform the user abour a problem in file upload
+            // TODO http://objectledge.org/jira/browse/CORAL-66 Inform the user abour a problem in file upload
             throw e;
         }
         if(script != null)

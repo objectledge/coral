@@ -186,7 +186,7 @@ public class DateAttributeHandlerTest extends LedgeTestCase
 
     public void testToAttributeValue()
     {
-        //TODO
+        //TODO http://objectledge.org/jira/browse/CORAL-70
        // assertEquals(currentDate, handler.toAttributeValue(currentDate.toGMTString()));
     }
 

@@ -16,7 +16,7 @@ import org.objectledge.web.mvc.security.PolicySystem;
  * Delete relation from cross reference action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: DeleteRelation.java,v 1.3 2005-05-24 05:40:28 pablo Exp $
+ * @version $Id: DeleteRelation.java,v 1.4 2005-05-30 09:44:25 zwierzem Exp $
  */
 public class DeleteRelation
     extends BaseBrowserAction
@@ -47,7 +47,7 @@ public class DeleteRelation
 			Resource resource1 = coralSession.getStore().getResource(res1);
 			Resource resource2 = coralSession.getStore().getResource(res2);
 			AttributeDefinition attrDefinition = resource.getResourceClass().getAttribute(attrName);
-            //TODO cross to relation
+            //TODO http://objectledge.org/jira/browse/CORAL-69 cross to relation
 			//CrossReference refs = (CrossReference)resource.get(attrDefinition);
 			//refs.remove(resource1, resource2);
 			//resource.set(attrDefinition, refs);
