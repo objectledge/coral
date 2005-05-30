@@ -16,7 +16,7 @@ import org.objectledge.web.mvc.security.PolicySystem;
  * Upload script.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: UploadScript.java,v 1.5 2005-05-24 05:40:28 pablo Exp $
+ * @version $Id: UploadScript.java,v 1.6 2005-05-30 08:16:34 rafal Exp $
  */
 public class UploadScript extends BaseBrowserAction
 {
@@ -51,7 +51,7 @@ public class UploadScript extends BaseBrowserAction
         catch(UploadLimitExceededException e)
         {
             // TODO Inform the user abour a problem in file upload
-            throw new ProcessingException(e);
+            throw e;
         }
         if(script != null)
         {
