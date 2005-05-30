@@ -35,19 +35,21 @@ import org.objectledge.coral.store.Resource;
 /**
  * Executes queries based on relations defined between Coral resources. 
  *
- * <p>TODO: Update Query Grammar</p>
- * 
  * <p>Queries have a following grammar:</p>
  * <pre>
- * expression = sum_expression
- * sum_expression = intersection_expression [ "OR" intersection_expression ]
- * intersection_expression = unary_expression [ "AND" unary_expression ]
- * unary_expression = "(" expression ")" | resource_identifier
- * resource_identifier = "'[a-zA-Z/_][a-zA-Z0-9/._]*'" | "[0-9]+" 
+ * Expression = SumExpression
+ * SumExpression = IntersectionExpression [ "+" IntersectionExpression ]
+ * IntersectionExpression = UnaryExpression [ "*" UnaryExpression ]
+ * UnaryExpression = "(" expression ")" | ResourceSetExpression
+ * ResourceSetExpression = ResourceIdentifier | MappingExpression | TransitiveMappingExpression
+ * ResourceIdentifier = "RES(" ( "'[a-zA-Z/_][a-zA-Z0-9/._]*'" | "[0-9]+" ) ")"
+ * MappingExpression = "MAP(" RelationName "){" ResourceSetExpression "}"
+ * TransitiveMappingExpression = "MAPTRANS(" RelationName "){" ResourceSetExpression "}"
+ * RelationName = "'[a-zA-Z/_][a-zA-Z0-9/._]*'"
  * </pre>
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationQuery.java,v 1.1 2004-02-20 09:15:48 zwierzem Exp $
+ * @version $Id: CoralRelationQuery.java,v 1.2 2005-05-30 09:42:23 zwierzem Exp $
  */
 public interface CoralRelationQuery
 {
