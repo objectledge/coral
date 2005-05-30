@@ -70,7 +70,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.19 2005-02-10 17:48:38 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.20 2005-05-30 09:46:03 zwierzem Exp $
  */
 public class CoralCoreImpl
     implements CoralCore, Startable
@@ -114,12 +114,10 @@ public class CoralCoreImpl
         container.registerComponentInstance(Database.class, persistence.getDatabase());
         container.registerComponentInstance(CacheFactory.class, cacheFactory);
         container.registerComponentInstance(EventWhiteboardFactory.class, eventWhiteboardFactory);
-        // TODO multiple/polymorphic loggers?
         container.registerComponentInstance(Logger.class, log);
         // register self       
         container.registerComponentInstance(CoralCore.class, this);
         // events
-        // TODO bridge support
         CoralEventHub coralEventHub = new CoralEventHubImpl(eventWhiteboardFactory, null);
         container.registerComponentInstance(CoralEventHub.class, coralEventHub);
         coralEventWhiteboard = coralEventHub.getGlobal();

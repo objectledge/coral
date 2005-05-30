@@ -43,7 +43,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PicoInstantiatorTest.java,v 1.3 2005-02-10 17:47:16 rafal Exp $
+ * @version $Id: PicoInstantiatorTest.java,v 1.4 2005-05-30 09:47:46 zwierzem Exp $
  */
 public class PicoInstantiatorTest
     extends TestCase
@@ -122,7 +122,6 @@ public class PicoInstantiatorTest
          */
         public void getData(OutputRecord record) throws PersistenceException
         {
-            // TODO Auto-generated method stub
         }
 
         /** 
@@ -130,7 +129,6 @@ public class PicoInstantiatorTest
          */
         public String[] getKeyColumns()
         {
-            // TODO Auto-generated method stub
             return null;
         }
 
@@ -139,7 +137,6 @@ public class PicoInstantiatorTest
          */
         public boolean getSaved()
         {
-            // TODO Auto-generated method stub
             return false;
         }
 
@@ -148,7 +145,6 @@ public class PicoInstantiatorTest
          */
         public String getTable()
         {
-            // TODO Auto-generated method stub
             return null;
         }
 
@@ -157,7 +153,6 @@ public class PicoInstantiatorTest
          */
         public void setData(InputRecord record) throws PersistenceException
         {
-            // TODO Auto-generated method stub
         }
 
         /** 
@@ -165,8 +160,6 @@ public class PicoInstantiatorTest
          */
         public void setSaved(long id)
         {
-            // TODO Auto-generated method stub
         }
-
     }
 }

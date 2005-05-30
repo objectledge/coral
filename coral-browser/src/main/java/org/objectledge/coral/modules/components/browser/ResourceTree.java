@@ -41,7 +41,6 @@ public class ResourceTree
                 state.setCurrentPage(0);
                 state.setShowRoot(true);
                 state.setExpanded(rootId);
-                // TODO: configure default
                 state.setPageSize(0);
                 state.setSortColumnName("name");
             }

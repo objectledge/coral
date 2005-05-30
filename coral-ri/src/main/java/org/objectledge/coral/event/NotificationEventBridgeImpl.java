@@ -118,7 +118,6 @@ public class NotificationEventBridgeImpl
             getPersistentFactory(RoleAssignmentImpl.class);
         this.permissionAssignmentFactory = instantiator.
             getPersistentFactory(PermissionAssignmentImpl.class);    
-        // TODO make this configurable 
         channel = CHANNEL_DEFAULT;
     }
     
