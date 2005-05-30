@@ -24,7 +24,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: CoralEntitySelectionState.java,v 1.6 2005-02-21 16:13:58 zwierzem Exp $
+ * @version $Id: CoralEntitySelectionState.java,v 1.7 2005-05-30 03:48:31 zwierzem Exp $
  */
 public abstract class CoralEntitySelectionState
 {
@@ -389,9 +389,9 @@ public abstract class CoralEntitySelectionState
      * @param parameterName the parameter name.
      * @return the set of id's.
      */
-    public static Set getIds(Parameters parameters, String parameterName)
+    public static Set<Long> getIds(Parameters parameters, String parameterName)
     {
-        Set ids = new HashSet();
+        Set<Long> ids = new HashSet<Long>();
         long[] paramAr = parameters.getLongs(parameterName);
         for(int i=0; i<paramAr.length; i++)
         {
