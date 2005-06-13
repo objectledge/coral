@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jcontainer.dna.ConfigurationException;
 import org.jcontainer.dna.Logger;
@@ -42,12 +44,16 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.28 2005-05-05 08:27:07 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.29 2005-06-13 11:08:42 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
     implements CoralStore, PreloadingParticipant
 {
+    // Constants /////////////////////////////////////////////////////////////////////////////////
+    
+    private static final Pattern ILLEGAL_NAME_PATTERN = Pattern.compile("[/;]");
+    
     // Instance variables ////////////////////////////////////////////////////////////////////////
 
     private Persistence persistence;
@@ -595,16 +601,17 @@ public class CoralStoreImpl
      *         <code>resourceClass</code> attributes.
      * @throws ValueRequiredException if a value of a REQIRED attribute is defined
      *         present in <code>attributes</code>.
+     * @throws InvalidResourceNameException if the name contains invalid chracters.
      */
     public Resource createResource(String name, Resource parent, ResourceClass resourceClass,
                                    Map attributes)
-        throws UnknownAttributeException,
-               ValueRequiredException
+        throws InvalidResourceNameException, UnknownAttributeException, ValueRequiredException
     {
         if(name == null || name.equals(""))
         {
             throw new ValueRequiredException("resource name cannot be NULL or empty");
         }
+        checkNameValidity(name);
         Subject creator = coral.getCurrentSubject();
         if((resourceClass.getFlags() & ResourceClassFlags.ABSTRACT) != 0)
         {
@@ -1025,9 +1032,12 @@ public class CoralStoreImpl
      *
      * @param resource the resource to rename.
      * @param name the new name of the resource.
+     * @throws InvalidResourceNameException if the name contains invalid chracters.
      */
     public void setName(Resource resource, String name)
+        throws InvalidResourceNameException
     {
+        checkNameValidity(name);
         synchronized(resourceByName)
         {
             synchronized(resourceByParentAndName)
@@ -1271,9 +1281,11 @@ public class CoralStoreImpl
      * @param destinationParent the parent resource of the copy.
      * @param destinationName the name of the copy.
      * @return the copy.
+     * @throws InvalidResourceNameException if the name contains invalid chracters.
      */
     public Resource copyResource(Resource source, Resource destinationParent, 
                                  String destinationName)
+        throws InvalidResourceNameException
     {
         HashMap attrs = new HashMap();
         AttributeDefinition[] atDefs = source.getResourceClass().getAllAttributes();
@@ -1312,11 +1324,12 @@ public class CoralStoreImpl
      * @param destinationParent the parent of root node of the destination
      * tree. 
      * @param destinationName the name of root node of the destination tree.
+     * @throws InvalidResourceNameException if the name contains invalid chracters.
      * @throws CircularDependencyException if the destination parent is a child of source root.
      */
     public void copyTree(Resource sourceRoot, Resource destinationParent, 
                          String destinationName)
-        throws CircularDependencyException
+        throws InvalidResourceNameException, CircularDependencyException
     {
         if(isAncestor(sourceRoot, destinationParent))
         {
@@ -1430,6 +1443,57 @@ public class CoralStoreImpl
         }
         return false;
     } 
+    
+    /**
+     * Checks if a given string is a valid resource name.
+     * 
+     * @param name the string to be checked.
+     * @return <code>true</code> if the name conatins no illegal characters.
+     */
+    public boolean isValidResourceName(String name)
+    {
+        return !ILLEGAL_NAME_PATTERN.matcher(name).find();
+    }
+
+    /**
+     * Returns a string that contains all characters from a given string that are not allowed
+     * inside a resource name.
+     * 
+     * @param name the string to be checked.
+     * @return a string that contains the illegal characters. If the string is a valid resource 
+     * name empty string is returned. Each invalid character appers once in the output.
+     */
+    public String getInvalidResourceNameCharacters(String name)
+    {
+        StringBuilder buff = new StringBuilder();
+        Matcher matcher = ILLEGAL_NAME_PATTERN.matcher(name);
+        while(matcher.find())
+        {
+            String found = matcher.group();
+            if(!buff.toString().contains(found))
+            {
+                buff.append(found);                
+            }
+        }
+        return buff.toString();
+    }    
+    
+    /**
+     * Checks if given resource name is valid, throws exception if not.
+     *  
+     * @param name the resource name.
+     * @throws InvalidResourceNameException if the given resource name is invalid.
+     */
+    protected void checkNameValidity(String name)
+        throws InvalidResourceNameException
+    {
+        if(!isValidResourceName(name))
+        {
+            String characters = getInvalidResourceNameCharacters(name);
+            throw new InvalidResourceNameException("invalid characters "+characters+
+                " in resource name", characters);
+        }
+    }
     
     // startup //////////////////////////////////////////////////////////////////////////////////
     

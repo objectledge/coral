@@ -31,7 +31,6 @@ package org.objectledge.coral.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.datatypes.NodeImpl;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -39,10 +38,13 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
+
+import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.test.Foo</code> Coral resource class.
@@ -95,8 +97,8 @@ public class FooImpl
      *
      * @param session the CoralSession
      * @param id the id of the object to be retrieved
-	 * @return a resource instance.
-	 * @throws EntityDoesNotExistException if the resource with the given id does not exist.
+     * @return a resource instance.
+     * @throws EntityDoesNotExistException if the resource with the given id does not exist.
      */
     public static Foo getFoo(CoralSession session, long id)
         throws EntityDoesNotExistException
@@ -118,8 +120,10 @@ public class FooImpl
      * @param name the name of the new resource
      * @param parent the parent resource.
      * @return a new Foo instance.
+     * @throws InvalidResourceNameException if the name argument contains illegal characters.
      */
     public static Foo createFoo(CoralSession session, String name, Resource parent)
+        throws InvalidResourceNameException
     {
         try
         {
@@ -141,7 +145,7 @@ public class FooImpl
         {
             throw new BackendException("incompatible schema change", e);
         }
-	}
+    }
 
     // public interface //////////////////////////////////////////////////////
  
@@ -154,6 +158,24 @@ public class FooImpl
     {
         return (String)get(greetingDef);
     }
+    
+    /**
+     * Returns the value of the <code>greeting</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>greeting</code> attribute.
+     */
+    public String getGreeting(String defaultValue)
+    {
+        if(isDefined(greetingDef))
+        {
+            return (String)get(greetingDef);
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }    
 
     /**
      * Sets the value of the <code>greeting</code> attribute.
@@ -183,6 +205,16 @@ public class FooImpl
             throw new BackendException("incompatible schema change",e);
         }
     }
-     
+   
+	/**
+	 * Checks if the value of the <code>greeting</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>greeting</code> attribute is defined.
+	 */
+    public boolean isGreetingDefined()
+	{
+	    return isDefined(greetingDef);
+	}
+  
     // @custom methods ///////////////////////////////////////////////////////
 }

@@ -38,6 +38,7 @@ $imports.add("org.objectledge.coral.schema.ResourceClass")##
 $imports.add("org.objectledge.coral.session.CoralSession")##
 $imports.add("org.objectledge.coral.store.Resource")##
 $imports.add("org.objectledge.coral.store.ValueRequiredException")##
+$imports.add("org.objectledge.coral.store.InvalidResourceNameException")##
 $imports.add("org.objectledge.database.Database")##
 $imports.add("org.jcontainer.dna.Logger")##
 $imports.add("java.util.Map")##
@@ -178,6 +179,7 @@ $string.wrap("#ctorSignature()")
 #if($requiredAttributes.size() > 0)
      * @throws ValueRequiredException if one of the required attribues is undefined.
 #end
+     * @throws InvalidResourceNameException if the name argument contains illegal characters.
      */
 #macro(createSignature)
 #if($requiredAttributes.size() > 0)
@@ -188,7 +190,9 @@ public static ${class.interfaceClassName} create${class.interfaceClassName}(Cora
 #end
 $string.wrap("#createSignature()")
 #if($requiredAttributes.size() > 0)
-        throws ValueRequiredException
+        throws ValueRequiredException, InvalidResourceNameException
+#else
+        throws InvalidResourceNameException
 #end
     {
         try

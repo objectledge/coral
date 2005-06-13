@@ -57,7 +57,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.13 2005-03-18 10:26:14 rafal Exp $
+ * @version $Id: RelationImplTest.java,v 1.14 2005-06-13 11:08:45 rafal Exp $
  */
 public class RelationImplTest extends LedgeTestCase
 {
@@ -559,6 +559,21 @@ public class RelationImplTest extends LedgeTestCase
             throw new UnsupportedOperationException();
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        public boolean isValidResourceName(String name)
+        {
+            throw new UnsupportedOperationException();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String getInvalidResourceNameCharacters(String name)
+        {
+            throw new UnsupportedOperationException();
+        }
     }
     
     private class MockResource implements Resource

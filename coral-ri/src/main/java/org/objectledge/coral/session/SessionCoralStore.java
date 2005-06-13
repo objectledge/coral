@@ -38,6 +38,7 @@ import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
+import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 
@@ -45,7 +46,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStore.java,v 1.6 2005-02-08 20:34:52 rafal Exp $
+ * @version $Id: SessionCoralStore.java,v 1.7 2005-06-13 11:08:43 rafal Exp $
  */
 public class SessionCoralStore implements CoralStore
 {
@@ -173,7 +174,7 @@ public class SessionCoralStore implements CoralStore
         Resource parent,
         ResourceClass resourceClass,
         Map attributes)
-        throws UnknownAttributeException, ValueRequiredException
+        throws UnknownAttributeException, ValueRequiredException, InvalidResourceNameException
     {
         session.verify();
         return coral.getStore().createResource(name, parent, resourceClass, attributes);
@@ -202,6 +203,7 @@ public class SessionCoralStore implements CoralStore
      * {@inheritDoc}
      */
     public void setName(Resource resource, String name)
+        throws InvalidResourceNameException
     {
         session.verify();
         coral.getStore().setName(resource, name);
@@ -241,6 +243,7 @@ public class SessionCoralStore implements CoralStore
         Resource source,
         Resource destinationParent,
         String destinationName)
+        throws InvalidResourceNameException
     {
         session.verify();
         return coral.getStore().copyResource(source, destinationParent, destinationName);
@@ -253,7 +256,7 @@ public class SessionCoralStore implements CoralStore
         Resource sourceRoot,
         Resource destinationParent,
         String destinationName)
-        throws CircularDependencyException
+        throws CircularDependencyException, InvalidResourceNameException
     {
         session.verify();
         coral.getStore().copyTree(sourceRoot, destinationParent, destinationName);
@@ -268,5 +271,23 @@ public class SessionCoralStore implements CoralStore
     {
         session.verify();
         return coral.getStore().isAncestor(ancestor, descendant);
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public boolean isValidResourceName(String name)
+    {
+        session.verify();
+        return coral.getStore().isValidResourceName(name);
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public String getInvalidResourceNameCharacters(String name)
+    {
+        session.verify();
+        return coral.getStore().getInvalidResourceNameCharacters(name);
     }    
 }

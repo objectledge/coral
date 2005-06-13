@@ -13,7 +13,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStore.java,v 1.7 2005-02-08 20:34:34 rafal Exp $
+ * @version $Id: CoralStore.java,v 1.8 2005-06-13 11:06:58 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralStore
@@ -167,6 +167,7 @@ public interface CoralStore
      * @param attributes the mapping of {@link org.objectledge.coral.schema.AttributeDefinition} 
      *        objects into initial values of the attributes.
      * @return the newly created resource.
+     * @throws InvalidResourceNameException if the name contains invalid chracters.
      * @throws UnknownAttributeException if the <code>attribute</code> map
      *         contains a key that does not belong to
      *         <code>resourceClass</code> attributes.
@@ -175,8 +176,7 @@ public interface CoralStore
      */
     public Resource createResource(String name, Resource parent, ResourceClass resourceClass, 
                                    Map attributes)
-        throws UnknownAttributeException,
-               ValueRequiredException;
+        throws InvalidResourceNameException, UnknownAttributeException, ValueRequiredException;
 
     /**
      * Removes a resource.
@@ -215,8 +215,10 @@ public interface CoralStore
      *
      * @param resource the resource to rename.
      * @param name the new name of the resource.
+     * @throws InvalidResourceNameException if the name contains invalid chracters.
      */
-    public void setName(Resource resource, String name);
+    public void setName(Resource resource, String name)
+        throws InvalidResourceNameException;
     
     /**
      * Creates a parent -- child relationship among two resources.
@@ -251,31 +253,33 @@ public interface CoralStore
      * @param destinationParent the parent resource of the copy.
      * @param destinationName the name of the copy.
      * @return the copy.
+     * @throws InvalidResourceNameException if the name contains invalid chracters.
      */
     public Resource copyResource(Resource source, Resource destinationParent, 
-                                 String destinationName);
+        String destinationName)
+        throws InvalidResourceNameException;
 
     /**
      * Copies a resource tree to another location.
-     *
-     * <p>Non-Resource attribute values, and Resource attrbute values poiting
-     * to Resources outside the source tree are copied by value. Resource
-     * attributes pointig to Resources inside the source tree are treated as
-     * relative, and will be converted to point to the corresponding resources
-     * in the destination tree. Resolution of relative resource references is
-     * done in a separate pass after cloning the resources themselves. Any
-     * relative reference being a READONLY attribute will be left poining to a
-     * resource in the source tree, and a warning will be issued to the log.</p>
-     *
+     * <p>
+     * Non-Resource attribute values, and Resource attrbute values poiting to Resources outside the
+     * source tree are copied by value. Resource attributes pointig to Resources inside the source
+     * tree are treated as relative, and will be converted to point to the corresponding resources
+     * in the destination tree. Resolution of relative resource references is done in a separate
+     * pass after cloning the resources themselves. Any relative reference being a READONLY
+     * attribute will be left poining to a resource in the source tree, and a warning will be issued
+     * to the log.
+     * </p>
+     * 
      * @param sourceRoot the root of the source tree.
-     * @param destinationParent the parent of root node of the destination
-     * tree. 
+     * @param destinationParent the parent of root node of the destination tree.
      * @param destinationName the name of root node of the destination tree.
+     * @throws InvalidResourceNameException if the name contains invalid chracters.
      * @throws CircularDependencyException if the destination parent is a child of source root.
      */
     public void copyTree(Resource sourceRoot, Resource destinationParent, 
                          String destinationName)
-        throws CircularDependencyException;
+        throws InvalidResourceNameException, CircularDependencyException;
                          
     /**
      * Checks whether the resource is an ancestor of the other.
@@ -284,5 +288,23 @@ public interface CoralStore
      * @param descendant the potential descendant
      * @return <code>true</code> if resource is an ancestor.
      */
-    public boolean isAncestor(Resource ancestor, Resource descendant);                         
+    public boolean isAncestor(Resource ancestor, Resource descendant);         
+    
+    /**
+     * Checks if a given string is a valid resource name.
+     * 
+     * @param name the string to be checked.
+     * @return <code>true</code> if the name conatins no illegal characters.
+     */
+    public boolean isValidResourceName(String name);
+
+    /**
+     * Returns a string that contains all characters from a given string that are not allowed
+     * inside a resource name.
+     * 
+     * @param name the string to be checked.
+     * @return a string that contains the illegal characters. If the string is a valid resource 
+     * name empty string is returned. Each invalid character appers once in the output.
+     */
+    public String getInvalidResourceNameCharacters(String name);    
 }

@@ -31,15 +31,17 @@ package org.objectledge.coral.datatypes;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
+
+import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.PersistentNode</code> Coral resource class.
@@ -62,7 +64,6 @@ public class PersistentNodeImpl
      * @param schema the CoralSchema.
      * @param database the Database.
      * @param logger the Logger.
-     * @parma resourceClass the ResourceClass.
      */
     public PersistentNodeImpl(CoralSchema schema, Database database, Logger logger)
     {
@@ -102,9 +103,11 @@ public class PersistentNodeImpl
      * @param name the name of the new resource
      * @param parent the parent resource.
      * @return a new PersistentNode instance.
+     * @throws InvalidResourceNameException if the name argument contains illegal characters.
      */
-    public static PersistentNode createPersistentNode(CoralSession session, String name, Resource 
-        parent)
+    public static PersistentNode createPersistentNode(CoralSession session, String name,
+        Resource parent)
+        throws InvalidResourceNameException
     {
         try
         {
@@ -127,6 +130,6 @@ public class PersistentNodeImpl
             throw new BackendException("incompatible schema change", e);
         }
     }
-
+ 
     // @custom methods ///////////////////////////////////////////////////////
 }
