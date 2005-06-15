@@ -3,11 +3,8 @@ package org.objectledge.coral.datatypes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
@@ -18,7 +15,6 @@ import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -34,7 +30,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.17 2005-01-20 06:00:24 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.18 2005-06-15 12:59:41 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -52,15 +48,6 @@ public class PersistentResource
 
     /** the resource's db table. */
     protected String dbTable;
-    
-    /** the attributes (AttributeDefinition -> Object). */
-    protected Map attributes = new HashMap();
-
-    /** the external attribute ids. */
-    protected Map ids = new HashMap();
-
-    /** modified attributes (AttibuteDefinition set). */
-    protected Set modified = new HashSet();
     
     /**
      * Constructor.
@@ -219,82 +206,6 @@ public class PersistentResource
             throw new BackendException("failed to delete resource state", e);
         }        
 	}    
-
-    // attribute access //////////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc}
-     */
-    protected boolean isDefinedLocally(AttributeDefinition attribute)
-    {
-        if(modified.contains(attribute))
-        {
-            return attributes.get(attribute) != null;
-        }
-        else
-        {
-            if(attributes.get(attribute) != null)
-            {
-                return true;
-            }
-            else
-            {
-                return ids.containsKey(attribute);
-            }
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected Object getLocally(AttributeDefinition attribute)
-        throws UnknownAttributeException
-    {
-        Object value = attributes.get(attribute);
-        if(modified.contains(attribute))
-        {
-            return value;
-        }
-        else
-        {
-            if(value != null)
-            {
-                return value;
-            }
-            else
-            {
-                Long idObj = (Long)ids.get(attribute);
-                if(idObj == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    value = loadAttribute(attribute, idObj.longValue());
-                    attributes.put(attribute, value);
-                    return value;
-                }
-            }
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected void setLocally(AttributeDefinition attribute, Object value)
-    {
-        attributes.put(attribute, value);
-        modified.add(attribute);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected void unsetLocally(AttributeDefinition attribute)
-    {
-        attributes.remove(attribute);
-        modified.add(attribute);
-    }
 
     /**
      * {@inheritDoc}

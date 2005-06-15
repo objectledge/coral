@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.21 2005-03-18 10:26:12 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.22 2005-06-15 12:59:41 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -73,6 +73,12 @@ public abstract class AbstractResource implements Resource
     /** Security delegate object. */
     protected Resource delegate;
     
+    /** the attributes (AttributeDefinition -> Object). */
+    protected Map attributes = new HashMap();
+
+    /** the external attribute ids. */
+    protected Map ids = new HashMap();
+
     /** Set of AttributeDefinitions of the modified attributes. */
     protected Set modified = new HashSet();
 
@@ -820,10 +826,20 @@ public abstract class AbstractResource implements Resource
     /**
      * Check if the attribute value is defined in this wrapper.
      * 
-     * @param attr the attribute defintion.
+     * @param attribute the attribute defintion.
      * @return <code>true</code> if the attribute value is defined in this wrapper.
      */
-    protected abstract boolean isDefinedLocally(AttributeDefinition attr);
+    private synchronized boolean isDefinedLocally(AttributeDefinition attribute)
+    {
+        if(modified.contains(attribute))
+        {
+            return attributes.containsKey(attribute);
+        }
+        else
+        {
+            return ids.containsKey(attribute);
+        }        
+    }
 
     /**
      * Retrieve the attribute value defined in this wrapper.
@@ -831,7 +847,35 @@ public abstract class AbstractResource implements Resource
      * @param attribute the attribute defintion.
      * @return the attribute value is defined in this wrapper.
      */
-    protected abstract Object getLocally(AttributeDefinition attribute);
+    private synchronized Object getLocally(AttributeDefinition attribute)
+    {
+        Object value = attributes.get(attribute);
+        if(modified.contains(attribute))
+        {
+            return value;
+        }
+        else
+        {
+            if(value != null)
+            {
+                return value;
+            }
+            else
+            {
+                Long idObj = (Long)ids.get(attribute);
+                if(idObj == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    value = loadAttribute(attribute, idObj.longValue());
+                    attributes.put(attribute, value);
+                    return value;
+                }
+            }
+        }        
+    }
 
     /**
      * Set the attribute value in this wrapper.
@@ -839,14 +883,22 @@ public abstract class AbstractResource implements Resource
      * @param attribute the attribute defintion.
      * @param value the attribute value.
      */
-    protected abstract void setLocally(AttributeDefinition attribute, Object value);
+    private synchronized void setLocally(AttributeDefinition attribute, Object value)
+    {
+        attributes.put(attribute, value);
+        modified.add(attribute);        
+    }
 
     /**
      * Unset the attribute value in this wrapper.
      * 
      * @param attribute the attribute defintion.
      */
-    protected abstract void unsetLocally(AttributeDefinition attribute);
+    private synchronized void unsetLocally(AttributeDefinition attribute)
+    {
+        attributes.remove(attribute);
+        modified.add(attribute);        
+    }
 
     /**
      * Lazy-load attribute value.

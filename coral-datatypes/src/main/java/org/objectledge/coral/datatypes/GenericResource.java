@@ -3,7 +3,6 @@ package org.objectledge.coral.datatypes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -25,18 +23,12 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.16 2005-02-08 20:33:42 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.17 2005-06-15 12:59:41 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
 {
     // Member objects ////////////////////////////////////////////////////////
-
-    /** AttributeDefinition -> attribute value map. */
-    private Map attributes = new HashMap();
-
-    /** AttributeDefinition -> attribute instance id map. */
-    private Map ids = new HashMap();
 
     /**
      * Constructor.
@@ -49,75 +41,6 @@ public class GenericResource
     {
         super(database, logger);
     }
-
-    // Resource interface - attributes (implemented here) ////////////////////
-
-    /**
-     * {@inheritDoc}
-     */
-    protected synchronized boolean isDefinedLocally(AttributeDefinition attribute)
-        throws UnknownAttributeException
-    {
-        if(modified.contains(attribute))
-        {
-            return attributes.containsKey(attribute);
-        }
-        else
-        {
-            return ids.containsKey(attribute);
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected synchronized Object getLocally(AttributeDefinition attribute)
-        throws UnknownAttributeException
-    {
-        if(modified.contains(attribute))
-        {
-            return attributes.get(attribute);
-        }
-        else
-        {
-            if(ids.containsKey(attribute))
-            {
-                if(attributes.containsKey(attribute))
-                {
-                    return attributes.get(attribute);
-                }
-                else
-                {
-                    long aId = ((Long)ids.get(attribute)).longValue();
-                    Object value = loadAttribute(attribute, aId);
-                    attributes.put(attribute, value);
-                    return value;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected synchronized void setLocally(AttributeDefinition attribute, Object value)
-    {
-        attributes.put(attribute, value);
-        modified.add(attribute);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected synchronized void unsetLocally(AttributeDefinition attribute)
-    {
-        attributes.remove(attribute);
-        modified.add(attribute);
-    }    
     
     // Package private ///////////////////////////////////////////////////////
 
