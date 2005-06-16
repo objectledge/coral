@@ -3,7 +3,6 @@ package org.objectledge.coral.datatypes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
@@ -23,7 +22,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.19 2005-06-16 07:56:52 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.20 2005-06-16 11:10:40 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -140,13 +139,10 @@ public class GenericResource
     {
         super.update(conn);
         Statement stmt = conn.createStatement();
-        Iterator i = modified.iterator();
-        while(i.hasNext())
+        for(AttributeDefinition attr : delegate.getResourceClass().getDeclaredAttributes())
         {
-            Object o = i.next();
-            if(o instanceof AttributeDefinition)
+            if(isAttributeModified(attr))
             {
-                AttributeDefinition attr = (AttributeDefinition)o;
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
 	                AttributeHandler handler = attr.getAttributeClass().getHandler();
@@ -198,9 +194,9 @@ public class GenericResource
 	                    }
 	                }
                 }    
-                i.remove();
             }
         }
+        clearModified();
     }
 
     synchronized void delete(Connection conn)

@@ -30,7 +30,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.21 2005-06-16 07:56:52 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.22 2005-06-16 11:10:40 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -307,7 +307,7 @@ public class PersistentResource
                 }
                 else if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
                 {
-                    if(modified.contains(attribute))
+                    if(isAttributeModified(attribute))
                     {
                         if(value != null)
                         {

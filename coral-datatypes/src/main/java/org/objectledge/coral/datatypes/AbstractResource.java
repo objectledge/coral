@@ -61,7 +61,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.27 2005-06-16 07:56:52 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.28 2005-06-16 11:10:40 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -81,7 +81,7 @@ public abstract class AbstractResource implements Resource
     private Map ids = new HashMap();
 
     /** Set of AttributeDefinitions of the modified attributes. */
-    protected Set modified = new HashSet();
+    private Set modified = new HashSet();
 
     /** The hashcode. */
     private int hashCode;
@@ -1054,5 +1054,24 @@ public abstract class AbstractResource implements Resource
     {
         Long id = (Long)ids.get(attr);
         return id != null ? id : -1L;
+    }
+    
+    /**
+     * Checks if an attribute value was modified since loading.
+     * 
+     * @param attr the attribute.
+     * @return <code>true</code> if the attribute was modified.
+     */
+    protected boolean isAttributeModified(AttributeDefinition attr)
+    {
+        return modified.contains(attr);
+    }
+    
+    /**
+     * Resets the modification flags for all attributes.
+     */
+    public void clearModified()
+    {
+        modified.clear();
     }
 }
