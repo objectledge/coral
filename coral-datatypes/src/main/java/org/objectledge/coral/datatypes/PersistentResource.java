@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
@@ -30,7 +31,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.19 2005-06-16 05:07:09 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.20 2005-06-16 06:43:23 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -224,9 +225,10 @@ public class PersistentResource
     /**
      * {@inheritDoc}
      */
-    protected void initAttributeMap(Resource delegate, ResourceClass resourceClass)
+    protected void initAttributeMap(Resource delegate, ResourceClass resourceClass,
+        List<ResourceClass> directParentClasses)
     {
-    	super.initAttributeMap(delegate, resourceClass);
+    	super.initAttributeMap(delegate, resourceClass, directParentClasses);
     	initPersistence(delegate);
     }
     

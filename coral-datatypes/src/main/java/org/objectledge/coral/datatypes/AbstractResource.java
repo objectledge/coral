@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,7 +61,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.24 2005-06-16 06:25:43 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.25 2005-06-16 06:43:23 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -192,10 +193,9 @@ public abstract class AbstractResource implements Resource
         Object data)
     	throws SQLException
     {
-        ResourceClass[] parentClasses = getDirectParentClasses(rClass);
-        for(int i=0; i<parentClasses.length; i++)
+        List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
+        for(ResourceClass parent : directParentClasses)
         {
-            ResourceClass parent = parentClasses[i];
             Resource instance;
             if(parent.getHandler() instanceof AbstractResourceHandler)
             {
@@ -208,16 +208,15 @@ public abstract class AbstractResource implements Resource
             }
             facets.put(parent, instance);
         }
-        initAttributeMap(delegate, rClass);
+        initAttributeMap(delegate, rClass, directParentClasses);
     }
 
     synchronized void create(Resource delegate, ResourceClass rClass, Map attributes,
         Connection conn) throws SQLException, ValueRequiredException, ConstraintViolationException
     {
-        ResourceClass[] parentClasses = getDirectParentClasses(rClass);
-        for (int i = 0; i < parentClasses.length; i++)
+        List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
+        for (ResourceClass parent : directParentClasses)
         {
-            ResourceClass parent = parentClasses[i];
             Resource instance;
             if(parent.getHandler() instanceof AbstractResourceHandler)
             {
@@ -248,7 +247,7 @@ public abstract class AbstractResource implements Resource
 	            }
             }
         }
-        initAttributeMap(delegate, rClass);
+        initAttributeMap(delegate, rClass, directParentClasses);
     }
     
     synchronized void revert(ResourceClass rClass, Connection conn, Object data)
@@ -258,10 +257,9 @@ public abstract class AbstractResource implements Resource
 	    modified.clear();
         attributes.clear();
         ids.clear();
-	    ResourceClass[] parentClasses = getDirectParentClasses(rClass);
-	    for(int i=0; i<parentClasses.length; i++)
+	    List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
+        for(ResourceClass parent : directParentClasses)
 	    {
-	        ResourceClass parent = parentClasses[i];
 	        Resource instance;
 	        if(facets.containsKey(parent))
 	        {
@@ -289,7 +287,7 @@ public abstract class AbstractResource implements Resource
 	            facets.put(parent, instance);
 	        }
 	    }
-	    initAttributeMap(delegate, rClass);
+	    initAttributeMap(delegate, rClass, directParentClasses);
 	}
 
     synchronized void update(Connection conn)
@@ -746,15 +744,15 @@ public abstract class AbstractResource implements Resource
      * 
      * @param delegate the security delegate object.
      * @param rClass the resource class facet this wrapper represents.
+     * @param directParentClasses precomputed list of direct parent classes of rClass
      */
-    protected void initAttributeMap(Resource delegate, ResourceClass rClass)
+    protected void initAttributeMap(Resource delegate, ResourceClass rClass,
+        List<ResourceClass> directParentClasses)
     {
         this.delegate = delegate;
         this.hashCode = delegate.hashCode();
-        ResourceClass[] parentClasses = getDirectParentClasses(rClass);
-        for(int i=0; i<parentClasses.length; i++)
+        for(ResourceClass parent : directParentClasses)
         {
-            ResourceClass parent = parentClasses[i];
             Resource instance = (Resource)facets.get(parent);
             AttributeDefinition[] hosted = parent.getAllAttributes();
             for(int j=0; j<hosted.length; j++)
@@ -790,19 +788,17 @@ public abstract class AbstractResource implements Resource
 	    return host;
 	}   
     
-    private ResourceClass[] getDirectParentClasses(ResourceClass rc)
+    private List<ResourceClass> getDirectParentClasses(ResourceClass rc)
     {
-        ArrayList temp = new ArrayList();
         ResourceClassInheritance[] rci = rc.getInheritance();
+        ArrayList result = new ArrayList(rci.length);
         for(int i=0; i<rci.length; i++)
         {
             if(rci[i].getChild().equals(rc))
             {
-                temp.add(rci[i].getParent());
+                result.add(rci[i].getParent());
             }
         }
-        ResourceClass[] result = new ResourceClass[temp.size()];
-        temp.toArray(result);
         return result;
     }
 
