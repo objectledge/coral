@@ -3,7 +3,6 @@ package org.objectledge.coral.datatypes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.20 2005-06-16 06:43:23 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.21 2005-06-16 07:56:52 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -123,7 +122,7 @@ public class PersistentResource
                 handler.checkDomain(attr.getDomain(), value);
                 if(handler.supportsExternalString())
                 {
-                    this.attributes.put(attr, value);
+                    setAttribute(attr, value);
                 }
                 else
                 {
@@ -139,7 +138,7 @@ public class PersistentResource
                         {
                             try
                             {
-                                this.attributes.put(attr, handler.retrieve(valueId, conn));
+                                setAttribute(attr, handler.retrieve(valueId, conn));
                             }
                             catch(EntityDoesNotExistException e)
                             {
@@ -147,7 +146,7 @@ public class PersistentResource
                             }
                         }
                     }
-                    ids.put(attr, new Long(valueId));
+                    setValueId(attr, valueId);
                 }
             }
         }
@@ -179,13 +178,11 @@ public class PersistentResource
 	    throws SQLException
 	{
 	    super.delete(conn);
-        Iterator i = ids.keySet().iterator();
-        while(i.hasNext())
+        for(AttributeDefinition attr : delegate.getResourceClass().getDeclaredAttributes())
         {
-            AttributeDefinition attr = (AttributeDefinition)i.next();
             if(!Entity.class.isAssignableFrom(attr.getAttributeClass().getJavaClass()))
             {
-                long valueId = ((Long)ids.get(attr)).longValue();
+                long valueId = getValueId(attr);
                 try
                 {
                     attr.getAttributeClass().getHandler().delete(valueId, conn);
@@ -278,7 +275,7 @@ public class PersistentResource
             }
             else
             {
-                value = attributes.get(attribute);
+                value = getAttribute(attribute);
             }
             if(!attribute.getName().equals("id"))
             {
@@ -323,10 +320,10 @@ public class PersistentResource
                     }
                     else
                     {
-                        Long attrId = (Long)ids.get(attribute);
-                        if(attrId != null)
+                        long attrId = getValueId(attribute);
+                        if(attrId != -1L)
                         {
-                            record.setLong(attribute.getName(), attrId.longValue());
+                            record.setLong(attribute.getName(), attrId);
                         }
                         else
                         {
@@ -336,11 +333,11 @@ public class PersistentResource
                 }
                 else
                 {
-                    Long attrId = (Long)ids.get(attribute);
+                    long attrId = getValueId(attribute);
                     attrId = updateAttribute(attribute, attrId, value);
-                    if(attrId != null)
+                    if(attrId != -1L)
                     {
-                        record.setLong(attribute.getName(), attrId.longValue());
+                        record.setLong(attribute.getName(), attrId);
                     }
                     else
                     {
@@ -370,7 +367,7 @@ public class PersistentResource
                     if(attribute.getAttributeClass().getJavaClass().equals(Date.class))
                     {
                         Date value = record.getDate(attribute.getName());
-                        attributes.put(attribute, value);
+                        setAttribute(attribute, value);
                     }
                     else 
                     {
@@ -378,12 +375,12 @@ public class PersistentResource
                         {
                             Object value = handler.
                                 toAttributeValue(record.getString(attribute.getName()));
-                            attributes.put(attribute, value);
+                            setAttribute(attribute, value);
                         }
                         else
                         {
                             long valueId = record.getLong(attribute.getName());
-                            ids.put(attribute, new Long(valueId));
+                            setValueId(attribute, valueId);
                         }
                     }
                 }

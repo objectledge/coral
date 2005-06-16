@@ -23,7 +23,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.18 2005-06-16 05:07:09 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.19 2005-06-16 07:56:52 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -59,7 +59,7 @@ public class GenericResource
                 Long id = (Long)dataKeys.get(declared[i]);
                 if(id != null)
                 {
-                    ids.put(declared[i], id);
+                    setValueId(declared[i], id);
                 }
             }
         }
@@ -79,7 +79,7 @@ public class GenericResource
                 Long id = (Long)dataKeys.get(declared[i]);
                 if(id != null)
                 {
-                    ids.put(declared[i], id);
+                    setValueId(declared[i], id);
                 }
             }
         }
@@ -103,7 +103,7 @@ public class GenericResource
 	            {
 		            value = handler.toAttributeValue(value);
 		            long newId = handler.create(value, conn);
-		            ids.put(attr, new Long(newId));
+		            setValueId(attr, newId);
 		            stmt.execute(
 		                "INSERT INTO coral_generic_resource "+
 		                "(resource_id, attribute_definition_id, data_key) "+
@@ -114,7 +114,7 @@ public class GenericResource
 		            {
 		                try
 		                {
-		                    this.attributes.put(attr, handler.retrieve(newId, conn));
+		                    setAttribute(attr, handler.retrieve(newId, conn));
 		                }
 		                catch(EntityDoesNotExistException e)
 		                {
@@ -123,7 +123,7 @@ public class GenericResource
 		            }
 		            else
 		            {
-		                this.attributes.put(attr, value);
+		                setAttribute(attr, value);
 		            }
 	            }
             }
@@ -150,11 +150,11 @@ public class GenericResource
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
 	                AttributeHandler handler = attr.getAttributeClass().getHandler();
-	                Object value = attributes.get(attr);
-	                Long id = (Long)ids.get(attr);
+	                Object value = getAttribute(attr);
+	                long id = getValueId(attr);
 	                if(value != null)
 	                {
-	                    if(id == null)
+	                    if(id == -1L)
 	                    {
 	                        long newId = handler.create(value, conn);
 	                        stmt.execute(
@@ -163,13 +163,13 @@ public class GenericResource
 	                            "VALUES ("+delegate.getIdString()+", "+attr.getIdString()+", "+
 	                            newId+")"
 	                        );
-	                        ids.put(attr, new Long(newId));
+	                        setValueId(attr, newId);
 	                    }
 	                    else
 	                    {
 	                        try
 	                        {
-	                            handler.update(id.longValue(), value, conn);
+	                            handler.update(id, value, conn);
 	                        }
 	                        catch(EntityDoesNotExistException e)
 	                        {
@@ -179,11 +179,11 @@ public class GenericResource
 	                }
 	                else
 	                {
-	                    if(id != null)
+	                    if(id != -1L)
 	                    {
 	                        try
 	                        {
-	                            handler.delete(id.longValue(), conn);
+	                            handler.delete(id, conn);
 	                        }
 	                        catch(EntityDoesNotExistException e)
 	                        {
@@ -194,7 +194,7 @@ public class GenericResource
 	                            "WHERE resource_id = "+delegate.getIdString()+
 	                            " AND attribute_definition_id = "+attr.getIdString()
 	                        );
-	                        ids.remove(attr);
+	                        setValueId(attr, -1L);
 	                    }
 	                }
                 }    
@@ -207,26 +207,22 @@ public class GenericResource
         throws SQLException
     {
         super.delete(conn);
-        Iterator i = ids.keySet().iterator();
-        if(i.hasNext())
+        AttributeDefinition[] declared = delegate.getResourceClass().getDeclaredAttributes();
+        Statement stmt = conn.createStatement();
+        for(AttributeDefinition attr : declared)
         {
-            Statement stmt = conn.createStatement();
-            while(i.hasNext())
+            long atId = getValueId(attr);
+            try
             {
-                AttributeDefinition attr = (AttributeDefinition)i.next();
-                long atId = ((Long)ids.get(attr)).longValue();
-                try
-                {
-                    attr.getAttributeClass().getHandler().delete(atId, conn);
-                }
-                catch(EntityDoesNotExistException e)
-                {
-                    throw new BackendException("internal error", e);
-                }
-                stmt.execute("DELETE FROM coral_generic_resource WHERE "+
-                             " resource_id = "+delegate.getIdString()+
-                             " AND attribute_definition_id = "+attr.getIdString());
+                attr.getAttributeClass().getHandler().delete(atId, conn);
             }
+            catch(EntityDoesNotExistException e)
+            {
+                throw new BackendException("internal error", e);
+            }
+            stmt.execute("DELETE FROM coral_generic_resource WHERE "+
+                         " resource_id = "+delegate.getIdString()+
+                         " AND attribute_definition_id = "+attr.getIdString());
         }
     }
 }

@@ -61,7 +61,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.26 2005-06-16 06:45:43 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.27 2005-06-16 07:56:52 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -75,10 +75,10 @@ public abstract class AbstractResource implements Resource
     protected Resource delegate;
     
     /** the attributes (AttributeDefinition -> Object). */
-    protected Map attributes = new HashMap();
+    private Map attributes = new HashMap();
 
     /** the external attribute ids. */
-    protected Map ids = new HashMap();
+    private Map ids = new HashMap();
 
     /** Set of AttributeDefinitions of the modified attributes. */
     protected Set modified = new HashSet();
@@ -948,9 +948,8 @@ public abstract class AbstractResource implements Resource
     /**
      * {@inheritDoc}
      */
-    protected Long updateAttribute(AttributeDefinition attribute, Long idObj, Object value)
+    protected long updateAttribute(AttributeDefinition attribute, long id, Object value)
     {
-        long id = idObj != null ? idObj.longValue() : -1;
         AttributeHandler handler = attribute.getAttributeClass().getHandler();
         Connection conn = null;
         try
@@ -965,7 +964,7 @@ public abstract class AbstractResource implements Resource
                 else
                 {
                     handler.update(id, value, conn);
-                    return idObj;
+                    return id;
                 }
             }
             else
@@ -973,10 +972,10 @@ public abstract class AbstractResource implements Resource
                 if(value != null)
                 {
                     id = handler.create(value, conn);
-                    return new Long(id);
+                    return id;
                 }
             }
-            return null;
+            return -1;
         }
         catch(Exception e)
         {
@@ -996,5 +995,64 @@ public abstract class AbstractResource implements Resource
                 }
             }
         }
+    }
+
+    /**
+     * Sets a value of locally stored attribute.
+     * 
+     * @param attr the attribute.
+     * @param value the value.
+     */
+    protected void setAttribute(AttributeDefinition attr, Object value)
+    {
+        if(value != null)
+        {
+            attributes.put(attr, value);
+        }
+        else
+        {
+            attributes.remove(attr);
+        }
+    }
+    
+    /**
+     * Sets a value of locally stored attribute.
+     * 
+     * @param attr the attribute.
+     * @return the value.
+     */
+    protected Object getAttribute(AttributeDefinition attr)
+    {
+        return attributes.get(attr);
+    }
+    
+    /**
+     * Sets attribute value identifier.
+     * 
+     * @param attr the attribute.
+     * @param id the identifier.
+     */
+    protected void setValueId(AttributeDefinition attr, long id)
+    {
+        if(id != -1)
+        {
+            ids.put(attr, id);
+        }
+        else
+        {
+            ids.remove(attr);
+        }
+    }
+    
+    /**
+     * Gets attribute value identifier.
+     * 
+     * @param attr the attribute.
+     * @return the identifier.
+     */
+    protected long getValueId(AttributeDefinition attr)
+    {
+        Long id = (Long)ids.get(attr);
+        return id != null ? id : -1L;
     }
 }
