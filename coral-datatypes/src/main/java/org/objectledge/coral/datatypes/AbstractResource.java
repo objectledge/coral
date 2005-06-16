@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.23 2005-06-16 05:07:09 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.24 2005-06-16 06:25:43 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -219,7 +219,7 @@ public abstract class AbstractResource implements Resource
         {
             ResourceClass parent = parentClasses[i];
             Resource instance;
-            if(parent.getHandler() instanceof GenericResourceHandler)
+            if(parent.getHandler() instanceof AbstractResourceHandler)
             {
                 create(delegate, parent, attributes, conn);
                 instance = this;
@@ -714,8 +714,8 @@ public abstract class AbstractResource implements Resource
         try
         {
             conn = database.getConnection();
-            GenericResourceHandler handler = (GenericResourceHandler)delegate.
-                getResourceClass().getHandler();
+            AbstractResourceHandler handler = (GenericResourceHandler)delegate.getResourceClass()
+                .getHandler();
             Object data = handler.getData(delegate, conn); 
             revert(delegate.getResourceClass(), conn, data);
         }
