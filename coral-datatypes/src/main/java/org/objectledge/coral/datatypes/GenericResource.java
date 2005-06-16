@@ -23,7 +23,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.17 2005-06-15 12:59:41 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.18 2005-06-16 05:07:09 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -69,8 +69,6 @@ public class GenericResource
         throws SQLException
     {
         super.revert(rClass, conn, data);
-        attributes.clear();
-        ids.clear();
         Map dataKeyMap = (Map)data;
         Map dataKeys = (Map)dataKeyMap.get(delegate.getIdObject());
         if(dataKeys != null)

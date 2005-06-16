@@ -30,7 +30,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.18 2005-06-15 12:59:41 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.19 2005-06-16 05:07:09 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -86,8 +86,6 @@ public class PersistentResource
         throws SQLException
     {
         super.revert(rClass, conn, data);
-        attributes.clear();
-        ids.clear();
         try
         {
             InputRecord in = (InputRecord)((Map)data).get(delegate.getIdObject());
