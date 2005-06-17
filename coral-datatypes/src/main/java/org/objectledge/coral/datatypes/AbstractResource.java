@@ -61,7 +61,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.29 2005-06-17 07:42:58 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.30 2005-06-17 11:27:39 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -826,14 +826,7 @@ public abstract class AbstractResource implements Resource
      */
     private synchronized boolean isDefinedLocally(AttributeDefinition attribute)
     {
-        if(modified.contains(attribute))
-        {
-            return attributes.containsKey(attribute);
-        }
-        else
-        {
-            return ids.containsKey(attribute);
-        }        
+        return attributes.containsKey(attribute);
     }
 
     /**
