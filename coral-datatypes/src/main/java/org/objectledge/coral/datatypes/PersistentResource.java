@@ -30,7 +30,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.23 2005-06-17 07:42:58 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.24 2005-06-17 10:43:47 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -178,7 +178,7 @@ public class PersistentResource
 	    throws SQLException
 	{
 	    super.delete(conn);
-        for(AttributeDefinition attr : delegate.getResourceClass().getDeclaredAttributes())
+        for(AttributeDefinition attr : delegate.getResourceClass().getAllAttributes())
         {
             if(!Entity.class.isAssignableFrom(attr.getAttributeClass().getJavaClass()))
             {
