@@ -22,7 +22,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.22 2005-06-17 10:43:47 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.23 2005-06-17 10:52:40 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -206,13 +206,16 @@ public class GenericResource
         for(AttributeDefinition attr : declared)
         {
             long atId = getValueId(attr);
-            try
+            if(atId != -1L)
             {
-                attr.getAttributeClass().getHandler().delete(atId, conn);
-            }
-            catch(EntityDoesNotExistException e)
-            {
-                throw new BackendException("internal error", e);
+                try
+                {
+                    attr.getAttributeClass().getHandler().delete(atId, conn);
+                }
+                catch(EntityDoesNotExistException e)
+                {
+                    throw new BackendException("internal error", e);
+                }
             }
             stmt.execute("DELETE FROM coral_generic_resource WHERE "+
                          " resource_id = "+delegate.getIdString()+
