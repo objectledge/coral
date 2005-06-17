@@ -22,7 +22,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.20 2005-06-16 11:10:40 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.21 2005-06-17 07:42:58 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -48,17 +48,17 @@ public class GenericResource
         throws SQLException
     {
         super.retrieve(delegate, rClass, conn, data);
-        Map dataKeyMap = (Map)data;
-        Map dataKeys = (Map)dataKeyMap.get(delegate.getIdObject());
+        Map<Long,Map<AttributeDefinition,Long>> dataKeyMap = 
+            (Map<Long,Map<AttributeDefinition,Long>>)data;
+        Map<AttributeDefinition,Long> dataKeys = dataKeyMap.get(delegate.getIdObject());
         if(dataKeys != null)
-        {
-            AttributeDefinition[] declared = rClass.getDeclaredAttributes();
-            for(int i=0; i<declared.length; i++)
+        {            
+            for(AttributeDefinition declared : rClass.getDeclaredAttributes())
             {
-                Long id = (Long)dataKeys.get(declared[i]);
+                Long id = dataKeys.get(declared);
                 if(id != null)
                 {
-                    setValueId(declared[i], id);
+                    setValueId(declared, id);
                 }
             }
         }
@@ -68,17 +68,17 @@ public class GenericResource
         throws SQLException
     {
         super.revert(rClass, conn, data);
-        Map dataKeyMap = (Map)data;
-        Map dataKeys = (Map)dataKeyMap.get(delegate.getIdObject());
+        Map<Long,Map<AttributeDefinition,Long>> dataKeyMap = 
+            (Map<Long,Map<AttributeDefinition,Long>>)data;
+        Map<AttributeDefinition,Long> dataKeys = dataKeyMap.get(delegate.getIdObject());
         if(dataKeys != null)
-        {
-            AttributeDefinition[] declared = rClass.getDeclaredAttributes();
-            for(int i=0; i<declared.length; i++)
+        {          
+            for(AttributeDefinition declared : rClass.getDeclaredAttributes())
             {
-                Long id = (Long)dataKeys.get(declared[i]);
+                Long id = dataKeys.get(declared);
                 if(id != null)
                 {
-                    setValueId(declared[i], id);
+                    setValueId(declared, id);
                 }
             }
         }
@@ -89,11 +89,9 @@ public class GenericResource
         throws SQLException, ValueRequiredException, ConstraintViolationException
     {
         super.create(delegate, rClass, attributes, conn);
-        AttributeDefinition[] declared = rClass.getDeclaredAttributes();
         Statement stmt = conn.createStatement();
-        for(int i=0; i<declared.length; i++)
+        for(AttributeDefinition attr : rClass.getDeclaredAttributes())
         {
-            AttributeDefinition attr = declared[i];
             if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
 	            AttributeHandler handler = attr.getAttributeClass().getHandler();

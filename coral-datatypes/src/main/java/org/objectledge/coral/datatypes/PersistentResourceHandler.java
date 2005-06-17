@@ -26,7 +26,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.16 2005-01-20 13:09:39 rafal Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.17 2005-06-17 07:42:58 rafal Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -183,7 +183,7 @@ public class PersistentResourceHandler
             	throw new SQLException("missing data for "+delegate.getResourceClass().getName()+
             				" WHERE resource_id = "+delegate.getIdString());
             }
-            Map data = new HashMap();
+            Map<Long,InputRecord> data = new HashMap<Long,InputRecord>();
             data.put(delegate.getIdObject(), record);
             return data;
 		}

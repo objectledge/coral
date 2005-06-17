@@ -30,7 +30,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.22 2005-06-16 11:10:40 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.23 2005-06-17 07:42:58 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -73,7 +73,8 @@ public class PersistentResource
         super.retrieve(delegate, rClass, conn, data);
         try
         {
-        	InputRecord in = (InputRecord)((Map)data).get(delegate.getIdObject());
+            Map<Long,InputRecord> inputRecordMap = (Map<Long,InputRecord>)data;
+        	InputRecord in = inputRecordMap.get(delegate.getIdObject());
             setData(in);
         }
         catch(PersistenceException e)
@@ -88,7 +89,8 @@ public class PersistentResource
         super.revert(rClass, conn, data);
         try
         {
-            InputRecord in = (InputRecord)((Map)data).get(delegate.getIdObject());
+            Map<Long,InputRecord> inputRecordMap = (Map<Long,InputRecord>)data;
+            InputRecord in = inputRecordMap.get(delegate.getIdObject());
             setData(in);
         }
         catch(PersistenceException e)
@@ -102,10 +104,8 @@ public class PersistentResource
     	throws SQLException, ValueRequiredException, ConstraintViolationException
 	{
         super.create(delegate, rClass, attributes, conn);
-        AttributeDefinition[] attrs = delegate.getResourceClass().getAllAttributes();
-        for(int i=0; i<attrs.length; i++)
+        for(AttributeDefinition attr : delegate.getResourceClass().getAllAttributes())
         {
-            AttributeDefinition attr = attrs[i];
             Object value;
             if((attr.getFlags() & AttributeFlags.BUILTIN) != 0)
             {
@@ -261,12 +261,10 @@ public class PersistentResource
     public void getData(OutputRecord record)
         throws PersistenceException
     {
-        AttributeDefinition[] attrs = delegate.getResourceClass().getAllAttributes();
         record.setLong(getTable()+"_id", id);
         record.setLong("resource_id", delegate.getId());
-        for(int i=0; i<attrs.length; i++)
+        for(AttributeDefinition attribute : delegate.getResourceClass().getAllAttributes())
         {
-            AttributeDefinition attribute = attrs[i];
             AttributeHandler handler = attribute.getAttributeClass().getHandler();
             Object value = null;
             if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
@@ -355,10 +353,8 @@ public class PersistentResource
         throws PersistenceException
     {
         id = record.getLong(getTable()+"_id");
-        AttributeDefinition[] attrs = delegate.getResourceClass().getAllAttributes();
-        for(int i=0; i<attrs.length; i++)
+        for(AttributeDefinition attribute : delegate.getResourceClass().getAllAttributes())
         {
-            AttributeDefinition attribute = attrs[i];
             if((attribute.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
                 if(!record.isNull(attribute.getName()))

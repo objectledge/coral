@@ -61,7 +61,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.28 2005-06-16 11:10:40 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.29 2005-06-17 07:42:58 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -75,22 +75,25 @@ public abstract class AbstractResource implements Resource
     protected Resource delegate;
     
     /** the attributes (AttributeDefinition -> Object). */
-    private Map attributes = new HashMap();
+    private Map<AttributeDefinition,Object> attributes = 
+        new HashMap<AttributeDefinition,Object>();
 
     /** the external attribute ids. */
-    private Map ids = new HashMap();
+    private Map<AttributeDefinition,Long> ids = 
+        new HashMap<AttributeDefinition,Long>();
 
     /** Set of AttributeDefinitions of the modified attributes. */
-    private Set modified = new HashSet();
+    private Set<Object> modified = new HashSet();
 
     /** The hashcode. */
     private int hashCode;
     
     /** AttributeDefinition -> hosting instance map. */
-    private Map attributeMap = new HashMap();    
+    private Map<AttributeDefinition,Resource> attributeMap = 
+        new HashMap<AttributeDefinition,Resource>();    
     
     /** ResourceClass -> parent class instance. */
-    private Map facets = new HashMap();
+    private Map<ResourceClass,Resource> facets = new HashMap<ResourceClass,Resource>();
     
     /**
      * Constructor.
@@ -229,10 +232,8 @@ public abstract class AbstractResource implements Resource
             }
             facets.put(parent, instance);
         }
-        AttributeDefinition[] declared = rClass.getDeclaredAttributes();
-        for(int i=0; i<declared.length; i++)
+        for(AttributeDefinition attr : rClass.getDeclaredAttributes())
         {
-            AttributeDefinition attr = declared[i];
             if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
 	            AttributeHandler handler = attr.getAttributeClass().getHandler();
@@ -263,7 +264,7 @@ public abstract class AbstractResource implements Resource
 	        Resource instance;
 	        if(facets.containsKey(parent))
 	        {
-	            instance = (Resource)facets.get(parent);
+	            instance = facets.get(parent);
                 if(parent.getHandler() instanceof AbstractResourceHandler)
                 {
                     revert(parent, conn, data);
@@ -294,7 +295,7 @@ public abstract class AbstractResource implements Resource
 	    throws SQLException
 	{
 	    Statement stmt = conn.createStatement();
-	    Iterator i = modified.iterator();
+	    Iterator<Object> i = modified.iterator();
 	    while(i.hasNext())
 	    {
 	        Object o = i.next();
@@ -314,11 +315,9 @@ public abstract class AbstractResource implements Resource
 	synchronized void delete(Connection conn)
 	    throws SQLException
 	{
-	    Iterator i = facets.keySet().iterator();
-	    while(i.hasNext())
+        for(ResourceClass parentClass : facets.keySet())
 	    {
-	        ResourceClass parentClass = (ResourceClass)i.next();
-	        Resource facet = (Resource)facets.get(parentClass);
+	        Resource facet = facets.get(parentClass);
             if(facet != this)
             {
                 parentClass.getHandler().delete(facet, conn);
@@ -753,22 +752,20 @@ public abstract class AbstractResource implements Resource
         this.hashCode = delegate.hashCode();
         for(ResourceClass parent : directParentClasses)
         {
-            Resource instance = (Resource)facets.get(parent);
-            AttributeDefinition[] hosted = parent.getAllAttributes();
-            for(int j=0; j<hosted.length; j++)
+            Resource instance = facets.get(parent);
+            for(AttributeDefinition hosted : parent.getAllAttributes())
             {
-                if((hosted[j].getFlags() & AttributeFlags.BUILTIN) == 0)
+                if((hosted.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
-                    attributeMap.put(hosted[j], instance);
+                    attributeMap.put(hosted, instance);
                 }
             }
         }
-        AttributeDefinition[] declared = rClass.getDeclaredAttributes();
-        for(int i=0; i<declared.length; i++)
+        for(AttributeDefinition declared : rClass.getDeclaredAttributes())
         {
-            if((declared[i].getFlags() & AttributeFlags.BUILTIN) == 0)
+            if((declared.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
-                attributeMap.put(declared[i], this);
+                attributeMap.put(declared, this);
             }
         }        
     }
@@ -776,7 +773,7 @@ public abstract class AbstractResource implements Resource
     private synchronized Resource getHost(AttributeDefinition attribute)
 	    throws UnknownAttributeException
 	{
-	    Resource host = (Resource)attributeMap.get(attribute);
+	    Resource host = attributeMap.get(attribute);
 	    if(host == null)
 	    {
 	        throw new UnknownAttributeException(delegate.getResourceClass().getName()+
@@ -790,13 +787,13 @@ public abstract class AbstractResource implements Resource
     
     private List<ResourceClass> getDirectParentClasses(ResourceClass rc)
     {
-        ResourceClassInheritance[] rci = rc.getInheritance();
-        ArrayList result = new ArrayList(rci.length);
-        for(int i=0; i<rci.length; i++)
+        ResourceClassInheritance[] relations = rc.getInheritance();
+        ArrayList result = new ArrayList(relations.length);
+        for(ResourceClassInheritance relation : relations)
         {
-            if(rci[i].getChild().equals(rc))
+            if(relation.getChild().equals(rc))
             {
-                result.add(rci[i].getParent());
+                result.add(relation.getParent());
             }
         }
         return result;
@@ -860,7 +857,7 @@ public abstract class AbstractResource implements Resource
             }
             else
             {
-                Long idObj = (Long)ids.get(attribute);
+                Long idObj = ids.get(attribute);
                 if(idObj == null)
                 {
                     return null;
@@ -1052,7 +1049,7 @@ public abstract class AbstractResource implements Resource
      */
     protected long getValueId(AttributeDefinition attr)
     {
-        Long id = (Long)ids.get(attr);
+        Long id = ids.get(attr);
         return id != null ? id : -1L;
     }
     

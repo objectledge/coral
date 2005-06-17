@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -28,7 +27,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.7 2005-01-20 06:00:24 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.8 2005-06-17 07:42:58 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -46,10 +45,10 @@ public abstract class AbstractResourceHandler
     protected Instantiator instantiator;
     
     /** resource sets, keyed by resource class. Resources are kept through  weak  references. */
-    private Map cache = new HashMap();
+    private Map<ResourceClass,Map> cache = new HashMap<ResourceClass,Map>();
     
     /** to avoid multiple cache processing. */
-    private Map cached = new WeakHashMap();
+    private Map<Resource,Object> cached = new WeakHashMap<Resource,Object>();
 
     /**
      * The base constructor.
@@ -140,19 +139,17 @@ public abstract class AbstractResourceHandler
     public Resource[] getResourceReferences(Resource resource, boolean clearable)
     {
         ArrayList temp = new ArrayList();
-        AttributeDefinition[] attrs = resourceClass.getAllAttributes();
-        for(int i=0; i<attrs.length; i++)
+        for(AttributeDefinition attr : resourceClass.getAllAttributes())
         {
-            AttributeDefinition attr = attrs[i];
             AttributeHandler handler = attr.getAttributeClass().getHandler();
             if(handler.containsResourceReferences() &&
-               resource.isDefined(attrs[i]) && 
+               resource.isDefined(attr) && 
                (clearable || (!handler.isComposite() && 
                    (attr.getFlags() & (AttributeFlags.READONLY | AttributeFlags.REQUIRED)) != 0)) &&
                ((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0))
             {
-                Resource[] refs = attrs[i].getAttributeClass().
-                    getHandler().getResourceReferences(resource.get(attrs[i]));
+                Resource[] refs = attr.getAttributeClass().
+                    getHandler().getResourceReferences(resource.get(attr));
                 temp.addAll(Arrays.asList(refs));
             }
         }
@@ -166,13 +163,11 @@ public abstract class AbstractResourceHandler
      */
     public void clearResourceReferences(Resource resource)
     {
-        AttributeDefinition[] attrs = resourceClass.getAllAttributes();
-        for(int i=0; i<attrs.length; i++)
+        for(AttributeDefinition attr : resourceClass.getAllAttributes())
         {
-            AttributeDefinition attr = attrs[i];
             AttributeHandler handler = attr.getAttributeClass().getHandler();
             if(handler.containsResourceReferences() &&
-               resource.isDefined(attrs[i]) && 
+               resource.isDefined(attr) && 
                (handler.isComposite() || 
                     (attr.getFlags() & (AttributeFlags.READONLY | AttributeFlags.REQUIRED | 
                          AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0))
@@ -272,10 +267,9 @@ public abstract class AbstractResourceHandler
         if(!cached.containsKey(res))
         {
             addToCache0(res.getResourceClass(), res);
-            ResourceClass[] classes = res.getResourceClass().getParentClasses();
-            for(int i=0; i<classes.length; i++)
+            for(ResourceClass parent : res.getResourceClass().getParentClasses())
             {
-                addToCache0(classes[i], res);
+                addToCache0(parent, res);
             }
             cached.put(res, null);
         }
@@ -289,7 +283,7 @@ public abstract class AbstractResourceHandler
      */
     private void addToCache0(ResourceClass rc, AbstractResource res)
     {
-        Map rset = (Map)cache.get(rc);
+        Map rset = cache.get(rc);
         if(rset == null)
         {
             rset = new WeakHashMap();
@@ -309,27 +303,24 @@ public abstract class AbstractResourceHandler
         throws SQLException
     {
         revert0(rc, conn);
-        ResourceClass[] classes = rc.getChildClasses();
-        for(int i=0; i<classes.length; i++)
+        for(ResourceClass child : rc.getChildClasses())
         {
-            revert0(classes[i], conn);
+            revert0(child, conn);
         }
     }
     
     private void revert0(ResourceClass rc, Connection conn)
         throws SQLException
     {
-        Map rset = (Map)cache.get(rc);
+        Map rset = cache.get(rc);
         if(rset != null)
         {
             // we'll get too much but this shouldn't be a problem.
-            Map dataKeyMap = (Map)getData(rc, conn);
-            Set orig = new HashSet(rset.keySet());
-            Iterator i = orig.iterator();
-            while(i.hasNext())
+            Object data = getData(rc, conn);
+            Set<AbstractResource> orig = new HashSet<AbstractResource>(rset.keySet());
+            for(AbstractResource r : orig)
             {
-                AbstractResource r = (AbstractResource)i.next();
-                r.revert(rc, conn, dataKeyMap);
+                r.revert(rc, conn, data);
             }
         }
     }
