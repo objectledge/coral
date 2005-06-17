@@ -114,6 +114,8 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockAttributeHandler.stubs().method("toAttributeValue").will(returnValue("foo"));
         mockAttributeHandler.stubs().method("checkDomain");
         mockAttributeHandler.stubs().method("shouldRetrieveAfterCreate").will(returnValue(false));
+        mockAttributeHandler.stubs().method("create").will(returnValue(1L));
+        mockAttributeHandler.stubs().method("delete");
         attributeHandler = (AttributeHandler)mockAttributeHandler.proxy();        
         
         mockAttributeClass = mock(AttributeClass.class);
@@ -168,6 +170,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         
         mockStatement = mock(Statement.class);
         mockStatement.stubs().method("close");
+        mockStatement.stubs().method("execute").will(returnValue(true));
         statement = (Statement)mockStatement.proxy();
         mockConnection = mock(Connection.class);
         mockConnection.stubs().method("createStatement").will(returnValue(statement));
@@ -211,7 +214,10 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     public void testDelete()
         throws Exception
     {
-        handler.delete(node, connection);
+        Map<AttributeDefinition,Object> attrs = new HashMap<AttributeDefinition,Object>();
+        attrs.put(attributeDefinition, "");
+        Resource n = handler.create(resource, attrs, connection);
+        handler.delete(n, connection);
     }
 
     /*
