@@ -61,7 +61,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.30 2005-06-17 11:27:39 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.31 2005-06-20 06:00:16 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -87,13 +87,6 @@ public abstract class AbstractResource implements Resource
 
     /** The hashcode. */
     private int hashCode;
-    
-    /** AttributeDefinition -> hosting instance map. */
-    private Map<AttributeDefinition,Resource> attributeMap = 
-        new HashMap<AttributeDefinition,Resource>();    
-    
-    /** ResourceClass -> parent class instance. */
-    private Map<ResourceClass,Resource> facets = new HashMap<ResourceClass,Resource>();
     
     /**
      * Constructor.
@@ -196,41 +189,22 @@ public abstract class AbstractResource implements Resource
         Object data)
     	throws SQLException
     {
+        this.delegate = delegate;
         List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
         for(ResourceClass parent : directParentClasses)
         {
-            Resource instance;
-            if(parent.getHandler() instanceof AbstractResourceHandler)
-            {
-                retrieve(delegate, parent, conn, data);
-                instance = this;
-            }
-            else
-            {
-                instance = parent.getHandler().retrieve(delegate, conn, data);
-            }
-            facets.put(parent, instance);
+            retrieve(delegate, parent, conn, data);
         }
-        initAttributeMap(delegate, rClass, directParentClasses);
     }
 
     synchronized void create(Resource delegate, ResourceClass rClass, Map attributes,
         Connection conn) throws SQLException, ValueRequiredException, ConstraintViolationException
     {
+        this.delegate = delegate;
         List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
         for (ResourceClass parent : directParentClasses)
         {
-            Resource instance;
-            if(parent.getHandler() instanceof AbstractResourceHandler)
-            {
-                create(delegate, parent, attributes, conn);
-                instance = this;
-            }
-            else
-            {
-                instance = parent.getHandler().create(delegate, attributes, conn);
-            }
-            facets.put(parent, instance);
+            create(delegate, parent, attributes, conn);
         }
         for(AttributeDefinition attr : rClass.getDeclaredAttributes())
         {
@@ -248,47 +222,19 @@ public abstract class AbstractResource implements Resource
 	            }
             }
         }
-        initAttributeMap(delegate, rClass, directParentClasses);
     }
     
     synchronized void revert(ResourceClass rClass, Connection conn, Object data)
 	    throws SQLException
 	{
-	    attributeMap.clear();
 	    modified.clear();
         attributes.clear();
         ids.clear();
 	    List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
         for(ResourceClass parent : directParentClasses)
 	    {
-	        Resource instance;
-	        if(facets.containsKey(parent))
-	        {
-	            instance = facets.get(parent);
-                if(parent.getHandler() instanceof AbstractResourceHandler)
-                {
-                    revert(parent, conn, data);
-                }
-                else
-                {
-                    parent.getHandler().revert(instance, conn, data);
-                }
-	        }
-	        else
-	        {
-                if(parent.getHandler() instanceof AbstractResourceHandler)
-                {
-                    retrieve(delegate, parent, conn, data);
-                    instance = this;
-                }
-                else
-                {
-                    instance = parent.getHandler().retrieve(delegate, conn, data);
-                }
-	            facets.put(parent, instance);
-	        }
+            revert(parent, conn, data);
 	    }
-	    initAttributeMap(delegate, rClass, directParentClasses);
 	}
 
     synchronized void update(Connection conn)
@@ -315,14 +261,6 @@ public abstract class AbstractResource implements Resource
 	synchronized void delete(Connection conn)
 	    throws SQLException
 	{
-        for(ResourceClass parentClass : facets.keySet())
-	    {
-	        Resource facet = facets.get(parentClass);
-            if(facet != this)
-            {
-                parentClass.getHandler().delete(facet, conn);
-            }
-	    }
 	}
     
     // Resource interface - identity+security (delegated) ///////////////////////////////////////
@@ -514,15 +452,7 @@ public abstract class AbstractResource implements Resource
         {
             return delegate.get(attribute);
         }
-        Resource host = getHost(attribute);
-        if(host == this)
-        {
-            return getLocally(attribute);
-        }
-        else
-        {
-            return host.get(attribute);
-        }
+        return getLocally(attribute);
     }
     
     /**
@@ -535,15 +465,7 @@ public abstract class AbstractResource implements Resource
         {
             return delegate.isDefined(attribute);
         }
-        Resource host = getHost(attribute);
-        if(host == this)
-        {
-            return isDefinedLocally(attribute);
-        }
-        else
-        {
-            return host.isDefined(attribute);
-        }
+        return isDefinedLocally(attribute);
     }
     
     /**
@@ -556,15 +478,7 @@ public abstract class AbstractResource implements Resource
         {
             return delegate.isModified(attribute);
         }
-        Resource host = getHost(attribute);
-        if(host == this)
-        {
-            return modified.contains(attribute);
-        }
-        else
-        {
-            return host.isModified(attribute);
-        }
+        return modified.contains(attribute);
     }
     
     /**
@@ -588,19 +502,10 @@ public abstract class AbstractResource implements Resource
             throw new ValueRequiredException("attribute "+attribute.getName()+
                                              "is declared as REQUIRED");
         }
-        Resource host = getHost(attribute);
         value = attribute.getAttributeClass().getHandler().toAttributeValue(value);
         attribute.getAttributeClass().getHandler().checkDomain(attribute.getDomain(), value);
-        if(host == this)
-        {
-            setLocally(attribute, value);
-            modified.add(attribute);
-        }
-        else
-        {
-            host.set(attribute, value);
-            modified.add(host);
-        }
+        setLocally(attribute, value);
+        modified.add(attribute);
     }
     
     /**
@@ -613,16 +518,7 @@ public abstract class AbstractResource implements Resource
         {
             delegate.setModified(attribute);
         }
-        Resource host = getHost(attribute);
-        if(host == this)
-        {
-            modified.add(attribute);
-        }
-        else
-        {
-            host.setModified(attribute);
-            modified.add(host);
-        }
+        modified.add(attribute);
     }
     
     /**
@@ -636,22 +532,13 @@ public abstract class AbstractResource implements Resource
         {
             delegate.unset(attribute);
         }
-        Resource host = getHost(attribute);
         if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
         {
             throw new ValueRequiredException("attribute "+attribute.getName()+
                                              "is declared as REQUIRED");
         }
-        if(host == this)
-        {
-            unsetLocally(attribute);
-            modified.add(attribute);
-        }
-        else
-        {
-            host.unset(attribute);
-            modified.add(host);
-        }
+        unsetLocally(attribute);
+        modified.add(attribute);
     }
  
     /**
@@ -737,54 +624,7 @@ public abstract class AbstractResource implements Resource
     }
 
     // implementation ///////////////////////////////////////////////////////////////////////////
-    
-    /**
-     * Initialize attribute map of the resource wrapper.
-     * 
-     * @param delegate the security delegate object.
-     * @param rClass the resource class facet this wrapper represents.
-     * @param directParentClasses precomputed list of direct parent classes of rClass
-     */
-    protected void initAttributeMap(Resource delegate, ResourceClass rClass,
-        List<ResourceClass> directParentClasses)
-    {
-        this.delegate = delegate;
-        this.hashCode = delegate.hashCode();
-        for(ResourceClass parent : directParentClasses)
-        {
-            Resource instance = facets.get(parent);
-            for(AttributeDefinition hosted : parent.getAllAttributes())
-            {
-                if((hosted.getFlags() & AttributeFlags.BUILTIN) == 0)
-                {
-                    attributeMap.put(hosted, instance);
-                }
-            }
-        }
-        for(AttributeDefinition declared : rClass.getDeclaredAttributes())
-        {
-            if((declared.getFlags() & AttributeFlags.BUILTIN) == 0)
-            {
-                attributeMap.put(declared, this);
-            }
-        }        
-    }
-    
-    private synchronized Resource getHost(AttributeDefinition attribute)
-	    throws UnknownAttributeException
-	{
-	    Resource host = attributeMap.get(attribute);
-	    if(host == null)
-	    {
-	        throw new UnknownAttributeException(delegate.getResourceClass().getName()+
-	                                            " does not contain "+
-	                                            attribute.getName()+" attribute "+
-	                                            "declared by "+
-	                                            attribute.getDeclaringClass().getName());
-	    } 
-	    return host;
-	}   
-    
+
     private List<ResourceClass> getDirectParentClasses(ResourceClass rc)
     {
         ResourceClassInheritance[] relations = rc.getInheritance();
@@ -826,7 +666,14 @@ public abstract class AbstractResource implements Resource
      */
     private synchronized boolean isDefinedLocally(AttributeDefinition attribute)
     {
-        return attributes.containsKey(attribute);
+        if(modified.contains(attribute))
+        {
+            return attributes.containsKey(attribute);
+        }
+        else
+        {
+            return attributes.containsKey(attribute) || ids.containsKey(attribute);
+        } 
     }
 
     /**
@@ -874,7 +721,6 @@ public abstract class AbstractResource implements Resource
     private synchronized void setLocally(AttributeDefinition attribute, Object value)
     {
         attributes.put(attribute, value);
-        modified.add(attribute);        
     }
 
     /**
@@ -885,7 +731,6 @@ public abstract class AbstractResource implements Resource
     private synchronized void unsetLocally(AttributeDefinition attribute)
     {
         attributes.remove(attribute);
-        modified.add(attribute);        
     }
 
     /**
@@ -1060,7 +905,7 @@ public abstract class AbstractResource implements Resource
     /**
      * Resets the modification flags for all attributes.
      */
-    public void clearModified()
+    protected void clearModified()
     {
         modified.clear();
     }

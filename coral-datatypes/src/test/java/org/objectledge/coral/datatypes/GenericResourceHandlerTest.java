@@ -144,6 +144,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockResourceClass.stubs().method("getInheritance").will(returnValue(new ResourceClassInheritance[0]));
         mockResourceClass.stubs().method("getParentClasses").will(returnValue(new ResourceClass[0]));
         mockResourceClass.stubs().method("getDeclaredAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
+        mockResourceClass.stubs().method("getAllAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
         resourceClass = (ResourceClass)mockResourceClass.proxy();
         
         mockCoralSchema = mock(CoralSchema.class);

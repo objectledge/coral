@@ -30,7 +30,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.25 2005-06-17 10:52:40 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.26 2005-06-20 06:00:16 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -70,6 +70,7 @@ public class PersistentResource
         Object data)
     	throws SQLException
 	{
+        initPersistence(delegate);
         super.retrieve(delegate, rClass, conn, data);
         try
         {
@@ -103,6 +104,7 @@ public class PersistentResource
         Map attributes, Connection conn)
     	throws SQLException, ValueRequiredException, ConstraintViolationException
 	{
+        initPersistence(delegate);
         super.create(delegate, rClass, attributes, conn);
         for(AttributeDefinition attr : delegate.getResourceClass().getAllAttributes())
         {
@@ -220,16 +222,6 @@ public class PersistentResource
         {
             return super.loadAttribute(attribute, aId);
         }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected void initAttributeMap(Resource delegate, ResourceClass resourceClass,
-        List<ResourceClass> directParentClasses)
-    {
-    	super.initAttributeMap(delegate, resourceClass, directParentClasses);
-    	initPersistence(delegate);
     }
     
     void initPersistence(Resource delegate)
