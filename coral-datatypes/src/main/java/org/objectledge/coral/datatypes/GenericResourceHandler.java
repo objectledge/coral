@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -18,13 +19,14 @@ import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
+import org.objectledge.database.Database;
 import org.objectledge.database.DatabaseUtils;
 
 /**
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.17 2005-06-17 07:42:58 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.18 2005-06-20 08:20:22 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -36,13 +38,15 @@ public class GenericResourceHandler
      * 
      * @param coralSchema the coral schema.
      * @param coralSecurity the coral security.
-     * @param instantiator the instantiator.
      * @param resourceClass the resource class.
+     * @param database the database.
+     * @param instantiator the instantiator.
+     * @param logger the logger.
      */
-    public GenericResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity, 
-        Instantiator instantiator, ResourceClass resourceClass)
+    public GenericResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
+        ResourceClass resourceClass, Database database, Instantiator instantiator, Logger logger)
     {
-        super(coralSchema, coralSecurity, instantiator, resourceClass);
+        super(coralSchema, coralSecurity, instantiator, resourceClass, database, logger);
     }
 
     // Resource handler interface ////////////////////////////////////////////

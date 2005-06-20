@@ -95,6 +95,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     private Statement statement;
     private Mock mockResultSet;
     private ResultSet resultSet;
+    
     // not mock  
     private GenericResourceHandler handler;
     private NodeImpl node;
@@ -178,7 +179,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         connection = (Connection)mockConnection.proxy();              
                 
         
-        handler = new GenericResourceHandler(coralSchema, coralSecurity, instantiator, resourceClass);
+        handler = new GenericResourceHandler(coralSchema, coralSecurity, resourceClass, database, instantiator, logger);
                                              
     }
     

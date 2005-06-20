@@ -61,16 +61,10 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.31 2005-06-20 06:00:16 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.32 2005-06-20 08:20:22 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
-    /** The database service. */
-    private Database database;
-
-    /** The logging facility. */
-    protected Logger logger;
-
     /** Security delegate object. */
     protected Resource delegate;
     
@@ -86,19 +80,7 @@ public abstract class AbstractResource implements Resource
     private Set<Object> modified = new HashSet();
 
     /** The hashcode. */
-    private int hashCode;
-    
-    /**
-     * Constructor.
-     * 
-     * @param database the database.
-     * @param logger the logger.
-     */
-    public AbstractResource(Database database, Logger logger)
-    {
-        this.database = database;
-        this.logger = logger;
-    }
+    private int hashCode;    
     
     // equality /////////////////////////////////////////////////////////////////////////////////
     
@@ -184,6 +166,11 @@ public abstract class AbstractResource implements Resource
     {
         return delegate;
     }    
+    
+    void setDelegate(Resource delegate)
+    {
+        this.delegate = delegate;
+    }
     
     synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, 
         Object data)
@@ -553,20 +540,20 @@ public abstract class AbstractResource implements Resource
         boolean controler = false;
         try
         {
-            controler = database.beginTransaction();
-            conn = database.getConnection();
+            controler = getDatabase().beginTransaction();
+            conn = getDatabase().getConnection();
             update(conn);
-            database.commitTransaction(controler);
+            getDatabase().commitTransaction(controler);
         }
         catch(SQLException e)
         {
             try
             {
-                database.rollbackTransaction(controler);
+                getDatabase().rollbackTransaction(controler);
             }
             catch(SQLException ee)
             {
-                logger.error("Failed to rollback transaction", ee);
+                getLogger().error("Failed to rollback transaction", ee);
             }
             throw new BackendException("Failed to update resource", e);
         }
@@ -580,7 +567,7 @@ public abstract class AbstractResource implements Resource
                 }
                 catch(SQLException ee)
                 {
-                    logger.error("Failed to close connection", ee);
+                    getLogger().error("Failed to close connection", ee);
                 }
             }
         }   
@@ -597,7 +584,7 @@ public abstract class AbstractResource implements Resource
         boolean controler = false;
         try
         {
-            conn = database.getConnection();
+            conn = getDatabase().getConnection();
             AbstractResourceHandler handler = (AbstractResourceHandler)delegate.getResourceClass()
                 .getHandler();
             Object data = handler.getData(delegate, conn); 
@@ -617,7 +604,7 @@ public abstract class AbstractResource implements Resource
                 }
                 catch(SQLException ee)
                 {
-                    logger.error("Failed to close connection", ee);
+                    getLogger().error("Failed to close connection", ee);
                 }
             }
         }   
@@ -745,7 +732,7 @@ public abstract class AbstractResource implements Resource
         Connection conn = null;
         try
         {
-            conn = database.getConnection();
+            conn = getDatabase().getConnection();
             return attribute.getAttributeClass().getHandler().
                 retrieve(aId, conn);
         }
@@ -774,7 +761,7 @@ public abstract class AbstractResource implements Resource
                 }
                 catch(SQLException ee)
                 {
-                    logger.error("Failed to close connection", ee);
+                    getLogger().error("Failed to close connection", ee);
                 }
             }
         }
@@ -789,7 +776,7 @@ public abstract class AbstractResource implements Resource
         Connection conn = null;
         try
         {
-            conn = database.getConnection();
+            conn = getDatabase().getConnection();
             if(id != -1L)
             {
                 if(value == null)
@@ -826,7 +813,7 @@ public abstract class AbstractResource implements Resource
                 }
                 catch(SQLException ee)
                 {
-                    logger.error("failed to close connection", ee);
+                    getLogger().error("failed to close connection", ee);
                 }
             }
         }
@@ -908,5 +895,21 @@ public abstract class AbstractResource implements Resource
     protected void clearModified()
     {
         modified.clear();
+    }
+
+    /**
+     * @return Returns the database.
+     */
+    private Database getDatabase()
+    {
+        return ((AbstractResourceHandler)delegate.getResourceClass().getHandler()).getDatabase();
+    }
+
+    /**
+     * @return Returns the logger.
+     */
+    protected Logger getLogger()
+    {
+        return ((AbstractResourceHandler)delegate.getResourceClass().getHandler()).getLogger();
     }
 }

@@ -22,7 +22,7 @@ import org.objectledge.database.Database;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.23 2005-06-17 10:52:40 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.24 2005-06-20 08:20:22 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -38,7 +38,6 @@ public class GenericResource
      */
     public GenericResource(CoralSchema coralSchema, Database database, Logger logger)
     {
-        super(database, logger);
     }
     
     // Package private ///////////////////////////////////////////////////////

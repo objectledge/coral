@@ -3,7 +3,6 @@ package org.objectledge.coral.datatypes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
@@ -19,7 +18,6 @@ import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
-import org.objectledge.database.persistence.DefaultPersistence;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -30,25 +28,16 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.26 2005-06-20 06:00:16 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.27 2005-06-20 08:20:22 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
 {
     // instance variables ////////////////////////////////////////////////////
 
-    /** the persistence component. */
-    protected Persistence persistence;
-    
     /** the unique id of the resource in it's db table. */
     protected long id = -1;
 
-    /** the resource's key column. */
-    protected String[] keyColumns;
-
-    /** the resource's db table. */
-    protected String dbTable;
-    
     /**
      * Constructor.
      * 
@@ -58,10 +47,6 @@ public class PersistentResource
      */
     public PersistentResource(CoralSchema coralSchema, Database database, Logger logger)
     {
-        super(database, logger);
-        // it would be better to have it passed through constructor. OTOH persistence is 
-        // lightweitght and stateless so it's not much of a problem.
-        persistence = new DefaultPersistence(database, logger);
     }
         
     // interface to PersistentResourceHandler ////////////////////////////////
@@ -70,7 +55,6 @@ public class PersistentResource
         Object data)
     	throws SQLException
 	{
-        initPersistence(delegate);
         super.retrieve(delegate, rClass, conn, data);
         try
         {
@@ -104,7 +88,6 @@ public class PersistentResource
         Map attributes, Connection conn)
     	throws SQLException, ValueRequiredException, ConstraintViolationException
 	{
-        initPersistence(delegate);
         super.create(delegate, rClass, attributes, conn);
         for(AttributeDefinition attr : delegate.getResourceClass().getAllAttributes())
         {
@@ -154,7 +137,7 @@ public class PersistentResource
         }
         try
         {
-            persistence.save(this);
+            getPersistence().save(this);
         }
         catch(PersistenceException e)
         {
@@ -168,7 +151,7 @@ public class PersistentResource
 	    super.update(conn);
         try
         {
-            persistence.save(this);
+            getPersistence().save(this);
         }
         catch(PersistenceException e)
         {
@@ -200,7 +183,7 @@ public class PersistentResource
         }
         try
         {
-            persistence.delete(this);
+            getPersistence().delete(this);
         }
         catch(PersistenceException e)
         {
@@ -224,14 +207,6 @@ public class PersistentResource
         }
     }
     
-    void initPersistence(Resource delegate)
-    {
-        this.delegate = delegate;
-    	dbTable = delegate.getResourceClass().getDbTable();
-    	keyColumns = new String[1];
-    	keyColumns[0] = dbTable+"_id";    	
-    }
-    
     // Persistent interface //////////////////////////////////////////////////
 
     /**
@@ -239,7 +214,7 @@ public class PersistentResource
      */
     public String getTable()
     {
-        return dbTable;
+        return delegate.getResourceClass().getDbTable();
     }
     
     /**
@@ -247,7 +222,8 @@ public class PersistentResource
      */
     public String[] getKeyColumns()
     {
-        return keyColumns;
+        return ((PersistentResourceHandler)delegate.getResourceClass().getHandler()).
+            getKeyColumns();
     }
 
     /**
@@ -417,5 +393,14 @@ public class PersistentResource
     public long getPersistentId()
     {
     	return id;
+    }
+
+    /**
+     * @return Returns the persistence.
+     */
+    protected Persistence getPersistence()
+    {
+        return ((PersistentResourceHandler)delegate.getResourceClass().getHandler()).
+            getPersistence();
     }
 }

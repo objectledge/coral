@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -22,12 +23,13 @@ import org.objectledge.coral.schema.ResourceHandler;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
+import org.objectledge.database.Database;
 
 /**
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.8 2005-06-17 07:42:58 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.9 2005-06-20 08:20:22 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -36,7 +38,7 @@ public abstract class AbstractResourceHandler
     protected ResourceClass resourceClass;
 
     /** The security. */
-    protected CoralSecurity coralSecurity;
+    private CoralSecurity coralSecurity;
     
     /** The schema. */
     protected CoralSchema coralSchema;
@@ -49,6 +51,12 @@ public abstract class AbstractResourceHandler
     
     /** to avoid multiple cache processing. */
     private Map<Resource,Object> cached = new WeakHashMap<Resource,Object>();
+    
+    /** the database. */
+    private Database database;
+    
+    /** the logger. */
+    private Logger logger;
 
     /**
      * The base constructor.
@@ -59,12 +67,14 @@ public abstract class AbstractResourceHandler
      * @param resourceClass the resource class.
      */
     public AbstractResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
-        Instantiator instantiator, ResourceClass resourceClass)
+        Instantiator instantiator, ResourceClass resourceClass, Database database, Logger logger)
     {
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
         this.instantiator = instantiator;
         this.resourceClass = resourceClass;
+        this.database = database;
+        this.logger = logger;
     }
     
     /**
@@ -344,4 +354,20 @@ public abstract class AbstractResourceHandler
      * @throws SQLException if information retrieval fails.
      */
     protected abstract Object getData(ResourceClass rc, Connection conn) throws SQLException;
+    
+    /**
+     * @return Returns the database.
+     */
+    Database getDatabase()
+    {
+        return database;
+    }
+
+    /**
+     * @return Returns the logger.
+     */
+    Logger getLogger()
+    {
+        return logger;
+    }    
 }

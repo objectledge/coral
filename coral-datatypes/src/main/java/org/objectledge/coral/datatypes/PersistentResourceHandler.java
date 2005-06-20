@@ -15,6 +15,7 @@ import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
+import org.objectledge.database.Database;
 import org.objectledge.database.persistence.DefaultInputRecord;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -26,7 +27,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.17 2005-06-17 07:42:58 rafal Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.18 2005-06-20 08:20:22 rafal Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -34,10 +35,12 @@ public class PersistentResourceHandler
     // instance variables ////////////////////////////////////////////////////
 
     /** The persistence. */
-    protected Persistence persistence;
+    private Persistence persistence;
     
     /** The instance factory. */
-    protected PersistentFactory factory;
+    private PersistentFactory factory;
+    
+    private String[] keyColumns;
     
     /**
      * Constructor.
@@ -45,18 +48,21 @@ public class PersistentResourceHandler
      * @param coralSchema the coral schema.
      * @param coralSecurity the coral security.
      * @param resourceClass the resource class.
+     * @param database the database.
      * @param persistence the persistence.
-     * @param logger the logger.
      * @param instantiator the instantiator.
+     * @param logger the logger.
      * @throws Exception if there is a problem instantiating an resource object.
      */
     public PersistentResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
          ResourceClass resourceClass, 
-         Persistence persistence, Logger logger, Instantiator instantiator) throws Exception
+         Database database, Persistence persistence, Instantiator instantiator, Logger logger) throws Exception
     {
-        super(coralSchema, coralSecurity, instantiator, resourceClass);
+        super(coralSchema, coralSecurity, instantiator, resourceClass, database, logger);
         this.persistence = persistence;
         factory = instantiator.getPersistentFactory(resourceClass.getJavaClass());
+        keyColumns = new String[1];
+        keyColumns[0] = resourceClass.getDbTable()+"_id";      
     }
 
     // schema operations (not supported) /////////////////////////////////////
@@ -173,7 +179,7 @@ public class PersistentResourceHandler
 		{
     		Persistent instance = (Persistent)instantiator.
                 newInstance(resourceClass.getJavaClass());
-    		((PersistentResource)instance).initPersistence(delegate);
+    		((AbstractResource)instance).setDelegate(delegate);
             PreparedStatement statement = DefaultInputRecord.
         		getSelectStatement("resource_id = "+delegate.getIdString(), instance, conn);
             ResultSet rs = statement.executeQuery();
@@ -208,5 +214,18 @@ public class PersistentResourceHandler
     public Object getData(Connection conn) throws SQLException
     {
         return null;
+    }
+    
+    /**
+     * @return Returns the persistence.
+     */
+    Persistence getPersistence()
+    {
+        return persistence;
+    }    
+    
+    String[] getKeyColumns()
+    {
+        return keyColumns;
     }
 }
