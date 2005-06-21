@@ -61,7 +61,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.32 2005-06-20 08:20:22 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.33 2005-06-21 08:10:49 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -110,13 +110,14 @@ public abstract class AbstractResource implements Resource
         if(obj != null && (obj instanceof Resource))
         {
             Resource res = (Resource)obj;
-            if(res.getDelegate() == null)
+            Resource resDelegate = res.getDelegate();
+            if(resDelegate == null)
             {
                 return delegate.equals(res);
             }
             else
             {
-                return delegate.equals(res.getDelegate());
+                return delegate.equals(resDelegate);
             }
         }
         return false;
@@ -170,6 +171,7 @@ public abstract class AbstractResource implements Resource
     void setDelegate(Resource delegate)
     {
         this.delegate = delegate;
+        this.hashCode = delegate.hashCode();
     }
     
     synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, 
@@ -177,6 +179,7 @@ public abstract class AbstractResource implements Resource
     	throws SQLException
     {
         this.delegate = delegate;
+        this.hashCode = delegate.hashCode();
         List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
         for(ResourceClass parent : directParentClasses)
         {
@@ -188,6 +191,7 @@ public abstract class AbstractResource implements Resource
         Connection conn) throws SQLException, ValueRequiredException, ConstraintViolationException
     {
         this.delegate = delegate;
+        this.hashCode = delegate.hashCode();
         List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
         for (ResourceClass parent : directParentClasses)
         {
