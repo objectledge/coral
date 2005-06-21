@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.18 2005-06-20 08:20:22 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.19 2005-06-21 09:39:42 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -364,7 +364,7 @@ public class GenericResourceHandler
         {
             while(rs.next())
             {
-                dataKeys.put(coralSchema.getAttribute(rs.getLong(1)), 
+                dataKeys.put(getAttribute(rs.getLong(1)), 
                     new Long(rs.getLong(2)));
             }
         }
@@ -405,7 +405,7 @@ public class GenericResourceHandler
                     dataKeys = new HashMap();
                     keyMap.put(resId, dataKeys);
                 }
-                dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
+                dataKeys.put(getAttribute(rs.getLong(2)), 
                     new Long(rs.getLong(3)));
             }
         }
@@ -446,7 +446,7 @@ public class GenericResourceHandler
                     dataKeys = new HashMap<AttributeDefinition,Long>();
                     keyMap.put(resId, dataKeys);
                 }
-                dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
+                dataKeys.put(getAttribute(rs.getLong(2)), 
                     new Long(rs.getLong(3)));
             }
         }
@@ -460,5 +460,31 @@ public class GenericResourceHandler
             stmt.close();
         }
         return keyMap;        
+    }
+    
+    private Map<Long,AttributeDefinition> attrCache;
+    
+    private AttributeDefinition getAttribute(long id)
+        throws EntityDoesNotExistException
+    {
+        if(attrCache == null)
+        {
+            cacheAttributes();
+        }
+        AttributeDefinition attr = attrCache.get(id);
+        if(attr == null)
+        {
+            throw new EntityDoesNotExistException("attribute definition #"+id);
+        }
+        return attr;
+    }
+    
+    private void cacheAttributes()
+    {
+        attrCache = new HashMap<Long,AttributeDefinition>();
+        for(AttributeDefinition attr : coralSchema.getAttribute())
+        {
+            attrCache.put(attr.getIdObject(), attr);
+        }
     }
 }
