@@ -1,6 +1,7 @@
 package org.objectledge.coral.schema;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,7 +29,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.21 2005-05-05 08:27:09 rafal Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.22 2005-06-21 09:40:24 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -72,10 +73,13 @@ public class ResourceClassImpl
     private String dbTable;
 
     /** Inheritance records. Describes direct relationships. */
-    private Set inheritance;
+    private Set<ResourceClassInheritance> inheritance;
 
     /** The parent classes. Contains direct and indirect parents. */
     private Set parentClasses;
+    
+    /** The direct parent classes. */
+    private Set<ResourceClass> directParentClasses;
 
     /** The child classes. Contains direct and indirect children. */
     private Set childClasses;
@@ -427,6 +431,17 @@ public class ResourceClassImpl
         snapshot.toArray(result);
         return result;
     }    
+    
+    /**
+     * Returns the direct parent classes of this resource class.
+     *
+     * @return the direct parent classes of this resource class.
+     */    
+    public Set<ResourceClass> getDirectParentClasses()
+    {
+        buildDirectParentClassSet();
+        return directParentClasses;
+    }
 
     /**
      * Checks if the specifid class is a child class of this class.
@@ -564,6 +579,7 @@ public class ResourceClassImpl
         // flush cached information
         childClasses = null;
         parentClasses = null;
+        directParentClasses = null;
         attributeMap = null;
         permissions = null;
     }
@@ -813,7 +829,26 @@ public class ResourceClassImpl
         }
     }
     
-
+    /**
+     * Initializes {@link #directParentClasses} set if neccessary.
+     */
+    private synchronized void buildDirectParentClassSet()
+    {
+        if(directParentClasses == null)
+        {
+            buildInheritance();
+            Set<ResourceClass> dpc = new HashSet<ResourceClass>();
+            for(ResourceClassInheritance ir : inheritance)
+            {
+                if(ir.getChild().equals(this))
+                {
+                    dpc.add(ir.getParent());
+                }                
+            }
+            directParentClasses = Collections.unmodifiableSet(dpc);
+        }
+    }
+    
     /**
      * Initializes {@link #childClasses} set if neccessary.
      */

@@ -1,5 +1,7 @@
 package org.objectledge.coral.schema;
 
+import java.util.Set;
+
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.PermissionAssociation;
@@ -7,7 +9,7 @@ import org.objectledge.coral.security.PermissionAssociation;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClass.java,v 1.2 2004-02-18 15:08:21 fil Exp $
+ * @version $Id: ResourceClass.java,v 1.3 2005-06-21 09:40:26 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceClass
@@ -119,6 +121,13 @@ public interface ResourceClass
      * @return the parent classes of this resource class.
      */
     public ResourceClass[] getParentClasses();
+    
+    /**
+     * Returns the direct parent classes of this resource class.
+     *
+     * @return the direct parent classes of this resource class.
+     */
+    public Set<ResourceClass> getDirectParentClasses();
 
     /**
      * Returns the child classes of this resource class.
