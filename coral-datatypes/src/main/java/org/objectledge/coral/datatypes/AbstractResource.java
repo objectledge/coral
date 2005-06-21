@@ -30,12 +30,10 @@ package org.objectledge.coral.datatypes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,7 +43,6 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.schema.ResourceClassInheritance;
 import org.objectledge.coral.schema.ResourceHandler;
 import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.security.PermissionAssignment;
@@ -61,7 +58,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.33 2005-06-21 08:10:49 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.34 2005-06-21 09:40:44 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -180,8 +177,7 @@ public abstract class AbstractResource implements Resource
     {
         this.delegate = delegate;
         this.hashCode = delegate.hashCode();
-        List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
-        for(ResourceClass parent : directParentClasses)
+        for(ResourceClass parent : rClass.getDirectParentClasses())
         {
             retrieve(delegate, parent, conn, data);
         }
@@ -192,8 +188,7 @@ public abstract class AbstractResource implements Resource
     {
         this.delegate = delegate;
         this.hashCode = delegate.hashCode();
-        List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
-        for (ResourceClass parent : directParentClasses)
+        for (ResourceClass parent : rClass.getDirectParentClasses())
         {
             create(delegate, parent, attributes, conn);
         }
@@ -221,8 +216,7 @@ public abstract class AbstractResource implements Resource
 	    modified.clear();
         attributes.clear();
         ids.clear();
-	    List<ResourceClass> directParentClasses = getDirectParentClasses(rClass);
-        for(ResourceClass parent : directParentClasses)
+        for(ResourceClass parent : rClass.getDirectParentClasses())
 	    {
             revert(parent, conn, data);
 	    }
@@ -615,20 +609,6 @@ public abstract class AbstractResource implements Resource
     }
 
     // implementation ///////////////////////////////////////////////////////////////////////////
-
-    private List<ResourceClass> getDirectParentClasses(ResourceClass rc)
-    {
-        ResourceClassInheritance[] relations = rc.getInheritance();
-        ArrayList result = new ArrayList(relations.length);
-        for(ResourceClassInheritance relation : relations)
-        {
-            if(relation.getChild().equals(rc))
-            {
-                result.add(relation.getParent());
-            }
-        }
-        return result;
-    }
 
     private void checkAttribute(AttributeDefinition attribute)
         throws UnknownAttributeException
