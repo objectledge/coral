@@ -35,7 +35,6 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.datatypes.NodeImpl;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.CoralStore;
@@ -43,9 +42,6 @@ import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
-
-import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.test.Test</code> Coral resource class.
@@ -56,25 +52,28 @@ public class TestImpl
     extends NodeImpl
     implements Test
 {
-    // instance variables ////////////////////////////////////////////////////
+    // class variables /////////////////////////////////////////////////////////
 
+    /** Class variables initialization status. */
+    private static boolean definitionsInitialized;
+	
     /** The AttributeDefinition object for the <code>i1</code> attribute. */
-    private AttributeDefinition i1Def;
+    private static AttributeDefinition i1Def;
 
     /** The AttributeDefinition object for the <code>i2</code> attribute. */
-    private AttributeDefinition i2Def;
+    private static AttributeDefinition i2Def;
 
     /** The AttributeDefinition object for the <code>i3</code> attribute. */
-    private AttributeDefinition i3Def;
+    private static AttributeDefinition i3Def;
 
     /** The AttributeDefinition object for the <code>s1</code> attribute. */
-    private AttributeDefinition s1Def;
+    private static AttributeDefinition s1Def;
 
     /** The AttributeDefinition object for the <code>s2</code> attribute. */
-    private AttributeDefinition s2Def;
+    private static AttributeDefinition s2Def;
 
     /** The AttributeDefinition object for the <code>s3</code> attribute. */
-    private AttributeDefinition s3Def;
+    private static AttributeDefinition s3Def;
 
 	// custom injected fields /////////////////////////////////////////////////
 	
@@ -90,28 +89,10 @@ public class TestImpl
      * <code>load()</code> and <code>create()</code> methods to create
      * instances of the wrapper in your application code.</p>
      *
-     * @param schema the CoralSchema.
-     * @param database the Database.
-     * @param logger the Logger.
      * @param coralStore the CoralStore.
      */
-    public TestImpl(CoralSchema schema, Database database, Logger logger, CoralStore coralStore)
+    public TestImpl(CoralStore coralStore)
     {
-        super(schema, database, logger);
-        try
-        {
-            ResourceClass rc = schema.getResourceClass("coral.test.Test");
-            i1Def = rc.getAttribute("i1");
-            i2Def = rc.getAttribute("i2");
-            i3Def = rc.getAttribute("i3");
-            s1Def = rc.getAttribute("s1");
-            s2Def = rc.getAttribute("s2");
-            s3Def = rc.getAttribute("s3");
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
         this.coralStore = coralStore;
     }
 

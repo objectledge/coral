@@ -35,16 +35,12 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.datatypes.NodeImpl;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
-
-import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.table.SymbolicLink</code> Coral resource class.
@@ -55,10 +51,13 @@ public class SymbolicLinkImpl
     extends NodeImpl
     implements SymbolicLink
 {
-    // instance variables ////////////////////////////////////////////////////
+    // class variables /////////////////////////////////////////////////////////
 
+    /** Class variables initialization status. */
+    private static boolean definitionsInitialized;
+	
     /** The AttributeDefinition object for the <code>target</code> attribute. */
-    private AttributeDefinition targetDef;
+    private static AttributeDefinition targetDef;
 
     // initialization /////////////////////////////////////////////////////////
 
@@ -69,22 +68,9 @@ public class SymbolicLinkImpl
      * <code>load()</code> and <code>create()</code> methods to create
      * instances of the wrapper in your application code.</p>
      *
-     * @param schema the CoralSchema.
-     * @param database the Database.
-     * @param logger the Logger.
      */
-    public SymbolicLinkImpl(CoralSchema schema, Database database, Logger logger)
+    public SymbolicLinkImpl()
     {
-        super(schema, database, logger);
-        try
-        {
-            ResourceClass rc = schema.getResourceClass("coral.table.SymbolicLink");
-            targetDef = rc.getAttribute("target");
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
     }
 
     // static methods ////////////////////////////////////////////////////////

@@ -34,16 +34,12 @@ import java.util.Map;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
-
-import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.test.DerivedMultiple</code> Coral resource class.
@@ -54,28 +50,31 @@ public class DerivedMultipleImpl
     extends NoRequiredImpl
     implements DerivedMultiple
 {
-    // instance variables ////////////////////////////////////////////////////
+    // class variables /////////////////////////////////////////////////////////
 
+    /** Class variables initialization status. */
+    private static boolean definitionsInitialized;
+	
     /** The AttributeDefinition object for the <code>i1</code> attribute. */
-    private AttributeDefinition i1Def;
+    private static AttributeDefinition i1Def;
 
     /** The AttributeDefinition object for the <code>i2</code> attribute. */
-    private AttributeDefinition i2Def;
+    private static AttributeDefinition i2Def;
 
     /** The AttributeDefinition object for the <code>i3</code> attribute. */
-    private AttributeDefinition i3Def;
+    private static AttributeDefinition i3Def;
 
     /** The AttributeDefinition object for the <code>s1</code> attribute. */
-    private AttributeDefinition s1Def;
+    private static AttributeDefinition s1Def;
 
     /** The AttributeDefinition object for the <code>s2</code> attribute. */
-    private AttributeDefinition s2Def;
+    private static AttributeDefinition s2Def;
 
     /** The AttributeDefinition object for the <code>s3</code> attribute. */
-    private AttributeDefinition s3Def;
+    private static AttributeDefinition s3Def;
 
     /** The AttributeDefinition object for the <code>s6</code> attribute. */
-    private AttributeDefinition s6Def;
+    private static AttributeDefinition s6Def;
 
     // initialization /////////////////////////////////////////////////////////
 
@@ -86,28 +85,9 @@ public class DerivedMultipleImpl
      * <code>load()</code> and <code>create()</code> methods to create
      * instances of the wrapper in your application code.</p>
      *
-     * @param schema the CoralSchema.
-     * @param database the Database.
-     * @param logger the Logger.
      */
-    public DerivedMultipleImpl(CoralSchema schema, Database database, Logger logger)
+    public DerivedMultipleImpl()
     {
-        super(schema, database, logger);
-        try
-        {
-            ResourceClass rc = schema.getResourceClass("coral.test.DerivedMultiple");
-            i1Def = rc.getAttribute("i1");
-            i2Def = rc.getAttribute("i2");
-            i3Def = rc.getAttribute("i3");
-            s1Def = rc.getAttribute("s1");
-            s2Def = rc.getAttribute("s2");
-            s3Def = rc.getAttribute("s3");
-            s6Def = rc.getAttribute("s6");
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
     }
 
     // static methods ////////////////////////////////////////////////////////

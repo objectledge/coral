@@ -36,17 +36,13 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
 import org.objectledge.parameters.Parameters;
-
-import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.test.Persistent</code> Coral resource class.
@@ -57,16 +53,19 @@ public class PersistentImpl
     extends PersistentResource
     implements Persistent
 {
-    // instance variables ////////////////////////////////////////////////////
+    // class variables /////////////////////////////////////////////////////////
 
+    /** Class variables initialization status. */
+    private static boolean definitionsInitialized;
+	
     /** The AttributeDefinition object for the <code>d1</code> attribute. */
-    private AttributeDefinition d1Def;
+    private static AttributeDefinition d1Def;
 
     /** The AttributeDefinition object for the <code>p1</code> attribute. */
-    private AttributeDefinition p1Def;
+    private static AttributeDefinition p1Def;
 
     /** The AttributeDefinition object for the <code>res1</code> attribute. */
-    private AttributeDefinition res1Def;
+    private static AttributeDefinition res1Def;
 
     // initialization /////////////////////////////////////////////////////////
 
@@ -77,24 +76,9 @@ public class PersistentImpl
      * <code>load()</code> and <code>create()</code> methods to create
      * instances of the wrapper in your application code.</p>
      *
-     * @param schema the CoralSchema.
-     * @param database the Database.
-     * @param logger the Logger.
      */
-    public PersistentImpl(CoralSchema schema, Database database, Logger logger)
+    public PersistentImpl()
     {
-        super(schema, database, logger);
-        try
-        {
-            ResourceClass rc = schema.getResourceClass("coral.test.Persistent");
-            d1Def = rc.getAttribute("d1");
-            p1Def = rc.getAttribute("p1");
-            res1Def = rc.getAttribute("res1");
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
     }
 
     // static methods ////////////////////////////////////////////////////////

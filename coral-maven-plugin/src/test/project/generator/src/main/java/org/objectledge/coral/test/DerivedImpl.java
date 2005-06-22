@@ -34,16 +34,12 @@ import java.util.Map;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
-
-import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.test.Derived</code> Coral resource class.
@@ -54,10 +50,13 @@ public class DerivedImpl
     extends NoRequiredImpl
     implements Derived
 {
-    // instance variables ////////////////////////////////////////////////////
+    // class variables /////////////////////////////////////////////////////////
 
+    /** Class variables initialization status. */
+    private static boolean definitionsInitialized;
+	
     /** The AttributeDefinition object for the <code>s5</code> attribute. */
-    private AttributeDefinition s5Def;
+    private static AttributeDefinition s5Def;
 
     // initialization /////////////////////////////////////////////////////////
 
@@ -68,22 +67,9 @@ public class DerivedImpl
      * <code>load()</code> and <code>create()</code> methods to create
      * instances of the wrapper in your application code.</p>
      *
-     * @param schema the CoralSchema.
-     * @param database the Database.
-     * @param logger the Logger.
      */
-    public DerivedImpl(CoralSchema schema, Database database, Logger logger)
+    public DerivedImpl()
     {
-        super(schema, database, logger);
-        try
-        {
-            ResourceClass rc = schema.getResourceClass("coral.test.Derived");
-            s5Def = rc.getAttribute("s5");
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
     }
 
     // static methods ////////////////////////////////////////////////////////

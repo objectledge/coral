@@ -35,16 +35,12 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.datatypes.NodeImpl;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
-
-import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.test.NoRequired</code> Coral resource class.
@@ -55,13 +51,16 @@ public class NoRequiredImpl
     extends NodeImpl
     implements NoRequired
 {
-    // instance variables ////////////////////////////////////////////////////
+    // class variables /////////////////////////////////////////////////////////
 
+    /** Class variables initialization status. */
+    private static boolean definitionsInitialized;
+	
     /** The AttributeDefinition object for the <code>i4</code> attribute. */
-    private AttributeDefinition i4Def;
+    private static AttributeDefinition i4Def;
 
     /** The AttributeDefinition object for the <code>s4</code> attribute. */
-    private AttributeDefinition s4Def;
+    private static AttributeDefinition s4Def;
 
     // initialization /////////////////////////////////////////////////////////
 
@@ -72,23 +71,9 @@ public class NoRequiredImpl
      * <code>load()</code> and <code>create()</code> methods to create
      * instances of the wrapper in your application code.</p>
      *
-     * @param schema the CoralSchema.
-     * @param database the Database.
-     * @param logger the Logger.
      */
-    public NoRequiredImpl(CoralSchema schema, Database database, Logger logger)
+    public NoRequiredImpl()
     {
-        super(schema, database, logger);
-        try
-        {
-            ResourceClass rc = schema.getResourceClass("coral.test.NoRequired");
-            i4Def = rc.getAttribute("i4");
-            s4Def = rc.getAttribute("s4");
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
     }
 
     // static methods ////////////////////////////////////////////////////////
