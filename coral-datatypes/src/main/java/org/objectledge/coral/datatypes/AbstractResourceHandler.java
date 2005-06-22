@@ -29,7 +29,7 @@ import org.objectledge.database.Database;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.9 2005-06-20 08:20:22 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.10 2005-06-22 08:51:25 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -65,6 +65,8 @@ public abstract class AbstractResourceHandler
      * @param coralSecurity the coral security.
      * @param instantiator the instantiator.
      * @param resourceClass the resource class.
+     * @param database the database.
+     * @param logger the logger.
      */
     public AbstractResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
         Instantiator instantiator, ResourceClass resourceClass, Database database, Logger logger)
