@@ -5,19 +5,16 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -28,7 +25,7 @@ import org.objectledge.database.persistence.Persistent;
  * A common base class for Resource implementations using PersistenceService.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResource.java,v 1.27 2005-06-20 08:20:22 rafal Exp $
+ * @version $Id: PersistentResource.java,v 1.28 2005-06-22 11:35:33 rafal Exp $
  */
 public class PersistentResource
     extends AbstractResource implements Persistent
@@ -40,12 +37,8 @@ public class PersistentResource
 
     /**
      * Constructor.
-     * 
-     * @param coralSchema the Coral Schema
-     * @param database the database.
-     * @param logger the logger.
      */
-    public PersistentResource(CoralSchema coralSchema, Database database, Logger logger)
+    public PersistentResource()
     {
     }
         

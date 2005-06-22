@@ -30,7 +30,6 @@
 ##
 $imports.add("org.objectledge.coral.BackendException")##
 $imports.add("org.objectledge.coral.entity.EntityDoesNotExistException")##
-$imports.add("org.objectledge.coral.schema.CoralSchema")##
 #if($attributes.size() > 0)
 $imports.add("org.objectledge.coral.schema.AttributeDefinition")##
 #end
@@ -39,8 +38,6 @@ $imports.add("org.objectledge.coral.session.CoralSession")##
 $imports.add("org.objectledge.coral.store.Resource")##
 $imports.add("org.objectledge.coral.store.ValueRequiredException")##
 $imports.add("org.objectledge.coral.store.InvalidResourceNameException")##
-$imports.add("org.objectledge.database.Database")##
-$imports.add("org.jcontainer.dna.Logger")##
 $imports.add("java.util.Map")##
 $imports.add("java.util.HashMap")##
 ##
@@ -78,12 +75,15 @@ public class ${class.implClassName}
     extends ${implParentClass}
     implements ${class.interfaceClassName}
 {
-#if($attributes.size() > 0)
-    // instance variables ////////////////////////////////////////////////////
+    // class variables /////////////////////////////////////////////////////////
 
+    /** Class variables initialization status. */
+    private static boolean definitionsInitialized;
+	
+#if($attributes.size() > 0)
 #foreach($attr in $attributes)
     /** The AttributeDefinition object for the <code>${attr.name}</code> attribute. */
-    private AttributeDefinition ${attr.name}Def;
+    private static AttributeDefinition ${attr.name}Def;
 
 #end
 #end
@@ -105,9 +105,6 @@ public class ${class.implClassName}
      * <code>load()</code> and <code>create()</code> methods to create
      * instances of the wrapper in your application code.</p>
      *
-     * @param schema the CoralSchema.
-     * @param database the Database.
-     * @param logger the Logger.
 #foreach($field in $superFields)
      * @param ${field.name} the ${field.type}.
 #end
@@ -115,24 +112,16 @@ public class ${class.implClassName}
      * @param ${field.name} the ${field.type}.
 #end
      */
+#macro(fields $fields)
+#foreach($field in $fields)${field.type} ${field.name}#if($velocityCount < $fields.size()), #end#end
+#end
 #macro(ctorSignature)
-public ${class.implClassName}(CoralSchema schema, Database database, Logger logger#foreach($field in $superFields), ${field.type} ${field.name}#end#foreach($field in $fields), ${field.type} ${field.name}#end)##
+public ${class.implClassName}(#fields($superFields)#if($superFields.size() > 0 && $fields.size() > 0), #end#fields($fields))##
 #end
 $string.wrap("#ctorSignature()")
     {
-        super(schema, database, logger#foreach($field in $superFields), ${field.name}#end);
-#if($attributes.size() > 0)
-        try
-        {
-            ResourceClass rc = schema.getResourceClass("${class.name}");
-#foreach($attr in $attributes)
-            ${attr.name}Def = rc.getAttribute("${attr.name}");
-#end
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("incompatible schema change", e);
-        }
+#if($superFields.size() > 0)	
+        super(#foreach($field in $superFields), ${field.name}#end);
 #end
 #foreach($field in $fields)
         this.${field.name} = ${field.name};

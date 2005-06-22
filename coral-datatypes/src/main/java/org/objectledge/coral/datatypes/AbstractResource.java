@@ -27,6 +27,8 @@
 // 
 package org.objectledge.coral.datatypes;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -58,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.34 2005-06-21 09:40:44 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.35 2005-06-22 11:35:33 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -169,14 +171,14 @@ public abstract class AbstractResource implements Resource
     {
         this.delegate = delegate;
         this.hashCode = delegate.hashCode();
+        initDefinitions(delegate.getResourceClass());
     }
     
     synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, 
         Object data)
     	throws SQLException
     {
-        this.delegate = delegate;
-        this.hashCode = delegate.hashCode();
+        setDelegate(delegate);
         for(ResourceClass parent : rClass.getDirectParentClasses())
         {
             retrieve(delegate, parent, conn, data);
@@ -186,8 +188,7 @@ public abstract class AbstractResource implements Resource
     synchronized void create(Resource delegate, ResourceClass rClass, Map attributes,
         Connection conn) throws SQLException, ValueRequiredException, ConstraintViolationException
     {
-        this.delegate = delegate;
-        this.hashCode = delegate.hashCode();
+        setDelegate(delegate);
         for (ResourceClass parent : rClass.getDirectParentClasses())
         {
             create(delegate, parent, attributes, conn);
@@ -896,4 +897,62 @@ public abstract class AbstractResource implements Resource
     {
         return ((AbstractResourceHandler)delegate.getResourceClass().getHandler()).getLogger();
     }
+    
+    private void initDefinitions(ResourceClass rClass)
+    {
+        synchronized(getClass())
+        {
+            try
+            {
+                Field initialized = getClass().getDeclaredField("definitionsInitialized");
+                initialized.setAccessible(true);
+                if(!((Boolean)initialized.get(null)).booleanValue())
+                {
+                    Class cl = getClass();
+                    while(Resource.class.isAssignableFrom(cl))
+                    {
+                        initDefinitions(cl, rClass);
+                        cl = cl.getSuperclass();
+                    }
+                }
+                initialized.set(null, Boolean.TRUE);
+            }
+            catch(Exception e)
+            {
+                if(e instanceof BackendException)
+                {
+                    throw (BackendException)e;
+                }
+                throw new BackendException("failed to initialize wrapper class "
+                    + getClass().getName(), e);
+            }
+        }
+    }
+
+    private void initDefinitions(Class cl, ResourceClass rClass)
+    {
+        for(Field f : cl.getDeclaredFields())
+        {
+            if(Modifier.isStatic(f.getModifiers()) && f.getName().endsWith("Def")
+                && f.getType().equals(AttributeDefinition.class))
+            {
+                String attrName = f.getName().substring(0, f.getName().length() - 3);
+                try
+                {
+                    AttributeDefinition attr = rClass.getAttribute(attrName);
+                    f.setAccessible(true);
+                    f.set(null, attr);
+                }
+                catch(UnknownAttributeException e)
+                {
+                    throw new BackendException("missing attribute " + attrName + " in class "
+                        + rClass.getName(), e);
+                }
+                catch(Exception e)
+                {
+                    throw new BackendException("failed to initialize field", e);
+                }
+            }
+        }
+    }    
 }

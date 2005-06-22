@@ -33,15 +33,11 @@ import java.util.Map;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
-
-import org.jcontainer.dna.Logger;
 
 /**
  * An implementation of <code>coral.PersistentNode</code> Coral resource class.
@@ -52,6 +48,11 @@ public class PersistentNodeImpl
     extends PersistentResource
     implements PersistentNode
 {
+    // class variables /////////////////////////////////////////////////////////
+
+    /** Class variables initialization status. */
+    private static boolean definitionsInitialized;
+
     // initialization /////////////////////////////////////////////////////////
 
     /**
@@ -60,14 +61,9 @@ public class PersistentNodeImpl
      * <p>This constructor should be used by the handler class only. Use 
      * <code>load()</code> and <code>create()</code> methods to create
      * instances of the wrapper in your application code.</p>
-     *
-     * @param schema the CoralSchema.
-     * @param database the Database.
-     * @param logger the Logger.
      */
-    public PersistentNodeImpl(CoralSchema schema, Database database, Logger logger)
+    public PersistentNodeImpl()
     {
-        super(schema, database, logger);
     }
 
     // static methods ////////////////////////////////////////////////////////

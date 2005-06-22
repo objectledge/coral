@@ -31,6 +31,7 @@ package org.objectledge.coral.datatypes;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -144,6 +145,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockResourceClass.stubs().method("getAttribute").will(returnValue(attributeDefinition));
         mockResourceClass.stubs().method("getInheritance").will(returnValue(new ResourceClassInheritance[0]));
         mockResourceClass.stubs().method("getParentClasses").will(returnValue(new ResourceClass[0]));
+        mockResourceClass.stubs().method("getDirectParentClasses").will(returnValue(Collections.EMPTY_SET));
         mockResourceClass.stubs().method("getDeclaredAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
         mockResourceClass.stubs().method("getAllAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
         resourceClass = (ResourceClass)mockResourceClass.proxy();
@@ -153,7 +155,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockCoralSchema.stubs().method("getAttribute").with(eq(1L)).will(returnValue(attributeDefinition));
         coralSchema = (CoralSchema)mockCoralSchema.proxy();
         
-        node = new NodeImpl(coralSchema, database, logger);
+        node = new NodeImpl();
         
         mockInstantiator = mock(Instantiator.class);
         mockInstantiator.stubs().method("newInstance").will(returnValue(node));

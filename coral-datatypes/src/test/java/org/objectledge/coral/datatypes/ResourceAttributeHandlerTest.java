@@ -142,7 +142,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
         mockResultSet.stubs().method("close").isVoid();
         mockStatement.stubs().method("close").isVoid();
         
-        node = new NodeImpl(coralSchema, database, logger);
+        node = new NodeImpl();
     }
 
     public void testAttributeHandlerBase()

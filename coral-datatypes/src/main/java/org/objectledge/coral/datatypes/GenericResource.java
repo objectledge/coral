@@ -5,24 +5,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
-import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
-import org.objectledge.database.Database;
 
 /**
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.24 2005-06-20 08:20:22 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.25 2005-06-22 11:35:33 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -31,12 +28,8 @@ public class GenericResource
 
     /**
      * Constructor.
-     * 
-     * @param coralSchema the Coral Schema.
-     * @param database the database.
-     * @param logger the logger.
      */
-    public GenericResource(CoralSchema coralSchema, Database database, Logger logger)
+    public GenericResource()
     {
     }
     
