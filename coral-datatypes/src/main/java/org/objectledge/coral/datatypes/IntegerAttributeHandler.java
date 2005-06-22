@@ -17,7 +17,7 @@ import org.objectledge.database.Database;
  * Handles persistency of <code>java.lang.Integer</code> objects.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: IntegerAttributeHandler.java,v 1.5 2005-01-20 10:48:26 rafal Exp $
+ * @version $Id: IntegerAttributeHandler.java,v 1.6 2005-06-22 06:56:59 pablo Exp $
  */
 public class IntegerAttributeHandler
     extends AttributeHandlerBase
@@ -123,6 +123,23 @@ public class IntegerAttributeHandler
         {
             defined.clear((int)id);
         }
+    }
+    
+    public void preload(Connection conn)
+        throws SQLException
+    {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT max(data_key) from "+getTable());
+        rs.next();
+        int count = rs.getInt(1);
+        cache = new int[count+1];
+        defined = new BitSet(count+1);
+        rs = stmt.executeQuery("SELECT data_key, data from "+getTable());
+        while(rs.next())
+        {
+            cache[rs.getInt(1)] = rs.getInt(2);
+            defined.set(rs.getInt(1));
+        }       
     }
     // meta information //////////////////////////////////////////////////////
     
