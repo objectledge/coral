@@ -170,9 +170,10 @@ public class TestImpl
     public int getI1()
         throws IllegalStateException
     {
-        if(isDefined(i1Def))
+	    Integer value = (Integer)getInternal(i1Def, null);
+        if(value != null)
         {
-            return ((Integer)get(i1Def)).intValue();
+            return value.intValue();
         }
         else
         {
@@ -189,15 +190,8 @@ public class TestImpl
      */
     public int getI1(int defaultValue)
     {
-        if(isDefined(i1Def))
-        {
-            return ((Integer)get(i1Def)).intValue();
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }
+		return ((Integer)getInternal(i1Def, new Integer(defaultValue))).intValue();
+	}
 
     /**
      * Sets the value of the <code>i1</code> attribute.
@@ -252,14 +246,7 @@ public class TestImpl
      */
     public int getI2()
     {
-        if(isDefined(i2Def))
-        {
-            return ((Integer)get(i2Def)).intValue();
-        }
-        else
-        {
-            throw new BackendException("incompatible schema change");
-        }
+		return ((Integer)getInternal(i2Def, null)).intValue();
     }    
 
     /**
@@ -293,9 +280,10 @@ public class TestImpl
     public int getI3()
         throws IllegalStateException
     {
-        if(isDefined(i3Def))
+	    Integer value = (Integer)getInternal(i3Def, null);
+        if(value != null)
         {
-            return ((Integer)get(i3Def)).intValue();
+            return value.intValue();
         }
         else
         {
@@ -312,15 +300,8 @@ public class TestImpl
      */
     public int getI3(int defaultValue)
     {
-        if(isDefined(i3Def))
-        {
-            return ((Integer)get(i3Def)).intValue();
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }
+		return ((Integer)getInternal(i3Def, new Integer(defaultValue))).intValue();
+	}
   
 	/**
 	 * Checks if the value of the <code>i3</code> attribute is defined.
@@ -339,7 +320,7 @@ public class TestImpl
      */
     public String getS1()
     {
-        return (String)get(s1Def);
+        return (String)getInternal(s1Def, null);
     }
     
     /**
@@ -350,14 +331,7 @@ public class TestImpl
      */
     public String getS1(String defaultValue)
     {
-        if(isDefined(s1Def))
-        {
-            return (String)get(s1Def);
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return (String)getInternal(s1Def, defaultValue);
     }    
 
     /**
@@ -406,7 +380,7 @@ public class TestImpl
      */
     public String getS2()
     {
-        return (String)get(s2Def);
+        return (String)getInternal(s2Def, null);
     }
  
     /**
@@ -444,7 +418,7 @@ public class TestImpl
      */
     public String getS3()
     {
-        return (String)get(s3Def);
+        return (String)getInternal(s3Def, null);
     }
     
     /**
@@ -455,14 +429,7 @@ public class TestImpl
      */
     public String getS3(String defaultValue)
     {
-        if(isDefined(s3Def))
-        {
-            return (String)get(s3Def);
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return (String)getInternal(s3Def, defaultValue);
     }    
   
 	/**

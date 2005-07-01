@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.35 2005-06-22 11:35:33 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.36 2005-07-01 05:21:02 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -898,6 +898,8 @@ public abstract class AbstractResource implements Resource
         return ((AbstractResourceHandler)delegate.getResourceClass().getHandler()).getLogger();
     }
     
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    
     private void initDefinitions(ResourceClass rClass)
     {
         synchronized(getClass())
@@ -955,4 +957,40 @@ public abstract class AbstractResource implements Resource
             }
         }
     }    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Returns the value of the attribute, or the supplied default value if undefined.
+     * 
+     * @param attribute the attribute definiiton.
+     * @param defaultValue the default value.
+     * @return attribute value.
+     */
+    protected Object getInternal(AttributeDefinition attribute, Object defaultValue)
+    {
+        Object value = attributes.get(attribute);
+        if(value != null)
+        {
+            return value;
+        }
+        else if(modified.contains(attribute))
+        {
+            return defaultValue;
+        }
+        else
+        {
+            Long idObj = ids.get(attribute);
+            if(idObj == null)
+            {
+                return defaultValue;
+            }
+            else
+            {
+                value = loadAttribute(attribute, idObj.longValue());
+                attributes.put(attribute, value);
+                return value;
+            }                
+        }
+    }
 }

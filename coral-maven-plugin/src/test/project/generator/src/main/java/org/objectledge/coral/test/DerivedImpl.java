@@ -141,7 +141,7 @@ public class DerivedImpl
      */
     public String getS5()
     {
-        return (String)get(s5Def);
+        return (String)getInternal(s5Def, null);
     }
     
     /**
@@ -152,14 +152,7 @@ public class DerivedImpl
      */
     public String getS5(String defaultValue)
     {
-        if(isDefined(s5Def))
-        {
-            return (String)get(s5Def);
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return (String)getInternal(s5Def, defaultValue);
     }    
 
     /**

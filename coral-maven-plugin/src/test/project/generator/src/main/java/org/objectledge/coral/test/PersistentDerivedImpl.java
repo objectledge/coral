@@ -146,14 +146,7 @@ public class PersistentDerivedImpl
      */
     public int getI1()
     {
-        if(isDefined(i1Def))
-        {
-            return ((Integer)get(i1Def)).intValue();
-        }
-        else
-        {
-            throw new BackendException("incompatible schema change");
-        }
+		return ((Integer)getInternal(i1Def, null)).intValue();
     }    
 
     /**
@@ -184,7 +177,7 @@ public class PersistentDerivedImpl
      */
     public String getS1()
     {
-        return (String)get(s1Def);
+        return (String)getInternal(s1Def, null);
     }
  
     /**

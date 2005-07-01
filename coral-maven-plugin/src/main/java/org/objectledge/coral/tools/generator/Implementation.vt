@@ -232,9 +232,10 @@ $string.wrap("#createSignature()")
     public ${attr.javaType} get${attr.javaName}()
         throws IllegalStateException
     {
-        if(isDefined(${attr.name}Def))
+	    ${attr.primitiveWrapper} value = (${attr.primitiveWrapper})getInternal(${attr.name}Def, null);
+        if(value != null)
         {
-            return (($attr.primitiveWrapper)get(${attr.name}Def)).${attr.javaType}Value();
+            return value.${attr.javaType}Value();
         }
         else
         {
@@ -251,15 +252,8 @@ $string.wrap("#createSignature()")
      */
     public ${attr.javaType} get${attr.javaName}(${attr.javaType} defaultValue)
     {
-        if(isDefined(${attr.name}Def))
-        {
-            return (($attr.primitiveWrapper)get(${attr.name}Def)).${attr.javaType}Value();
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }
+		return ((${attr.primitiveWrapper})getInternal(${attr.name}Def, new ${attr.primitiveWrapper}(defaultValue))).${attr.javaType}Value();
+	}
 #else ## $attr.required
 
     /**
@@ -269,14 +263,7 @@ $string.wrap("#createSignature()")
      */
     public ${attr.javaType} get${attr.javaName}()
     {
-        if(isDefined(${attr.name}Def))
-        {
-            return (($attr.primitiveWrapper)get(${attr.name}Def)).${attr.javaType}Value();
-        }
-        else
-        {
-            throw new BackendException("incompatible schema change");
-        }
+		return ((${attr.primitiveWrapper})getInternal(${attr.name}Def, null)).${attr.javaType}Value();
     }    
 #end
 #if(!$attr.readonly)
@@ -328,7 +315,7 @@ $string.wrap("#createSignature()")
      */
     public $attr.javaType get${attr.javaName}()
     {
-        return ($attr.javaType)get(${attr.name}Def);
+        return (${attr.javaType})getInternal(${attr.name}Def, null);
     }
 #if(!$attr.required)
     
@@ -340,14 +327,7 @@ $string.wrap("#createSignature()")
      */
     public $attr.javaType get${attr.javaName}(${attr.javaType} defaultValue)
     {
-        if(isDefined(${attr.name}Def))
-        {
-            return ($attr.javaType)get(${attr.name}Def);
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return (${attr.javaType})getInternal(${attr.name}Def, defaultValue);
     }    
 #end
 #if(!$attr.readonly)

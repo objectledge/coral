@@ -142,7 +142,7 @@ public class FooImpl
      */
     public String getGreeting()
     {
-        return (String)get(greetingDef);
+        return (String)getInternal(greetingDef, null);
     }
     
     /**
@@ -153,14 +153,7 @@ public class FooImpl
      */
     public String getGreeting(String defaultValue)
     {
-        if(isDefined(greetingDef))
-        {
-            return (String)get(greetingDef);
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return (String)getInternal(greetingDef, defaultValue);
     }    
 
     /**

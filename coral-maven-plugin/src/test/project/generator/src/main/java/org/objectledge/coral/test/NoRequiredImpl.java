@@ -149,9 +149,10 @@ public class NoRequiredImpl
     public int getI4()
         throws IllegalStateException
     {
-        if(isDefined(i4Def))
+	    Integer value = (Integer)getInternal(i4Def, null);
+        if(value != null)
         {
-            return ((Integer)get(i4Def)).intValue();
+            return value.intValue();
         }
         else
         {
@@ -168,15 +169,8 @@ public class NoRequiredImpl
      */
     public int getI4(int defaultValue)
     {
-        if(isDefined(i4Def))
-        {
-            return ((Integer)get(i4Def)).intValue();
-        }
-        else
-        {
-            return defaultValue;
-        }
-    }
+		return ((Integer)getInternal(i4Def, new Integer(defaultValue))).intValue();
+	}
 
     /**
      * Sets the value of the <code>i4</code> attribute.
@@ -231,7 +225,7 @@ public class NoRequiredImpl
      */
     public String getS4()
     {
-        return (String)get(s4Def);
+        return (String)getInternal(s4Def, null);
     }
     
     /**
@@ -242,14 +236,7 @@ public class NoRequiredImpl
      */
     public String getS4(String defaultValue)
     {
-        if(isDefined(s4Def))
-        {
-            return (String)get(s4Def);
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return (String)getInternal(s4Def, defaultValue);
     }    
 
     /**

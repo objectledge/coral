@@ -151,7 +151,7 @@ public class PersistentImpl
      */
     public Date getD1()
     {
-        return (Date)get(d1Def);
+        return (Date)getInternal(d1Def, null);
     }
     
     /**
@@ -162,14 +162,7 @@ public class PersistentImpl
      */
     public Date getD1(Date defaultValue)
     {
-        if(isDefined(d1Def))
-        {
-            return (Date)get(d1Def);
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return (Date)getInternal(d1Def, defaultValue);
     }    
 
     /**
@@ -218,7 +211,7 @@ public class PersistentImpl
      */
     public Parameters getP1()
     {
-        return (Parameters)get(p1Def);
+        return (Parameters)getInternal(p1Def, null);
     }
     
     /**
@@ -229,14 +222,7 @@ public class PersistentImpl
      */
     public Parameters getP1(Parameters defaultValue)
     {
-        if(isDefined(p1Def))
-        {
-            return (Parameters)get(p1Def);
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return (Parameters)getInternal(p1Def, defaultValue);
     }    
 
     /**
@@ -285,7 +271,7 @@ public class PersistentImpl
      */
     public Resource getRes1()
     {
-        return (Resource)get(res1Def);
+        return (Resource)getInternal(res1Def, null);
     }
     
     /**
@@ -296,14 +282,7 @@ public class PersistentImpl
      */
     public Resource getRes1(Resource defaultValue)
     {
-        if(isDefined(res1Def))
-        {
-            return (Resource)get(res1Def);
-        }
-        else
-        {
-            return defaultValue;
-        }
+        return (Resource)getInternal(res1Def, defaultValue);
     }    
 
     /**
