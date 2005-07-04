@@ -142,7 +142,7 @@ public class SymbolicLinkImpl
      */
     public Resource getTarget()
     {
-        return (Resource)get(targetDef);
+        return (Resource)getInternal(targetDef, null);
     }
  
     /**
