@@ -6,7 +6,7 @@
   <name>Coral browser</name>
   <id>coral-browser</id>
   <groupId>coral</groupId>
-  <currentVersion>0.2-dev</currentVersion>
+  <currentVersion>SNAPSHOT</currentVersion>
   <shortDescription>
     Coral Browser is a simple web application that allows viewing and modifying Coral 
     data schema, security settings, and resources.

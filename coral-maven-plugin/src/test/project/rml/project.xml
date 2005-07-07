@@ -28,13 +28,13 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.4 2004-09-09 11:43:18 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.5 2005-07-07 06:53:55 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
 
   <groupId>coral</groupId>
   <id>coral-maven-plugin-rml-test</id>
-  <currentVersion>0.2-dev</currentVersion>
+  <currentVersion>SNAPSHOT</currentVersion>
   
   <name>Coral Maven Plugin - RML runner test</name>
   <package>org.objectledge.coral.test</package>
