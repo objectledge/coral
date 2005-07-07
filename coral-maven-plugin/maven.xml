@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.6 2004-09-09 11:40:03 rafal Exp $ -->
+<!-- $Id: maven.xml,v 1.7 2005-07-07 07:05:54 rafal Exp $ -->
 <project xmlns:j="jelly:core"
          xmlns:m="jelly:maven"
          xmlns:p="plugin"
@@ -62,13 +62,4 @@
     <attainGoal name="plugin:installInMaven"/>
   </goal>
 
-  <goal name="plugin:install-snapshot" prereqs="plugin:plugin">
-    <a:install-snapshot
-      artifact="${maven.build.dir}/${maven.final.name}.jar"
-      type="plugin"
-      project="${pom}"
-    />
-    <attainGoal name="plugin:installInMaven"/>
-  </goal>
-  
 </project>
