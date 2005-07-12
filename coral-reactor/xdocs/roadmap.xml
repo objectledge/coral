@@ -7,10 +7,20 @@
   <body>
     <section name="Completed releases">
       <subsection name="0.1 release">
-        <p>Planned release: September 10, 2004</p>
-        <!-- <p>Actual release: ...</p> -->
+        <p>Actual release: September 10, 2004</p>
         <p><b>Goal</b></p>
         <p>Initial release.</p>
+        <p><a href="changes-report.html#0_1">Changes</a></p>
+      </subsection>
+      <subsection name="0.1 release">
+        <p>Actual release: July 12, 2004</p>
+        <p><b>Goal</b></p>
+        <p>Releasing the changes accumulated over past 10 months of development. Acknowledging the
+        fact that we have not progressed towards 0.2 release goals yet we tag the release 0.1.1.
+        Over the past months Coral was substantialy improved in the areas of memory footprint,
+        startup time, and runtime performance. With this release we bumped Status rating on the 
+        home page from "Alpha" to "Stable" bypassing the intermediate steps because Coral is 
+        already being used in mission-critical applications for many months now.</p>
         <p><a href="changes-report.html#0_1">Changes</a></p>
       </subsection>
     </section>
