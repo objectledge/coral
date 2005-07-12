@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.12 2005-07-07 06:53:27 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.12.2.1 2005-07-12 08:49:02 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -38,7 +38,7 @@
   
   <groupId>coral</groupId>
   <id>coral-api</id>
-  <currentVersion>SNAPSHOT</currentVersion>
+  <currentVersion>0.1.1</currentVersion>
   
   <name>Coral API</name>
   <shortDescription>
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3.1</version>
       <url>http://objectledge.org/modules/ledge-components/</url>
     </dependency>
     <dependency>
