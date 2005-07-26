@@ -9,13 +9,13 @@ import org.objectledge.templating.Template;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.web.mvc.MVCContext;
 import org.objectledge.web.mvc.builders.BuildException;
-import org.objectledge.web.mvc.components.DefaultComponent;
+import org.objectledge.web.mvc.components.AbstractComponent;
 
 /**
  * The base coral component class.
  */
 public abstract class BaseCoralComponent
-    extends DefaultComponent
+    extends AbstractComponent
 {
     /**
      * Constructor.
