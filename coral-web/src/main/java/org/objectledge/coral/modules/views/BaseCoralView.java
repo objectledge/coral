@@ -11,14 +11,14 @@ import org.objectledge.templating.Template;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.web.HttpContext;
 import org.objectledge.web.mvc.MVCContext;
+import org.objectledge.web.mvc.builders.AbstractBuilder;
 import org.objectledge.web.mvc.builders.BuildException;
-import org.objectledge.web.mvc.builders.DefaultBuilder;
 
 /**
  * The base screen for coral application.
  */
 public abstract class BaseCoralView
-    extends DefaultBuilder
+    extends AbstractBuilder
 {
     /**
      * The constructor.
