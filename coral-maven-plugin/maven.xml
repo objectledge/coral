@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: maven.xml,v 1.7 2005-07-07 07:05:54 rafal Exp $ -->
+<!-- $Id: maven.xml,v 1.8 2005-08-03 10:20:13 rafal Exp $ -->
 <project xmlns:j="jelly:core"
          xmlns:m="jelly:maven"
          xmlns:p="plugin"
@@ -61,5 +61,19 @@
     />
     <attainGoal name="plugin:installInMaven"/>
   </goal>
+  
+  <goal name="rewritePom">
+    <j:invokeStatic var="rewrittenFile" 
+      className="org.apache.maven.artifact.PomRewriter"
+      method="getRewrittenPom">
+      <j:arg value="${pom}"/>
+    </j:invokeStatic>
+    <echo>${rewrittenFile}</echo>
+    <copy file="${rewrittenFile}" toFile="${maven.build.dir}/classes/project.xml"/>
+  </goal>
+  
+  <preGoal name="jar:jar">
+    <attainGoal name="rewritePom"/>
+  </preGoal>
 
 </project>

@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.20 2005-07-07 06:53:50 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.21 2005-08-03 10:20:20 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -38,7 +38,7 @@
   
   <groupId>coral</groupId>
   <id>coral-touchstone</id>
-  <currentVersion>SNAPSHOT</currentVersion>
+  <currentVersion>${versions.coral}</currentVersion>
   
   <name>Coral Touchstone</name>
   <shortDescription>
@@ -58,37 +58,37 @@
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-api</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.coral}</version>
       <url>http://coral.objectledge.org/modules/coral-api/</url>
     </dependency>
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-ri</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.coral}</version>
       <url>http://coral.objectledge.org/modules/coral-ri/</url>
     </dependency>
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-datatypes</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.coral}</version>
       <url>http://coral.objectledge.org/modules/coral-datatypes/</url>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.ledge}</version>
       <url>http://objectledge.org/modules/ledge-components/</url>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-container</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.ledge}</version>
       <url>http://objectledge.org/modules/ledge-components/</url>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-lgpl</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.ledge}</version>
       <url>http://objectledge.org/modules/ledge-lgpl/</url>
     </dependency>
     <dependency>

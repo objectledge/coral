@@ -6,7 +6,7 @@
   <name>Coral browser</name>
   <id>coral-browser</id>
   <groupId>coral</groupId>
-  <currentVersion>SNAPSHOT</currentVersion>
+  <currentVersion>${versions.coral}</currentVersion>
   <shortDescription>
     Coral Browser is a simple web application that allows viewing and modifying Coral 
     data schema, security settings, and resources.
@@ -16,19 +16,19 @@
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-api</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.coral}</version>
       <url>http://coral.objectledge.org/modules/coral-api/</url>
     </dependency>
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-web</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.coral}</version>
       <url>http://coral.objectledge.org/modules/coral-web/</url>
     </dependency>
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-datatypes</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.coral}</version>
       <url>http://coral.objectledge.org/modules/coral-datatypes/</url>
     </dependency>
     <dependency>
@@ -40,12 +40,12 @@
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.ledge}</version>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-web</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.ledge}</version>
     </dependency>
   </dependencies>
 

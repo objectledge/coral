@@ -28,13 +28,14 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.5 2005-07-07 06:53:55 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.6 2005-08-03 10:20:11 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
 
+  <extend>../../../../project.xml</extend>
   <groupId>coral</groupId>
   <id>coral-maven-plugin-rml-test</id>
-  <currentVersion>SNAPSHOT</currentVersion>
+  <currentVersion>${versions.coral}</currentVersion>
   
   <name>Coral Maven Plugin - RML runner test</name>
   <package>org.objectledge.coral.test</package>
@@ -52,19 +53,19 @@
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-api</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.coral}</version>
       <url>http://coral.objectledge.org/modules/coral-api/</url>
     </dependency>
     <dependency>
       <groupId>coral</groupId>
       <artifactId>coral-datatypes</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.coral}</version>
       <url>http://coral.objectledge.org/modules/coral-datatypes/</url>
     </dependency>
     <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
-      <version>SNAPSHOT</version>
+      <version>${versions.ledge}</version>
       <url>http://objectledge.org/modules/ledge-components/</url>
     </dependency>
     <dependency>
