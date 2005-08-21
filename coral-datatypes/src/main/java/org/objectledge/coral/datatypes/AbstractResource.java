@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.36 2005-07-01 05:21:02 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.37 2005-08-21 13:09:25 pablo Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -490,8 +490,10 @@ public abstract class AbstractResource implements Resource
         }
         value = attribute.getAttributeClass().getHandler().toAttributeValue(value);
         attribute.getAttributeClass().getHandler().checkDomain(attribute.getDomain(), value);
-        setLocally(attribute, value);
-        modified.add(attribute);
+        if(setLocally(attribute, value))
+        {
+            modified.add(attribute);
+        }
     }
     
     /**
@@ -542,6 +544,7 @@ public abstract class AbstractResource implements Resource
             controler = getDatabase().beginTransaction();
             conn = getDatabase().getConnection();
             update(conn);
+            delegate.update();    
             getDatabase().commitTransaction(controler);
         }
         catch(SQLException e)
@@ -570,7 +573,6 @@ public abstract class AbstractResource implements Resource
                 }
             }
         }   
-        delegate.update();
     }
 
     /**
@@ -689,10 +691,29 @@ public abstract class AbstractResource implements Resource
      * 
      * @param attribute the attribute defintion.
      * @param value the attribute value.
+     * @return <code>true</code> if values were different.
      */
-    private synchronized void setLocally(AttributeDefinition attribute, Object value)
+    private synchronized boolean setLocally(AttributeDefinition attribute, Object value)
     {
+        Object oldValue = attributes.get(attribute);
+        if(oldValue == null || value == null)
+        {
+            if(value == null && oldValue == null)
+            {
+                return false;
+            }
+            else
+            {
+                attributes.put(attribute, value);
+                return true;
+            }
+        }
+        if(oldValue.equals(value))
+        {
+            return false;
+        }
         attributes.put(attribute, value);
+        return true;
     }
 
     /**
