@@ -65,7 +65,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * (will be returned from consequtive invocations). </p>
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski </a>
- * @version $Id: SessionFactoryTag.java,v 1.12 2005-02-16 16:20:49 rafal Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.13 2005-09-25 12:04:12 rafal Exp $
  */
 public class SessionFactoryTag
     extends CoralPluginTag
@@ -145,7 +145,7 @@ public class SessionFactoryTag
         ClassLoader cl = getClassLoader();
         Thread.currentThread().setContextClassLoader(cl);
         container.registerComponentInstance(ClassLoader.class, cl);
-        Transaction transaction = new JotmTransaction(0, context, getLog(Transaction.class), null);
+        Transaction transaction = new JotmTransaction(0, 120, context, getLog(Transaction.class), null);
         Database database = new DefaultDatabase(dataSource, idGenerator, transaction); 
         Persistence persistence = new DefaultPersistence(database, getLog(Persistence.class));
         ThreadPool threadPool = new ThreadPool(null, context, null, getLog(ThreadPool.class));
