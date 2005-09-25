@@ -60,7 +60,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.37 2005-08-21 13:09:25 pablo Exp $
+ * @version $Id: AbstractResource.java,v 1.38 2005-09-25 12:03:09 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
@@ -547,7 +547,7 @@ public abstract class AbstractResource implements Resource
             delegate.update();    
             getDatabase().commitTransaction(controler);
         }
-        catch(SQLException e)
+        catch(Exception e)
         {
             try
             {
