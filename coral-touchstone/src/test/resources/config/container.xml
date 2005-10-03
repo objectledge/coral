@@ -8,12 +8,7 @@
   <!-- database -->
 
   <component class-key="org.objectledge.database.Transaction"
-             class="org.objectledge.database.JotmTransaction">
-     <parameter value="0"/>
-     <parameter/>
-     <parameter/>
-     <parameter/>
-  </component>  
+             class="org.objectledge.database.JotmTransaction"/>
 
   <component class="org.objectledge.database.XaPoolDataSource"/>
   
