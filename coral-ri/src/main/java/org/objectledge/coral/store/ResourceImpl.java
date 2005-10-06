@@ -37,7 +37,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * and {@link org.objectledge.coral.schema.ResourceHandler#retrieve(Resource,
  * java.sql.Connection,Object)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.25 2005-05-05 08:27:07 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.26 2005-10-06 08:40:50 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -171,6 +171,33 @@ public class ResourceImpl
         this.modifier = creator;
         this.created = new Date();
         this.modified = this.created;
+    }
+    
+    /**
+     * Compares this ResourceImpl to another object.
+     * 
+     * <p>This methods takes into account the fact that the argument may be another resource 
+     * security delegate, or an actual resource, and returns <code>true</code> if the argument
+     * refers to the same logical resource.</p>
+     * 
+     * @return true if obj is non-null, an implementation of Resource interface and refers to 
+     * the same logical resource.
+     */
+    public boolean equals(Object obj) 
+    {
+        if(obj instanceof Resource) 
+        {
+            Resource delegate = ((Resource)obj).getDelegate();
+            if(delegate == null) 
+            {
+                return super.equals(obj);
+            }
+            else
+            {
+                return super.equals(delegate);
+            }
+        }
+        return false;
     }
     
     /**
