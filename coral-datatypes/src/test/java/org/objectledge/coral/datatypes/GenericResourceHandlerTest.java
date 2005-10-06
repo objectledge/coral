@@ -206,7 +206,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         //mockAttributeHandler.expects(once()).method("update").with(eq(1L),eq("foo"),ANYTHING).isVoid();
         handler.update(newResource, connection);
         mockAttributeHandler.expects(once()).method("delete").with(eq(newResource.getId()),ANYTHING).isVoid();
-        stmt = "DELETE FROM coral_generic_resource WHERE  resource_id = 1 AND attribute_definition_id = 1";
+        stmt = "DELETE FROM coral_generic_resource WHERE  resource_id = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         
         

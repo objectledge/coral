@@ -19,7 +19,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.25 2005-06-22 11:35:33 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.26 2005-10-06 08:42:07 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -209,9 +209,8 @@ public class GenericResource
                     throw new BackendException("internal error", e);
                 }
             }
-            stmt.execute("DELETE FROM coral_generic_resource WHERE "+
-                         " resource_id = "+delegate.getIdString()+
-                         " AND attribute_definition_id = "+attr.getIdString());
         }
+        stmt.execute("DELETE FROM coral_generic_resource WHERE "+
+            " resource_id = "+delegate.getIdString());
     }
 }
