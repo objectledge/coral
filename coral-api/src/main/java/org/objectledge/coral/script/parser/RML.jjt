@@ -1370,7 +1370,7 @@ void alterResourceSetParentStatement(ASTresource resource) :
     jjtThis.resource = resource;
 }
 {
-    jjtThis.parent = resource() | 
+    jjtThis.parentResource = resource() | 
     "NONE"
 }
 

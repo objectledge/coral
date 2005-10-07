@@ -3644,7 +3644,7 @@ void alterResourceSetParentStatement(ASTresource resource) :
 {/*@bgen(jjtree) alterResourceSetParentStatement */
     try {
 /*@egen*/
-    jjtn000.parent = resource() | 
+    jjtn000.parentResource = resource() | 
     "NONE"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
