@@ -14,7 +14,8 @@
   
   <component class="org.objectledge.database.ThreadDataSource">
     <parameter class-key="org.objectledge.database.XaPoolDataSource"/>
-    <parameter value="0"/>
+    <parameter/>
+    <parameter/>
     <parameter/>
     <parameter/>
   </component>
