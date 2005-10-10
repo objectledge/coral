@@ -20,6 +20,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
+import org.objectledge.coral.Feature;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.PreloadingParticipant;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
@@ -44,7 +45,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.29 2005-06-13 11:08:42 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.30 2005-10-10 12:46:22 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -52,7 +53,10 @@ public class CoralStoreImpl
 {
     // Constants /////////////////////////////////////////////////////////////////////////////////
     
-    private static final Pattern ILLEGAL_NAME_PATTERN = Pattern.compile("[/;]");
+    private static final String ILLEGAL_CHARACTERS = "/";
+    
+    private static final Pattern ILLEGAL_NAME_PATTERN = Pattern.compile(
+        "[" + ILLEGAL_CHARACTERS + "]");
     
     // Instance variables ////////////////////////////////////////////////////////////////////////
 
@@ -1487,7 +1491,8 @@ public class CoralStoreImpl
     protected void checkNameValidity(String name)
         throws InvalidResourceNameException
     {
-        if(!isValidResourceName(name))
+        if(coral.isEnabled(Feature.RESOURCE_NAME_VALIDITY_ENFORCEMENT)
+            && !isValidResourceName(name))
         {
             String characters = getInvalidResourceNameCharacters(name);
             throw new InvalidResourceNameException("invalid characters "+characters+
