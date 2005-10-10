@@ -43,10 +43,20 @@ import org.objectledge.coral.store.CoralStore;
  * A bridge between interdependent Coral componentes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCore.java,v 1.8 2005-01-25 09:26:08 rafal Exp $
+ * @version $Id: CoralCore.java,v 1.9 2005-10-10 12:45:21 rafal Exp $
  */
 public interface CoralCore
 {
+    // configuration ////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Checks if the given optional feature is enabled.
+     * 
+     * @param feature feature.
+     * @return <code>true</code> if the feature is enabled.
+     */
+    public boolean isEnabled(Feature feature);
+    
     // facilities ///////////////////////////////////////////////////////////////////////////////
     
     /**

@@ -27,6 +27,7 @@
 // 
 package org.objectledge.coral;
 
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,7 +71,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.20 2005-05-30 09:46:03 zwierzem Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.21 2005-10-10 12:45:21 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore, Startable
@@ -85,7 +86,6 @@ public class CoralCoreImpl
     private CoralQuery coralQuery;
     private Instantiator instantiator;
     private RMLParserFactory rmlParserFactory;
-    private boolean preload;
     
     private MutablePicoContainer container;
     
@@ -93,6 +93,7 @@ public class CoralCoreImpl
     private ThreadLocal<LinkedList<CoralSession>> currentSessionStack = 
         new ThreadLocal<LinkedList<CoralSession>>();
     private final Logger log;
+    private Set<Feature> features = EnumSet.noneOf(Feature.class);
 
     /**
      * Constructs a Coral instance.
@@ -155,7 +156,11 @@ public class CoralCoreImpl
         coralRelationQuery = (CoralRelationQuery)container.
             getComponentInstance(CoralRelationQuery.class);
         coralQuery = (CoralQuery)container.getComponentInstance(CoralQuery.class);
-        this.preload = preload;        
+        // TODO get Features from a Configuration
+        if(preload)
+        {
+            features.add(Feature.PRELOAD);
+        }
     }
     
     /**
@@ -163,7 +168,7 @@ public class CoralCoreImpl
      */
     public void start()
     {
-        if(preload)
+        if(isEnabled(Feature.PRELOAD))
         {
             List startupAdapters = container.
                 getComponentAdaptersOfType(PreloadingParticipant.class);
@@ -193,6 +198,18 @@ public class CoralCoreImpl
         // I wish Startable iterface was split back into Startable/Stoppable        
     }
 
+    // configuration ////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isEnabled(Feature feature)
+    {
+        return features.contains(feature);
+    }
+    
+    // facilities ///////////////////////////////////////////////////////////////////////////////
+    
     /** 
      * {@inheritDoc}
      */
