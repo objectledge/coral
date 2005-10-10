@@ -65,12 +65,7 @@ public class CoralStoreImplTest
     {
         assertTrue(coralStore.isValidResourceName("abc"));
         assertFalse(coralStore.isValidResourceName("a/bc"));
-        assertFalse(coralStore.isValidResourceName("ab;c"));
-        assertFalse(coralStore.isValidResourceName("a/b;c"));
         assertEquals("",coralStore.getInvalidResourceNameCharacters("abc"));
         assertEquals("/",coralStore.getInvalidResourceNameCharacters("a/bc"));
-        assertEquals(";",coralStore.getInvalidResourceNameCharacters("ab;c"));
-        assertEquals("/;",coralStore.getInvalidResourceNameCharacters("a/b;c"));
-        assertEquals("/;",coralStore.getInvalidResourceNameCharacters("a/b/;c;;;"));
     }    
 }

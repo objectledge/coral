@@ -36,6 +36,7 @@ import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
 import org.objectledge.logging.LoggerFactory;
+import org.objectledge.logging.LoggingConfigurator;
 import org.objectledge.pico.customization.CustomizedComponentAdapter;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
@@ -43,7 +44,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PicoInstantiatorTest.java,v 1.4 2005-05-30 09:47:46 zwierzem Exp $
+ * @version $Id: PicoInstantiatorTest.java,v 1.5 2005-10-10 14:16:24 rafal Exp $
  */
 public class PicoInstantiatorTest
     extends TestCase
@@ -79,7 +80,7 @@ public class PicoInstantiatorTest
     public void testCustomizedDependencyInstantiation()
         throws Exception
     {
-        LoggerFactory factory = new LoggerFactory(null);
+        LoggerFactory factory = new LoggerFactory(new LoggingConfigurator());
         picoContainer.registerComponent(new CustomizedComponentAdapter(Logger.class, factory));
         assertEquals(Green.class, picoInstantiator.newInstance(Green.class).getClass());
     }
