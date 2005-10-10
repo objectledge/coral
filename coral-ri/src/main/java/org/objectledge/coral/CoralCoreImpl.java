@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.jcontainer.dna.Configuration;
+import org.jcontainer.dna.ConfigurationException;
 import org.jcontainer.dna.Logger;
 import org.objectledge.ComponentInitializationError;
 import org.objectledge.cache.CacheFactory;
@@ -71,7 +73,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.21 2005-10-10 12:45:21 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.22 2005-10-10 13:07:30 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore, Startable
@@ -93,8 +95,8 @@ public class CoralCoreImpl
     private ThreadLocal<LinkedList<CoralSession>> currentSessionStack = 
         new ThreadLocal<LinkedList<CoralSession>>();
     private final Logger log;
-    private Set<Feature> features = EnumSet.noneOf(Feature.class);
-
+    private final Set<Feature> features;
+    
     /**
      * Constructs a Coral instance.
      * @param parentContainer the container where Coral is deployed.
@@ -107,6 +109,70 @@ public class CoralCoreImpl
     public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence, 
         CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log, 
         boolean preload)
+    {
+        this(parentContainer, persistence, cacheFactory, eventWhiteboardFactory, log,
+            (preload ? EnumSet.of(Feature.PRELOAD) : EnumSet.noneOf(Feature.class)));
+    }
+
+    /**
+     * Constructs a Coral instance.
+     * @param parentContainer the container where Coral is deployed.
+     * @param persistence the persitence subsystem.
+     * @param cacheFactory the cache factory.
+     * @param eventWhiteboardFactory the event whiteboard factory.
+     * @param log the logger.
+     * @param config component configuration.
+     * @throws ConfigurationException if the provided configuration is incorrect. 
+     */
+    public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence, 
+        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log, 
+        Configuration config)
+        throws ConfigurationException
+    {
+        this(parentContainer, persistence, cacheFactory, eventWhiteboardFactory, log,
+            getFeatureSet(config));
+    }
+
+    /**
+     * Build a set of Features from DNA Configuration object.
+     * 
+     * @param config configuration object.
+     * @return set of Features.
+     * @throws ConfigurationException if the provided configuration is incorrect. 
+     */
+    private static Set<Feature> getFeatureSet(Configuration config)
+        throws ConfigurationException
+    {
+        Set<Feature> featureSet = EnumSet.noneOf(Feature.class);
+        Configuration[] features = config.getChild("features").getChildren("feature");
+        for(Configuration feature : features)
+        {
+            String featureName = feature.getValue();
+            try
+            {
+                featureSet.add(Feature.valueOf(featureName));
+            }
+            catch(IllegalArgumentException e)
+            {
+                throw new ConfigurationException("unknown feature "+featureName, 
+                    feature.getPath(), feature.getLocation());
+            }
+        }
+        return featureSet;
+    }
+    
+    /**
+     * Constructs a Coral instance.
+     * @param parentContainer the container where Coral is deployed.
+     * @param persistence the persitence subsystem.
+     * @param cacheFactory the cache factory.
+     * @param eventWhiteboardFactory the event whiteboard factory.
+     * @param log the logger.
+     * @param features the optiona feature set.
+     */
+    public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence, 
+        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log, 
+        Set<Feature> features)
     {
         this.log = log;
         container = new DefaultPicoContainer(parentContainer);
@@ -156,11 +222,8 @@ public class CoralCoreImpl
         coralRelationQuery = (CoralRelationQuery)container.
             getComponentInstance(CoralRelationQuery.class);
         coralQuery = (CoralQuery)container.getComponentInstance(CoralQuery.class);
-        // TODO get Features from a Configuration
-        if(preload)
-        {
-            features.add(Feature.PRELOAD);
-        }
+        
+        this.features = features;
     }
     
     /**
