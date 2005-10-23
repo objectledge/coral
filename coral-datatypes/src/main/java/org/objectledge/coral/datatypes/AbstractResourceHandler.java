@@ -29,7 +29,7 @@ import org.objectledge.database.Database;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.10 2005-06-22 08:51:25 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.11 2005-10-23 10:13:23 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -305,29 +305,35 @@ public abstract class AbstractResourceHandler
     }
 
     /**
-     * Reverts all cached resources of the specific class.
+     * Reverts all cached resources of the specific class (including subclasses).
      *
      * @param rc the resource class to revert.
      * @param conn the JDBC connection to use.
      * @throws SQLException if the database operation fails.
      */
-    protected synchronized void revert(ResourceClass rc, Connection conn)
+    public synchronized void revert(ResourceClass rc, Connection conn)
         throws SQLException
     {
         revert0(rc, conn);
         for(ResourceClass child : rc.getChildClasses())
         {
-            revert0(child, conn);
+            child.getHandler().revert(child, conn);
         }
     }
-    
+
+    /**
+     * Revert the object of this particular class only (not subclasses).
+     * 
+     * @param rc the resource class.
+     * @param conn connection to read data from.
+     * @throws SQLException if data reading fails.
+     */
     private void revert0(ResourceClass rc, Connection conn)
         throws SQLException
     {
         Map rset = cache.get(rc);
         if(rset != null)
         {
-            // we'll get too much but this shouldn't be a problem.
             Object data = getData(rc, conn);
             Set<AbstractResource> orig = new HashSet<AbstractResource>(rset.keySet());
             for(AbstractResource r : orig)
