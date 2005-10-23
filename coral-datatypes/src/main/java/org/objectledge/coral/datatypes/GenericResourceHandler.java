@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.19 2005-06-21 09:39:42 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.20 2005-10-23 10:14:38 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -63,6 +63,8 @@ public class GenericResourceHandler
         {
             child.getHandler().addAttribute(attribute, value, conn);
         }
+        cacheAttributes();
+        revert(resourceClass, conn);
     }
     
     /**
@@ -76,6 +78,7 @@ public class GenericResourceHandler
         {
             deleteAttribute0(child, attribute, conn);
         }
+        revert(resourceClass, conn);
     }
 
     /**
@@ -90,6 +93,8 @@ public class GenericResourceHandler
         {
             child.getHandler().addParentClass(parent, values, conn);
         }
+        cacheAttributes();
+        revert(resourceClass, conn);
     }
     
     /**
@@ -104,6 +109,7 @@ public class GenericResourceHandler
         {
             deleteAttribute0(child, attrs, conn);
         }
+        revert(resourceClass, conn);
     }
 
     // private ///////////////////////////////////////////////////////////////
@@ -158,7 +164,6 @@ public class GenericResourceHandler
                     );
                 }
             }
-            revert(rc, conn);
         }
     }
 
@@ -227,7 +232,6 @@ public class GenericResourceHandler
                 }
             }
         }
-        revert(rc, conn);
     }
 
     /**
@@ -283,7 +287,6 @@ public class GenericResourceHandler
         {
             DatabaseUtils.close(null, stmt, rs);
         }
-        revert(rc, conn);
     }    
 
     /**
@@ -337,7 +340,6 @@ public class GenericResourceHandler
             );
         }
         stmt.close();
-        revert(rc, conn);
     }
 
     /**
@@ -391,6 +393,8 @@ public class GenericResourceHandler
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(
             "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
+            "NATURAL JOIN coral_resource "+
+            "WHERE resource_class_id = " + rc.getIdString() + " " +
             "ORDER BY resource_id"
         );
         Map dataKeys = null;
