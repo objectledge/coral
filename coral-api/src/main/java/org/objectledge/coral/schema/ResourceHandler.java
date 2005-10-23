@@ -10,7 +10,7 @@ import org.objectledge.coral.store.ValueRequiredException;
 /**
  * Manages persistency of resources belonging to a specific class .
  *
- * @version $Id: ResourceHandler.java,v 1.7 2005-02-08 20:34:28 rafal Exp $
+ * @version $Id: ResourceHandler.java,v 1.8 2005-10-23 10:11:44 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceHandler
@@ -74,6 +74,16 @@ public interface ResourceHandler
      *         should consider rolling back the whole transaction.
      */
     public void revert(Resource resource, Connection conn, Object data)
+        throws SQLException;
+    
+    /**
+     * Reverts the state of all resources of the specified class from the persistent storage.
+     * 
+     * @param resourceClass the resource class.
+     * @param conn the JDBC connection.
+     * @throws SQLException in case of database problems.
+     */
+    public void revert(ResourceClass resourceClass, Connection conn)
         throws SQLException;
 
     /**
