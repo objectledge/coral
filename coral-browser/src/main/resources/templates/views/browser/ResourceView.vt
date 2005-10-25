@@ -134,7 +134,9 @@ function fSub(action)
   </tr>
   #end
 </table>
-
+#if($resource || $parametersTool.isDefined('rowId'))
+	  Show selected resource in the <a href="#sel">tree</a>
+#end
     </td>
   </tr>
 </table>
