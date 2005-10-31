@@ -153,6 +153,20 @@
     <define:bean name="ledgeContainer"
       className="org.objectledge.coral.tools.LedgeContainerTag">
     </define:bean>
+ 
+    
+    <!--
+     | Retrieves a Ledge component into Jelly variable.
+     |
+     | @param key component's string key.
+     | @param className component's class key.
+     | @param variable the variable name.
+     | @param scope the variable scope.
+     -->
+    <define:bean name="ledgeComponent"
+      className="org.objectledge.coral.tools.LedgeComponentTag">
+    </define:bean>     
+ 
 
     <!--
      | Instantiates a dummy Principal
