@@ -5,6 +5,7 @@ import org.objectledge.context.Context;
 import org.objectledge.coral.datatypes.ResourceList;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
@@ -16,15 +17,18 @@ import org.objectledge.web.mvc.security.PolicySystem;
  * Delete relation from cross reference action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: RemoveFromResourceList.java,v 1.3 2005-05-24 05:40:28 pablo Exp $
+ * @version $Id: RemoveFromResourceList.java,v 1.4 2005-12-14 11:42:25 pablo Exp $
  */
 public class RemoveFromResourceList
     extends BaseBrowserAction
 {
+    private CoralSessionFactory coralSessionFactory;
     
-    public RemoveFromResourceList(PolicySystem policySystemArg, Logger logger)
+    public RemoveFromResourceList(PolicySystem policySystemArg, Logger logger, 
+        CoralSessionFactory coralSessionFactory)
     {
         super(policySystemArg, logger);
+        this.coralSessionFactory = coralSessionFactory;
     }
     
     /**
@@ -47,7 +51,7 @@ public class RemoveFromResourceList
 			AttributeDefinition attrDefinition = resource.getResourceClass().getAttribute(attrName);
 			ResourceList list = (ResourceList)resource.get(attrDefinition);
 			list.remove(resource1);
-			resource.set(attrDefinition, list);
+			resource.set(attrDefinition, new ResourceList(coralSessionFactory, list));
 			resource.update();
         }
         catch(Exception e)
