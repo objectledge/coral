@@ -7,8 +7,11 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.schema.AttributeDefinition;
+import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.table.comparator.AttributeValueComparator;
 import org.objectledge.coral.table.comparator.CreationTimeComparator;
 import org.objectledge.coral.table.comparator.CreatorNameComparator;
 import org.objectledge.coral.table.comparator.IdComparator;
@@ -31,7 +34,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.11 2005-02-21 14:04:39 rafal Exp $
+ * @version $Id: CoralTableModel.java,v 1.12 2005-12-19 13:58:54 rafal Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {
@@ -87,6 +90,33 @@ public class CoralTableModel implements ExtendedTableModel
 
         // Id comparator
         comparatorByColumnName.put("id", new IdComparator());
+    }
+
+    /**
+     * Adds a custom column to the model.
+     * 
+     * @param name name of the column.
+     * @param comparator the comparator for the column.
+     */
+    public void addColumn(String name, Comparator comparator)
+    {
+        comparatorByColumnName.put(name, comparator);
+    }
+
+    /**
+     * Adds an attribute value based column to the model.
+     *  
+     * @param resourceClass the resource class.
+     * @param attributeName the attribute name.
+     * @param valueComparator the comparator for attribute values.
+     */
+    public void addColumn(ResourceClass resourceClass, String attributeName,
+        Comparator valueComparator)
+    {
+        AttributeDefinition attDef = resourceClass.getAttribute(attributeName);
+        Comparator columnComparator = new AttributeValueComparator<Resource>(resourceClass
+            .getJavaClass(), attDef, valueComparator);
+        comparatorByColumnName.put(attributeName, columnComparator);
     }
 
     /**
