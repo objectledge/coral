@@ -17,7 +17,7 @@ import org.objectledge.web.mvc.security.PolicySystem;
  * Delete relation from cross reference action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: RemoveFromResourceList.java,v 1.4 2005-12-14 11:42:25 pablo Exp $
+ * @version $Id: RemoveFromResourceList.java,v 1.5 2006-01-02 14:57:58 rafal Exp $
  */
 public class RemoveFromResourceList
     extends BaseBrowserAction
@@ -49,9 +49,9 @@ public class RemoveFromResourceList
 			Resource resource = coralSession.getStore().getResource(resId);
 			Resource resource1 = coralSession.getStore().getResource(res1);
 			AttributeDefinition attrDefinition = resource.getResourceClass().getAttribute(attrName);
-			ResourceList list = (ResourceList)resource.get(attrDefinition);
+			ResourceList list = new ResourceList(coralSessionFactory, (ResourceList)resource.get(attrDefinition));
 			list.remove(resource1);
-			resource.set(attrDefinition, new ResourceList(coralSessionFactory, list));
+			resource.set(attrDefinition, list);
 			resource.update();
         }
         catch(Exception e)
