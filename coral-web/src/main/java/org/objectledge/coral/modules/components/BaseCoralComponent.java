@@ -45,7 +45,8 @@ public abstract class BaseCoralComponent
         {
 			if(template != null)
 			{
-				throw new BuildException("Failed to build the component with template: "+template.getName(),e);
+				throw new BuildException("Failed to build the component with template: "
+                    + template.getName(), e);
 			}
 			throw new BuildException("Failed to build the component",e);
         }
