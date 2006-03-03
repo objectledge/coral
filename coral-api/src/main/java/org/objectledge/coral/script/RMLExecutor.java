@@ -2306,7 +2306,7 @@ public class RMLExecutor
         }
         else if(node instanceof ASTalterRelationDeleteReverseStatement)
         {
-            mod.removeInv(entities.resolve(((ASTalterRelationDeleteForwardStatement)node)
+            mod.removeInv(entities.resolve(((ASTalterRelationDeleteReverseStatement)node)
                 .getResource()));
         }
         else if(node instanceof ASTalterRelationDeleteAllStatement)

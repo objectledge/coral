@@ -1440,11 +1440,11 @@ void alterRelationStatement()       :
     ( 
         ( "SET" "NAME" alterRelationSetNameStatement(relation) ) |
         ( "ADD" alterRelationAddPairsStatement(relation) ) |
-        ( "DELETE"
+        ( "DELETE" (
              ( "FORWARD" alterRelationDeleteForwardStatement(relation) ) |
              ( "REVERSE" alterRelationDeleteReverseStatement(relation) ) |
              alterRelationDeleteAllStatement(relation) |
-             alterRelationDeletePairsStatement(relation)
+             alterRelationDeletePairsStatement(relation) )
         )             
     )
 }
