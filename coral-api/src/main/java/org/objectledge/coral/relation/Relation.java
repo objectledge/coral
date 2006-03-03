@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * </p>  
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: Relation.java,v 1.8 2005-04-01 12:30:20 zwierzem Exp $
+ * @version $Id: Relation.java,v 1.9 2006-03-03 12:39:47 rafal Exp $
  */
 public interface Relation extends Entity
 {
@@ -99,6 +99,13 @@ public interface Relation extends Entity
 	
 	// statistical info ---------------------------------------------------------------------------
 
+    /**
+     * Returns the number of pairs defined in this relation.
+     * 
+     * @return the number of pairs defined in this relation.
+     */
+    public int size();
+    
 	/**
 	 * Returns a number equal to the average size of a mapping for this relation.
      * 

@@ -40,7 +40,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: MinimalRelationModificationTest.java,v 1.6 2005-02-11 13:00:07 rafal Exp $
+ * @version $Id: MinimalRelationModificationTest.java,v 1.7 2006-03-03 12:39:46 rafal Exp $
  */
 public class MinimalRelationModificationTest extends LedgeTestCase
 {
@@ -389,6 +389,11 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 			return false;
         }
 
+        public int size()
+        {
+            return 12;
+        }
+        
         /**
          * {@inheritDoc}
          */
@@ -533,6 +538,14 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 				return null;
 			}
 
+            /**
+             * {@inheritDoc}
+             */
+            public int size()
+            {
+                return MockRelation.this.size();
+            }
+            
 			/**
 			 * {@inheritDoc}
 			 */

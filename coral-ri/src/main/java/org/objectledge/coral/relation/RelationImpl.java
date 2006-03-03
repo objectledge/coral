@@ -47,7 +47,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.27 2005-04-01 12:32:13 zwierzem Exp $
+ * @version $Id: RelationImpl.java,v 1.28 2006-03-03 12:39:43 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -156,6 +156,14 @@ implements Relation
             return set.contains(new Long(idInv));
         }
         return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int size()
+    {
+        return calcSetsSizeSum(rel);
     }
 
 	/**
@@ -516,6 +524,14 @@ implements Relation
         public String getName()
         {
             return RelationImpl.this.getName();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public int size()
+        {
+            return RelationImpl.this.size();
         }
 
 		/**
