@@ -56,6 +56,10 @@ public class SimpleNode implements Node {
   ASTattribute attribute;
   boolean canGrant;
   String message;
+  ASTrelation relation;
+  ASTresource pairHead;
+  ASTresource pairTail;
+  ASTresourcePairList pairs;
   
   public SimpleNode(int i) {
     id = i;

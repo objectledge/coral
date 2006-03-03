@@ -7,91 +7,95 @@ public interface RMLConstants {
   int COMMENT = 5;
   int ABSTRACT = 6;
   int ADD = 7;
-  int ALTER = 8;
-  int AND = 9;
-  int AS = 10;
-  int ASC = 11;
-  int ATTRIBUTE = 12;
-  int ATTRIBUTES = 13;
-  int BUILTIN = 14;
-  int BY = 15;
-  int CLASS = 16;
-  int CLASS_UNIQUE = 17;
-  int CREATE = 18;
-  int DB = 19;
-  int DEFINED = 20;
-  int DELETE = 21;
-  int DESC = 22;
-  int DESCRIPTIVE = 23;
-  int DIRECT = 24;
-  int DOMAIN = 25;
-  int ECHO = 26;
-  int FINAL = 27;
-  int FIND = 28;
-  int FLAGS = 29;
-  int FOR = 30;
-  int FROM = 31;
-  int GRANT = 32;
-  int GRANTS = 33;
-  int HANDLER = 34;
-  int ID = 35;
-  int IMPERSONATE = 36;
-  int INDEXABLE = 37;
-  int JAVA = 38;
-  int LIKE = 39;
-  int NAME = 40;
-  int NONE = 41;
-  int NOT = 42;
-  int OF = 43;
-  int ON = 44;
-  int OR = 45;
-  int OPTION = 46;
-  int ORDER = 47;
-  int OWNER = 48;
-  int PARENT = 49;
-  int PERMISSION = 50;
-  int PERMISSIONS = 51;
-  int READONLY = 52;
-  int RECURSIVE = 53;
-  int RESOURCE = 54;
-  int REQUIRED = 55;
-  int REVOKE = 56;
-  int ROLE = 57;
-  int ROLES = 58;
-  int SELECT = 59;
-  int SELF = 60;
-  int SET = 61;
-  int SIBLINGS_UNIQUE = 62;
-  int SUBJECT = 63;
-  int SUBROLES = 64;
-  int SUPERCLASS = 65;
-  int SUPERCLASSES = 66;
-  int SUPERROLES = 67;
-  int SYNTHETIC = 68;
-  int TABLE = 69;
-  int TO = 70;
-  int VALUE = 71;
-  int VALUES = 72;
-  int WITH = 73;
-  int WHERE = 74;
-  int WHOAMI = 75;
-  int DIGIT = 76;
-  int LETTER = 77;
-  int PATHMETA = 78;
-  int STRING = 79;
-  int NUMBER = 80;
-  int QUOTED_STRING = 81;
-  int LPAREN = 82;
-  int RPAREN = 83;
-  int COMMA = 84;
-  int LESS = 85;
-  int LESS_EQUALS = 86;
-  int GREATER = 87;
-  int GREATER_EQUALS = 88;
-  int EQUALS = 89;
-  int DOUBLE_EQUALS = 90;
-  int NOT_EQUALS = 91;
-  int SQL_NOT_EQUALS = 92;
+  int ALL = 8;
+  int ALTER = 9;
+  int AND = 10;
+  int AS = 11;
+  int ASC = 12;
+  int ATTRIBUTE = 13;
+  int ATTRIBUTES = 14;
+  int BUILTIN = 15;
+  int BY = 16;
+  int CLASS = 17;
+  int CLASS_UNIQUE = 18;
+  int CREATE = 19;
+  int DB = 20;
+  int DEFINED = 21;
+  int DELETE = 22;
+  int DESC = 23;
+  int DESCRIPTIVE = 24;
+  int DIRECT = 25;
+  int DOMAIN = 26;
+  int ECHO = 27;
+  int FINAL = 28;
+  int FIND = 29;
+  int FLAGS = 30;
+  int FOR = 31;
+  int FORWARD = 32;
+  int FROM = 33;
+  int GRANT = 34;
+  int GRANTS = 35;
+  int HANDLER = 36;
+  int ID = 37;
+  int IMPERSONATE = 38;
+  int INDEXABLE = 39;
+  int JAVA = 40;
+  int LIKE = 41;
+  int NAME = 42;
+  int NONE = 43;
+  int NOT = 44;
+  int OF = 45;
+  int ON = 46;
+  int OR = 47;
+  int OPTION = 48;
+  int ORDER = 49;
+  int OWNER = 50;
+  int PARENT = 51;
+  int PERMISSION = 52;
+  int PERMISSIONS = 53;
+  int READONLY = 54;
+  int RECURSIVE = 55;
+  int RELATION = 56;
+  int RESOURCE = 57;
+  int REQUIRED = 58;
+  int REVERSE = 59;
+  int REVOKE = 60;
+  int ROLE = 61;
+  int ROLES = 62;
+  int SELECT = 63;
+  int SELF = 64;
+  int SET = 65;
+  int SIBLINGS_UNIQUE = 66;
+  int SUBJECT = 67;
+  int SUBROLES = 68;
+  int SUPERCLASS = 69;
+  int SUPERCLASSES = 70;
+  int SUPERROLES = 71;
+  int SYNTHETIC = 72;
+  int TABLE = 73;
+  int TO = 74;
+  int VALUE = 75;
+  int VALUES = 76;
+  int WITH = 77;
+  int WHERE = 78;
+  int WHOAMI = 79;
+  int DIGIT = 80;
+  int LETTER = 81;
+  int PATHMETA = 82;
+  int STRING = 83;
+  int NUMBER = 84;
+  int QUOTED_STRING = 85;
+  int LPAREN = 86;
+  int RPAREN = 87;
+  int COMMA = 88;
+  int LESS = 89;
+  int LESS_EQUALS = 90;
+  int GREATER = 91;
+  int GREATER_EQUALS = 92;
+  int EQUALS = 93;
+  int DOUBLE_EQUALS = 94;
+  int NOT_EQUALS = 95;
+  int SQL_NOT_EQUALS = 96;
 
   int DEFAULT = 0;
 
@@ -104,6 +108,7 @@ public interface RMLConstants {
     "<COMMENT>",
     "\"ABSTRACT\"",
     "\"ADD\"",
+    "\"ALL\"",
     "\"ALTER\"",
     "\"AND\"",
     "\"AS\"",
@@ -127,6 +132,7 @@ public interface RMLConstants {
     "\"FIND\"",
     "\"FLAGS\"",
     "\"FOR\"",
+    "\"FORWARD\"",
     "\"FROM\"",
     "\"GRANT\"",
     "\"GRANTS\"",
@@ -150,8 +156,10 @@ public interface RMLConstants {
     "\"PERMISSIONS\"",
     "\"READONLY\"",
     "\"RECURSIVE\"",
+    "\"RELATION\"",
     "\"RESOURCE\"",
     "\"REQUIRED\"",
+    "\"REVERSE\"",
     "\"REVOKE\"",
     "\"ROLE\"",
     "\"ROLES\"",

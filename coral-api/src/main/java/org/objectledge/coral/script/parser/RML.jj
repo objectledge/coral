@@ -72,6 +72,7 @@ TOKEN:
 {
     <ABSTRACT : "ABSTRACT"> |
     <ADD : "ADD"> |
+    <ALL : "ALL" > |
     <ALTER : "ALTER"> |
     <AND : "AND"> |
     <AS : "AS"> |
@@ -95,6 +96,7 @@ TOKEN:
     <FIND : "FIND"> |
     <FLAGS : "FLAGS"> |
     <FOR : "FOR"> |
+    <FORWARD: "FORWARD"> |
     <FROM : "FROM"> |
     <GRANT : "GRANT"> |
     <GRANTS : "GRANTS"> |
@@ -118,8 +120,10 @@ TOKEN:
     <PERMISSIONS : "PERMISSIONS"> |
     <READONLY: "READONLY"> |
     <RECURSIVE : "RECURSIVE"> |
+    <RELATION : "RELATION"> |
     <RESOURCE : "RESOURCE"> |
     <REQUIRED : "REQUIRED"> |
+    <REVERSE : "REVERSE" > |
     <REVOKE : "REVOKE"> |
     <ROLE : "ROLE"> |
     <ROLES : "ROLES"> |
@@ -506,6 +510,50 @@ ASTresource resource() :
 /*@egen*/
 }
 
+ASTrelation relation() :
+{/*@bgen(jjtree) relation */
+  ASTrelation jjtn000 = new ASTrelation(this, JJTRELATION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) relation */
+        try {
+/*@egen*/
+	entitySpecifier(jjtn000)/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtreeCloseNodeScope(jjtn000);
+    }
+/*@egen*/
+    { 
+        return jjtn000; 
+    }/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
 // Lexical entities //////////////////////////////////////////////////////////
 
 ASTresourceClassFlag resourceClassFlag() :
@@ -677,6 +725,50 @@ ASTattribute attribute() :
 /*@egen*/
 }
 
+ASTresourcePair resourcePair() :
+{/*@bgen(jjtree) resourcePair */
+  ASTresourcePair jjtn000 = new ASTresourcePair(this, JJTRESOURCEPAIR);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) resourcePair */
+    try {
+/*@egen*/
+    <LPAREN> jjtn000.pairHead = resource() jjtn000.pairTail = resource() <RPAREN>/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtreeCloseNodeScope(jjtn000);
+    }
+/*@egen*/
+    {
+        return jjtn000;
+    }/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
 // Entity lists //////////////////////////////////////////////////////////////
 
 ASTresourceClassList resourceClassList() :
@@ -787,6 +879,53 @@ ASTpermissionList permissionList() :
     ( 
         permission()
         ( <COMMA> permission() )* 
+    )/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtreeCloseNodeScope(jjtn000);
+    }
+/*@egen*/
+    {
+        return jjtn000;
+    }/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
+ASTresourcePairList resourcePairList() :
+{/*@bgen(jjtree) resourcePairList */
+  ASTresourcePairList jjtn000 = new ASTresourcePairList(this, JJTRESOURCEPAIRLIST);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) resourcePairList */
+    try {
+/*@egen*/
+    ( 
+        resourcePair()
+        ( <COMMA> resourcePair() )* 
     )/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
@@ -1126,12 +1265,13 @@ void createStatement()       :
 {
     ( "ATTRIBUTE" "CLASS" createAttributeClassStatement() ) |
     ( "SUBJECT" createSubjectStatement() ) |
-    ( "ROLE" createRoleStatement() ) |
-    ( "PERMISSION" createPermissionStatement() ) |
+    ( "RELATION" createRelationStatement() ) |
     ( "RESOURCE" (
         ( "CLASS" createResourceClassStatement() ) |
         createResourceStatement() )
-    )                         
+    ) |
+    ( "ROLE" createRoleStatement() ) |
+    ( "PERMISSION" createPermissionStatement() ) 
 }
 
 void findStatement()       :
@@ -1142,6 +1282,7 @@ void findStatement()       :
     ( "SUBJECT" findSubjectStatement() ) |
     ( "ROLE" findRoleStatement() ) |
     ( "PERMISSION" findPermissionStatement() ) |
+    ( "RELATION" findRelationStatement() ) |
     ( "RESOURCE" (
         ("CLASS" findResourceClassStatement() ) |
         findResourceStatement() )
@@ -1182,6 +1323,7 @@ void alterStatement()       :
    ( "SUBJECT" alterSubjectStatement() ) |
    ( "ROLE" alterRoleStatement() ) |
    ( "PERMISSION" alterPermissionStatement() ) |
+   ( "RELATION" alterRelationStatement() ) |
    ( "RESOURCE" (
        ( "CLASS" alterResourceClassStatement() ) |
        alterResourceStatement())
@@ -1289,6 +1431,24 @@ void alterResourceStatement()       :
     )
 }
 
+void alterRelationStatement()       :
+{
+    ASTrelation relation;
+}
+{
+    relation=relation() 
+    ( 
+        ( "SET" "NAME" alterRelationSetNameStatement(relation) ) |
+        ( "ADD" alterRelationAddPairsStatement(relation) ) |
+        ( "DELETE"
+             ( "FORWARD" alterRelationDeleteForwardStatement(relation) ) |
+             ( "REVERSE" alterRelationDeleteReverseStatement(relation) ) |
+             alterRelationDeleteAllStatement(relation) |
+             alterRelationDeletePairsStatement(relation)
+        )             
+    )
+}
+
 void deleteStatement()       :
 {
 }
@@ -1297,6 +1457,7 @@ void deleteStatement()       :
     ( "SUBJECT" deleteSubjectStatement() ) |
     ( "ROLE" deleteRoleStatement() ) |
     ( "PERMISSION" deletePermissionStatement() ) |
+    ( "RELATION" deleteRelationStatement() ) |
     ( "RESOURCE" (
         ( "CLASS" deleteResourceClassStatement() ) |
         deleteResourceStatement() )
@@ -4170,6 +4331,315 @@ void findGrantsForResourceStatement() :
     try {
 /*@egen*/
     jjtn000.resource=resource()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
+// relations /////////////////////////////////////////////////////////////////
+
+void createRelationStatement() :
+{/*@bgen(jjtree) createRelationStatement */
+  ASTcreateRelationStatement jjtn000 = new ASTcreateRelationStatement(this, JJTCREATERELATIONSTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) createRelationStatement */
+    try {
+/*@egen*/
+    jjtn000.name = name()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
+void findRelationStatement() :
+{/*@bgen(jjtree) findRelationStatement */
+  ASTfindRelationStatement jjtn000 = new ASTfindRelationStatement(this, JJTFINDRELATIONSTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) findRelationStatement */
+    try {
+/*@egen*/
+    [ entitySpecifier(jjtn000) ]/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
+void alterRelationSetNameStatement(ASTrelation relation) :
+{/*@bgen(jjtree) alterRelationSetNameStatement */
+    ASTalterRelationSetNameStatement jjtn000 = new ASTalterRelationSetNameStatement(this, JJTALTERRELATIONSETNAMESTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+    jjtn000.relation = relation;
+}
+{/*@bgen(jjtree) alterRelationSetNameStatement */
+        try {
+/*@egen*/
+	jjtn000.newName = name()/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
+void alterRelationAddPairsStatement(ASTrelation relation) :
+{/*@bgen(jjtree) alterRelationAddPairsStatement */
+    ASTalterRelationAddPairsStatement jjtn000 = new ASTalterRelationAddPairsStatement(this, JJTALTERRELATIONADDPAIRSSTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+    jjtn000.relation = relation;
+}
+{/*@bgen(jjtree) alterRelationAddPairsStatement */
+    try {
+/*@egen*/
+    jjtn000.pairs = resourcePairList()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
+void alterRelationDeletePairsStatement(ASTrelation relation) :
+{/*@bgen(jjtree) alterRelationDeletePairsStatement */
+    ASTalterRelationDeletePairsStatement jjtn000 = new ASTalterRelationDeletePairsStatement(this, JJTALTERRELATIONDELETEPAIRSSTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+    jjtn000.relation = relation;
+}
+{/*@bgen(jjtree) alterRelationDeletePairsStatement */
+    try {
+/*@egen*/
+    jjtn000.pairs = resourcePairList()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
+void alterRelationDeleteForwardStatement(ASTrelation relation) :
+{/*@bgen(jjtree) alterRelationDeleteForwardStatement */
+    ASTalterRelationDeleteForwardStatement jjtn000 = new ASTalterRelationDeleteForwardStatement(this, JJTALTERRELATIONDELETEFORWARDSTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+    jjtn000.relation = relation;
+}
+{/*@bgen(jjtree) alterRelationDeleteForwardStatement */
+    try {
+/*@egen*/
+    jjtn000.resource = resource()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
+void alterRelationDeleteReverseStatement(ASTrelation relation) :
+{/*@bgen(jjtree) alterRelationDeleteReverseStatement */
+    ASTalterRelationDeleteReverseStatement jjtn000 = new ASTalterRelationDeleteReverseStatement(this, JJTALTERRELATIONDELETEREVERSESTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+    jjtn000.relation = relation;
+}
+{/*@bgen(jjtree) alterRelationDeleteReverseStatement */
+    try {
+/*@egen*/
+    jjtn000.resource = resource()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+/*@egen*/
+}
+
+void alterRelationDeleteAllStatement(ASTrelation relation) :
+{/*@bgen(jjtree) alterRelationDeleteAllStatement */
+    ASTalterRelationDeleteAllStatement jjtn000 = new ASTalterRelationDeleteAllStatement(this, JJTALTERRELATIONDELETEALLSTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+    jjtn000.relation = relation;
+}
+{/*@bgen(jjtree) alterRelationDeleteAllStatement */
+        try {
+/*@egen*/
+	"ALL"/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+        }
+/*@egen*/
+}
+
+void deleteRelationStatement() :
+{/*@bgen(jjtree) deleteRelationStatement */
+  ASTdeleteRelationStatement jjtn000 = new ASTdeleteRelationStatement(this, JJTDELETERELATIONSTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+/*@egen*/
+}
+{/*@bgen(jjtree) deleteRelationStatement */
+    try {
+/*@egen*/
+    jjtn000.relation = relation()/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);

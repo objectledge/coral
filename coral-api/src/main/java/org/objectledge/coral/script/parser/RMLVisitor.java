@@ -11,13 +11,16 @@ public interface RMLVisitor
   public Object visit(ASTrole node, Object data);
   public Object visit(ASTpermission node, Object data);
   public Object visit(ASTresource node, Object data);
+  public Object visit(ASTrelation node, Object data);
   public Object visit(ASTresourceClassFlag node, Object data);
   public Object visit(ASTattributeFlag node, Object data);
   public Object visit(ASTattributeDefinition node, Object data);
   public Object visit(ASTattribute node, Object data);
+  public Object visit(ASTresourcePair node, Object data);
   public Object visit(ASTresourceClassList node, Object data);
   public Object visit(ASTroleList node, Object data);
   public Object visit(ASTpermissionList node, Object data);
+  public Object visit(ASTresourcePairList node, Object data);
   public Object visit(ASTattributeFlagList node, Object data);
   public Object visit(ASTresourceClassFlagList node, Object data);
   public Object visit(ASTattributeDefinitionList node, Object data);
@@ -96,6 +99,15 @@ public interface RMLVisitor
   public Object visit(ASTgrantPermissionStatement node, Object data);
   public Object visit(ASTrevokePermissionStatement node, Object data);
   public Object visit(ASTfindGrantsForResourceStatement node, Object data);
+  public Object visit(ASTcreateRelationStatement node, Object data);
+  public Object visit(ASTfindRelationStatement node, Object data);
+  public Object visit(ASTalterRelationSetNameStatement node, Object data);
+  public Object visit(ASTalterRelationAddPairsStatement node, Object data);
+  public Object visit(ASTalterRelationDeletePairsStatement node, Object data);
+  public Object visit(ASTalterRelationDeleteForwardStatement node, Object data);
+  public Object visit(ASTalterRelationDeleteReverseStatement node, Object data);
+  public Object visit(ASTalterRelationDeleteAllStatement node, Object data);
+  public Object visit(ASTdeleteRelationStatement node, Object data);
   public Object visit(ASTimpersonateStatement node, Object data);
   public Object visit(ASTechoStatement node, Object data);
 }

@@ -4,7 +4,7 @@ package org.objectledge.coral.script.parser;
  * Basic implementation of the visitor that simply traverses the whole tree.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: DefaultRMLVisitor.java,v 1.3 2004-03-19 12:47:58 fil Exp $
+ * @version $Id: DefaultRMLVisitor.java,v 1.4 2006-03-03 10:59:52 rafal Exp $
  */
 public class DefaultRMLVisitor
     implements RMLVisitor
@@ -760,6 +760,102 @@ public class DefaultRMLVisitor
      * {@inheritDoc}
      */
     public Object visit(ASTselectList node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTrelation node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTresourcePair node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTresourcePairList node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTcreateRelationStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTfindRelationStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationSetNameStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationAddPairsStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationDeletePairsStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationDeleteForwardStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationDeleteReverseStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationDeleteAllStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTdeleteRelationStatement node, Object data)
     {
         return visit((SimpleNode)node, data);
     }

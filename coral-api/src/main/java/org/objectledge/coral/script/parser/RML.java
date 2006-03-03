@@ -319,6 +319,41 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     throw new Error("Missing return statement in function");
   }
 
+  final public ASTrelation relation() throws ParseException {
+ /*@bgen(jjtree) relation */
+  ASTrelation jjtn000 = new ASTrelation(this, JJTRELATION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+    try {
+      entitySpecifier(jjtn000);
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtreeCloseNodeScope(jjtn000);
+        {if (true) return jjtn000;}
+    } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            {if (true) throw (RuntimeException)jjte000;}
+          }
+          if (jjte000 instanceof ParseException) {
+            {if (true) throw (ParseException)jjte000;}
+          }
+          {if (true) throw (Error)jjte000;}
+    } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+    }
+    throw new Error("Missing return statement in function");
+  }
+
 // Lexical entities //////////////////////////////////////////////////////////
   final public ASTresourceClassFlag resourceClassFlag() throws ParseException {
  /*@bgen(jjtree) resourceClassFlag */
@@ -491,6 +526,44 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     throw new Error("Missing return statement in function");
   }
 
+  final public ASTresourcePair resourcePair() throws ParseException {
+ /*@bgen(jjtree) resourcePair */
+  ASTresourcePair jjtn000 = new ASTresourcePair(this, JJTRESOURCEPAIR);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+    try {
+      jj_consume_token(LPAREN);
+      jjtn000.pairHead = resource();
+      jjtn000.pairTail = resource();
+      jj_consume_token(RPAREN);
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtreeCloseNodeScope(jjtn000);
+        {if (true) return jjtn000;}
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+    throw new Error("Missing return statement in function");
+  }
+
 // Entity lists //////////////////////////////////////////////////////////////
   final public ASTresourceClassList resourceClassList() throws ParseException {
  /*@bgen(jjtree) resourceClassList */
@@ -636,6 +709,54 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     throw new Error("Missing return statement in function");
   }
 
+  final public ASTresourcePairList resourcePairList() throws ParseException {
+ /*@bgen(jjtree) resourcePairList */
+  ASTresourcePairList jjtn000 = new ASTresourcePairList(this, JJTRESOURCEPAIRLIST);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+    try {
+      resourcePair();
+      label_4:
+      while (true) {
+        switch (jj_nt.kind) {
+        case COMMA:
+          ;
+          break;
+        default:
+          jj_la1[9] = jj_gen;
+          break label_4;
+        }
+        jj_consume_token(COMMA);
+        resourcePair();
+      }
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+      jjtreeCloseNodeScope(jjtn000);
+        {if (true) return jjtn000;}
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+    throw new Error("Missing return statement in function");
+  }
+
   final public ASTattributeFlagList attributeFlagList() throws ParseException {
  /*@bgen(jjtree) attributeFlagList */
   ASTattributeFlagList jjtn000 = new ASTattributeFlagList(this, JJTATTRIBUTEFLAGLIST);
@@ -643,7 +764,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      label_4:
+      label_5:
       while (true) {
         switch (jj_nt.kind) {
         case BUILTIN:
@@ -657,8 +778,8 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           ;
           break;
         default:
-          jj_la1[9] = jj_gen;
-          break label_4;
+          jj_la1[10] = jj_gen;
+          break label_5;
         }
         attributeFlag();
       }
@@ -696,7 +817,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      label_5:
+      label_6:
       while (true) {
         switch (jj_nt.kind) {
         case ABSTRACT:
@@ -705,8 +826,8 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           ;
           break;
         default:
-          jj_la1[10] = jj_gen;
-          break label_5;
+          jj_la1[11] = jj_gen;
+          break label_6;
         }
         resourceClassFlag();
       }
@@ -745,15 +866,15 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtreeOpenNodeScope(jjtn000);
     try {
       attributeDefinition();
-      label_6:
+      label_7:
       while (true) {
         switch (jj_nt.kind) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[11] = jj_gen;
-          break label_6;
+          jj_la1[12] = jj_gen;
+          break label_7;
         }
         jj_consume_token(COMMA);
         attributeDefinition();
@@ -793,15 +914,15 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtreeOpenNodeScope(jjtn000);
     try {
       attribute();
-      label_7:
+      label_8:
       while (true) {
         switch (jj_nt.kind) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[12] = jj_gen;
-          break label_7;
+          jj_la1[13] = jj_gen;
+          break label_8;
         }
         jj_consume_token(COMMA);
         attribute();
@@ -841,7 +962,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      label_8:
+      label_9:
       while (true) {
         switch (jj_nt.kind) {
         case ALTER:
@@ -853,12 +974,12 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         case IMPERSONATE:
         case REVOKE:
         case WHOAMI:
-        case 93:
+        case 97:
           ;
           break;
         default:
-          jj_la1[13] = jj_gen;
-          break label_8;
+          jj_la1[14] = jj_gen;
+          break label_9;
         }
         switch (jj_nt.kind) {
         case ALTER:
@@ -873,10 +994,10 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           statement();
           break;
         default:
-          jj_la1[14] = jj_gen;
+          jj_la1[15] = jj_gen;
           ;
         }
-        jj_consume_token(93);
+        jj_consume_token(97);
       }
       jj_consume_token(0);
       jjtree.closeNodeScope(jjtn000, true);
@@ -915,11 +1036,11 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     try {
       statement();
       switch (jj_nt.kind) {
-      case 93:
-        jj_consume_token(93);
+      case 97:
+        jj_consume_token(97);
         break;
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[16] = jj_gen;
         ;
       }
       jj_consume_token(0);
@@ -995,7 +1116,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       }
       break;
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[17] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1012,13 +1133,9 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       jj_consume_token(SUBJECT);
       createSubjectStatement();
       break;
-    case ROLE:
-      jj_consume_token(ROLE);
-      createRoleStatement();
-      break;
-    case PERMISSION:
-      jj_consume_token(PERMISSION);
-      createPermissionStatement();
+    case RELATION:
+      jj_consume_token(RELATION);
+      createRelationStatement();
       break;
     case RESOURCE:
       jj_consume_token(RESOURCE);
@@ -1032,13 +1149,21 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         createResourceStatement();
         break;
       default:
-        jj_la1[17] = jj_gen;
+        jj_la1[18] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
+    case ROLE:
+      jj_consume_token(ROLE);
+      createRoleStatement();
+      break;
+    case PERMISSION:
+      jj_consume_token(PERMISSION);
+      createPermissionStatement();
+      break;
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[19] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1063,6 +1188,10 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       jj_consume_token(PERMISSION);
       findPermissionStatement();
       break;
+    case RELATION:
+      jj_consume_token(RELATION);
+      findRelationStatement();
+      break;
     case RESOURCE:
       jj_consume_token(RESOURCE);
       switch (jj_nt.kind) {
@@ -1071,7 +1200,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         findResourceClassStatement();
         break;
       default:
-        jj_la1[19] = jj_gen;
+        jj_la1[20] = jj_gen;
         findResourceStatement();
       }
       break;
@@ -1100,7 +1229,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       findRolesStatement(false);
       break;
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[21] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1129,13 +1258,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         findGrantsForResourceStatement();
         break;
       default:
-        jj_la1[21] = jj_gen;
+        jj_la1[22] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[22] = jj_gen;
+      jj_la1[23] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1159,7 +1288,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       findRolesStatement(true);
       break;
     default:
-      jj_la1[23] = jj_gen;
+      jj_la1[24] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1184,6 +1313,10 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       jj_consume_token(PERMISSION);
       alterPermissionStatement();
       break;
+    case RELATION:
+      jj_consume_token(RELATION);
+      alterRelationStatement();
+      break;
     case RESOURCE:
       jj_consume_token(RESOURCE);
       switch (jj_nt.kind) {
@@ -1197,13 +1330,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         alterResourceStatement();
         break;
       default:
-        jj_la1[24] = jj_gen;
+        jj_la1[25] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[26] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1234,7 +1367,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       alterAttributeClassSetDbTableStatement(ac);
       break;
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[27] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1272,7 +1405,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         alterResourceClassSetFlagsStatement(rc);
         break;
       default:
-        jj_la1[27] = jj_gen;
+        jj_la1[28] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1293,7 +1426,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         alterResourceClassAddPermissionsStatement(rc);
         break;
       default:
-        jj_la1[28] = jj_gen;
+        jj_la1[29] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1314,7 +1447,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         alterResourceClassDeletePermissionsStatement(rc);
         break;
       default:
-        jj_la1[29] = jj_gen;
+        jj_la1[30] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1338,13 +1471,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         alterResourceClassAlterAttributeSetDomainStatement(rc, attr);
         break;
       default:
-        jj_la1[30] = jj_gen;
+        jj_la1[31] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[31] = jj_gen;
+      jj_la1[32] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1378,7 +1511,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       alterRoleDeleteSubrolesStatement(role);
       break;
     default:
-      jj_la1[32] = jj_gen;
+      jj_la1[33] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1416,7 +1549,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         alterResourceSetAttributeStatement(resource);
         break;
       default:
-        jj_la1[33] = jj_gen;
+        jj_la1[34] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1427,7 +1560,53 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       alterResourceDeleteAttributeStatement(resource);
       break;
     default:
-      jj_la1[34] = jj_gen;
+      jj_la1[35] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+  }
+
+  final public void alterRelationStatement() throws ParseException {
+    ASTrelation relation;
+    relation = relation();
+    switch (jj_nt.kind) {
+    case SET:
+      jj_consume_token(SET);
+      jj_consume_token(NAME);
+      alterRelationSetNameStatement(relation);
+      break;
+    case ADD:
+      jj_consume_token(ADD);
+      alterRelationAddPairsStatement(relation);
+      break;
+    case ALL:
+    case DELETE:
+    case REVERSE:
+    case LPAREN:
+      switch (jj_nt.kind) {
+      case DELETE:
+        jj_consume_token(DELETE);
+        jj_consume_token(FORWARD);
+        alterRelationDeleteForwardStatement(relation);
+        break;
+      case REVERSE:
+        jj_consume_token(REVERSE);
+        alterRelationDeleteReverseStatement(relation);
+        break;
+      case ALL:
+        alterRelationDeleteAllStatement(relation);
+        break;
+      case LPAREN:
+        alterRelationDeletePairsStatement(relation);
+        break;
+      default:
+        jj_la1[36] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      break;
+    default:
+      jj_la1[37] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1452,6 +1631,10 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       jj_consume_token(PERMISSION);
       deletePermissionStatement();
       break;
+    case RELATION:
+      jj_consume_token(RELATION);
+      deleteRelationStatement();
+      break;
     case RESOURCE:
       jj_consume_token(RESOURCE);
       switch (jj_nt.kind) {
@@ -1465,13 +1648,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         deleteResourceStatement();
         break;
       default:
-        jj_la1[35] = jj_gen;
+        jj_la1[38] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[36] = jj_gen;
+      jj_la1[39] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1488,7 +1671,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       grantPermissionStatement();
       break;
     default:
-      jj_la1[37] = jj_gen;
+      jj_la1[40] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1505,7 +1688,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       revokePermissionStatement();
       break;
     default:
-      jj_la1[38] = jj_gen;
+      jj_la1[41] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1539,13 +1722,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jj_consume_token(NONE);
           break;
         default:
-          jj_la1[39] = jj_gen;
+          jj_la1[42] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
         break;
       default:
-        jj_la1[40] = jj_gen;
+        jj_la1[43] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -1584,7 +1767,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         entitySpecifier(jjtn000);
         break;
       default:
-        jj_la1[41] = jj_gen;
+        jj_la1[44] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -1745,7 +1928,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(NONE);
         break;
       default:
-        jj_la1[42] = jj_gen;
+        jj_la1[45] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1800,13 +1983,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jj_consume_token(NONE);
           break;
         default:
-          jj_la1[43] = jj_gen;
+          jj_la1[46] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
         break;
       default:
-        jj_la1[44] = jj_gen;
+        jj_la1[47] = jj_gen;
         ;
       }
       switch (jj_nt.kind) {
@@ -1817,7 +2000,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[45] = jj_gen;
+        jj_la1[48] = jj_gen;
         ;
       }
       switch (jj_nt.kind) {
@@ -1828,7 +2011,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[46] = jj_gen;
+        jj_la1[49] = jj_gen;
         ;
       }
       switch (jj_nt.kind) {
@@ -1839,7 +2022,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[47] = jj_gen;
+        jj_la1[50] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -1878,7 +2061,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         entitySpecifier(jjtn000);
         break;
       default:
-        jj_la1[48] = jj_gen;
+        jj_la1[51] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2039,7 +2222,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(NONE);
         break;
       default:
-        jj_la1[49] = jj_gen;
+        jj_la1[52] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -2202,7 +2385,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.value = value();
         break;
       default:
-        jj_la1[50] = jj_gen;
+        jj_la1[53] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2273,7 +2456,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[51] = jj_gen;
+        jj_la1[54] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2373,7 +2556,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         entitySpecifier(jjtn000);
         break;
       default:
-        jj_la1[52] = jj_gen;
+        jj_la1[55] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2475,7 +2658,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[53] = jj_gen;
+        jj_la1[56] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2514,7 +2697,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         entitySpecifier(jjtn000);
         break;
       default:
-        jj_la1[54] = jj_gen;
+        jj_la1[57] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2740,7 +2923,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[55] = jj_gen;
+        jj_la1[58] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2779,7 +2962,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         entitySpecifier(jjtn000);
         break;
       default:
-        jj_la1[56] = jj_gen;
+        jj_la1[59] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -2909,15 +3092,15 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       jjtreeOpenNodeScope(jjtn001);
     try {
       andExpression();
-      label_9:
+      label_10:
       while (true) {
         switch (jj_nt.kind) {
         case OR:
           ;
           break;
         default:
-          jj_la1[57] = jj_gen;
-          break label_9;
+          jj_la1[60] = jj_gen;
+          break label_10;
         }
         jj_consume_token(OR);
         andExpression();
@@ -2951,15 +3134,15 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       jjtreeOpenNodeScope(jjtn001);
     try {
       simpleExpression();
-      label_10:
+      label_11:
       while (true) {
         switch (jj_nt.kind) {
         case AND:
           ;
           break;
         default:
-          jj_la1[58] = jj_gen;
-          break label_10;
+          jj_la1[61] = jj_gen;
+          break label_11;
         }
         jj_consume_token(AND);
         simpleExpression();
@@ -2998,7 +3181,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       primaryExpression();
       break;
     default:
-      jj_la1[59] = jj_gen;
+      jj_la1[62] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3048,7 +3231,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
       jj_consume_token(RPAREN);
       break;
     default:
-      jj_la1[60] = jj_gen;
+      jj_la1[63] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3080,13 +3263,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         approximationCondition(lhs);
         break;
       default:
-        jj_la1[61] = jj_gen;
+        jj_la1[64] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[62] = jj_gen;
+      jj_la1[65] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3120,7 +3303,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           t = jj_consume_token(STRING);
           break;
         default:
-          jj_la1[63] = jj_gen;
+          jj_la1[66] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3130,7 +3313,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.rhs = t.image;
         break;
       default:
-        jj_la1[64] = jj_gen;
+        jj_la1[67] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3168,7 +3351,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(DOUBLE_EQUALS);
         break;
       default:
-        jj_la1[65] = jj_gen;
+        jj_la1[68] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3184,14 +3367,14 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(SQL_NOT_EQUALS);
         break;
       default:
-        jj_la1[66] = jj_gen;
+        jj_la1[69] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
         {if (true) return RMLOperator.NOT_EQUALS;}
       break;
     default:
-      jj_la1[67] = jj_gen;
+      jj_la1[70] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3226,7 +3409,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           t = jj_consume_token(STRING);
           break;
         default:
-          jj_la1[68] = jj_gen;
+          jj_la1[71] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3236,7 +3419,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.rhs = t.image;
         break;
       default:
-        jj_la1[69] = jj_gen;
+        jj_la1[72] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3281,7 +3464,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         {if (true) return RMLOperator.GREATER_EQUALS;}
       break;
     default:
-      jj_la1[70] = jj_gen;
+      jj_la1[73] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3316,7 +3499,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           t = jj_consume_token(STRING);
           break;
         default:
-          jj_la1[71] = jj_gen;
+          jj_la1[74] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3326,7 +3509,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.rhs = t.image;
         break;
       default:
-        jj_la1[72] = jj_gen;
+        jj_la1[75] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3383,7 +3566,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.alias = name();
         break;
       default:
-        jj_la1[73] = jj_gen;
+        jj_la1[76] = jj_gen;
         ;
       }
       jjtree.closeNodeScope(jjtn000, true);
@@ -3421,15 +3604,15 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtreeOpenNodeScope(jjtn000);
     try {
       classAndAliasSpecifier();
-      label_11:
+      label_12:
       while (true) {
         switch (jj_nt.kind) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[74] = jj_gen;
-          break label_11;
+          jj_la1[77] = jj_gen;
+          break label_12;
         }
         jj_consume_token(COMMA);
         classAndAliasSpecifier();
@@ -3481,13 +3664,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.dir = false;
           break;
         default:
-          jj_la1[75] = jj_gen;
+          jj_la1[78] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
         break;
       default:
-        jj_la1[76] = jj_gen;
+        jj_la1[79] = jj_gen;
         ;
       }
       jjtree.closeNodeScope(jjtn000, true);
@@ -3525,15 +3708,15 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtreeOpenNodeScope(jjtn000);
     try {
       orderBySpecifier();
-      label_12:
+      label_13:
       while (true) {
         switch (jj_nt.kind) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[77] = jj_gen;
-          break label_12;
+          jj_la1[80] = jj_gen;
+          break label_13;
         }
         jj_consume_token(COMMA);
         orderBySpecifier();
@@ -3608,15 +3791,15 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtreeOpenNodeScope(jjtn000);
     try {
       selectSpecifier();
-      label_13:
+      label_14:
       while (true) {
         switch (jj_nt.kind) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[78] = jj_gen;
-          break label_13;
+          jj_la1[81] = jj_gen;
+          break label_14;
         }
         jj_consume_token(COMMA);
         selectSpecifier();
@@ -3671,7 +3854,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(NONE);
         break;
       default:
-        jj_la1[79] = jj_gen;
+        jj_la1[82] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3683,7 +3866,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(RPAREN);
         break;
       default:
-        jj_la1[80] = jj_gen;
+        jj_la1[83] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -3722,14 +3905,14 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.resource = resource();
         break;
       default:
-        jj_la1[85] = jj_gen;
+        jj_la1[88] = jj_gen;
         switch (jj_nt.kind) {
         case FROM:
           jj_consume_token(FROM);
           jjtn000.from = classAndAliasSpecifierList();
           break;
         default:
-          jj_la1[81] = jj_gen;
+          jj_la1[84] = jj_gen;
           ;
         }
         switch (jj_nt.kind) {
@@ -3738,7 +3921,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jjtn000.where = conditionalExpression();
           break;
         default:
-          jj_la1[82] = jj_gen;
+          jj_la1[85] = jj_gen;
           ;
         }
         switch (jj_nt.kind) {
@@ -3748,7 +3931,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jjtn000.orderBy = orderByList();
           break;
         default:
-          jj_la1[83] = jj_gen;
+          jj_la1[86] = jj_gen;
           ;
         }
         switch (jj_nt.kind) {
@@ -3757,7 +3940,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jjtn000.select = selectList();
           break;
         default:
-          jj_la1[84] = jj_gen;
+          jj_la1[87] = jj_gen;
           ;
         }
       }
@@ -3802,7 +3985,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.recursive = true;
         break;
       default:
-        jj_la1[86] = jj_gen;
+        jj_la1[89] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -3874,7 +4057,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(NONE);
         break;
       default:
-        jj_la1[87] = jj_gen;
+        jj_la1[90] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -4104,7 +4287,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.canGrant = true;
         break;
       default:
-        jj_la1[88] = jj_gen;
+        jj_la1[91] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -4205,7 +4388,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.resource = resource();
         break;
       default:
-        jj_la1[89] = jj_gen;
+        jj_la1[92] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -4244,7 +4427,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jjtn000.resource = resource();
         break;
       default:
-        jj_la1[90] = jj_gen;
+        jj_la1[93] = jj_gen;
         ;
       }
     } catch (Throwable jjte000) {
@@ -4286,7 +4469,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
             jjtn000.recursive = true;
         break;
       default:
-        jj_la1[91] = jj_gen;
+        jj_la1[94] = jj_gen;
         ;
       }
       jj_consume_token(TO);
@@ -4377,6 +4560,272 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     }
   }
 
+// relations /////////////////////////////////////////////////////////////////
+  final public void createRelationStatement() throws ParseException {
+ /*@bgen(jjtree) createRelationStatement */
+  ASTcreateRelationStatement jjtn000 = new ASTcreateRelationStatement(this, JJTCREATERELATIONSTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+    try {
+      jjtn000.name = name();
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+  }
+
+  final public void findRelationStatement() throws ParseException {
+ /*@bgen(jjtree) findRelationStatement */
+  ASTfindRelationStatement jjtn000 = new ASTfindRelationStatement(this, JJTFINDRELATIONSTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+    try {
+      switch (jj_nt.kind) {
+      case STRING:
+      case NUMBER:
+      case QUOTED_STRING:
+        entitySpecifier(jjtn000);
+        break;
+      default:
+        jj_la1[95] = jj_gen;
+        ;
+      }
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+  }
+
+  final public void alterRelationSetNameStatement(ASTrelation relation) throws ParseException {
+ /*@bgen(jjtree) alterRelationSetNameStatement */
+    ASTalterRelationSetNameStatement jjtn000 = new ASTalterRelationSetNameStatement(this, JJTALTERRELATIONSETNAMESTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
+    try {
+      jjtn000.newName = name();
+    } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            {if (true) throw (RuntimeException)jjte000;}
+          }
+          if (jjte000 instanceof ParseException) {
+            {if (true) throw (ParseException)jjte000;}
+          }
+          {if (true) throw (Error)jjte000;}
+    } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+    }
+  }
+
+  final public void alterRelationAddPairsStatement(ASTrelation relation) throws ParseException {
+ /*@bgen(jjtree) alterRelationAddPairsStatement */
+    ASTalterRelationAddPairsStatement jjtn000 = new ASTalterRelationAddPairsStatement(this, JJTALTERRELATIONADDPAIRSSTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
+    try {
+      jjtn000.pairs = resourcePairList();
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+  }
+
+  final public void alterRelationDeletePairsStatement(ASTrelation relation) throws ParseException {
+ /*@bgen(jjtree) alterRelationDeletePairsStatement */
+    ASTalterRelationDeletePairsStatement jjtn000 = new ASTalterRelationDeletePairsStatement(this, JJTALTERRELATIONDELETEPAIRSSTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
+    try {
+      jjtn000.pairs = resourcePairList();
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+  }
+
+  final public void alterRelationDeleteForwardStatement(ASTrelation relation) throws ParseException {
+ /*@bgen(jjtree) alterRelationDeleteForwardStatement */
+    ASTalterRelationDeleteForwardStatement jjtn000 = new ASTalterRelationDeleteForwardStatement(this, JJTALTERRELATIONDELETEFORWARDSTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
+    try {
+      jjtn000.resource = resource();
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+  }
+
+  final public void alterRelationDeleteReverseStatement(ASTrelation relation) throws ParseException {
+ /*@bgen(jjtree) alterRelationDeleteReverseStatement */
+    ASTalterRelationDeleteReverseStatement jjtn000 = new ASTalterRelationDeleteReverseStatement(this, JJTALTERRELATIONDELETEREVERSESTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
+    try {
+      jjtn000.resource = resource();
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+  }
+
+  final public void alterRelationDeleteAllStatement(ASTrelation relation) throws ParseException {
+ /*@bgen(jjtree) alterRelationDeleteAllStatement */
+    ASTalterRelationDeleteAllStatement jjtn000 = new ASTalterRelationDeleteAllStatement(this, JJTALTERRELATIONDELETEALLSTATEMENT);
+    boolean jjtc000 = true;
+    jjtree.openNodeScope(jjtn000);
+    jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
+    try {
+      jj_consume_token(ALL);
+    } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtreeCloseNodeScope(jjtn000);
+          }
+    }
+  }
+
+  final public void deleteRelationStatement() throws ParseException {
+ /*@bgen(jjtree) deleteRelationStatement */
+  ASTdeleteRelationStatement jjtn000 = new ASTdeleteRelationStatement(this, JJTDELETERELATIONSTATEMENT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtreeOpenNodeScope(jjtn000);
+    try {
+      jjtn000.relation = relation();
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        {if (true) throw (RuntimeException)jjte000;}
+      }
+      if (jjte000 instanceof ParseException) {
+        {if (true) throw (ParseException)jjte000;}
+      }
+      {if (true) throw (Error)jjte000;}
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtreeCloseNodeScope(jjtn000);
+      }
+    }
+  }
+
 // 5.0 Impersonation /////////////////////////////////////////////////////////
 
 // whoamiStatement node is defined inline in statement() non-terminal
@@ -4397,7 +4846,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
         jj_consume_token(SELF);
         break;
       default:
-        jj_la1[92] = jj_gen;
+        jj_la1[96] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -4458,23 +4907,28 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   JavaCharStream jj_input_stream;
   public Token token, jj_nt;
   private int jj_gen;
-  final private int[] jj_la1 = new int[93];
+  final private int[] jj_la1 = new int[97];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
+  static private int[] jj_la1_3;
   static {
       jj_la1_0();
       jj_la1_1();
       jj_la1_2();
+      jj_la1_3();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x0,0x8004040,0x824000,0x0,0x0,0x0,0x0,0x824000,0x8004040,0x0,0x0,0x14240100,0x14240100,0x0,0x14240100,0x10000,0x1000,0x10000,0x1001000,0x10000,0x0,0x0,0x10000,0x1000,0x80000,0x20080000,0x1000,0x1000,0x22000000,0x200180,0x200080,0x1000,0x200000,0x10000,0x1000,0x0,0x0,0x0,0x80000,0x0,0x0,0x0,0x80000,0x0,0x2000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x200,0x100000,0x100000,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400,0x0,0x400800,0x400800,0x0,0x0,0x0,0x2000,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x0,0x0,0x0,0x10008040,0x1048000,0x0,0x0,0x0,0x0,0x0,0x1048000,0x10008040,0x0,0x0,0x28480200,0x28480200,0x0,0x28480200,0x20000,0x2000,0x20000,0x2002000,0x20000,0x0,0x0,0x20000,0x2000,0x100000,0x40100000,0x2000,0x2000,0x44000000,0x400280,0x400080,0x2000,0x400000,0x400100,0x400180,0x20000,0x2000,0x0,0x0,0x0,0x100000,0x0,0x0,0x0,0x100000,0x0,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400,0x200000,0x200000,0x0,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800,0x0,0x801000,0x801000,0x0,0x0,0x0,0x4000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x40900020,0x0,0x0,0x0,0x0,0x40900020,0x0,0x0,0x0,0x1000011,0x1000011,0x0,0x1000011,0x0,0x82440000,0x0,0x86440002,0x0,0x82400000,0x4000000,0x0,0x82440000,0x144,0x144,0x80000,0x80000,0x100,0x20000000,0x20000000,0x30100,0x20000000,0x0,0x82440000,0x2040000,0x2040000,0x200,0x0,0x0,0x200,0x200,0x0,0x0,0x0,0x80000,0x0,0x200,0x0,0x0,0x0,0x0,0x0,0x2000000,0x0,0x2000,0x0,0x400,0x0,0x80,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x200,0x0,0x0,0x0,0x8000,0x8000000,0x0,0x200000,0x200,0x0,0x1000,0x1000,0x200000,0x10000000,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x4400080,0x0,0x0,0x0,0x0,0x0,0x4400080,0x0,0x0,0x0,0x10000044,0x10000044,0x0,0x10000044,0x0,0x23100000,0x0,0x63100008,0x0,0x22000000,0x40000000,0x0,0x23100000,0x510,0x510,0x200000,0x200000,0x400,0x0,0x0,0xc0400,0x0,0x8000000,0x8000000,0x0,0x23100000,0x20100000,0x20100000,0x800,0x0,0x0,0x800,0x800,0x0,0x0,0x0,0x200000,0x0,0x800,0x0,0x0,0x0,0x0,0x0,0x20000000,0x0,0x8000,0x0,0x1000,0x0,0x200,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800,0x0,0x2,0x0,0x20000,0x80000000,0x0,0x800000,0x800,0x0,0x4000,0x4000,0x800000,0x0,0x0,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x28000,0x38000,0x38000,0x0,0x10,0x40000,0x100000,0x100000,0x100000,0x10,0x0,0x100000,0x100000,0x20000800,0x800,0x20000000,0x800,0x28000,0x0,0x0,0x9,0x38000,0x0,0x9,0x38000,0x0,0x0,0x0,0x2,0x2,0x0,0x0,0x0,0x0,0x0,0x38000,0x0,0x0,0x0,0x28000,0x0,0x38000,0x28000,0x28000,0x0,0x4,0x0,0x0,0x38000,0x28000,0x80,0x100,0x38000,0x1,0x38000,0x0,0x38000,0x0,0x0,0x68000,0x68000,0x1fe00000,0x28000,0x18000,0x38000,0x6000000,0x18000000,0x1e000000,0x18000,0x38000,0x1e00000,0x18000,0x38000,0x0,0x100000,0x0,0x0,0x100000,0x100000,0x38000,0x0,0x0,0x400,0x0,0x0,0x38000,0x0,0x38000,0x200,0x0,0x0,0x0,0x38000,};
+      jj_la1_2 = new int[] {0x280000,0x380000,0x380000,0x0,0x104,0x400000,0x1000000,0x1000000,0x1000000,0x1000000,0x104,0x0,0x1000000,0x1000000,0x8000,0x8000,0x0,0x8000,0x280000,0x8,0x0,0x98,0x380000,0x8,0x90,0x380000,0x8,0x0,0x0,0x20,0x20,0x0,0x2,0x2,0x0,0x2,0x400000,0x400002,0x380000,0x8,0x0,0x0,0x280000,0x0,0x380000,0x280000,0x280000,0x0,0x40,0x0,0x0,0x380000,0x280000,0x800,0x1000,0x380000,0x10,0x380000,0x0,0x380000,0x0,0x0,0x680000,0x680000,0xfe000000,0x280000,0x180000,0x380000,0x60000000,0x80000000,0xe0000000,0x180000,0x380000,0x1e000000,0x180000,0x380000,0x0,0x1000000,0x0,0x0,0x1000000,0x1000000,0x380000,0x0,0x0,0x4000,0x0,0x0,0x380000,0x0,0x380000,0x2000,0x0,0x0,0x0,0x380000,0x380001,};
+   }
+   private static void jj_la1_3() {
+      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x0,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x1,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
 
   public RML(java.io.InputStream stream) {
@@ -4483,7 +4937,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 97; i++) jj_la1[i] = -1;
   }
 
   public void ReInit(java.io.InputStream stream) {
@@ -4493,7 +4947,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token.next = jj_nt = token_source.getNextToken();
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 97; i++) jj_la1[i] = -1;
   }
 
   public RML(java.io.Reader stream) {
@@ -4502,7 +4956,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 97; i++) jj_la1[i] = -1;
   }
 
   public void ReInit(java.io.Reader stream) {
@@ -4512,7 +4966,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token.next = jj_nt = token_source.getNextToken();
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 97; i++) jj_la1[i] = -1;
   }
 
   public RML(RMLTokenManager tm) {
@@ -4520,7 +4974,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 97; i++) jj_la1[i] = -1;
   }
 
   public void ReInit(RMLTokenManager tm) {
@@ -4529,7 +4983,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     token.next = jj_nt = token_source.getNextToken();
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 93; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 97; i++) jj_la1[i] = -1;
   }
 
   final private Token jj_consume_token(int kind) throws ParseException {
@@ -4568,15 +5022,15 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[94];
-    for (int i = 0; i < 94; i++) {
+    boolean[] la1tokens = new boolean[98];
+    for (int i = 0; i < 98; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 93; i++) {
+    for (int i = 0; i < 97; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -4588,10 +5042,13 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           if ((jj_la1_2[i] & (1<<j)) != 0) {
             la1tokens[64+j] = true;
           }
+          if ((jj_la1_3[i] & (1<<j)) != 0) {
+            la1tokens[96+j] = true;
+          }
         }
       }
     }
-    for (int i = 0; i < 94; i++) {
+    for (int i = 0; i < 98; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

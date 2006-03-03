@@ -72,6 +72,7 @@ TOKEN:
 {
     <ABSTRACT : "ABSTRACT"> |
     <ADD : "ADD"> |
+    <ALL : "ALL" > |
     <ALTER : "ALTER"> |
     <AND : "AND"> |
     <AS : "AS"> |
@@ -95,6 +96,7 @@ TOKEN:
     <FIND : "FIND"> |
     <FLAGS : "FLAGS"> |
     <FOR : "FOR"> |
+    <FORWARD: "FORWARD"> |
     <FROM : "FROM"> |
     <GRANT : "GRANT"> |
     <GRANTS : "GRANTS"> |
@@ -118,8 +120,10 @@ TOKEN:
     <PERMISSIONS : "PERMISSIONS"> |
     <READONLY: "READONLY"> |
     <RECURSIVE : "RECURSIVE"> |
+    <RELATION : "RELATION"> |
     <RESOURCE : "RESOURCE"> |
     <REQUIRED : "REQUIRED"> |
+    <REVERSE : "REVERSE" > |
     <REVOKE : "REVOKE"> |
     <ROLE : "ROLE"> |
     <ROLES : "ROLES"> |
@@ -302,6 +306,16 @@ ASTresource resource() :
     }
 }
 
+ASTrelation relation() :
+{
+}
+{
+	entitySpecifier(jjtThis)
+    { 
+        return jjtThis; 
+    }
+}
+
 // Lexical entities //////////////////////////////////////////////////////////
 
 ASTresourceClassFlag resourceClassFlag() :
@@ -365,6 +379,16 @@ ASTattribute attribute() :
     }
 }
 
+ASTresourcePair resourcePair() :
+{
+}
+{
+    <LPAREN> jjtThis.pairHead = resource() jjtThis.pairTail = resource() <RPAREN>
+    {
+        return jjtThis;
+    }
+}
+
 // Entity lists //////////////////////////////////////////////////////////////
 
 ASTresourceClassList resourceClassList() :
@@ -400,6 +424,19 @@ ASTpermissionList permissionList() :
     ( 
         permission()
         ( <COMMA> permission() )* 
+    )
+    {
+        return jjtThis;
+    }
+}
+
+ASTresourcePairList resourcePairList() :
+{
+}
+{
+    ( 
+        resourcePair()
+        ( <COMMA> resourcePair() )* 
     )
     {
         return jjtThis;
@@ -499,12 +536,13 @@ void createStatement() #void :
 {
     ( "ATTRIBUTE" "CLASS" createAttributeClassStatement() ) |
     ( "SUBJECT" createSubjectStatement() ) |
-    ( "ROLE" createRoleStatement() ) |
-    ( "PERMISSION" createPermissionStatement() ) |
+    ( "RELATION" createRelationStatement() ) |
     ( "RESOURCE" (
         ( "CLASS" createResourceClassStatement() ) |
         createResourceStatement() )
-    )                         
+    ) |
+    ( "ROLE" createRoleStatement() ) |
+    ( "PERMISSION" createPermissionStatement() ) 
 }
 
 void findStatement() #void :
@@ -515,6 +553,7 @@ void findStatement() #void :
     ( "SUBJECT" findSubjectStatement() ) |
     ( "ROLE" findRoleStatement() ) |
     ( "PERMISSION" findPermissionStatement() ) |
+    ( "RELATION" findRelationStatement() ) |
     ( "RESOURCE" (
         ("CLASS" findResourceClassStatement() ) |
         findResourceStatement() )
@@ -555,6 +594,7 @@ void alterStatement() #void :
    ( "SUBJECT" alterSubjectStatement() ) |
    ( "ROLE" alterRoleStatement() ) |
    ( "PERMISSION" alterPermissionStatement() ) |
+   ( "RELATION" alterRelationStatement() ) |
    ( "RESOURCE" (
        ( "CLASS" alterResourceClassStatement() ) |
        alterResourceStatement())
@@ -662,6 +702,24 @@ void alterResourceStatement() #void :
     )
 }
 
+void alterRelationStatement() #void :
+{
+    ASTrelation relation;
+}
+{
+    relation=relation() 
+    ( 
+        ( "SET" "NAME" alterRelationSetNameStatement(relation) ) |
+        ( "ADD" alterRelationAddPairsStatement(relation) ) |
+        ( "DELETE"
+             ( "FORWARD" alterRelationDeleteForwardStatement(relation) ) |
+             ( "REVERSE" alterRelationDeleteReverseStatement(relation) ) |
+             alterRelationDeleteAllStatement(relation) |
+             alterRelationDeletePairsStatement(relation)
+        )             
+    )
+}
+
 void deleteStatement() #void :
 {
 }
@@ -670,6 +728,7 @@ void deleteStatement() #void :
     ( "SUBJECT" deleteSubjectStatement() ) |
     ( "ROLE" deleteRoleStatement() ) |
     ( "PERMISSION" deletePermissionStatement() ) |
+    ( "RELATION" deleteRelationStatement() ) |
     ( "RESOURCE" (
         ( "CLASS" deleteResourceClassStatement() ) |
         deleteResourceStatement() )
@@ -1504,6 +1563,77 @@ void findGrantsForResourceStatement() :
 }
 {
     jjtThis.resource=resource()
+}
+
+// relations /////////////////////////////////////////////////////////////////
+
+void createRelationStatement() :
+{
+}
+{
+    jjtThis.name = name()
+}
+
+void findRelationStatement() :
+{
+}
+{
+    [ entitySpecifier(jjtThis) ]
+}
+
+void alterRelationSetNameStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+	jjtThis.newName = name()
+}
+
+void alterRelationAddPairsStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+    jjtThis.pairs = resourcePairList()
+}
+
+void alterRelationDeletePairsStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+    jjtThis.pairs = resourcePairList()
+}
+
+void alterRelationDeleteForwardStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+    jjtThis.resource = resource()
+}
+
+void alterRelationDeleteReverseStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+    jjtThis.resource = resource()
+}
+
+void alterRelationDeleteAllStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+	"ALL"
+}
+
+void deleteRelationStatement() :
+{
+}
+{
+    jjtThis.relation = relation()
 }
 
 // 5.0 Impersonation /////////////////////////////////////////////////////////
