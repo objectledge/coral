@@ -142,7 +142,7 @@ public class RMLExecutor
         this.out = new PrintWriter(out);
         this.coralSessionFactory = coralSessionFactory;
         entities = new RMLEntityResolver(coralSession.getSchema(), coralSession.getSecurity(),
-        		coralSession.getStore());
+        		coralSession.getStore(), coralSession.getRelationManager());
     }
 
     // statements ////////////////////////////////////////////////////////////

@@ -2,15 +2,27 @@ package org.objectledge.coral.script;
 
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.relation.CoralRelationManager;
+import org.objectledge.coral.relation.Relation;
+import org.objectledge.coral.relation.RelationModification;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.script.parser.ASTalterRelationAddPairsStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationDeleteAllStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationDeleteForwardStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationDeletePairsStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationDeleteReverseStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationStatement;
 import org.objectledge.coral.script.parser.ASTattributeClass;
 import org.objectledge.coral.script.parser.ASTpermission;
 import org.objectledge.coral.script.parser.ASTpermissionList;
+import org.objectledge.coral.script.parser.ASTrelation;
 import org.objectledge.coral.script.parser.ASTresource;
 import org.objectledge.coral.script.parser.ASTresourceClass;
 import org.objectledge.coral.script.parser.ASTresourceClassList;
+import org.objectledge.coral.script.parser.ASTresourcePair;
+import org.objectledge.coral.script.parser.ASTresourcePairList;
 import org.objectledge.coral.script.parser.ASTrole;
 import org.objectledge.coral.script.parser.ASTroleList;
 import org.objectledge.coral.script.parser.ASTsubject;
@@ -24,7 +36,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * Resolves RML AST nodes into ARL entities.
  * 
- * @version $Id: RMLEntityResolver.java,v 1.4 2004-12-21 08:10:21 rafal Exp $
+ * @version $Id: RMLEntityResolver.java,v 1.5 2006-03-03 11:41:18 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RMLEntityResolver
@@ -36,6 +48,8 @@ public class RMLEntityResolver
 	private CoralSecurity coralSecurity;
 	
 	private CoralStore coralStore;
+    
+    private CoralRelationManager coralRelationManager;
 	
     // initialization ////////////////////////////////////////////////////////
     
@@ -47,11 +61,12 @@ public class RMLEntityResolver
      * @param coralStore the CoralStore.
      */
     public RMLEntityResolver(CoralSchema coralSchema, CoralSecurity coralSecurity, 
-        CoralStore coralStore)
+        CoralStore coralStore, CoralRelationManager coralRelationManager)
     {
         this.coralSchema = coralSchema;
         this.coralSecurity = coralSecurity;
         this.coralStore = coralStore;
+        this.coralRelationManager = coralRelationManager;
     }
 
     /**
@@ -284,5 +299,75 @@ public class RMLEntityResolver
         {
             return coralSchema.getAttributeClass(node.getName());
         }
+    }
+    
+    /**
+     * Resolve Relation from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the Relation.
+     * @throws EntityDoesNotExistException if the node does not describe an existing Relation.
+     * @throws AmbigousEntityNameException if multiple Relations match node's description.
+     */
+    public Relation resolve(ASTrelation node)
+        throws EntityDoesNotExistException, AmbigousEntityNameException
+    {
+        if(node.getId() != -1)
+        {
+            return coralRelationManager.getRelation(node.getId());
+        }
+        else
+        {
+            return coralRelationManager.getRelation(node.getName());
+        }
+    }
+    
+    /**
+     * Resolve a RelationModification from an AST node.
+     * 
+     * @param node the AST node.
+     * @return the RelationModification.
+     * @throws EntityDoesNotExistException if the node's children contain invalid resource identifier.
+     * @throws AmbigousEntityNameException if the node's children contain invalid resource identifier.
+     */
+    public RelationModification RelationModification(ASTalterRelationStatement node)
+        throws EntityDoesNotExistException, AmbigousEntityNameException
+    {
+        RelationModification mod = new RelationModification();
+        if(node instanceof ASTalterRelationAddPairsStatement)
+        {
+            ASTresourcePairList pairs = ((ASTalterRelationAddPairsStatement)node).getResourcePairs();
+            for(int i = 0; i < pairs.jjtGetNumChildren(); i++)
+            {
+                ASTresourcePair pair = (ASTresourcePair)pairs.jjtGetChild(i);
+                mod.add(resolve(pair.getHead()), resolve(pair.getTail()));
+            }
+        }
+        else if(node instanceof ASTalterRelationDeletePairsStatement)
+        {
+            ASTresourcePairList pairs = ((ASTalterRelationDeletePairsStatement)node).getResourcePairs();
+            for(int i = 0; i < pairs.jjtGetNumChildren(); i++)
+            {
+                ASTresourcePair pair = (ASTresourcePair)pairs.jjtGetChild(i);
+                mod.remove(resolve(pair.getHead()), resolve(pair.getTail()));
+            }            
+        }
+        else if(node instanceof ASTalterRelationDeleteForwardStatement)
+        {
+            mod.remove(resolve(((ASTalterRelationDeleteForwardStatement)node).getResource()));
+        }
+        else if(node instanceof ASTalterRelationDeleteReverseStatement)
+        {
+            mod.removeInv(resolve(((ASTalterRelationDeleteForwardStatement)node).getResource()));            
+        }
+        else if(node instanceof ASTalterRelationDeleteAllStatement)
+        {
+            mod.clear();
+        }
+        else
+        {
+            throw new IllegalArgumentException("unknown alter statement " + node.getClass().getName());
+        }        
+        return mod;
     }
 }
