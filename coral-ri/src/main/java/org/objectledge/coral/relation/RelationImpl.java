@@ -27,10 +27,12 @@
 //
 package org.objectledge.coral.relation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,7 +49,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.28 2006-03-03 12:39:43 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.29 2006-03-03 13:52:26 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -267,6 +269,29 @@ implements Relation
 		}
 		return totalSize;
 	}
+    
+    private static final long[][] BLANK = new long[0][];
+    
+    private long[][] getPairs(Map<Long, Set<Long>> relation)
+    {
+        List<long[]> temp = new ArrayList<long[]>();
+        for(long head : relation.keySet())
+        {
+            for(long tail : relation.get(head))
+            {
+                long[] pair = new long[2];
+                pair[0] = head;
+                pair[1] = tail;
+                temp.add(pair);
+            }
+        }
+        return temp.toArray(BLANK);
+    }
+    
+    public long[][] getPairs()
+    {
+        return getPairs(rel);
+    }
 
     // implementation api -------------------------------------------------------------------------
 
@@ -541,5 +566,10 @@ implements Relation
 		{
 			return RelationImpl.this.getAvgMappingSize(invRel);
 		}
+        
+        public long[][] getPairs()
+        {
+            return RelationImpl.this.getPairs(invRel);
+        }
     }
 }

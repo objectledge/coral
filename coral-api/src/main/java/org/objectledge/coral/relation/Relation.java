@@ -40,7 +40,7 @@ import org.objectledge.coral.store.Resource;
  * </p>  
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: Relation.java,v 1.9 2006-03-03 12:39:47 rafal Exp $
+ * @version $Id: Relation.java,v 1.10 2006-03-03 13:52:33 rafal Exp $
  */
 public interface Relation extends Entity
 {
@@ -122,4 +122,11 @@ public interface Relation extends Entity
 	 * @return average mapping size 
 	 */
 	public float getAvgMappingSize();
+    
+    /**
+     * Return raw relation data.
+     * 
+     * @return raw relation data.
+     */
+    public long[][] getPairs();
 }

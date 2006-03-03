@@ -27,8 +27,10 @@
 // 
 package org.objectledge.coral.relation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -42,7 +44,7 @@ import org.objectledge.coral.store.Resource;
  * "reverse"/inverted relation expresses resource -> it's parent relationship.</p>
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceHierarchyRelationImpl.java,v 1.6 2006-03-03 12:39:43 rafal Exp $
+ * @version $Id: ResourceHierarchyRelationImpl.java,v 1.7 2006-03-03 13:52:26 rafal Exp $
  */
 public class ResourceHierarchyRelationImpl
     implements Relation
@@ -160,6 +162,30 @@ public class ResourceHierarchyRelationImpl
         return 0;
     }
     
+    private static final long[][] BLANK = new long[0][];
+    
+    public long[][] getPairs(boolean swap)
+    {
+        List<long[]> temp = new ArrayList<long[]>();
+        for(Resource r : store.getResource())
+        {
+            Resource[] children = store.getResource(r);
+            for(Resource c : children)
+            {
+                long[] pair = new long[2];
+                pair[swap ? 1 : 0] = r.getId();
+                pair[swap ? 0 : 1] = c.getId();
+                temp.add(pair);
+            }
+        }
+        return temp.toArray(BLANK);
+    }
+    
+    public long[][] getPairs()
+    {
+        return getPairs(false);
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -274,6 +300,11 @@ public class ResourceHierarchyRelationImpl
         {
             // calculating it would be too costly.
             return 0;
+        }
+        
+        public long[][] getPairs()
+        {
+            return ResourceHierarchyRelationImpl.this.getPairs(true);
         }
         
         /**
