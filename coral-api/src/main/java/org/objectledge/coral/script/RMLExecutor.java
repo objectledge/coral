@@ -9,10 +9,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.query.FilteredQueryResults;
 import org.objectledge.coral.query.QueryResults;
+import org.objectledge.coral.relation.Relation;
+import org.objectledge.coral.relation.RelationModification;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
@@ -23,6 +26,13 @@ import org.objectledge.coral.script.parser.ASTalterAttributeClassSetHandlerClass
 import org.objectledge.coral.script.parser.ASTalterAttributeClassSetJavaClassStatement;
 import org.objectledge.coral.script.parser.ASTalterAttributeClassSetNameStatement;
 import org.objectledge.coral.script.parser.ASTalterPermissionSetNameStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationAddPairsStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationDeleteAllStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationDeleteForwardStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationDeletePairsStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationDeleteReverseStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationSetNameStatement;
+import org.objectledge.coral.script.parser.ASTalterRelationStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAddAttributeStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAddPermissionsStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAddSuperclassStatement;
@@ -54,12 +64,14 @@ import org.objectledge.coral.script.parser.ASTattributeFlagList;
 import org.objectledge.coral.script.parser.ASTattributeList;
 import org.objectledge.coral.script.parser.ASTcreateAttributeClassStatement;
 import org.objectledge.coral.script.parser.ASTcreatePermissionStatement;
+import org.objectledge.coral.script.parser.ASTcreateRelationStatement;
 import org.objectledge.coral.script.parser.ASTcreateResourceClassStatement;
 import org.objectledge.coral.script.parser.ASTcreateResourceStatement;
 import org.objectledge.coral.script.parser.ASTcreateRoleStatement;
 import org.objectledge.coral.script.parser.ASTcreateSubjectStatement;
 import org.objectledge.coral.script.parser.ASTdeleteAttributeClassStatement;
 import org.objectledge.coral.script.parser.ASTdeletePermissionStatement;
+import org.objectledge.coral.script.parser.ASTdeleteRelationStatement;
 import org.objectledge.coral.script.parser.ASTdeleteResourceClassStatement;
 import org.objectledge.coral.script.parser.ASTdeleteResourceStatement;
 import org.objectledge.coral.script.parser.ASTdeleteRoleStatement;
@@ -71,6 +83,7 @@ import org.objectledge.coral.script.parser.ASTfindGrantsForResourceStatement;
 import org.objectledge.coral.script.parser.ASTfindGrantsForRoleStatement;
 import org.objectledge.coral.script.parser.ASTfindGrantsForSubjectStatement;
 import org.objectledge.coral.script.parser.ASTfindPermissionStatement;
+import org.objectledge.coral.script.parser.ASTfindRelationStatement;
 import org.objectledge.coral.script.parser.ASTfindResourceClassStatement;
 import org.objectledge.coral.script.parser.ASTfindResourceStatement;
 import org.objectledge.coral.script.parser.ASTfindRoleStatement;
@@ -83,6 +96,8 @@ import org.objectledge.coral.script.parser.ASTgrantRoleStatement;
 import org.objectledge.coral.script.parser.ASTimpersonateStatement;
 import org.objectledge.coral.script.parser.ASTresourceClassFlag;
 import org.objectledge.coral.script.parser.ASTresourceClassFlagList;
+import org.objectledge.coral.script.parser.ASTresourcePair;
+import org.objectledge.coral.script.parser.ASTresourcePairList;
 import org.objectledge.coral.script.parser.ASTrevokePermissionStatement;
 import org.objectledge.coral.script.parser.ASTrevokeRoleStatement;
 import org.objectledge.coral.script.parser.ASTwhoamiStatement;
@@ -1764,6 +1779,202 @@ public class RMLExecutor
     }
 
     //////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTcreateRelationStatement node, Object data)
+    {
+        try
+        {
+            coralSession.getRelationManager().createRelation(node.getName());
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTfindRelationStatement node, Object data)
+    {
+        try
+        {
+            if(node.getId() != -1 || node.getName() != null)
+            {
+                Relation rel;
+                if(node.getId() != -1)
+                {
+                    rel  = coralSession.getRelationManager().getRelation(node.getId());
+                }
+                else 
+                {
+                    rel = coralSession.getRelationManager().getRelation(node.getName());
+                }
+                String[][] result = new String[2][];
+                result[0] = new String[] { "Id", "Name", "Size", "Avg. Mappig Size" };
+                result[1] = new String[4];
+                result[1][0] = rel.getIdString();
+                result[1][1] = rel.getName();
+                result[1][2] = Integer.toString(rel.size());
+                result[1][3] = Float.toString(rel.getAvgMappingSize());
+                table(result);
+                long[][] pairs = rel.getPairs();
+                result = new String[pairs.length + 1][];
+                result[0] = new String[] {"Head", "Tail" };
+                for(int i = 0; i < pairs.length; i++)
+                {
+                    result[i + 1] = new String[2];
+                    result[i + 1][0] = Long.toString(pairs[i][0]);
+                    result[i + 1][1] = Long.toString(pairs[i][1]);
+                }
+                table(result);
+            }
+            else
+            {
+                Relation[] items = coralSession.getRelationManager().getRelation();
+                String[][] result = new String[items.length + 1][];
+                result[0] = new String[] { "Id", "Name", "Size", "Avg. Mappig Size" };
+                for(int i = 0; i < items.length; i++)
+                {
+                    result[i+1] = new String[4];
+                    result[i+1][0] = items[i].getIdString();
+                    result[i+1][1] = items[i].getName();
+                    result[i+1][2] = Integer.toString(items[i].size());
+                    result[i+1][3] = Float.toString(items[i].getAvgMappingSize());
+                }
+                table(result);
+            }
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationSetNameStatement node, Object data)
+    {
+        try
+        {
+            coralSession.getRelationManager().setName(entities.resolve(node.getRelation()),
+                node.getNewName());
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationAddPairsStatement node, Object data)
+    {
+        try
+        {
+            coralSession.getRelationManager().updateRelation(entities.resolve(node.getRelation()), 
+                getRelationModification(node));
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationDeletePairsStatement node, Object data)
+    {
+        try
+        {
+            coralSession.getRelationManager().updateRelation(entities.resolve(node.getRelation()), 
+                getRelationModification(node));            
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationDeleteForwardStatement node, Object data)
+    {
+        try
+        {
+            coralSession.getRelationManager().updateRelation(entities.resolve(node.getRelation()), 
+                getRelationModification(node));
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationDeleteReverseStatement node, Object data)
+    {
+        try
+        {
+            coralSession.getRelationManager().updateRelation(entities.resolve(node.getRelation()), 
+                getRelationModification(node));
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterRelationDeleteAllStatement node, Object data)
+    {
+        try
+        {
+            coralSession.getRelationManager().updateRelation(entities.resolve(node.getRelation()), 
+                getRelationModification(node));
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTdeleteRelationStatement node, Object data)
+    {
+        try
+        {
+            coralSession.getRelationManager().deleteRelation(entities.resolve(node.getRelation()));
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+    
+    //////////////////////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc}
@@ -2061,5 +2272,52 @@ public class RMLExecutor
             return result;
         }
         return new ASTattribute[0];
+    }
+    
+    
+    private RelationModification getRelationModification(ASTalterRelationStatement node)
+        throws EntityDoesNotExistException, AmbigousEntityNameException
+    {
+        RelationModification mod = new RelationModification();
+        if(node instanceof ASTalterRelationAddPairsStatement)
+        {
+            ASTresourcePairList pairs = ((ASTalterRelationAddPairsStatement)node)
+                .getResourcePairs();
+            for(int i = 0; i < pairs.jjtGetNumChildren(); i++)
+            {
+                ASTresourcePair pair = (ASTresourcePair)pairs.jjtGetChild(i);
+                mod.add(entities.resolve(pair.getHead()), entities.resolve(pair.getTail()));
+            }
+        }
+        else if(node instanceof ASTalterRelationDeletePairsStatement)
+        {
+            ASTresourcePairList pairs = ((ASTalterRelationDeletePairsStatement)node)
+                .getResourcePairs();
+            for(int i = 0; i < pairs.jjtGetNumChildren(); i++)
+            {
+                ASTresourcePair pair = (ASTresourcePair)pairs.jjtGetChild(i);
+                mod.remove(entities.resolve(pair.getHead()), entities.resolve(pair.getTail()));
+            }
+        }
+        else if(node instanceof ASTalterRelationDeleteForwardStatement)
+        {
+            mod.remove(entities.resolve(((ASTalterRelationDeleteForwardStatement)node)
+                .getResource()));
+        }
+        else if(node instanceof ASTalterRelationDeleteReverseStatement)
+        {
+            mod.removeInv(entities.resolve(((ASTalterRelationDeleteForwardStatement)node)
+                .getResource()));
+        }
+        else if(node instanceof ASTalterRelationDeleteAllStatement)
+        {
+            mod.clear();
+        }
+        else
+        {
+            throw new IllegalArgumentException("unknown alter statement "
+                + node.getClass().getName());
+        }
+        return mod;
     }
 }
