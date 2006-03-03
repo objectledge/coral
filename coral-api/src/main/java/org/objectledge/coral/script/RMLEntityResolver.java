@@ -36,7 +36,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * Resolves RML AST nodes into ARL entities.
  * 
- * @version $Id: RMLEntityResolver.java,v 1.5 2006-03-03 11:41:18 rafal Exp $
+ * @version $Id: RMLEntityResolver.java,v 1.6 2006-03-03 13:54:02 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RMLEntityResolver
@@ -320,54 +320,5 @@ public class RMLEntityResolver
         {
             return coralRelationManager.getRelation(node.getName());
         }
-    }
-    
-    /**
-     * Resolve a RelationModification from an AST node.
-     * 
-     * @param node the AST node.
-     * @return the RelationModification.
-     * @throws EntityDoesNotExistException if the node's children contain invalid resource identifier.
-     * @throws AmbigousEntityNameException if the node's children contain invalid resource identifier.
-     */
-    public RelationModification RelationModification(ASTalterRelationStatement node)
-        throws EntityDoesNotExistException, AmbigousEntityNameException
-    {
-        RelationModification mod = new RelationModification();
-        if(node instanceof ASTalterRelationAddPairsStatement)
-        {
-            ASTresourcePairList pairs = ((ASTalterRelationAddPairsStatement)node).getResourcePairs();
-            for(int i = 0; i < pairs.jjtGetNumChildren(); i++)
-            {
-                ASTresourcePair pair = (ASTresourcePair)pairs.jjtGetChild(i);
-                mod.add(resolve(pair.getHead()), resolve(pair.getTail()));
-            }
-        }
-        else if(node instanceof ASTalterRelationDeletePairsStatement)
-        {
-            ASTresourcePairList pairs = ((ASTalterRelationDeletePairsStatement)node).getResourcePairs();
-            for(int i = 0; i < pairs.jjtGetNumChildren(); i++)
-            {
-                ASTresourcePair pair = (ASTresourcePair)pairs.jjtGetChild(i);
-                mod.remove(resolve(pair.getHead()), resolve(pair.getTail()));
-            }            
-        }
-        else if(node instanceof ASTalterRelationDeleteForwardStatement)
-        {
-            mod.remove(resolve(((ASTalterRelationDeleteForwardStatement)node).getResource()));
-        }
-        else if(node instanceof ASTalterRelationDeleteReverseStatement)
-        {
-            mod.removeInv(resolve(((ASTalterRelationDeleteForwardStatement)node).getResource()));            
-        }
-        else if(node instanceof ASTalterRelationDeleteAllStatement)
-        {
-            mod.clear();
-        }
-        else
-        {
-            throw new IllegalArgumentException("unknown alter statement " + node.getClass().getName());
-        }        
-        return mod;
     }
 }
