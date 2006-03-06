@@ -31,7 +31,7 @@ function deletePermission(name, url)
   <tr>
     <th>Permission properties: '$permission.name'</th>
     <th>
-    <a href="javascript:deletePermission('$permission.name','$link.action('DeletePermission').set('perm_id',$permission.id)');">delete</a>
+    <a href="javascript:deletePermission('$permission.name','$link.action('browser.DeletePermission').set('perm_id',$permission.id)');">delete</a>
     </th>
   </tr>
   <tr>
@@ -53,9 +53,9 @@ function deletePermission(name, url)
     <th>Choose permission</th>
   </tr>
   <tr>
-    <form name="form1" method="post" action='$link.action('AddPermission')'>
+    <form name="form1" method="post" action='$link.action('browser.AddPermission')'>
       <td><input type="text" name="permission_name" value="" maxlength="40">
-        <a href="javascript:fSub('$link.action('AddPermission')')">add permission</a>
+        <a href="javascript:fSub('$link.action('browser.AddPermission')')">add permission</a>
       </td>
     </form>
   </tr>
