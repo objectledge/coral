@@ -2,9 +2,7 @@ package org.objectledge.coral.modules.actions.browser;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
-import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.session.CoralSession;
-import org.objectledge.coral.store.Resource;
 import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
 import org.objectledge.templating.TemplatingContext;
@@ -12,13 +10,12 @@ import org.objectledge.web.mvc.MVCContext;
 import org.objectledge.web.mvc.security.PolicySystem;
 
 /**
- * Add relation action.
+ * Add role action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: AddRelation.java,v 1.4 2005-05-30 09:44:25 zwierzem Exp $
+ * @version $Id: AddRelation.java,v 1.5 2006-03-06 13:03:35 rafal Exp $
  */
-public class AddRelation
-    extends BaseBrowserAction
+public class AddRelation extends BaseBrowserAction
 {
     public AddRelation(PolicySystem policySystemArg, Logger logger)
     {
@@ -33,35 +30,20 @@ public class AddRelation
     {
         try
         {
-			long resId = parameters.getLong("res_id",-1);
-			long res1 = parameters.getLong("res_1",-1);
-			long res2 = parameters.getLong("res_2",-1);
-			String attrName = parameters.get("attr_name","");
-			if (resId == -1 || attrName.length() == 0 || res1 == -1 || res2 == -1)
-			{
-				throw new ProcessingException("parameter not found");
-			}
-			Resource resource = coralSession.getStore().getResource(resId);
-			Resource resource1 = coralSession.getStore().getResource(res1);
-			Resource resource2 = coralSession.getStore().getResource(res2);
-			AttributeDefinition attrDefinition = resource.getResourceClass().getAttribute(attrName);
-            //TODO http://objectledge.org/jira/browse/CORAL-68 ....move from crossreference to relationg
-			//CrossReference refs = (CrossReference)resource.get(attrDefinition);
-			//refs.put(resource1, resource2);
-			//resource.set(attrDefinition, refs);
-			//resource.update(subject);
+            String relationName = parameters.get("relation_name", "");
+            if (relationName.length() == 0)
+            {
+                templatingContext.put("result", "invalid_name");
+                return;
+            }
+            coralSession.getRelationManager().createRelation(relationName);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            logger.error("ARLException: ",e);
-            templatingContext.put("result","exception");
-            //context.put("trace",StringUtils.stackTrace(e));
+            logger.error("Coral exception: ", e);
+            templatingContext.put("result", "exception");
             return;
-        } 
-        templatingContext.put("result", "relation_added");        
+        }
+        templatingContext.put("result", "added_successfully");
     }
 }
-
-
-
-

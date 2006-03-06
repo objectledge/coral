@@ -10,6 +10,8 @@
       <td class="separator">|</td>
       #linkCell('admin' 'CLASSES' $link.view("browser.ResourceClassView"))
       <td class="separator">|</td>
+      #linkCell('admin' 'RELATIONS' $link.view("browser.RelationView"))
+      <td class="separator">|</td>
       #linkCell('admin' 'ROLES' $link.view("browser.RoleView"))
       <td class="separator">|</td>
       #linkCell('admin' 'PERMISSIONS' $link.view("browser.PermissionView"))
