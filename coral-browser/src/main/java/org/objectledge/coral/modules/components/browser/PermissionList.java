@@ -4,7 +4,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.session.CoralSession;
-import org.objectledge.coral.table.comparator.PermissionNameComparator;
+import org.objectledge.coral.table.comparator.NameComparator;
 import org.objectledge.i18n.I18nContext;
 import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
@@ -37,7 +37,7 @@ public class PermissionList extends BaseBrowserComponent
         {
             I18nContext i18nContext = I18nContext.getI18nContext(context);
             TableColumn[] columns = new TableColumn[1];
-            columns[0] = new TableColumn("name", new PermissionNameComparator(i18nContext.getLocale()));
+            columns[0] = new TableColumn("name", new NameComparator(i18nContext.getLocale()));
             TableState state = tableStateManager.getState(context, this.getClass().getName());
             if (state.isNew())
             {

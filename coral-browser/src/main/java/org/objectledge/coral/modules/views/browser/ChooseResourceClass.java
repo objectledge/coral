@@ -4,7 +4,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
-import org.objectledge.coral.table.comparator.ClassNameComparator;
+import org.objectledge.coral.table.comparator.NameComparator;
 import org.objectledge.i18n.I18nContext;
 import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
@@ -35,7 +35,7 @@ public class ChooseResourceClass extends BaseBrowserView
         try
         {
             TableColumn[] columns = new TableColumn[1];
-            columns[0] = new TableColumn("name", new ClassNameComparator(i18nContext.getLocale()));
+            columns[0] = new TableColumn("name", new NameComparator(i18nContext.getLocale()));
             TableState state = tableStateManager.getState(context, this.getClass().getName());
             if (state.isNew())
             {
