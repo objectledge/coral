@@ -44,7 +44,7 @@ import org.objectledge.coral.store.Resource;
  * "reverse"/inverted relation expresses resource -> it's parent relationship.</p>
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceHierarchyRelationImpl.java,v 1.7 2006-03-03 13:52:26 rafal Exp $
+ * @version $Id: ResourceHierarchyRelationImpl.java,v 1.8 2006-03-06 13:24:20 rafal Exp $
  */
 public class ResourceHierarchyRelationImpl
     implements Relation
@@ -178,6 +178,7 @@ public class ResourceHierarchyRelationImpl
                 temp.add(pair);
             }
         }
+        Collections.sort(temp, PairComparator.INSTANCE);
         return temp.toArray(BLANK);
     }
     

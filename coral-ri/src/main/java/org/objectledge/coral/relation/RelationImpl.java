@@ -49,7 +49,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.29 2006-03-03 13:52:26 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.30 2006-03-06 13:24:20 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -285,6 +285,7 @@ implements Relation
                 temp.add(pair);
             }
         }
+        Collections.sort(temp, PairComparator.INSTANCE);
         return temp.toArray(BLANK);
     }
     
