@@ -9,7 +9,7 @@ import org.objectledge.coral.schema.AttributeClass;
  * Represents the results of a query as tuples of Resource properties.
  *
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: FilteredQueryResults.java,v 1.3 2004-05-14 11:19:10 fil Exp $
+ * @version $Id: FilteredQueryResults.java,v 1.4 2006-04-26 11:10:07 rafal Exp $
  */
 public interface FilteredQueryResults
 {
@@ -22,7 +22,7 @@ public interface FilteredQueryResults
      *
      * @return an Iterator over a list of {@link FilteredQueryResults.Row} objects.
      */
-    public Iterator iterator();
+    public Iterator<Row> iterator();
 
     /**
      * Returns a list of {@link FilteredQueryResults.Row} objects.
@@ -32,7 +32,7 @@ public interface FilteredQueryResults
      *
      * @return a list of {@link FilteredQueryResults.Row} objects.
      */
-    public List getList();
+    public List<Row> getList();
 
     // results metadata //////////////////////////////////////////////////////
 

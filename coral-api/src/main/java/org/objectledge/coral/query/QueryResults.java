@@ -20,7 +20,7 @@ import org.objectledge.coral.store.Resource;
  * object instead.</p>
  *
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: QueryResults.java,v 1.3 2004-05-14 11:19:10 fil Exp $
+ * @version $Id: QueryResults.java,v 1.4 2006-04-26 11:10:07 rafal Exp $
  */
 public interface QueryResults
 {
@@ -48,7 +48,7 @@ public interface QueryResults
      *
      * @return an Iterator over a list of {@link QueryResults.Row} objects.
      */
-    public Iterator iterator();
+    public Iterator<Row> iterator();
 
     /**
      * Returns a list of {@link QueryResults.Row} objects.
@@ -58,7 +58,7 @@ public interface QueryResults
      *
      * @return a list of {@link QueryResults.Row} objects.
      */
-    public List getList();
+    public List<Row> getList();
 
     // access to a colum of results at once (possibly memory consuming) //////
 
@@ -92,7 +92,7 @@ public interface QueryResults
      * @throws IllegalArgumentException if no column by the specified name is
      *         present in the results.
      */
-    public List getList(String name)
+    public List<Resource> getList(String name)
         throws IllegalArgumentException;
 
     /**
@@ -103,7 +103,7 @@ public interface QueryResults
      * @throws IndexOutOfBoundsException if the index if the index is out of
      *         1..columnCount range.
      */
-    public List getList(int index)
+    public List<Resource> getList(int index)
         throws IndexOutOfBoundsException;
 
     // results metadata //////////////////////////////////////////////////////
