@@ -34,7 +34,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.12 2005-12-19 13:58:54 rafal Exp $
+ * @version $Id: CoralTableModel.java,v 1.13 2006-04-28 07:35:35 rafal Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {
@@ -113,10 +113,8 @@ public class CoralTableModel implements ExtendedTableModel
     public void addColumn(ResourceClass resourceClass, String attributeName,
         Comparator valueComparator)
     {
-        AttributeDefinition attDef = resourceClass.getAttribute(attributeName);
-        Comparator columnComparator = new AttributeValueComparator<Resource>(resourceClass
-            .getJavaClass(), attDef, valueComparator);
-        comparatorByColumnName.put(attributeName, columnComparator);
+        addColumn(attributeName, AttributeTableColumn.getAttributeComparator(resourceClass,
+            attributeName, valueComparator));
     }
 
     /**
