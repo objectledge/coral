@@ -19,10 +19,10 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>  
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ResourceList.java,v 1.6 2005-02-21 15:44:16 zwierzem Exp $
+ * @version $Id: ResourceList.java,v 1.7 2006-05-09 10:26:37 rafal Exp $
  */
-public class ResourceList
-    extends AbstractList
+public class ResourceList<T extends Resource>
+    extends AbstractList<T>
 {
     // constants /////////////////////////////////////////////////////////////
 
@@ -117,7 +117,7 @@ public class ResourceList
     /**
      * {@inheritDoc}
      */
-    public Object get(int index)
+    public T get(int index)
         throws IndexOutOfBoundsException
     {
         if(index < 0 || index >= size)
@@ -126,7 +126,7 @@ public class ResourceList
         }
         try
         {
-            return getStore().getResource(ids[index]);
+            return (T)getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -147,27 +147,19 @@ public class ResourceList
     /**
      * {@inheritDoc}
      */
-    public void add(int index, Object object)
+    public void add(int index, T object)
         throws IndexOutOfBoundsException, ClassCastException
+    {
+        add(index, object.getId());
+    }
+    
+    public void add(int index, long id)
     {
         if(index < 0 || index > size)
         {
             throw new IndexOutOfBoundsException();
         }
-        long id;
-        if(object instanceof Resource)
-        {
-            id = ((Resource)object).getId();
-        }
-        else if(object instanceof Long)
-        {
-            id = ((Long)object).longValue();
-        }
-        else
-        {
-            throw new ClassCastException(object.getClass().getName());
-        }
-
+        
         if(size+1 <= capacity && index == size)
         {
             ids[index] = id;
@@ -195,36 +187,35 @@ public class ResourceList
         newIds[index] = id;
         ids = newIds;
         size++;
-        modCount++;
+        modCount++;        
     }
 
     /**
      * {@inheritDoc}
      */    
-    public Object set(int index, Object object)
+    public T set(int index, T object)
         throws IndexOutOfBoundsException, ClassCastException
+    {
+        return set(index, object.getId());
+    }
+    
+    /**
+     * Set list element using resource identifier instead of reference.
+     * 
+     * @param index item index.
+     * @param id item resource id.
+     * @return old item.
+     */
+    public T set(int index, long id)
     {
         if(index < 0 || index >= size)
         {
             throw new IndexOutOfBoundsException();
         }
-        long id;
-        if(object instanceof Resource)
-        {
-            id = ((Resource)object).getId();
-        }
-        else if(object instanceof Long)
-        {
-            id = ((Long)object).longValue();
-        }
-        else
-        {
-            throw new ClassCastException(object.getClass().getName());
-        }
-        Object old;
+        T old;
         try
         {
-            old = getStore().getResource(ids[index]);
+            old = (T)getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -237,17 +228,17 @@ public class ResourceList
     /**
      * {@inheritDoc}
      */
-    public Object remove(int index)
+    public T remove(int index)
         throws IndexOutOfBoundsException
     {
         if(index < 0 || index >= size)
         {
             throw new IndexOutOfBoundsException();
         }
-        Object old;
+        T old;
         try
         {
-            old = getStore().getResource(ids[index]);
+            old = (T)getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {

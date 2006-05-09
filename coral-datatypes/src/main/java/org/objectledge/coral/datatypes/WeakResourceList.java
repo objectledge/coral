@@ -15,10 +15,10 @@ import org.objectledge.coral.store.Resource;
  * the StoreService</p>
  * 
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: WeakResourceList.java,v 1.5 2005-02-21 15:44:16 zwierzem Exp $
+ * @version $Id: WeakResourceList.java,v 1.6 2006-05-09 10:26:37 rafal Exp $
  */
-public class WeakResourceList
-    extends ResourceList
+public class WeakResourceList<T extends Resource>
+    extends ResourceList<T>
 {
     /**
      * Creates an empty list.
@@ -49,7 +49,7 @@ public class WeakResourceList
     /**
      * {@inheritDoc}
      */
-    public Object get(int index)
+    public T get(int index)
         throws IndexOutOfBoundsException
     {
         if(index < 0 || index >= size)
@@ -58,7 +58,7 @@ public class WeakResourceList
         }
         try
         {
-            return getStore().getResource(ids[index]);
+            return (T)getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -69,30 +69,22 @@ public class WeakResourceList
     /**
      * {@inheritDoc}
      */
-    public Object set(int index, Object object)
+    public T set(int index, T object)
         throws IndexOutOfBoundsException, ClassCastException
+    {
+        return set(index, object.getId());
+    }
+    
+    public T set(int index, long id)
     {
         if(index < 0 || index >= size)
         {
             throw new IndexOutOfBoundsException();
         }
-        long id;
-        if(object instanceof Resource)
-        {
-            id = ((Resource)object).getId();
-        }
-        else if(object instanceof Long)
-        {
-            id = ((Long)object).longValue();
-        }
-        else
-        {
-            throw new ClassCastException(object.getClass().getName());
-        }
-        Object old = null;
+        T old = null;
         try
         {
-            old = getStore().getResource(ids[index]);
+            old = (T)getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -105,17 +97,17 @@ public class WeakResourceList
     /**
      * {@inheritDoc}
      */
-    public Object remove(int index)
+    public T remove(int index)
         throws IndexOutOfBoundsException
     {
         if(index < 0 || index >= size)
         {
             throw new IndexOutOfBoundsException();
         }
-        Object old = null;
+        T old = null;
         try
         {
-            old = getStore().getResource(ids[index]);
+            old = (T)getStore().getResource(ids[index]);
         }
         catch(EntityDoesNotExistException e)
         {
