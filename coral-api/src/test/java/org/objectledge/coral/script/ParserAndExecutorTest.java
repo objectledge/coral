@@ -33,6 +33,7 @@ import java.io.StringReader;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.objectledge.coral.query.CoralQuery;
+import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
@@ -51,7 +52,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParserAndExecutorTest.java,v 1.7 2004-05-28 10:04:05 fil Exp $
+ * @version $Id: ParserAndExecutorTest.java,v 1.8 2006-05-10 11:18:31 rafal Exp $
  */
 public class ParserAndExecutorTest extends LedgeTestCase
 {
@@ -63,6 +64,8 @@ public class ParserAndExecutorTest extends LedgeTestCase
     private CoralStore coralStore;
     private Mock mockCoralQuery;
     private CoralQuery coralQuery;
+    private Mock mockCoralRelationManager;
+    private CoralRelationManager coralRelationManager;
     private Mock mockCoralSession;
     private CoralSession coralSession;
     private Mock mockCoralSessionFactory;
@@ -94,12 +97,15 @@ public class ParserAndExecutorTest extends LedgeTestCase
         coralStore = (CoralStore)mockCoralStore.proxy();
         mockCoralQuery = mock(CoralQuery.class);
         coralQuery = (CoralQuery)mockCoralQuery.proxy();
+        mockCoralRelationManager = mock(CoralRelationManager.class);
+        coralRelationManager = (CoralRelationManager)mockCoralRelationManager.proxy();
         mockCoralSession = mock(CoralSession.class);
         coralSession = (CoralSession)mockCoralSession.proxy();
         mockCoralSession.stubs().method("getSchema").will(returnValue(coralSchema));
         mockCoralSession.stubs().method("getSecurity").will(returnValue(coralSecurity));
         mockCoralSession.stubs().method("getStore").will(returnValue(coralStore));
         mockCoralSession.stubs().method("getQuery").will(returnValue(coralQuery));
+        mockCoralSession.stubs().method("getRelationManager").will(returnValue(coralRelationManager));
         mockCoralSessionFactory = mock(CoralSessionFactory.class);
         
         executor = new RMLExecutor(coralSession, new OutputStreamWriter(System.out), 
