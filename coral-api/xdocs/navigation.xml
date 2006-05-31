@@ -8,7 +8,7 @@
       <item name="home" href="../../index.html"/>
       <item name="wiki" href="http://objectledge.org/confluence/display/CORAL"/>
       <item name="issues" href="http://objectledge.org/jira/secure/BrowseProject.jspa?id=10030"/>
-      <item name="viewcvs" href="http://coral.objectledge.org/viewcvs.cgi/"/>
+      <item name="fisheye" href="http://coral.objectledge.org/viewcvs.cgi/"/>
     </links>
   </body>
 </project>
