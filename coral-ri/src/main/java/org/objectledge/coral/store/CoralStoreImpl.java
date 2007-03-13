@@ -45,7 +45,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.30 2005-10-10 12:46:22 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.31 2007-03-13 00:09:38 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -1106,6 +1106,10 @@ public class CoralStoreImpl
         {
             throw new IllegalArgumentException(
                 "use unsetParent() to delete parent-child relationships");
+        }
+        if(parent.equals(child))
+        {
+            throw new CircularDependencyException("cannot make a resource the parent of itself");
         }
         if(isAncestor(child, parent))
         {
