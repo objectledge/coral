@@ -1,10 +1,13 @@
 package org.objectledge.coral.schema;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +32,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.22 2005-06-21 09:40:24 rafal Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.23 2007-04-03 23:23:13 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -95,6 +98,12 @@ public class ResourceClassImpl
     
     /** The attributes keyed by name. Contains declared and inherited attributes. */
     private Map attributeMap;
+    
+    /** The attribute indexes, indexed by attribute defnition id. */
+    private int[] attributeIndexTable;
+    
+    /** Largest attribute index used until now. */
+    private int attributeMaxIndex = 1;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -395,6 +404,37 @@ public class ResourceClassImpl
         Map snapshot = attributeMap;
         return snapshot.containsKey(name);
     }
+    
+    /**
+     * Returns the index of the attribute definition within a resource class.
+     * <p>
+     * Index of the attribute definition is an integer greater or equal to 0. It is defined for all
+     * declared and inherited attributes of the class. It is guaranteed to remain constant through
+     * the entire runtime of a Coral instance however it may change across different Coral
+     * instantiations. An attempt will be made to keep indexes as small as possible.
+     * </p>
+     * <p>
+     * This mechanism is provided to enable datatypes implementations to use Java arrays as a
+     * space-effective means of storing resource attribute values.
+     * </p>
+     * 
+     * @param attr the attribute.
+     * @return the index of the attribute definition within a resource class.
+     * @throws UnknownAttributeException if the attribute was not declared by the class or one of
+     *         it's parent classes.
+     */
+    public int getAttributeIndex(AttributeDefinition attr)
+        throws UnknownAttributeException
+    {
+        buildAttributeIndexTable();
+        int index = attributeIndexTable[(int)attr.getId()];
+        if(index == 0)
+        {
+            throw new UnknownAttributeException("attribute " + attr
+                + " does not belong to resource class " + this);
+        }
+        return index - 1;
+    }
 
     /**
      * Returns information about inheritance relationships this class is
@@ -576,6 +616,10 @@ public class ResourceClassImpl
             }
             inheritance = inheritanceCopy;
         }
+        if(item.getChild().equals(this) || item.getChild().isParent(this) && added)
+        {
+            expandAttributeIndexTable(Arrays.asList(item.getParent().getAllAttributes()));
+        }
         // flush cached information
         childClasses = null;
         parentClasses = null;
@@ -616,6 +660,7 @@ public class ResourceClassImpl
             if(added)
             {
                 attributeMapCopy.put(attribute.getName(), attribute);
+                expandAttributeIndexTable(attribute);
             }
             else
             {
@@ -981,5 +1026,78 @@ public class ResourceClassImpl
                 }
             }
         }
+    }
+    
+    private synchronized void buildAttributeIndexTable()
+    {
+        if(attributeIndexTable == null)
+        {
+            buildAttributeMap();
+            List<AttributeDefinition> attrs = new ArrayList<AttributeDefinition>(attributeMap
+                .values());
+            Collections.sort(attrs, AttributeDefinitionComparator.INSTANCE);
+            long maxId = attrs.get(attrs.size()-1).getId();
+            int[] table = new int[(int)maxId+1];
+            for(AttributeDefinition attr : attrs) 
+            {
+                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                {
+                    table[(int)attr.getId()] = attributeMaxIndex++;
+                }
+            }
+            attributeIndexTable = table;
+        }
+    }
+    
+    private synchronized void expandAttributeIndexTable(AttributeDefinition attr)
+    {
+        if(attributeIndexTable != null)
+        {            
+            if(attr.getId() > attributeIndexTable.length)
+            {
+                int[] table = new int[(int)attr.getId()+1];
+                System.arraycopy(attributeIndexTable, 0, table, 0, attributeIndexTable.length);
+                attributeIndexTable = table;            
+            }
+            if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+            {
+                attributeIndexTable[(int)attr.getId()] = attributeMaxIndex++;
+            }
+        }
+    }
+    
+    private synchronized void expandAttributeIndexTable(List<AttributeDefinition> origAttrs) 
+    {
+        if(attributeIndexTable != null)
+        {            
+            // List returned from Collections.asList(Object[]) is immutable
+            List<AttributeDefinition> attrs = new ArrayList<AttributeDefinition>(origAttrs);
+            Collections.sort(attrs, AttributeDefinitionComparator.INSTANCE);  
+            long maxId = attrs.get(attrs.size()-1).getId();
+            if(maxId > attributeIndexTable.length)
+            {
+                int[] table = new int[(int)maxId+1];
+                System.arraycopy(attributeIndexTable, 0, table, 0, attributeIndexTable.length);
+                attributeIndexTable = table;
+            }
+            for(AttributeDefinition attr : attrs) 
+            {
+                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                {
+                    attributeIndexTable[(int)attr.getId()] = attributeMaxIndex++;
+                }
+            }        
+        }
+    }
+    
+    private static class AttributeDefinitionComparator implements Comparator<AttributeDefinition> 
+    {
+        public static final AttributeDefinitionComparator INSTANCE = 
+            new AttributeDefinitionComparator(); 
+        
+        public int compare(AttributeDefinition e1, AttributeDefinition e2)
+        {                   
+            return (int)(e1.getId() - e2.getId());
+        }                
     }
 }

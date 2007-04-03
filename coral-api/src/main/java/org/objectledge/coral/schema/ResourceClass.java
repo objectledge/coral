@@ -9,7 +9,7 @@ import org.objectledge.coral.security.PermissionAssociation;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClass.java,v 1.3 2005-06-21 09:40:26 rafal Exp $
+ * @version $Id: ResourceClass.java,v 1.4 2007-04-03 23:23:11 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceClass
@@ -99,6 +99,27 @@ public interface ResourceClass
      *         specified name.
      */
     public boolean hasAttribute(String name);
+    
+    /**
+     * Returns the index of the attribute definition within a resource class.
+     * <p>
+     * Index of the attribute definition is an integer greater or equal to 0. It is defined for all
+     * declared and inherited attributes of the class. It is guaranteed to remain constant through
+     * the entire runtime of a Coral instance however it may change across different Coral
+     * instantiations. An attempt will be made to keep indexes as small as possible.
+     * </p>
+     * <p>
+     * This mechanism is provided to enable datatypes implementations to use Java arrays as a
+     * space-effective means of storing resource attribute values.
+     * </p>
+     * 
+     * @param attr the attribute.
+     * @return the index of the attribute definition within a resource class.
+     * @throws UnknownAttributeException if the attribute was not declared by the class or one of
+     *         it's parent classes.
+     */
+    public int getAttributeIndex(AttributeDefinition attr)
+        throws UnknownAttributeException;
 
     /**
      * Returns information about inheritance relationships this class is
