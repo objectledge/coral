@@ -19,7 +19,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * A generic implementation of {@link Resource} interface.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResource.java,v 1.26 2005-10-06 08:42:07 rafal Exp $
+ * @version $Id: GenericResource.java,v 1.27 2007-04-04 22:25:19 rafal Exp $
  */
 public class GenericResource
     extends AbstractResource
@@ -131,9 +131,9 @@ public class GenericResource
         Statement stmt = conn.createStatement();
         for(AttributeDefinition attr : delegate.getResourceClass().getAllAttributes())
         {
-            if(isAttributeModified(attr))
+            if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
-                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                if(isAttributeModified(attr))
                 {
 	                AttributeHandler handler = attr.getAttributeClass().getHandler();
 	                Object value = getAttribute(attr);
