@@ -9,7 +9,7 @@ import org.objectledge.coral.security.PermissionAssociation;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClass.java,v 1.4 2007-04-03 23:23:11 rafal Exp $
+ * @version $Id: ResourceClass.java,v 1.5 2007-04-04 21:13:50 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceClass
@@ -121,6 +121,13 @@ public interface ResourceClass
     public int getAttributeIndex(AttributeDefinition attr)
         throws UnknownAttributeException;
 
+    /**
+     * Returns the maximum attribute index used at this moment by the resource class.
+     * 
+     * @return the maximum attribute index used at this moment by the resource class.
+     */
+    public int getMaxAttributeIndex();
+    
     /**
      * Returns information about inheritance relationships this class is
      * involved in. 

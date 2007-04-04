@@ -32,7 +32,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.23 2007-04-03 23:23:13 rafal Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.24 2007-04-04 21:17:02 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -99,11 +99,13 @@ public class ResourceClassImpl
     /** The attributes keyed by name. Contains declared and inherited attributes. */
     private Map attributeMap;
     
-    /** The attribute indexes, indexed by attribute defnition id. */
+    /** The attribute indexes, indexed by attribute defnition id. Values stored in the array
+     *  are equal to actual index + 1, and hence 0 marks an invalid entry - an attribute undefined
+     *  for this class. */
     private int[] attributeIndexTable;
     
     /** Largest attribute index used until now. */
-    private int attributeMaxIndex = 1;
+    private int attributeMaxIndex = -1;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -434,6 +436,16 @@ public class ResourceClassImpl
                 + " does not belong to resource class " + this);
         }
         return index - 1;
+    }
+    
+    /**
+     * Returns the maximum attribute index used at this moment by the resource class.
+     * 
+     * @return the maximum attribute index used at this moment by the resource class.
+     */
+    public int getMaxAttributeIndex() 
+    {
+        return attributeMaxIndex;
     }
 
     /**
@@ -1042,7 +1054,7 @@ public class ResourceClassImpl
             {
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
-                    table[(int)attr.getId()] = attributeMaxIndex++;
+                    table[(int)attr.getId()] = ++attributeMaxIndex + 1;
                 }
             }
             attributeIndexTable = table;
@@ -1061,7 +1073,7 @@ public class ResourceClassImpl
             }
             if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
-                attributeIndexTable[(int)attr.getId()] = attributeMaxIndex++;
+                attributeIndexTable[(int)attr.getId()] = ++attributeMaxIndex + 1;
             }
         }
     }
@@ -1084,7 +1096,7 @@ public class ResourceClassImpl
             {
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
-                    attributeIndexTable[(int)attr.getId()] = attributeMaxIndex++;
+                    attributeIndexTable[(int)attr.getId()] = ++attributeMaxIndex + 1;
                 }
             }        
         }
