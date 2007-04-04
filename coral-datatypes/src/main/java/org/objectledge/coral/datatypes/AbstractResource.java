@@ -32,6 +32,7 @@ import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.BitSet;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,23 +61,21 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.38 2005-09-25 12:03:09 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.39 2007-04-04 22:25:49 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {
     /** Security delegate object. */
     protected Resource delegate;
     
-    /** the attributes (AttributeDefinition -> Object). */
-    private Map<AttributeDefinition,Object> attributes = 
-        new HashMap<AttributeDefinition,Object>();
+    /** the attribute values. */
+    private Object[] attributes;
 
     /** the external attribute ids. */
-    private Map<AttributeDefinition,Long> ids = 
-        new HashMap<AttributeDefinition,Long>();
+    private long[] ids;
 
     /** Set of AttributeDefinitions of the modified attributes. */
-    private Set<Object> modified = new HashSet();
+    private BitSet modified;
 
     /** The hashcode. */
     private int hashCode;    
@@ -171,6 +170,13 @@ public abstract class AbstractResource implements Resource
     {
         this.delegate = delegate;
         this.hashCode = delegate.hashCode();
+        if(attributes == null)
+        {
+            int arraySize = delegate.getResourceClass().getMaxAttributeIndex() + 1;
+            attributes = new Object[arraySize];
+            ids = new long[arraySize];
+            modified = new BitSet(arraySize);            
+        }
         initDefinitions(delegate.getResourceClass());
     }
     
@@ -214,9 +220,11 @@ public abstract class AbstractResource implements Resource
     synchronized void revert(ResourceClass rClass, Connection conn, Object data)
 	    throws SQLException
 	{
-	    modified.clear();
-        attributes.clear();
-        ids.clear();
+        // recreate arrays - size might have changed
+        int arraySize = delegate.getResourceClass().getMaxAttributeIndex() + 1;
+        attributes = new Object[arraySize];
+        ids = new long[arraySize];
+        modified = new BitSet(arraySize);
         for(ResourceClass parent : rClass.getDirectParentClasses())
 	    {
             revert(parent, conn, data);
@@ -226,22 +234,6 @@ public abstract class AbstractResource implements Resource
     synchronized void update(Connection conn)
 	    throws SQLException
 	{
-	    Statement stmt = conn.createStatement();
-	    Iterator<Object> i = modified.iterator();
-	    while(i.hasNext())
-	    {
-	        Object o = i.next();
-	        if(!(o instanceof AttributeDefinition))
-	        {
-	            Resource res = (Resource)o;
-                if(res != this)
-                {
-                    ResourceHandler handler = res.getResourceClass().getHandler();
-                    handler.update(res, conn);
-                }
-	            i.remove();
-	        }
-	    }
 	}
     
 	synchronized void delete(Connection conn)
@@ -249,8 +241,6 @@ public abstract class AbstractResource implements Resource
 	{
 	}
     
-    // Resource interface - identity+security (delegated) ///////////////////////////////////////
-
     /**
      * Returns the numerical identifier of the entity.
      * 
@@ -433,7 +423,6 @@ public abstract class AbstractResource implements Resource
      */
     public Object get(AttributeDefinition attribute) throws UnknownAttributeException
     {
-        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.get(attribute);
@@ -446,12 +435,12 @@ public abstract class AbstractResource implements Resource
      */
     public boolean isDefined(AttributeDefinition attribute) throws UnknownAttributeException
     {
-        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.isDefined(attribute);
         }
-        return isDefinedLocally(attribute);
+        int index = delegate.getResourceClass().getAttributeIndex(attribute);
+        return isDefinedLocally(index);
     }
     
     /**
@@ -459,12 +448,12 @@ public abstract class AbstractResource implements Resource
      */
     public boolean isModified(AttributeDefinition attribute) throws UnknownAttributeException
     {
-        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.isModified(attribute);
         }
-        return modified.contains(attribute);
+        int index = delegate.getResourceClass().getAttributeIndex(attribute);
+        return modified.get(index);
     }
     
     /**
@@ -473,10 +462,10 @@ public abstract class AbstractResource implements Resource
     public void set(AttributeDefinition attribute, Object value) throws UnknownAttributeException,
         ModificationNotPermitedException, ValueRequiredException
     {
-        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             delegate.set(attribute, value);
+            return;
         }
         if((attribute.getFlags() & AttributeFlags.READONLY) != 0)
         {
@@ -490,9 +479,10 @@ public abstract class AbstractResource implements Resource
         }
         value = attribute.getAttributeClass().getHandler().toAttributeValue(value);
         attribute.getAttributeClass().getHandler().checkDomain(attribute.getDomain(), value);
-        if(setLocally(attribute, value))
+        int index = delegate.getResourceClass().getAttributeIndex(attribute);
+        if(setLocally(index, value))
         {
-            modified.add(attribute);
+            modified.set(index);
         }
     }
     
@@ -501,12 +491,13 @@ public abstract class AbstractResource implements Resource
      */    
     public void setModified(AttributeDefinition attribute) throws UnknownAttributeException
     {
-        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             delegate.setModified(attribute);
+            return;
         }
-        modified.add(attribute);
+        int index = delegate.getResourceClass().getAttributeIndex(attribute);
+        modified.set(index);
     }
     
     /**
@@ -515,18 +506,19 @@ public abstract class AbstractResource implements Resource
     public void unset(AttributeDefinition attribute) throws ValueRequiredException,
         UnknownAttributeException
     {
-        checkAttribute(attribute);
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             delegate.unset(attribute);
+            return;
         }
         if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
         {
             throw new ValueRequiredException("attribute "+attribute.getName()+
                                              "is declared as REQUIRED");
         }
-        unsetLocally(attribute);
-        modified.add(attribute);
+        int index = delegate.getResourceClass().getAttributeIndex(attribute);
+        unsetLocally(index);
+        modified.set(index);
     }
  
     /**
@@ -635,31 +627,32 @@ public abstract class AbstractResource implements Resource
     /**
      * Check if the attribute value is defined in this wrapper.
      * 
-     * @param attribute the attribute defintion.
+     * @param index the attribute index.
      * @return <code>true</code> if the attribute value is defined in this wrapper.
      */
-    private synchronized boolean isDefinedLocally(AttributeDefinition attribute)
+    private synchronized boolean isDefinedLocally(int index)
     {
-        if(modified.contains(attribute))
+        if(modified.get(index))
         {
-            return attributes.containsKey(attribute);
+            return attributes[index] != null;
         }
         else
         {
-            return attributes.containsKey(attribute) || ids.containsKey(attribute);
+            return attributes[index] != null || ids[index] > 0;
         } 
     }
 
     /**
      * Retrieve the attribute value defined in this wrapper.
      * 
-     * @param attribute the attribute defintion.
+     * @param attribute the attribute definition.
      * @return the attribute value is defined in this wrapper.
      */
     private synchronized Object getLocally(AttributeDefinition attribute)
     {
-        Object value = attributes.get(attribute);
-        if(modified.contains(attribute))
+        int index = delegate.getResourceClass().getAttributeIndex(attribute);
+        Object value = attributes[index];
+        if(modified.get(index))
         {
             return value;
         }
@@ -671,15 +664,15 @@ public abstract class AbstractResource implements Resource
             }
             else
             {
-                Long idObj = ids.get(attribute);
-                if(idObj == null)
+                long id = ids[index] - 1;
+                if(id == -1)
                 {
                     return null;
                 }
                 else
                 {
-                    value = loadAttribute(attribute, idObj.longValue());
-                    attributes.put(attribute, value);
+                    value = loadAttribute(attribute, id);
+                    attributes[index] = value;
                     return value;
                 }
             }
@@ -689,13 +682,13 @@ public abstract class AbstractResource implements Resource
     /**
      * Set the attribute value in this wrapper.
      * 
-     * @param attribute the attribute defintion.
+     * @param index the attribute index.
      * @param value the attribute value.
      * @return <code>true</code> if values were different.
      */
-    private synchronized boolean setLocally(AttributeDefinition attribute, Object value)
+    private synchronized boolean setLocally(int index, Object value)
     {
-        Object oldValue = attributes.get(attribute);
+        Object oldValue = attributes[index];
         if(oldValue == null || value == null)
         {
             if(value == null && oldValue == null)
@@ -704,7 +697,7 @@ public abstract class AbstractResource implements Resource
             }
             else
             {
-                attributes.put(attribute, value);
+                attributes[index] = value;
                 return true;
             }
         }
@@ -712,18 +705,18 @@ public abstract class AbstractResource implements Resource
         {
             return false;
         }
-        attributes.put(attribute, value);
+        attributes[index] = value;
         return true;
     }
 
     /**
      * Unset the attribute value in this wrapper.
      * 
-     * @param attribute the attribute defintion.
+     * @param index the attribute index.
      */
-    private synchronized void unsetLocally(AttributeDefinition attribute)
+    private synchronized void unsetLocally(int index)
     {
-        attributes.remove(attribute);
+        attributes[index] = null;
     }
 
     /**
@@ -833,14 +826,8 @@ public abstract class AbstractResource implements Resource
      */
     protected void setAttribute(AttributeDefinition attr, Object value)
     {
-        if(value != null)
-        {
-            attributes.put(attr, value);
-        }
-        else
-        {
-            attributes.remove(attr);
-        }
+        int index = delegate.getResourceClass().getAttributeIndex(attr);
+        attributes[index] = value;
     }
     
     /**
@@ -851,7 +838,8 @@ public abstract class AbstractResource implements Resource
      */
     protected Object getAttribute(AttributeDefinition attr)
     {
-        return attributes.get(attr);
+        int index = delegate.getResourceClass().getAttributeIndex(attr);
+        return attributes[index];
     }
     
     /**
@@ -862,14 +850,8 @@ public abstract class AbstractResource implements Resource
      */
     protected void setValueId(AttributeDefinition attr, long id)
     {
-        if(id != -1)
-        {
-            ids.put(attr, id);
-        }
-        else
-        {
-            ids.remove(attr);
-        }
+        int index = delegate.getResourceClass().getAttributeIndex(attr);
+        ids[index] = id + 1;
     }
     
     /**
@@ -880,8 +862,8 @@ public abstract class AbstractResource implements Resource
      */
     protected long getValueId(AttributeDefinition attr)
     {
-        Long id = ids.get(attr);
-        return id != null ? id : -1L;
+        int index = delegate.getResourceClass().getAttributeIndex(attr);
+        return ids[index] - 1;
     }
     
     /**
@@ -892,7 +874,8 @@ public abstract class AbstractResource implements Resource
      */
     protected boolean isAttributeModified(AttributeDefinition attr)
     {
-        return modified.contains(attr);
+        int index = delegate.getResourceClass().getAttributeIndex(attr);
+        return modified.get(index);
     }
     
     /**
@@ -990,26 +973,27 @@ public abstract class AbstractResource implements Resource
      */
     protected Object getInternal(AttributeDefinition attribute, Object defaultValue)
     {
-        Object value = attributes.get(attribute);
+        int index = delegate.getResourceClass().getAttributeIndex(attribute);
+        Object value = attributes[index];
         if(value != null)
         {
             return value;
         }
-        else if(modified.contains(attribute))
+        else if(modified.get(index))
         {
             return defaultValue;
         }
         else
         {
-            Long idObj = ids.get(attribute);
-            if(idObj == null)
+            long id = ids[index] - 1;
+            if(id == -1)
             {
                 return defaultValue;
             }
             else
             {
-                value = loadAttribute(attribute, idObj.longValue());
-                attributes.put(attribute, value);
+                value = loadAttribute(attribute, id);
+                attributes[index] = value;
                 return value;
             }                
         }
