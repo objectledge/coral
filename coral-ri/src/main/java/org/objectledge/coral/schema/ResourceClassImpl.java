@@ -32,7 +32,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.24 2007-04-04 21:17:02 rafal Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.25 2007-04-04 22:24:21 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -445,6 +445,7 @@ public class ResourceClassImpl
      */
     public int getMaxAttributeIndex() 
     {
+        buildAttributeIndexTable();
         return attributeMaxIndex;
     }
 
