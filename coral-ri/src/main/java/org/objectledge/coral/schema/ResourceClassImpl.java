@@ -32,7 +32,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.25 2007-04-04 22:24:21 rafal Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.26 2007-05-30 22:16:01 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -1066,7 +1066,7 @@ public class ResourceClassImpl
     {
         if(attributeIndexTable != null)
         {            
-            if(attr.getId() > attributeIndexTable.length)
+            if(attr.getId() >= attributeIndexTable.length)
             {
                 int[] table = new int[(int)attr.getId()+1];
                 System.arraycopy(attributeIndexTable, 0, table, 0, attributeIndexTable.length);
