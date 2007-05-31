@@ -29,7 +29,7 @@ import org.objectledge.database.Database;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.11 2005-10-23 10:13:23 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.12 2007-05-31 20:27:15 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -315,7 +315,7 @@ public abstract class AbstractResourceHandler
         throws SQLException
     {
         revert0(rc, conn);
-        for(ResourceClass child : rc.getChildClasses())
+        for(ResourceClass child : rc.getDirectChildClasses())
         {
             child.getHandler().revert(child, conn);
         }

@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.20 2005-10-23 10:14:38 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.21 2007-05-31 20:27:15 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -59,7 +59,7 @@ public class GenericResourceHandler
         throws ValueRequiredException, SQLException
     {
         addAttribute0(resourceClass, attribute, value, conn);
-        for(ResourceClass child : resourceClass.getChildClasses())
+        for(ResourceClass child : resourceClass.getDirectChildClasses())
         {
             child.getHandler().addAttribute(attribute, value, conn);
         }
@@ -74,9 +74,9 @@ public class GenericResourceHandler
         throws SQLException
     {
         deleteAttribute0(resourceClass, attribute, conn);
-        for(ResourceClass child : resourceClass.getChildClasses())
+        for(ResourceClass child : resourceClass.getDirectChildClasses())
         {
-            deleteAttribute0(child, attribute, conn);
+            child.getHandler().deleteAttribute(attribute, conn);
         }
         revert(resourceClass, conn);
     }
@@ -89,7 +89,7 @@ public class GenericResourceHandler
     {
         AttributeDefinition[] attrs = parent.getAllAttributes();
         addAttribute0(resourceClass, attrs, values, conn);
-        for(ResourceClass child : resourceClass.getChildClasses())
+        for(ResourceClass child : resourceClass.getDirectChildClasses())
         {
             child.getHandler().addParentClass(parent, values, conn);
         }
@@ -105,9 +105,12 @@ public class GenericResourceHandler
     {
         AttributeDefinition[] attrs = parent.getAllAttributes();
         deleteAttribute0(resourceClass, attrs, conn);
-        for(ResourceClass child : resourceClass.getChildClasses())
+        for(ResourceClass child : resourceClass.getDirectChildClasses())
         {
-            deleteAttribute0(child, attrs, conn);
+        	for(AttributeDefinition attr : attrs)
+        	{
+                child.getHandler().deleteAttribute(attr, conn);        		
+        	}
         }
         revert(resourceClass, conn);
     }
