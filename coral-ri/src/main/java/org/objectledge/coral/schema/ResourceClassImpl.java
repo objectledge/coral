@@ -32,7 +32,7 @@ import org.objectledge.database.persistence.PersistenceException;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClassImpl.java,v 1.26 2007-05-30 22:16:01 rafal Exp $
+ * @version $Id: ResourceClassImpl.java,v 1.27 2007-05-31 20:24:54 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceClassImpl
@@ -79,26 +79,29 @@ public class ResourceClassImpl
     private Set<ResourceClassInheritance> inheritance;
 
     /** The parent classes. Contains direct and indirect parents. */
-    private Set parentClasses;
+    private Set<ResourceClass> parentClasses;
     
     /** The direct parent classes. */
     private Set<ResourceClass> directParentClasses;
 
     /** The child classes. Contains direct and indirect children. */
-    private Set childClasses;
+    private Set<ResourceClass> childClasses;
+    
+    /** The direct child classes. */
+    private Set<ResourceClass> directChildClasses;
     
     /** The declared attributes. */
-    private Set declaredAttributes;
+    private Set<AttributeDefinition> declaredAttributes;
 
     /** The associated permissions. */
-    private Set permissions;
+    private Set<Permission> permissions;
 
     /** The permission associations. */
-    private Set permissionAssociations;
+    private Set<PermissionAssociation> permissionAssociations;
     
     /** The attributes keyed by name. Contains declared and inherited attributes. */
-    private Map attributeMap;
-    
+    private Map<String, AttributeDefinition> attributeMap;
+
     /** The attribute indexes, indexed by attribute defnition id. Values stored in the array
      *  are equal to actual index + 1, and hence 0 marks an invalid entry - an attribute undefined
      *  for this class. */
@@ -341,7 +344,7 @@ public class ResourceClassImpl
     {
         buildDeclaredAttributeSet();
         // copy on write
-        Set snapshot = declaredAttributes;
+        Set<AttributeDefinition> snapshot = declaredAttributes;
         AttributeDefinition[] result = new AttributeDefinition[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -358,7 +361,7 @@ public class ResourceClassImpl
     {
         buildAttributeMap();
         // copy on write
-        Map snapshot = attributeMap;
+        Map<String, AttributeDefinition> snapshot = attributeMap;
         AttributeDefinition[] result = new AttributeDefinition[snapshot.size()];
         snapshot.values().toArray(result);
         return result;
@@ -379,7 +382,7 @@ public class ResourceClassImpl
         throws UnknownAttributeException
     {
         buildAttributeMap();
-        Map snapshot = attributeMap;
+        Map<String, AttributeDefinition> snapshot = attributeMap;
         AttributeDefinition attr = (AttributeDefinition)snapshot.get(name);
         if(attr == null)
         {
@@ -403,7 +406,7 @@ public class ResourceClassImpl
     {
         buildAttributeMap();
         // copy on write
-        Map snapshot = attributeMap;
+        Map<String, AttributeDefinition> snapshot = attributeMap;
         return snapshot.containsKey(name);
     }
     
@@ -464,7 +467,7 @@ public class ResourceClassImpl
     { 
         buildInheritance();
         // copy on write
-        Set snapshot = inheritance;
+        Set<ResourceClassInheritance> snapshot = inheritance;
         ResourceClassInheritance[] result = new ResourceClassInheritance[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -479,7 +482,7 @@ public class ResourceClassImpl
     {
         buildParentClassSet();
         // copy on write
-        Set snapshot = parentClasses;
+        Set<ResourceClass> snapshot = parentClasses;
         ResourceClass[] result = new ResourceClass[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -522,12 +525,23 @@ public class ResourceClassImpl
     {
         buildChildClassSet();
         // copy on write
-        Set snapshot = childClasses;
+        Set<ResourceClass> snapshot = childClasses;
         ResourceClass[] result = new ResourceClass[snapshot.size()];
         snapshot.toArray(result);
         return result;
     }
 
+    /**
+     * Returns the direct child classes of this resource class.
+     *
+     * @return the direct child classes of this resource class.
+     */    
+    public Set<ResourceClass> getDirectChildClasses()
+    {
+        buildDirectChildClassSet();
+        return directChildClasses;
+    }    
+    
     /**
      * Returns the permissions associated with this resource class.
      *
@@ -537,7 +551,7 @@ public class ResourceClassImpl
     {
         buildPermissionSet();
         // copy on write
-        Set snapshot = permissions;
+        Set<Permission> snapshot = permissions;
         Permission[] result = new Permission[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -552,7 +566,7 @@ public class ResourceClassImpl
     {
         buildPermissionAssociationSet();
         // copy on write
-        Set snapshot = permissionAssociations;
+        Set<PermissionAssociation> snapshot = permissionAssociations;
         PermissionAssociation[] result = new PermissionAssociation[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -590,7 +604,7 @@ public class ResourceClassImpl
         if(item.getChild().equals(this) || item.getParent().equals(this))
         {
             // copy on write
-            Set inheritanceCopy = (Set)((HashSet)inheritance).clone();
+            Set<ResourceClassInheritance> inheritanceCopy = new HashSet<ResourceClassInheritance>(inheritance);
             if(added)
             {
                 inheritanceCopy.add(item);
@@ -635,6 +649,7 @@ public class ResourceClassImpl
         }
         // flush cached information
         childClasses = null;
+        directChildClasses = null;
         parentClasses = null;
         directParentClasses = null;
         attributeMap = null;
@@ -658,7 +673,7 @@ public class ResourceClassImpl
         {
             if(rc.equals(this))
             {
-                Set declaredAttributesCopy = (Set)((HashSet)declaredAttributes).clone();
+                Set<AttributeDefinition> declaredAttributesCopy = new HashSet<AttributeDefinition>(declaredAttributes);
                 if(added)
                 {
                     declaredAttributesCopy.add(attribute);
@@ -669,7 +684,7 @@ public class ResourceClassImpl
                 }
                 declaredAttributes = declaredAttributesCopy;
             }
-            Map attributeMapCopy = (Map)((HashMap)attributeMap).clone();
+            Map<String, AttributeDefinition> attributeMapCopy = new HashMap<String, AttributeDefinition>(attributeMap);
             if(added)
             {
                 attributeMapCopy.put(attribute.getName(), attribute);
@@ -787,7 +802,7 @@ public class ResourceClassImpl
         try
         {
             Class handlerClass = instantiator.loadClass(className);
-            Map additional = new HashMap();
+            Map<Class, Object> additional = new HashMap<Class, Object>();
             additional.put(ResourceClass.class, this);
             handler = (ResourceHandler)instantiator.newInstance(handlerClass, additional);
         }
@@ -852,8 +867,8 @@ public class ResourceClassImpl
         if(parentClasses == null)
         {
             buildInheritance();
-            Set pc = new HashSet();
-            ArrayList stack = new ArrayList();
+            Set<ResourceClass> pc = new HashSet<ResourceClass>();
+            ArrayList<ResourceClass> stack = new ArrayList<ResourceClass>();
             stack.add(this);
             
             while(stack.size() > 0)
@@ -915,8 +930,8 @@ public class ResourceClassImpl
         if(childClasses == null)
         {
             buildInheritance();
-            Set cc = new HashSet();
-            ArrayList stack = new ArrayList();
+            Set<ResourceClass> cc = new HashSet<ResourceClass>();
+            ArrayList<ResourceClass> stack = new ArrayList<ResourceClass>();
             stack.add(this);
             
             while(stack.size() > 0)
@@ -947,6 +962,26 @@ public class ResourceClassImpl
             childClasses = cc;
         }
     }
+    
+    /**
+     * Initializes {@link #directChildClasses} set if neccessary.
+     */
+    private synchronized void buildDirectChildClassSet()
+    {
+        if(directChildClasses == null)
+        {
+            buildInheritance();
+            Set<ResourceClass> dcc = new HashSet<ResourceClass>();
+            for(ResourceClassInheritance ir : inheritance)
+            {
+                if(ir.getParent().equals(this))
+                {
+                    dcc.add(ir.getChild());
+                }                
+            }
+            directChildClasses = Collections.unmodifiableSet(dcc);
+        }
+    }
 
     /**
      * Initializes {@link #declaredAttributes} if neccessary.
@@ -969,7 +1004,7 @@ public class ResourceClassImpl
         {
             buildPermissionAssociationSet();
             buildParentClassSet();
-            Set temp = new HashSet();
+            Set<PermissionAssociation> temp = new HashSet<PermissionAssociation>();
             temp.addAll(permissionAssociations);
             Iterator i = parentClasses.iterator();
             while(i.hasNext())
@@ -978,7 +1013,7 @@ public class ResourceClassImpl
                 rc.buildPermissionAssociationSet();
                 temp.addAll(rc.permissionAssociations);
             }
-            permissions = new HashSet();
+            permissions = new HashSet<Permission>();
             i = temp.iterator();
             while(i.hasNext())
             {
@@ -1010,7 +1045,7 @@ public class ResourceClassImpl
             buildParentClassSet();
             buildDeclaredAttributeSet();
             
-            attributeMap = new HashMap();
+            attributeMap = new HashMap<String, AttributeDefinition>();
             Set ads = declaredAttributes;
             Iterator i = ads.iterator();
             while(i.hasNext())

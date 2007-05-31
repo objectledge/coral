@@ -9,7 +9,7 @@ import org.objectledge.coral.security.PermissionAssociation;
 /**
  * Represents a resource class.
  *
- * @version $Id: ResourceClass.java,v 1.5 2007-04-04 21:13:50 rafal Exp $
+ * @version $Id: ResourceClass.java,v 1.6 2007-05-31 20:24:58 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface ResourceClass
@@ -166,6 +166,13 @@ public interface ResourceClass
      */
     public ResourceClass[] getChildClasses();
 
+    /**
+     * Returns the direct child classes of this resource class.
+     *
+     * @return the direct child classes of this resource class.
+     */
+    public Set<ResourceClass> getDirectChildClasses();    
+    
     /**
      * Checks if the specifid class is a child class of this class.
      *
