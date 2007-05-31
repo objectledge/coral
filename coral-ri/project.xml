@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.24 2005-10-11 13:11:36 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.25 2007-05-31 20:30:51 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -130,6 +130,12 @@
       <artifactId>commons-collections</artifactId>
       <version>3.0</version>
       <url>http://jakarta.apache.org/commons/collections</url>
+    </dependency>
+    <dependency>
+      <groupId>pcj</groupId>
+      <artifactId>pcj</artifactId>
+      <version>1.2</version>
+      <url>http://pcj.sourceforge.net</url>
     </dependency>
   </dependencies>
 </project>
