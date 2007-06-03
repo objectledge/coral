@@ -29,11 +29,7 @@ package org.objectledge.coral.relation;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.objectledge.coral.BackendException;
@@ -45,11 +41,19 @@ import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 
+import bak.pcj.LongIterator;
+import bak.pcj.adapter.LongSetToSetAdapter;
+import bak.pcj.map.LongKeyMap;
+import bak.pcj.map.LongKeyMapIterator;
+import bak.pcj.map.LongKeyOpenHashMap;
+import bak.pcj.set.LongOpenHashSet;
+import bak.pcj.set.LongSet;
+
 /**
  * An implementation of the Relation interface.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImpl.java,v 1.30 2006-03-06 13:24:20 rafal Exp $
+ * @version $Id: RelationImpl.java,v 1.31 2007-06-03 00:06:26 rafal Exp $
  */
 public class RelationImpl
 extends AbstractEntity
@@ -62,9 +66,9 @@ implements Relation
     private CoralRelationManager coralRelationManager;
 
     /** Map r1 -&gt; set of r2. */
-    private Map<Long, Set<Long>> rel = new HashMap<Long, Set<Long>>();
+    private LongKeyMap rel = new LongKeyOpenHashMap();
     /** Map r2 -&gt; set of r1. */
-    private Map<Long, Set<Long>> invRel = new HashMap<Long, Set<Long>>();
+    private LongKeyMap invRel = new LongKeyOpenHashMap();
 	/** Number of unique resource pairs. */
 	private int resourceIdPairsNum = 0;
 
@@ -152,10 +156,10 @@ implements Relation
      */
     public boolean hasRef(long id, long idInv)
     {
-        Set set = (Set)rel.get(new Long(id));
+        LongSet set = (LongSet)rel.get(id);
         if(set != null)
         {
-            return set.contains(new Long(idInv));
+            return set.contains(idInv);
         }
         return false;
     }
@@ -176,9 +180,9 @@ implements Relation
 		return getAvgMappingSize(rel);
 	}
 
-	float getAvgMappingSize(Map relation)
+	float getAvgMappingSize(LongKeyMap relation)
 	{
-		int numSets = relation.keySet().size();
+		int numSets = relation.size();
 		if(numSets != 0)
 		{
 			return (float) resourceIdPairsNum / (float) numSets;
@@ -222,29 +226,28 @@ implements Relation
 		super.setData(record);
 		long[] def = coralRelationManager.getRelationDefinition(this);
         
-        
-        Set<Long> set1 = new HashSet(def.length/4);
-        Set<Long> set2 = new HashSet(def.length/4);
+        LongSet set1 = makeLongSet(def.length / 4);
+        LongSet set2 = makeLongSet(def.length / 4);
 
         for(int i=0; i<def.length / 2; i++)
         {
-            set1.add(new Long(def[2 * i]));
-            set2.add(new Long(def[2 * i + 1]));
+            set1.add(def[2 * i]);
+            set2.add(def[2 * i + 1]);
         }
 
-        rel = new HashMap<Long, Set<Long>>((int)(set1.size()*1.5));
-        invRel = new HashMap<Long, Set<Long>>((int)(set2.size()*1.5));
+        rel = makeLongKeyMap((int)(set1.size()*1.5));
+        invRel = makeLongKeyMap((int)(set2.size()*1.5));
 
         for(int i=0; i<def.length / 2; i++)
         {
-            Long r1k = new Long(def[i * 2]);
-            Long r2k = new Long(def[2 * i + 1]);
+            long id1 = def[i * 2];
+            long id2 = def[2 * i + 1];
 
-            set1 = maybeCreateSet(rel, r1k);
-            set2 = maybeCreateSet(invRel, r2k);
+            set1 = maybeCreateSet(rel, id1);
+            set2 = maybeCreateSet(invRel, id2);
 
-            set1.add(r2k);
-            set2.add(r1k);
+            set1.add(id2);
+            set2.add(id1);
         }
         this.resourceIdPairsNum = calcSetsSizeSum(rel);
     }
@@ -259,12 +262,13 @@ implements Relation
 		return "coral_relation_data";
 	}
     
-	private int calcSetsSizeSum(Map<Long, Set<Long>> relation)
+	private int calcSetsSizeSum(LongKeyMap relation)
 	{
 		int totalSize = 0;
-		for (Iterator<Set<Long>> iter = relation.values().iterator(); iter.hasNext();)
+		for(LongKeyMapIterator i = relation.entries(); i.hasNext(); )
 		{
-            Set<Long> relSet = iter.next();
+			i.next();
+			LongSet relSet = (LongSet) i.getValue();
 			totalSize += relSet.size();
 		}
 		return totalSize;
@@ -272,18 +276,20 @@ implements Relation
     
     private static final long[][] BLANK = new long[0][];
     
-    private long[][] getPairs(Map<Long, Set<Long>> relation)
+    private long[][] getPairs(LongKeyMap relation)
     {
         List<long[]> temp = new ArrayList<long[]>();
-        for(long head : relation.keySet())
+        for(LongKeyMapIterator i = relation.entries(); i.hasNext(); )
         {
-            for(long tail : relation.get(head))
-            {
+        	i.next();
+        	LongSet tailSet = (LongSet)i.getValue();
+        	for(LongIterator j = tailSet.iterator(); j.hasNext(); )
+        	{
                 long[] pair = new long[2];
-                pair[0] = head;
-                pair[1] = tail;
+                pair[0] = i.getKey();
+                pair[1] = j.next();
                 temp.add(pair);
-            }
+        	}
         }
         Collections.sort(temp, PairComparator.INSTANCE);
         return temp.toArray(BLANK);
@@ -314,29 +320,26 @@ implements Relation
      */
 	synchronized void remove(long id1, long id2)
     {
-        Long r1k = new Long(id1);
-        Long r2k = new Long(id2);
-
-        Set<Long> set1 = rel.get(r1k);
-        Set<Long> set2 = invRel.get(r2k);
+        LongSet set1 = (LongSet) rel.get(id1);
+        LongSet set2 = (LongSet) invRel.get(id2);
 
         boolean p1 = false;
         if(set1 != null)
         {
-            p1 = set1.remove(r2k);
+            p1 = set1.remove(id2);
             if(set1.size() == 0)
             {
-				rel.remove(r1k);
+				rel.remove(id1);
             }
         }
 
         boolean p2 = false;
         if(set2 != null)
         {
-            p2 = set2.remove(r1k);
+            p2 = set2.remove(id1);
 			if(set2.size() == 0)
 			{
-				invRel.remove(r2k);
+				invRel.remove(id2);
 			}
         }
 
@@ -359,15 +362,12 @@ implements Relation
      */
     synchronized void add(long id1, long id2)
     {
-        Long r1k = new Long(id1);
-        Long r2k = new Long(id2);
+        LongSet set1 = maybeCreateSet(rel, id1);
+        LongSet set2 = maybeCreateSet(invRel, id2);
 
-        Set<Long> set1 = maybeCreateSet(rel, r1k);
-        Set<Long> set2 = maybeCreateSet(invRel, r2k);
-
-        boolean p1 = set1.add(r2k);
+        boolean p1 = set1.add(id2);
         // -- this the moment in which the relationship is directed r1 -> r2
-		boolean p2 = set2.add(r1k);
+		boolean p2 = set2.add(id1);
 
 		if(p1 && p2)
 		{
@@ -387,7 +387,7 @@ implements Relation
     /**
      * Returns a set for a given id key and relation, maybe creates it.
      */
-    private Set<Long> maybeCreateSet(Map<Long, Set<Long>> relation, Long idk)
+    private LongSet maybeCreateSet(LongKeyMap relation, long idk)
     {
         return maybeCreateSet(relation, idk, initialSetCapacity);
     }
@@ -395,12 +395,12 @@ implements Relation
     /**
      * Returns a set for a given id key and relation, maybe creates it.
      */
-    private Set<Long> maybeCreateSet(Map<Long, Set<Long>> relation, Long idk, int initialCapacity)
+    private LongSet maybeCreateSet(LongKeyMap relation, long idk, int initialCapacity)
     {
-        Set<Long> set = relation.get(idk);
+        LongSet set = (LongSet) relation.get(idk);
         if(set == null)
         {
-            set = new HashSet<Long>(initialCapacity);
+            set = makeLongSet(initialCapacity);
             relation.put(idk, set);
         }
         return set;
@@ -409,9 +409,9 @@ implements Relation
     /**
      * Returns resources referenced by a given resource in the relation.
      */
-    Resource[] get(Map<Long, Set<Long>> relation, Resource r)
+    Resource[] get(LongKeyMap relation, Resource r)
     {
-        Set<Long> set = relation.get(r.getIdObject());
+        LongSet set = (LongSet)relation.get(r.getId());
         if(set != null)
         {
             return instantiate(set);
@@ -425,12 +425,12 @@ implements Relation
     /**
      * Return an array of ids contained in the map under given id.
      */
-    Set<Long> get(Map<Long, Set<Long>> relation, long id)
+    Set<Long> get(LongKeyMap relation, long id)
     {
-        Set<Long> set = relation.get(new Long(id));
+        LongSet set = (LongSet) relation.get(id);
         if(set != null)
         {
-        	return Collections.unmodifiableSet(set);
+        	return Collections.unmodifiableSet((Set<Long>) new LongSetToSetAdapter(set));
         }
         else
         {
@@ -444,16 +444,16 @@ implements Relation
      * @param a indentifier array.
      * @return Resource array.
      */
-    private Resource[] instantiate(Set<Long> a)
+    private Resource[] instantiate(LongSet a)
     {
         Resource[] res = new Resource[a.size()];
         try
         {
             int i = 0;
-            for (Iterator<Long> iter = a.iterator(); iter.hasNext(); i++)
+            for (LongIterator iter = a.iterator(); iter.hasNext(); i++)
             {
-                Long id = iter.next();
-                res[i] = store.getResource(id.longValue());
+                long id = iter.next();
+                res[i] = store.getResource(id);
             }
         }
         catch(EntityDoesNotExistException e)
@@ -462,6 +462,31 @@ implements Relation
         }
         return res;
     }
+    
+	
+	private LongKeyMap makeLongKeyMap(int size)
+	{
+		if(size <= 0)
+		{
+			return new LongKeyOpenHashMap();
+		}
+		else
+		{
+			return new LongKeyOpenHashMap(size);
+		}
+	}
+	
+	private LongSet makeLongSet(int size)
+	{
+		if(size <= 0)
+		{
+			return new LongOpenHashSet();
+		}
+		else
+		{
+			return new LongOpenHashSet(size);
+		}		
+	}
 
 	// relation invertion -------------------------------------------------------------------------
 
