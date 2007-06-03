@@ -57,7 +57,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.14 2005-06-13 11:08:45 rafal Exp $
+ * @version $Id: RelationImplTest.java,v 1.15 2007-06-03 00:07:08 rafal Exp $
  */
 public class RelationImplTest extends LedgeTestCase
 {
@@ -160,7 +160,7 @@ public class RelationImplTest extends LedgeTestCase
 		
 		assertEquals("avg mapping size", relation.getAvgMappingSize(), 2F, 0.5F);
 
-		mockResource1.expects(atLeastOnce()).method("getIdObject").will(returnValue(new Long(1L)));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(new Long(1L)));
 		Resource[] resRelatedTo1 = relation.get(resource1);
 		assertEquals(resRelatedTo1.length, 3);
 		if(resRelatedTo1[0].getId() == 4L)
@@ -197,7 +197,7 @@ public class RelationImplTest extends LedgeTestCase
             }
 		} 
 
-		mockResource1.expects(atLeastOnce()).method("getIdObject").will(returnValue(new Long(100L)));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(new Long(100L)));
 		Resource[] resRelatedTo100 = relation.get(resource1);
 		assertEquals(resRelatedTo100.length, 0);
 
@@ -241,7 +241,7 @@ public class RelationImplTest extends LedgeTestCase
 
 		assertEquals("avg mapping size", invRelation.getAvgMappingSize(), 2F, 0.5F);
 
-		mockResource1.expects(atLeastOnce()).method("getIdObject").will(returnValue(new Long(6L)));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(new Long(6L)));
 		Resource[] resRelatedTo6 = invRelation.get(resource1);
 		assertEquals(resRelatedTo6.length, 3);
 		if(resRelatedTo6[0].getId() == 1L)
@@ -278,7 +278,7 @@ public class RelationImplTest extends LedgeTestCase
             }
         } 
 
-		mockResource1.expects(atLeastOnce()).method("getIdObject").will(returnValue(new Long(100L)));
+		mockResource1.expects(atLeastOnce()).method("getId").will(returnValue(new Long(100L)));
 		resRelatedTo100 = invRelation.get(resource1);
 		assertEquals(resRelatedTo100.length, 0);
 
