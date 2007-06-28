@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.23 2005-10-03 11:34:56 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.24 2007-06-28 21:42:58 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -207,6 +207,12 @@
       <artifactId>xapool</artifactId>
       <version>1.5.0</version>
       <url>http://xapool.experlog.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>pcj</groupId>
+      <artifactId>pcj</artifactId>
+      <version>1.2</version>
+      <url>http://pcj.sourceforge.net</url>
     </dependency>
 
     <dependency>
