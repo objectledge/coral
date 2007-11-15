@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * An abstract base class for {@link AttributeHandler} implementations.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AttributeHandlerBase.java,v 1.15 2005-04-04 11:35:03 rafal Exp $
+ * @version $Id: AttributeHandlerBase.java,v 1.16 2007-11-15 17:35:40 rafal Exp $
  */
 public abstract class AttributeHandlerBase
     implements AttributeHandler
@@ -441,6 +441,32 @@ public abstract class AttributeHandlerBase
             throw (IllegalArgumentException)new IllegalArgumentException(string+
                 " does not conform to "+pattern+" pattern").initCause(e);
         }
+    }
+    
+    /**
+     * Format a Date object into string (day resolution).
+     * 
+     * @param date date object to format.
+     * @return String representation of the date.
+     */
+    protected String formatDate(Date date)
+    {
+        /** DateFormat is not thread-safe */
+        DateFormat format = new SimpleDateFormat(DATE_FORMAT);
+        return format.format(date);
+    }  
+    
+    /**
+     * Format a Date object into string (second resolution).
+     * 
+     * @param date date object to format.
+     * @return String representation of the date and time.
+     */  
+    protected String formatDateTime(Date date)
+    {
+        /** DateFormat is not thread-safe */
+        DateFormat format = new SimpleDateFormat(DATE_TIME_FORMAT);
+        return format.format(date);
     }
 
     /**
