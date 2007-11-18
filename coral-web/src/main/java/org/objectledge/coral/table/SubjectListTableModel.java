@@ -20,7 +20,7 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: SubjectListTableModel.java,v 1.6 2007-02-27 21:40:41 rafal Exp $
+ * @version $Id: SubjectListTableModel.java,v 1.7 2007-11-18 21:02:39 rafal Exp $
  */
 public class SubjectListTableModel extends ListTableModel
 {
@@ -39,7 +39,7 @@ public class SubjectListTableModel extends ListTableModel
     public SubjectListTableModel(Subject[] array, Locale locale, String[] properties, UserManager userManager)
         throws TableException
     {
-        super(array, null);
+        super(array, (TableColumn[])null);
         columns = getColumns(locale, properties, userManager);
     }
         
@@ -55,7 +55,7 @@ public class SubjectListTableModel extends ListTableModel
     public SubjectListTableModel(List list, Locale locale, String[] properties, UserManager userManager)
         throws TableException
     {
-        super(list, null);
+        super(list, (TableColumn[])null);
         columns = getColumns(locale, properties, userManager);
     }
 

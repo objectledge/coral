@@ -23,7 +23,7 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.8 2005-02-21 14:04:39 rafal Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.9 2007-11-18 21:02:39 rafal Exp $
  */
 public class ResourceListTableModel extends ListTableModel
 {
@@ -40,7 +40,7 @@ public class ResourceListTableModel extends ListTableModel
     public ResourceListTableModel(Resource[] array, Locale locale)
         throws TableException
     {
-        super(array, null);
+        super(array, (TableColumn[])null);
         columns = getColumns(locale);
     }
 
@@ -54,7 +54,7 @@ public class ResourceListTableModel extends ListTableModel
     public ResourceListTableModel(List list, Locale locale)
         throws TableException
     {
-        super(list, null);
+        super(list, (TableColumn[])null);
         columns = getColumns(locale);
     }
 
