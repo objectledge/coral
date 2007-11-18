@@ -29,7 +29,6 @@
 package org.objectledge.coral.table.comparator;
 
 import java.security.Principal;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;

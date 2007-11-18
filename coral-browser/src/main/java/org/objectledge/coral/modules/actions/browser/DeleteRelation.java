@@ -3,7 +3,6 @@ package org.objectledge.coral.modules.actions.browser;
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.relation.Relation;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.parameters.Parameters;
@@ -16,7 +15,7 @@ import org.objectledge.web.mvc.security.PolicySystem;
  * Delete relation action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: DeleteRelation.java,v 1.5 2006-03-06 13:03:35 rafal Exp $
+ * @version $Id: DeleteRelation.java,v 1.6 2007-11-18 21:19:46 rafal Exp $
  */
 public class DeleteRelation
     extends BaseBrowserAction

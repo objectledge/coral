@@ -2,7 +2,6 @@
 
 package org.objectledge.coral.script.parser;
 
-import org.objectledge.coral.schema.ResourceClass;
 
 public class ASTclassAndAliasSpecifier extends SimpleNode {
   public ASTclassAndAliasSpecifier(int id) {

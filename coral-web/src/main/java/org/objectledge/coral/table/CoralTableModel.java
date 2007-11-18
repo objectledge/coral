@@ -7,11 +7,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
-import org.objectledge.coral.table.comparator.AttributeValueComparator;
 import org.objectledge.coral.table.comparator.CreationTimeComparator;
 import org.objectledge.coral.table.comparator.CreatorNameComparator;
 import org.objectledge.coral.table.comparator.IdComparator;
@@ -34,7 +32,7 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.13 2006-04-28 07:35:35 rafal Exp $
+ * @version $Id: CoralTableModel.java,v 1.14 2007-11-18 21:21:04 rafal Exp $
  */
 public class CoralTableModel implements ExtendedTableModel
 {

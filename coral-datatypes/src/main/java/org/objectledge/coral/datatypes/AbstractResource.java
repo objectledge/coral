@@ -31,14 +31,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.BitSet;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
@@ -46,7 +41,6 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.schema.ResourceHandler;
 import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.security.PermissionAssignment;
 import org.objectledge.coral.security.Role;
@@ -61,7 +55,7 @@ import org.objectledge.database.Database;
  * Common base class for Resource data objects implementations. 
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.39 2007-04-04 22:25:49 rafal Exp $
+ * @version $Id: AbstractResource.java,v 1.40 2007-11-18 21:20:30 rafal Exp $
  */
 public abstract class AbstractResource implements Resource
 {

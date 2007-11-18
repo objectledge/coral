@@ -4,16 +4,9 @@ import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.relation.Relation;
-import org.objectledge.coral.relation.RelationModification;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.script.parser.ASTalterRelationAddPairsStatement;
-import org.objectledge.coral.script.parser.ASTalterRelationDeleteAllStatement;
-import org.objectledge.coral.script.parser.ASTalterRelationDeleteForwardStatement;
-import org.objectledge.coral.script.parser.ASTalterRelationDeletePairsStatement;
-import org.objectledge.coral.script.parser.ASTalterRelationDeleteReverseStatement;
-import org.objectledge.coral.script.parser.ASTalterRelationStatement;
 import org.objectledge.coral.script.parser.ASTattributeClass;
 import org.objectledge.coral.script.parser.ASTpermission;
 import org.objectledge.coral.script.parser.ASTpermissionList;
@@ -21,8 +14,6 @@ import org.objectledge.coral.script.parser.ASTrelation;
 import org.objectledge.coral.script.parser.ASTresource;
 import org.objectledge.coral.script.parser.ASTresourceClass;
 import org.objectledge.coral.script.parser.ASTresourceClassList;
-import org.objectledge.coral.script.parser.ASTresourcePair;
-import org.objectledge.coral.script.parser.ASTresourcePairList;
 import org.objectledge.coral.script.parser.ASTrole;
 import org.objectledge.coral.script.parser.ASTroleList;
 import org.objectledge.coral.script.parser.ASTsubject;
@@ -36,7 +27,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * Resolves RML AST nodes into ARL entities.
  * 
- * @version $Id: RMLEntityResolver.java,v 1.6 2006-03-03 13:54:02 rafal Exp $
+ * @version $Id: RMLEntityResolver.java,v 1.7 2007-11-18 21:20:48 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RMLEntityResolver

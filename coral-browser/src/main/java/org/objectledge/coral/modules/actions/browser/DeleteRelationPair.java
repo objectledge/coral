@@ -5,7 +5,6 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.relation.Relation;
 import org.objectledge.coral.relation.RelationModification;
-import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.parameters.Parameters;
@@ -18,7 +17,7 @@ import org.objectledge.web.mvc.security.PolicySystem;
  * Delete relation from cross reference action.
  * 
  * @author <a href="mailo:pablo@caltha.pl">Pawel Potempski</a>
- * @version $Id: DeleteRelationPair.java,v 1.1 2006-03-06 13:03:35 rafal Exp $
+ * @version $Id: DeleteRelationPair.java,v 1.2 2007-11-18 21:19:46 rafal Exp $
  */
 public class DeleteRelationPair
     extends BaseBrowserAction
