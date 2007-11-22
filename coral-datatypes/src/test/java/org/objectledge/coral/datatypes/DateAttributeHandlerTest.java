@@ -32,6 +32,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jmock.Mock;
@@ -197,7 +199,8 @@ public class DateAttributeHandlerTest extends LedgeTestCase
 
     public void testToExternalString()
     {
-        assertEquals("'"+currentDate+"'", handler.toExternalString(currentDate));
+    	DateFormat format = new SimpleDateFormat(DateAttributeHandler.DATE_TIME_FORMAT);
+        assertEquals("'"+format.format(currentDate)+"'", handler.toExternalString(currentDate));
     }
 
     public void testCheckDomainString()
