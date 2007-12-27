@@ -24,7 +24,7 @@ import org.objectledge.web.HttpContext;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * 
- * @version $Id: CoralEntitySelectionState.java,v 1.7 2005-05-30 03:48:31 zwierzem Exp $
+ * @version $Id: CoralEntitySelectionState.java,v 1.8 2007-12-27 16:00:34 rafal Exp $
  */
 public abstract class CoralEntitySelectionState
 {
@@ -260,7 +260,43 @@ public abstract class CoralEntitySelectionState
 		state.remove(id);
 	}
 
-	/**
+    /**
+     * Set string value of the entity.
+     * 
+     * @param entity the entity.
+     * @param value the value.
+     * @return the previous value of the entity.
+     */
+    public String setValue(Entity entity, String value)
+    {
+        return setValue(entity.getIdObject(), value);
+    }
+
+    /**
+     * Set string value of the entity.
+     * 
+     * @param id the id.
+     * @param value the value.
+     * @return the previous value of the entity.
+     */
+    public String setValue(long id, String value)
+    {
+        return setValue(new Long(id), value);
+    }
+
+    /**
+     * Set string value of the entity.
+     * 
+     * @param id the id.
+     * @param value the value.
+     * @return the previous value of the entity.
+     */
+    public String setValue(Long id, String value)
+    {
+        return (String)(state.put(id, value));
+    }
+    
+    /**
      * Get string value of the entity.
      * 
      * @param entity the entity.
