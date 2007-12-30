@@ -2,10 +2,12 @@ package org.objectledge.coral.security;
 
 import java.util.Date;
 
+import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssignment;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.store.ResourceRef;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.PersistenceException;
@@ -18,7 +20,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * org.objectledge.coral.store.Resource#getPermissionAssignments()} method. They experss security
  * constraints placed upon a specific resource (and optionally it's sub-resources). </p> 
  *
- * @version $Id: PermissionAssignmentImpl.java,v 1.8 2005-02-08 20:34:45 rafal Exp $
+ * @version $Id: PermissionAssignmentImpl.java,v 1.9 2007-12-30 22:06:10 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssignmentImpl
@@ -31,7 +33,7 @@ public class PermissionAssignmentImpl
     private CoralCore coral;
         
     /** The {@link org.objectledge.coral.store.Resource}. */
-    private Resource resource;
+    private ResourceRef resource;
     
     /** The {@link org.objectledge.coral.security.Role}. */
     private Role role;
@@ -71,7 +73,7 @@ public class PermissionAssignmentImpl
     {
         super(coral, grantor, new Date());
         this.coral = coral;
-        this.resource = resource;
+        this.resource = new ResourceRef(coral, resource);
         this.role = role;
         this.permission = permission;
         this.inherited = inherited;
@@ -168,7 +170,7 @@ public class PermissionAssignmentImpl
         try
         {
             long resourceId = record.getLong("resource_id");
-            resource = coral.getStore().getResource(resourceId);
+            resource = new ResourceRef(coral, resourceId);
             long roleId = record.getLong("role_id");
             role = coral.getSecurity().getRole(roleId);
             long permissionId = record.getLong("permission_id");
@@ -190,7 +192,14 @@ public class PermissionAssignmentImpl
      */
     public Resource getResource()
     {
-        return resource;
+        try
+        {
+            return resource.get();
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new BackendException("in-memory data inconsistency", e);
+        }
     }
     
     /**
