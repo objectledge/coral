@@ -20,7 +20,7 @@ import org.objectledge.coral.store.Resource;
  * {@link org.objectledge.coral.entity.Assignment} and 
  * {@link org.objectledge.coral.entity.Association} objects.
  * 
- * @version $Id: CoralRegistry.java,v 1.3 2004-03-03 10:27:30 fil Exp $
+ * @version $Id: CoralRegistry.java,v 1.4 2007-12-30 22:20:13 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralRegistry
@@ -156,7 +156,7 @@ public interface CoralRegistry
      * @param resourceClass the resource class.
      * @return attributes defined by a particular {@link ResourceClass}.
      */
-    public Set getDeclaredAttributes(ResourceClass resourceClass);
+    public Set<AttributeDefinition> getDeclaredAttributes(ResourceClass resourceClass);
 
     /**
      * Returns all attributes defined by classes in the system.
@@ -210,7 +210,7 @@ public interface CoralRegistry
      * @param resourceClass the resource class.
      * @return a set of {@link ResourceClassInheritance} objects.
      */
-    public Set getResourceClassInheritance(ResourceClass resourceClass);
+    public Set<ResourceClassInheritance> getResourceClassInheritance(ResourceClass resourceClass);
 
     /**
      * Adds an resource class inheritance record to the persistent storage and
@@ -442,7 +442,7 @@ public interface CoralRegistry
      * @return role implications in which particular role is involved (as super,
      *         or sub role).
      */
-    public Set getRoleImplications(Role role);
+    public Set<RoleImplication> getRoleImplications(Role role);
 
     /**
      * Adds an resource class inheritance record to the persistent storage and
@@ -468,7 +468,7 @@ public interface CoralRegistry
      * @param subject the subject.
      * @return the role assignments for a particular subject.
      */
-    public Set getRoleAssignments(Subject subject);
+    public Set<RoleAssignment> getRoleAssignments(Subject subject);
 
     /**
      * Returns the assignments of a particular role.
@@ -476,7 +476,7 @@ public interface CoralRegistry
      * @param role the role.
      * @return the assignments of a particular role.
      */
-    public Set getRoleAssignments(Role role);
+    public Set<RoleAssignment> getRoleAssignments(Role role);
 
     /**
      * Adds an attribute definition to the persistent storage and in-memory
@@ -501,7 +501,7 @@ public interface CoralRegistry
      * @param resourceClass the resourceClass.
      * @return pemission associations for a particular {@link ResourceClass}.
      */
-    public Set getPermissionAssociations(ResourceClass resourceClass);
+    public Set<PermissionAssociation> getPermissionAssociations(ResourceClass resourceClass);
     
     /**
      * Returns pemission associations for a particular {@link Permission}.
@@ -509,7 +509,7 @@ public interface CoralRegistry
      * @param permission the permission.
      * @return pemission associations for a particular {@link Permission}.
      */
-    public Set getPermissionAssociations(Permission permission);
+    public Set<PermissionAssociation> getPermissionAssociations(Permission permission);
 
     /**
      * Adds an permission association to the persistent storage and in-memory
@@ -536,7 +536,7 @@ public interface CoralRegistry
      * @return permission assignment information for a particular {@link
      * Resource}.
      */
-    public Set getPermissionAssignments(Resource resource);
+    public Set<PermissionAssignment> getPermissionAssignments(Resource resource);
  
      /**
      * Returns permission assignment information for a particular {@link
@@ -546,7 +546,7 @@ public interface CoralRegistry
      * @return permission assignment information for a particular {@link
      * Role}.
      */
-    public Set getPermissionAssignments(Role role);
+    public Set<PermissionAssignment> getPermissionAssignments(Role role);
 
     /**
      * Adds an permission assignment to the persistent storage and in-memory
