@@ -2,7 +2,6 @@ package org.objectledge.coral.security;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.objectledge.coral.BackendException;
@@ -20,9 +19,9 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 
 /**
- * An implementaion of {@link org.objectledge.coral.security.Role} interface.
+ * An implementation of {@link org.objectledge.coral.security.Role} interface.
  *
- * @version $Id: RoleImpl.java,v 1.13 2005-05-20 05:36:56 pablo Exp $
+ * @version $Id: RoleImpl.java,v 1.14 2007-12-30 23:55:38 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class RoleImpl
@@ -287,15 +286,11 @@ public class RoleImpl
         buildRoles();
         Set<Subject> temp = new HashSet<Subject>();
         Set<Role> roleset = roles.getMatchingRoles();
-        Iterator i=roleset.iterator();
-        while(i.hasNext())
+        for(Role r: roleset)
         {
-            Role r = (Role)i.next();
-            Set ras = coral.getRegistry().getRoleAssignments(r);
-            Iterator j=ras.iterator();
-            while(j.hasNext())
+            Set<RoleAssignment> ras = coral.getRegistry().getRoleAssignments(r);
+            for(RoleAssignment ra : ras)
             {
-                RoleAssignment ra = (RoleAssignment)j.next();
                 temp.add(ra.getSubject());
             }
         }
@@ -329,26 +324,17 @@ public class RoleImpl
     public PermissionAssignment[] getPermissionAssignments(Resource resource)    
     {
         buildPermissions();
-        PermissionAssignment[] pas = permissions.getPermissionAssignments(resource);
-		if(pas.length == 0)
-		{
-			return pas;
-		}
+        Set<PermissionAssignment> pas = coral.getRegistry().getPermissionAssignments(resource);
 		// filter out inherited grants
 		ArrayList<PermissionAssignment> list = new ArrayList<PermissionAssignment>();
-		for(PermissionAssignment pa:pas)
+		for(PermissionAssignment pa : pas)
 		{
 			if(pa.getRole().equals(this) && pa.getResource().equals(resource))
 			{
 				list.add(pa);
 			}
 		}
-		if(list.size() != pas.length)
-		{
-			pas = new PermissionAssignment[list.size()];
-			list.toArray(pas);
-		}
-		return pas;
+		return list.toArray(new PermissionAssignment[list.size()]);
     }
     
     /**
