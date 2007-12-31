@@ -1,8 +1,10 @@
 package org.objectledge.coral.security;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -18,7 +20,7 @@ import org.objectledge.coral.store.ResourceInheritance;
  * A helper class for managing a set of permissions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionContainer.java,v 1.7 2005-02-08 20:34:45 rafal Exp $
+ * @version $Id: PermissionContainer.java,v 1.8 2007-12-31 00:49:31 rafal Exp $
  */
 public class PermissionContainer
     implements PermissionAssignmentChangeListener,
@@ -35,14 +37,8 @@ public class PermissionContainer
     /** The role container. */
     private RoleContainer roles;
 
-    /** Resource -> Set of Permissions */
-    private Map pCache = new WeakHashMap();
-    
-    /** Respource -> Array of PermissionAssignments */
-    private Map paCache = new WeakHashMap();
-
-    /** Resource -> Set of watched child resources. */ 
-    private Map childResources = new WeakHashMap();
+    /** Cache of permission information */
+    private Map<Resource, PermissionsInfo> piCache = new WeakHashMap<Resource, PermissionsInfo>();
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -73,10 +69,14 @@ public class PermissionContainer
      */
     public Permission[] getPermissions(Resource res)
     {
-        Set snapshot = buildPermissions(res);
-        Permission[] result = new Permission[snapshot.size()];
-        snapshot.toArray(result);
-        return result;
+        List<PermissionsInfo> piList = getPermissionsInfo(res);
+        List<Permission> pList = new ArrayList<Permission>();
+        PermissionsInfo piRes = piList.get(0);
+        for(PermissionsInfo pi : piList)
+        {
+            pi.addTo(pList, pi == piRes);
+        }
+        return pList.toArray(new Permission[pList.size()]);
     }
 
     /**
@@ -89,19 +89,16 @@ public class PermissionContainer
      */
     public boolean hasPermission(Resource res, Permission perm)
     {    
-        return buildPermissions(res).contains(perm);
-    }
-
-    /**
-     * Returl all permission assignments the entityt this permission container
-     * describes has on a specific resource.
-     *
-     * @param res the resource.
-     * @return permission assignment array.
-     */
-    public PermissionAssignment[] getPermissionAssignments(Resource res)
-    {
-        return buildPermissionAssignments(res);
+        List<PermissionsInfo> piList = getPermissionsInfo(res);
+        PermissionsInfo piRes = piList.get(0);
+        for(PermissionsInfo pi : piList)
+        {
+            if(pi.hasPermission(perm, pi == piRes))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // PermissionAssignmentChangeListener interface /////////////////////////////////////////////
@@ -117,18 +114,13 @@ public class PermissionContainer
      */
     public synchronized void permissionsChanged(PermissionAssignment item, boolean added)
     {
-        ArrayList stack = new ArrayList();
+        List<Resource> stack = new ArrayList<Resource>();
         stack.add(item.getResource());
         while(stack.size() > 0)
         {
-            Resource r = (Resource)stack.remove(stack.size()-1);
-            pCache.remove(r);
-            paCache.remove(r);
-            Set children = (Set)childResources.get(r);
-            if(children != null)
-            {
-                stack.addAll(children);
-            }
+            Resource r = stack.remove(stack.size()-1);
+            flush(r);
+            stack.addAll(Arrays.asList(r.getChildren()));
         }
     }
 
@@ -145,133 +137,112 @@ public class PermissionContainer
      */
     public synchronized void resourceTreeChanged(ResourceInheritance item, boolean added)
     {
-        ArrayList stack = new ArrayList();
+        List<Resource> stack = new ArrayList<Resource>();
         stack.add(item.getChild());
         while(stack.size() > 0)
         {
-            Resource r = (Resource)stack.remove(stack.size()-1);
+            Resource r = stack.remove(stack.size()-1);
             flush(r);
-            Set children = (Set)childResources.get(r);
-            if(children != null)
-            {
-                stack.addAll(children);
-            }
+            stack.addAll(Arrays.asList(r.getChildren()));
         }
-        Set children = (Set)childResources.get(item.getParent());
         if(added)
         {
-            if(children == null)
-            {
-                children = new HashSet();
-                childResources.put(item.getParent(), children);
-            }
-            children.add(item.getChild());
             coralEventHub.getGlobal().addResourceTreeChangeListener(this, item.getParent());
             coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, item.getParent());
-        }
-        else
-        {
-            if(children != null)
-            {
-                children.remove(item.getChild());
-            }
         }
     }
 
     // private methods //////////////////////////////////////////////////////////////////////////
 
     /**
-     * Build a set of permissions on a specific resource.
-     *
-     * @param res the resource
-     * @return the set of permissions
+     * Returns the chain of permissions info starting from res all the way up to hierarchy root.
+     * 
+     * Always returns at least one element.
+     * PermissionsInfo for res is always the first element.
      */
-    private synchronized Set buildPermissions(Resource res)
+    private synchronized List<PermissionsInfo> getPermissionsInfo(Resource res)
     {
-        Set ps = (Set)pCache.get(res);
-        if(ps == null)
+        List<PermissionsInfo> piList = new ArrayList<PermissionsInfo>();
+        Set<Role> roleSet = null;
+        Resource cur = res;
+        while(cur != null)
         {
-            ps = new HashSet();
-            pCache.put(res, ps);
-            PermissionAssignment[] paa = buildPermissionAssignments(res);
-            for(int i=0; i<paa.length; i++)
+            PermissionsInfo pi = piCache.get(cur);
+            if(pi == null)
             {
-                ps.add(paa[i].getPermission());
+                if(roleSet == null)
+                {
+                    roleSet = roles.getMatchingRoles();
+                }
+                Set<PermissionAssignment> paSet = coral.getRegistry().getPermissionAssignments(cur);
+                pi = new PermissionsInfo(roleSet, paSet);
+                piCache.put(cur, pi);
+                coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, cur);
+                coralEventHub.getGlobal().addResourceTreeChangeListener(this, cur);                
             }
+            piList.add(pi);
+            cur = cur.getParent();
         }
-        return ps;
+        return piList;
     }
 
     /**
-     * Build a set of permission assignments on a specific resource.
-     *
-     * @param res the resource
-     * @return the set of permissions
-     */
-    private synchronized PermissionAssignment[] buildPermissionAssignments(Resource res)
-    {
-        PermissionAssignment[] paa = (PermissionAssignment[])paCache.get(res);
-        if(paa == null)
-        {
-            Set temp = new HashSet();
-            Resource r = res;
-            Resource rr = null;
-            Set roleSet = roles.getMatchingRoles();
-            while(r != null)
-            {
-                Set pas = coral.getRegistry().getPermissionAssignments(r);
-                Iterator i = pas.iterator();
-                while(i.hasNext())
-                {
-                    PermissionAssignment pa = (PermissionAssignment)i.next();
-                    if(roleSet.contains(pa.getRole()) &&
-                       (pa.isInherited() || r.equals(res)))
-                    {
-                        temp.add(pa);
-                    }
-                }
-                if(!r.equals(res))
-                {
-                    Set children = (Set)childResources.get(r);
-                    if(children == null)
-                    {
-                        children = new HashSet();
-                        childResources.put(r, children);
-                    }
-                    children.add(rr);
-                }
-                coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, r);
-                coralEventHub.getGlobal().addResourceTreeChangeListener(this, r);
-                rr = r;
-                r = r.getParent();
-            }
-            paa = new PermissionAssignment[temp.size()];
-            temp.toArray(paa);
-            paCache.put(res, paa);
-        }
-        return paa;
-    }
-
-    /**
-     * Flushes permission information on all reosurces.
+     * Flushes permission information on all resources.
      *
      * <p>This method is called by the peer RoleContainer when role
      * information (implications / assignments) change.</p>
      */
     synchronized void flush()
     {
-        pCache.clear();
-        paCache.clear();
+        piCache.clear();
     }
 
     /**
      * Flushes permission information on a particular resource.
      *
-     * @param r the resource to flush permissission information on.
+     * @param r the resource to flush permissions information on.
      */
     synchronized void flush(Resource r)
     {
-        pCache.remove(r);
-        paCache.remove(r);
+        piCache.remove(r);
+    }
+    
+    private class PermissionsInfo
+    {
+        private Set<Permission> inherited = new HashSet<Permission>();
+        
+        private Set<Permission> nonInherited = new HashSet<Permission>();
+        
+        public PermissionsInfo(Set<Role> roleSet, Set<PermissionAssignment> paSet)
+        {
+            for(PermissionAssignment pa : paSet)
+            {
+                if(roleSet.contains(pa.getRole()))
+                {
+                    if(pa.isInherited())
+                    {
+                        inherited.add(pa.getPermission());
+                    }
+                    else
+                    {
+                        nonInherited.add(pa.getPermission());
+                    }
+                }
+            }
+        }
+        
+        public boolean hasPermission(Permission p, boolean includeNonInherited)
+        {
+            return inherited.contains(p) || includeNonInherited && nonInherited.contains(p);
+        }
+        
+        public void addTo(Collection<Permission> pCol, boolean includeNotInherited)
+        {
+            pCol.addAll(inherited);
+            if(includeNotInherited)
+            {
+                pCol.addAll(nonInherited);
+            }
+        }
     }
 }
