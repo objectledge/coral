@@ -1,5 +1,6 @@
 package org.objectledge.coral.entity;
 
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 import org.objectledge.coral.CoralCore;
@@ -35,11 +36,12 @@ public abstract class EntityRef<E extends Entity>
      * Creates a new instance of EntityRef.
      * @param entity An Entity object.
      * @param coralCore The Coral Core.
+     * @param queue reference queue, may be null.
      */
-    public EntityRef(E entity, CoralCore coralCore)
+    public EntityRef(E entity, CoralCore coralCore, ReferenceQueue<E> queue)
     {
         this.coralCore = coralCore;
-        ref = new WeakReference<E>(entity);
+        ref = new WeakReference<E>(entity, queue);
         if(entity != null)
         {
             id = entity.getId();
@@ -54,8 +56,9 @@ public abstract class EntityRef<E extends Entity>
      * Creates a new instance of EntityRef.
      * @param id Entity identitfier.
      * @param coralCore The Coral Core.
+     * @param queue reference queue, may be null.
      */
-    public EntityRef(long id, CoralCore coralCore)
+    public EntityRef(long id, CoralCore coralCore, ReferenceQueue<E> queue)
     {
         this.coralCore = coralCore;
         ref = new WeakReference<E>(null);

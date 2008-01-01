@@ -1,5 +1,7 @@
 package org.objectledge.coral.store;
 
+import java.lang.ref.ReferenceQueue;
+
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityRef;
@@ -16,10 +18,32 @@ public class ResourceRef
      * Create a new reference instance.
      * @param resource the resource.
      * @param coralCore the Coral core.
+     * @param queue reference queue, may be null.
+     */
+    public ResourceRef(Resource resource, CoralCore coralCore, ReferenceQueue<Resource> queue)
+    {
+        super(resource, coralCore, queue);
+    }
+    
+    /**
+     * Create a new reference instance.
+     * @param id resource id.
+     * @param coralCore the Coral core.
+     * @param queue reference queue, may be null.
+     */
+    public ResourceRef(long id, CoralCore coralCore, ReferenceQueue<Resource> queue)
+    {
+        super(id, coralCore, queue);
+    }
+
+    /**
+     * Create a new reference instance.
+     * @param resource the resource.
+     * @param coralCore the Coral core.
      */
     public ResourceRef(Resource resource, CoralCore coralCore)
     {
-        super(resource, coralCore);
+        super(resource, coralCore, null);
     }
     
     /**
@@ -29,9 +53,9 @@ public class ResourceRef
      */
     public ResourceRef(long id, CoralCore coralCore)
     {
-        super(id, coralCore);
-    }
-
+        super(id, coralCore, null);
+    }    
+    
     @Override
     protected Resource resolve(long id)
         throws EntityDoesNotExistException
