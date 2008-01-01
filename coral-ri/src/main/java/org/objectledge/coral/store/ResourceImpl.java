@@ -37,7 +37,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * and {@link org.objectledge.coral.schema.ResourceHandler#retrieve(Resource,
  * java.sql.Connection,Object)}.</p>
  *
- * @version $Id: ResourceImpl.java,v 1.27 2007-12-30 22:06:09 rafal Exp $
+ * @version $Id: ResourceImpl.java,v 1.28 2008-01-01 20:20:27 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class ResourceImpl
@@ -161,7 +161,7 @@ public class ResourceImpl
         this.coralEventHub = coralEventHub;
 
         this.resourceClass = resourceClass;
-        this.parent = new ResourceRef(coral, parent);
+        this.parent = new ResourceRef(parent, coral);
         if(parent != null)
         {
             this.parentId = parent.getId();
@@ -467,7 +467,7 @@ public class ResourceImpl
             {
                 try
                 {
-                    parent = new ResourceRef(coral, coral.getStore().getResource(parentId));
+                    parent = new ResourceRef(coral.getStore().getResource(parentId), coral);
                 }
                 catch(EntityDoesNotExistException e)
                 {
@@ -477,7 +477,7 @@ public class ResourceImpl
             }
             else
             {
-                parent = new ResourceRef(coral, null);
+                parent = new ResourceRef(null, coral);
             }
         }
         try
@@ -789,7 +789,7 @@ public class ResourceImpl
      */
     void setParent(Resource parent)
     {
-        this.parent = new ResourceRef(coral, parent);
+        this.parent = new ResourceRef(parent, coral);
         if(parent != null)
         {
         	parentId = parent.getId();

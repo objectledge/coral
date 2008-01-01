@@ -33,11 +33,10 @@ public abstract class EntityRef<E extends Entity>
 
     /**
      * Creates a new instance of EntityRef.
-     * 
-     * @param coralCore The Coral Core.
      * @param entity An Entity object.
+     * @param coralCore The Coral Core.
      */
-    public EntityRef(CoralCore coralCore, E entity)
+    public EntityRef(E entity, CoralCore coralCore)
     {
         this.coralCore = coralCore;
         ref = new WeakReference<E>(entity);
@@ -53,11 +52,10 @@ public abstract class EntityRef<E extends Entity>
     
     /**
      * Creates a new instance of EntityRef.
-     * 
-     * @param coralCore The Coral Core.
      * @param id Entity identitfier.
+     * @param coralCore The Coral Core.
      */
-    public EntityRef(CoralCore coralCore, long id)
+    public EntityRef(long id, CoralCore coralCore)
     {
         this.coralCore = coralCore;
         ref = new WeakReference<E>(null);

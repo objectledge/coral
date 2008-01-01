@@ -14,24 +14,22 @@ public class ResourceRef
 {
     /**
      * Create a new reference instance.
-     * 
-     * @param coralCore the Coral core.
      * @param resource the resource.
+     * @param coralCore the Coral core.
      */
-    public ResourceRef(CoralCore coralCore, Resource resource)
+    public ResourceRef(Resource resource, CoralCore coralCore)
     {
-        super(coralCore, resource);
+        super(resource, coralCore);
     }
     
     /**
      * Create a new reference instance.
-     * 
-     * @param coralCore the Coral core.
      * @param id resource id.
+     * @param coralCore the Coral core.
      */
-    public ResourceRef(CoralCore coralCore, long id)
+    public ResourceRef(long id, CoralCore coralCore)
     {
-        super(coralCore, id);
+        super(id, coralCore);
     }
 
     @Override
