@@ -33,6 +33,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.Log4JLogger;
 import org.jmock.Mock;
+import org.objectledge.cache.CacheFactory;
 import org.objectledge.context.Context;
 import org.objectledge.coral.security.PermissionAssociation;
 import org.objectledge.event.DelegatingEventWhiteboard;
@@ -43,7 +44,7 @@ import org.objectledge.threads.ThreadPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventHubImplTest.java,v 1.6 2005-01-28 01:04:16 rafal Exp $
+ * @version $Id: CoralEventHubImplTest.java,v 1.7 2008-01-01 23:32:43 rafal Exp $
  */
 public class CoralEventHubImplTest
     extends CoralEventTestCase
@@ -76,8 +77,9 @@ public class CoralEventHubImplTest
         BasicConfigurator.configure();
         Logger log = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
         threadPool = new ThreadPool(null, new Context(), null, log);
+        
         EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, log,
-             threadPool);
+             threadPool, cacheFactory);
         PassthroughEventBridge passthroughEventBridge = new PassthroughEventBridge();
         inboundBridge = passthroughEventBridge.getInbound();
         outboundBridge = passthroughEventBridge.getOutbound();

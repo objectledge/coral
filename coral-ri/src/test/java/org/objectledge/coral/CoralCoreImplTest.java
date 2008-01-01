@@ -48,7 +48,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImplTest.java,v 1.9 2005-01-28 01:04:19 rafal Exp $
+ * @version $Id: CoralCoreImplTest.java,v 1.10 2008-01-01 23:32:44 rafal Exp $
  */
 public class CoralCoreImplTest extends LedgeTestCase
 {
@@ -81,9 +81,10 @@ public class CoralCoreImplTest extends LedgeTestCase
         mockCacheFactory = mock(CacheFactory.class);
         cacheFactory = (CacheFactory)mockCacheFactory.proxy();
         mockCacheFactory.stubs().method("getInstance").will(returnValue(new HashMap()));
+        mockCacheFactory.stubs().method("registerForPeriodicExpunge").isVoid();
         logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));        
         threadPool = new ThreadPool(null, new Context(), null, logger);
-        eventWhiteboardFactory = new EventWhiteboardFactory(null, logger, threadPool);
+        eventWhiteboardFactory = new EventWhiteboardFactory(null, logger, threadPool, cacheFactory);
         PicoContainer emptyContainer = new DefaultPicoContainer();
         
         coralCore = new CoralCoreImpl(emptyContainer, persistence, cacheFactory, 

@@ -49,7 +49,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSecurityImplTest.java,v 1.9 2005-05-23 01:00:55 rafal Exp $
+ * @version $Id: CoralSecurityImplTest.java,v 1.10 2008-01-01 23:32:44 rafal Exp $
  */
 public class CoralSecurityImplTest 
     extends LedgeTestCase
@@ -411,10 +411,13 @@ public class CoralSecurityImplTest
         mockCoralRegistry.stubs().method("getRole").with(eq(1L)).will(returnValue(rootRole));
         mockRootSubject.stubs().method("hasRole").with(same(rootRole)).will(returnValue(true));
         mockResource.stubs().method("getResourceClass").will(returnValue(resourceClass));
+        mockResource.stubs().method("getId").will(returnValue(new Long(1L)));        
         mockResourceClass.stubs().method("isAssociatedWith").with(same(permission)).will(returnValue(true));
         mockResource.stubs().method("getIdObject").will(returnValue(new Long(1L)));
         mockRole.stubs().method("getIdObject").will(returnValue(new Long(2L)));
+        mockRole.stubs().method("getId").will(returnValue(new Long(2L)));
         mockPermission.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockPermission.stubs().method("getId").will(returnValue(new Long(1L)));
         PermissionAssignment pa = new PermissionAssignmentImpl(coralCore,
             rootSubject, resource, role, permission, true);
         mockCoralRegistry.expects(once()).method("addPermissionAssignment").with(eq(pa));
@@ -429,8 +432,11 @@ public class CoralSecurityImplTest
         mockCoralRegistry.stubs().method("getRole").with(eq(1L)).will(returnValue(rootRole));
         mockRootSubject.stubs().method("hasRole").with(same(rootRole)).will(returnValue(true));
         mockResource.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockResource.stubs().method("getId").will(returnValue(new Long(1L)));        
         mockRole.stubs().method("getIdObject").will(returnValue(new Long(2L)));
+        mockRole.stubs().method("getId").will(returnValue(new Long(2L)));
         mockPermission.stubs().method("getIdObject").will(returnValue(new Long(1L)));
+        mockPermission.stubs().method("getId").will(returnValue(new Long(1L)));
         PermissionAssignment pa = new PermissionAssignmentImpl(coralCore,
             rootSubject, resource, role, permission, false);
         mockResource.stubs().method("getPermissionAssignments").with(same(role)).will(

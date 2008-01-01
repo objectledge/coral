@@ -37,6 +37,7 @@ import java.util.Map;
 
 import org.jcontainer.dna.Logger;
 import org.jmock.Mock;
+import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -63,7 +64,8 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     private Database database;
     private Mock mockLogger;
     private Logger logger;
-    
+    private Mock mockCacheFactory;
+    private CacheFactory cacheFactory;
     
     private Mock mockSubject;
     private Subject subject;
@@ -108,6 +110,9 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         database = (Database)mockDatabase.proxy();
         mockLogger = mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
+        mockCacheFactory = mock(CacheFactory.class);
+        mockCacheFactory.stubs().method("registerForPeriodicExpunge").isVoid();
+        cacheFactory = (CacheFactory)mockCacheFactory.proxy();
 
         mockSubject = mock(Subject.class);
         subject = (Subject)mockSubject.proxy();
@@ -183,7 +188,8 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         connection = (Connection)mockConnection.proxy();              
                 
         
-        handler = new GenericResourceHandler(coralSchema, coralSecurity, resourceClass, database, instantiator, logger);
+        handler = new GenericResourceHandler(coralSchema, resourceClass, database,
+            instantiator, cacheFactory, logger);
                                              
     }
     

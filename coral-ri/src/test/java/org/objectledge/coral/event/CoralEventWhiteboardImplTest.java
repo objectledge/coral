@@ -39,7 +39,7 @@ import org.objectledge.threads.ThreadPool;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventWhiteboardImplTest.java,v 1.7 2005-02-10 17:47:15 rafal Exp $
+ * @version $Id: CoralEventWhiteboardImplTest.java,v 1.8 2008-01-01 23:32:43 rafal Exp $
  */
 public class CoralEventWhiteboardImplTest extends CoralEventTestCase
 {
@@ -63,7 +63,8 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
         BasicConfigurator.configure();
         Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
         threadPool = new ThreadPool(null, context, null, logger);
-        EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, logger, threadPool);
+        EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, logger,
+            threadPool, cacheFactory);
         EventWhiteboard realEventWhiteboard = eventWhiteboardFactory.newInstance();
         realCoralEventWhiteboard = new CoralEventWhiteboardImpl(realEventWhiteboard);
     }

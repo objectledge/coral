@@ -28,6 +28,7 @@
 package org.objectledge.coral.event;
 
 import org.jmock.Mock;
+import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.ResourceClass;
@@ -48,7 +49,7 @@ import org.objectledge.utils.LedgeTestCase;
  * An abstract test case that mocks a full set of objects used by event related classes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralEventTestCase.java,v 1.4 2004-03-24 14:40:12 fil Exp $
+ * @version $Id: CoralEventTestCase.java,v 1.5 2008-01-01 23:32:43 rafal Exp $
  */
 public abstract class CoralEventTestCase
     extends LedgeTestCase
@@ -144,6 +145,9 @@ public abstract class CoralEventTestCase
     protected Mock mockAttributeDefinitionChangeListener;
     protected AttributeDefinitionChangeListener attributeDefinitionChangeListener;
     
+    protected Mock mockCacheFactory;
+    protected CacheFactory cacheFactory;
+    
     public void setUp()
         throws Exception
     {
@@ -237,5 +241,9 @@ public abstract class CoralEventTestCase
         
         mockAttributeDefinitionChangeListener = mock(AttributeDefinitionChangeListener.class);
         attributeDefinitionChangeListener = (AttributeDefinitionChangeListener)mockAttributeDefinitionChangeListener.proxy();
+        
+        mockCacheFactory = mock(CacheFactory.class);
+        mockCacheFactory.stubs().method("registerForPeriodicExpunge").isVoid();
+        cacheFactory = (CacheFactory)mockCacheFactory.proxy();
     }
 }
