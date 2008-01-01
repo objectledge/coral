@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.21 2007-05-31 20:27:15 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.22 2008-01-01 20:18:30 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -63,7 +63,6 @@ public class GenericResourceHandler
         {
             child.getHandler().addAttribute(attribute, value, conn);
         }
-        cacheAttributes();
         revert(resourceClass, conn);
     }
     
@@ -93,7 +92,6 @@ public class GenericResourceHandler
         {
             child.getHandler().addParentClass(parent, values, conn);
         }
-        cacheAttributes();
         revert(resourceClass, conn);
     }
     
@@ -369,7 +367,7 @@ public class GenericResourceHandler
         {
             while(rs.next())
             {
-                dataKeys.put(getAttribute(rs.getLong(1)), 
+                dataKeys.put(coralSchema.getAttribute(rs.getLong(1)), 
                     new Long(rs.getLong(2)));
             }
         }
@@ -412,7 +410,7 @@ public class GenericResourceHandler
                     dataKeys = new HashMap();
                     keyMap.put(resId, dataKeys);
                 }
-                dataKeys.put(getAttribute(rs.getLong(2)), 
+                dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
                     new Long(rs.getLong(3)));
             }
         }
@@ -453,7 +451,7 @@ public class GenericResourceHandler
                     dataKeys = new HashMap<AttributeDefinition,Long>();
                     keyMap.put(resId, dataKeys);
                 }
-                dataKeys.put(getAttribute(rs.getLong(2)), 
+                dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
                     new Long(rs.getLong(3)));
             }
         }
@@ -467,31 +465,5 @@ public class GenericResourceHandler
             stmt.close();
         }
         return keyMap;        
-    }
-    
-    private Map<Long,AttributeDefinition> attrCache;
-    
-    private AttributeDefinition getAttribute(long id)
-        throws EntityDoesNotExistException
-    {
-        if(attrCache == null)
-        {
-            cacheAttributes();
-        }
-        AttributeDefinition attr = attrCache.get(id);
-        if(attr == null)
-        {
-            throw new EntityDoesNotExistException("attribute definition #"+id);
-        }
-        return attr;
-    }
-    
-    private void cacheAttributes()
-    {
-        attrCache = new HashMap<Long,AttributeDefinition>();
-        for(AttributeDefinition attr : coralSchema.getAttribute())
-        {
-            attrCache.put(attr.getIdObject(), attr);
-        }
     }
 }
