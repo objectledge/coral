@@ -65,7 +65,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * (will be returned from consequtive invocations). </p>
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski </a>
- * @version $Id: SessionFactoryTag.java,v 1.13 2005-09-25 12:04:12 rafal Exp $
+ * @version $Id: SessionFactoryTag.java,v 1.14 2008-01-01 23:30:36 rafal Exp $
  */
 public class SessionFactoryTag
     extends CoralPluginTag
@@ -176,7 +176,7 @@ public class SessionFactoryTag
         CacheFactory cacheFactory = new DefaultCacheFactory(cacheConfig, getLog(CacheFactory.class),
             threadPool, null, null);
         EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, 
-            getLog(EventWhiteboardFactory.class), threadPool);
+            getLog(EventWhiteboardFactory.class), threadPool, cacheFactory);
         DBParametersManager dbParameterManager = new DefaultDBParametersManager(database,
             getLog(DBParametersManager.class));
         container.registerComponentInstance(DBParametersManager.class, dbParameterManager);
