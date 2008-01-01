@@ -29,7 +29,7 @@ import org.objectledge.database.Database;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.12 2007-05-31 20:27:15 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.13 2008-01-01 22:12:41 rafal Exp $
  */
 public abstract class AbstractResourceHandler 
     implements ResourceHandler
@@ -48,9 +48,6 @@ public abstract class AbstractResourceHandler
     
     /** resource sets, keyed by resource class. Resources are kept through  weak  references. */
     private Map<ResourceClass,Map> cache = new HashMap<ResourceClass,Map>();
-    
-    /** to avoid multiple cache processing. */
-    private Map<Resource,Object> cached = new WeakHashMap<Resource,Object>();
     
     /** the database. */
     private Database database;
@@ -276,14 +273,10 @@ public abstract class AbstractResourceHandler
      */
     private void addToCache(AbstractResource res)
     {
-        if(!cached.containsKey(res))
+        addToCache0(res.getResourceClass(), res);
+        for(ResourceClass parent : res.getResourceClass().getParentClasses())
         {
-            addToCache0(res.getResourceClass(), res);
-            for(ResourceClass parent : res.getResourceClass().getParentClasses())
-            {
-                addToCache0(parent, res);
-            }
-            cached.put(res, null);
+            addToCache0(parent, res);
         }
     }
     
