@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.jcontainer.dna.Logger;
+import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -20,7 +21,6 @@ import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.ResourceHandler;
-import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
@@ -29,53 +29,52 @@ import org.objectledge.database.Database;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.13 2008-01-01 22:12:41 rafal Exp $
+ * @version $Id: AbstractResourceHandler.java,v 1.14 2008-01-01 22:36:16 rafal Exp $
  */
-public abstract class AbstractResourceHandler 
+public abstract class AbstractResourceHandler
     implements ResourceHandler
 {
     /** The resource class this handler is responsible for. */
     protected ResourceClass resourceClass;
 
-    /** The security. */
-    private CoralSecurity coralSecurity;
-    
     /** The schema. */
     protected CoralSchema coralSchema;
-    
+
     /** The instnatiator. */
     protected Instantiator instantiator;
-    
-    /** resource sets, keyed by resource class. Resources are kept through  weak  references. */
-    private Map<ResourceClass,Map> cache = new HashMap<ResourceClass,Map>();
-    
+
+    /** resource sets, keyed by resource class. Resources are kept through weak references. */
+    private Map<ResourceClass, WeakHashMap<AbstractResource, Object>> cache = new HashMap<ResourceClass, WeakHashMap<AbstractResource, Object>>();
+
     /** the database. */
     private Database database;
-    
+
     /** the logger. */
     private Logger logger;
+
+    private final CacheFactory cacheFactory;
 
     /**
      * The base constructor.
      * 
      * @param coralSchema the coral schema.
-     * @param coralSecurity the coral security.
      * @param instantiator the instantiator.
      * @param resourceClass the resource class.
      * @param database the database.
+     * @param cacheFactory the cache factory.
      * @param logger the logger.
      */
-    public AbstractResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
-        Instantiator instantiator, ResourceClass resourceClass, Database database, Logger logger)
+    public AbstractResourceHandler(CoralSchema coralSchema, Instantiator instantiator,
+        ResourceClass resourceClass, Database database, CacheFactory cacheFactory, Logger logger)
     {
         this.coralSchema = coralSchema;
-        this.coralSecurity = coralSecurity;
         this.instantiator = instantiator;
         this.resourceClass = resourceClass;
         this.database = database;
+        this.cacheFactory = cacheFactory;
         this.logger = logger;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -88,7 +87,7 @@ public abstract class AbstractResourceHandler
         addToCache(res);
         return res;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -115,7 +114,7 @@ public abstract class AbstractResourceHandler
         addToCache(res);
         return res;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -128,7 +127,7 @@ public abstract class AbstractResourceHandler
         {
             data = getData(delegate, conn);
         }
-        ((AbstractResource)resource).revert(resourceClass, conn, data);        
+        ((AbstractResource)resource).revert(resourceClass, conn, data);
     }
 
     /**
@@ -141,45 +140,42 @@ public abstract class AbstractResourceHandler
         ((AbstractResource)resource).update(conn);
     }
 
-    
     /**
      * {@inheritDoc}
      */
     public Resource[] getResourceReferences(Resource resource, boolean clearable)
     {
         ArrayList temp = new ArrayList();
-        for(AttributeDefinition attr : resourceClass.getAllAttributes())
+        for (AttributeDefinition attr : resourceClass.getAllAttributes())
         {
             AttributeHandler handler = attr.getAttributeClass().getHandler();
-            if(handler.containsResourceReferences() &&
-               resource.isDefined(attr) && 
-               (clearable || (!handler.isComposite() && 
-                   (attr.getFlags() & (AttributeFlags.READONLY | AttributeFlags.REQUIRED)) != 0)) &&
-               ((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0))
+            if(handler.containsResourceReferences()
+                && resource.isDefined(attr)
+                && (clearable || (!handler.isComposite() && (attr.getFlags() & (AttributeFlags.READONLY | AttributeFlags.REQUIRED)) != 0))
+                && ((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0))
             {
-                Resource[] refs = attr.getAttributeClass().
-                    getHandler().getResourceReferences(resource.get(attr));
+                Resource[] refs = attr.getAttributeClass().getHandler().getResourceReferences(
+                    resource.get(attr));
                 temp.addAll(Arrays.asList(refs));
             }
         }
         Resource[] result = new Resource[temp.size()];
         temp.toArray(result);
         return result;
-    }   
-    
+    }
+
     /**
      * {@inheritDoc}
      */
     public void clearResourceReferences(Resource resource)
     {
-        for(AttributeDefinition attr : resourceClass.getAllAttributes())
+        for (AttributeDefinition attr : resourceClass.getAllAttributes())
         {
             AttributeHandler handler = attr.getAttributeClass().getHandler();
-            if(handler.containsResourceReferences() &&
-               resource.isDefined(attr) && 
-               (handler.isComposite() || 
-                    (attr.getFlags() & (AttributeFlags.READONLY | AttributeFlags.REQUIRED | 
-                         AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0))
+            if(handler.containsResourceReferences()
+                && resource.isDefined(attr)
+                && (handler.isComposite() || (attr.getFlags() & (AttributeFlags.READONLY
+                    | AttributeFlags.REQUIRED | AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0))
             {
                 if(handler.isComposite())
                 {
@@ -203,10 +199,10 @@ public abstract class AbstractResourceHandler
 
     /**
      * Instantiate an implementation object.
-     *
+     * 
      * @param rClass the resource class to be instantiated
      * @return implementation object.
-     * @throws BackendException if failed to instantiate. 
+     * @throws BackendException if failed to instantiate.
      */
     protected AbstractResource instantiate(ResourceClass rClass)
         throws BackendException
@@ -226,60 +222,58 @@ public abstract class AbstractResourceHandler
         }
         catch(Throwable e)
         {
-            throw new BackendException("failed to instantiate "+
-                                        rClass.getName(), e);
+            throw new BackendException("failed to instantiate " + rClass.getName(), e);
         }
         return res;
     }
-    
+
     /**
      * Checks if the passed resource is really a {@link GenericResource}.
-     *
+     * 
      * @param resource the resource to check.
      */
     protected void checkResource(Resource resource)
     {
         if(!(resource instanceof AbstractResource))
         {
-            throw new ClassCastException("AbstractResourceHanler won't operate on "+
-                                         resource.getClass().getName());
+            throw new ClassCastException("AbstractResourceHanler won't operate on "
+                + resource.getClass().getName());
         }
     }
 
     /**
-     * Chekcks if the passed delegate object specifies {@link GenericResource}
-     * as the javaClass.
-     *
+     * Chekcks if the passed delegate object specifies {@link GenericResource} as the javaClass.
+     * 
      * @param delegate the delegate to check.
      */
     protected void checkDelegate(Resource delegate)
     {
         if((delegate.getResourceClass().getJavaClass().getModifiers() & Modifier.INTERFACE) != 0)
         {
-            throw new ClassCastException(delegate.getResourceClass().getName()+" specifies "+
-                delegate.getResourceClass().getJavaClass()+" as implementation class");
+            throw new ClassCastException(delegate.getResourceClass().getName() + " specifies "
+                + delegate.getResourceClass().getJavaClass() + " as implementation class");
         }
         if(!AbstractResource.class.isAssignableFrom(delegate.getResourceClass().getJavaClass()))
         {
-            throw new ClassCastException("AbstractResourceHandler won't operate on "+
-                                         delegate.getResourceClass().getName());
+            throw new ClassCastException("AbstractResourceHandler won't operate on "
+                + delegate.getResourceClass().getName());
         }
     }
 
     /**
      * Adds the loaded/created resource to the internal cache.
-     *
+     * 
      * @param res the resource to add to the cache.
      */
     private void addToCache(AbstractResource res)
     {
         addToCache0(res.getResourceClass(), res);
-        for(ResourceClass parent : res.getResourceClass().getParentClasses())
+        for (ResourceClass parent : res.getResourceClass().getParentClasses())
         {
             addToCache0(parent, res);
         }
     }
-    
+
     /**
      * Adds the loaded/created resource to the internal cache.
      * 
@@ -288,10 +282,11 @@ public abstract class AbstractResourceHandler
      */
     private void addToCache0(ResourceClass rc, AbstractResource res)
     {
-        Map rset = cache.get(rc);
+        WeakHashMap<AbstractResource,Object> rset = cache.get(rc);
         if(rset == null)
         {
-            rset = new WeakHashMap();
+            rset = new WeakHashMap<AbstractResource,Object>();
+            cacheFactory.registerForPeriodicExpunge(rset);
             cache.put(rc, rset);
         }
         rset.put(res, null);
@@ -299,7 +294,7 @@ public abstract class AbstractResourceHandler
 
     /**
      * Reverts all cached resources of the specific class (including subclasses).
-     *
+     * 
      * @param rc the resource class to revert.
      * @param conn the JDBC connection to use.
      * @throws SQLException if the database operation fails.
@@ -308,7 +303,7 @@ public abstract class AbstractResourceHandler
         throws SQLException
     {
         revert0(rc, conn);
-        for(ResourceClass child : rc.getDirectChildClasses())
+        for (ResourceClass child : rc.getDirectChildClasses())
         {
             child.getHandler().revert(child, conn);
         }
@@ -324,18 +319,18 @@ public abstract class AbstractResourceHandler
     private void revert0(ResourceClass rc, Connection conn)
         throws SQLException
     {
-        Map rset = cache.get(rc);
+        WeakHashMap<AbstractResource,Object> rset = cache.get(rc);
         if(rset != null)
         {
             Object data = getData(rc, conn);
             Set<AbstractResource> orig = new HashSet<AbstractResource>(rset.keySet());
-            for(AbstractResource r : orig)
+            for (AbstractResource r : orig)
             {
                 r.revert(rc, conn, data);
             }
         }
     }
-    
+
     /**
      * Retrieve attribute information for a specific resource.
      * 
@@ -344,7 +339,8 @@ public abstract class AbstractResourceHandler
      * @return opaque data object.
      * @throws SQLException if information retrieval fails.
      */
-    protected abstract Object getData(Resource delegate, Connection conn) throws SQLException;
+    protected abstract Object getData(Resource delegate, Connection conn)
+        throws SQLException;
 
     /**
      * Retrieve attribute information for resources of a specific class.
@@ -354,8 +350,9 @@ public abstract class AbstractResourceHandler
      * @return opaque data object.
      * @throws SQLException if information retrieval fails.
      */
-    protected abstract Object getData(ResourceClass rc, Connection conn) throws SQLException;
-    
+    protected abstract Object getData(ResourceClass rc, Connection conn)
+        throws SQLException;
+
     /**
      * @return Returns the database.
      */
@@ -370,5 +367,5 @@ public abstract class AbstractResourceHandler
     Logger getLogger()
     {
         return logger;
-    }    
+    }
 }

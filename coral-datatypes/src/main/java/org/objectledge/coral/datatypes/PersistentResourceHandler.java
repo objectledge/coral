@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
+import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CoralSchema;
@@ -27,7 +28,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * <code>PersistenceService</code>.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PersistentResourceHandler.java,v 1.18 2005-06-20 08:20:22 rafal Exp $
+ * @version $Id: PersistentResourceHandler.java,v 1.19 2008-01-01 22:36:16 rafal Exp $
  */
 public class PersistentResourceHandler
     extends AbstractResourceHandler
@@ -46,19 +47,20 @@ public class PersistentResourceHandler
      * Constructor.
      * 
      * @param coralSchema the coral schema.
-     * @param coralSecurity the coral security.
      * @param resourceClass the resource class.
      * @param database the database.
      * @param persistence the persistence.
      * @param instantiator the instantiator.
+     * @param cacheFactory the cache factory.
      * @param logger the logger.
      * @throws Exception if there is a problem instantiating an resource object.
      */
     public PersistentResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
-         ResourceClass resourceClass, 
-         Database database, Persistence persistence, Instantiator instantiator, Logger logger) throws Exception
+        ResourceClass resourceClass, Database database, Persistence persistence,
+        Instantiator instantiator, CacheFactory cacheFactory, Logger logger)
+        throws Exception
     {
-        super(coralSchema, coralSecurity, instantiator, resourceClass, database, logger);
+        super(coralSchema, instantiator, resourceClass, database, cacheFactory, logger);
         this.persistence = persistence;
         factory = instantiator.getPersistentFactory(resourceClass.getJavaClass());
         keyColumns = new String[1];

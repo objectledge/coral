@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcontainer.dna.Logger;
+import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -15,7 +16,6 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -26,7 +26,7 @@ import org.objectledge.database.DatabaseUtils;
  * Handles persistence of {@link GenericResource} objects.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: GenericResourceHandler.java,v 1.22 2008-01-01 20:18:30 rafal Exp $
+ * @version $Id: GenericResourceHandler.java,v 1.23 2008-01-01 22:36:16 rafal Exp $
  */
 public class GenericResourceHandler
     extends AbstractResourceHandler
@@ -37,16 +37,16 @@ public class GenericResourceHandler
      * The constructor.
      * 
      * @param coralSchema the coral schema.
-     * @param coralSecurity the coral security.
      * @param resourceClass the resource class.
      * @param database the database.
      * @param instantiator the instantiator.
+     * @param cacheFactory the cache factory.
      * @param logger the logger.
      */
-    public GenericResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
-        ResourceClass resourceClass, Database database, Instantiator instantiator, Logger logger)
+    public GenericResourceHandler(CoralSchema coralSchema, ResourceClass resourceClass,
+        Database database, Instantiator instantiator, CacheFactory cacheFactory, Logger logger)
     {
-        super(coralSchema, coralSecurity, instantiator, resourceClass, database, logger);
+        super(coralSchema, instantiator, resourceClass, database, cacheFactory, logger);
     }
 
     // Resource handler interface ////////////////////////////////////////////
