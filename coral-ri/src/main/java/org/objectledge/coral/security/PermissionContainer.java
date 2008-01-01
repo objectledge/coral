@@ -20,11 +20,10 @@ import org.objectledge.coral.store.ResourceInheritance;
  * A helper class for managing a set of permissions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionContainer.java,v 1.8 2007-12-31 00:49:31 rafal Exp $
+ * @version $Id: PermissionContainer.java,v 1.9 2008-01-01 16:51:27 rafal Exp $
  */
 public class PermissionContainer
-    implements PermissionAssignmentChangeListener,
-               ResourceTreeChangeListener
+    implements PermissionAssignmentChangeListener, ResourceTreeChangeListener
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
 
@@ -33,7 +32,7 @@ public class PermissionContainer
 
     /** The CoralEventHub. */
     private CoralEventHub coralEventHub;
-    
+
     /** The role container. */
     private RoleContainer roles;
 
@@ -44,13 +43,12 @@ public class PermissionContainer
 
     /**
      * Constructs a permission container.
-     *
+     * 
      * @param coralEventHub the CoralEventHub.
      * @param coral the Coral core component.
      * @param roles a RoleContainer.
      */
-    PermissionContainer(CoralEventHub coralEventHub, CoralCore coral, 
-        RoleContainer roles)
+    PermissionContainer(CoralEventHub coralEventHub, CoralCore coral, RoleContainer roles)
     {
         this.coralEventHub = coralEventHub;
         this.coral = coral;
@@ -61,9 +59,9 @@ public class PermissionContainer
     // Permissions //////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Return all permission the entity this permission container belongs to
-     * has on a specific resource.
-     *
+     * Return all permission the entity this permission container belongs to has on a specific
+     * resource.
+     * 
      * @param res the resource.
      * @return permission array.
      */
@@ -72,7 +70,7 @@ public class PermissionContainer
         List<PermissionsInfo> piList = getPermissionsInfo(res);
         List<Permission> pList = new ArrayList<Permission>();
         PermissionsInfo piRes = piList.get(0);
-        for(PermissionsInfo pi : piList)
+        for (PermissionsInfo pi : piList)
         {
             pi.addTo(pList, pi == piRes);
         }
@@ -80,18 +78,18 @@ public class PermissionContainer
     }
 
     /**
-     * Check if the entity this container describes has a specific permission
-     * on a specific resource.
-     *
+     * Check if the entity this container describes has a specific permission on a specific
+     * resource.
+     * 
      * @param res the resource.
      * @param perm the permission.
      * @return <code>true</code> if the entity has the permission.
      */
     public boolean hasPermission(Resource res, Permission perm)
-    {    
+    {
         List<PermissionsInfo> piList = getPermissionsInfo(res);
         PermissionsInfo piRes = piList.get(0);
-        for(PermissionsInfo pi : piList)
+        for (PermissionsInfo pi : piList)
         {
             if(pi.hasPermission(perm, pi == piRes))
             {
@@ -105,10 +103,11 @@ public class PermissionContainer
 
     /**
      * Called when permission assignments on a watched resource change.
-     *
-     * <p>Flushes cached permission information on the involved resource and
-     * all of it's child resources.</p>
-     *
+     * <p>
+     * Flushes cached permission information on the involved resource and all of it's child
+     * resources.
+     * </p>
+     * 
      * @param item permission assignment information.
      * @param added was the permission added, or removed?
      */
@@ -118,7 +117,7 @@ public class PermissionContainer
         stack.add(item.getResource());
         while(stack.size() > 0)
         {
-            Resource r = stack.remove(stack.size()-1);
+            Resource r = stack.remove(stack.size() - 1);
             flush(r);
             stack.addAll(Arrays.asList(r.getChildren()));
         }
@@ -128,10 +127,11 @@ public class PermissionContainer
 
     /**
      * Called when resource tree changes.
-     *
-     * <p>Flushes cached permission information on the child resource in
-     * the relationship and all of it child resources.</p>
-     *
+     * <p>
+     * Flushes cached permission information on the child resource in the relationship and all of it
+     * child resources.
+     * </p>
+     * 
      * @param item resource relationship information.
      * @param added was the relationship added or removed.
      */
@@ -141,7 +141,7 @@ public class PermissionContainer
         stack.add(item.getChild());
         while(stack.size() > 0)
         {
-            Resource r = stack.remove(stack.size()-1);
+            Resource r = stack.remove(stack.size() - 1);
             flush(r);
             stack.addAll(Arrays.asList(r.getChildren()));
         }
@@ -156,9 +156,7 @@ public class PermissionContainer
 
     /**
      * Returns the chain of permissions info starting from res all the way up to hierarchy root.
-     * 
-     * Always returns at least one element.
-     * PermissionsInfo for res is always the first element.
+     * Always returns at least one element. PermissionsInfo for res is always the first element.
      */
     private synchronized List<PermissionsInfo> getPermissionsInfo(Resource res)
     {
@@ -178,7 +176,7 @@ public class PermissionContainer
                 pi = new PermissionsInfo(roleSet, paSet);
                 piCache.put(cur, pi);
                 coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, cur);
-                coralEventHub.getGlobal().addResourceTreeChangeListener(this, cur);                
+                coralEventHub.getGlobal().addResourceTreeChangeListener(this, cur);
             }
             piList.add(pi);
             cur = cur.getParent();
@@ -188,9 +186,10 @@ public class PermissionContainer
 
     /**
      * Flushes permission information on all resources.
-     *
-     * <p>This method is called by the peer RoleContainer when role
-     * information (implications / assignments) change.</p>
+     * <p>
+     * This method is called by the peer RoleContainer when role information (implications /
+     * assignments) change.
+     * </p>
      */
     synchronized void flush()
     {
@@ -199,47 +198,59 @@ public class PermissionContainer
 
     /**
      * Flushes permission information on a particular resource.
-     *
+     * 
      * @param r the resource to flush permissions information on.
      */
     synchronized void flush(Resource r)
     {
         piCache.remove(r);
     }
-    
+
     private class PermissionsInfo
     {
-        private Set<Permission> inherited = new HashSet<Permission>();
-        
-        private Set<Permission> nonInherited = new HashSet<Permission>();
-        
+        private Set<Permission> inherited;
+
+        private Set<Permission> nonInherited;
+
         public PermissionsInfo(Set<Role> roleSet, Set<PermissionAssignment> paSet)
         {
-            for(PermissionAssignment pa : paSet)
+            for (PermissionAssignment pa : paSet)
             {
                 if(roleSet.contains(pa.getRole()))
                 {
                     if(pa.isInherited())
                     {
+                        if(inherited == null)
+                        {
+                            inherited = new HashSet<Permission>();
+                        }
                         inherited.add(pa.getPermission());
                     }
                     else
                     {
+                        if(nonInherited == null)
+                        {
+                            nonInherited = new HashSet<Permission>();
+                        }
                         nonInherited.add(pa.getPermission());
                     }
                 }
             }
         }
-        
+
         public boolean hasPermission(Permission p, boolean includeNonInherited)
         {
-            return inherited.contains(p) || includeNonInherited && nonInherited.contains(p);
+            return (inherited != null && inherited.contains(p))
+                || (includeNonInherited && nonInherited != null && nonInherited.contains(p));
         }
-        
+
         public void addTo(Collection<Permission> pCol, boolean includeNotInherited)
         {
-            pCol.addAll(inherited);
-            if(includeNotInherited)
+            if(inherited != null)
+            {
+                pCol.addAll(inherited);
+            }
+            if(includeNotInherited && nonInherited != null)
             {
                 pCol.addAll(nonInherited);
             }
