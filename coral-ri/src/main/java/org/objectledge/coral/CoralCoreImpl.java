@@ -73,7 +73,7 @@ import org.picocontainer.defaults.DefaultPicoContainer;
  * Coral core component implemenation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCoreImpl.java,v 1.22 2005-10-10 13:07:30 rafal Exp $
+ * @version $Id: CoralCoreImpl.java,v 1.23 2008-01-02 00:29:24 rafal Exp $
  */
 public class CoralCoreImpl
     implements CoralCore, Startable
@@ -96,6 +96,7 @@ public class CoralCoreImpl
         new ThreadLocal<LinkedList<CoralSession>>();
     private final Logger log;
     private final Set<Feature> features;
+    private final CacheFactory cacheFactory;
     
     /**
      * Constructs a Coral instance.
@@ -190,6 +191,7 @@ public class CoralCoreImpl
         coralEventWhiteboard = coralEventHub.getGlobal();
         // instantiator
         instantiator = new PicoInstantiator(container);
+        this.cacheFactory = cacheFactory;
         container.registerComponentInstance(Instantiator.class, instantiator);
         // RML parsers
         if(parentContainer.getComponentAdapterOfType(RMLParserFactory.class) == null)
@@ -343,6 +345,14 @@ public class CoralCoreImpl
     public Instantiator getInstantiator()
     {
         return instantiator;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public CacheFactory getCacheFactory()
+    {
+        return cacheFactory;
     }
     
     /**

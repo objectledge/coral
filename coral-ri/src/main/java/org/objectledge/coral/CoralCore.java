@@ -27,6 +27,7 @@
 // 
 package org.objectledge.coral;
 
+import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.coral.query.CoralQuery;
@@ -43,7 +44,7 @@ import org.objectledge.coral.store.CoralStore;
  * A bridge between interdependent Coral componentes.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralCore.java,v 1.9 2005-10-10 12:45:21 rafal Exp $
+ * @version $Id: CoralCore.java,v 1.10 2008-01-02 00:29:24 rafal Exp $
  */
 public interface CoralCore
 {
@@ -121,6 +122,13 @@ public interface CoralCore
      * @return an Instnatiator.
      */
     public Instantiator getInstantiator();
+    
+    /**
+     * Returns the cache factory.
+     * 
+     * @return the cache factory.
+     */
+    public CacheFactory getCacheFactory();
 
     /**
      * Returns the RMLParserFactory.
