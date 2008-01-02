@@ -45,7 +45,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.31 2007-03-13 00:09:38 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.32 2008-01-02 00:31:02 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -113,6 +113,8 @@ public class CoralStoreImpl
         setupCache(cacheFactory, "resource");
         resourceByParent = new WeakHashMap();
         resourceByParentAndName = new WeakHashMap();
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)resourceByParent);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)resourceByParentAndName);
     }
 
 

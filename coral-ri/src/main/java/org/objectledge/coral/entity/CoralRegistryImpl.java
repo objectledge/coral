@@ -57,7 +57,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Manages persistence of {@link Entity}, {@link Assignment} and {@link
  * Association} objects.
  * 
- * @version $Id: CoralRegistryImpl.java,v 1.13 2005-02-08 20:34:58 rafal Exp $
+ * @version $Id: CoralRegistryImpl.java,v 1.14 2008-01-02 00:31:03 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
@@ -200,7 +200,7 @@ public class CoralRegistryImpl
         this.coral = coral;
         this.log = log;
         
-        setupCaches();
+        setupCaches(cacheFactory);
         setupFactories(instantiator);
         setupRegistries(cacheFactory, instantiator);
         setupListener();
@@ -209,7 +209,7 @@ public class CoralRegistryImpl
     /**
      * Sets up the instance chaces for reflection objects.
      */
-    private void setupCaches()
+    private void setupCaches(CacheFactory cacheFactory)
     {
         attributeDefinitionByResourceClass = new WeakHashMap();
         resourceClassInheritanceByResourceClass = new WeakHashMap();
@@ -224,6 +224,16 @@ public class CoralRegistryImpl
 
         permissionAssignmentByRole = new WeakHashMap();
         permissionAssignmentByResource = new WeakHashMap();
+        
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)attributeDefinitionByResourceClass);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)resourceClassInheritanceByResourceClass);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)roleImplicationByRole);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)roleAssignmentBySubject);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)roleAssignmentByRole);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)permissionAssociationByResourceClass);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)permissionAssociationByPermission);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)permissionAssignmentByRole);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)permissionAssignmentByResource);
     }
 
     private void setupFactories(Instantiator instantiator)
