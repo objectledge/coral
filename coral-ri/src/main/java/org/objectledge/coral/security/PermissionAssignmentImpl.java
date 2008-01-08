@@ -20,7 +20,7 @@ import org.objectledge.database.persistence.PersistenceException;
  * org.objectledge.coral.store.Resource#getPermissionAssignments()} method. They experss security
  * constraints placed upon a specific resource (and optionally it's sub-resources). </p> 
  *
- * @version $Id: PermissionAssignmentImpl.java,v 1.10 2008-01-01 20:20:28 rafal Exp $
+ * @version $Id: PermissionAssignmentImpl.java,v 1.11 2008-01-08 21:18:56 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class PermissionAssignmentImpl
@@ -103,7 +103,7 @@ public class PermissionAssignmentImpl
     {
         if(other != null && other.getClass().equals(getClass()))
         {
-            return resource.equals(((PermissionAssignmentImpl)other).getResource()) &&
+            return getResource().equals(((PermissionAssignmentImpl)other).getResource()) &&
                 role.equals(((PermissionAssignmentImpl)other).getRole()) &&
                 permission.equals(((PermissionAssignmentImpl)other).getPermission());
         }
