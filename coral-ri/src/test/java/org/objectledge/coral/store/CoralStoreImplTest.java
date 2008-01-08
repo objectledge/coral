@@ -54,6 +54,7 @@ public class CoralStoreImplTest
         logger = (Logger)mockLogger.proxy();
 
         mockCacheFactory.stubs().method("getInstance").will(returnValue(new HashMap()));
+        mockCacheFactory.stubs().method("registerForPeriodicExpunge").isVoid();
         mockInstantiator.stubs().method("getPersistentFactory").with(same(ResourceImpl.class))
             .will(returnValue(persistentFactory));
         

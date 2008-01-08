@@ -58,7 +58,7 @@ import org.objectledge.utils.LedgeTestCase;
 /**
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralRegistryTest.java,v 1.8 2005-01-28 01:04:08 rafal Exp $
+ * @version $Id: CoralRegistryTest.java,v 1.9 2008-01-08 20:51:33 rafal Exp $
  */
 public class CoralRegistryTest extends LedgeTestCase
 {
@@ -208,6 +208,7 @@ public class CoralRegistryTest extends LedgeTestCase
         throws Exception
     {
         mockCacheFactory.stubs().method("getInstance").will(returnValue(new HashMap()));
+        mockCacheFactory.stubs().method("registerForPeriodicExpunge").isVoid();
         mockCoralEventHub.stubs().method("getInbound").will(returnValue(coralEventWhiteboard));
         mockCoralEventWhiteboard.expects(once()).
             method("addPermissionAssociationChangeListener").with(ANYTHING, NULL);
