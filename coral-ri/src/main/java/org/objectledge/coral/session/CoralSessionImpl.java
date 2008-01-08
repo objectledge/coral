@@ -50,7 +50,7 @@ import org.objectledge.utils.TracingException;
  * A coral session implementation.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: CoralSessionImpl.java,v 1.16 2007-12-30 19:14:22 rafal Exp $
+ * @version $Id: CoralSessionImpl.java,v 1.17 2008-01-08 20:50:59 rafal Exp $
  */
 public class CoralSessionImpl
     implements CoralSession
@@ -172,7 +172,6 @@ public class CoralSessionImpl
             open = false;
             ownerThread = null;
             subject = null;
-            principal = null;
             pool.returnObject(principal, this);
         }
         catch(Exception e)
