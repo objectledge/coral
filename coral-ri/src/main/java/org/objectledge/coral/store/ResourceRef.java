@@ -22,7 +22,7 @@ public class ResourceRef
      */
     public ResourceRef(Resource resource, CoralCore coralCore, ReferenceQueue<Resource> queue)
     {
-        super(resource, coralCore, queue);
+        super(Resource.class, resource, coralCore, queue);
     }
     
     /**
@@ -33,7 +33,7 @@ public class ResourceRef
      */
     public ResourceRef(long id, CoralCore coralCore, ReferenceQueue<Resource> queue)
     {
-        super(id, coralCore, queue);
+        super(Resource.class, id, coralCore, queue);
     }
 
     /**
@@ -43,7 +43,7 @@ public class ResourceRef
      */
     public ResourceRef(Resource resource, CoralCore coralCore)
     {
-        super(resource, coralCore, null);
+        super(Resource.class, resource, coralCore, null);
     }
     
     /**
@@ -53,7 +53,7 @@ public class ResourceRef
      */
     public ResourceRef(long id, CoralCore coralCore)
     {
-        super(id, coralCore, null);
+        super(Resource.class, id, coralCore, null);
     }    
     
     @Override
