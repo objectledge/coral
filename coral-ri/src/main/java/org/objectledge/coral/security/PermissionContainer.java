@@ -1,9 +1,9 @@
 package org.objectledge.coral.security;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +20,7 @@ import org.objectledge.coral.store.ResourceInheritance;
  * A helper class for managing a set of permissions.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: PermissionContainer.java,v 1.10 2008-01-02 00:31:01 rafal Exp $
+ * @version $Id: PermissionContainer.java,v 1.10.2.1 2008-01-10 16:19:01 rafal Exp $
  */
 public class PermissionContainer
     implements PermissionAssignmentChangeListener, ResourceTreeChangeListener
@@ -114,14 +114,7 @@ public class PermissionContainer
      */
     public synchronized void permissionsChanged(PermissionAssignment item, boolean added)
     {
-        List<Resource> stack = new ArrayList<Resource>();
-        stack.add(item.getResource());
-        while(stack.size() > 0)
-        {
-            Resource r = stack.remove(stack.size() - 1);
-            flush(r);
-            stack.addAll(Arrays.asList(r.getChildren()));
-        }
+        flush(item.getResource());
     }
 
     // ResourceTreeChangeListener interface /////////////////////////////////////////////////////
@@ -138,14 +131,7 @@ public class PermissionContainer
      */
     public synchronized void resourceTreeChanged(ResourceInheritance item, boolean added)
     {
-        List<Resource> stack = new ArrayList<Resource>();
-        stack.add(item.getChild());
-        while(stack.size() > 0)
-        {
-            Resource r = stack.remove(stack.size() - 1);
-            flush(r);
-            stack.addAll(Arrays.asList(r.getChildren()));
-        }
+        flush(item.getChild());
         if(added)
         {
             coralEventHub.getGlobal().addResourceTreeChangeListener(this, item.getParent());
@@ -198,13 +184,23 @@ public class PermissionContainer
     }
 
     /**
-     * Flushes permission information on a particular resource.
+     * Flushes permission information on a particular resource and it's children.
      * 
      * @param r the resource to flush permissions information on.
      */
     synchronized void flush(Resource r)
     {
         piCache.remove(r);
+        // we assume than number of PermissionInfo entries is significantly smaller than number of resource's descendants
+        Iterator<Resource> i = piCache.keySet().iterator();
+        while(i.hasNext())
+        {
+            Resource res = i.next();
+            if(coral.getStore().isAncestor(r, res))
+            {
+                i.remove();
+            }
+        }
     }
 
     private class PermissionsInfo
