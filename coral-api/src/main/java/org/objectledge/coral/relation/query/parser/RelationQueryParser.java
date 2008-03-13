@@ -370,7 +370,10 @@ public class RelationQueryParser/*@bgen(jjtree)*/implements RelationQueryParserT
    }
 
   public RelationQueryParser(java.io.InputStream stream) {
-    jj_input_stream = new JavaCharStream(stream, 1, 1);
+     this(stream, null);
+  }
+  public RelationQueryParser(java.io.InputStream stream, String encoding) {
+    try { jj_input_stream = new JavaCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new RelationQueryParserTokenManager(jj_input_stream);
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
@@ -379,7 +382,10 @@ public class RelationQueryParser/*@bgen(jjtree)*/implements RelationQueryParserT
   }
 
   public void ReInit(java.io.InputStream stream) {
-    jj_input_stream.ReInit(stream, 1, 1);
+     ReInit(stream, null);
+  }
+  public void ReInit(java.io.InputStream stream, String encoding) {
+    try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();

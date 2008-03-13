@@ -1796,26 +1796,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.attributeClass = attributeClass();
+      attributeClass();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                               if (jjtc000) {
+                                 jjtree.clearNodeScope(jjtn000);
+                                 jjtc000 = false;
+                               } else {
+                                 jjtree.popNode();
+                               }
+                               if (jjte000 instanceof RuntimeException) {
+                                 {if (true) throw (RuntimeException)jjte000;}
+                               }
+                               if (jjte000 instanceof ParseException) {
+                                 {if (true) throw (ParseException)jjte000;}
+                               }
+                               {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                               if (jjtc000) {
+                                 jjtree.closeNodeScope(jjtn000, true);
+                                 jjtreeCloseNodeScope(jjtn000);
+                               }
     }
   }
 
@@ -1826,26 +1826,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.attributeClass = attributeClass;
     try {
-      jjtn000.newName = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                        if (jjtc000) {
+                          jjtree.clearNodeScope(jjtn000);
+                          jjtc000 = false;
+                        } else {
+                          jjtree.popNode();
+                        }
+                        if (jjte000 instanceof RuntimeException) {
+                          {if (true) throw (RuntimeException)jjte000;}
+                        }
+                        if (jjte000 instanceof ParseException) {
+                          {if (true) throw (ParseException)jjte000;}
+                        }
+                        {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                        if (jjtc000) {
+                          jjtree.closeNodeScope(jjtn000, true);
+                          jjtreeCloseNodeScope(jjtn000);
+                        }
     }
   }
 
@@ -1856,26 +1856,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.attributeClass = attributeClass;
     try {
-      jjtn000.javaClass = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                          if (jjtc000) {
+                            jjtree.clearNodeScope(jjtn000);
+                            jjtc000 = false;
+                          } else {
+                            jjtree.popNode();
+                          }
+                          if (jjte000 instanceof RuntimeException) {
+                            {if (true) throw (RuntimeException)jjte000;}
+                          }
+                          if (jjte000 instanceof ParseException) {
+                            {if (true) throw (ParseException)jjte000;}
+                          }
+                          {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                          if (jjtc000) {
+                            jjtree.closeNodeScope(jjtn000, true);
+                            jjtreeCloseNodeScope(jjtn000);
+                          }
     }
   }
 
@@ -1886,26 +1886,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.attributeClass = attributeClass;
     try {
-      jjtn000.handlerClass = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                           if (jjtc000) {
+                             jjtree.clearNodeScope(jjtn000);
+                             jjtc000 = false;
+                           } else {
+                             jjtree.popNode();
+                           }
+                           if (jjte000 instanceof RuntimeException) {
+                             {if (true) throw (RuntimeException)jjte000;}
+                           }
+                           if (jjte000 instanceof ParseException) {
+                             {if (true) throw (ParseException)jjte000;}
+                           }
+                           {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                           if (jjtc000) {
+                             jjtree.closeNodeScope(jjtn000, true);
+                             jjtreeCloseNodeScope(jjtn000);
+                           }
     }
   }
 
@@ -2090,26 +2090,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.resourceClass = resourceClass();
+      resourceClass();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                              if (jjtc000) {
+                                jjtree.clearNodeScope(jjtn000);
+                                jjtc000 = false;
+                              } else {
+                                jjtree.popNode();
+                              }
+                              if (jjte000 instanceof RuntimeException) {
+                                {if (true) throw (RuntimeException)jjte000;}
+                              }
+                              if (jjte000 instanceof ParseException) {
+                                {if (true) throw (ParseException)jjte000;}
+                              }
+                              {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                              if (jjtc000) {
+                                jjtree.closeNodeScope(jjtn000, true);
+                                jjtreeCloseNodeScope(jjtn000);
+                              }
     }
   }
 
@@ -2120,26 +2120,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
     try {
-      jjtn000.newName = name();
+      name();
     } catch (Throwable jjte000) {
-       if (jjtc000) {
-         jjtree.clearNodeScope(jjtn000);
-         jjtc000 = false;
-       } else {
-         jjtree.popNode();
-       }
-       if (jjte000 instanceof RuntimeException) {
-         {if (true) throw (RuntimeException)jjte000;}
-       }
-       if (jjte000 instanceof ParseException) {
-         {if (true) throw (ParseException)jjte000;}
-       }
-       {if (true) throw (Error)jjte000;}
+                         if (jjtc000) {
+                           jjtree.clearNodeScope(jjtn000);
+                           jjtc000 = false;
+                         } else {
+                           jjtree.popNode();
+                         }
+                         if (jjte000 instanceof RuntimeException) {
+                           {if (true) throw (RuntimeException)jjte000;}
+                         }
+                         if (jjte000 instanceof ParseException) {
+                           {if (true) throw (ParseException)jjte000;}
+                         }
+                         {if (true) throw (Error)jjte000;}
     } finally {
-       if (jjtc000) {
-         jjtree.closeNodeScope(jjtn000, true);
-         jjtreeCloseNodeScope(jjtn000);
-       }
+                         if (jjtc000) {
+                           jjtree.closeNodeScope(jjtn000, true);
+                           jjtreeCloseNodeScope(jjtn000);
+                         }
     }
   }
 
@@ -2150,26 +2150,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
     try {
-      jjtn000.javaClass = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                          if (jjtc000) {
+                            jjtree.clearNodeScope(jjtn000);
+                            jjtc000 = false;
+                          } else {
+                            jjtree.popNode();
+                          }
+                          if (jjte000 instanceof RuntimeException) {
+                            {if (true) throw (RuntimeException)jjte000;}
+                          }
+                          if (jjte000 instanceof ParseException) {
+                            {if (true) throw (ParseException)jjte000;}
+                          }
+                          {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                          if (jjtc000) {
+                            jjtree.closeNodeScope(jjtn000, true);
+                            jjtreeCloseNodeScope(jjtn000);
+                          }
     }
   }
 
@@ -2180,26 +2180,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
     try {
-      jjtn000.handlerClass = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                             if (jjtc000) {
+                               jjtree.clearNodeScope(jjtn000);
+                               jjtc000 = false;
+                             } else {
+                               jjtree.popNode();
+                             }
+                             if (jjte000 instanceof RuntimeException) {
+                               {if (true) throw (RuntimeException)jjte000;}
+                             }
+                             if (jjte000 instanceof ParseException) {
+                               {if (true) throw (ParseException)jjte000;}
+                             }
+                             {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                             if (jjtc000) {
+                               jjtree.closeNodeScope(jjtn000, true);
+                               jjtreeCloseNodeScope(jjtn000);
+                             }
     }
   }
 
@@ -2252,26 +2252,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
     try {
-      jjtn000.resourceClassFlags = resourceClassFlagList();
+      resourceClassFlagList();
     } catch (Throwable jjte000) {
-       if (jjtc000) {
-         jjtree.clearNodeScope(jjtn000);
-         jjtc000 = false;
-       } else {
-         jjtree.popNode();
-       }
-       if (jjte000 instanceof RuntimeException) {
-         {if (true) throw (RuntimeException)jjte000;}
-       }
-       if (jjte000 instanceof ParseException) {
-         {if (true) throw (ParseException)jjte000;}
-       }
-       {if (true) throw (Error)jjte000;}
+                                    if (jjtc000) {
+                                      jjtree.clearNodeScope(jjtn000);
+                                      jjtc000 = false;
+                                    } else {
+                                      jjtree.popNode();
+                                    }
+                                    if (jjte000 instanceof RuntimeException) {
+                                      {if (true) throw (RuntimeException)jjte000;}
+                                    }
+                                    if (jjte000 instanceof ParseException) {
+                                      {if (true) throw (ParseException)jjte000;}
+                                    }
+                                    {if (true) throw (Error)jjte000;}
     } finally {
-       if (jjtc000) {
-         jjtree.closeNodeScope(jjtn000, true);
-         jjtreeCloseNodeScope(jjtn000);
-       }
+                                    if (jjtc000) {
+                                      jjtree.closeNodeScope(jjtn000, true);
+                                      jjtreeCloseNodeScope(jjtn000);
+                                    }
     }
   }
 
@@ -2283,26 +2283,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
     jjtn000.attributeName = attr;
     try {
-      jjtn000.newName = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                        if (jjtc000) {
+                          jjtree.clearNodeScope(jjtn000);
+                          jjtc000 = false;
+                        } else {
+                          jjtree.popNode();
+                        }
+                        if (jjte000 instanceof RuntimeException) {
+                          {if (true) throw (RuntimeException)jjte000;}
+                        }
+                        if (jjte000 instanceof ParseException) {
+                          {if (true) throw (ParseException)jjte000;}
+                        }
+                        {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                        if (jjtc000) {
+                          jjtree.closeNodeScope(jjtn000, true);
+                          jjtreeCloseNodeScope(jjtn000);
+                        }
     }
   }
 
@@ -2314,26 +2314,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
     jjtn000.attributeName = attr;
     try {
-      jjtn000.attributeFlags = attributeFlagList();
+      attributeFlagList();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                               if (jjtc000) {
+                                 jjtree.clearNodeScope(jjtn000);
+                                 jjtc000 = false;
+                               } else {
+                                 jjtree.popNode();
+                               }
+                               if (jjte000 instanceof RuntimeException) {
+                                 {if (true) throw (RuntimeException)jjte000;}
+                               }
+                               if (jjte000 instanceof ParseException) {
+                                 {if (true) throw (ParseException)jjte000;}
+                               }
+                               {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                               if (jjtc000) {
+                                 jjtree.closeNodeScope(jjtn000, true);
+                                 jjtreeCloseNodeScope(jjtn000);
+                               }
     }
   }
 
@@ -2345,26 +2345,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
     jjtn000.attributeName = attr;
     try {
-      jjtn000.domain = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                       if (jjtc000) {
+                         jjtree.clearNodeScope(jjtn000);
+                         jjtc000 = false;
+                       } else {
+                         jjtree.popNode();
+                       }
+                       if (jjte000 instanceof RuntimeException) {
+                         {if (true) throw (RuntimeException)jjte000;}
+                       }
+                       if (jjte000 instanceof ParseException) {
+                         {if (true) throw (ParseException)jjte000;}
+                       }
+                       {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                       if (jjtc000) {
+                         jjtree.closeNodeScope(jjtn000, true);
+                         jjtreeCloseNodeScope(jjtn000);
+                       }
     }
   }
 
@@ -2414,26 +2414,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
     try {
-      jjtn000.attributeName = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                              if (jjtc000) {
+                                jjtree.clearNodeScope(jjtn000);
+                                jjtc000 = false;
+                              } else {
+                                jjtree.popNode();
+                              }
+                              if (jjte000 instanceof RuntimeException) {
+                                {if (true) throw (RuntimeException)jjte000;}
+                              }
+                              if (jjte000 instanceof ParseException) {
+                                {if (true) throw (ParseException)jjte000;}
+                              }
+                              {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                              if (jjtc000) {
+                                jjtree.closeNodeScope(jjtn000, true);
+                                jjtreeCloseNodeScope(jjtn000);
+                              }
     }
   }
 
@@ -2485,26 +2485,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resourceClass = resourceClass;
     try {
-      jjtn000.superClass = resourceClass();
+      resourceClass();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                           if (jjtc000) {
+                             jjtree.clearNodeScope(jjtn000);
+                             jjtc000 = false;
+                           } else {
+                             jjtree.popNode();
+                           }
+                           if (jjte000 instanceof RuntimeException) {
+                             {if (true) throw (RuntimeException)jjte000;}
+                           }
+                           if (jjte000 instanceof ParseException) {
+                             {if (true) throw (ParseException)jjte000;}
+                           }
+                           {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                           if (jjtc000) {
+                             jjtree.closeNodeScope(jjtn000, true);
+                             jjtreeCloseNodeScope(jjtn000);
+                           }
     }
   }
 
@@ -2516,26 +2516,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.name = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                     if (jjtc000) {
+                       jjtree.clearNodeScope(jjtn000);
+                       jjtc000 = false;
+                     } else {
+                       jjtree.popNode();
+                     }
+                     if (jjte000 instanceof RuntimeException) {
+                       {if (true) throw (RuntimeException)jjte000;}
+                     }
+                     if (jjte000 instanceof ParseException) {
+                       {if (true) throw (ParseException)jjte000;}
+                     }
+                     {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                     if (jjtc000) {
+                       jjtree.closeNodeScope(jjtn000, true);
+                       jjtreeCloseNodeScope(jjtn000);
+                     }
     }
   }
 
@@ -2585,26 +2585,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.permission = permission();
+      permission();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                           if (jjtc000) {
+                             jjtree.clearNodeScope(jjtn000);
+                             jjtc000 = false;
+                           } else {
+                             jjtree.popNode();
+                           }
+                           if (jjte000 instanceof RuntimeException) {
+                             {if (true) throw (RuntimeException)jjte000;}
+                           }
+                           if (jjte000 instanceof ParseException) {
+                             {if (true) throw (ParseException)jjte000;}
+                           }
+                           {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                           if (jjtc000) {
+                             jjtree.closeNodeScope(jjtn000, true);
+                             jjtreeCloseNodeScope(jjtn000);
+                           }
     }
   }
 
@@ -2615,26 +2615,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.permission = perm;
     try {
-      jjtn000.newName = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                        if (jjtc000) {
+                          jjtree.clearNodeScope(jjtn000);
+                          jjtc000 = false;
+                        } else {
+                          jjtree.popNode();
+                        }
+                        if (jjte000 instanceof RuntimeException) {
+                          {if (true) throw (RuntimeException)jjte000;}
+                        }
+                        if (jjte000 instanceof ParseException) {
+                          {if (true) throw (ParseException)jjte000;}
+                        }
+                        {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                        if (jjtc000) {
+                          jjtree.closeNodeScope(jjtn000, true);
+                          jjtreeCloseNodeScope(jjtn000);
+                        }
     }
   }
 
@@ -2726,26 +2726,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.role = role();
+      role();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                     if (jjtc000) {
+                       jjtree.clearNodeScope(jjtn000);
+                       jjtc000 = false;
+                     } else {
+                       jjtree.popNode();
+                     }
+                     if (jjte000 instanceof RuntimeException) {
+                       {if (true) throw (RuntimeException)jjte000;}
+                     }
+                     if (jjte000 instanceof ParseException) {
+                       {if (true) throw (ParseException)jjte000;}
+                     }
+                     {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                     if (jjtc000) {
+                       jjtree.closeNodeScope(jjtn000, true);
+                       jjtreeCloseNodeScope(jjtn000);
+                     }
     }
   }
 
@@ -2756,26 +2756,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.role = role;
     try {
-      jjtn000.newName = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                        if (jjtc000) {
+                          jjtree.clearNodeScope(jjtn000);
+                          jjtc000 = false;
+                        } else {
+                          jjtree.popNode();
+                        }
+                        if (jjte000 instanceof RuntimeException) {
+                          {if (true) throw (RuntimeException)jjte000;}
+                        }
+                        if (jjte000 instanceof ParseException) {
+                          {if (true) throw (ParseException)jjte000;}
+                        }
+                        {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                        if (jjtc000) {
+                          jjtree.closeNodeScope(jjtn000, true);
+                          jjtreeCloseNodeScope(jjtn000);
+                        }
     }
   }
 
@@ -2850,26 +2850,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.direct = direct;
     try {
-      jjtn000.role = role();
+      role();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                     if (jjtc000) {
+                       jjtree.clearNodeScope(jjtn000);
+                       jjtc000 = false;
+                     } else {
+                       jjtree.popNode();
+                     }
+                     if (jjte000 instanceof RuntimeException) {
+                       {if (true) throw (RuntimeException)jjte000;}
+                     }
+                     if (jjte000 instanceof ParseException) {
+                       {if (true) throw (ParseException)jjte000;}
+                     }
+                     {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                     if (jjtc000) {
+                       jjtree.closeNodeScope(jjtn000, true);
+                       jjtreeCloseNodeScope(jjtn000);
+                     }
     }
   }
 
@@ -2880,26 +2880,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.direct = direct;
     try {
-      jjtn000.role = role();
+      role();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                     if (jjtc000) {
+                       jjtree.clearNodeScope(jjtn000);
+                       jjtc000 = false;
+                     } else {
+                       jjtree.popNode();
+                     }
+                     if (jjte000 instanceof RuntimeException) {
+                       {if (true) throw (RuntimeException)jjte000;}
+                     }
+                     if (jjte000 instanceof ParseException) {
+                       {if (true) throw (ParseException)jjte000;}
+                     }
+                     {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                     if (jjtc000) {
+                       jjtree.closeNodeScope(jjtn000, true);
+                       jjtreeCloseNodeScope(jjtn000);
+                     }
     }
   }
 
@@ -2991,26 +2991,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.subject = subject();
+      subject();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                        if (jjtc000) {
+                          jjtree.clearNodeScope(jjtn000);
+                          jjtc000 = false;
+                        } else {
+                          jjtree.popNode();
+                        }
+                        if (jjte000 instanceof RuntimeException) {
+                          {if (true) throw (RuntimeException)jjte000;}
+                        }
+                        if (jjte000 instanceof ParseException) {
+                          {if (true) throw (ParseException)jjte000;}
+                        }
+                        {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                        if (jjtc000) {
+                          jjtree.closeNodeScope(jjtn000, true);
+                          jjtreeCloseNodeScope(jjtn000);
+                        }
     }
   }
 
@@ -3021,26 +3021,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.subject = subject;
     try {
-      jjtn000.newName = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                        if (jjtc000) {
+                          jjtree.clearNodeScope(jjtn000);
+                          jjtc000 = false;
+                        } else {
+                          jjtree.popNode();
+                        }
+                        if (jjte000 instanceof RuntimeException) {
+                          {if (true) throw (RuntimeException)jjte000;}
+                        }
+                        if (jjte000 instanceof ParseException) {
+                          {if (true) throw (ParseException)jjte000;}
+                        }
+                        {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                        if (jjtc000) {
+                          jjtree.closeNodeScope(jjtn000, true);
+                          jjtreeCloseNodeScope(jjtn000);
+                        }
     }
   }
 
@@ -4014,26 +4014,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resource = resource;
     try {
-      jjtn000.newName = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                        if (jjtc000) {
+                          jjtree.clearNodeScope(jjtn000);
+                          jjtc000 = false;
+                        } else {
+                          jjtree.popNode();
+                        }
+                        if (jjte000 instanceof RuntimeException) {
+                          {if (true) throw (RuntimeException)jjte000;}
+                        }
+                        if (jjte000 instanceof ParseException) {
+                          {if (true) throw (ParseException)jjte000;}
+                        }
+                        {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                        if (jjtc000) {
+                          jjtree.closeNodeScope(jjtn000, true);
+                          jjtreeCloseNodeScope(jjtn000);
+                        }
     }
   }
 
@@ -4087,26 +4087,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resource = resource;
     try {
-      jjtn000.owner = subject();
+      subject();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                      if (jjtc000) {
+                        jjtree.clearNodeScope(jjtn000);
+                        jjtc000 = false;
+                      } else {
+                        jjtree.popNode();
+                      }
+                      if (jjte000 instanceof RuntimeException) {
+                        {if (true) throw (RuntimeException)jjte000;}
+                      }
+                      if (jjte000 instanceof ParseException) {
+                        {if (true) throw (ParseException)jjte000;}
+                      }
+                      {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                      if (jjtc000) {
+                        jjtree.closeNodeScope(jjtn000, true);
+                        jjtreeCloseNodeScope(jjtn000);
+                      }
     }
   }
 
@@ -4117,26 +4117,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resource = resource;
     try {
-      jjtn000.attribute = attribute();
+      attribute();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                          if (jjtc000) {
+                            jjtree.clearNodeScope(jjtn000);
+                            jjtc000 = false;
+                          } else {
+                            jjtree.popNode();
+                          }
+                          if (jjte000 instanceof RuntimeException) {
+                            {if (true) throw (RuntimeException)jjte000;}
+                          }
+                          if (jjte000 instanceof ParseException) {
+                            {if (true) throw (ParseException)jjte000;}
+                          }
+                          {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                          if (jjtc000) {
+                            jjtree.closeNodeScope(jjtn000, true);
+                            jjtreeCloseNodeScope(jjtn000);
+                          }
     }
   }
 
@@ -4147,26 +4147,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.resource = resource;
     try {
-      jjtn000.attributeName = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                              if (jjtc000) {
+                                jjtree.clearNodeScope(jjtn000);
+                                jjtc000 = false;
+                              } else {
+                                jjtree.popNode();
+                              }
+                              if (jjte000 instanceof RuntimeException) {
+                                {if (true) throw (RuntimeException)jjte000;}
+                              }
+                              if (jjte000 instanceof ParseException) {
+                                {if (true) throw (ParseException)jjte000;}
+                              }
+                              {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                              if (jjtc000) {
+                                jjtree.closeNodeScope(jjtn000, true);
+                                jjtreeCloseNodeScope(jjtn000);
+                              }
     }
   }
 
@@ -4242,26 +4242,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.resourceClass = resourceClass();
+      resourceClass();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                              if (jjtc000) {
+                                jjtree.clearNodeScope(jjtn000);
+                                jjtc000 = false;
+                              } else {
+                                jjtree.popNode();
+                              }
+                              if (jjte000 instanceof RuntimeException) {
+                                {if (true) throw (RuntimeException)jjte000;}
+                              }
+                              if (jjte000 instanceof ParseException) {
+                                {if (true) throw (ParseException)jjte000;}
+                              }
+                              {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                              if (jjtc000) {
+                                jjtree.closeNodeScope(jjtn000, true);
+                                jjtreeCloseNodeScope(jjtn000);
+                              }
     }
   }
 
@@ -4348,26 +4348,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.direct = direct;
     try {
-      jjtn000.subject = subject();
+      subject();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                      if (jjtc000) {
+                        jjtree.clearNodeScope(jjtn000);
+                        jjtc000 = false;
+                      } else {
+                        jjtree.popNode();
+                      }
+                      if (jjte000 instanceof RuntimeException) {
+                        {if (true) throw (RuntimeException)jjte000;}
+                      }
+                      if (jjte000 instanceof ParseException) {
+                        {if (true) throw (ParseException)jjte000;}
+                      }
+                      {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                      if (jjtc000) {
+                        jjtree.closeNodeScope(jjtn000, true);
+                        jjtreeCloseNodeScope(jjtn000);
+                      }
     }
   }
 
@@ -4534,26 +4534,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.resource = resource();
+      resource();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                       if (jjtc000) {
+                         jjtree.clearNodeScope(jjtn000);
+                         jjtc000 = false;
+                       } else {
+                         jjtree.popNode();
+                       }
+                       if (jjte000 instanceof RuntimeException) {
+                         {if (true) throw (RuntimeException)jjte000;}
+                       }
+                       if (jjte000 instanceof ParseException) {
+                         {if (true) throw (ParseException)jjte000;}
+                       }
+                       {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                       if (jjtc000) {
+                         jjtree.closeNodeScope(jjtn000, true);
+                         jjtreeCloseNodeScope(jjtn000);
+                       }
     }
   }
 
@@ -4565,26 +4565,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.name = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                     if (jjtc000) {
+                       jjtree.clearNodeScope(jjtn000);
+                       jjtc000 = false;
+                     } else {
+                       jjtree.popNode();
+                     }
+                     if (jjte000 instanceof RuntimeException) {
+                       {if (true) throw (RuntimeException)jjte000;}
+                     }
+                     if (jjte000 instanceof ParseException) {
+                       {if (true) throw (ParseException)jjte000;}
+                     }
+                     {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                     if (jjtc000) {
+                       jjtree.closeNodeScope(jjtn000, true);
+                       jjtreeCloseNodeScope(jjtn000);
+                     }
     }
   }
 
@@ -4634,26 +4634,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
     try {
-      jjtn000.newName = name();
+      name();
     } catch (Throwable jjte000) {
-          if (jjtc000) {
-            jjtree.clearNodeScope(jjtn000);
-            jjtc000 = false;
-          } else {
-            jjtree.popNode();
-          }
-          if (jjte000 instanceof RuntimeException) {
-            {if (true) throw (RuntimeException)jjte000;}
-          }
-          if (jjte000 instanceof ParseException) {
-            {if (true) throw (ParseException)jjte000;}
-          }
-          {if (true) throw (Error)jjte000;}
+                            if (jjtc000) {
+                              jjtree.clearNodeScope(jjtn000);
+                              jjtc000 = false;
+                            } else {
+                              jjtree.popNode();
+                            }
+                            if (jjte000 instanceof RuntimeException) {
+                              {if (true) throw (RuntimeException)jjte000;}
+                            }
+                            if (jjte000 instanceof ParseException) {
+                              {if (true) throw (ParseException)jjte000;}
+                            }
+                            {if (true) throw (Error)jjte000;}
     } finally {
-          if (jjtc000) {
-            jjtree.closeNodeScope(jjtn000, true);
-            jjtreeCloseNodeScope(jjtn000);
-          }
+                            if (jjtc000) {
+                              jjtree.closeNodeScope(jjtn000, true);
+                              jjtreeCloseNodeScope(jjtn000);
+                            }
     }
   }
 
@@ -4664,26 +4664,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
     try {
-      jjtn000.pairs = resourcePairList();
+      resourcePairList();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                      if (jjtc000) {
+                        jjtree.clearNodeScope(jjtn000);
+                        jjtc000 = false;
+                      } else {
+                        jjtree.popNode();
+                      }
+                      if (jjte000 instanceof RuntimeException) {
+                        {if (true) throw (RuntimeException)jjte000;}
+                      }
+                      if (jjte000 instanceof ParseException) {
+                        {if (true) throw (ParseException)jjte000;}
+                      }
+                      {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                      if (jjtc000) {
+                        jjtree.closeNodeScope(jjtn000, true);
+                        jjtreeCloseNodeScope(jjtn000);
+                      }
     }
   }
 
@@ -4694,26 +4694,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
     try {
-      jjtn000.pairs = resourcePairList();
+      resourcePairList();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                      if (jjtc000) {
+                        jjtree.clearNodeScope(jjtn000);
+                        jjtc000 = false;
+                      } else {
+                        jjtree.popNode();
+                      }
+                      if (jjte000 instanceof RuntimeException) {
+                        {if (true) throw (RuntimeException)jjte000;}
+                      }
+                      if (jjte000 instanceof ParseException) {
+                        {if (true) throw (ParseException)jjte000;}
+                      }
+                      {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                      if (jjtc000) {
+                        jjtree.closeNodeScope(jjtn000, true);
+                        jjtreeCloseNodeScope(jjtn000);
+                      }
     }
   }
 
@@ -4724,26 +4724,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
     try {
-      jjtn000.resource = resource();
+      resource();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                         if (jjtc000) {
+                           jjtree.clearNodeScope(jjtn000);
+                           jjtc000 = false;
+                         } else {
+                           jjtree.popNode();
+                         }
+                         if (jjte000 instanceof RuntimeException) {
+                           {if (true) throw (RuntimeException)jjte000;}
+                         }
+                         if (jjte000 instanceof ParseException) {
+                           {if (true) throw (ParseException)jjte000;}
+                         }
+                         {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                         if (jjtc000) {
+                           jjtree.closeNodeScope(jjtn000, true);
+                           jjtreeCloseNodeScope(jjtn000);
+                         }
     }
   }
 
@@ -4754,26 +4754,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
     jjtree.openNodeScope(jjtn000);
     jjtreeOpenNodeScope(jjtn000);jjtn000.relation = relation;
     try {
-      jjtn000.resource = resource();
+      resource();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                         if (jjtc000) {
+                           jjtree.clearNodeScope(jjtn000);
+                           jjtc000 = false;
+                         } else {
+                           jjtree.popNode();
+                         }
+                         if (jjte000 instanceof RuntimeException) {
+                           {if (true) throw (RuntimeException)jjte000;}
+                         }
+                         if (jjte000 instanceof ParseException) {
+                           {if (true) throw (ParseException)jjte000;}
+                         }
+                         {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                         if (jjtc000) {
+                           jjtree.closeNodeScope(jjtn000, true);
+                           jjtreeCloseNodeScope(jjtn000);
+                         }
     }
   }
 
@@ -4800,26 +4800,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.relation = relation();
+      relation();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                         if (jjtc000) {
+                           jjtree.clearNodeScope(jjtn000);
+                           jjtc000 = false;
+                         } else {
+                           jjtree.popNode();
+                         }
+                         if (jjte000 instanceof RuntimeException) {
+                           {if (true) throw (RuntimeException)jjte000;}
+                         }
+                         if (jjte000 instanceof ParseException) {
+                           {if (true) throw (ParseException)jjte000;}
+                         }
+                         {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                         if (jjtc000) {
+                           jjtree.closeNodeScope(jjtn000, true);
+                           jjtreeCloseNodeScope(jjtn000);
+                         }
     }
   }
 
@@ -4877,26 +4877,26 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   jjtree.openNodeScope(jjtn000);
   jjtreeOpenNodeScope(jjtn000);
     try {
-      jjtn000.message = name();
+      name();
     } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        {if (true) throw (RuntimeException)jjte000;}
-      }
-      if (jjte000 instanceof ParseException) {
-        {if (true) throw (ParseException)jjte000;}
-      }
-      {if (true) throw (Error)jjte000;}
+                        if (jjtc000) {
+                          jjtree.clearNodeScope(jjtn000);
+                          jjtc000 = false;
+                        } else {
+                          jjtree.popNode();
+                        }
+                        if (jjte000 instanceof RuntimeException) {
+                          {if (true) throw (RuntimeException)jjte000;}
+                        }
+                        if (jjte000 instanceof ParseException) {
+                          {if (true) throw (ParseException)jjte000;}
+                        }
+                        {if (true) throw (Error)jjte000;}
     } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-        jjtreeCloseNodeScope(jjtn000);
-      }
+                        if (jjtc000) {
+                          jjtree.closeNodeScope(jjtn000, true);
+                          jjtreeCloseNodeScope(jjtn000);
+                        }
     }
   }
 
@@ -4929,7 +4929,10 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
    }
 
   public RML(java.io.InputStream stream) {
-    jj_input_stream = new JavaCharStream(stream, 1, 1);
+     this(stream, null);
+  }
+  public RML(java.io.InputStream stream, String encoding) {
+    try { jj_input_stream = new JavaCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new RMLTokenManager(jj_input_stream);
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
@@ -4938,7 +4941,10 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
   }
 
   public void ReInit(java.io.InputStream stream) {
-    jj_input_stream.ReInit(stream, 1, 1);
+     ReInit(stream, null);
+  }
+  public void ReInit(java.io.InputStream stream, String encoding) {
+    try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
