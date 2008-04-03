@@ -18,4 +18,24 @@
       <artifactId>ledge-components</artifactId>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>javacc</id>
+            <goals>
+              <goal>jjtree-javacc</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <sourceDirectory>src/main/java</sourceDirectory>
+          <updateSources>true</updateSources>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
