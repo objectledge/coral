@@ -33,7 +33,7 @@
         </executions>
         <configuration>
           <sourceDirectory>src/main/java</sourceDirectory>
-          <updateSources>true</updateSources>
+          <inPlace>true</inPlace>
         </configuration>
       </plugin>
     </plugins>
