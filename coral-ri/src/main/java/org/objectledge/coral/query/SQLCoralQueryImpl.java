@@ -36,7 +36,7 @@ import org.objectledge.database.Database;
  * A QueryService implementation that uses the underlying relational database.
  *
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
- * @version $Id: SQLCoralQueryImpl.java,v 1.10 2005-05-30 09:47:03 zwierzem Exp $
+ * @version $Id: SQLCoralQueryImpl.java,v 1.11 2008-06-05 17:17:03 rafal Exp $
  */
 public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
@@ -149,24 +149,22 @@ public class SQLCoralQueryImpl
                     whereStarted = true;
                 }
                 ResourceClass[] children = rcm.getRClass().getChildClasses();
+                query.append("r").append(i+1).append(".resource_class_id");
                 if(children.length > 0)
                 {
-                    query.append("(");
-                    query.append("r").append(i+1).append(".resource_class_id");
-                    query.append(" = ");
-                    query.append(rcm.getRClass().getIdString());
+                    query.append(" IN (");
                     for(int j=0; j<children.length; j++)
                     {
-                        query.append(" OR ");
-                        query.append("r").append(i+1).append(".resource_class_id");
-                        query.append(" = ");
                         query.append(children[j].getIdString());
+                        if(j < children.length -1)
+                        {
+                            query.append(", ");
+                        }
                     }
                     query.append(")");
                 }
                 else
                 {
-                    query.append("r").append(i+1).append(".resource_class_id");
                     query.append(" = ");
                     query.append(rcm.getRClass().getIdString());
                 }
