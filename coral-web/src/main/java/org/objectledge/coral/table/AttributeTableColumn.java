@@ -41,10 +41,10 @@ import org.objectledge.table.TableException;
  * A table column base on a Coral resource's attribute.
  *
  * @author <a href="rafal@caltha.pl">Rafał Krzewski</a>
- * @version $Id: AttributeTableColumn.java,v 1.1 2006-04-28 07:35:35 rafal Exp $
+ * @version $Id: AttributeTableColumn.java,v 1.2 2008-06-05 16:38:00 rafal Exp $
  */
-public class AttributeTableColumn
-    extends TableColumn
+public class AttributeTableColumn<V>
+    extends TableColumn<Resource>
 {
     /**
      * Creates a new AttributeTableColumn instance.
@@ -54,7 +54,7 @@ public class AttributeTableColumn
      * @throws TableException
      */
     public AttributeTableColumn(ResourceClass resourceClass, String attributeName,
-        Comparator valueComparator)
+        Comparator<V> valueComparator)
         throws TableException
     {
         super(attributeName, getAttributeComparator(resourceClass, attributeName, valueComparator));
@@ -67,11 +67,11 @@ public class AttributeTableColumn
      * @param attributeName the attribute name.
      * @param valueComparator the comparator for attribute values.
      */
-    public static Comparator getAttributeComparator(ResourceClass resourceClass, 
-        String attributeName, Comparator valueComparator)
+    public static <V> Comparator<Resource> getAttributeComparator(ResourceClass resourceClass, 
+        String attributeName, Comparator<V> valueComparator)
     {
         AttributeDefinition attDef = resourceClass.getAttribute(attributeName);
-        return new AttributeValueComparator<Resource>(resourceClass.getJavaClass(), attDef,
+        return new AttributeValueComparator<Resource, V>(resourceClass.getJavaClass(), attDef,
             valueComparator);        
     }
 }

@@ -9,10 +9,10 @@ import org.objectledge.table.comparator.BaseStringComparator;
  * This is a comparator for comparing coral entities names.
  *
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
- * @version $Id: NameComparator.java,v 1.4 2005-02-21 14:04:29 rafal Exp $
+ * @version $Id: NameComparator.java,v 1.5 2008-06-05 16:37:59 rafal Exp $
  */
-public class NameComparator
-    extends BaseStringComparator
+public class NameComparator<T extends Entity>
+    extends BaseStringComparator<T>
 {
     /**
      * Creates new NameComparator instance.
@@ -27,16 +27,8 @@ public class NameComparator
     /**
      * {@inheritDoc}
      */
-    public int compare(Object o1, Object o2)
+    public int compare(T e1, T e2)
     {
-        if(!((o1 instanceof Entity && o2 instanceof Entity )))
-        {
-            return 0;
-        }
-
-        Entity r1 = (Entity)o1;
-        Entity r2 = (Entity)o2;
-
-        return compareStrings(r1.getName(), r2.getName());
+        return compareStrings(e1.getName(), e2.getName());
     }
 }

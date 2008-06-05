@@ -40,13 +40,13 @@ import org.objectledge.coral.store.Resource;
  * @param <T> the type of resources to be compared.
  * 
  * @author <a href="rafal@caltha.pl">Rafał Krzewski</a>
- * @version $Id: AttributeValueComparator.java,v 1.1 2005-12-19 13:58:54 rafal Exp $
+ * @version $Id: AttributeValueComparator.java,v 1.2 2008-06-05 16:37:58 rafal Exp $
  */
-public class AttributeValueComparator<T extends Resource>
+public class AttributeValueComparator<T extends Resource, V>
     implements Comparator<T>
 {
     private final AttributeDefinition attrDef;
-    private final Comparator valueComparator;
+    private final Comparator<V> valueComparator;
 
     /**
      * Creates a new AttributeValueComparator instance.
@@ -56,7 +56,7 @@ public class AttributeValueComparator<T extends Resource>
      * @param valueComparator a compartor for the attribute values.
      */
     public AttributeValueComparator(Class<T> type, AttributeDefinition attrDef,
-        Comparator valueComparator)
+        Comparator<V> valueComparator)
     {
         if(!attrDef.getDeclaringClass().getJavaClass().isAssignableFrom(type))
         {
@@ -76,8 +76,8 @@ public class AttributeValueComparator<T extends Resource>
      */
     public int compare(T o1, T o2)
     {
-        Object v1 = o1.get(attrDef);
-        Object v2 = o2.get(attrDef);
+        V v1 = (V) o1.get(attrDef);
+        V v2 = (V) o2.get(attrDef);
         return valueComparator.compare(v1, v2);
     }
 }

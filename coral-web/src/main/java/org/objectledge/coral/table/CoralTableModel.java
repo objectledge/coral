@@ -32,15 +32,15 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralTableModel.java,v 1.14 2007-11-18 21:21:04 rafal Exp $
+ * @version $Id: CoralTableModel.java,v 1.15 2008-06-05 16:37:59 rafal Exp $
  */
-public class CoralTableModel implements ExtendedTableModel
+public class CoralTableModel implements ExtendedTableModel<Resource>
 {
     /** coral session. */
     protected CoralSession coralSession;
 
     /** comparators keyed by column name. */
-    protected Map<String, Comparator> comparatorByColumnName = new HashMap<String, Comparator>();
+    protected Map<String, Comparator<Resource>> comparatorByColumnName = new HashMap<String, Comparator<Resource>>();
 
     /**
      * Creates new CoralTableModel instance.
@@ -82,12 +82,12 @@ public class CoralTableModel implements ExtendedTableModel
         comparatorByColumnName.put("modification.time", new ModificationTimeComparator());
 
         // Name comparator
-        comparatorByColumnName.put("name", new NameComparator(locale));
+        comparatorByColumnName.put("name", new NameComparator<Resource>(locale));
         // Path comparator
         comparatorByColumnName.put("path", new PathComparator(locale));
 
         // Id comparator
-        comparatorByColumnName.put("id", new IdComparator());
+        comparatorByColumnName.put("id", new IdComparator<Resource>());
     }
 
     /**
@@ -96,7 +96,7 @@ public class CoralTableModel implements ExtendedTableModel
      * @param name name of the column.
      * @param comparator the comparator for the column.
      */
-    public void addColumn(String name, Comparator comparator)
+    public void addColumn(String name, Comparator<Resource> comparator)
     {
         comparatorByColumnName.put(name, comparator);
     }
@@ -108,8 +108,8 @@ public class CoralTableModel implements ExtendedTableModel
      * @param attributeName the attribute name.
      * @param valueComparator the comparator for attribute values.
      */
-    public void addColumn(ResourceClass resourceClass, String attributeName,
-        Comparator valueComparator)
+    public <V> void addColumn(ResourceClass resourceClass, String attributeName,
+        Comparator<V> valueComparator)
     {
         addColumn(attributeName, AttributeTableColumn.getAttributeComparator(resourceClass,
             attributeName, valueComparator));
@@ -123,15 +123,15 @@ public class CoralTableModel implements ExtendedTableModel
      * @param filters a list of filters to be used while creating the rows set
      * @return table of children
      */
-    public TableRowSet getRowSet(TableState state, TableFilter[] filters)
+    public TableRowSet<Resource> getRowSet(TableState state, TableFilter<Resource>[] filters)
     {
         if(state.getTreeView())
         {
-            return new GenericTreeRowSet(state, filters, this);
+            return new GenericTreeRowSet<Resource>(state, filters, this);
         }
         else
         {
-            return new GenericListRowSet(state, filters, this);   
+            return new GenericListRowSet<Resource>(state, filters, this);   
         }
     }
 
@@ -141,17 +141,17 @@ public class CoralTableModel implements ExtendedTableModel
      *
      * @return array of <code>TableColumn</code> objects
      */
-    public TableColumn[] getColumns()
+    public TableColumn<Resource>[] getColumns()
     {
-        TableColumn[] columns = new TableColumn[comparatorByColumnName.size()];
+        TableColumn<Resource>[] columns = new TableColumn[comparatorByColumnName.size()];
         int i=0;
-        for(Iterator iter = comparatorByColumnName.keySet().iterator(); iter.hasNext(); i++)
+        for(Iterator<String> iter = comparatorByColumnName.keySet().iterator(); iter.hasNext(); i++)
         {
             String columnName = (String)(iter.next());
-            Comparator comparator =  (Comparator)(comparatorByColumnName.get(columnName));
+            Comparator<Resource> comparator =  (Comparator<Resource>)(comparatorByColumnName.get(columnName));
             try
             {
-                columns[i] = new TableColumn(columnName, comparator);
+                columns[i] = new TableColumn<Resource>(columnName, comparator);
             }
             catch(TableException e)
             {
@@ -167,13 +167,13 @@ public class CoralTableModel implements ExtendedTableModel
      * @param parent the parent
      * @return table of children
      */
-    public Object[] getChildren(Object parent)
+    public Resource[] getChildren(Resource parent)
     {
         if(parent == null)
         {
-            return new Object[0];
+            return new Resource[0];
         }
-        return coralSession.getStore().getResource((Resource)parent);
+        return coralSession.getStore().getResource(parent);
     }
 
     /**
@@ -182,7 +182,7 @@ public class CoralTableModel implements ExtendedTableModel
      * @param id the id of the object
      * @return model object
      */
-    public Object getObject(String id)
+    public Resource getObject(String id)
     {
         Resource resource = null;
         try
@@ -208,12 +208,12 @@ public class CoralTableModel implements ExtendedTableModel
      * @param child model object.
      * @return the id of the object.
      */
-    public String getId(String parent, Object child)
+    public String getId(String parent, Resource child)
     {
         if(child == null)
         {
             return "-1";
         }
-        return ((Resource)child).getIdString();
+        return child.getIdString();
     }
 }

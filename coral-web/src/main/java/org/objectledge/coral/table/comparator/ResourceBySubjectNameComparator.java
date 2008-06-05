@@ -11,10 +11,10 @@ import org.objectledge.table.comparator.BaseStringComparator;
  * to a resource.
  *
  * @author <a href="mailto:damian@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceBySubjectNameComparator.java,v 1.3 2005-02-21 14:04:29 rafal Exp $
+ * @version $Id: ResourceBySubjectNameComparator.java,v 1.4 2008-06-05 16:37:59 rafal Exp $
  */
 public abstract class ResourceBySubjectNameComparator
-    extends BaseStringComparator
+    extends BaseStringComparator<Resource>
 {
     /**
      * Creates new ResourceBySubjectNameComparator instance.
@@ -37,14 +37,10 @@ public abstract class ResourceBySubjectNameComparator
     /**
      * {@inheritDoc}
      */
-    public int compare(Object o1, Object o2)
+    public int compare(Resource r1, Resource r2)
     {
-        if(!((o1 instanceof Resource && o2 instanceof Resource )))
-        {
-            return 0;
-        }
-        Subject s1 = getSubject((Resource)o1);
-        Subject s2 = getSubject((Resource)o2);
+        Subject s1 = getSubject(r1);
+        Subject s2 = getSubject(r2);
         return compareStrings(s1.getName(), s2.getName());
     }
 }
