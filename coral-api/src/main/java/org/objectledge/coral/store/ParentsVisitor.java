@@ -36,7 +36,7 @@ import org.objectledge.visitor.Visitor;
  * A visitor for traversing the parents chain of a resource.
  *
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: ParentsVisitor.java,v 1.2 2005-03-18 10:48:19 rafal Exp $
+ * @version $Id: ParentsVisitor.java,v 1.3 2008-06-12 16:06:14 rafal Exp $
  */
 public class ParentsVisitor
     extends Visitor<Resource>
@@ -49,7 +49,7 @@ public class ParentsVisitor
     {
         if(r.getParent() != null)
         {
-            return Collections.singletonList(r).iterator();
+            return Collections.singletonList(r.getParent()).iterator();
         }
         else
         {
