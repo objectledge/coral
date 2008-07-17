@@ -358,11 +358,12 @@ ASTattributeDefinition attributeDefinition() :
 {
 }
 {
-    jjtThis.attributeFlags = attributeFlagList() jjtThis.attributeClass = attributeClass() 
+    ( jjtThis.attributeFlags = attributeFlagList() ) 
+    ( jjtThis.attributeClass = attributeClass() )
     [ <LPAREN> 
-        jjtThis.domain = name() 
+        ( jjtThis.domain = name() ) 
     <RPAREN> ]
-    jjtThis.attributeName = name()
+    ( jjtThis.attributeName = name() )
     {
         return jjtThis;
     }       
@@ -372,7 +373,7 @@ ASTattribute attribute() :
 {
 }
 {
-    jjtThis.attributeName = name() <EQUALS> jjtThis.value = value()
+    ( jjtThis.attributeName = name() ) <EQUALS> ( jjtThis.value = value() )
     {
         return jjtThis;
     }
@@ -382,7 +383,7 @@ ASTresourcePair resourcePair() :
 {
 }
 {
-    <LPAREN> jjtThis.pairHead = resource() jjtThis.pairTail = resource() <RPAREN>
+    <LPAREN> ( jjtThis.pairHead = resource() ) ( jjtThis.pairTail = resource() ) <RPAREN>
     {
         return jjtThis;
     }
@@ -756,13 +757,13 @@ void createAttributeClassStatement() :
 {
 }
 {
-    jjtThis.name=name() 
-    "JAVA" "CLASS" jjtThis.javaClass = name()
-    "HANDLER" "CLASS" jjtThis.handlerClass = name()
+    ( jjtThis.name = name() ) 
+    "JAVA" "CLASS" ( jjtThis.javaClass = name() )
+    "HANDLER" "CLASS" ( jjtThis.handlerClass = name() )
     [ 
         "DB" "TABLE" 
         ( 
-            jjtThis.dbTable = name() | 
+            ( jjtThis.dbTable = name() ) | 
             "NONE" 
         ) 
     ]
@@ -779,7 +780,7 @@ void deleteAttributeClassStatement() :
 {
 }
 {
-    jjtThis.attributeClass = attributeClass()
+    ( jjtThis.attributeClass = attributeClass() )
 }
 
 void alterAttributeClassSetNameStatement(ASTattributeClass attributeClass) :
@@ -787,7 +788,7 @@ void alterAttributeClassSetNameStatement(ASTattributeClass attributeClass) :
     jjtThis.attributeClass = attributeClass;
 }
 {
-    jjtThis.newName = name()
+    ( jjtThis.newName = name() )
 }
 
 void alterAttributeClassSetJavaClassStatement(ASTattributeClass attributeClass) :
@@ -795,7 +796,7 @@ void alterAttributeClassSetJavaClassStatement(ASTattributeClass attributeClass) 
     jjtThis.attributeClass = attributeClass;
 }
 {
-    jjtThis.javaClass = name()
+    ( jjtThis.javaClass = name() )
 }
 
 void alterAttributeClassSetHandlerClassStatement(ASTattributeClass attributeClass) :
@@ -803,7 +804,7 @@ void alterAttributeClassSetHandlerClassStatement(ASTattributeClass attributeClas
     jjtThis.attributeClass = attributeClass;
 }
 {
-    jjtThis.handlerClass=name()
+    ( jjtThis.handlerClass = name() )
 }
 
 void alterAttributeClassSetDbTableStatement(ASTattributeClass attributeClass) :
@@ -812,7 +813,7 @@ void alterAttributeClassSetDbTableStatement(ASTattributeClass attributeClass) :
 }
 {
     ( 
-        jjtThis.dbTable = name() | 
+        ( jjtThis.dbTable = name() ) | 
         "NONE" 
     )
 }
@@ -823,24 +824,24 @@ void createResourceClassStatement() :
 {
 }
 {
-    jjtThis.resourceClassFlags = resourceClassFlagList() jjtThis.name = name() 
-    "JAVA" "CLASS" jjtThis.javaClass = name()
-    "HANDLER" "CLASS" jjtThis.handlerClass = name()
+    ( jjtThis.resourceClassFlags = resourceClassFlagList() ) ( jjtThis.name = name() ) 
+    "JAVA" "CLASS" ( jjtThis.javaClass = name() )
+    "HANDLER" "CLASS" ( jjtThis.handlerClass = name() )
     [ 
         "DB" "TABLE" 
         ( 
-            jjtThis.dbTable = name() | 
+            ( jjtThis.dbTable = name() ) | 
             "NONE" 
         ) 
     ]
     [ "SUPERCLASSES" <LPAREN> 
-        jjtThis.superClasses = resourceClassList() 
+        ( jjtThis.superClasses = resourceClassList() ) 
     <RPAREN> ]
     [ "ATTRIBUTES" <LPAREN> 
-        jjtThis.attributeDefinitions = attributeDefinitionList() 
+        ( jjtThis.attributeDefinitions = attributeDefinitionList() ) 
     <RPAREN> ]
     [ "PERMISSIONS" <LPAREN> 
-        jjtThis.permissions = permissionList() 
+        ( jjtThis.permissions = permissionList() ) 
     <RPAREN> ]
 }
 
@@ -855,7 +856,7 @@ void deleteResourceClassStatement() :
 {
 }
 {
-    jjtThis.resourceClass = resourceClass()
+    ( jjtThis.resourceClass = resourceClass() )
 }
 
 void alterResourceClassSetNameStatement(ASTresourceClass resourceClass) :
@@ -863,7 +864,7 @@ void alterResourceClassSetNameStatement(ASTresourceClass resourceClass) :
     jjtThis.resourceClass = resourceClass;
 }
 {
-     jjtThis.newName = name()
+     ( jjtThis.newName = name() )
 }
 
 void alterResourceClassSetJavaClassStatement(ASTresourceClass resourceClass) :
@@ -871,7 +872,7 @@ void alterResourceClassSetJavaClassStatement(ASTresourceClass resourceClass) :
     jjtThis.resourceClass = resourceClass;
 }
 {
-    jjtThis.javaClass = name()
+    ( jjtThis.javaClass = name() )
 }
 
 void alterResourceClassSetHandlerClassStatement(ASTresourceClass resourceClass) :
@@ -879,7 +880,7 @@ void alterResourceClassSetHandlerClassStatement(ASTresourceClass resourceClass) 
     jjtThis.resourceClass = resourceClass;
 }
 {
-    jjtThis.handlerClass = name()
+    ( jjtThis.handlerClass = name() )
 }
 
 void alterResourceClassSetDbTableStatement(ASTresourceClass resourceClass) :
@@ -888,7 +889,7 @@ void alterResourceClassSetDbTableStatement(ASTresourceClass resourceClass) :
 }
 {
     ( 
-        jjtThis.dbTable = name() | 
+        ( jjtThis.dbTable = name() ) | 
         "NONE" 
     )
 }
@@ -898,7 +899,7 @@ void alterResourceClassSetFlagsStatement(ASTresourceClass resourceClass) :
     jjtThis.resourceClass = resourceClass;    
 }
 {
-     jjtThis.resourceClassFlags = resourceClassFlagList()
+     ( jjtThis.resourceClassFlags = resourceClassFlagList() )
 }
 
 void alterResourceClassAlterAttributeSetNameStatement(ASTresourceClass resourceClass, String attr) :
@@ -907,7 +908,7 @@ void alterResourceClassAlterAttributeSetNameStatement(ASTresourceClass resourceC
     jjtThis.attributeName = attr;
 }
 {
-    jjtThis.newName = name()
+    ( jjtThis.newName = name() )
 }
 
 void alterResourceClassAlterAttributeSetFlagsStatement(ASTresourceClass resourceClass, String attr) :
@@ -916,7 +917,7 @@ void alterResourceClassAlterAttributeSetFlagsStatement(ASTresourceClass resource
     jjtThis.attributeName = attr;
 }
 {
-    jjtThis.attributeFlags = attributeFlagList()
+    ( jjtThis.attributeFlags = attributeFlagList() )
 }
 
 void alterResourceClassAlterAttributeSetDomainStatement(ASTresourceClass resourceClass, String attr) :
@@ -925,7 +926,7 @@ void alterResourceClassAlterAttributeSetDomainStatement(ASTresourceClass resourc
     jjtThis.attributeName = attr;
 }
 {
-    jjtThis.domain = name()
+    ( jjtThis.domain = name() )
 }
 
 void alterResourceClassAddAttributeStatement(ASTresourceClass resourceClass) :
@@ -933,7 +934,7 @@ void alterResourceClassAddAttributeStatement(ASTresourceClass resourceClass) :
     jjtThis.resourceClass = resourceClass;
 }
 {
-    jjtThis.attributeDefinition = attributeDefinition() [ "VALUE" jjtThis.value = value() ]
+    ( jjtThis.attributeDefinition = attributeDefinition() ) [ "VALUE" ( jjtThis.value = value() ) ]
 }
 
 void alterResourceClassDeleteAttributeStatement(ASTresourceClass resourceClass) :
@@ -941,7 +942,7 @@ void alterResourceClassDeleteAttributeStatement(ASTresourceClass resourceClass) 
     jjtThis.resourceClass = resourceClass;
 }
 {
-    jjtThis.attributeName = name()
+    ( jjtThis.attributeName = name() )
 }
 
 void alterResourceClassAddSuperclassStatement(ASTresourceClass resourceClass) :
@@ -949,9 +950,9 @@ void alterResourceClassAddSuperclassStatement(ASTresourceClass resourceClass) :
     jjtThis.resourceClass = resourceClass;
 }
 {
-    jjtThis.superClass = resourceClass() 
+    ( jjtThis.superClass = resourceClass() ) 
     [ "VALUES" <LPAREN> 
-        jjtThis.attributeValues = attributeList() 
+        ( jjtThis.attributeValues = attributeList() ) 
     <RPAREN> ]
 }
 
@@ -960,7 +961,7 @@ void alterResourceClassDeleteSuperclassStatement(ASTresourceClass resourceClass)
     jjtThis.resourceClass = resourceClass;
 }
 {
-    jjtThis.superClass = resourceClass()
+    ( jjtThis.superClass = resourceClass() )
 }
 
 // 2.1 Permissions ///////////////////////////////////////////////////////////
@@ -969,7 +970,7 @@ void createPermissionStatement() :
 {
 }
 {
-    jjtThis.name = name()
+    ( jjtThis.name = name() )
 }
 
 void findPermissionStatement() :
@@ -983,7 +984,7 @@ void deletePermissionStatement() :
 {
 }
 {
-    jjtThis.permission = permission()
+    ( jjtThis.permission = permission() )
 }
 
 void alterPermissionSetNameStatement(ASTpermission perm) :
@@ -991,7 +992,7 @@ void alterPermissionSetNameStatement(ASTpermission perm) :
     jjtThis.permission = perm;
 }
 {
-    jjtThis.newName = name()
+    ( jjtThis.newName = name() )
 }
 
 // 2.2 Roles /////////////////////////////////////////////////////////////////
@@ -1000,9 +1001,9 @@ void createRoleStatement() :
 {
 }
 {
-    jjtThis.name = name() 
+    ( jjtThis.name = name() ) 
     [ "SUBROLES" <LPAREN> 
-        jjtThis.subRoles = roleList() 
+        ( jjtThis.subRoles = roleList() ) 
     <RPAREN> ]
 }
 
@@ -1017,7 +1018,7 @@ void deleteRoleStatement() :
 {
 }
 {
-    jjtThis.role = role()
+    ( jjtThis.role = role() )
 }
 
 void alterRoleSetNameStatement(ASTrole role) :
@@ -1025,7 +1026,7 @@ void alterRoleSetNameStatement(ASTrole role) :
     jjtThis.role = role;
 }
 {
-    jjtThis.newName = name()
+    ( jjtThis.newName = name() )
 }
 
 void alterRoleAddSubrolesStatement(ASTrole role) :
@@ -1034,7 +1035,7 @@ void alterRoleAddSubrolesStatement(ASTrole role) :
 }
 {
     <LPAREN> 
-        jjtThis.subRoles = roleList() 
+        ( jjtThis.subRoles = roleList() ) 
     <RPAREN>
 }
 
@@ -1044,7 +1045,7 @@ void alterRoleDeleteSubrolesStatement(ASTrole role) :
 }
 {
     <LPAREN> 
-        jjtThis.subRoles = roleList() 
+        ( jjtThis.subRoles = roleList() ) 
     <RPAREN>
 }
 
@@ -1053,7 +1054,7 @@ void findSubrolesStatement(boolean direct) :
     jjtThis.direct = direct;
 }
 {
-    jjtThis.role = role()
+    ( jjtThis.role = role() )
 }
 
 void findSuperrolesStatement(boolean direct) :
@@ -1061,7 +1062,7 @@ void findSuperrolesStatement(boolean direct) :
     jjtThis.direct = direct;
 }
 {
-    jjtThis.role = role()
+    ( jjtThis.role = role() )
 }
 
 // 2.3 Subjects //////////////////////////////////////////////////////////////
@@ -1070,9 +1071,9 @@ void createSubjectStatement() :
 {
 }
 {
-    jjtThis.name = name()
+    ( jjtThis.name = name() )
     [ "ROLE" <LPAREN> 
-        jjtThis.roles = roleList() 
+        ( jjtThis.roles = roleList() ) 
     <RPAREN> ]
 }
 
@@ -1087,7 +1088,7 @@ void deleteSubjectStatement() :
 {
 }
 {
-    jjtThis.subject = subject()
+    ( jjtThis.subject = subject() )
 }
 
 void alterSubjectSetNameStatement(ASTsubject subject) :
@@ -1095,7 +1096,7 @@ void alterSubjectSetNameStatement(ASTsubject subject) :
     jjtThis.subject = subject;
 }
 {
-    jjtThis.newName = name()
+    ( jjtThis.newName = name() )
 }
 
 
@@ -1180,7 +1181,7 @@ void equalityCondition(String lhs) :
     Token t;
 }
 {
-    jjtThis.operator = equalityOperator() 
+    ( jjtThis.operator = equalityOperator() ) 
     ( 
         t = <QUOTED_STRING> 
         {
@@ -1223,7 +1224,7 @@ void comparisonCondition(String lhs) :
     Token t;
 }
 {
-    jjtThis.operator = comparisonOperator()
+    ( jjtThis.operator = comparisonOperator() )
     ( 
         t = <QUOTED_STRING> 
         {
@@ -1289,14 +1290,14 @@ void definedCondition() :
 {
 }
 {
-    "DEFINED" jjtThis.rhs = name()
+    "DEFINED" ( jjtThis.rhs = name() )
 }
 
 ASTclassAndAliasSpecifier classAndAliasSpecifier() :
 {
 }
 {
-    jjtThis.resourceClass = resourceClass() [ "AS" jjtThis.alias = name() ]
+    ( jjtThis.resourceClass = resourceClass() ) [ "AS" ( jjtThis.alias = name() ) ]
     {
         return jjtThis;
     }
@@ -1317,7 +1318,7 @@ ASTorderBySpecifier orderBySpecifier() :
     jjtThis.dir = true;
 }
 {
-    jjtThis.attributeName = name() 
+    ( jjtThis.attributeName = name() ) 
     [ 
         "ASC" | 
         "DESC" 
@@ -1347,7 +1348,7 @@ ASTselectSpecifier selectSpecifier() :
 {
 }
 {
-	jjtThis.attributeName = name()
+	( jjtThis.attributeName = name() )
 	{
 		return jjtThis;
 	}
@@ -1372,15 +1373,15 @@ void createResourceStatement() :
 {
 }
 {
-    jjtThis.name = name()
-    "RESOURCE" "CLASS" jjtThis.resourceClass = resourceClass()
+    ( jjtThis.name = name() )
+    "RESOURCE" "CLASS" ( jjtThis.resourceClass = resourceClass() )
     "PARENT" 
     ( 
-        jjtThis.parentResource = resource() | 
+        ( jjtThis.parentResource = resource() ) | 
         "NONE" 
     )
     [ "ATTRIBUTES" <LPAREN> 
-        jjtThis.attributeValues = attributeList() 
+        ( jjtThis.attributeValues = attributeList() ) 
     <RPAREN> ]
 }
 
@@ -1389,12 +1390,12 @@ ASTfindResourceStatement findResourceStatement() :
 }
 {
     (
-        jjtThis.resource = resource() | 
+        ( jjtThis.resource = resource() ) | 
         (
-            [ "FROM" jjtThis.from = classAndAliasSpecifierList() ] 
-            [ "WHERE" jjtThis.where = conditionalExpression() ]
-            [ "ORDER" "BY" jjtThis.orderBy = orderByList() ]
-            [ "SELECT" jjtThis.select = selectList() ]
+            [ "FROM" ( jjtThis.from = classAndAliasSpecifierList() ) ] 
+            [ "WHERE" ( jjtThis.where = conditionalExpression() ) ]
+            [ "ORDER" "BY" ( jjtThis.orderBy = orderByList() ) ]
+            [ "SELECT" ( jjtThis.select = selectList() ) ]
         )
     )
     {
@@ -1420,7 +1421,7 @@ void alterResourceSetNameStatement(ASTresource resource) :
     jjtThis.resource = resource;
 }
 {
-    jjtThis.newName = name()
+    ( jjtThis.newName = name() )
 }
 
 void alterResourceSetParentStatement(ASTresource resource) :
@@ -1428,7 +1429,7 @@ void alterResourceSetParentStatement(ASTresource resource) :
     jjtThis.resource = resource;
 }
 {
-    jjtThis.parentResource = resource() | 
+    ( jjtThis.parentResource = resource() ) | 
     "NONE"
 }
 
@@ -1437,7 +1438,7 @@ void alterResourceSetOwnerStatement(ASTresource resource) :
     jjtThis.resource = resource;
 }
 {
-    jjtThis.owner = subject()
+    ( jjtThis.owner = subject() )
 }
 
 void alterResourceSetAttributeStatement(ASTresource resource) :
@@ -1445,7 +1446,7 @@ void alterResourceSetAttributeStatement(ASTresource resource) :
     jjtThis.resource = resource;
 }
 {
-    jjtThis.attribute = attribute()
+    ( jjtThis.attribute = attribute() )
 }
 
 void alterResourceDeleteAttributeStatement(ASTresource resource) :
@@ -1453,7 +1454,7 @@ void alterResourceDeleteAttributeStatement(ASTresource resource) :
     jjtThis.resource = resource;
 }
 {
-    jjtThis.attributeName = name()
+    ( jjtThis.attributeName = name() )
 }
 
 // 4.1 ResourceClass Permissions /////////////////////////////////////////////
@@ -1464,7 +1465,7 @@ void alterResourceClassAddPermissionsStatement(ASTresourceClass resourceClass) :
 }
 {
     <LPAREN> 
-        jjtThis.permissions = permissionList() 
+        ( jjtThis.permissions = permissionList() ) 
     <RPAREN>
 }
 
@@ -1474,7 +1475,7 @@ void alterResourceClassDeletePermissionsStatement(ASTresourceClass resourceClass
 }
 {
     <LPAREN> 
-        jjtThis.permissions = permissionList() 
+        ( jjtThis.permissions = permissionList() ) 
     <RPAREN>
 }
 
@@ -1482,7 +1483,7 @@ void findGrantsForResourceClassStatement() :
 {
 }
 {
-    jjtThis.resourceClass = resourceClass()
+    ( jjtThis.resourceClass = resourceClass() )
 }
 
 // 4.2 Subject Roles /////////////////////////////////////////////////////////
@@ -1491,7 +1492,7 @@ void grantRoleStatement() :
 {
 }
 {
-    jjtThis.role=role() "TO" jjtThis.subject = subject() 
+    ( jjtThis.role=role() ) "TO" ( jjtThis.subject = subject() ) 
     [ 
         "WITH" "GRANT" "OPTION" 
         { 
@@ -1504,7 +1505,7 @@ void revokeRoleStatement() :
 {
 }
 {
-    jjtThis.role=role() "FROM" jjtThis.subject=subject()
+    ( jjtThis.role = role() ) "FROM" ( jjtThis.subject = subject() )
 }
 
 void findRolesStatement(boolean direct) :
@@ -1512,23 +1513,23 @@ void findRolesStatement(boolean direct) :
     jjtThis.direct = direct;
 }
 {
-    jjtThis.subject=subject()
+    ( jjtThis.subject = subject() )
 }
 
 void findGrantsForSubjectStatement() :
 {
 }
 {
-    jjtThis.subject=subject() 
-    [ "ON" jjtThis.resource = resource() ]
+    ( jjtThis.subject = subject() ) 
+    [ "ON" ( jjtThis.resource = resource() ) ]
 }
 
 void findGrantsForRoleStatement() :
 {
 }
 {
-    jjtThis.role=role() 
-    [ "ON" jjtThis.resource = resource() ]
+    ( jjtThis.role = role() ) 
+    [ "ON" ( jjtThis.resource = resource() ) ]
 }
 
 // 4.3 Role Permissions on Resources /////////////////////////////////////////
@@ -1537,31 +1538,31 @@ void grantPermissionStatement() :
 {
 }
 {
-    jjtThis.permission = permission() 
-    "ON" jjtThis.resource = resource() 
+    ( jjtThis.permission = permission() ) 
+    "ON" ( jjtThis.resource = resource() ) 
     [
         "RECURSIVE" 
         { 
             jjtThis.recursive = true; 
         } 
     ] 
-    "TO" jjtThis.role = role()
+    "TO" ( jjtThis.role = role() )
 }
 
 void revokePermissionStatement() :
 {
 }
 {
-    jjtThis.permission = permission() 
-    "ON" jjtThis.resource = resource() 
-    "FROM" jjtThis.role = role()
+    ( jjtThis.permission = permission() ) 
+    "ON" ( jjtThis.resource = resource() ) 
+    "FROM" ( jjtThis.role = role() )
 }
             
 void findGrantsForResourceStatement() :
 { 
 }
 {
-    jjtThis.resource=resource()
+    ( jjtThis.resource = resource() )
 }
 
 // relations /////////////////////////////////////////////////////////////////
@@ -1570,7 +1571,7 @@ void createRelationStatement() :
 {
 }
 {
-    jjtThis.name = name()
+    ( jjtThis.name = name() )
 }
 
 void findRelationStatement() :
@@ -1585,7 +1586,7 @@ void alterRelationSetNameStatement(ASTrelation relation) :
     jjtThis.relation = relation;
 }
 {
-	jjtThis.newName = name()
+	( jjtThis.newName = name() )
 }
 
 void alterRelationAddPairsStatement(ASTrelation relation) :
@@ -1593,7 +1594,7 @@ void alterRelationAddPairsStatement(ASTrelation relation) :
     jjtThis.relation = relation;
 }
 {
-    jjtThis.pairs = resourcePairList()
+    ( jjtThis.pairs = resourcePairList() )
 }
 
 void alterRelationDeletePairsStatement(ASTrelation relation) :
@@ -1601,7 +1602,7 @@ void alterRelationDeletePairsStatement(ASTrelation relation) :
     jjtThis.relation = relation;
 }
 {
-    jjtThis.pairs = resourcePairList()
+    ( jjtThis.pairs = resourcePairList() )
 }
 
 void alterRelationDeleteForwardStatement(ASTrelation relation) :
@@ -1609,7 +1610,7 @@ void alterRelationDeleteForwardStatement(ASTrelation relation) :
     jjtThis.relation = relation;
 }
 {
-    jjtThis.resource = resource()
+    ( jjtThis.resource = resource() )
 }
 
 void alterRelationDeleteReverseStatement(ASTrelation relation) :
@@ -1617,7 +1618,7 @@ void alterRelationDeleteReverseStatement(ASTrelation relation) :
     jjtThis.relation = relation;
 }
 {
-    jjtThis.resource = resource()
+    ( jjtThis.resource = resource() )
 }
 
 void alterRelationDeleteAllStatement(ASTrelation relation) :
@@ -1632,7 +1633,7 @@ void deleteRelationStatement() :
 {
 }
 {
-    jjtThis.relation = relation()
+    ( jjtThis.relation = relation() )
 }
 
 // 5.0 Impersonation /////////////////////////////////////////////////////////
@@ -1643,7 +1644,7 @@ void impersonateStatement() :
 {
 }
 {
-    jjtThis.subject = subject() | 
+    ( jjtThis.subject = subject() ) | 
     "SELF"
 }
 
@@ -1653,5 +1654,5 @@ void echoStatement() :
 {
 }
 {
-    jjtThis.message = name()
+    ( jjtThis.message = name() )
 }
