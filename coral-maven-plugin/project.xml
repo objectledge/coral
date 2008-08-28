@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.38 2008-05-25 21:19:47 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.39 2008-08-28 15:53:25 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -233,7 +233,7 @@
     <dependency>
       <groupId>velocity</groupId>
       <artifactId>velocity</artifactId>
-      <version>1.4</version>
+      <version>1.5</version>
       <url>http://jakarta.apache.org/velocity/</url>
     </dependency>
     <dependency>
