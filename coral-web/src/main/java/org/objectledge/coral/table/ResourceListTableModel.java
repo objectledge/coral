@@ -17,13 +17,14 @@ import org.objectledge.coral.table.comparator.OwnerNameComparator;
 import org.objectledge.coral.table.comparator.PathComparator;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableException;
+import org.objectledge.table.comparator.ArrayPositionComparator;
 import org.objectledge.table.generic.ListTableModel;
 
 /**
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.9 2007-11-18 21:02:39 rafal Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.10 2008-10-07 16:46:45 rafal Exp $
  */
 public class ResourceListTableModel extends ListTableModel
 {
@@ -41,7 +42,7 @@ public class ResourceListTableModel extends ListTableModel
         throws TableException
     {
         super(array, (TableColumn[])null);
-        columns = getColumns(locale);
+        columns = getColumns(locale, array);
     }
 
     /**
@@ -55,7 +56,7 @@ public class ResourceListTableModel extends ListTableModel
         throws TableException
     {
         super(list, (TableColumn[])null);
-        columns = getColumns(locale);
+        columns = getColumns(locale, (Resource [])list.toArray());
     }
 
     /**
@@ -65,10 +66,10 @@ public class ResourceListTableModel extends ListTableModel
      * @return array of table columns.
      * @throws TableException if there is a problem crating column objects. 
      */
-    protected TableColumn[] getColumns(Locale locale)
+    protected TableColumn[] getColumns(Locale locale, Resource[] array)
         throws TableException
     {
-        TableColumn[] columns = new TableColumn[8];
+        TableColumn[] columns = new TableColumn[9];
         // add generic Resource columns
 
         // Subject name comparator columns
@@ -87,6 +88,9 @@ public class ResourceListTableModel extends ListTableModel
 
         // Id comparator
         columns[7] = new TableColumn("id", new IdComparator());
+        
+        // "Unsorted" comparator
+        columns[8] = new TableColumn("unsorted", new ArrayPositionComparator<Resource>(array));
         return columns;
     }
 
