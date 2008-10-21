@@ -17,16 +17,16 @@ import org.objectledge.coral.table.comparator.OwnerNameComparator;
 import org.objectledge.coral.table.comparator.PathComparator;
 import org.objectledge.table.TableColumn;
 import org.objectledge.table.TableException;
-import org.objectledge.table.comparator.ArrayPositionComparator;
+import org.objectledge.table.comparator.ListPositionComparator;
 import org.objectledge.table.generic.ListTableModel;
 
 /**
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.10 2008-10-07 16:46:45 rafal Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.11 2008-10-21 14:44:24 rafal Exp $
  */
-public class ResourceListTableModel extends ListTableModel
+public class ResourceListTableModel extends ListTableModel<Resource>
 {
     /** resources keyed by their id */
     private Map<String, Resource> resourcesById;
@@ -41,8 +41,9 @@ public class ResourceListTableModel extends ListTableModel
     public ResourceListTableModel(Resource[] array, Locale locale)
         throws TableException
     {
-        super(array, (TableColumn[])null);
-        columns = getColumns(locale, array);
+        super(array, (TableColumn<Resource>[])null);
+        // list variable is intilaized by superclass constructor
+        columns = getColumns(locale, list);
     }
 
     /**
@@ -52,11 +53,11 @@ public class ResourceListTableModel extends ListTableModel
      * @param locale the locale to be used by comparators.
      * @throws TableException if there is a problem creating the model.
      */
-    public ResourceListTableModel(List list, Locale locale)
+    public ResourceListTableModel(List<Resource> list, Locale locale)
         throws TableException
     {
-        super(list, (TableColumn[])null);
-        columns = getColumns(locale, (Resource [])list.toArray());
+        super(list, (TableColumn<Resource>[])null);
+        columns = getColumns(locale, list);
     }
 
     /**
@@ -66,31 +67,31 @@ public class ResourceListTableModel extends ListTableModel
      * @return array of table columns.
      * @throws TableException if there is a problem crating column objects. 
      */
-    protected TableColumn[] getColumns(Locale locale, Resource[] array)
+    protected TableColumn<Resource>[] getColumns(Locale locale, List<Resource> list)
         throws TableException
     {
-        TableColumn[] columns = new TableColumn[9];
+        TableColumn<Resource>[] columns = new TableColumn[9];
         // add generic Resource columns
 
         // Subject name comparator columns
-        columns[0] = new TableColumn("creator.name", new CreatorNameComparator(locale));
-        columns[1] = new TableColumn("modifier.name", new ModifierNameComparator(locale));
-        columns[2] = new TableColumn("owner.name", new OwnerNameComparator(locale));
+        columns[0] = new TableColumn<Resource>("creator.name", new CreatorNameComparator(locale));
+        columns[1] = new TableColumn<Resource>("modifier.name", new ModifierNameComparator(locale));
+        columns[2] = new TableColumn<Resource>("owner.name", new OwnerNameComparator(locale));
 
         // Time comparator columns
-        columns[3] = new TableColumn("creation.time", new CreationTimeComparator());
-        columns[4] = new TableColumn("modification.time", new ModificationTimeComparator());
+        columns[3] = new TableColumn<Resource>("creation.time", new CreationTimeComparator());
+        columns[4] = new TableColumn<Resource>("modification.time", new ModificationTimeComparator());
 
         // Name comparator
-        columns[5] = new TableColumn("name", new NameComparator(locale));
+        columns[5] = new TableColumn<Resource>("name", new NameComparator<Resource>(locale));
         // Path comparator
-        columns[6] = new TableColumn("path", new PathComparator(locale));
+        columns[6] = new TableColumn<Resource>("path", new PathComparator(locale));
 
         // Id comparator
-        columns[7] = new TableColumn("id", new IdComparator());
+        columns[7] = new TableColumn<Resource>("id", new IdComparator<Resource>());
         
         // "Unsorted" comparator
-        columns[8] = new TableColumn("unsorted", new ArrayPositionComparator<Resource>(array));
+        columns[8] = new TableColumn<Resource>("unsorted", new ListPositionComparator<Resource>(list));
         return columns;
     }
 
@@ -100,12 +101,12 @@ public class ResourceListTableModel extends ListTableModel
      * @param id the id of the object
      * @return model object
      */
-    public Object getObject(String id)
+    public Resource getObject(String id)
     {
         if(resourcesById == null)
         {
             resourcesById = new HashMap<String, Resource>();
-            for(Iterator i = list.iterator(); i.hasNext();)
+            for(Iterator<Resource> i = list.iterator(); i.hasNext();)
             {
                 Resource res = (Resource)(i.next());
                 resourcesById.put(res.getIdString(), res);
@@ -121,7 +122,7 @@ public class ResourceListTableModel extends ListTableModel
      *
      * @return the id of the object.
      */
-    public String getId(String parent, Object child)
+    public String getId(String parent, Resource child)
     {
         if(child == null)
         {
