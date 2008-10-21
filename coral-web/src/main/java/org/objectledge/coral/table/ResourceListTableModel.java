@@ -24,7 +24,7 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: ResourceListTableModel.java,v 1.11 2008-10-21 14:44:24 rafal Exp $
+ * @version $Id: ResourceListTableModel.java,v 1.12 2008-10-21 15:03:56 rafal Exp $
  */
 public class ResourceListTableModel extends ListTableModel<Resource>
 {
@@ -38,7 +38,7 @@ public class ResourceListTableModel extends ListTableModel<Resource>
      * @param locale the locale to be used by comparators.
      * @throws TableException if there is a problem creating the model.
      */
-    public ResourceListTableModel(Resource[] array, Locale locale)
+    public <T extends Resource> ResourceListTableModel (T[] array, Locale locale)
         throws TableException
     {
         super(array, (TableColumn<Resource>[])null);
@@ -53,11 +53,11 @@ public class ResourceListTableModel extends ListTableModel<Resource>
      * @param locale the locale to be used by comparators.
      * @throws TableException if there is a problem creating the model.
      */
-    public ResourceListTableModel(List<Resource> list, Locale locale)
+    public <T extends Resource> ResourceListTableModel(List<T> list, Locale locale)
         throws TableException
     {
-        super(list, (TableColumn<Resource>[])null);
-        columns = getColumns(locale, list);
+        super((List<Resource>)list, (TableColumn<Resource>[])null);
+        columns = getColumns(locale, (List<Resource>)list);
     }
 
     /**
