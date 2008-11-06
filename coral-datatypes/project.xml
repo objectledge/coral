@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<!-- $Id: project.xml,v 1.16 2005-08-03 10:19:54 rafal Exp $ -->
+<!-- $Id: project.xml,v 1.17 2008-11-06 00:08:12 rafal Exp $ -->
 <project>
   <pomVersion>3</pomVersion>
   
@@ -113,6 +113,12 @@
       <artifactId>dna-impl</artifactId>
       <version>1.1-rc2</version>
       <url>http://dna.codehaus.org</url>
+    </dependency>
+    <dependency>
+      <groupId>pcj</groupId>
+      <artifactId>pcj</artifactId>
+      <version>1.2</version>
+      <url>http://pcj.sourceforge.net</url>
     </dependency>
   </dependencies>
 </project>
