@@ -20,9 +20,9 @@ import org.objectledge.table.generic.ListTableModel;
  * Implementation of Table Model for lists of ARL resources.
  *
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: SubjectListTableModel.java,v 1.7 2007-11-18 21:02:39 rafal Exp $
+ * @version $Id: SubjectListTableModel.java,v 1.8 2009-01-09 16:16:40 rafal Exp $
  */
-public class SubjectListTableModel extends ListTableModel
+public class SubjectListTableModel extends ListTableModel<Subject>
 {
     /** subjects keyed by their id */
     private Map<String, Subject> subjectsById;
@@ -89,7 +89,7 @@ public class SubjectListTableModel extends ListTableModel
      * @param id the id of the object
      * @return model object
      */
-    public Object getObject(String id)
+    public Subject getObject(String id)
     {
         if(subjectsById == null)
         {
@@ -106,16 +106,16 @@ public class SubjectListTableModel extends ListTableModel
     /**
      * Returns the id of the object.
      * 
-     * @param parent the id of the parent objet.
+     * @param parent the id of the parent object.
      * @param child model object.
      * @return the id of the object.
      */
-    public String getId(String parent, Object child)
+    public String getId(String parent, Subject child)
     {
         if(child == null)
         {
             return "-1";
         }
-        return ((Subject)child).getIdString();
+        return child.getIdString();
     }
 }
