@@ -8,6 +8,7 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.schema.CircularDependencyException;
@@ -18,7 +19,7 @@ import org.objectledge.database.persistence.Persistence;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurityImpl.java,v 1.10 2005-05-20 05:35:53 pablo Exp $
+ * @version $Id: CoralSecurityImpl.java,v 1.11 2009-01-30 13:44:11 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSecurityImpl
@@ -702,5 +703,44 @@ public class CoralSecurityImpl
             }
         }
         return root;
+    }
+
+    @Override
+    public EntityFactory<Subject> getSubjectFactory()
+    {
+        return new EntityFactory<Subject>() {
+            @Override
+            public Subject getEntity(long id)
+            throws EntityDoesNotExistException
+            {
+                return getSubject(id);
+            }
+        };
     }    
+
+    @Override
+    public EntityFactory<Role> getRoleFactory()
+    {
+        return new EntityFactory<Role>() {
+            @Override
+            public Role getEntity(long id)
+                throws EntityDoesNotExistException
+            {
+                return getRole(id);
+            }
+        };
+    }
+    
+    @Override
+    public EntityFactory<Permission> getPermissionFactory()
+    {
+        return new EntityFactory<Permission>() {
+            @Override
+            public Permission getEntity(long id)
+            throws EntityDoesNotExistException
+            {
+                return getPermission(id);
+            }
+        };
+    }
 }

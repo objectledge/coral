@@ -30,12 +30,13 @@ package org.objectledge.coral.relation;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.entity.EntityFactory;
 
 /**
  * Acts as a management interface for {@link Relation} creation and deletion. 
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManager.java,v 1.4 2005-01-26 06:34:09 rafal Exp $
+ * @version $Id: CoralRelationManager.java,v 1.5 2009-01-30 13:43:52 rafal Exp $
  */
 public interface CoralRelationManager
 {
@@ -123,4 +124,11 @@ public interface CoralRelationManager
      * @return array of resource identifiers;
      */
     public long[] getRelationDefinition(Relation relation);
+    
+    /**
+     * Provides an EntityFactory for Relations.
+     * 
+     * @return an EntityFactory for Relations.
+     */
+    public EntityFactory<Relation> getRelationFactory();
 }

@@ -2,6 +2,7 @@ package org.objectledge.coral.security;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClass;
@@ -10,7 +11,7 @@ import org.objectledge.coral.store.Resource;
 /**
  * Manages {@link Subject}s, {@link Role}s and {@link Permission}s.
  *
- * @version $Id: CoralSecurity.java,v 1.5 2005-02-08 20:34:36 rafal Exp $
+ * @version $Id: CoralSecurity.java,v 1.6 2009-01-30 13:43:51 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSecurity
@@ -330,4 +331,25 @@ public interface CoralSecurity
      */
     public void revoke(Resource resource, Role role, Permission permission)
         throws IllegalArgumentException, SecurityException;
+    
+    /**
+     * Provides an EntityFactory for Subjects.
+     * 
+     * @param EntityFactory for Subjects.
+     */
+    public EntityFactory<Subject> getSubjectFactory();
+
+    /**
+     * Provides an EntityFactory for Subjects.
+     * 
+     * @param EntityFactory for Subjects.
+     */
+    public EntityFactory<Role> getRoleFactory();
+    
+    /**
+     * Provides an EntityFactory for Subjects.
+     * 
+     * @param EntityFactory for Subjects.
+     */
+    public EntityFactory<Permission> getPermissionFactory();
 }

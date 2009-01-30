@@ -31,6 +31,7 @@ import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.relation.Relation;
 import org.objectledge.coral.relation.RelationModification;
@@ -39,7 +40,7 @@ import org.objectledge.coral.relation.RelationModification;
  * Session private wrapper for the Coral relation manger component.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralRelationManager.java,v 1.4 2005-02-08 20:34:52 rafal Exp $
+ * @version $Id: SessionCoralRelationManager.java,v 1.5 2009-01-30 13:43:58 rafal Exp $
  */
 public class SessionCoralRelationManager implements CoralRelationManager
 {
@@ -129,5 +130,12 @@ public class SessionCoralRelationManager implements CoralRelationManager
     {
         session.verify();
         return coral.getRelationManager().getRelationDefinition(relation);
+    }
+
+    @Override
+    public EntityFactory<Relation> getRelationFactory()
+    {
+        session.verify();
+        return coral.getRelationManager().getRelationFactory();
     }
 }

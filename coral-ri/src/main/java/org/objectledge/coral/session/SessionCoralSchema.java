@@ -32,6 +32,7 @@ import java.util.Map;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -46,7 +47,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralSchema wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSchema.java,v 1.4 2005-02-08 20:34:52 rafal Exp $
+ * @version $Id: SessionCoralSchema.java,v 1.5 2009-01-30 13:43:58 rafal Exp $
  */
 public class SessionCoralSchema implements CoralSchema
 {
@@ -351,5 +352,26 @@ public class SessionCoralSchema implements CoralSchema
     {
         session.verify();
         coral.getSchema().deleteParentClass(child, parent);
+    }
+
+    @Override
+    public EntityFactory<AttributeClass> getAttributeClassFactory()
+    {
+        session.verify();
+        return coral.getSchema().getAttributeClassFactory();
+    }
+
+    @Override
+    public EntityFactory<AttributeDefinition> getAttributeDefinitionFactory()
+    {
+        session.verify();
+        return coral.getSchema().getAttributeDefinitionFactory();
+    }
+
+    @Override
+    public EntityFactory<ResourceClass> getResourceClassFactory()
+    {
+        session.verify();
+        return coral.getSchema().getResourceClassFactory();
     }
 }

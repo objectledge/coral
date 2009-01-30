@@ -37,6 +37,7 @@ import java.util.Set;
 import org.jmock.Mock;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CircularDependencyException;
@@ -57,7 +58,7 @@ import org.objectledge.utils.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: RelationImplTest.java,v 1.15 2007-06-03 00:07:08 rafal Exp $
+ * @version $Id: RelationImplTest.java,v 1.16 2009-01-30 13:43:56 rafal Exp $
  */
 public class RelationImplTest extends LedgeTestCase
 {
@@ -571,6 +572,12 @@ public class RelationImplTest extends LedgeTestCase
          * {@inheritDoc}
          */
         public String getInvalidResourceNameCharacters(String name)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public EntityFactory<Resource> getResourceFactory()
         {
             throw new UnsupportedOperationException();
         }

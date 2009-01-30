@@ -30,6 +30,7 @@ package org.objectledge.coral.session;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClass;
@@ -44,7 +45,7 @@ import org.objectledge.coral.store.Resource;
  * A session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralSecurity.java,v 1.4 2005-02-08 20:34:52 rafal Exp $
+ * @version $Id: SessionCoralSecurity.java,v 1.5 2009-01-30 13:43:57 rafal Exp $
  */
 public class SessionCoralSecurity implements CoralSecurity
 {
@@ -322,5 +323,32 @@ public class SessionCoralSecurity implements CoralSecurity
     {
         session.verify();
         coral.getSecurity().revoke(resource, role, permission);
+    }
+
+    /** 
+     * {@inheritDoc}
+     */    
+    public EntityFactory<Subject> getSubjectFactory()
+     {
+         session.verify();
+         return coral.getSecurity().getSubjectFactory();
+     }
+     
+    /** 
+     * {@inheritDoc}
+     */    
+    public EntityFactory<Role> getRoleFactory()
+    {
+         session.verify();
+         return coral.getSecurity().getRoleFactory();
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public EntityFactory<Permission> getPermissionFactory()
+    {
+        session.verify();
+        return coral.getSecurity().getPermissionFactory();
     }
 }

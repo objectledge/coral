@@ -32,6 +32,7 @@ import java.util.Map;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClass;
@@ -46,7 +47,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * Session local CoralStore wrapper.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: SessionCoralStore.java,v 1.7 2005-06-13 11:08:43 rafal Exp $
+ * @version $Id: SessionCoralStore.java,v 1.8 2009-01-30 13:43:58 rafal Exp $
  */
 public class SessionCoralStore implements CoralStore
 {
@@ -289,5 +290,12 @@ public class SessionCoralStore implements CoralStore
     {
         session.verify();
         return coral.getStore().getInvalidResourceNameCharacters(name);
+    }
+
+    @Override
+    public EntityFactory<Resource> getResourceFactory()
+    {
+        session.verify();
+        return coral.getStore().getResourceFactory();
     }    
 }

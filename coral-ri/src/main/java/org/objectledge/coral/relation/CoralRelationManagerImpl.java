@@ -49,6 +49,7 @@ import org.objectledge.coral.PreloadingParticipant;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityRegistry;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.database.DatabaseUtils;
@@ -59,7 +60,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * Implmentation of the Coral relation manager component.
  * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
- * @version $Id: CoralRelationManagerImpl.java,v 1.16 2005-05-30 09:47:05 zwierzem Exp $
+ * @version $Id: CoralRelationManagerImpl.java,v 1.17 2009-01-30 13:44:09 rafal Exp $
  */
 public class CoralRelationManagerImpl
     implements CoralRelationManager, PreloadingParticipant
@@ -463,5 +464,18 @@ public class CoralRelationManagerImpl
         relationRegistry.get();
         log.info("building relation objects: done in "+
             (System.currentTimeMillis()-time)+"ms");
+    }
+
+    @Override
+    public EntityFactory<Relation> getRelationFactory()
+    {
+        return new EntityFactory<Relation>() {
+            @Override
+            public Relation getEntity(long id)
+                throws EntityDoesNotExistException
+            {
+                return getRelation(id);
+            }
+        };
     }
 }

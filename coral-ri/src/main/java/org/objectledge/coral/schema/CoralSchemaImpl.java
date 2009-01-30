@@ -13,6 +13,7 @@ import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.PreloadingParticipant;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -24,7 +25,7 @@ import org.objectledge.database.persistence.Persistent;
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchemaImpl.java,v 1.18 2005-05-30 09:47:26 zwierzem Exp $
+ * @version $Id: CoralSchemaImpl.java,v 1.19 2009-01-30 13:44:02 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralSchemaImpl
@@ -915,5 +916,44 @@ public class CoralSchemaImpl
         {
             DatabaseUtils.close(conn);
         }
+    }
+
+    @Override
+    public EntityFactory<AttributeClass> getAttributeClassFactory()
+    {
+        return new EntityFactory<AttributeClass>() {
+            @Override
+            public AttributeClass getEntity(long id)
+                throws EntityDoesNotExistException
+            {
+                return getAttributeClass(id);
+            }
+        };
+    }
+
+    @Override
+    public EntityFactory<AttributeDefinition> getAttributeDefinitionFactory()
+    {
+        return new EntityFactory<AttributeDefinition>() {
+            @Override
+            public AttributeDefinition getEntity(long id)
+                throws EntityDoesNotExistException
+            {
+                return getAttribute(id);
+            }
+        };
+    }
+
+    @Override
+    public EntityFactory<ResourceClass> getResourceClassFactory()
+    {
+        return new EntityFactory<ResourceClass>() {
+            @Override
+            public ResourceClass getEntity(long id)
+                throws EntityDoesNotExistException
+            {
+                return getResourceClass(id);
+            }
+        };
     }
 } 

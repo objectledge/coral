@@ -25,8 +25,10 @@ import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.PreloadingParticipant;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.event.CoralEventHub;
+import org.objectledge.coral.relation.Relation;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CircularDependencyException;
@@ -45,7 +47,7 @@ import org.objectledge.database.persistence.PersistentFactory;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStoreImpl.java,v 1.32 2008-01-02 00:31:02 rafal Exp $
+ * @version $Id: CoralStoreImpl.java,v 1.33 2009-01-30 13:44:14 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralStoreImpl
@@ -1713,5 +1715,18 @@ public class CoralStoreImpl
         }
         time = System.currentTimeMillis() - time;
         log.info("finished preloading resource store in "+time+"ms");
-    }    
+    }
+
+    @Override
+    public EntityFactory<Resource> getResourceFactory()
+    {
+        return new EntityFactory<Resource>() {
+            @Override
+            public Resource getEntity(long id)
+                throws EntityDoesNotExistException
+            {
+                return getResource(id);
+            }
+        };    
+     }    
 }

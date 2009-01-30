@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClass;
@@ -13,7 +14,7 @@ import org.objectledge.coral.security.Subject;
 /**
  * Manages resource instances.
  *
- * @version $Id: CoralStore.java,v 1.8 2005-06-13 11:06:58 rafal Exp $
+ * @version $Id: CoralStore.java,v 1.9 2009-01-30 13:43:51 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralStore
@@ -307,4 +308,11 @@ public interface CoralStore
      * name empty string is returned. Each invalid character appers once in the output.
      */
     public String getInvalidResourceNameCharacters(String name);    
+    
+    /**
+     * Provides an EntityFactory for Resources.
+     * 
+     * @return  an EntityFactory for Resources.
+     */
+    public EntityFactory<Resource> getResourceFactory();
 }

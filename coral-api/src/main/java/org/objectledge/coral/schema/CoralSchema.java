@@ -4,13 +4,14 @@ import java.util.Map;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
+import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.store.ValueRequiredException;
 
 /**
  * Manages {@link ResourceClass}es and their associated entities.
  *
- * @version $Id: CoralSchema.java,v 1.5 2004-12-23 07:18:34 rafal Exp $
+ * @version $Id: CoralSchema.java,v 1.6 2009-01-30 13:43:52 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSchema
@@ -369,4 +370,25 @@ public interface CoralSchema
     public void deleteParentClass(ResourceClass child, ResourceClass parent)
         throws IllegalArgumentException;
     
+    /**
+     * Provides an EntityFactory for AttributeClasses.
+     * 
+     * @return  an EntityFactory for AttributeClasses.
+     */
+    public EntityFactory<AttributeClass> getAttributeClassFactory();
+
+    /**
+     * Provides an EntityFactory for AttributeDefinitions.
+     * 
+     * @return  an EntityFactory for AttributeDefinitions.
+     */
+    public EntityFactory<AttributeDefinition> getAttributeDefinitionFactory();
+    
+
+    /**
+     * Provides an EntityFactory for AttributeClasses.
+     * 
+     * @return  an EntityFactory for AttributeClasses.
+     */
+    public EntityFactory<ResourceClass> getResourceClassFactory();
 } 
