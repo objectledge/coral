@@ -2,6 +2,7 @@ package org.objectledge.coral.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +32,7 @@ public class EntityUtils
      * @param entities a Collection of Entities.
      * @return comma separated String of Entity ids.
      */
-    public static <E extends Entity>String entitiesToIds(Collection<E> entities)
+    public static <E extends Entity> String entitiesToIds(Collection<E> entities)
     {
         StringBuilder sb = new StringBuilder();
         Iterator<E> i = entities.iterator();
@@ -47,46 +48,65 @@ public class EntityUtils
     }
 
     /**
-     * Converts a comma separated string of Entity ids into a list of Entities using specified factory.
+     * Converts a comma separated string of Entity ids into a list of Entities using specified
+     * factory.
      * 
      * @param <E> Entity subclass.
      * @param idString comma separated string of Entity id's
      * @param factory an Entity factory.
      * @return a list of Entities.
      * @throws NumberFormatException if the string contains numbers that cannot be parsed correctly
-     * @throws EntityDoesNotExistException if the factory is unable to provide Entities with specified ids
+     * @throws EntityDoesNotExistException if the factory is unable to provide Entities with
+     *         specified ids
      */
-    public static <E extends Entity>List<E> idsToEntityList(String idString, EntityFactory<E> factory)
+    public static <E extends Entity> List<E> idsToEntityList(String idString,
+        EntityFactory<E> factory)
         throws NumberFormatException, EntityDoesNotExistException
     {
-        String[] ids = idString.split(",");
-        List<E> entities = new ArrayList<E>(ids.length);
-        for (String id : ids)
+        if(idString.trim().length() > 0)
         {
-            entities.add(factory.getEntity(Long.parseLong(id)));
+            String[] ids = idString.split(",");
+            List<E> entities = new ArrayList<E>(ids.length);
+            for (String id : ids)
+            {
+                entities.add(factory.getEntity(Long.parseLong(id.trim())));
+            }
+            return entities;
         }
-        return entities;
+        else
+        {
+            return Collections.emptyList();
+        }
     }
 
     /**
-     * Converts a comma separated string of Entity ids into a set of Entities using specified factory.
+     * Converts a comma separated string of Entity ids into a set of Entities using specified
+     * factory.
      * 
      * @param <E> Entity subclass.
      * @param idString comma separated string of Entity id's
      * @param factory an Entity factory.
      * @return a set of Entities.
      * @throws NumberFormatException if the string contains numbers that cannot be parsed correctly
-     * @throws EntityDoesNotExistException if the factory is unable to provide Entities with specified ids
+     * @throws EntityDoesNotExistException if the factory is unable to provide Entities with
+     *         specified ids
      */
-    public static <E extends Entity>Set<E> idsToEntitySet(String idString, EntityFactory<E> factory)
+    public static <E extends Entity> Set<E> idsToEntitySet(String idString, EntityFactory<E> factory)
         throws NumberFormatException, EntityDoesNotExistException
     {
-        String[] ids = idString.split(",");
-        Set<E> entities = new HashSet<E>(ids.length);
-        for (String id : ids)
+        if(idString.trim().length() > 0)
         {
-            entities.add(factory.getEntity(Long.parseLong(id)));
+            String[] ids = idString.split(",");
+            Set<E> entities = new HashSet<E>(ids.length);
+            for (String id : ids)
+            {
+                entities.add(factory.getEntity(Long.parseLong(id.trim())));
+            }
+            return entities;
         }
-        return entities;
+        else
+        {
+            return Collections.emptySet();
+        }
     }
 }
