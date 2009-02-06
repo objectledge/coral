@@ -48,6 +48,28 @@ public class EntityUtils
     }
 
     /**
+     * Converts an array of Entity ids into a list of Entities using specified
+     * factory.
+     * 
+     * @param <E> Entity subclass.
+     * @param ids array of Entity id's
+     * @param factory an Entity factory.
+     * @return a list of Entities.
+     * @throws EntityDoesNotExistException if the factory is unable to provide Entities with
+     *         specified ids
+     */
+    public static <E extends Entity> List<E> idsToEntityList(String[] ids, EntityFactory<E> factory)
+        throws EntityDoesNotExistException
+    {
+        List<E> entities = new ArrayList<E>(ids.length);
+        for (String id : ids)
+        {
+            entities.add(factory.getEntity(Long.parseLong(id.trim())));
+        }
+        return entities;
+    }
+
+    /**
      * Converts a comma separated string of Entity ids into a list of Entities using specified
      * factory.
      * 
@@ -65,18 +87,34 @@ public class EntityUtils
     {
         if(idString.trim().length() > 0)
         {
-            String[] ids = idString.split(",");
-            List<E> entities = new ArrayList<E>(ids.length);
-            for (String id : ids)
-            {
-                entities.add(factory.getEntity(Long.parseLong(id.trim())));
-            }
-            return entities;
+            return idsToEntityList(idString.split(","), factory);
         }
         else
         {
-            return Collections.emptyList();
+            return new ArrayList<E>(0);
         }
+    }
+
+    /**
+     * Converts an array of Entity ids into a set of Entities using specified
+     * factory.
+     * 
+     * @param <E> Entity subclass.
+     * @param ids array of Entity id's
+     * @param factory an Entity factory.
+     * @return a set of Entities.
+     * @throws EntityDoesNotExistException if the factory is unable to provide Entities with
+     *         specified ids
+     */
+    public static <E extends Entity> Set<E> idsToEntitySet(String[] ids, EntityFactory<E> factory)
+        throws EntityDoesNotExistException
+    {
+        Set<E> entities = new HashSet<E>(ids.length);
+        for (String id : ids)
+        {
+            entities.add(factory.getEntity(Long.parseLong(id.trim())));
+        }
+        return entities;
     }
 
     /**
@@ -96,17 +134,11 @@ public class EntityUtils
     {
         if(idString.trim().length() > 0)
         {
-            String[] ids = idString.split(",");
-            Set<E> entities = new HashSet<E>(ids.length);
-            for (String id : ids)
-            {
-                entities.add(factory.getEntity(Long.parseLong(id.trim())));
-            }
-            return entities;
+            return idsToEntitySet(idString.split(","), factory);
         }
         else
         {
-            return Collections.emptySet();
+            return new HashSet<E>(0);
         }
     }
 }
