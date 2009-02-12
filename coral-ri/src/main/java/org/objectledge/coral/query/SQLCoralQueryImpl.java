@@ -156,12 +156,9 @@ public class SQLCoralQueryImpl
                     for(int j=0; j<children.length; j++)
                     {
                         query.append(children[j].getIdString());
-                        if(j < children.length -1)
-                        {
-                            query.append(", ");
-                        }
+                        query.append(", ");
                     }
-                    query.append(")");
+                    query.append(rcm.getRClass().getIdString()).append(")");
                 }
                 else
                 {
