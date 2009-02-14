@@ -15,19 +15,14 @@
   <!-- logo -->
   <inceptionYear>2003</inceptionYear>
   <package>org.objectledge.coral</package>
-  <issueTrackingUrl>http://objectledge.org/jira/secure/BrowseProject.jspa?id=10030</issueTrackingUrl>
+  <issueTrackingUrl>http://objectledge.org/jira/browse/CORAL</issueTrackingUrl>
    
-  <url>http://coral.objectledge.org/</url>
+  <url>http://objectledge.org/confluence/display/CORAL</url>
   
-  <siteAddress>coral.objectledge.org</siteAddress>
-  <siteDirectory>/home/caltha/objectledge/coral/www</siteDirectory>
-  <distributionSite>coral.objectledge.org</distributionSite>
-  <distributionDirectory>/home/caltha/objectledge/coral/builds</distributionDirectory>
-
   <repository>
-    <developerConnection>scm:cvs:ext:${maven.username}@cvs.caltha.pl:/cvsroot/${pom.groupId}:${pom.artifactId}</developerConnection>
-    <connection>scm:cvs:pserver:anoncvs@objectledge.org:/cvsroot/${pom.groupId}:${pom.artifactId}</connection>
-    <url>http://objectledge.org/fisheye/browse/${pom.groupId}/${pom.artifactId}</url>
+    <developerConnection>scm:svn:http://objectledge.org/coral/${pom.artifactId}</developerConnection>
+    <connection>scm:svn:http://objectledge.org/coral/${pom.artifactId}</connection>
+    <url>http://objectledge.org/fisheye/browse/coral</url>
   </repository>
 
   <versions>
