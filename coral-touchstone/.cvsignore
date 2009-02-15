@@ -1,0 +1,5 @@
+.clover
+maven.log
+velocity.log
+bin
+target
