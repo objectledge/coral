@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id: project.xml,v 1.6 2005-08-03 10:19:56 rafal Exp $ -->
+<project>
+  <pomVersion>3</pomVersion>
+  
+  <extend>../coral-common/project.xml</extend>
+
+  <!-- project info -->
+  
+  <groupId>coral</groupId>
+  <id>coral-reactor</id>
+  <currentVersion>${versions.coral}</currentVersion>
+  
+  <name>Coral</name>
+  <shortDescription>Coral - documentation package.</shortDescription>
+  <description>
+    Coral is as an object oriented database. It manages structured resources, that 
+    can be mapped to Java objects in a JDBC relational database. 
+    
+    Besides simple object persistency mechanism Coral provides an expressive 
+    security system, many kinds of resources relations (intrinsic tree organization 
+    or resources, reference attributes, set theory relations) and a powerful query 
+    facility that can use attribute values and resource relations to select objects 
+    from the store.   
+  </description>
+  <dependencies>
+    <dependency>
+      <type>plugin</type>
+      <groupId>findbugs</groupId>
+      <artifactId>maven-findbugs-plugin</artifactId>
+      <version>1.3</version>
+    </dependency>
+  </dependencies>
+  <reports>   
+    <report>maven-license-plugin</report>
+    <report>maven-changes-plugin</report>
+    <report>maven-faq-plugin</report>    
+    <report>maven-multiproject-plugin</report>
+    <report>maven-dashboard-plugin</report>
+    <report>maven-multichanges-plugin</report>
+    <!-- <report>maven-jira-plugin</report> -->
+  </reports>
+</project>
