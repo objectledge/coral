@@ -1,0 +1,8 @@
+.clover
+maven.log
+velocity.log
+bin
+target
+.settings
+build.properties
+*.log*
