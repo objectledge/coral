@@ -1,7 +1,9 @@
 package org.objectledge.coral.security;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import org.objectledge.coral.BackendException;
@@ -284,19 +286,22 @@ public class RoleImpl
     public Subject[] getSubjects()
     {
         buildRoles();
-        Set<Subject> temp = new HashSet<Subject>();
-        Set<Role> roleset = roles.getMatchingRoles();
-        for(Role r: roleset)
+        Set<Subject> subjects = new HashSet<Subject>();
+        Deque<Role> roleStack = new LinkedList<Role>();
+        roleStack.push(this);
+        while(!roleStack.isEmpty())
         {
-            Set<RoleAssignment> ras = coral.getRegistry().getRoleAssignments(r);
-            for(RoleAssignment ra : ras)
+            Role r = roleStack.pop();
+            for(RoleAssignment ra : coral.getRegistry().getRoleAssignments(r))
             {
-                temp.add(ra.getSubject());
+                subjects.add(ra.getSubject());
+            }
+            for(Role sr : r.getSuperRoles())
+            {
+                roleStack.push(sr);
             }
         }
-        Subject[] result = new Subject[temp.size()];
-        temp.toArray(result);
-        return result;
+        return subjects.toArray(new Subject[subjects.size()]);
     }
 
     /**
