@@ -31,4 +31,9 @@ public class ASTapproximationCondition extends SimpleNode {
   {
   	return literalRHS;
   }
+
+  public int getOperator()
+  {
+    return operator;
+  }
 }

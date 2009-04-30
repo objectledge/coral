@@ -479,9 +479,16 @@ public class SQLCoralQueryImpl
                     try
                     {
                         AttributeDefinition lhs = 
-                            ((ResultColumnAttribute)parseOperand(node.getLHS(), true, columnMap)).
-                             getAttribute();
-                        appendAttribute(node.getLHS(), columnMap, out);
+                        	((ResultColumnAttribute)parseOperand(node.getLHS(), true, columnMap)).
+                        	 getAttribute();
+                        boolean[] caseSensitive = { false, true };
+                        if(caseSensitive[node.getOperator()]){
+                            appendAttribute(node.getLHS(), columnMap, out);
+                        }else{
+                            out.append(" LOWER(");
+                            appendAttribute(node.getLHS(), columnMap, out);
+                            out.append(")");
+                        }
                         out.append(" LIKE ");
                         Object rhs = parseOperand(node.getRHS(), false, columnMap);
                         if(rhs instanceof ResultColumnAttribute)
@@ -493,7 +500,7 @@ public class SQLCoralQueryImpl
                             AttributeHandler h = lhs.getAttributeClass().getHandler();
                             Object value = h.toAttributeValue(rhs);
                             out.append(h.toExternalString(value));
-                        }                        
+                        }						 
                         return data;
                     }
                     catch(MalformedQueryException e)
@@ -502,7 +509,7 @@ public class SQLCoralQueryImpl
                     }
                 }
             };
-        
+
         try
         {
             visitor.visit(expr, null);

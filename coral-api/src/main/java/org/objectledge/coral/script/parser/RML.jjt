@@ -105,6 +105,7 @@ TOKEN:
     <INDEXABLE : "INDEXABLE"> |
     <JAVA : "JAVA"> |
     <LIKE : "LIKE"> |
+	<LIKE_NC : "LIKE_NC"> |
     <NAME : "NAME"> |
     <NONE : "NONE"> |
     <NOT : "NOT"> |
@@ -1269,7 +1270,7 @@ void approximationCondition(String lhs) :
     Token t;
 }
 {
-    "LIKE"
+	"LIKE"
     ( 
         t = <QUOTED_STRING> 
         {
@@ -1282,6 +1283,23 @@ void approximationCondition(String lhs) :
         )
         {
             jjtThis.rhs = t.image;
+            jjtThis.operator = 1;
+        }
+    ) |
+    "LIKE_NC"
+    ( 
+        t = <QUOTED_STRING> 
+        {
+            jjtThis.literalRHS = true;
+            jjtThis.rhs = unquote(t.image);
+        } |
+        ( 
+            t = <NUMBER> | 
+            t = <STRING> 
+        )
+        {
+            jjtThis.rhs = t.image;
+            jjtThis.operator = 0;
         }
     )
 }
