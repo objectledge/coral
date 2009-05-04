@@ -504,7 +504,11 @@ public class SQLCoralQueryImpl
                         {
                             AttributeHandler h = lhs.getAttributeClass().getHandler();
                             Object value = h.toAttributeValue(rhs);
-                            out.append(h.toExternalString(value));
+                            if(node.isCaseSensitive()){
+                                out.append(h.toExternalString(value));
+                            }else{
+                                out.append(h.toExternalString(value).toLowerCase());
+                            }
                         }						 
                         return data;
                     }
