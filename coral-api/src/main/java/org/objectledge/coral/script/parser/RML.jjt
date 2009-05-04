@@ -1283,7 +1283,7 @@ void approximationCondition(String lhs) :
         )
         {
             jjtThis.rhs = t.image;
-            jjtThis.operator = 1;
+            jjtThis.caseSensitive = true;
         }
     ) |
     "LIKE_NC"
@@ -1299,7 +1299,7 @@ void approximationCondition(String lhs) :
         )
         {
             jjtThis.rhs = t.image;
-            jjtThis.operator = 0;
+            jjtThis.caseSensitive = false;
         }
     )
 }

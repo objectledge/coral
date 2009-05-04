@@ -2,7 +2,11 @@
 
 package org.objectledge.coral.script.parser;
 
+
 public class ASTapproximationCondition extends SimpleNode {
+    
+  boolean caseSensitive;
+    
   public ASTapproximationCondition(int id) {
     super(id);
   }
@@ -32,8 +36,8 @@ public class ASTapproximationCondition extends SimpleNode {
   	return literalRHS;
   }
 
-  public int getOperator()
+  public boolean isCaseSensitive()
   {
-    return operator;
-  }
+      return caseSensitive;
+  } 
 }

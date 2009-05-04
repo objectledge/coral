@@ -481,8 +481,7 @@ public class SQLCoralQueryImpl
                         AttributeDefinition lhs = 
                         	((ResultColumnAttribute)parseOperand(node.getLHS(), true, columnMap)).
                         	 getAttribute();
-                        boolean[] caseSensitive = { false, true };
-                        if(caseSensitive[node.getOperator()]){
+                        if(node.isCaseSensitive()){
                             appendAttribute(node.getLHS(), columnMap, out);
                         }else{
                             out.append(" LOWER(");
@@ -493,7 +492,13 @@ public class SQLCoralQueryImpl
                         Object rhs = parseOperand(node.getRHS(), false, columnMap);
                         if(rhs instanceof ResultColumnAttribute)
                         {
-                            appendAttribute(node.getRHS(), columnMap, out);
+                            if(node.isCaseSensitive()){
+                                appendAttribute(node.getRHS(), columnMap, out);
+                            }else{
+                                out.append(" LOWER(");
+                                appendAttribute(node.getRHS(), columnMap, out);
+                                out.append(")");
+                            }
                         }
                         if(rhs instanceof String)
                         {
