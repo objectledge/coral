@@ -208,7 +208,9 @@ public class SQLCoralQueryImpl
             {
                 query.append("\nWHERE ");
             }
+            query.append("(");
             appendCondition(statement.getWhere(), columnMap, query);
+            query.append(")");
         }
         // ORDER BY
         if(statement.getOrderBy() != null)
