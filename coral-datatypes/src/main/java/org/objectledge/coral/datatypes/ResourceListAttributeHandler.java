@@ -82,7 +82,9 @@ public class ResourceListAttributeHandler
                     temp.add(new Long(result.getLong(2)));
                 }
                 while(result.next() && result.getLong(1) == lastId);
-                cache[(int)lastId] = instantiate(temp);
+                ResourceList value = instantiate(temp);
+                value.clearModified();
+                cache[(int)lastId] = value;
                 temp.clear();
             }
             while(!result.isAfterLast());
@@ -110,6 +112,7 @@ public class ResourceListAttributeHandler
                 pstmt.setLong(2, ids[i]);
                 pstmt.addBatch();
             }
+            ((ResourceList)value).clearModified();
         }
         else
         {
@@ -169,6 +172,7 @@ public class ResourceListAttributeHandler
         {
             cache[(int)id] = value;
         }
+        value.clearModified();
         return value;
     }
 
@@ -204,6 +208,7 @@ public class ResourceListAttributeHandler
                 pstmt.setLong(2, ids[i]);
                 pstmt.addBatch();
             }
+            ((ResourceList)value).clearModified();
         }
         else
         {
@@ -252,6 +257,21 @@ public class ResourceListAttributeHandler
             "DELETE FROM "+getTable()+" WHERE data_key = "+id
         );
         releaseId(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */    
+    public boolean isModified(Object value)
+    {
+        if(value instanceof ResourceList)
+        {
+            return ((ResourceList)value).isModified();
+        }
+        else
+        {
+            return false;
+        }
     }
 
     // integrity constraints ////////////////////////////////////////////////    

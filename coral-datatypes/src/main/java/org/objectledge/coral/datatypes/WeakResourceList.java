@@ -91,6 +91,7 @@ public class WeakResourceList<T extends Resource>
             //do nothing...
         }
         ids[index] = id;
+        modified = true;
         return old;
     }
 
@@ -126,6 +127,7 @@ public class WeakResourceList<T extends Resource>
         }
         ids = newIds;
         modCount++;
+        modified = true;
         size--;
         return old;
     }

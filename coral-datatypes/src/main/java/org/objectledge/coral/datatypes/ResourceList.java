@@ -45,6 +45,9 @@ public class ResourceList<T extends Resource>
     
     /** Current list capacity. */
 	protected int capacity = CAPACITY_INITIAL;
+	
+	/** Modification status */
+	protected boolean modified = false;
 
     /**
      * Creates an empty list.
@@ -187,7 +190,8 @@ public class ResourceList<T extends Resource>
         newIds[index] = id;
         ids = newIds;
         size++;
-        modCount++;        
+        modCount++;
+        modified = true;
     }
 
     /**
@@ -222,6 +226,7 @@ public class ResourceList<T extends Resource>
             throw new BackendException("resource #"+ids[index]+" dissappeared", e);
         }
         ids[index] = id;
+        modified = true;
         return old;
     }
 
@@ -257,6 +262,7 @@ public class ResourceList<T extends Resource>
         }
         ids = newIds;
         modCount++;
+        modified = true;
         size--;
         return old;
     }
@@ -292,6 +298,7 @@ public class ResourceList<T extends Resource>
         }
         size = size-(toIndex-fromIndex);
         modCount++;
+        modified = true;
     }
     
     /**
@@ -313,5 +320,17 @@ public class ResourceList<T extends Resource>
         }
         buff.append(']');
         return buff.toString();
+    }
+
+    // package private methods for AttributeHandler
+    
+    boolean isModified()
+    {
+        return modified;
+    }
+    
+    void clearModified()
+    {
+        modified = false;
     }
 }
