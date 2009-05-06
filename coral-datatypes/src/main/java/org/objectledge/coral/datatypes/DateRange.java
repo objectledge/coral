@@ -16,6 +16,12 @@ public class DateRange
     private Date start;
 
     private Date end;
+    
+    // modification tracking - Date objects are mutable, which I believe is a design flaw in JDK
+    
+    private Date origStart;
+    
+    private Date origEnd;
 
     // Initialization ///////////////////////////////////////////////////////
     
@@ -29,6 +35,7 @@ public class DateRange
     {
         this.start = start;
         this.end = end;
+        clearModified();
     }
     
     // Public interface //////////////////////////////////////////////////////
@@ -72,5 +79,18 @@ public class DateRange
     public String toString()
     {
         return "["+start.toString()+","+end.toString()+"]";
+    }
+    
+    // package protected methods for AttributeHandler implementation
+    
+    boolean isModified()
+    {
+        return !(start.equals(origStart) && end.equals(origEnd));
+    }
+    
+    void clearModified() 
+    {
+        origStart = new Date(start.getTime());
+        origEnd = new Date(end.getTime());
     }
 }

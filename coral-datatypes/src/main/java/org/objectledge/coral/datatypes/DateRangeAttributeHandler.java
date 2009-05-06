@@ -55,6 +55,7 @@ public class DateRangeAttributeHandler
         stmt.setTimestamp(3, new java.sql.Timestamp(((DateRange)value).getEnd().getTime()));
         stmt.execute();
         stmt.close();
+        ((DateRange)value).clearModified();
         return id;
     }
 
@@ -93,6 +94,15 @@ public class DateRangeAttributeHandler
         pstmt.setLong(3, id);
         pstmt.execute();
         pstmt.close();
+        ((DateRange)value).clearModified();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isModified(Object value)
+    {
+        return ((DateRange)value).isModified();
     }
     
     /**
