@@ -166,6 +166,21 @@ public class ParametersAttributeHandler
         }
     }
 
+    /**
+     * Checks if an attribute value object had it's state modified since retrieval or most recent
+     * update.
+     * <p>
+     * Parameters objects do have mutable internal state, but Since DB backed implementation saves
+     * changes automatically after each modification this method always returns <false>.
+     * </p>
+     * 
+     * @see org.objectledge.coral.schema.AttributeHander#isModified(Object)
+     */
+    public boolean isModified(Object value)
+    {
+        return false;
+    }
+    
     // meta information //////////////////////////////////////////////////////
 
     /**
