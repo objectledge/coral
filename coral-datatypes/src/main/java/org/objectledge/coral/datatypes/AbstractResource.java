@@ -869,7 +869,7 @@ public abstract class AbstractResource implements Resource
     protected boolean isAttributeModified(AttributeDefinition attr)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
-        return modified.get(index);
+        return modified.get(index) || attr.getAttributeClass().getHandler().isModified(get(attr));
     }
     
     /**
