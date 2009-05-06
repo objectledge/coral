@@ -127,7 +127,10 @@ public abstract class AttributeHandlerBase
     }
     
     /**
-     * Most attribute objects are immutable, hence the base implementation always returns false.
+     * Checks if an attribute value object had it's state modified since retrieval or most recent
+     * update.
+     * 
+     * <p>Most attribute objects are immutable, hence the base implementation always returns false.</p>
      * 
      * @see org.objectledge.coral.schema.AttributeHander#isModified(Object)
      */
