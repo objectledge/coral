@@ -125,6 +125,16 @@ public abstract class AttributeHandlerBase
     {
         // default implementation does noting
     }
+    
+    /**
+     * Most attribute objects are immutable, hence the base implementation always returns false.
+     * 
+     * @see org.objectledge.coral.schema.AttributeHander#isModified(Object)
+     */
+    public boolean isModified(Object value)
+    {
+        return false;
+    }
 
     // meta information //////////////////////////////////////////////////////
 

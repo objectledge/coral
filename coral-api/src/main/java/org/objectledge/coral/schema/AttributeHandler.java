@@ -112,6 +112,17 @@ public interface AttributeHandler
     public void delete(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException;
 
+    /**
+     * Checks if an attribute value object had it's state modified since retrieval or most recent
+     * update.
+     * 
+     * <p>
+     * For immutable objects (numbers, strings, references and such) this method returns always
+     * <code>false</code>.
+     * </p>
+     */
+    public boolean isModified(Object value);
+    
     // meta information //////////////////////////////////////////////////////
 
     /**
