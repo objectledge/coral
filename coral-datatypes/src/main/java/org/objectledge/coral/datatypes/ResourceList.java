@@ -168,6 +168,7 @@ public class ResourceList<T extends Resource>
             ids[index] = id;
             size++;
             modCount++;
+            modified = true;
             return;
         }
         
