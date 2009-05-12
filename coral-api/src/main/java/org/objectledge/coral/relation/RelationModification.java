@@ -143,34 +143,94 @@ public class RelationModification
     }
     
     /**
-     * Delete a ordered pair from the relationship's definition.
+     * Remove an ordered pair from the relationship's definition.
      *
      * @param r1 the first element of the pair.
      * @param r2 the second element of the4 pair.
      */
     public void remove(Resource r1, Resource r2)
     {
-        rem(r1.getIdObject(), r2.getIdObject());
+        remove(r1.getIdObject(), r2.getIdObject());
+    }
+    
+    /**
+     * Remove a number of pairs to the relationship's definition.
+     *
+     * @param r1 the first element of the pairs.
+     * @param ress second elements of the pairs.
+     */
+    public void remove(Resource r1, Resource[] ress)
+    {
+        Long id1 = r1.getIdObject();
+        for (int i = 0; i < ress.length; i++)
+        {
+            remove(id1, ress[i].getIdObject());
+        }
     }
 
     /**
-     * Delete all pairs where r is the first element of the pair from relationship's definition.
+     * Remove a number of pairs to the relationship's definition.
+     *
+     * @param r1 the first element of the pairs.
+     * @param ress second elements of the pairs.
+     */
+    public void remove(Resource r1, List<Resource> ress)
+    {
+        Long id1 = r1.getIdObject();
+        for (Resource res: ress)
+        {
+            remove(id1, res.getIdObject());
+        }
+    }
+    
+    /**
+     * Remove a number of pairs to the relationship's definition.
+     *
+     * @param ress first elements of the pairs.
+     * @param r2 the second element of the pairs.
+     */
+    public void remove(Resource[] ress, Resource r2)
+    {
+        Long id2 = r2.getIdObject();
+        for (int i = 0; i < ress.length; i++)
+        {
+            remove(ress[i].getIdObject(), id2);
+        }
+    }
+
+    /**
+     * Remove a number of pairs to the relationship's definition.
+     *
+     * @param ress first elements of the pairs.
+     * @param r2 the second element of the pairs.
+     */
+    public void remove(List<Resource> ress, Resource r2)
+    {
+        Long id2 = r2.getIdObject();
+        for (Resource res:ress)
+        {
+            remove(res.getIdObject(), id2);
+        }
+    }
+
+    /**
+     * Remove all pairs where r is the first element of the pair from relationship's definition.
      *
      * @param r the resource
      */
     public void remove(Resource r)
     {
-        rem(r.getIdObject(), null);
+        remove(r.getIdObject(), null);
     }
 
     /**
-     * Delete all pairs where r is the second element of the pair from relationship's definition.
+     * Remove all pairs where r is the second element of the pair from relationship's definition.
      *
      * @param r the resource
      */
     public void removeInv(Resource r)
     {    	
-        rem(null, r.getIdObject());
+        remove(null, r.getIdObject());
     }
 
     /**
@@ -189,7 +249,7 @@ public class RelationModification
 		operations.add(new AddOperation(id1, id2));
     }
 
-    private void rem(Long id1, Long id2)
+    private void remove(Long id1, Long id2)
     {
 		operations.add(new RemoveOperation(id1, id2));
     }
