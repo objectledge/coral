@@ -52,11 +52,9 @@ public class RelationModification
      */
     public void accept(ModificationOperationVisitor visitor)
     {
-        for(Iterator iter = operations.iterator(); iter.hasNext();)
+        for(Iterator<ModificationOperation> i = operations.iterator(); i.hasNext();)
         {
-            RelationModification.ModificationOperation operation = (RelationModification.ModificationOperation)iter
-                .next();
-            operation.visit(visitor);
+            i.next().visit(visitor);
         }
     }
 
@@ -90,9 +88,9 @@ public class RelationModification
     public void add(Resource r1, Resource[] ress)
     {
         Long id1 = r1.getIdObject();
-        for(int i = 0; i < ress.length; i++)
+        for(Resource res : ress)
         {
-            add(id1, ress[i].getIdObject());
+            add(id1, res.getIdObject());
         }
     }
 
@@ -120,9 +118,9 @@ public class RelationModification
     public void add(Resource[] ress, Resource r2)
     {
         Long id2 = r2.getIdObject();
-        for(int i = 0; i < ress.length; i++)
+        for(Resource res : ress)
         {
-            add(ress[i].getIdObject(), id2);
+            add(res.getIdObject(), id2);
         }
     }
 
@@ -161,9 +159,9 @@ public class RelationModification
     public void remove(Resource r1, Resource[] ress)
     {
         Long id1 = r1.getIdObject();
-        for(int i = 0; i < ress.length; i++)
+        for(Resource res : ress)
         {
-            remove(id1, ress[i].getIdObject());
+            remove(id1, res.getIdObject());
         }
     }
 
@@ -191,9 +189,9 @@ public class RelationModification
     public void remove(Resource[] ress, Resource r2)
     {
         Long id2 = r2.getIdObject();
-        for(int i = 0; i < ress.length; i++)
+        for(Resource res : ress)
         {
-            remove(ress[i].getIdObject(), id2);
+            remove(res.getIdObject(), id2);
         }
     }
 
