@@ -206,6 +206,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         Map attributes = new HashMap();
         attributes.put(attributeDefinition, "foo");
         mockAttributeHandler.expects(once()).method("create").with(eq("foo"),ANYTHING).will(returnValue(1L));
+        mockAttributeHandler.expects(atLeastOnce()).method("isModified").with(eq("foo")).will(returnValue(false));
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         Node newResource = (Node)handler.create(resource, attributes, connection);
         //assertEquals(newResource.getDescription(),"foo");
