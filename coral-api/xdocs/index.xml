@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>Home</title>
+  </properties>
+    
+  <body>
+    <section name="Coral API">
+      <subsection name="Introduction">
+       <p>
+         Coral API defines the Java interface to Coral database, the RML script language, 
+         and core relational database tables that form the contract between datatypes 
+         implementations and the CoralQuery subsystem.
+       </p>
+      </subsection>
+    </section>
+   
+  </body>
+</document>
+  
