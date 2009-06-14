@@ -28,22 +28,22 @@
       <dependency>
         <groupId>org.objectledge.coral</groupId>
         <artifactId>coral-api</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.objectledge.coral</groupId>
         <artifactId>coral-ri</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.objectledge.coral</groupId>
         <artifactId>coral-datatypes</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.objectledge.coral</groupId>
         <artifactId>coral-web</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
