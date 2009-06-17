@@ -1,0 +1,1676 @@
+options 
+{
+    UNICODE_INPUT = true;
+    JAVA_UNICODE_ESCAPE = true;
+
+    CACHE_TOKENS = true;
+    
+    STATIC = false;
+    MULTI = true;
+    NODE_SCOPE_HOOK = true;
+    NODE_USES_PARSER = true;
+    VISITOR = true;
+}
+
+PARSER_BEGIN(RML)
+
+package org.objectledge.coral.script.parser;
+
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+
+import java.util.ArrayList;
+
+public class RML
+{
+    private String unquote(String str)
+    {
+        char[] c = str.toCharArray();
+        StringBuffer out = new StringBuffer();
+        for(int i=1; i<c.length-1; i++)
+        {
+            if(c[i] != '\\')
+            {
+                out.append(c[i]);
+            }
+            else
+            {
+                out.append(c[++i]);
+            }
+        }
+        return out.toString();
+    }
+    
+    void jjtreeOpenNodeScope(Node n)
+    {
+        ((SimpleNode)n).firstToken = getToken(1);
+    }
+    
+    void jjtreeCloseNodeScope(Node n)
+    {
+        ((SimpleNode)n).lastToken = getToken(0);
+    }
+}
+
+PARSER_END(RML)
+
+/* Whitespace & comments */
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| <COMMENT : "#" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+
+/* Reserved words */
+TOKEN:
+{
+    <ABSTRACT : "ABSTRACT"> |
+    <ADD : "ADD"> |
+    <ALL : "ALL" > |
+    <ALTER : "ALTER"> |
+    <AND : "AND"> |
+    <AS : "AS"> |
+    <ASC : "ASC"> |
+    <ATTRIBUTE : "ATTRIBUTE"> |
+    <ATTRIBUTES : "ATTRIBUTES"> |
+    <BUILTIN : "BUILTIN"> |
+    <BY : "BY"> |
+    <CLASS : "CLASS"> |
+    <CLASS_UNIQUE : "CLASS_UNIQUE"> |
+    <CREATE : "CREATE"> |
+    <DB : "DB" > |
+    <DEFINED : "DEFINED" > |
+    <DELETE : "DELETE"> |
+    <DESC : "DESC"> |
+    <DESCRIPTIVE : "DESCRIPTIVE"> |
+    <DIRECT : "DIRECT"> |     
+    <DOMAIN : "DOMAIN"> |
+    <ECHO : "ECHO"> |
+    <FINAL : "FINAL"> |
+    <FIND : "FIND"> |
+    <FLAGS : "FLAGS"> |
+    <FOR : "FOR"> |
+    <FORWARD: "FORWARD"> |
+    <FROM : "FROM"> |
+    <GRANT : "GRANT"> |
+    <GRANTS : "GRANTS"> |
+    <HANDLER: "HANDLER"> |
+    <ID : "ID"> |
+    <IMPERSONATE : "IMPERSONATE"> |
+    <INDEXABLE : "INDEXABLE"> |
+    <JAVA : "JAVA"> |
+    <LIKE : "LIKE"> |
+	<LIKE_NC : "LIKE_NC"> |
+    <NAME : "NAME"> |
+    <NONE : "NONE"> |
+    <NOT : "NOT"> |
+    <OF : "OF"> |
+    <ON : "ON"> |
+    <OR : "OR"> |
+    <OPTION : "OPTION"> |
+    <ORDER : "ORDER"> |
+    <OWNER : "OWNER"> |
+    <PARENT : "PARENT"> |
+    <PERMISSION : "PERMISSION"> |
+    <PERMISSIONS : "PERMISSIONS"> |
+    <READONLY: "READONLY"> |
+    <RECURSIVE : "RECURSIVE"> |
+    <RELATION : "RELATION"> |
+    <RESOURCE : "RESOURCE"> |
+    <REQUIRED : "REQUIRED"> |
+    <REVERSE : "REVERSE" > |
+    <REVOKE : "REVOKE"> |
+    <ROLE : "ROLE"> |
+    <ROLES : "ROLES"> |
+    <SELECT : "SELECT"> |
+    <SELF : "SELF"> |
+    <SET : "SET"> |
+    <SIBLINGS_UNIQUE : "SIBLINGS_UNIQUE"> |
+    <SUBJECT : "SUBJECT"> |
+    <SUBROLES : "SUBROLES"> |
+    <SUPERCLASS : "SUPERCLASS"> |
+    <SUPERCLASSES : "SUPERCLASSES"> |
+    <SUPERROLES : "SUPERROLES"> |
+    <SYNTHETIC : "SYNTHETIC"> |
+    <TABLE : "TABLE"> |
+    <TO : "TO"> |
+    <VALUE : "VALUE"> |
+    <VALUES : "VALUES"> |
+    <WITH : "WITH"> |
+    <WHERE : "WHERE"> |
+    <WHOAMI : "WHOAMI">
+}
+
+/* Literals */
+TOKEN :
+{
+    <#DIGIT : ["0"-"9"]> |
+    <#LETTER : ["a"-"z","A"-"Z","_","."]> |
+    <#PATHMETA : ["/","*"]> |
+    <STRING : ( <LETTER> | <PATHMETA> ) (<LETTER> | <DIGIT> | <PATHMETA>)*> |
+    <NUMBER : (<DIGIT>)+> |
+    <QUOTED_STRING : "'" ( ~["'","\\"] | "\\'" | "\\\\" )* "'"> 
+}
+
+/* Separators */
+TOKEN:
+{
+    <LPAREN : "("> |
+    <RPAREN : ")"> |
+    <COMMA : ",">
+}
+
+/* Operators */
+TOKEN:
+{
+    <LESS : "<"> |
+    <LESS_EQUALS : "<="> |
+    <GREATER : ">"> |
+    <GREATER_EQUALS : ">="> |
+    <EQUALS : "="> |
+    <DOUBLE_EQUALS : "=="> |
+    <NOT_EQUALS : "!="> |
+    <SQL_NOT_EQUALS : "<>">
+}
+
+// Identifiers ///////////////////////////////////////////////////////////////
+
+String name() #void :
+{
+    Token t;
+    String value;
+}
+{
+   ( 
+       t = <STRING> 
+       { 
+           value = t.image; 
+       } |
+       t = <QUOTED_STRING> 
+       { 
+           value = unquote(t.image);
+       } 
+   )
+   {
+       return value;
+   }
+}
+
+String value() #void :
+{
+    Token t;
+    String value;
+}
+{
+   ( 
+       t = <STRING> 
+       { 
+           value = t.image; 
+       } |
+       t = <QUOTED_STRING> 
+       { 
+           value = unquote(t.image); 
+       } |
+       t = <NUMBER> { value = t.image;} 
+   )
+   {
+       return value;
+   }
+}
+
+
+long id() #void :
+{
+    Token id;
+}
+{
+    id = <NUMBER>
+    {
+        long value = Long.parseLong(id.image);
+        return value;
+    }
+}           
+
+// Entities //////////////////////////////////////////////////////////////////
+
+void entitySpecifier(SimpleNode node) #void :
+{
+}
+{
+	node.entityName = name() |
+	node.entityId = id()
+}
+
+ASTattributeClass attributeClass() :
+{
+}
+{
+	entitySpecifier(jjtThis)
+    { 
+        return jjtThis; 
+    }
+}
+
+ASTresourceClass resourceClass() :
+{
+}
+{
+	entitySpecifier(jjtThis)
+    { 
+        return jjtThis; 
+    }
+}
+
+ASTsubject subject() :
+{
+}
+{
+	entitySpecifier(jjtThis)
+    { 
+        return jjtThis; 
+    }
+}
+
+ASTrole role() :
+{
+}
+{
+	entitySpecifier(jjtThis)
+    { 
+        return jjtThis; 
+    }
+}
+
+ASTpermission permission() :
+{
+}
+{
+	entitySpecifier(jjtThis)
+    { 
+        return jjtThis; 
+    }
+}
+
+ASTresource resource() :
+{
+}
+{
+	entitySpecifier(jjtThis)
+    { 
+        return jjtThis; 
+    }
+}
+
+ASTrelation relation() :
+{
+}
+{
+	entitySpecifier(jjtThis)
+    { 
+        return jjtThis; 
+    }
+}
+
+// Lexical entities //////////////////////////////////////////////////////////
+
+ASTresourceClassFlag resourceClassFlag() :
+{
+    Token flag;
+}
+{
+    ( 
+        flag = "ABSTRACT" | 
+        flag = "FINAL" | 
+        flag = "BUILTIN" 
+    )
+    {
+        jjtThis.value = flag.image;
+        return jjtThis;
+    }
+}
+
+ASTattributeFlag attributeFlag() :
+{
+    Token flag;
+}
+{
+    ( 
+        flag = "REQUIRED" | 
+        flag = "READONLY" | 
+        flag = "DESCRIPTIVE" | 
+        flag = "BUILTIN" | 
+        flag = "INDEXABLE" | 
+        flag = "CLASS_UNIQUE" | 
+        flag = "SIBLINGS_UNIQUE" | 
+        flag = "SYNTHETIC" 
+    )
+    {
+        jjtThis.value = flag.image;
+        return jjtThis;
+    }
+}
+
+ASTattributeDefinition attributeDefinition() :
+{
+}
+{
+    ( jjtThis.attributeFlags = attributeFlagList() ) 
+    ( jjtThis.attributeClass = attributeClass() )
+    [ <LPAREN> 
+        ( jjtThis.domain = name() ) 
+    <RPAREN> ]
+    ( jjtThis.attributeName = name() )
+    {
+        return jjtThis;
+    }       
+}
+
+ASTattribute attribute() :
+{
+}
+{
+    ( jjtThis.attributeName = name() ) <EQUALS> ( jjtThis.value = value() )
+    {
+        return jjtThis;
+    }
+}
+
+ASTresourcePair resourcePair() :
+{
+}
+{
+    <LPAREN> ( jjtThis.pairHead = resource() ) ( jjtThis.pairTail = resource() ) <RPAREN>
+    {
+        return jjtThis;
+    }
+}
+
+// Entity lists //////////////////////////////////////////////////////////////
+
+ASTresourceClassList resourceClassList() :
+{
+}
+{
+    ( 
+        resourceClass() 
+        ( <COMMA> resourceClass() )* 
+    )
+    {
+        return jjtThis;
+    }
+}
+
+ASTroleList roleList() :
+{
+}
+{
+    ( 
+        role() 
+        ( <COMMA> role() )* 
+    )
+    {
+        return jjtThis;
+    }
+}
+
+ASTpermissionList permissionList() :
+{
+}
+{
+    ( 
+        permission()
+        ( <COMMA> permission() )* 
+    )
+    {
+        return jjtThis;
+    }
+}
+
+ASTresourcePairList resourcePairList() :
+{
+}
+{
+    ( 
+        resourcePair()
+        ( <COMMA> resourcePair() )* 
+    )
+    {
+        return jjtThis;
+    }
+}
+
+ASTattributeFlagList attributeFlagList() :
+{
+}
+{
+    ( attributeFlag() )*
+    {
+        return jjtThis;
+    }       
+}
+
+ASTresourceClassFlagList resourceClassFlagList() :
+{
+}
+{
+    ( resourceClassFlag() )*
+    {
+        return jjtThis;
+    }       
+}
+
+ASTattributeDefinitionList attributeDefinitionList() :
+{
+}
+{
+    ( 
+        attributeDefinition() 
+        ( <COMMA> attributeDefinition() )* 
+    )
+    {
+        return jjtThis;
+    }
+}
+
+ASTattributeList attributeList() :
+{
+}
+{
+    ( 
+        attribute()
+        ( <COMMA> attribute() )* 
+    )
+    {
+        return jjtThis;
+    }
+}
+
+// Statement groups //////////////////////////////////////////////////////////
+
+ASTscript script() :
+{
+}
+{
+    (
+        ( 
+            [ statement() ] ";" 
+        )* 
+        <EOF>
+    )
+    { 
+    	return jjtThis; 
+  	}
+}
+
+void singleStatement() :
+{
+}
+{
+    statement() [ ";" ] <EOF>
+}
+
+// Statements ////////////////////////////////////////////////////////////////
+
+void statement() #void :
+{
+}
+{
+    ( "CREATE" createStatement() ) |
+    ( "FIND" findStatement() ) |
+    ( "ALTER" alterStatement() ) |
+    ( "DELETE" deleteStatement() ) |
+    ( "GRANT" grantStatement() ) |
+    ( "REVOKE" revokeStatement() ) |
+    ( "ECHO" echoStatement() ) |
+    ( "IMPERSONATE" impersonateStatement() ) |
+    ( "WHOAMI" #whoamiStatement )
+}
+
+void createStatement() #void :
+{
+}
+{
+    ( "ATTRIBUTE" "CLASS" createAttributeClassStatement() ) |
+    ( "SUBJECT" createSubjectStatement() ) |
+    ( "RELATION" createRelationStatement() ) |
+    ( "RESOURCE" (
+        ( "CLASS" createResourceClassStatement() ) |
+        createResourceStatement() )
+    ) |
+    ( "ROLE" createRoleStatement() ) |
+    ( "PERMISSION" createPermissionStatement() ) 
+}
+
+void findStatement() #void :
+{
+}
+{
+    ( "ATTRIBUTE" "CLASS" findAttributeClassStatement() ) |
+    ( "SUBJECT" findSubjectStatement() ) |
+    ( "ROLE" findRoleStatement() ) |
+    ( "PERMISSION" findPermissionStatement() ) |
+    ( "RELATION" findRelationStatement() ) |
+    ( "RESOURCE" (
+        ("CLASS" findResourceClassStatement() ) |
+        findResourceStatement() )
+    ) |
+    ( "GRANTS" "FOR" findGrantsForStatement() ) |
+    ( "DIRECT" findDirectStatement() ) |
+    ( "SUPERROLES" "OF" findSuperrolesStatement(false) ) |
+    ( "SUBROLES" "OF" findSubrolesStatement(false) ) |
+    ( "ROLES" "OF" findRolesStatement(false) )
+}
+
+void findGrantsForStatement() #void : 
+{
+}
+{
+   ( "SUBJECT" findGrantsForSubjectStatement() ) |
+   ( "ROLE" findGrantsForRoleStatement() ) |
+   ( "RESOURCE" (
+       ( "CLASS" findGrantsForResourceClassStatement() ) |
+       findGrantsForResourceStatement() )
+   )
+}
+
+void findDirectStatement() #void :
+{
+}
+{
+    ( "SUPERROLES" "OF" findSuperrolesStatement(true) ) |
+    ( "SUBROLES" "OF" findSubrolesStatement(true) ) |
+    ( "ROLES" "OF" findRolesStatement(true) ) 
+}
+
+void alterStatement() #void :
+{
+}
+{
+   ( "ATTRIBUTE" "CLASS" alterAttributeClassStatement() ) |
+   ( "SUBJECT" alterSubjectStatement() ) |
+   ( "ROLE" alterRoleStatement() ) |
+   ( "PERMISSION" alterPermissionStatement() ) |
+   ( "RELATION" alterRelationStatement() ) |
+   ( "RESOURCE" (
+       ( "CLASS" alterResourceClassStatement() ) |
+       alterResourceStatement())
+   )
+}
+
+void alterAttributeClassStatement() #void :
+{
+    ASTattributeClass ac;
+}
+{
+    ac = attributeClass() "SET" 
+    (
+        ( "NAME" alterAttributeClassSetNameStatement(ac) ) |
+        ( "JAVA" "CLASS" alterAttributeClassSetJavaClassStatement(ac) ) |
+        ( "HANDLER" "CLASS" alterAttributeClassSetHandlerClassStatement(ac) ) |
+        ( "DB" "TABLE" alterAttributeClassSetDbTableStatement(ac) )
+    )
+}
+
+void alterResourceClassStatement() #void :
+{
+    ASTresourceClass rc;
+    String attr;
+}
+{
+    rc = resourceClass() 
+    ( 
+        "SET" 
+        (
+            ( "NAME" alterResourceClassSetNameStatement(rc) ) |
+            ( "JAVA" "CLASS" alterResourceClassSetJavaClassStatement(rc) ) |
+            ( "HANDLER" "CLASS" alterResourceClassSetHandlerClassStatement(rc) ) |
+            ( "DB" "TABLE" alterResourceClassSetDbTableStatement(rc) ) |
+            ( "FLAGS" alterResourceClassSetFlagsStatement(rc) )
+        ) |
+        "ADD" 
+        (
+            ( "ATTRIBUTE" alterResourceClassAddAttributeStatement(rc) ) |
+            ( "SUPERCLASS" alterResourceClassAddSuperclassStatement(rc) ) |
+            ( "PERMISSIONS" alterResourceClassAddPermissionsStatement(rc) )
+        ) |
+        "DELETE" 
+        (
+            ( "ATTRIBUTE" alterResourceClassDeleteAttributeStatement(rc) ) |
+            ( "SUPERCLASS" alterResourceClassDeleteSuperclassStatement(rc) ) |
+            ( "PERMISSIONS" alterResourceClassDeletePermissionsStatement(rc) )
+        ) |
+        "ALTER" "ATTRIBUTE" attr=name() "SET" 
+        (
+            ( "NAME" alterResourceClassAlterAttributeSetNameStatement(rc, attr) ) |
+            ( "FLAGS" alterResourceClassAlterAttributeSetFlagsStatement(rc, attr) ) |
+            ( "DOMAIN" alterResourceClassAlterAttributeSetDomainStatement(rc, attr) )
+        )
+    ) 
+}
+
+void alterSubjectStatement() #void :
+{
+    ASTsubject subject;
+}
+{
+    subject = subject() "SET" 
+    (
+        "NAME" alterSubjectSetNameStatement(subject)
+    ) 
+}
+
+void alterRoleStatement() #void :
+{
+    ASTrole role;
+}
+{
+    role = role() 
+    (
+        ( "SET" "NAME" alterRoleSetNameStatement(role) ) |
+        ( "ADD" "SUBROLES" alterRoleAddSubrolesStatement(role) ) |
+        ( "DELETE" "SUBROLES" alterRoleDeleteSubrolesStatement(role) )
+    ) 
+}
+
+void alterPermissionStatement() #void :
+{
+    ASTpermission permission;
+}
+{
+    permission = permission() "SET" "NAME" alterPermissionSetNameStatement(permission)
+}
+
+void alterResourceStatement() #void :
+{
+    ASTresource resource;
+}
+{
+    resource=resource() 
+    ( 
+        "SET" 
+        (
+            ( "NAME" alterResourceSetNameStatement(resource) ) |
+            ( "PARENT" alterResourceSetParentStatement(resource) ) |
+            ( "OWNER" alterResourceSetOwnerStatement(resource) ) |
+            ( "ATTRIBUTE" alterResourceSetAttributeStatement(resource) )
+        ) |
+        ( "DELETE" "ATTRIBUTE" alterResourceDeleteAttributeStatement(resource) )
+    )
+}
+
+void alterRelationStatement() #void :
+{
+    ASTrelation relation;
+}
+{
+    relation=relation() 
+    ( 
+        ( "SET" "NAME" alterRelationSetNameStatement(relation) ) |
+        ( "ADD" alterRelationAddPairsStatement(relation) ) |
+        ( "DELETE" (
+             ( "FORWARD" alterRelationDeleteForwardStatement(relation) ) |
+             ( "REVERSE" alterRelationDeleteReverseStatement(relation) ) |
+             alterRelationDeleteAllStatement(relation) |
+             alterRelationDeletePairsStatement(relation) )
+        )             
+    )
+}
+
+void deleteStatement() #void :
+{
+}
+{
+    ( "ATTRIBUTE" "CLASS" deleteAttributeClassStatement() ) |
+    ( "SUBJECT" deleteSubjectStatement() ) |
+    ( "ROLE" deleteRoleStatement() ) |
+    ( "PERMISSION" deletePermissionStatement() ) |
+    ( "RELATION" deleteRelationStatement() ) |
+    ( "RESOURCE" (
+        ( "CLASS" deleteResourceClassStatement() ) |
+        deleteResourceStatement() )
+    )
+}
+
+void grantStatement() #void :
+{
+}
+{
+    ( "ROLE" grantRoleStatement() ) |
+    ( "PERMISSION" grantPermissionStatement() )
+}
+
+void revokeStatement() #void :
+{
+}
+{
+    ( "ROLE" revokeRoleStatement() ) |
+    ( "PERMISSION" revokePermissionStatement() )
+}
+
+// 1.1 Attribute classes /////////////////////////////////////////////////////
+
+void createAttributeClassStatement() :
+{
+}
+{
+    ( jjtThis.name = name() ) 
+    "JAVA" "CLASS" ( jjtThis.javaClass = name() )
+    "HANDLER" "CLASS" ( jjtThis.handlerClass = name() )
+    [ 
+        "DB" "TABLE" 
+        ( 
+            ( jjtThis.dbTable = name() ) | 
+            "NONE" 
+        ) 
+    ]
+}
+
+void findAttributeClassStatement() :
+{
+}
+{
+    [ entitySpecifier(jjtThis) ]
+}
+
+void deleteAttributeClassStatement() :
+{
+}
+{
+    ( jjtThis.attributeClass = attributeClass() )
+}
+
+void alterAttributeClassSetNameStatement(ASTattributeClass attributeClass) :
+{
+    jjtThis.attributeClass = attributeClass;
+}
+{
+    ( jjtThis.newName = name() )
+}
+
+void alterAttributeClassSetJavaClassStatement(ASTattributeClass attributeClass) :
+{
+    jjtThis.attributeClass = attributeClass;
+}
+{
+    ( jjtThis.javaClass = name() )
+}
+
+void alterAttributeClassSetHandlerClassStatement(ASTattributeClass attributeClass) :
+{
+    jjtThis.attributeClass = attributeClass;
+}
+{
+    ( jjtThis.handlerClass = name() )
+}
+
+void alterAttributeClassSetDbTableStatement(ASTattributeClass attributeClass) :
+{
+    jjtThis.attributeClass = attributeClass;
+}
+{
+    ( 
+        ( jjtThis.dbTable = name() ) | 
+        "NONE" 
+    )
+}
+
+// 2.1 Resource classes //////////////////////////////////////////////////////
+
+void createResourceClassStatement() :
+{
+}
+{
+    ( jjtThis.resourceClassFlags = resourceClassFlagList() ) ( jjtThis.name = name() ) 
+    "JAVA" "CLASS" ( jjtThis.javaClass = name() )
+    "HANDLER" "CLASS" ( jjtThis.handlerClass = name() )
+    [ 
+        "DB" "TABLE" 
+        ( 
+            ( jjtThis.dbTable = name() ) | 
+            "NONE" 
+        ) 
+    ]
+    [ "SUPERCLASSES" <LPAREN> 
+        ( jjtThis.superClasses = resourceClassList() ) 
+    <RPAREN> ]
+    [ "ATTRIBUTES" <LPAREN> 
+        ( jjtThis.attributeDefinitions = attributeDefinitionList() ) 
+    <RPAREN> ]
+    [ "PERMISSIONS" <LPAREN> 
+        ( jjtThis.permissions = permissionList() ) 
+    <RPAREN> ]
+}
+
+void findResourceClassStatement() :
+{
+}
+{
+    [ entitySpecifier(jjtThis) ]
+}
+
+void deleteResourceClassStatement() :
+{
+}
+{
+    ( jjtThis.resourceClass = resourceClass() )
+}
+
+void alterResourceClassSetNameStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+     ( jjtThis.newName = name() )
+}
+
+void alterResourceClassSetJavaClassStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    ( jjtThis.javaClass = name() )
+}
+
+void alterResourceClassSetHandlerClassStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    ( jjtThis.handlerClass = name() )
+}
+
+void alterResourceClassSetDbTableStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    ( 
+        ( jjtThis.dbTable = name() ) | 
+        "NONE" 
+    )
+}
+
+void alterResourceClassSetFlagsStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;    
+}
+{
+     ( jjtThis.resourceClassFlags = resourceClassFlagList() )
+}
+
+void alterResourceClassAlterAttributeSetNameStatement(ASTresourceClass resourceClass, String attr) :
+{
+    jjtThis.resourceClass = resourceClass;
+    jjtThis.attributeName = attr;
+}
+{
+    ( jjtThis.newName = name() )
+}
+
+void alterResourceClassAlterAttributeSetFlagsStatement(ASTresourceClass resourceClass, String attr) :
+{
+    jjtThis.resourceClass = resourceClass;
+    jjtThis.attributeName = attr;
+}
+{
+    ( jjtThis.attributeFlags = attributeFlagList() )
+}
+
+void alterResourceClassAlterAttributeSetDomainStatement(ASTresourceClass resourceClass, String attr) :
+{
+    jjtThis.resourceClass = resourceClass;
+    jjtThis.attributeName = attr;
+}
+{
+    ( jjtThis.domain = name() )
+}
+
+void alterResourceClassAddAttributeStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    ( jjtThis.attributeDefinition = attributeDefinition() ) [ "VALUE" ( jjtThis.value = value() ) ]
+}
+
+void alterResourceClassDeleteAttributeStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    ( jjtThis.attributeName = name() )
+}
+
+void alterResourceClassAddSuperclassStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    ( jjtThis.superClass = resourceClass() ) 
+    [ "VALUES" <LPAREN> 
+        ( jjtThis.attributeValues = attributeList() ) 
+    <RPAREN> ]
+}
+
+void alterResourceClassDeleteSuperclassStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    ( jjtThis.superClass = resourceClass() )
+}
+
+// 2.1 Permissions ///////////////////////////////////////////////////////////
+
+void createPermissionStatement() :
+{
+}
+{
+    ( jjtThis.name = name() )
+}
+
+void findPermissionStatement() :
+{
+}
+{
+    [ entitySpecifier(jjtThis) ]
+}
+
+void deletePermissionStatement() :
+{
+}
+{
+    ( jjtThis.permission = permission() )
+}
+
+void alterPermissionSetNameStatement(ASTpermission perm) :
+{
+    jjtThis.permission = perm;
+}
+{
+    ( jjtThis.newName = name() )
+}
+
+// 2.2 Roles /////////////////////////////////////////////////////////////////
+
+void createRoleStatement() :
+{
+}
+{
+    ( jjtThis.name = name() ) 
+    [ "SUBROLES" <LPAREN> 
+        ( jjtThis.subRoles = roleList() ) 
+    <RPAREN> ]
+}
+
+void findRoleStatement() :
+{
+}
+{
+    [ entitySpecifier(jjtThis) ]
+}
+
+void deleteRoleStatement() :
+{
+}
+{
+    ( jjtThis.role = role() )
+}
+
+void alterRoleSetNameStatement(ASTrole role) :
+{
+    jjtThis.role = role;
+}
+{
+    ( jjtThis.newName = name() )
+}
+
+void alterRoleAddSubrolesStatement(ASTrole role) :
+{
+    jjtThis.role = role;
+}
+{
+    <LPAREN> 
+        ( jjtThis.subRoles = roleList() ) 
+    <RPAREN>
+}
+
+void alterRoleDeleteSubrolesStatement(ASTrole role) :
+{
+    jjtThis.role = role;
+}
+{
+    <LPAREN> 
+        ( jjtThis.subRoles = roleList() ) 
+    <RPAREN>
+}
+
+void findSubrolesStatement(boolean direct) :
+{
+    jjtThis.direct = direct;
+}
+{
+    ( jjtThis.role = role() )
+}
+
+void findSuperrolesStatement(boolean direct) :
+{
+    jjtThis.direct = direct;
+}
+{
+    ( jjtThis.role = role() )
+}
+
+// 2.3 Subjects //////////////////////////////////////////////////////////////
+
+void createSubjectStatement() :
+{
+}
+{
+    ( jjtThis.name = name() )
+    [ "ROLE" <LPAREN> 
+        ( jjtThis.roles = roleList() ) 
+    <RPAREN> ]
+}
+
+void findSubjectStatement() :
+{
+}
+{
+    [ entitySpecifier(jjtThis) ]
+}
+
+void deleteSubjectStatement() :
+{
+}
+{
+    ( jjtThis.subject = subject() )
+}
+
+void alterSubjectSetNameStatement(ASTsubject subject) :
+{
+    jjtThis.subject = subject;
+}
+{
+    ( jjtThis.newName = name() )
+}
+
+
+// 3.0 Resources /////////////////////////////////////////////////////////////
+
+// Resource query grammar ////////////////////////////////////////////////////
+
+ASTconditionalExpression conditionalExpression() :
+{
+}
+{
+    orExpression()
+    {
+        return jjtThis;
+    }
+}
+
+void orExpression() #void :
+{
+}
+{
+    ( 
+       andExpression() 
+       ( "OR" andExpression() )* 
+    ) #orExpression(>1)
+}
+
+void andExpression() #void :
+{
+}
+{
+    ( 
+        simpleExpression() 
+        ( "AND" simpleExpression() )* 
+    ) #andExpression(>1)
+}
+
+void simpleExpression() #void :
+{
+}
+{
+    notExpression() | 
+    primaryExpression()
+}
+
+void notExpression() :
+{
+}
+{
+    "NOT" primaryExpression()
+}
+
+void primaryExpression() #void :
+{
+}
+{
+    condition() | 
+    ( <LPAREN> 
+        orExpression() 
+    <RPAREN> )
+}
+
+void condition() #void :
+{
+    String lhs;
+}
+{
+    definedCondition() | 
+    ( 
+        lhs = name() 
+        ( 
+            equalityCondition(lhs) | 
+            comparisonCondition(lhs) | 
+            approximationCondition(lhs) 
+        ) 
+    )
+}
+
+void equalityCondition(String lhs) :
+{
+    jjtThis.lhs = lhs;
+    Token t;
+}
+{
+    ( jjtThis.operator = equalityOperator() ) 
+    ( 
+        t = <QUOTED_STRING> 
+        {
+            jjtThis.literalRHS = true;
+            jjtThis.rhs = unquote(t.image);
+        } |
+        ( 
+            t=<NUMBER> | 
+            t=<STRING> 
+        )
+        {
+            jjtThis.rhs = t.image;
+        }
+    )
+}
+
+int equalityOperator() #void :
+{
+}
+{
+    ( 
+        "=" | 
+        "==" 
+    )  
+    {
+        return RMLOperator.EQUALS;
+    } |
+    ( 
+        "!=" | 
+        "<>" 
+    )
+    {
+        return RMLOperator.NOT_EQUALS;
+    }
+}
+
+void comparisonCondition(String lhs) :
+{
+    jjtThis.lhs = lhs;
+    Token t;
+}
+{
+    ( jjtThis.operator = comparisonOperator() )
+    ( 
+        t = <QUOTED_STRING> 
+        {
+            jjtThis.literalRHS = true;
+            jjtThis.rhs = unquote(t.image);
+        } |
+        ( 
+            t = <NUMBER> | 
+            t = <STRING> 
+        )
+        {
+            jjtThis.rhs = t.image;
+        }
+    )
+}
+
+int comparisonOperator() #void :
+{
+}
+{
+    "<" 
+    {
+        return RMLOperator.LESSER;
+    } |
+    ">" 
+    {
+        return RMLOperator.GREATER;
+    } |
+    "<=" 
+    {
+        return RMLOperator.LESSER_EQUALS;
+    } |
+    ">="
+    {
+        return RMLOperator.GREATER_EQUALS;
+    }
+}
+
+void approximationCondition(String lhs) :
+{
+    jjtThis.lhs = lhs;
+    Token t;
+}
+{
+	"LIKE"
+    ( 
+        t = <QUOTED_STRING> 
+        {
+            jjtThis.literalRHS = true;
+            jjtThis.rhs = unquote(t.image);
+        } |
+        ( 
+            t = <NUMBER> | 
+            t = <STRING> 
+        )
+        {
+            jjtThis.rhs = t.image;
+            jjtThis.caseSensitive = true;
+        }
+    ) |
+    "LIKE_NC"
+    ( 
+        t = <QUOTED_STRING> 
+        {
+            jjtThis.literalRHS = true;
+            jjtThis.rhs = unquote(t.image);
+        } |
+        ( 
+            t = <NUMBER> | 
+            t = <STRING> 
+        )
+        {
+            jjtThis.rhs = t.image;
+            jjtThis.caseSensitive = false;
+        }
+    )
+}
+
+void definedCondition() :
+{
+}
+{
+    "DEFINED" ( jjtThis.rhs = name() )
+}
+
+ASTclassAndAliasSpecifier classAndAliasSpecifier() :
+{
+}
+{
+    ( jjtThis.resourceClass = resourceClass() ) [ "AS" ( jjtThis.alias = name() ) ]
+    {
+        return jjtThis;
+    }
+}
+
+ASTclassAndAliasSpecifierList classAndAliasSpecifierList() :
+{
+}
+{
+    classAndAliasSpecifier() ( <COMMA> classAndAliasSpecifier() )*
+    {
+        return jjtThis;
+    }
+}           
+
+ASTorderBySpecifier orderBySpecifier() :
+{
+    jjtThis.dir = true;
+}
+{
+    ( jjtThis.attributeName = name() ) 
+    [ 
+        "ASC" | 
+        "DESC" 
+        { 
+            jjtThis.dir = false; 
+        } 
+    ]
+    {
+        return jjtThis;
+    }
+}
+
+ASTorderByList orderByList() :
+{
+}
+{
+    ( 
+        orderBySpecifier()
+        ( <COMMA> orderBySpecifier() )* 
+    )
+    {
+        return jjtThis;
+    }
+}
+
+ASTselectSpecifier selectSpecifier() :
+{
+}
+{
+	( jjtThis.attributeName = name() )
+	{
+		return jjtThis;
+	}
+}
+
+ASTselectList selectList() :
+{
+}
+{
+    ( 
+        selectSpecifier()
+        ( <COMMA> selectSpecifier() )* 
+    )
+	{
+		return jjtThis;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void createResourceStatement() :
+{
+}
+{
+    ( jjtThis.name = name() )
+    "RESOURCE" "CLASS" ( jjtThis.resourceClass = resourceClass() )
+    "PARENT" 
+    ( 
+        ( jjtThis.parentResource = resource() ) | 
+        "NONE" 
+    )
+    [ "ATTRIBUTES" <LPAREN> 
+        ( jjtThis.attributeValues = attributeList() ) 
+    <RPAREN> ]
+}
+
+ASTfindResourceStatement findResourceStatement() :
+{
+}
+{
+    (
+        ( jjtThis.resource = resource() ) | 
+        (
+            [ "FROM" ( jjtThis.from = classAndAliasSpecifierList() ) ] 
+            [ "WHERE" ( jjtThis.where = conditionalExpression() ) ]
+            [ "ORDER" "BY" ( jjtThis.orderBy = orderByList() ) ]
+            [ "SELECT" ( jjtThis.select = selectList() ) ]
+        )
+    )
+    {
+        return jjtThis;
+    }
+}
+
+void deleteResourceStatement() :
+{
+}
+{
+    entitySpecifier(jjtThis)
+    [ 
+        "RECURSIVE" 
+        { 
+            jjtThis.recursive = true; 
+        } 
+    ]
+}
+
+void alterResourceSetNameStatement(ASTresource resource) :
+{
+    jjtThis.resource = resource;
+}
+{
+    ( jjtThis.newName = name() )
+}
+
+void alterResourceSetParentStatement(ASTresource resource) :
+{
+    jjtThis.resource = resource;
+}
+{
+    ( jjtThis.parentResource = resource() ) | 
+    "NONE"
+}
+
+void alterResourceSetOwnerStatement(ASTresource resource) :
+{
+    jjtThis.resource = resource;
+}
+{
+    ( jjtThis.owner = subject() )
+}
+
+void alterResourceSetAttributeStatement(ASTresource resource) :
+{
+    jjtThis.resource = resource;
+}
+{
+    ( jjtThis.attribute = attribute() )
+}
+
+void alterResourceDeleteAttributeStatement(ASTresource resource) :
+{
+    jjtThis.resource = resource;
+}
+{
+    ( jjtThis.attributeName = name() )
+}
+
+// 4.1 ResourceClass Permissions /////////////////////////////////////////////
+
+void alterResourceClassAddPermissionsStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    <LPAREN> 
+        ( jjtThis.permissions = permissionList() ) 
+    <RPAREN>
+}
+
+void alterResourceClassDeletePermissionsStatement(ASTresourceClass resourceClass) :
+{
+    jjtThis.resourceClass = resourceClass;
+}
+{
+    <LPAREN> 
+        ( jjtThis.permissions = permissionList() ) 
+    <RPAREN>
+}
+
+void findGrantsForResourceClassStatement() :
+{
+}
+{
+    ( jjtThis.resourceClass = resourceClass() )
+}
+
+// 4.2 Subject Roles /////////////////////////////////////////////////////////
+
+void grantRoleStatement() :
+{
+}
+{
+    ( jjtThis.role=role() ) "TO" ( jjtThis.subject = subject() ) 
+    [ 
+        "WITH" "GRANT" "OPTION" 
+        { 
+            jjtThis.canGrant = true; 
+        } 
+    ]
+}
+
+void revokeRoleStatement() :
+{
+}
+{
+    ( jjtThis.role = role() ) "FROM" ( jjtThis.subject = subject() )
+}
+
+void findRolesStatement(boolean direct) :
+{
+    jjtThis.direct = direct;
+}
+{
+    ( jjtThis.subject = subject() )
+}
+
+void findGrantsForSubjectStatement() :
+{
+}
+{
+    ( jjtThis.subject = subject() ) 
+    [ "ON" ( jjtThis.resource = resource() ) ]
+}
+
+void findGrantsForRoleStatement() :
+{
+}
+{
+    ( jjtThis.role = role() ) 
+    [ "ON" ( jjtThis.resource = resource() ) ]
+}
+
+// 4.3 Role Permissions on Resources /////////////////////////////////////////
+
+void grantPermissionStatement() :
+{
+}
+{
+    ( jjtThis.permission = permission() ) 
+    "ON" ( jjtThis.resource = resource() ) 
+    [
+        "RECURSIVE" 
+        { 
+            jjtThis.recursive = true; 
+        } 
+    ] 
+    "TO" ( jjtThis.role = role() )
+}
+
+void revokePermissionStatement() :
+{
+}
+{
+    ( jjtThis.permission = permission() ) 
+    "ON" ( jjtThis.resource = resource() ) 
+    "FROM" ( jjtThis.role = role() )
+}
+            
+void findGrantsForResourceStatement() :
+{ 
+}
+{
+    ( jjtThis.resource = resource() )
+}
+
+// relations /////////////////////////////////////////////////////////////////
+
+void createRelationStatement() :
+{
+}
+{
+    ( jjtThis.name = name() )
+}
+
+void findRelationStatement() :
+{
+}
+{
+    [ entitySpecifier(jjtThis) ]
+}
+
+void alterRelationSetNameStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+	( jjtThis.newName = name() )
+}
+
+void alterRelationAddPairsStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+    ( jjtThis.pairs = resourcePairList() )
+}
+
+void alterRelationDeletePairsStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+    ( jjtThis.pairs = resourcePairList() )
+}
+
+void alterRelationDeleteForwardStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+    ( jjtThis.resource = resource() )
+}
+
+void alterRelationDeleteReverseStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+    ( jjtThis.resource = resource() )
+}
+
+void alterRelationDeleteAllStatement(ASTrelation relation) :
+{
+    jjtThis.relation = relation;
+}
+{
+	"ALL"
+}
+
+void deleteRelationStatement() :
+{
+}
+{
+    ( jjtThis.relation = relation() )
+}
+
+// 5.0 Impersonation /////////////////////////////////////////////////////////
+
+// whoamiStatement node is defined inline in statement() non-terminal
+
+void impersonateStatement() :
+{
+}
+{
+    ( jjtThis.subject = subject() ) | 
+    "SELF"
+}
+
+// Miscelenaous statements ///////////////////////////////////////////////////
+
+void echoStatement() :
+{
+}
+{
+    ( jjtThis.message = name() )
+}
