@@ -1,0 +1,142 @@
+<script type="text/javascript">
+<!--
+function revokePermission(role, permission, url)
+{
+    if(confirm("Are you sure you want revoke the permission '"+permission+"' from  role '"+role+"' on this resource?"))
+    {
+        document.location.href = url;
+    }
+}
+
+function deleteResource(name, url)
+{
+    if(confirm("Are your sure you want delete the resource '"+name+"'\nthe operation once performed cannot be rolled back!"))
+    {
+        document.location.href = url;
+    }
+}
+
+function fSub(action)
+{
+  document.form1.action = action;
+  document.form1.submit();
+}
+//-->
+</script>
+
+
+<table width="100%">
+  <tr>
+    <td valign="top">
+      $component.embed('browser.ResourceTree') 
+    </td>
+    <td valign="top">
+
+#result()
+<table class="genericItemTree" width="100%" cellpadding="0" cellspacing="0">
+  #if($resource)
+  <tr>
+    <th>The '$resource.path' resource information
+     <a href="$link.view('browser.ResourceClassView').set('res_class_id',$resource.resourceClass.id)">
+     '$resource.resourceClass.name'
+     </a>
+    </th>
+    <th>
+      <a href="javascript:deleteResource('$resource.name','$link.action('browser.DeleteResource').set('res_id',$resource.id)');">delete</a>|
+      <a href="javascript:deleteResource('$resource.name','$link.action('browser.DeleteResourceRecursive').set('res_id',$resource.id)');">delete recursive</a>
+    </th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <table>
+        <tr>
+          <th><span title="Attribute class">Class</span></th>
+          <th><span title="Attribute name">Name</span></th>
+          <th><span title="Definition class">Def. class</span></th>
+          <th>Domain</th>
+          <th>Value</th>
+        </tr>
+      #foreach($attr in $resource.resourceClass.allAttributes)
+        <tr>
+          <td>${attr.attributeClass.name}</td>
+		  <td><a href="$link.view('browser.AttributeDetails').set('res_id',$resource.id).set('attr_name',$attr.name)">$attr.name</a></td>
+          <td><a href="$link.view('browser.ResourceClassView').set('res_class_id',$attr.declaringClass.id)">$attr.declaringClass.name</a></td>
+          <td>
+            #if($attr.domain)
+              <a href="$link.view('browser.ResourceClassView').set('res_class_id',$attr.declaringClass.id)">
+                $attr.domain
+              </a>
+            #else
+             -
+            #end
+          </td>
+          <td>
+            #if($resource.isDefined($attr) && $resource.get($attr))
+              $attr.attributeClass.handler.toPrintableString($resource.get($attr))
+            #else
+              -
+            #end
+          </td>
+        </tr>
+      #end
+      </table>
+      <table>
+        <tr>
+          <th>Role</th>
+          <th>Permission</th>
+          <th>Recursive</th>
+          <th>&nbsp;</th>
+        </tr>
+      #foreach($pa in $resource.permissionAssignments)
+        <tr>
+          <td><a href="$link.view('browser.RoleView').set('role_id',$pa.role.id)">$pa.role.name</a></td>
+          <td><a href="$link.view('browser.PermissionView').set('perm_id',$pa.permission.id)">$pa.permission.name</a></td>
+          <td>#if($pa.isInherited())
+               true
+              #else
+               false
+              #end
+          </td>
+          <td>
+            <a href="javascript:revokePermission('$pa.role.name','$pa.permission.name','$link.action('browser.RevokePermission').set('role_id',$pa.role.id).set('res_id',$resource.id).set('perm_id',$pa.permission.id)');">delete</a>
+          </td>
+        </tr>
+      #end
+        <tr>
+          <th colspan="4">Grant rights:</th>
+        </tr>
+        <tr>
+          <form name="form1" method="post" action='$link.action('browser.AddPermission')'>
+          <input type="hidden" name="res_id" value="$resource.id" >
+          <td><input type="text" name="role_name" value="">
+            <a href="#select_role("name" "form1" "role_name")">choose</a>
+          </td>
+          <td>
+          <select name="perm_name">
+          #foreach($association in $resource.resourceClass.permissionAssociations)
+          <option value="$association.permission.name">$association.permission.name</option>
+          #end
+          </select>
+          ##<input type="text" name="perm_name" value="">
+          </td>
+          <td><input type="checkbox" name="recursive" value="true" ></td>
+          <td>
+          <a href="javascript:fSub('$link.action('browser.GrantPermission')')">grant</a>
+          </td>
+          </form>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  #else
+  <tr>
+    <th>Choose the resource from resource tree</th>
+  </tr>
+  #end
+</table>
+#if($resource || $parametersTool.isDefined('rowId'))
+	  Show selected resource in the <a href="#sel">tree</a>
+#end
+    </td>
+  </tr>
+</table>
