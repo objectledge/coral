@@ -150,31 +150,34 @@ public class CoralStoreImpl
      */
     public Resource[] getResource()
     {
-        synchronized(resourceSet)
+        synchronized(resourceById)
         {
-            Set rs = (Set)resourceSet.get("all");
-            if(rs == null)
+            synchronized(resourceSet)
             {
-                Connection conn = null;
-                try
+                Set rs = (Set)resourceSet.get("all");
+                if(rs == null)
                 {
-                    conn = persistence.getDatabase().getConnection();
-                    List list = persistence.load(" true ORDER BY resource_id", resourceFactory);
-                    rs = instantiate(list, conn);
+                    Connection conn = null;
+                    try
+                    {
+                        conn = persistence.getDatabase().getConnection();
+                        List list = persistence.load(" true ORDER BY resource_id", resourceFactory);
+                        rs = instantiate(list, conn);
+                    }
+                    catch(Exception e)
+                    {
+                        throw new BackendException("failed to load resource objects", e);
+                    }
+                    finally
+                    {
+                        DatabaseUtils.close(conn);
+                    }
+                    resourceSet.put("all", rs);
                 }
-                catch(Exception e)
-                {
-                    throw new BackendException("failed to load resource objects", e);
-                }
-                finally
-                {
-                    DatabaseUtils.close(conn);
-                }
-                resourceSet.put("all", rs);
+                Resource[] result = new Resource[rs.size()];
+                rs.toArray(result);
+                return result;
             }
-            Resource[] result = new Resource[rs.size()];
-            rs.toArray(result);
-            return result;
         }
     }
 
@@ -187,42 +190,45 @@ public class CoralStoreImpl
      */
     public Resource[] getResource(Resource parent)
     {
-        synchronized(resourceByParent)
+        synchronized(resourceById)
         {
-            Set rs = (Set)resourceByParent.get(parent);
-            if(rs == null)
+            synchronized(resourceByParent)
             {
-                Connection conn = null;
-                try
+                Set rs = (Set)resourceByParent.get(parent);
+                if(rs == null)
                 {
-                    conn = persistence.getDatabase().getConnection();
-                    List list;
-                    if(parent != null)
+                    Connection conn = null;
+                    try
                     {
-                        list = persistence.load("parent = "+parent.getIdString(),
-                                                    resourceFactory);
+                        conn = persistence.getDatabase().getConnection();
+                        List list;
+                        if(parent != null)
+                        {
+                            list = persistence.load("parent = "+parent.getIdString(),
+                                resourceFactory);
+                        }
+                        else
+                        {
+                            list = persistence.load("parent IS NULL",
+                                resourceFactory);
+                        }
+                        
+                        rs = instantiate(list, conn);
                     }
-                    else
+                    catch(Exception e)
                     {
-                        list = persistence.load("parent IS NULL",
-                                                    resourceFactory);
+                        throw new BackendException("failed to load resource objects", e);
                     }
-                    
-                    rs = instantiate(list, conn);
+                    finally
+                    {
+                        DatabaseUtils.close(conn);
+                    }
+                    resourceByParent.put(parent, rs);
                 }
-                catch(Exception e)
-                {
-                    throw new BackendException("failed to load resource objects", e);
-                }
-                finally
-                {
-                    DatabaseUtils.close(conn);
-                }
-                resourceByParent.put(parent, rs);
+                Resource[] result = new Resource[rs.size()];
+                rs.toArray(result);
+                return result;
             }
-            Resource[] result = new Resource[rs.size()];
-            rs.toArray(result);
-            return result;
         }
     }
 
@@ -286,32 +292,35 @@ public class CoralStoreImpl
      */
     public Resource[] getResource(String name)
     {
-        synchronized(resourceByName)
+        synchronized(resourceById)
         {
-            Set rs = (Set)resourceByName.get(name);
-            if(rs == null)
+            synchronized(resourceByName)
             {
-                Connection conn = null;
-                try
+                Set rs = (Set)resourceByName.get(name);
+                if(rs == null)
                 {
-                    conn = persistence.getDatabase().getConnection();
-                    List list = persistence.load("name = '"+DatabaseUtils.escapeSqlString(name)+"'",
-                                                     resourceFactory);
-                    rs = instantiate(list, conn);
+                    Connection conn = null;
+                    try
+                    {
+                        conn = persistence.getDatabase().getConnection();
+                        List list = persistence.load("name = '"+DatabaseUtils.escapeSqlString(name)+"'",
+                            resourceFactory);
+                        rs = instantiate(list, conn);
+                    }
+                    catch(Exception e)
+                    {
+                        throw new BackendException("failed to load resource objects", e);
+                    }
+                    finally
+                    {
+                        DatabaseUtils.close(conn);
+                    }
+                    resourceByName.put(name, rs);
                 }
-                catch(Exception e)
-                {
-                    throw new BackendException("failed to load resource objects", e);
-                }
-                finally
-                {
-                    DatabaseUtils.close(conn);
-                }
-                resourceByName.put(name, rs);
+                Resource[] result = new Resource[rs.size()];
+                rs.toArray(result);
+                return result;
             }
-            Resource[] result = new Resource[rs.size()];
-            rs.toArray(result);
-            return result;
         }
     }
 
@@ -348,38 +357,41 @@ public class CoralStoreImpl
      */
     public Resource[] getResource(Resource parent, String name)
     {
-        synchronized(resourceByParentAndName)
+        synchronized(resourceById)
         {
-            Map nameMap = (Map)resourceByParentAndName.get(parent);
-            if(nameMap == null)
+            synchronized(resourceByParentAndName)
             {
-                nameMap = new HashMap();
-                resourceByParentAndName.put(parent, nameMap);
-            }
-            Set rs = (Set)nameMap.get(name);
-            if(rs == null)
-            {
-                Connection conn = null;
-                try
+                Map nameMap = (Map)resourceByParentAndName.get(parent);
+                if(nameMap == null)
                 {
-                    conn = persistence.getDatabase().getConnection();
-                    List list = persistence.load("parent = "+parent.getIdString()+
-                        " AND name = '"+DatabaseUtils.escapeSqlString(name)+"'", resourceFactory);
-                    rs = instantiate(list, conn);
+                    nameMap = new HashMap();
+                    resourceByParentAndName.put(parent, nameMap);
                 }
-                catch(Exception e)
+                Set rs = (Set)nameMap.get(name);
+                if(rs == null)
                 {
-                    throw new BackendException("failed to load resource objects", e);
+                    Connection conn = null;
+                    try
+                    {
+                        conn = persistence.getDatabase().getConnection();
+                        List list = persistence.load("parent = "+parent.getIdString()+
+                            " AND name = '"+DatabaseUtils.escapeSqlString(name)+"'", resourceFactory);
+                        rs = instantiate(list, conn);
+                    }
+                    catch(Exception e)
+                    {
+                        throw new BackendException("failed to load resource objects", e);
+                    }
+                    finally
+                    {
+                        DatabaseUtils.close(conn);
+                    }
+                    nameMap.put(name, rs);
                 }
-                finally
-                {
-                    DatabaseUtils.close(conn);
-                }
-                nameMap.put(name, rs);
-            }
-            Resource[] result = new Resource[rs.size()];
-            rs.toArray(result);
-            return result;
+                Resource[] result = new Resource[rs.size()];
+                rs.toArray(result);
+                return result;
+            }            
         }
     }
 
