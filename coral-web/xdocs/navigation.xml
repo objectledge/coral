@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Coral">
+
+  <title>Coral Web</title>
+
+  <body>
+    <links>
+      <item name="home" href="../../index.html"/>
+      <item name="wiki" href="http://objectledge.org/confluence/display/CORAL"/>
+      <item name="issues" href="http://objectledge.org/jira/secure/BrowseProject.jspa?id=10030"/>
+      <item name="fisheye" href="http://objectledge.org/fisheye/browse/coral/coral-web"/>
+    </links>
+  </body>
+</project>
