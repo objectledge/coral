@@ -1132,60 +1132,66 @@ public class CoralStoreImpl
             throw new CircularDependencyException("the resource : '" + child.getPath() +
                 "' is an ancestor of the resource: '" + parent.getPath()+"'");
         }
-        synchronized(resourceByParent)
+        synchronized(resourceById)
         {
-            synchronized(resourceByParentAndName)
+            synchronized(resourceByName)
             {
-                Resource oldParent = child.getParent();
-                ResourceImpl delegate = (ResourceImpl)child.getDelegate();
-                try
+                synchronized(resourceByParent)
                 {
-                    delegate.setParent(parent);
-                    persistence.save(delegate);
-
-                    Set rs = (Set)resourceByParent.get(oldParent);
-                    if(rs != null)
+                    synchronized(resourceByParentAndName)
                     {
-                        rs.remove(child);
-                    }
-                    rs = (Set)resourceByParent.get(parent);
-                    if(rs != null)
-                    {
-                        rs.add(child);
-                    }
-
-                    String name = child.getName();
-                    Map nameMap = (Map)resourceByParentAndName.get(oldParent);
-                    if(nameMap != null)
-                    {
-                        rs = (Set)nameMap.get(name);
-                        if(rs != null)
+                        Resource oldParent = child.getParent();
+                        ResourceImpl delegate = (ResourceImpl)child.getDelegate();
+                        try
                         {
-                            rs.remove(child);
+                            delegate.setParent(parent);
+                            persistence.save(delegate);
+
+                            Set rs = (Set)resourceByParent.get(oldParent);
+                            if(rs != null)
+                            {
+                                rs.remove(child);
+                            }
+                            rs = (Set)resourceByParent.get(parent);
+                            if(rs != null)
+                            {
+                                rs.add(child);
+                            }
+
+                            String name = child.getName();
+                            Map nameMap = (Map)resourceByParentAndName.get(oldParent);
+                            if(nameMap != null)
+                            {
+                                rs = (Set)nameMap.get(name);
+                                if(rs != null)
+                                {
+                                    rs.remove(child);
+                                }
+                            }
+                            nameMap = (Map)resourceByParentAndName.get(parent);
+                            if(nameMap != null)
+                            {
+                                rs = (Set)nameMap.get(name);
+                                if(rs != null)
+                                {
+                                    rs.add(child);
+                                }
+                            }
+
+                            if(oldParent != null)
+                            {
+                                coralEventHub.getGlobal().fireResourceTreeChangeEvent(
+                                    new ResourceInheritanceImpl(oldParent, child), false);
+                            }
+                            coralEventHub.getGlobal().fireResourceTreeChangeEvent(
+                                new ResourceInheritanceImpl(parent, child), true);
+                        }
+                        catch(PersistenceException e)
+                        {
+                            delegate.setParent(oldParent);
+                            throw new BackendException("failed to update the resource object", e);
                         }
                     }
-                    nameMap = (Map)resourceByParentAndName.get(parent);
-                    if(nameMap != null)
-                    {
-                        rs = (Set)nameMap.get(name);
-                        if(rs != null)
-                        {
-                            rs.add(child);
-                        }
-                    }
-                    
-                    if(oldParent != null)
-                    {
-                        coralEventHub.getGlobal().fireResourceTreeChangeEvent(
-                            new ResourceInheritanceImpl(oldParent, child), false);
-                    }
-                    coralEventHub.getGlobal().fireResourceTreeChangeEvent(
-                        new ResourceInheritanceImpl(parent, child), true);
-                }
-                catch(PersistenceException e)
-                {
-                    delegate.setParent(oldParent);
-                    throw new BackendException("failed to update the resource object", e);
                 }
             }
         }
@@ -1198,41 +1204,47 @@ public class CoralStoreImpl
      */
     public void unsetParent(Resource child)  
     {
-        synchronized(resourceByParent)
-        {
-            synchronized(resourceByParentAndName)
+        synchronized(resourceById)        
+        {            
+            synchronized(resourceByName)
             {
-                Resource oldParent = child.getParent();
-                ResourceImpl delegate = (ResourceImpl)child.getDelegate();
-                try
+                synchronized(resourceByParent)
                 {
-                    delegate.setParent(null);
-                    persistence.save(delegate);
-
-                    Set rs = (Set)resourceByParent.get(oldParent);
-                    if(rs != null)
+                    synchronized(resourceByParentAndName)
                     {
-                        rs.remove(child);
-                    }
-
-                    String name = child.getName();
-                    Map nameMap = (Map)resourceByParentAndName.get(oldParent);
-                    if(nameMap != null)
-                    {
-                        rs = (Set)nameMap.get(name);
-                        if(rs != null)
+                        Resource oldParent = child.getParent();
+                        ResourceImpl delegate = (ResourceImpl)child.getDelegate();
+                        try
                         {
-                            rs.remove(child);
+                            delegate.setParent(null);
+                            persistence.save(delegate);
+
+                            Set rs = (Set)resourceByParent.get(oldParent);
+                            if(rs != null)
+                            {
+                                rs.remove(child);
+                            }
+
+                            String name = child.getName();
+                            Map nameMap = (Map)resourceByParentAndName.get(oldParent);
+                            if(nameMap != null)
+                            {
+                                rs = (Set)nameMap.get(name);
+                                if(rs != null)
+                                {
+                                    rs.remove(child);
+                                }
+                            }
+
+                            coralEventHub.getGlobal().fireResourceTreeChangeEvent(
+                                new ResourceInheritanceImpl(oldParent, child), false);
+                        }
+                        catch(PersistenceException e)
+                        {
+                            delegate.setParent(oldParent);
+                            throw new BackendException("failed to update the resource object", e);
                         }
                     }
-
-                    coralEventHub.getGlobal().fireResourceTreeChangeEvent(
-                        new ResourceInheritanceImpl(oldParent, child), false);
-                }
-                catch(PersistenceException e)
-                {
-                    delegate.setParent(oldParent);
-                    throw new BackendException("failed to update the resource object", e);
                 }
             }
         }
