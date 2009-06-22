@@ -1,0 +1,3 @@
+# SQL files
+src/main/resources/sql/test/Test.sql
+src/main/resources/sql/test/TestInitial.sql

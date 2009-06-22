@@ -1,0 +1,4 @@
+# Coral datatypes
+rml/coral/CoralDatatypesInitial.rml
+# Actual RML sources
+@include src/main/rmlSources.lst
