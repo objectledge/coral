@@ -282,14 +282,21 @@ public abstract class AbstractResourceHandler
      */
     private void addToCache0(ResourceClass rc, AbstractResource res)
     {
-        WeakHashMap<AbstractResource,Object> rset = cache.get(rc);
-        if(rset == null)
+        WeakHashMap<AbstractResource,Object> rset;
+        synchronized(cache)
         {
-            rset = new WeakHashMap<AbstractResource,Object>();
-            cacheFactory.registerForPeriodicExpunge(rset);
-            cache.put(rc, rset);
+            rset = cache.get(rc);
+            if(rset == null)
+            {
+                rset = new WeakHashMap<AbstractResource,Object>();
+                cacheFactory.registerForPeriodicExpunge(rset);
+                cache.put(rc, rset);
+            }
         }
-        rset.put(res, null);
+        synchronized(rset)
+        {
+            rset.put(res, null);
+        }
     }
 
     /**
@@ -319,14 +326,21 @@ public abstract class AbstractResourceHandler
     private void revert0(ResourceClass rc, Connection conn)
         throws SQLException
     {
-        WeakHashMap<AbstractResource,Object> rset = cache.get(rc);
+        WeakHashMap<AbstractResource,Object> rset;
+        synchronized(cache)
+        {
+            rset = cache.get(rc);
+        }
         if(rset != null)
         {
-            Object data = getData(rc, conn);
-            Set<AbstractResource> orig = new HashSet<AbstractResource>(rset.keySet());
-            for (AbstractResource r : orig)
+            synchronized(rset)
             {
-                r.revert(rc, conn, data);
+                Object data = getData(rc, conn);
+                Set<AbstractResource> orig = new HashSet<AbstractResource>(rset.keySet());
+                for(AbstractResource r : orig)
+                {
+                    r.revert(rc, conn, data);
+                }
             }
         }
     }
