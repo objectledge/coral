@@ -3507,7 +3507,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jjtc000 = false;
           jjtreeCloseNodeScope(jjtn000);
             jjtn000.rhs = t.image;
-            jjtn000.operator = 1;
+            jjtn000.caseSensitive = true;
           break;
         default:
           jj_la1[75] = jj_gen;
@@ -3544,7 +3544,7 @@ public class RML/*@bgen(jjtree)*/implements RMLTreeConstants, RMLConstants {/*@b
           jjtc000 = false;
           jjtreeCloseNodeScope(jjtn000);
             jjtn000.rhs = t.image;
-            jjtn000.operator = 0;
+            jjtn000.caseSensitive = false;
           break;
         default:
           jj_la1[77] = jj_gen;
