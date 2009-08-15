@@ -25,5 +25,9 @@
       <groupId>org.objectledge</groupId>
       <artifactId>ledge-web</artifactId>
     </dependency>
+    <dependency>
+    	<groupId>javax.servlet</groupId>
+    	<artifactId>servlet-api</artifactId>
+    </dependency>
   </dependencies>
 </project>
