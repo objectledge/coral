@@ -17,5 +17,10 @@
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-api</artifactId>
     </dependency>
+    <dependency>
+    	<groupId>pcj</groupId>
+    	<artifactId>pcj</artifactId>
+    	<scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

@@ -32,6 +32,13 @@
     <dependency>
       <groupId>dbunit</groupId>
       <artifactId>dbunit</artifactId>
-     </dependency>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>hsqldb</groupId>
+    	<artifactId>hsqldb</artifactId>
+    	<type>jar</type>
+    	<scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
