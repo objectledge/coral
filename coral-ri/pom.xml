@@ -21,9 +21,5 @@
       <groupId>org.objectledge</groupId>
       <artifactId>ledge-container</artifactId>
     </dependency>
-    <dependency>
-    	<groupId>pcj</groupId>
-    	<artifactId>pcj</artifactId>
-    </dependency>
   </dependencies>
 </project>
