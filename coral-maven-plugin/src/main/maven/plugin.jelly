@@ -108,32 +108,6 @@
     -->
 
     <!--
-     | Instantiates arl DataSource, based upon arl.db.url, arl.db.user and arl.db.password settings.
-     |
-     | @param var the name of the variable to put DataSource object into.
-     -->
-    <define:tag name="arlDataSource">
-      <m:pluginVar plugin="coral-maven-plugin" var="arlDbUrl" property="arl.db.url"/>  
-      <m:pluginVar plugin="coral-maven-plugin" var="arlDbUser" property="arl.db.user"/>  
-      <m:pluginVar plugin="coral-maven-plugin" var="arlDbPassword" property="arl.db.password"/>
-      <coral:dbDriver var="arlDbDriver" url="${arlDbUrl}"/>
-      <sql:driver var="arlDataSource" driver="${arlDbDriver}" jdbcURL="${arlDbUrl}" 
-        userName="${arlDbUser}"/>
-      <j:set var="${var}" scope="parent" value="${arlDataSource}"/>
-    </define:tag>
-
-    <!--
-     | Instantiates ARL Import component.
-     |
-     | @param sourceDataSource the data source to use as a source db.
-     | @param targetDataSource the data source to use as a target db.
-     | @param var the variable to store component into (arlImporterComponent).
-     -->
-    <define:bean name="arlImporter"
-      className="org.objectledge.coral.tools.arl.ARLImporterTag">
-    </define:bean>
-
-    <!--
      | Instantiates Coral session factory.
      |
      | @param dataSource the data source to use.
