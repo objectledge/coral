@@ -1,0 +1,412 @@
+#*
+# Copyright (c) 2003, Caltha - Gajda, Krzewski, Mach, Potempski Sp.J.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, 
+# are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice, 
+#   this list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice, 
+#   this list of conditions and the following disclaimer in the documentation 
+#   and/or other materials provided with the distribution.
+# * Neither the name of the Caltha - Gajda, Krzewski, Mach, Potempski Sp.J. 
+#   nor the names of its contributors may be used to endorse or promote products 
+#   derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+# OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+*###
+#set($attributes = $class.concreteImplAttributes)
+#set($requiredAttributes = $class.concreteRequiredAttributes)
+##
+$imports.add("org.objectledge.coral.BackendException")##
+$imports.add("org.objectledge.coral.entity.EntityDoesNotExistException")##
+#if($attributes.size() > 0)
+$imports.add("org.objectledge.coral.schema.AttributeDefinition")##
+#end
+$imports.add("org.objectledge.coral.schema.ResourceClass")##
+$imports.add("org.objectledge.coral.session.CoralSession")##
+$imports.add("org.objectledge.coral.store.Resource")##
+$imports.add("org.objectledge.coral.store.ValueRequiredException")##
+$imports.add("org.objectledge.coral.store.InvalidResourceNameException")##
+$imports.add("java.util.Map")##
+$imports.add("java.util.HashMap")##
+##
+#if($class.implParentClass)
+$imports.add($class.implParentClass.getFQImplClassName())##
+#end
+#if($primaryParentClass)
+$imports.add($fqImplParentClass)##
+#end
+#foreach($attr in $attributes)
+#if(!$attr.primitive)
+$imports.add($attr.getFQJavaType())##
+#end
+#if(!$attr.readonly)
+$imports.add("org.objectledge.coral.store.ModificationNotPermitedException")##
+#end    
+#end
+#foreach($attr in $requiredAttributes)
+#if(!$attr.primitive)
+$imports.add($attr.getFQJavaType())##
+#end
+#end
+##
+$header##
+
+package $class.packageName;
+
+$imports##
+/**
+ * An implementation of <code>${class.name}</code> Coral resource class.
+ *
+ * @author Coral Maven plugin
+ */
+public class ${class.implClassName}
+    extends ${implParentClass}
+    implements ${class.interfaceClassName}
+{
+    // class variables /////////////////////////////////////////////////////////
+
+    /** Class variables initialization status. */
+    private static boolean definitionsInitialized;
+	
+#if($attributes.size() > 0)
+#foreach($attr in $attributes)
+    /** The AttributeDefinition object for the <code>${attr.name}</code> attribute. */
+    private static AttributeDefinition ${attr.name}Def;
+
+#end
+#end
+#if($fields.size() > 0)
+	// custom injected fields /////////////////////////////////////////////////
+	
+#foreach($field in $fields)
+    /** The ${field.type}. */
+    protected ${field.type} ${field.name};
+
+#end	
+#end
+    // initialization /////////////////////////////////////////////////////////
+
+    /**
+     * Creates a blank <code>${class.name}</code> resource wrapper.
+     *
+     * <p>This constructor should be used by the handler class only. Use 
+     * <code>load()</code> and <code>create()</code> methods to create
+     * instances of the wrapper in your application code.</p>
+     *
+#foreach($field in $superFields)
+     * @param ${field.name} the ${field.type}.
+#end
+#foreach($field in $fields)
+     * @param ${field.name} the ${field.type}.
+#end
+     */
+#macro(fields $fields)
+#foreach($field in $fields)${field.type} ${field.name}#if($velocityCount < $fields.size()), #end#end
+#end
+#macro(ctorSignature)
+public ${class.implClassName}(#fields($superFields)#if($superFields.size() > 0 && $fields.size() > 0), #end#fields($fields))##
+#end
+$string.wrap("#ctorSignature()")
+    {
+#if($superFields.size() > 0)	
+        super(#foreach($field in $superFields), ${field.name}#end);
+#end
+#foreach($field in $fields)
+        this.${field.name} = ${field.name};
+#end
+    }
+
+    // static methods ////////////////////////////////////////////////////////
+
+    /**
+     * Retrieves a <code>${class.name}</code> resource instance from the store.
+     *
+     * <p>This is a simple wrapper of StoreService.getResource() method plus
+     * the typecast.</p>
+     *
+     * @param session the CoralSession
+     * @param id the id of the object to be retrieved
+     * @return a resource instance.
+     * @throws EntityDoesNotExistException if the resource with the given id does not exist.
+     */
+    public static ${class.interfaceClassName} get${class.interfaceClassName}(CoralSession session, long id)
+        throws EntityDoesNotExistException
+    {
+        Resource res = session.getStore().getResource(id);
+        if(!(res instanceof $class.interfaceClassName))
+        {
+            throw new IllegalArgumentException("resource #"+id+" is "+
+                                               res.getResourceClass().getName()+
+                                               " not ${class.name}");
+        }
+        return ($class.interfaceClassName)res;
+    }
+
+#if(!$abstract)
+    /**
+     * Creates a new <code>${class.name}</code> resource instance.
+     *
+     * @param session the CoralSession
+     * @param name the name of the new resource
+     * @param parent the parent resource.
+#foreach($attr in $requiredAttributes)
+     * @param ${attr.name} the ${attr.name} attribute
+#end
+     * @return a new ${class.interfaceClassName} instance.
+#if($requiredAttributes.size() > 0)
+     * @throws ValueRequiredException if one of the required attribues is undefined.
+#end
+     * @throws InvalidResourceNameException if the name argument contains illegal characters.
+     */
+#macro(createSignature)
+#if($requiredAttributes.size() > 0)
+public static ${class.interfaceClassName} create${class.interfaceClassName}(CoralSession session, String name, Resource parent, #foreach($attr in $requiredAttributes)$attr.javaType $attr.name#if($velocityCount != $requiredAttributes.size()), #end#end)##
+#else
+public static ${class.interfaceClassName} create${class.interfaceClassName}(CoralSession session, String name, Resource parent)##
+#end
+#end
+$string.wrap("#createSignature()")
+#if($requiredAttributes.size() > 0)
+        throws ValueRequiredException, InvalidResourceNameException
+#else
+        throws InvalidResourceNameException
+#end
+    {
+        try
+        {
+            ResourceClass rc = session.getSchema().getResourceClass("${class.name}");
+            Map attrs = new HashMap();
+#foreach($attr in $requiredAttributes)
+#if($attr.primitive)
+            attrs.put(rc.getAttribute("${attr.name}"), new ${attr.primitiveWrapper}(${attr.name}));
+#else
+            attrs.put(rc.getAttribute("${attr.name}"), ${attr.name});
+#end
+#end
+            Resource res = session.getStore().createResource(name, parent, rc, attrs);
+            if(!(res instanceof ${class.interfaceClassName}))
+            {
+                throw new BackendException("incosistent schema: created object is "+
+                                           res.getClass().getName());
+            }
+            return ($class.interfaceClassName)res;
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new BackendException("incompatible schema change", e);
+        }
+#if($requiredAttributes.size() == 0)
+        catch(ValueRequiredException e)
+        {
+            throw new BackendException("incompatible schema change", e);
+        }
+#end
+    }
+#end
+#if($attributes.size() > 0)
+
+    // public interface //////////////////////////////////////////////////////
+#foreach($attr in $attributes)
+#if($attr.primitive)
+#if(!$attr.required)
+
+    /**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @return the value of the <code>${attr.name}</code> attribute.
+     * @throws IllegalStateException if the value of the attribute is 
+     *         undefined.
+     */
+    public ${attr.javaType} get${attr.javaName}()
+        throws IllegalStateException
+    {
+	    ${attr.primitiveWrapper} value = (${attr.primitiveWrapper})getInternal(${attr.name}Def, null);
+        if(value != null)
+        {
+            return value.${attr.javaType}Value();
+        }
+        else
+        {
+            throw new IllegalStateException("value of attribute ${attr.name} is undefined"+
+			    " for resource #"+getId());
+        }
+    }
+
+    /**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>${attr.name}</code> attribute.
+     */
+    public ${attr.javaType} get${attr.javaName}(${attr.javaType} defaultValue)
+    {
+		return ((${attr.primitiveWrapper})getInternal(${attr.name}Def, new ${attr.primitiveWrapper}(defaultValue))).${attr.javaType}Value();
+	}
+#else ## $attr.required
+
+    /**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @return the value of the <code>${attr.name}</code> attribute.
+     */
+    public ${attr.javaType} get${attr.javaName}()
+    {
+		return ((${attr.primitiveWrapper})getInternal(${attr.name}Def, null)).${attr.javaType}Value();
+    }    
+#end
+#if(!$attr.readonly)
+
+    /**
+     * Sets the value of the <code>${attr.name}</code> attribute.
+     *
+     * @param value the value of the <code>${attr.name}</code> attribute.
+     */
+    public void set${attr.javaName}(${attr.javaType} value)
+    {
+        try
+        {
+            set(${attr.name}Def, new ${attr.primitiveWrapper}(value));
+        }
+        catch(ModificationNotPermitedException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+        catch(ValueRequiredException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+    }
+#if(!$attr.required)
+	
+	/**
+     * Removes the value of the <code>${attr.name}</code> attribute.
+     */
+    public void unset${attr.javaName}()
+    {
+        try
+        {
+            unset(${attr.name}Def);
+        }
+        catch(ValueRequiredException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }     
+    } 
+#end ## !$attr.required
+#end ## $attr.readonly
+#else ## $!attr.java_primitive
+
+    /**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @return the value of the <code>${attr.name}</code> attribute.
+     */
+    public $attr.javaType get${attr.javaName}()
+    {
+        return (${attr.javaType})getInternal(${attr.name}Def, null);
+    }
+#if(!$attr.required)
+    
+    /**
+     * Returns the value of the <code>${attr.name}</code> attribute.
+     *
+     * @param defaultValue the value to return if the attribute is undefined.
+     * @return the value of the <code>${attr.name}</code> attribute.
+     */
+    public $attr.javaType get${attr.javaName}(${attr.javaType} defaultValue)
+    {
+        return (${attr.javaType})getInternal(${attr.name}Def, defaultValue);
+    }    
+#end
+#if(!$attr.readonly)
+#if(!$attr.required)
+
+    /**
+     * Sets the value of the <code>${attr.name}</code> attribute.
+     *
+     * @param value the value of the <code>${attr.name}</code> attribute,
+     *        or <code>null</code> to remove value.
+     */
+    public void set${attr.javaName}(${attr.javaType} value)
+    {
+        try
+        {
+            if(value != null)
+            {
+                set(${attr.name}Def, value);
+            }
+            else
+            {
+                unset(${attr.name}Def);
+            }
+        }
+        catch(ModificationNotPermitedException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+        catch(ValueRequiredException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+    }
+#else ## $attr.required
+
+    /**
+     * Sets the value of the <code>${attr.name}</code> attribute.
+     *
+     * @param value the value of the <code>${attr.name}</code> attribute.
+     * @throws ValueRequiredException if you attempt to set a <code>null</code> 
+     *         value.
+     */
+    public void set${attr.javaName}($attr.javaType value)
+        throws ValueRequiredException
+    {
+        try
+        {
+            if(value != null)
+            {
+                set(${attr.name}Def, value);
+            }
+            else
+            {
+                throw new ValueRequiredException("attribute ${attr.name} "+
+                                                 "is declared as REQUIRED");
+            }
+        }
+        catch(ModificationNotPermitedException e)
+        {
+            throw new BackendException("incompatible schema change",e);
+        }
+    }
+#end ## $attr.required
+#end ## $attr.readonly
+#end ## $attr.java_primitive
+#if(!$attr.required)
+
+	/**
+	 * Checks if the value of the <code>${attr.name}</code> attribute is defined.
+	 *
+	 * @return <code>true</code> if the value of the <code>${attr.name}</code> attribute is defined.
+	 */
+    public boolean is${attr.javaName}Defined()
+	{
+	    return isDefined(${attr.name}Def);
+	}
+#end
+#end ## #foreach $attr
+#end ## $attributes.length() > 0
+
+    // @custom methods ///////////////////////////////////////////////////////
+$!{custom}}
