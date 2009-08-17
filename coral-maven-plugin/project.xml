@@ -96,6 +96,12 @@
       <url>http://coral.objectledge.org/modules/coral-datatypes/</url>
     </dependency>
     <dependency>
+      <groupId>coral</groupId>
+      <artifactId>coral-tools</artifactId>
+      <version>${versions.coral}</version>
+      <url>http://coral.objectledge.org/modules/coral-datatypes/</url>
+    </dependency>    
+    <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
       <version>${versions.ledge}</version>
