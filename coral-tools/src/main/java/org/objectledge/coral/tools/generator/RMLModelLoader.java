@@ -102,6 +102,16 @@ public class RMLModelLoader
     }
     
     /**
+     * Returns the loaded schema.
+     * 
+     * @return the loaded schema.
+     */
+    public Schema getSchema()
+    {
+        return schema;
+    }
+
+    /**
      * Processes a script.
      * 
      * @param in the Reader to read script from.
@@ -151,6 +161,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTcreateAttributeClassStatement node, Object data)
         {
             try
@@ -168,6 +179,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTdeleteAttributeClassStatement node, Object data)
         {
             try
@@ -185,6 +197,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterAttributeClassSetNameStatement node, Object data)
         {
             try
@@ -204,6 +217,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterAttributeClassSetJavaClassStatement node, Object data)
         {
             try
@@ -221,6 +235,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTcreateResourceClassStatement node, Object data)
         {
             try
@@ -253,6 +268,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTdeleteResourceClassStatement node, Object data)
         {
             try
@@ -270,6 +286,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassAddAttributeStatement node, Object data)
         {
             try
@@ -292,6 +309,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassDeleteAttributeStatement node, Object data)
         {
             try
@@ -310,6 +328,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassAddSuperclassStatement node, Object data)
         {
             try
@@ -328,6 +347,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassDeleteSuperclassStatement node, Object data)
         {
             try
@@ -346,6 +366,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassSetNameStatement node, Object data)
         {
             try
@@ -365,6 +386,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassSetJavaClassStatement node, Object data)
         {
             try
@@ -382,6 +404,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassSetFlagsStatement node, Object data)
         {
             try
@@ -399,6 +422,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassSetDbTableStatement node, Object data)
         {
             try
@@ -416,6 +440,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassAlterAttributeSetNameStatement node, Object data)
         {
             try
@@ -436,6 +461,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassAlterAttributeSetFlagsStatement node, Object data)
         {
             try
@@ -454,6 +480,7 @@ public class RMLModelLoader
         /**
          * {@inheritDoc}
          */    
+        @Override
         public Object visit(ASTalterResourceClassAlterAttributeSetDomainStatement node, 
             Object data)
         {

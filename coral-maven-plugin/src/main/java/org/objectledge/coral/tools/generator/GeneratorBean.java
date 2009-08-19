@@ -27,14 +27,7 @@
 // 
 package org.objectledge.coral.tools.generator;
 
-import org.jcontainer.dna.Logger;
-import org.jcontainer.dna.impl.DefaultConfiguration;
-import org.jcontainer.dna.impl.Log4JLogger;
-import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
-import org.objectledge.filesystem.FileSystemProvider;
-import org.objectledge.templating.Templating;
-import org.objectledge.templating.velocity.VelocityTemplating;
 
 
 /**
@@ -66,32 +59,13 @@ public class GeneratorBean
     public void run()
         throws Exception
     {
-        Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
-
-        FileSystemProvider lfs = new org.objectledge.filesystem.
-	        LocalFileSystemProvider("local", baseDir);
-	    FileSystemProvider cfs = new org.objectledge.filesystem.
-	        ClasspathFileSystemProvider("classpath", 
-	        FileSystem.class.getClassLoader());
-	    // standard FS allows only 64k in memory files.
-        FileSystem fileSystem = new FileSystem(new FileSystemProvider[] { lfs, cfs }, 
-            4096, 250000);
-        
-        Templating templating = initTemplating(fileSystem, logger);
-        
-        Schema schema = new Schema();
-        
-        RMLModelLoader loader = new RMLModelLoader(schema);
-
-        GeneratorComponent generator = new GeneratorComponent(fileEncoding, sourceFiles, 
-            targetDir, importGroups, packageIncludes, packageExcludes, headerFile, 
-            sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath, 
-			fileSystem, templating, schema, loader, System.out);
+        FileSystem fileSystem = GeneratorComponent.initFileSystem(baseDir);
+        GeneratorComponent generator = new GeneratorComponent(fileSystem, fileEncoding,
+            sourceFiles, targetDir, importGroups, packageIncludes, packageExcludes, headerFile,
+            sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath, System.out);
         generator.execute();
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    
     /**
      * Sets the baseDir.
      *
@@ -212,31 +186,4 @@ public class GeneratorBean
 	{
 		this.sqlTargetPrefix = sqlTargetPrefix;
 	}
-    
-    // implementation ///////////////////////////////////////////////////////////////////////////
-    
-    /**
-     * Initializes the Velocity templating component.
-     *
-     * @param logger the logger to use.
-     * @return the intialized templating component.
-     * @throws Exception if the templating component could not be initialized.
-     */
-    Templating initTemplating(FileSystem fileSystem, Logger logger)
-        throws Exception
-    {
-        DefaultConfiguration config = new DefaultConfiguration("config", "<generated>", "");
-        DefaultConfiguration configPaths = new DefaultConfiguration("paths", "<generated>", 
-            "config");
-        DefaultConfiguration configPathsPath = new DefaultConfiguration("path", "<generated>", 
-            "config/paths");
-        DefaultConfiguration configEncoding = new DefaultConfiguration("encoding", "<generated>",
-            "config");
-        configEncoding.setValue("UTF-8");
-        configPathsPath.setValue("/");
-        configPaths.addChild(configPathsPath);
-        config.addChild(configPaths);
-        config.addChild(configEncoding);
-        return new VelocityTemplating(config, logger, fileSystem);
-    }
 }

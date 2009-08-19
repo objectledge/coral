@@ -40,16 +40,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.jcontainer.dna.Logger;
+import org.jcontainer.dna.impl.DefaultConfiguration;
+import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.ResourceClassFlags;
 import org.objectledge.coral.tools.BatchLoader;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
+import org.objectledge.filesystem.FileSystemProvider;
 import org.objectledge.filesystem.UnsupportedCharactersInFilePathException;
 import org.objectledge.templating.Template;
 import org.objectledge.templating.Templating;
 import org.objectledge.templating.TemplatingContext;
+import org.objectledge.templating.velocity.VelocityTemplating;
 
 /**
  * Performs wrapper generation.
@@ -122,9 +127,6 @@ public class GeneratorComponent
     
     /** Path of the SQL list file to be generated. */
     private String sqlListPath;
-
-    /** The schema. */
-    private Schema schema;
     
     /** The RML loader. */
     private RMLModelLoader rmlLoader;
@@ -161,9 +163,42 @@ public class GeneratorComponent
     
     /** custom fields defined by resource class. */ 
     private Map fieldMap = new HashMap();
-    
+
     /**
      * Creates new GeneratorComponent instance.
+     * 
+     * @param fileSystem the file system to operate on.
+     * @param fileEncoding the character encoding to use for reading and writing files.
+     * @param sourceFiles the path of source file list.
+     * @param targetDir the target directory.
+     * @param importGroups the comma separated list of package prefixes, for grouping.
+     * @param packageIncludes packages to include in generation.
+     * @param packageExcludes packages to exclude from generation
+     * @param headerFile the path to the header file.
+     * @param sqlAttributeInfoFile path of the SQL type information for attribute classes.
+     * @param sqlTargetDir directory to write the SQL files to.
+     * @param sqlTargetPrefix path prefix of the SQL files in the Ledge FS (for list file).
+     * @param sqlListPath path of file listing all the generated SQL files.
+     * @param out the PrintStream to write informational messages to.
+     * @throws Exception if the component could not be initialized.
+     */
+    public GeneratorComponent(FileSystem fileSystem, String fileEncoding,
+        String sourceFiles, String targetDir, String importGroups, String packageIncludes,
+        String packageExcludes, String headerFile, String sqlAttributeInfoFile,
+        String sqlTargetDir, String sqlTargetPrefix, String sqlListPath, PrintStream out)
+        throws Exception
+    {
+        this(fileEncoding, sourceFiles, targetDir, importGroups, packageIncludes, packageExcludes,
+                        headerFile, sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix,
+                        sqlListPath, fileSystem, GeneratorComponent.initTemplating(fileSystem,
+                            new Log4JLogger(org.apache.log4j.Logger
+                                .getLogger(GeneratorComponent.class))), new RMLModelLoader(
+                            new Schema()), System.out);
+    }
+
+    /**
+     * Creates new GeneratorComponent instance.
+     * 
      * @param fileEncoding the character encoding to use for reading and writing files.
      * @param sourceFiles the path of source file list.
      * @param targetDir the target directory.
@@ -178,32 +213,20 @@ public class GeneratorComponent
      * @param fileSystem the file system to operate on.
      * @param templating the templating component.
      * @param schema the schema.
-     * @param loader the loader.
+     * @param rmlLoader the loader.
      * @param out the PrintStream to write informational messages to.
-     * 
      * @throws Exception if the component could not be initialized.
      */
-    public GeneratorComponent(String fileEncoding, String sourceFiles, String targetDir, 
+    GeneratorComponent(String fileEncoding, String sourceFiles, String targetDir,
         String importGroups, String packageIncludes, String packageExcludes, String headerFile, 
         String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix, 
-        String sqlListPath, FileSystem fileSystem, Templating templating, Schema schema, 
-        RMLModelLoader loader, PrintStream out)
+        String sqlListPath, FileSystem fileSystem, Templating templating,
+        final RMLModelLoader rmlLoader, PrintStream out)
         throws Exception
     {
         this.fileSystem = fileSystem;
         this.templating = templating;
-        this.schema = schema;
-        this.rmlLoader = loader;
-        this.batchLoader = new BatchLoader(fileSystem, fileEncoding)
-        {
-            protected void load(Reader in)
-                throws Exception
-            {
-                rmlLoader.load(in);
-            }
-        };
-        this.out = out;
-        
+        this.rmlLoader = rmlLoader;
         this.fileEncoding = fileEncoding;
         this.sourceFiles = sourceFiles;
         this.targetDir = targetDir;
@@ -214,12 +237,7 @@ public class GeneratorComponent
         this.sqlTargetDir = sqlTargetDir;
         this.sqlTargetPrefix = sqlTargetPrefix;
         this.sqlListPath = sqlListPath;
-        /*
-        this.sqlAttributeInfoFile = "sql/coral/CoralDatatypesAttributes.properties";
-        this.sqlTargetDir = "src/main/resources/sql";
-        this.sqlTargetPrefix = "sql";
-        this.sqlListPath = "src/main/resources/sql/generated.list";
-        */
+        this.out = out;
         
         if(fileSystem.exists(headerFile))
         {
@@ -231,6 +249,52 @@ public class GeneratorComponent
         }
         
         initTemplating();
+
+        batchLoader = new BatchLoader(fileSystem, fileEncoding)
+            {
+                @Override
+                protected void load(Reader in)
+                    throws Exception
+                {
+                    rmlLoader.load(in);
+                }
+            };
+    }
+
+    public static FileSystem initFileSystem(String baseDir)
+    {
+        FileSystemProvider lfs = new org.objectledge.filesystem.LocalFileSystemProvider("local",
+            baseDir);
+        FileSystemProvider cfs = new org.objectledge.filesystem.ClasspathFileSystemProvider(
+            "classpath", FileSystem.class.getClassLoader());
+        // standard FS allows only 64k in memory files.
+        FileSystem fileSystem = new FileSystem(new FileSystemProvider[] { lfs, cfs }, 4096, 250000);
+        return fileSystem;
+    }
+
+    /**
+     * Initializes the Velocity templating component.
+     * 
+     * @param logger the logger to use.
+     * @return the intialized templating component.
+     * @throws Exception if the templating component could not be initialized.
+     */
+    public static Templating initTemplating(FileSystem fileSystem, Logger logger)
+        throws Exception
+    {
+        DefaultConfiguration config = new DefaultConfiguration("config", "<generated>", "");
+        DefaultConfiguration configPaths = new DefaultConfiguration("paths", "<generated>",
+            "config");
+        DefaultConfiguration configPathsPath = new DefaultConfiguration("path", "<generated>",
+            "config/paths");
+        DefaultConfiguration configEncoding = new DefaultConfiguration("encoding", "<generated>",
+            "config");
+        configEncoding.setValue("UTF-8");
+        configPathsPath.setValue("/");
+        configPaths.addChild(configPathsPath);
+        config.addChild(configPaths);
+        config.addChild(configEncoding);
+        return new VelocityTemplating(config, logger, fileSystem);
     }
 
     /**
@@ -243,7 +307,7 @@ public class GeneratorComponent
     {
         loadSources(sourceFiles);
         loadSQLInfo(sqlAttributeInfoFile);
-        List resourceClasses = schema.getResourceClasses();
+        List resourceClasses = rmlLoader.getSchema().getResourceClasses();
         for(Iterator i = resourceClasses.iterator(); i.hasNext();)
         {
             ResourceClass rc = (ResourceClass)i.next();
@@ -409,7 +473,7 @@ public class GeneratorComponent
         Reader reader = fileSystem.getReader(path, fileEncoding);
         try
         {
-            AttributeSQLInfoLoader sqlInfoLoader = new AttributeSQLInfoLoader(schema);
+            AttributeSQLInfoLoader sqlInfoLoader = new AttributeSQLInfoLoader(rmlLoader.getSchema());
             sqlInfoLoader.load(reader);
         }
         catch(IOException e)
@@ -607,7 +671,7 @@ public class GeneratorComponent
     String generateSQLList()
     {
     	StringBuilder buff = new StringBuilder();
-        List resourceClasses = schema.getResourceClasses();
+        List resourceClasses = rmlLoader.getSchema().getResourceClasses();
         for(Iterator i = resourceClasses.iterator(); i.hasNext();)
         {
             ResourceClass rc = (ResourceClass)i.next();
@@ -668,7 +732,8 @@ public class GeneratorComponent
             {
                 throw new Exception("malformed @extends hint - exactly one value expected");
             }
-            ResourceClass implParentClass = schema.getResourceClass((String)extendsHint.get(0));
+            ResourceClass implParentClass = rmlLoader.getSchema().getResourceClass(
+                (String)extendsHint.get(0));
             rc.setImplParentClass(implParentClass);
         }
         else
