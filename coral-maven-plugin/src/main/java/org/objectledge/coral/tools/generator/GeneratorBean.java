@@ -65,7 +65,7 @@ public class GeneratorBean
         Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(GeneratorComponent.class));
         GeneratorComponent generator = new GeneratorComponent(fileSystem, logger, fileEncoding,
             sourceFiles, targetDir, importGroups, packageIncludes, packageExcludes, headerFile,
-            sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath, System.out);
+            sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath);
         generator.execute();
     }
 

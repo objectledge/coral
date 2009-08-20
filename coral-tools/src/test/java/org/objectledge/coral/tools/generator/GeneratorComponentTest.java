@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcontainer.dna.Logger;
 import org.jmock.Mock;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.coral.tools.generator.model.Schema;
@@ -75,6 +76,10 @@ public class GeneratorComponentTest
     private ResourceClass resourceClass;
     private Mock mockImportTool;
     private ImportTool importTool;
+
+    private Mock mockLogger;
+
+    private Logger logger;
     
     private FileSystem testFileSystem; 
 
@@ -108,6 +113,10 @@ public class GeneratorComponentTest
         mockResourceClass = mock(ResourceClass.class);
         resourceClass = (ResourceClass)mockResourceClass.proxy();
         
+        mockLogger = mock(Logger.class);
+        logger = (Logger)mockLogger.proxy();
+        mockLogger.stubs().method("info").with(ANYTHING).isVoid();
+
         mockFileSystem.stubs().method("exists").with(eq("LICENSE.txt")).will(returnValue(true));
         mockFileSystem.stubs().method("read").with(eq("LICENSE.txt"),eq("UTF-8")).will(returnValue("//license"));
         mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Interface")).will(returnValue(interfaceTemplate));
@@ -115,7 +124,7 @@ public class GeneratorComponentTest
         mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/SQL")).will(returnValue(sqlTemplate));
         generatorComponent = new GeneratorComponent("UTF-8", "src/main/rml/files.lst",
             "src/main/java", "java.,javax.,org.objectledge.", "*", "", "LICENSE.txt", null, null,
-            null, null, fileSystem, templating, rmlModelLoader, System.out);
+            null, null, fileSystem, templating, rmlModelLoader, logger);
             
         testFileSystem = FileSystem.getStandardFileSystem("src/test/resources/generator");
     }

@@ -104,10 +104,10 @@ public class GeneratorMojo
         try
         {
             FileSystem fileSystem = GeneratorComponent.initFileSystem(baseDir);
-            GeneratorComponent generator = new GeneratorComponent(fileSystem, new MavenDNALogger(
-                getLog()), fileEncoding, sourcesList, targetDir, importGroups, packageIncludes,
-                packageExcludes, headerFile, sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix,
-                sqlListPath, System.out);
+            MavenDNALogger log = new MavenDNALogger(getLog());
+            GeneratorComponent generator = new GeneratorComponent(fileSystem, log, fileEncoding,
+                sourcesList, targetDir, importGroups, packageIncludes, packageExcludes, headerFile,
+                sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath);
             generator.execute();
         }
         catch(Exception e)

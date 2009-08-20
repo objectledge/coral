@@ -29,7 +29,6 @@ package org.objectledge.coral.tools.generator;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.io.PrintStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -153,7 +152,7 @@ public class GeneratorComponent
     private String header;
     
     /** PrintWriter for informational messages.*/
-    private PrintStream out;
+    private Logger log;
     
     /** packages to generate wrappers in. */
     private List packageIncludes;
@@ -183,16 +182,18 @@ public class GeneratorComponent
      * @param out the PrintStream to write informational messages to.
      * @throws Exception if the component could not be initialized.
      */
-    public GeneratorComponent(FileSystem fileSystem, Logger logger,
+    public GeneratorComponent(FileSystem fileSystem, Logger log,
         String fileEncoding, String sourceFiles, String targetDir, String importGroups,
         String packageIncludes, String packageExcludes, String headerFile,
-        String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix, String sqlListPath, PrintStream out)
+ String sqlAttributeInfoFile,
+        String sqlTargetDir, String sqlTargetPrefix, String sqlListPath)
         throws Exception
     {
         this(fileEncoding, sourceFiles, targetDir, importGroups, packageIncludes, packageExcludes,
                         headerFile, sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix,
                         sqlListPath, fileSystem, GeneratorComponent.initTemplating(fileSystem,
-                            logger), new RMLModelLoader(new Schema()), System.out);
+ log), new RMLModelLoader(
+                            new Schema()), log);
     }
 
     /**
@@ -220,7 +221,7 @@ public class GeneratorComponent
         String importGroups, String packageIncludes, String packageExcludes, String headerFile, 
         String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix, 
         String sqlListPath, FileSystem fileSystem, Templating templating,
-        final RMLModelLoader rmlLoader, PrintStream out)
+        final RMLModelLoader rmlLoader, Logger log)
         throws Exception
     {
         this.fileSystem = fileSystem;
@@ -236,7 +237,7 @@ public class GeneratorComponent
         this.sqlTargetDir = sqlTargetDir;
         this.sqlTargetPrefix = sqlTargetPrefix;
         this.sqlListPath = sqlListPath;
-        this.out = out;
+        this.log = log;
         
         if(fileSystem.exists(headerFile))
         {
@@ -544,48 +545,50 @@ public class GeneratorComponent
     {
         if(rc.hasFlags(ResourceClassFlags.BUILTIN))
         {
-            out.println("    skipping "+rc.getName()+" (BUILTIN)");
+            log.info("    skipping " + rc.getName() + " (BUILTIN)");
             return;
         }
         if(!matches(rc.getPackageName(), packageIncludes)) 
         {
-            out.println("    skipping "+rc.getName()+" (package "+rc.getPackageName()+
+            log.info("    skipping " + rc.getName() + " (package " + rc.getPackageName()
+                +
                 " not included)");
             return;            
         }
         if(matches(rc.getPackageName(), packageExcludes))
         {
-            out.println("    skipping "+rc.getName()+" (package "+rc.getPackageName()+" excluded)");
+            log.info("    skipping " + rc.getName() + " (package " + rc.getPackageName()
+                + " excluded)");
             return;            
         }
 
         if(generateWrapper(rc, classInterfacePath(rc), interfaceTemplate))
         {
-            out.println("    writing "+rc.getName()+" interface to "+classInterfacePath(rc));
+            log.info("    writing " + rc.getName() + " interface to " + classInterfacePath(rc));
         }
         else
         {
-            out.println("    skipping "+rc.getName()+" interface (not modified)");
+            log.info("    skipping " + rc.getName() + " interface (not modified)");
         }
 
         if(generateWrapper(rc, classImplPath(rc), implementationTemplate))
         {
-            out.println("    writing "+rc.getName()+" implementation to "+classImplPath(rc));
+            log.info("    writing " + rc.getName() + " implementation to " + classImplPath(rc));
         }
         else
         {
-            out.println("    skipping "+rc.getName()+" implementation (not modified)");
+            log.info("    skipping " + rc.getName() + " implementation (not modified)");
         }
         
         if(rc.getDbTable() != null && rc.getDbTable().length() > 0)
         {
         	if(generateSQL(rc, sqlPath(rc), sqlTemplate))
         	{
-        		out.println("    writing "+rc.getName()+" SQL script to "+sqlPath(rc));
+                log.info("    writing " + rc.getName() + " SQL script to " + sqlPath(rc));
         	}
         	else
         	{
-        		out.println("    skipping "+rc.getName()+" SQL script (not modified)");
+                log.info("    skipping " + rc.getName() + " SQL script (not modified)");
         	}
         }
     }
