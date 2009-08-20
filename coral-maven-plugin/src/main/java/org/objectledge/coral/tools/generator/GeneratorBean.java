@@ -27,6 +27,8 @@
 // 
 package org.objectledge.coral.tools.generator;
 
+import org.jcontainer.dna.Logger;
+import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.filesystem.FileSystem;
 
 
@@ -60,7 +62,8 @@ public class GeneratorBean
         throws Exception
     {
         FileSystem fileSystem = GeneratorComponent.initFileSystem(baseDir);
-        GeneratorComponent generator = new GeneratorComponent(fileSystem, fileEncoding,
+        Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(GeneratorComponent.class));
+        GeneratorComponent generator = new GeneratorComponent(fileSystem, logger, fileEncoding,
             sourceFiles, targetDir, importGroups, packageIncludes, packageExcludes, headerFile,
             sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath, System.out);
         generator.execute();

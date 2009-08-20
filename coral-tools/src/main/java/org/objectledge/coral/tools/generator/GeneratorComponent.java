@@ -32,6 +32,7 @@ import java.io.LineNumberReader;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,7 +43,6 @@ import java.util.StringTokenizer;
 
 import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.DefaultConfiguration;
-import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.ResourceClassFlags;
 import org.objectledge.coral.tools.BatchLoader;
@@ -168,6 +168,7 @@ public class GeneratorComponent
      * Creates new GeneratorComponent instance.
      * 
      * @param fileSystem the file system to operate on.
+     * @param logger TODO
      * @param fileEncoding the character encoding to use for reading and writing files.
      * @param sourceFiles the path of source file list.
      * @param targetDir the target directory.
@@ -182,18 +183,16 @@ public class GeneratorComponent
      * @param out the PrintStream to write informational messages to.
      * @throws Exception if the component could not be initialized.
      */
-    public GeneratorComponent(FileSystem fileSystem, String fileEncoding,
-        String sourceFiles, String targetDir, String importGroups, String packageIncludes,
-        String packageExcludes, String headerFile, String sqlAttributeInfoFile,
-        String sqlTargetDir, String sqlTargetPrefix, String sqlListPath, PrintStream out)
+    public GeneratorComponent(FileSystem fileSystem, Logger logger,
+        String fileEncoding, String sourceFiles, String targetDir, String importGroups,
+        String packageIncludes, String packageExcludes, String headerFile,
+        String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix, String sqlListPath, PrintStream out)
         throws Exception
     {
         this(fileEncoding, sourceFiles, targetDir, importGroups, packageIncludes, packageExcludes,
                         headerFile, sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix,
                         sqlListPath, fileSystem, GeneratorComponent.initTemplating(fileSystem,
-                            new Log4JLogger(org.apache.log4j.Logger
-                                .getLogger(GeneratorComponent.class))), new RMLModelLoader(
-                            new Schema()), System.out);
+                            logger), new RMLModelLoader(new Schema()), System.out);
     }
 
     /**
@@ -504,6 +503,10 @@ public class GeneratorComponent
     
     List split(String string)
     {
+        if(string == null || string.length() == 0)
+        {
+            return Collections.EMPTY_LIST;
+        }
         StringTokenizer st = new StringTokenizer(string, ",");
         List list = new ArrayList(st.countTokens());  
         while(st.hasMoreTokens())

@@ -18,6 +18,8 @@ package org.objectledege.coral.tools.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.jcontainer.dna.Logger;
 import org.objectledge.coral.tools.generator.GeneratorComponent;
 import org.objectledge.filesystem.FileSystem;
 
@@ -102,14 +104,106 @@ public class GeneratorMojo
         try
         {
             FileSystem fileSystem = GeneratorComponent.initFileSystem(baseDir);
-            GeneratorComponent generator = new GeneratorComponent(fileSystem, fileEncoding,
-                sourcesList, targetDir, importGroups, packageIncludes, packageExcludes, headerFile,
-                sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath, System.out);
+            GeneratorComponent generator = new GeneratorComponent(fileSystem, new MavenDNALogger(
+                getLog()), fileEncoding, sourcesList, targetDir, importGroups, packageIncludes,
+                packageExcludes, headerFile, sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix,
+                sqlListPath, System.out);
             generator.execute();
         }
         catch(Exception e)
         {
             throw new MojoExecutionException("Exception while generating Coral wrappers", e);
+        }
+    }
+
+    private static class MavenDNALogger
+        implements Logger
+    {
+        private final Log log;
+
+        public MavenDNALogger(Log log)
+        {
+            this.log = log;
+        }
+
+        public boolean isErrorEnabled()
+        {
+            return log.isErrorEnabled();
+        }
+
+        public void error(String msg)
+        {
+            log.error(msg);
+        }
+
+        public void error(String msg, Throwable e)
+        {
+            log.error(msg, e);
+        }
+
+        public boolean isWarnEnabled()
+        {
+            return log.isWarnEnabled();
+        }
+
+        public void warn(String msg)
+        {
+            log.warn(msg);
+        }
+
+        public void warn(String msg, Throwable e)
+        {
+            log.warn(msg, e);
+        }
+
+        public boolean isInfoEnabled()
+        {
+            return log.isInfoEnabled();
+        }
+
+        public void info(String msg)
+        {
+            log.info(msg);
+        }
+
+        public void info(String msg, Throwable e)
+        {
+            log.info(msg, e);
+        }
+
+        public boolean isDebugEnabled()
+        {
+            return log.isDebugEnabled();
+        }
+
+        public void debug(String msg)
+        {
+            log.debug(msg);
+        }
+
+        public void debug(String msg, Throwable e)
+        {
+            log.debug(msg, e);
+        }
+
+        public boolean isTraceEnabled()
+        {
+            return log.isDebugEnabled();
+        }
+
+        public void trace(String msg)
+        {
+            log.debug(msg);
+        }
+
+        public void trace(String msg, Throwable e)
+        {
+            log.debug(msg, e);
+        }
+
+        public Logger getChildLogger(String arg0)
+        {
+            throw new UnsupportedOperationException();
         }
     }
 }
