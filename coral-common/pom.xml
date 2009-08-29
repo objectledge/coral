@@ -16,6 +16,7 @@
     <module>../coral-api</module>
     <module>../coral-ri</module>
     <module>../coral-datatypes</module>
+    <module>../coral-tools</module>
     <module>../coral-maven2-plugin</module>
     <module>../coral-web</module>
     <module>../coral-browser</module>
