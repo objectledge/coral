@@ -28,22 +28,12 @@
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.objectledge.coral</groupId>
-      <artifactId>coral-maven2-plugin</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <type>maven-plugin</type>
-    </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
         <groupId>org.objectledge.coral</groupId>
         <artifactId>coral-maven2-plugin</artifactId>
-        <!-- 
-        <version>${versions.coral}</version>
-        -->
-        <version>1.0.0-SNAPSHOT</version> 
         <configuration>
           <sourcesList>src/main/rml-sources-gen.list</sourcesList>
         </configuration>
