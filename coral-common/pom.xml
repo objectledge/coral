@@ -24,6 +24,13 @@
     facility that can use attribute values and resource relations to select objects 
     from the store.   
   </description>
+  <licenses>
+    <license>
+      <name>BSD</name>
+      <url>http://opensource.org/licenses/bsd-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>  
   <organization>
     <name>ObjectLedge</name>
     <url>http://objectledge.org/</url>
