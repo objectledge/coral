@@ -13,6 +13,17 @@
   <packaging>pom</packaging>
   <version>1.0.0-SNAPSHOT</version>
   <name>ObjectLedge Coral object oriented database</name>
+  <inceptionYear>2003</inceptionYear>
+    <description>
+    Coral is as an object oriented database. It manages structured resources, that 
+    can be mapped to Java objects in a JDBC relational database. 
+    
+    Besides simple object persistency mechanism Coral provides an expressive 
+    security system, many kinds of resources relations (intrinsic tree organization 
+    or resources, reference attributes, set theory relations) and a powerful query 
+    facility that can use attribute values and resource relations to select objects 
+    from the store.   
+  </description>
   <organization>
     <name>ObjectLedge</name>
     <url>http://objectledge.org/</url>
