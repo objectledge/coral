@@ -99,7 +99,7 @@ public class RmlRunnerBean
         throws Exception
     {
         FileSystem fileSystem = FileSystem.getStandardFileSystem(baseDir);
-        Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(RmlRunnerBean.class));
+        final Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(RmlRunnerBean.class));
         BatchLoader loader = new BatchLoader(fileSystem, logger, fileEncoding)
         {
             public void load(Reader in)
@@ -108,7 +108,7 @@ public class RmlRunnerBean
                 String result = session.getScript().runScript(in);
                 if(result != null && result.length() > 0)
                 {
-                    System.out.println(result);
+                    logger.info(result);
                 }
             }
         };
