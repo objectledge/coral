@@ -107,7 +107,7 @@ public abstract class BatchLoader
             }
             catch(Exception e)
             {
-                e.printStackTrace();
+                logger.error("failed to load source file " + line, e);
                 throw new Exception("failed to load source file " + line, e);
             }
         }
