@@ -29,11 +29,9 @@ package org.objectledge.coral.event;
 
 import java.lang.reflect.Method;
 
-import org.apache.log4j.BasicConfigurator;
 import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.Log4JLogger;
 import org.jmock.Mock;
-import org.objectledge.cache.CacheFactory;
 import org.objectledge.context.Context;
 import org.objectledge.coral.security.PermissionAssociation;
 import org.objectledge.event.DelegatingEventWhiteboard;
@@ -73,8 +71,6 @@ public class CoralEventHubImplTest
     {
         super.setUp();
         
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure();
         Logger log = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
         threadPool = new ThreadPool(null, new Context(), null, log);
         

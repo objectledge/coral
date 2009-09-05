@@ -27,7 +27,6 @@
 // 
 package org.objectledge.coral.tools.generator;
 
-import org.apache.log4j.BasicConfigurator;
 import org.objectledge.utils.LedgeTestCase;
 
 public class GeneratorBeanTest extends LedgeTestCase
@@ -42,8 +41,6 @@ public class GeneratorBeanTest extends LedgeTestCase
     public void testIntegartion()
         throws Exception
     {
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure();
         generatorBean.setBaseDir("src/test/project/generator");
         generatorBean.setFileEncoding("UTF-8");
         generatorBean.setHeaderFile("/LICENSE.txt");

@@ -29,7 +29,6 @@ package org.objectledge.coral;
 
 import java.util.HashMap;
 
-import org.apache.log4j.BasicConfigurator;
 import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.Log4JLogger;
 import org.jmock.Mock;
@@ -71,8 +70,6 @@ public class CoralCoreImplTest extends LedgeTestCase
 
     public void setUp()
     {
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure();
         mockDatabase = mock(Database.class);
         database = (Database)mockDatabase.proxy();
         mockPersistence = mock(Persistence.class);

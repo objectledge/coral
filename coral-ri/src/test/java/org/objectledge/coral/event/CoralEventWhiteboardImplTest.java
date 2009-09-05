@@ -27,7 +27,6 @@
 // 
 package org.objectledge.coral.event;
 
-import org.apache.log4j.BasicConfigurator;
 import org.jcontainer.dna.Logger;
 import org.jcontainer.dna.impl.Log4JLogger;
 import org.jmock.Mock;
@@ -59,8 +58,6 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
         coralEventWhiteboard = new CoralEventWhiteboardImpl(eventWhiteboard);
 
         Context context = new Context();
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure();
         Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
         threadPool = new ThreadPool(null, context, null, logger);
         EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, logger,
