@@ -191,8 +191,8 @@ public class GeneratorComponent
     {
         this(fileEncoding, sourceFiles, targetDir, importGroups, packageIncludes, packageExcludes,
                         headerFile, sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix,
-                        sqlListPath, fileSystem, GeneratorComponent.initTemplating(fileSystem,
- log), new RMLModelLoader(
+                        sqlListPath, fileSystem,
+                        GeneratorComponent.initTemplating(fileSystem, log), new RMLModelLoader(
                             new Schema()), log);
     }
 
@@ -250,7 +250,7 @@ public class GeneratorComponent
         
         initTemplating();
 
-        batchLoader = new BatchLoader(fileSystem, fileEncoding)
+        batchLoader = new BatchLoader(fileSystem, log, fileEncoding)
             {
                 @Override
                 protected void load(Reader in)
@@ -318,11 +318,11 @@ public class GeneratorComponent
         {
         	if(write(sqlListPath, sqlList))
         	{
-        		System.out.println("    writing generated SQL list to "+sqlListPath);
+        		log.info("writing generated SQL list to "+sqlListPath);
         	}
         	else
         	{
-        		System.out.println("    skipping generated SQL list (not modified)");
+        		log.debug("skipping generated SQL list (not modified)");
         	}
         }
     }
@@ -545,50 +545,49 @@ public class GeneratorComponent
     {
         if(rc.hasFlags(ResourceClassFlags.BUILTIN))
         {
-            log.info("    skipping " + rc.getName() + " (BUILTIN)");
+            log.debug("skipping " + rc.getName() + " (BUILTIN)");
             return;
         }
         if(!matches(rc.getPackageName(), packageIncludes)) 
         {
-            log.info("    skipping " + rc.getName() + " (package " + rc.getPackageName()
-                +
-                " not included)");
+            log.debug("skipping " + rc.getName() + " (package " + rc.getPackageName()
+                + " not included)");
             return;            
         }
         if(matches(rc.getPackageName(), packageExcludes))
         {
-            log.info("    skipping " + rc.getName() + " (package " + rc.getPackageName()
+            log.debug("skipping " + rc.getName() + " (package " + rc.getPackageName()
                 + " excluded)");
             return;            
         }
 
         if(generateWrapper(rc, classInterfacePath(rc), interfaceTemplate))
         {
-            log.info("    writing " + rc.getName() + " interface to " + classInterfacePath(rc));
+            log.info("writing " + rc.getName() + " interface to " + classInterfacePath(rc));
         }
         else
         {
-            log.info("    skipping " + rc.getName() + " interface (not modified)");
+            log.debug("skipping " + rc.getName() + " interface (not modified)");
         }
 
         if(generateWrapper(rc, classImplPath(rc), implementationTemplate))
         {
-            log.info("    writing " + rc.getName() + " implementation to " + classImplPath(rc));
+            log.info("writing " + rc.getName() + " implementation to " + classImplPath(rc));
         }
         else
         {
-            log.info("    skipping " + rc.getName() + " implementation (not modified)");
+            log.debug("skipping " + rc.getName() + " implementation (not modified)");
         }
         
         if(rc.getDbTable() != null && rc.getDbTable().length() > 0)
         {
         	if(generateSQL(rc, sqlPath(rc), sqlTemplate))
         	{
-                log.info("    writing " + rc.getName() + " SQL script to " + sqlPath(rc));
+                log.info("writing " + rc.getName() + " SQL script to " + sqlPath(rc));
         	}
         	else
         	{
-                log.info("    skipping " + rc.getName() + " SQL script (not modified)");
+                log.debug("skipping " + rc.getName() + " SQL script (not modified)");
         	}
         }
     }
