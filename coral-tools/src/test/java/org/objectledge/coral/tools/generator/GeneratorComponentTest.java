@@ -107,6 +107,7 @@ public class GeneratorComponentTest
         mockLogger = mock(Logger.class);
         logger = (Logger)mockLogger.proxy();
         mockLogger.stubs().method("info").with(ANYTHING).isVoid();
+        mockLogger.stubs().method("debug").with(ANYTHING).isVoid();
 
         mockFileSystem.stubs().method("exists").with(eq("LICENSE.txt")).will(returnValue(true));
         mockFileSystem.stubs().method("read").with(eq("LICENSE.txt"),eq("UTF-8")).will(returnValue("//license"));

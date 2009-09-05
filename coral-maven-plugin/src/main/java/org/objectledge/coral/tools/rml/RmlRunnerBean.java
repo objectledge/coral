@@ -29,6 +29,8 @@ package org.objectledge.coral.tools.rml;
 
 import java.io.Reader;
 
+import org.jcontainer.dna.Logger;
+import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.tools.BatchLoader;
 import org.objectledge.filesystem.FileSystem;
@@ -97,7 +99,8 @@ public class RmlRunnerBean
         throws Exception
     {
         FileSystem fileSystem = FileSystem.getStandardFileSystem(baseDir);
-        BatchLoader loader = new BatchLoader(fileSystem, fileEncoding)
+        Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(RmlRunnerBean.class));
+        BatchLoader loader = new BatchLoader(fileSystem, logger, fileEncoding)
         {
             public void load(Reader in)
                 throws Exception
