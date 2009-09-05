@@ -163,6 +163,10 @@ public class GeneratorMojo
 
         public void info(String msg)
         {
+            if(msg.startsWith("Velocimacro : added"))
+            {
+                return;
+            }
             log.info(msg);
         }
 
