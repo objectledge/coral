@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
 
+import org.jcontainer.dna.Logger;
 import org.objectledge.filesystem.FileSystem;
 
 /**
@@ -41,9 +42,11 @@ import org.objectledge.filesystem.FileSystem;
  */
 public abstract class BatchLoader
 {
-    private FileSystem fileSystem;
+    private final FileSystem fileSystem;
     
-    private String fileEncoding;
+    private final String fileEncoding;
+
+    private final Logger logger;
 
     /**
      * Creates new BatchLoader instance.
@@ -51,9 +54,10 @@ public abstract class BatchLoader
      * @param fileSystem the file system to load file contents from.
      * @param fileEncoding the encoding of the source files.
      */
-    public BatchLoader(FileSystem fileSystem, String fileEncoding)
+    public BatchLoader(FileSystem fileSystem, Logger logger, String fileEncoding)
     {
         this.fileSystem = fileSystem;
+        this.logger = logger;
         this.fileEncoding = fileEncoding;
     }
 
@@ -71,7 +75,7 @@ public abstract class BatchLoader
         {
             throw new IOException("missing listing file " + path);
         }
-        System.out.println("    processing "+path);
+        logger.info("processing "+path);
         LineNumberReader lnr = new LineNumberReader(fileSystem.getReader(path, fileEncoding));
         while(lnr.ready())
         {
@@ -98,7 +102,7 @@ public abstract class BatchLoader
             }
             try
             {
-                System.out.println("    loading "+line);
+                logger.debug("loading "+line);
                 load(fileSystem.getReader(line, fileEncoding));
             }
             catch(Exception e)
