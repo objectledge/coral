@@ -42,7 +42,7 @@ public class AttributeClass
     private String javaClassName;
     
     /** The actual java class of the attribute. */
-    private Class javaClass;
+    private Class<?> javaClass;
     
     /** SQL info for the attribute class. */
     private AttributeSQLInfo sqlInfo;
@@ -87,7 +87,7 @@ public class AttributeClass
      * 
      * @return the Java class for this attribute class.
      */
-    public Class getJavaClass()
+    public Class<?> getJavaClass()
     {
         return javaClass;
     }

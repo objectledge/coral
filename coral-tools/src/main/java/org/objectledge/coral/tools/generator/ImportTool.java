@@ -43,8 +43,8 @@ import java.util.TreeSet;
 public class ImportTool
 {
     private String packageName;
-    private List prefices;
-    private Set imports = new TreeSet();
+    private List<String> prefices;
+    private Set<String> imports = new TreeSet<String>();
 
     /**
      * No arg constructor to allow mocking.
@@ -60,7 +60,7 @@ public class ImportTool
      * @param packageName the name of this compilation unit's package.
      * @param prefices the package name prefeices to be used for grouping. 
      */
-    public ImportTool(String packageName, List prefices)
+    public ImportTool(String packageName, List<String> prefices)
     {
         this.packageName = packageName;
         this.prefices = prefices;
@@ -87,32 +87,32 @@ public class ImportTool
     public String toString()
     {
         StringBuilder buff = new StringBuilder();
-        List groups = new ArrayList(prefices.size()+1);
+        List<List<String>> groups = new ArrayList<List<String>>(prefices.size()+1);
         for(int j = 0; j < prefices.size()+1; j++)
         {
-            groups.add(new ArrayList());        
+            groups.add(new ArrayList<String>());        
         }
-        for(Iterator i = imports.iterator(); i.hasNext();)
+        for(Iterator<String> i = imports.iterator(); i.hasNext();)
         {
-            String className = (String)i.next();
+            String className = i.next();
             int matched;
             for(matched = 0; matched < prefices.size(); matched++)
             {
-                String prefix = (String)prefices.get(matched);
+                String prefix = prefices.get(matched);
                 if(className.startsWith(prefix))
                 {
-                    ((List)groups.get(matched)).add(className);
+                    groups.get(matched).add(className);
                     break; 
                 }
             }
             if(matched == prefices.size())
             {
-                ((List)groups.get(matched)).add(className);
+                groups.get(matched).add(className);
             }
         }
-        for(Iterator j = groups.iterator(); j.hasNext();)
+        for(Iterator<List<String>> j = groups.iterator(); j.hasNext();)
         {
-            List group = (List)j.next();
+            List<String> group = j.next();
             if(group.isEmpty())
             {
                 j.remove();
@@ -120,9 +120,9 @@ public class ImportTool
             else
             {
                 Collections.sort(group);
-                for(Iterator i = group.iterator(); i.hasNext();)
+                for(Iterator<String> i = group.iterator(); i.hasNext();)
                 {
-                    String className = (String)i.next();
+                    String className = i.next();
                     buff.append("import ").append(className).append(";\n");
                 }
                 buff.append("\n");

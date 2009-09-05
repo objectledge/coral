@@ -61,11 +61,11 @@ public class ResourceClass
     
     private String dbTable;
     
-    private SortedMap attributes = new TreeMap();
-    private SortedMap parentClasses = new TreeMap();
+    private SortedMap<String, Attribute> attributes = new TreeMap<String, Attribute>();
+    private SortedMap<String, ResourceClass> parentClasses = new TreeMap<String, ResourceClass>();
     
     private ResourceClass implParentClass;
-    private List attributeOrder;
+    private List<String> attributeOrder;
     
     // constructors /////////////////////////////////////////////////////////////////////////////
     
@@ -186,9 +186,9 @@ public class ResourceClass
      * 
      * @return the attributes of this resource class.
      */    
-    public List getDeclaredAttributes()
+    public List<Attribute> getDeclaredAttributes()
     {
-        return sortAttributes(new ArrayList(attributes.values()));
+        return sortAttributes(new ArrayList<Attribute>(attributes.values()));
     }
 
     /**
@@ -196,14 +196,14 @@ public class ResourceClass
      * 
      * @return all declared and inherited attributes.
      */
-    public List getAllAttributes()
+    public List<Attribute> getAllAttributes()
     {
-        Set result = new TreeSet();
+        Set<Attribute> result = new TreeSet<Attribute>();
         result.addAll(this.getDeclaredAttributes());
-        List parents = getAllParentClasses();
-        for(Iterator i = parents.iterator(); i.hasNext();)
+        List<ResourceClass> parents = getAllParentClasses();
+        for(Iterator<ResourceClass> i = parents.iterator(); i.hasNext();)
         {
-            ResourceClass rc = (ResourceClass)i.next();
+            ResourceClass rc = i.next();
             result.addAll(rc.getDeclaredAttributes());
         }
         return sortAttributes(result);
@@ -223,10 +223,10 @@ public class ResourceClass
         {
             return getDeclaredAttribute(name);
         }
-        List parents = getAllParentClasses();
-        for(Iterator i = parents.iterator(); i.hasNext();)
+        List<ResourceClass> parents = getAllParentClasses();
+        for(Iterator<ResourceClass> i = parents.iterator(); i.hasNext();)
         {
-            ResourceClass rc = (ResourceClass)i.next();
+            ResourceClass rc = i.next();
             try
             {
                 return rc.getDeclaredAttribute(name);
@@ -244,17 +244,17 @@ public class ResourceClass
      * 
      * @return concrete attributes not inherited from implementation parent.
      */
-    public List getConcreteImplAttributes()
+    public List<Attribute> getConcreteImplAttributes()
     {
-        List all = getAllAttributes();
+        List<Attribute> all = getAllAttributes();
         if(getImplParentClass() != null)
         {
             all.removeAll(getImplParentClass().getAllAttributes());
         }
-        List result = new ArrayList();
-        for(Iterator i = all.iterator(); i.hasNext();)
+        List<Attribute> result = new ArrayList<Attribute>();
+        for(Iterator<Attribute> i = all.iterator(); i.hasNext();)
         {
-            Attribute a = (Attribute)i.next();
+            Attribute a = i.next();
             if(a.isConcrete())
             {
                 result.add(a);
@@ -268,13 +268,13 @@ public class ResourceClass
      * 
      * @return concrete required attributes.
      */
-    public List getConcreteRequiredAttributes()
+    public List<Attribute> getConcreteRequiredAttributes()
     {
-        List all = getAllAttributes();
-        List result = new ArrayList();
-        for(Iterator i = all.iterator(); i.hasNext();)
+        List<Attribute> all = getAllAttributes();
+        List<Attribute> result = new ArrayList<Attribute>();
+        for(Iterator<Attribute> i = all.iterator(); i.hasNext();)
         {
-            Attribute a = (Attribute)i.next();
+            Attribute a = i.next();
             if(a.isRequired() && a.isConcrete())
             {
                 result.add(a);
@@ -288,13 +288,13 @@ public class ResourceClass
      * 
      * @return concrete required attributes.
      */
-    public List getConcreteDeclaredAttributes()
+    public List<Attribute> getConcreteDeclaredAttributes()
     {
-        List all = getDeclaredAttributes();
-        List result = new ArrayList();
-        for(Iterator i = all.iterator(); i.hasNext();)
+        List<Attribute> all = getDeclaredAttributes();
+        List<Attribute> result = new ArrayList<Attribute>();
+        for(Iterator<Attribute> i = all.iterator(); i.hasNext();)
         {
-            Attribute a = (Attribute)i.next();
+            Attribute a = i.next();
             if(a.isConcrete())
             {
                 result.add(a);
@@ -313,7 +313,7 @@ public class ResourceClass
     public Attribute getDeclaredAttribute(String attributeName)
         throws EntityDoesNotExistException
     {
-        Attribute result = (Attribute)attributes.get(attributeName);
+        Attribute result = attributes.get(attributeName);
         if(result == null)
         {
             throw new EntityDoesNotExistException("attribute "+attributeName+" not found");
@@ -326,9 +326,9 @@ public class ResourceClass
      * 
      * @return the parent classes of this resource class.
      */    
-    public List getDeclaredParentClasses()
+    public List<ResourceClass> getDeclaredParentClasses()
     {
-        return new ArrayList(parentClasses.values());
+        return new ArrayList<ResourceClass>(parentClasses.values());
     }
     
     /**
@@ -336,19 +336,19 @@ public class ResourceClass
      * 
      * @return all parent classes of this class.
      */
-    public List getAllParentClasses()
+    public List<ResourceClass> getAllParentClasses()
     {
-        Set result = new TreeSet();
-        LinkedList stack = new LinkedList();
+        Set<ResourceClass> result = new TreeSet<ResourceClass>();
+        LinkedList<ResourceClass> stack = new LinkedList<ResourceClass>();
         stack.addLast(this);
         ResourceClass rc;
         while(!stack.isEmpty())
         {
-            rc = (ResourceClass)stack.removeLast();
+            rc = stack.removeLast();
             result.addAll(rc.getDeclaredParentClasses());
             stack.addAll(rc.getDeclaredParentClasses());
         }
-        return new ArrayList(result);
+        return new ArrayList<ResourceClass>(result);
     }
     
     /**
@@ -483,13 +483,13 @@ public class ResourceClass
     public void addParentClass(ResourceClass parentClass)
         throws SchemaIntegrityException, CircularDependencyException
     {
-        List conflicting = new ArrayList();
-        List newAttributes = parentClass.getAllAttributes();
-        SortedMap existingAttributes = attributeMap(getAllAttributes());
-        for(Iterator i = newAttributes.iterator(); i.hasNext();)
+        List<String> conflicting = new ArrayList<String>();
+        List<Attribute> newAttributes = parentClass.getAllAttributes();
+        SortedMap<String, Attribute> existingAttributes = attributeMap(getAllAttributes());
+        for(Iterator<Attribute> i = newAttributes.iterator(); i.hasNext();)
         {
-            Attribute attr = (Attribute)i.next();
-            Attribute existing = (Attribute)existingAttributes.get(attr.getName());
+            Attribute attr = i.next();
+            Attribute existing = existingAttributes.get(attr.getName());
             if(existing != null && !attr.getDeclaringClass().equals(existing.getDeclaringClass()))
             {
                 conflicting.add(attr.getName());
@@ -540,14 +540,14 @@ public class ResourceClass
      * @throws EntityDoesNotExistException if any of the names in the list does not denote a valid 
      *         attribute.
      */
-    public void setAttributeOrder(List order)
+    public void setAttributeOrder(List<String> order)
         throws EntityDoesNotExistException
     {
         if(order != null)
         {
-            for(Iterator i = order.iterator(); i.hasNext(); )
+            for(Iterator<String> i = order.iterator(); i.hasNext(); )
             {
-                String name = (String)i.next();
+                String name = i.next();
                 getAttribute(name);
             }
         }
@@ -556,17 +556,17 @@ public class ResourceClass
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     
-    private List sortAttributes(Collection attributes)
+    private List<Attribute> sortAttributes(Collection<Attribute> attributes)
     {
         if(attributeOrder != null && attributeOrder.size() > 0)
         {
-            List result = new ArrayList(attributes.size());
-            for(Iterator i = attributeOrder.iterator(); i.hasNext();)
+            List<Attribute> result = new ArrayList<Attribute>(attributes.size());
+            for(Iterator<String> i = attributeOrder.iterator(); i.hasNext();)
             {
-                String name = (String)i.next();
-                for(Iterator j=attributes.iterator(); j.hasNext();)
+                String name = i.next();
+                for(Iterator<Attribute> j=attributes.iterator(); j.hasNext();)
                 {
-                    Attribute attr = (Attribute)j.next();
+                    Attribute attr = j.next();
                     if(attr.getName().equals(name))
                     {
                         j.remove();
@@ -579,16 +579,16 @@ public class ResourceClass
         }
         else
         {
-            return new ArrayList(attributes);
+            return new ArrayList<Attribute>(attributes);
         }
     }
     
-    private SortedMap attributeMap(Collection attributes)
+    private SortedMap<String, Attribute> attributeMap(Collection<Attribute> attributes)
     {
-        SortedMap result = new TreeMap();
-        for(Iterator i = attributes.iterator(); i.hasNext();)
+        SortedMap<String, Attribute> result = new TreeMap<String, Attribute>();
+        for(Iterator<Attribute> i = attributes.iterator(); i.hasNext();)
         {
-            Attribute attr = (Attribute)i.next();
+            Attribute attr = i.next();
             result.put(attr.getName(), attr);
         }
         return result;

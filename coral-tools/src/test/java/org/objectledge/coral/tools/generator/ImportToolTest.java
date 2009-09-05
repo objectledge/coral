@@ -43,7 +43,7 @@ public class ImportToolTest extends LedgeTestCase
     
     public void setUp()
     {
-        List prefices = new ArrayList();
+        List<String> prefices = new ArrayList<String>();
         prefices.add("java");
         prefices.add("org.objectledge");
         importTool = new ImportTool("pl.caltha.test", prefices);

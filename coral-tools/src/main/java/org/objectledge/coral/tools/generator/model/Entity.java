@@ -34,7 +34,7 @@ package org.objectledge.coral.tools.generator.model;
  * @version $Id: Entity.java,v 1.6 2005-02-10 17:46:42 rafal Exp $
  */
 public class Entity
-    implements Comparable
+    implements Comparable<Entity>
 {
     // variables ////////////////////////////////////////////////////////////////////////////////
     
@@ -132,13 +132,12 @@ public class Entity
      * @param o object to compare to.
      * @return result of name comparison. 
      */
-    public int compareTo(Object o)
+    public int compareTo(Entity e)
     {
-        if(!getClass().isAssignableFrom(o.getClass()))
+        if(!getClass().isAssignableFrom(e.getClass()))
         {
-            throw new ClassCastException("expected "+getClass()+" was "+o.getClass());
+            throw new ClassCastException("expected "+getClass()+" was "+e.getClass());
         }
-        Entity e = (Entity)o;
         return name.compareTo(e.getName());   
     }
     

@@ -36,7 +36,6 @@ import java.util.Map;
 import org.jcontainer.dna.Logger;
 import org.jmock.Mock;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
-import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.templating.Template;
 import org.objectledge.templating.Templating;
@@ -55,8 +54,6 @@ public class GeneratorComponentTest
     private FileSystem fileSystem;
     private Mock mockTemplating;
     private Templating templating;
-    private Mock mockSchema;
-    private Schema schema;
     private Mock mockRMLModelLoader;
     private RMLModelLoader rmlModelLoader;
 
@@ -74,8 +71,6 @@ public class GeneratorComponentTest
     private Reader reader2;
     private Mock mockResourceClass;
     private ResourceClass resourceClass;
-    private Mock mockImportTool;
-    private ImportTool importTool;
 
     private Mock mockLogger;
 
@@ -91,8 +86,6 @@ public class GeneratorComponentTest
         fileSystem = (FileSystem)mockFileSystem.proxy();
         mockTemplating = mock(Templating.class);
         templating = (Templating)mockTemplating.proxy();
-        mockSchema = mock(Schema.class);
-        schema = (Schema)mockSchema.proxy();
         mockRMLModelLoader = mock(RMLModelLoader.class);
         rmlModelLoader = (RMLModelLoader)mockRMLModelLoader.proxy();
         
@@ -108,8 +101,6 @@ public class GeneratorComponentTest
         mockReader2 = mock(Reader.class, "mockReader2");
         reader2 = (Reader)mockReader2.proxy();
         
-        mockImportTool = mock(ImportTool.class);
-        importTool = (ImportTool)mockImportTool.proxy();
         mockResourceClass = mock(ResourceClass.class);
         resourceClass = (ResourceClass)mockResourceClass.proxy();
         
@@ -133,7 +124,7 @@ public class GeneratorComponentTest
         throws Exception
     {
         provideFile("Custom1.java");
-        Map hints = new HashMap();
+        Map<String, List<String>> hints = new HashMap<String, List<String>>();
         String custom = generatorComponent.read("Custom1.java", hints);
         assertEquals(
             "    // @order a,b,c\n"+
@@ -141,9 +132,9 @@ public class GeneratorComponentTest
             "    // @import java.lang.reflect.Method\n"+
             "    // @extends fred\n"+
             "    // user defined\n", custom);
-        List orderHint = (List)hints.get("order");
-        List importHint = (List)hints.get("import");
-        List extendsHint = (List)hints.get("extends");
+        List<String> orderHint = hints.get("order");
+        List<String> importHint = hints.get("import");
+        List<String> extendsHint = hints.get("extends");
         assertEquals("[a, b, c]", orderHint.toString());
         assertEquals("[java.util.Date, java.lang.reflect.Method]", importHint.toString());
         assertEquals("[fred]", extendsHint.toString());        
@@ -153,7 +144,7 @@ public class GeneratorComponentTest
         throws Exception
     {
         provideFile("Custom2.java");
-        Map hints = new HashMap();
+        Map<String, List<String>> hints = new HashMap<String, List<String>>();
         try
         {
             generatorComponent.read("Custom2.java", hints);
@@ -169,7 +160,7 @@ public class GeneratorComponentTest
         throws Exception
     {
         provideFile("Custom3.java");
-        Map hints = new HashMap();
+        Map<String, List<String>> hints = new HashMap<String, List<String>>();
         try
         {
             generatorComponent.read("Custom3.java", hints);
@@ -185,7 +176,7 @@ public class GeneratorComponentTest
         throws Exception
     {
         mockFileSystem.stubs().method("exists").with(eq("Custom4.java")).will(returnValue(false));
-        Map hints = new HashMap();
+        Map<String, List<String>> hints = new HashMap<String, List<String>>();
         String custom = generatorComponent.read("Custom4.java", hints);
         assertEquals("", custom);
     }
@@ -278,7 +269,7 @@ public class GeneratorComponentTest
     
     public void testMatches()
     {
-        List prefices = new ArrayList(2);
+        List<String> prefices = new ArrayList<String>(2);
         prefices.add("org.objectledge.coral.test");
         prefices.add("org.objectledge.coral.test.*");
         assertTrue(generatorComponent.matches("org.objectledge.coral.test", prefices));

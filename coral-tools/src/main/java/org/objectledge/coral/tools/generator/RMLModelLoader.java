@@ -80,7 +80,7 @@ public class RMLModelLoader
 {
     private RMLParserFactory parserFactory = new RMLParserFactory();
     private RMLVisistor visitor = new RMLVisistor();
-    private List exceptions = new ArrayList();    
+    private List<Exception> exceptions = new ArrayList<Exception>();    
     private Schema schema;
 
     /**
@@ -133,7 +133,7 @@ public class RMLModelLoader
         
         if(!exceptions.isEmpty())
         {
-            Exception e = (Exception)exceptions.get(0);
+            Exception e = exceptions.get(0);
             exceptions.clear();
             throw new Exception("there were exceptions running the script", e); 
         }

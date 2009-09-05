@@ -143,7 +143,7 @@ public class Attribute
         {
             try
             {
-                Field f = attributeClass.getJavaClass().getField("TYPE");
+                attributeClass.getJavaClass().getField("TYPE");
                 return true;
             }
             catch(NoSuchFieldException e)
@@ -171,7 +171,7 @@ public class Attribute
         {
             try
             {
-                Field f = attributeClass.getJavaClass().getField("TYPE");
+                attributeClass.getJavaClass().getField("TYPE");
                 int lastDot = className.lastIndexOf('.'); 
                 return className.substring(lastDot+1);
             }
@@ -212,7 +212,7 @@ public class Attribute
             try
             {
                 Field f = attributeClass.getJavaClass().getField("TYPE");
-                type = ((Class)f.get(null)).getName();
+                type = ((Class<?>)f.get(null)).getName();
             }
             catch(NoSuchFieldException e)
             {

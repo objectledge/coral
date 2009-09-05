@@ -43,8 +43,8 @@ import org.objectledge.coral.entity.EntityExistsException;
  */
 public class Schema
 {
-    private SortedMap attributeClasses = new TreeMap();
-    private SortedMap resourceClasses = new TreeMap();
+    private SortedMap<String, AttributeClass> attributeClasses = new TreeMap<String, AttributeClass>();
+    private SortedMap<String, ResourceClass> resourceClasses = new TreeMap<String, ResourceClass>();
 
     // attribute classes ////////////////////////////////////////////////////////////////////////
     
@@ -53,9 +53,9 @@ public class Schema
      * 
      * @return all the defined attribute classes.
      */
-    public List getAttributeClasses()
+    public List<AttributeClass> getAttributeClasses()
     {
-        return new ArrayList(attributeClasses.values());
+        return new ArrayList<AttributeClass>(attributeClasses.values());
     }
     
     /**
@@ -68,7 +68,7 @@ public class Schema
     public AttributeClass getAttributeClass(String name) 
         throws EntityDoesNotExistException
     {
-        AttributeClass result = (AttributeClass)attributeClasses.get(name);
+        AttributeClass result = attributeClasses.get(name);
         if(result == null)
         {
             throw new EntityDoesNotExistException("attribute class "+name+" not found"); 
@@ -118,9 +118,9 @@ public class Schema
      * 
      * @return all the defined resource classes.
      */
-    public List getResourceClasses()
+    public List<ResourceClass> getResourceClasses()
     {
-        return new ArrayList(resourceClasses.values());
+        return new ArrayList<ResourceClass>(resourceClasses.values());
     }
     
     /**
@@ -133,7 +133,7 @@ public class Schema
     public ResourceClass getResourceClass(String name) 
         throws EntityDoesNotExistException
     {
-        ResourceClass result = (ResourceClass)resourceClasses.get(name); 
+        ResourceClass result = resourceClasses.get(name); 
         if(result == null)
         {
             throw new EntityDoesNotExistException("resource class "+name+" not found"); 

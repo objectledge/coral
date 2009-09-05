@@ -67,7 +67,7 @@ public class GeneratorComponent
     private FileSystem fileSystem;
 
     /** The recognized hint names. */
-    private static Set hintNames = new HashSet();
+    private static Set<String> hintNames = new HashSet<String>();
     
     static
     {
@@ -78,7 +78,7 @@ public class GeneratorComponent
     }
 
     /** The ignored hint names. */
-    private static Set ignoredHintNames = new HashSet();
+    private static Set<String> ignoredHintNames = new HashSet<String>();
     
     static
     {
@@ -146,7 +146,7 @@ public class GeneratorComponent
     private Template sqlTemplate;
     
     /** Package prefices used for grouping. */
-    private List importGroups = new ArrayList();
+    private List<String> importGroups = new ArrayList<String>();
     
     /** The file header contents. */
     private String header;
@@ -155,13 +155,13 @@ public class GeneratorComponent
     private Logger log;
     
     /** packages to generate wrappers in. */
-    private List packageIncludes;
+    private List<String> packageIncludes;
     
     /** packages to not generate wrappers in. */
-    private List packageExcludes;
+    private List<String> packageExcludes;
     
     /** custom fields defined by resource class. */ 
-    private Map fieldMap = new HashMap();
+    private Map<ResourceClass, List<Map<String, String>>> fieldMap = new HashMap<ResourceClass, List<Map<String, String>>>();
 
     /**
      * Creates new GeneratorComponent instance.
@@ -307,10 +307,10 @@ public class GeneratorComponent
     {
         loadSources(sourceFiles);
         loadSQLInfo(sqlAttributeInfoFile);
-        List resourceClasses = rmlLoader.getSchema().getResourceClasses();
-        for(Iterator i = resourceClasses.iterator(); i.hasNext();)
+        List<ResourceClass> resourceClasses = rmlLoader.getSchema().getResourceClasses();
+        for(Iterator<ResourceClass> i = resourceClasses.iterator(); i.hasNext();)
         {
-            ResourceClass rc = (ResourceClass)i.next();
+            ResourceClass rc = i.next();
             processClass(rc);
         }
         String sqlList = generateSQLList();
@@ -353,7 +353,7 @@ public class GeneratorComponent
      * @return the custom code found in the file.
      * @throws IOException if the file couldn't be read.
      */
-    String read(String path, Map hints)
+    String read(String path, Map<String, List<String>> hints)
         throws IOException
     {
         if(!fileSystem.exists(path))
@@ -397,10 +397,10 @@ public class GeneratorComponent
                         String token = in.substring(a+1, b);
                         if(hintNames.contains(token))
                         {
-                            List l = (List)hints.get(token);
+                            List<String> l = hints.get(token);
                             if(l == null)
                             {
-                                l = new ArrayList();
+                                l = new ArrayList<String>();
                                 hints.put(token, l);
                             }
                             StringTokenizer st = new StringTokenizer(in.substring(b+1), ",");
@@ -502,14 +502,14 @@ public class GeneratorComponent
     	return sqlTargetPrefix+"/"+rc.getName().replace('.', '/')+".sql";
     }
     
-    List split(String string)
+    List<String> split(String string)
     {
         if(string == null || string.length() == 0)
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         StringTokenizer st = new StringTokenizer(string, ",");
-        List list = new ArrayList(st.countTokens());  
+        List<String> list = new ArrayList<String>(st.countTokens());  
         while(st.hasMoreTokens())
         {
             list.add(st.nextToken());
@@ -517,11 +517,11 @@ public class GeneratorComponent
         return list;
     }
     
-    boolean matches(String name, List preficesList)
+    boolean matches(String name, List<String> preficesList)
     {
-        for(Iterator i = preficesList.iterator(); i.hasNext();)
+        for(Iterator<String> i = preficesList.iterator(); i.hasNext();)
         {
-            String prefix = (String)i.next();
+            String prefix = i.next();
             if(prefix.charAt(prefix.length()-1) == '*')
             {
                 if(name.startsWith(prefix.substring(0, prefix.length()-1)))
@@ -610,20 +610,20 @@ public class GeneratorComponent
         throws Exception
     {
         TemplatingContext context = templating.createContext();
-        Map hints = new HashMap();
+        Map<String, List<String>> hints = new HashMap<String, List<String>>();
         String custom = read(path, hints);
         ImportTool imports = new ImportTool(rc.getPackageName(), importGroups);
 
-        List importHint = (List)hints.get("import");
+        List<String> importHint = hints.get("import");
         if(importHint != null)
         {
-            for(Iterator i = importHint.iterator(); i.hasNext();)
+            for(Iterator<String> i = importHint.iterator(); i.hasNext();)
             {
-                imports.add((String)i.next());
+                imports.add(i.next());
             }
         }
 
-        List orderHint = (List)hints.get("order");
+        List<String> orderHint = hints.get("order");
         if(orderHint != null)
         {
             rc.setAttributeOrder(orderHint);
@@ -635,9 +635,9 @@ public class GeneratorComponent
 
         processExtendsHint(rc, hints);
 
-        List fields = processFieldHint(rc, hints);
+        List<Map<String, String>> fields = processFieldHint(rc, hints);
 
-        List superFields = new ArrayList();
+        List<Map<String, String>> superFields = new ArrayList<Map<String, String>>();
         if(rc.getImplParentClass() != null)
         {
             addSuperFields(rc.getImplParentClass(), superFields);
@@ -677,10 +677,10 @@ public class GeneratorComponent
     String generateSQLList()
     {
     	StringBuilder buff = new StringBuilder();
-        List resourceClasses = rmlLoader.getSchema().getResourceClasses();
-        for(Iterator i = resourceClasses.iterator(); i.hasNext();)
+        List<ResourceClass> resourceClasses = rmlLoader.getSchema().getResourceClasses();
+        for(Iterator<ResourceClass> i = resourceClasses.iterator(); i.hasNext();)
         {
-            ResourceClass rc = (ResourceClass)i.next();
+            ResourceClass rc = i.next();
             if(rc.getDbTable() != null && rc.getDbTable().length() > 0)
             {
             	buff.append(sqlAltPath(rc)).append("\n");
@@ -697,17 +697,17 @@ public class GeneratorComponent
      * @return list of maps with "name" and "type" keys.
      * @throws Exception if the hint list is malformed
      */
-    private List processFieldHint(ResourceClass rc, Map hints) throws Exception
+    private List<Map<String, String>> processFieldHint(ResourceClass rc, Map<String, List<String>> hints) throws Exception
     {
-        List fieldHint = (List)hints.get("field");
-        ArrayList fields = new ArrayList();
+        List<String> fieldHint = hints.get("field");
+        ArrayList<Map<String, String>> fields = new ArrayList<Map<String, String>>();
         if(fieldHint != null)
         {
             fields.ensureCapacity(fieldHint.size());
             for(int i=0; i<fieldHint.size(); i++)
             {
-                Map entry = new HashMap();
-                StringTokenizer st = new StringTokenizer((String)fieldHint.get(i));
+                Map<String, String> entry = new HashMap<String, String>();
+                StringTokenizer st = new StringTokenizer(fieldHint.get(i));
                 if(st.countTokens() != 2)
                 {
                     throw new Exception("malformed @field hints - " +
@@ -728,10 +728,10 @@ public class GeneratorComponent
      * @throws Exception
      * @throws EntityDoesNotExistException
      */
-    private void processExtendsHint(ResourceClass rc, Map hints) 
+    private void processExtendsHint(ResourceClass rc, Map<String, List<String>> hints) 
         throws Exception, EntityDoesNotExistException
     {
-        List extendsHint = (List)hints.get("extends");
+        List<String> extendsHint = hints.get("extends");
         if(extendsHint != null)
         {
             if(extendsHint.size() != 1)
@@ -739,7 +739,7 @@ public class GeneratorComponent
                 throw new Exception("malformed @extends hint - exactly one value expected");
             }
             ResourceClass implParentClass = rmlLoader.getSchema().getResourceClass(
-                (String)extendsHint.get(0));
+                extendsHint.get(0));
             rc.setImplParentClass(implParentClass);
         }
         else
@@ -748,12 +748,12 @@ public class GeneratorComponent
         }
     }
 
-    private void addSuperFields(ResourceClass rc, List fields)
+    private void addSuperFields(ResourceClass rc, List<Map<String, String>> fields)
     	throws Exception
     {
         if(!fieldMap.containsKey(rc))
         {
-            Map hints = new HashMap();
+            Map<String, List<String>> hints = new HashMap<String, List<String>>();
             read(classImplPath(rc), hints);
             processExtendsHint(rc, hints);
             processFieldHint(rc, hints);
@@ -762,7 +762,7 @@ public class GeneratorComponent
         {
             addSuperFields(rc.getImplParentClass(), fields);
         }
-        List superFields = (List)fieldMap.get(rc);
+        List<Map<String, String>> superFields = fieldMap.get(rc);
         if(superFields != null)
         {
             fields.addAll(superFields);            

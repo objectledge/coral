@@ -282,7 +282,7 @@ public class ResourceClassTest extends LedgeTestCase
         resourceClass.addAttribute(attribute2);
         mockAttribute3.expects(once()).method("setDeclaringClass").with(same(resourceClass));
         resourceClass.addAttribute(attribute3);
-        List order = new ArrayList();
+        List<String> order = new ArrayList<String>();
         order.add("attribute3");
         order.add("attribute1");
         resourceClass.setAttributeOrder(order);
