@@ -29,6 +29,7 @@ package org.objectledge.coral;
 
 import java.util.Map;
 
+import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
 
 /**
@@ -46,7 +47,7 @@ public interface Instantiator
      * @return a Class object.
      * @throws ClassNotFoundException if the class is not defined.
      */
-    public Class loadClass(String className)
+    public Class<?> loadClass(String className)
         throws ClassNotFoundException;
     
     /**
@@ -56,7 +57,7 @@ public interface Instantiator
      * @return the instance of the class.
      * @throws InstantiationException if the class could not be instantiated.
      */
-    public Object newInstance(Class clazz)
+    public <V> V newInstance(Class<V> clazz)
         throws InstantiationException;
         
     /**
@@ -67,7 +68,7 @@ public interface Instantiator
      * @return the instance of the class.
      * @throws InstantiationException if the class could not be instantiated.
      */
-    public Object newInstance(Class clazz, Map additional)    
+    public <V> V newInstance(Class<V> clazz, Map<?, ?> additional)    
         throws InstantiationException;    
         
     /**
@@ -76,5 +77,5 @@ public interface Instantiator
      * @param clazz a Class object.
      * @return a PersistentFactory for the specified class. 
      */
-    public PersistentFactory getPersistentFactory(Class clazz);
+    public <V extends Persistent> PersistentFactory<V> getPersistentFactory(Class<V> clazz);
 }

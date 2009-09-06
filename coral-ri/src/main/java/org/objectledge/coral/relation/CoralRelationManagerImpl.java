@@ -78,8 +78,8 @@ public class CoralRelationManagerImpl
     private CoralCore coral;
 
     private Map relationCache;
-    private PersistentFactory relationFactory;
-    private EntityRegistry relationRegistry;
+    private PersistentFactory<RelationImpl> relationFactory;
+    private EntityRegistry<RelationImpl> relationRegistry;
 
     /**
      * Relation manager manages relation lifecycle.
@@ -106,7 +106,7 @@ public class CoralRelationManagerImpl
         this.relationFactory = instantiator.getPersistentFactory(RelationImpl.class);
         this.relationRegistry = new EntityRegistry(persistence, cacheFactory, instantiator, log, 
 			"relation", RelationImpl.class);
-        this.relationRegistry.addSynthetic(new ResourceHierarchyRelationImpl(coral.getStore()));
+        this.relationRegistry.addSynthetic(new ResourceHierarchyRelationImpl(persistence, coral.getStore(), this));
     }
 
     /**
@@ -161,7 +161,7 @@ public class CoralRelationManagerImpl
     public void setName(Relation item, String name)
         throws EntityExistsException
     {
-        relationRegistry.renameUnique(item, name);
+        relationRegistry.renameUnique((RelationImpl)item, name);
     }
 
     /**
@@ -301,7 +301,7 @@ public class CoralRelationManagerImpl
 				+" WHERE relation_id = "+relationImpl.getIdString()
 			);
 
-            relationRegistry.delete(relation);
+            relationRegistry.delete((RelationImpl)relation);
 
             persistence.getDatabase().commitTransaction(shouldCommit);
         }

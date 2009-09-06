@@ -89,25 +89,25 @@ public class CoralRegistryImpl
     // Factory classes
 
     /** The <code>PersistentFactory</code> for <code>ResourceClassInheritance</code> objects. */
-    private PersistentFactory resourceClassInheritanceFactory ; 
+    private PersistentFactory<ResourceClassInheritanceImpl> resourceClassInheritanceFactory ; 
 
     /** The <code>PersistentFactory</code> for <code>AttributeDefinition</code> objects. */
-    private PersistentFactory attributeDefinitionFactory; 
+    private PersistentFactory<AttributeDefinitionImpl> attributeDefinitionFactory; 
 
     /** The <code>PersistentFactory</code> for <code>RoleImplication</code> objects. */
-    private PersistentFactory roleImplicationFactory; 
+    private PersistentFactory<RoleImplicationImpl> roleImplicationFactory; 
 
     /** The <code>PersistentFactory</code> for <code>RoleAssignment</code> objects. */
-    private PersistentFactory roleAssignmentFactory;      
+    private PersistentFactory<RoleAssignmentImpl> roleAssignmentFactory;      
 
     /** The <code>PersistentFactory</code> for <code>PermissionAssociation</code> objects. */
-    private PersistentFactory permissionAssociationFactory;      
+    private PersistentFactory<PermissionAssociationImpl> permissionAssociationFactory;      
 
     /** The <code>PersistentFactory</code> for <code>PermissionAssignment</code> objects. */
-    private PersistentFactory permissionAssignmentFactory;      
+    private PersistentFactory<PermissionAssignmentImpl> permissionAssignmentFactory;      
 
     /** The <code>PersistentFactory</code> for <code>Subject</code> objects. */
-    private PersistentFactory subjectFactory;      
+    private PersistentFactory<SubjectImpl> subjectFactory;      
 
     // caches
 
@@ -160,22 +160,22 @@ public class CoralRegistryImpl
     // Registires
 
     /** <code>ResourceClass</code> registry. */
-    private EntityRegistry resourceClassRegistry;
+    private EntityRegistry<ResourceClassImpl> resourceClassRegistry;
     
     /** <code>AttributeClass</code> registry. */
-    private EntityRegistry attributeClassRegistry;
+    private EntityRegistry<AttributeClassImpl> attributeClassRegistry;
     
     /** <code>AttributeDefinition</code> registry. */
-    private EntityRegistry attributeDefinitionRegistry;
+    private EntityRegistry<AttributeDefinitionImpl> attributeDefinitionRegistry;
 
     /** <code>Permission</code> registry. */
-    private EntityRegistry permissionRegistry;
+    private EntityRegistry<PermissionImpl> permissionRegistry;
 
     /** <code>Role</code> registry. */
-    private EntityRegistry roleRegistry;
+    private EntityRegistry<RoleImpl> roleRegistry;
 
     /** <code>Subject</code> registry. */
-    private EntityRegistry subjectRegistry;
+    private EntityRegistry<SubjectImpl> subjectRegistry;
 
     // Initialization ////////////////////////////////////////////////////////
 
@@ -337,7 +337,7 @@ public class CoralRegistryImpl
     public void addAttributeClass(AttributeClass item)
         throws EntityExistsException
     {
-        attributeClassRegistry.addUnique(item);
+        attributeClassRegistry.addUnique((AttributeClassImpl)item);
     }
 
     /**
@@ -346,7 +346,7 @@ public class CoralRegistryImpl
     public void renameAttributeClass(AttributeClass item, String name)
         throws EntityExistsException
     {
-        attributeClassRegistry.renameUnique(item, name);
+        attributeClassRegistry.renameUnique((AttributeClassImpl)item, name);
     }
     
     /**
@@ -367,7 +367,7 @@ public class CoralRegistryImpl
                                                    attrs+" attributes");
             }
             
-            attributeClassRegistry.delete(item);
+            attributeClassRegistry.delete((AttributeClassImpl)item);
             
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
@@ -453,7 +453,7 @@ public class CoralRegistryImpl
     public void addResourceClass(ResourceClass item)
         throws EntityExistsException
     {
-        resourceClassRegistry.addUnique(item);
+        resourceClassRegistry.addUnique((ResourceClassImpl)item);
     }
     
     /**
@@ -501,7 +501,7 @@ public class CoralRegistryImpl
             {
                 coral.getSecurity().deletePermission(item, perms[i]);
             }
-            resourceClassRegistry.delete(item);
+            resourceClassRegistry.delete((ResourceClassImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException e)
@@ -548,7 +548,7 @@ public class CoralRegistryImpl
     public void renameResourceClass(ResourceClass item, String name)
         throws EntityExistsException
     {
-        resourceClassRegistry.renameUnique(item, name);
+        resourceClassRegistry.renameUnique((ResourceClassImpl)item, name);
     }
 
     // Schema - AttributeDefinition //////////////////////////////////////////
@@ -623,7 +623,7 @@ public class CoralRegistryImpl
     {
         synchronized(resourceClassLock)
         {
-            attributeDefinitionRegistry.add(item);
+            attributeDefinitionRegistry.add((AttributeDefinitionImpl)item);
             ResourceClass owner = item.getDeclaringClass();
             Set items = (Set)attributeDefinitionByResourceClass.get(owner);
             if(items == null)
@@ -640,7 +640,7 @@ public class CoralRegistryImpl
      */
     public void renameAttributeDefinition(AttributeDefinition item, String name)
     {
-        attributeDefinitionRegistry.rename(item, name);
+        attributeDefinitionRegistry.rename((AttributeDefinitionImpl)item, name);
     }
 
     /**
@@ -650,7 +650,7 @@ public class CoralRegistryImpl
     {
         synchronized(resourceClassLock)
         {
-            attributeDefinitionRegistry.delete(item);
+            attributeDefinitionRegistry.delete((AttributeDefinitionImpl)item);
             ResourceClass owner = item.getDeclaringClass();
             Set items = (Set)attributeDefinitionByResourceClass.get(owner);
             if(items != null)
@@ -804,7 +804,7 @@ public class CoralRegistryImpl
     public void addSubject(Subject item)
         throws EntityExistsException
     {
-        subjectRegistry.addUnique(item);
+        subjectRegistry.addUnique((SubjectImpl)item);
     }
     
     /**
@@ -858,7 +858,7 @@ public class CoralRegistryImpl
                     " has made "+grantedPermissions+" permission grants");
             }
                 
-            subjectRegistry.delete(item);
+            subjectRegistry.delete((SubjectImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException e)
@@ -905,7 +905,7 @@ public class CoralRegistryImpl
     public void renameSubject(Subject item, String name)
         throws EntityExistsException
     {
-        subjectRegistry.renameUnique(item, name);
+        subjectRegistry.renameUnique((SubjectImpl)item, name);
     }
 
     // Security - Role ///////////////////////////////////////////////////////
@@ -966,7 +966,7 @@ public class CoralRegistryImpl
      */
     public void addRole(Role item)
     {
-        roleRegistry.add(item);
+        roleRegistry.add((RoleImpl)item);
     }
     
     /**
@@ -1004,7 +1004,7 @@ public class CoralRegistryImpl
                                                assignments+" permssion assignments");
             }
 
-            roleRegistry.delete(item);
+            roleRegistry.delete((RoleImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException e)
@@ -1050,7 +1050,7 @@ public class CoralRegistryImpl
      */
     public void renameRole(Role item, String name)
     {
-        roleRegistry.rename(item, name);
+        roleRegistry.rename((RoleImpl)item, name);
     }
 
     // Security - Permission /////////////////////////////////////////////////
@@ -1111,7 +1111,7 @@ public class CoralRegistryImpl
      */
     public void addPermission(Permission item)
     {
-        permissionRegistry.add(item);
+        permissionRegistry.add((PermissionImpl)item);
     }
     
     /**
@@ -1141,7 +1141,7 @@ public class CoralRegistryImpl
                                                    "with "+associations+" resource classes");
             }
             
-            permissionRegistry.delete(item);
+            permissionRegistry.delete((PermissionImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(PersistenceException e)
@@ -1187,7 +1187,7 @@ public class CoralRegistryImpl
      */
     public void renamePermission(Permission item, String name)
     {
-        permissionRegistry.rename(item, name);
+        permissionRegistry.rename((PermissionImpl)item, name);
     }
 
     // Security - RoleImplication ////////////////////////////////////////////

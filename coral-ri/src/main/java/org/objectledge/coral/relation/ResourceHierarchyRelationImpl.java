@@ -36,6 +36,7 @@ import java.util.Set;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.database.persistence.Persistence;
 
 /**
  * Natural tree-realation of the resources.
@@ -47,7 +48,7 @@ import org.objectledge.coral.store.Resource;
  * @version $Id: ResourceHierarchyRelationImpl.java,v 1.8 2006-03-06 13:24:20 rafal Exp $
  */
 public class ResourceHierarchyRelationImpl
-    implements Relation
+    extends RelationImpl
 {
     private static final long ID = 1L;
 
@@ -67,9 +68,11 @@ public class ResourceHierarchyRelationImpl
      * 
      * @param coralStore Coral store this relation instance reflects.
      */
-    public ResourceHierarchyRelationImpl(CoralStore coralStore)
+    public ResourceHierarchyRelationImpl(Persistence persistence, CoralStore store, 
+        CoralRelationManager coralRelationManager)
     {
-        this.store = coralStore;
+        super(persistence, store, coralRelationManager);
+        this.store = store;
     }
     
     /**

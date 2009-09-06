@@ -29,7 +29,6 @@ package org.objectledge.coral;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.objectledge.database.persistence.Persistent;
@@ -67,7 +66,7 @@ public class PicoInstantiator
     /** 
      * {@inheritDoc}
      */
-    public Class loadClass(String className) 
+    public Class<?> loadClass(String className) 
         throws ClassNotFoundException
     {
         ClassLoader cl = null;
@@ -89,43 +88,42 @@ public class PicoInstantiator
     /** 
      * {@inheritDoc}
      */
-    public Object newInstance(Class clazz) throws InstantiationException
+    public <V> V newInstance(Class<V> clazz) throws InstantiationException
     {
         ComponentAdapter adapter = getAdapter(clazz);
-        return adapter.getComponentInstance(container); 
+        return (V)adapter.getComponentInstance(container); 
     }
 
     /** 
      * {@inheritDoc}
      */
-    public Object newInstance(Class clazz, Map additional) throws InstantiationException
+    public <V> V newInstance(Class<V> clazz, Map<?, ?> additional) throws InstantiationException
     {
         ComponentAdapter adapter = new CustomizingConstructorComponentAdapter(clazz, clazz, null);
         MutablePicoContainer tempContainer = new DefaultPicoContainer(container);
-        for(Iterator i=additional.entrySet().iterator(); i.hasNext();)
+        for(Map.Entry<?, ?>  entry : additional.entrySet())
         {
-            Map.Entry entry = (Map.Entry)i.next();
             tempContainer.registerComponentInstance(entry.getKey(), entry.getValue());
         }
-        return adapter.getComponentInstance(tempContainer); 
+        return (V)adapter.getComponentInstance(tempContainer); 
     }
     
     /** 
      * {@inheritDoc}
      */
-    public PersistentFactory getPersistentFactory(final Class clazz)
+    public <V extends Persistent> PersistentFactory<V> getPersistentFactory(final Class<V> clazz)
     {
         if(!Persistent.class.isAssignableFrom(clazz))
         {
             throw new IllegalArgumentException(clazz.getName()+
                 " does not implmement Persistent interface");
         }
-        return new PersistentFactory()
+        return new PersistentFactory<V>()
         {
-            public Persistent newInstance()
+            public V newInstance()
                 throws Exception
             {
-                return (Persistent)PicoInstantiator.this.newInstance(clazz);
+                return PicoInstantiator.this.newInstance(clazz);
             }
         };
     }
@@ -133,12 +131,12 @@ public class PicoInstantiator
     private final Map<Class<?>,ComponentAdapter> adapterMap = 
         new HashMap<Class<?>,ComponentAdapter>();
     
-    private ComponentAdapter getAdapter(Class clazz)
+    private <T> ComponentAdapter getAdapter(Class<T> clazz)
     {
         ComponentAdapter adapter = adapterMap.get(clazz);
         if(adapter == null)
         {
-            adapter = new ArgumentCachingComponentAdapter(clazz);
+            adapter = new ArgumentCachingComponentAdapter<T>(clazz);
             adapterMap.put(clazz, adapter);
         }
         return adapter;
@@ -150,10 +148,10 @@ public class PicoInstantiator
      * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
      * @version $Id: PicoInstantiator.java,v 1.8 2005-02-07 00:35:42 rafal Exp $
      */
-    private class ArgumentCachingComponentAdapter
+    private class ArgumentCachingComponentAdapter<T>
         extends CustomizingConstructorComponentAdapter
     {
-        private Constructor ctor;
+        private Constructor<T> ctor;
         private Object[] args;
         
         /**
@@ -164,7 +162,7 @@ public class PicoInstantiator
          * interface.
          * @throws NotConcreteRegistrationException if the implementation class is not concrete.
          */
-        public ArgumentCachingComponentAdapter(Class componentImplementation)
+        public ArgumentCachingComponentAdapter(Class<T> componentImplementation)
             throws AssignabilityRegistrationException, NotConcreteRegistrationException
         {
             super(componentImplementation, componentImplementation);

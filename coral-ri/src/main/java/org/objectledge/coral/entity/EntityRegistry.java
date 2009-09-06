@@ -24,7 +24,7 @@ import org.objectledge.database.persistence.PersistentFactory;
  * This class manages 'by id' 'by name' and 'all' registires for a specific
  * entity type.
  */
-public class EntityRegistry
+public class EntityRegistry<E extends Persistent & Entity>
 {
     /** The persistence service. */
     private Persistence persistence;
@@ -33,10 +33,10 @@ public class EntityRegistry
     private Logger log;
     
     /** The factory of the entity objects. */
-    private PersistentFactory factory;
+    private PersistentFactory<E> factory;
     
     /** The type of entities */
-    private Class type;
+    private Class<E> type;
 
     /** The semantic name of the entity type used in error messages. */
     private String kind;
@@ -46,16 +46,16 @@ public class EntityRegistry
     private String kindPlural;
 
     /** The identifier to entity map. */
-    private Map byId;
+    private Map<Long, E> byId;
     
     /** The name to entity set map. */
-    private Map byName;
+    private Map<String, Set<E>> byName;
     
     /** The "all" to entity set map. */
-    private Map all;
+    private Map<String, Set<E>> all;
     
     /** Objects added through addSynthetic() */
-    private Set synthetics;
+    private Set<E> synthetics;
 
     /** The under which the value set is stored in 'all' map */
     private static final String ALL_KEY = "all";
@@ -76,7 +76,7 @@ public class EntityRegistry
      */
     public EntityRegistry(Persistence persistence, CacheFactory cacheFactory, 
         Instantiator instantiator, Logger log, 
-        String kind, final Class type)
+        String kind, final Class<E> type)
         throws ConfigurationException
     {
         this.persistence = persistence;
@@ -98,7 +98,7 @@ public class EntityRegistry
         
         this.factory = instantiator.getPersistentFactory(type);
 
-        Class cl = type;
+        Class<?> cl = type;
         if(AbstractEntity.class.isAssignableFrom(type))
         {
             // AbstractEntity has setName() that is local to our package
@@ -144,16 +144,16 @@ public class EntityRegistry
      *
      * @return all entities of the specified type.
      */
-    public synchronized Set get()
+    public synchronized Set<E> get()
     {
-        Set es = (Set)all.get(ALL_KEY);
+        Set<E> es = all.get(ALL_KEY);
         if(es == null)
         {
-            es = new HashSet();
+            es = new HashSet<E>();
             all.put(ALL_KEY, es);
             try
             {
-                List items = persistence.load(null, factory);
+                List<E> items = persistence.load(null, factory);
                 resolve(items, es);
                 if(synthetics != null)
                 {
@@ -180,12 +180,12 @@ public class EntityRegistry
         throws EntityDoesNotExistException
     {
         Long idObj = new Long(id);
-        Entity e = (Entity)byId.get(idObj);
+        E e = byId.get(idObj);
         if(e == null)
         {
             try
             {
-                e = (Entity)persistence.load(id, factory);
+                e = persistence.load(id, factory);
             }
             catch(PersistenceException ex)
             {
@@ -207,16 +207,16 @@ public class EntityRegistry
      * @param name the name of the entities.
      * @return all entities with the specific name.
      */
-    public Set get(String name)
+    public Set<E> get(String name)
     {
-        Set es = (Set)byName.get(name);
+        Set<E> es = byName.get(name);
         if(es == null)
         {
-            es = new HashSet();
+            es = new HashSet<E>();
             byName.put(name, es);
             try
             {
-                List items = persistence.load("name = '"+DatabaseUtils.escapeSqlString(name)+"'", 
+                List<E> items = persistence.load("name = '"+DatabaseUtils.escapeSqlString(name)+"'", 
                     factory);
                 resolve(items, es);
             }
@@ -241,7 +241,7 @@ public class EntityRegistry
     public Entity getUnique(String name)
         throws AmbigousEntityNameException, EntityDoesNotExistException
     {
-        Set es = get(name);
+        Set<E> es = get(name);
         if(es.size() == 0)
         {
             throw new EntityDoesNotExistException(kind+" '"+name+"' does not exist");
@@ -258,23 +258,23 @@ public class EntityRegistry
      *
      * @param entity the entity.
      */
-    public void add(Entity entity)
+    public void add(E entity)
     {
         try
         {
-            persistence.save((Persistent)entity);
+            persistence.save(entity);
         }
         catch(PersistenceException ex)
         {
             throw new BackendException("failed to save "+type+" to storage", ex);
         }
         byId.put(entity.getIdObject(), entity);
-        Set es = (Set)byName.get(entity.getName());
+        Set<E> es = byName.get(entity.getName());
         if(es != null)
         {
             es.add(entity);
         }
-        es = (Set)all.get(ALL_KEY);
+        es = all.get(ALL_KEY);
         if(es != null)
         {
             es.add(entity);
@@ -289,24 +289,24 @@ public class EntityRegistry
      * 
      * @param entity the entity to add.
      */
-    public void addSynthetic(Entity entity)
+    public void addSynthetic(E entity)
     {
         byId.put(entity.getIdObject(), entity);
-        Set es = (Set)byName.get(entity.getName());
+        Set<E> es = byName.get(entity.getName());
         if(es == null)
         {
-            es = new HashSet();
+            es = new HashSet<E>();
             byName.put(entity.getName(), es);
         }
         es.add(entity);
-        es = (Set)all.get(ALL_KEY);
+        es = all.get(ALL_KEY);
         if(es != null)
         {
             es.add(entity);
         }
         if(synthetics == null)
         {
-            synthetics = new HashSet();
+            synthetics = new HashSet<E>();
         }
         synthetics.add(entity);
     }
@@ -318,7 +318,7 @@ public class EntityRegistry
      * @throws EntityExistsException if an entity with the same name as the
      *         specified already exists in the system.
      */
-    public void addUnique(Entity entity)
+    public void addUnique(E entity)
         throws EntityExistsException
     {
         boolean shouldCommit = false;
@@ -381,23 +381,23 @@ public class EntityRegistry
      *
      * @param entity the entity.
      */
-    public void delete(Entity entity)
+    public void delete(E entity)
     {
         try
         {
-            persistence.delete((Persistent)entity);
+            persistence.delete(entity);
         }
         catch(PersistenceException ex)
         {
             throw new BackendException("failed to delete "+kind+" #"+entity.getIdString(), ex);
         }
         byId.remove(entity.getIdObject());
-        Set es = (Set)byName.get(entity.getName());
+        Set<E> es = byName.get(entity.getName());
         if(es != null)
         {
             es.remove(entity);
         }
-        es = (Set)all.get(ALL_KEY);
+        es = all.get(ALL_KEY);
         if(es != null)
         {
             es.remove(entity);
@@ -410,7 +410,7 @@ public class EntityRegistry
      * @param entity the entity. 
      * @param name the new name.
      */
-    public void rename(Entity entity, String name)
+    public void rename(E entity, String name)
     {
         String oldName = entity.getName();
         if(setName == null)
@@ -423,14 +423,14 @@ public class EntityRegistry
             setName.invoke(entity, new Object[] { name });
             try
             {
-                persistence.save((Persistent)entity);
+                persistence.save(entity);
 
-                Set es = (Set)byName.get(oldName);
+                Set<E> es = byName.get(oldName);
                 if(es != null)
                 {
                     es.remove(entity);
                 }
-                es = (Set)byName.get(name);
+                es = byName.get(name);
                 if(es != null)
                 {
                     es.add(entity);
@@ -455,7 +455,7 @@ public class EntityRegistry
      * @throws EntityExistsException if an entity with the same name as the
      *         specified already exists in the system.
      */
-    public void renameUnique(Entity entity, String name)
+    public void renameUnique(E entity, String name)
         throws EntityExistsException
     {
         boolean shouldCommit = false;
@@ -519,21 +519,21 @@ public class EntityRegistry
      * @param in entities loaded from the db
      * @param out equivalent entity set with new objects replaced with cached ones if possible.
      */
-    public synchronized void resolve(List in, Set out)
+    public synchronized void resolve(List<E> in, Set<E> out)
     {
-        Iterator i = in.iterator();
+        Iterator<E> i = in.iterator();
         while(i.hasNext())
         {
-            Entity e = (Entity)i.next();
+            E e = i.next();
             Long id = e.getIdObject();
-            Entity ee = (Entity)byId.get(id);
+            E ee = byId.get(id);
             if(ee == null)
             {
                 byId.put(id, e);
-                Set nameSet = (Set)byName.get(e.getName());
+                Set<E> nameSet = byName.get(e.getName());
                 if(nameSet == null)
                 {
-                    nameSet = new HashSet();
+                    nameSet = new HashSet<E>();
                     byName.put(e.getName(), nameSet);
                 }
                 nameSet.add(e);
