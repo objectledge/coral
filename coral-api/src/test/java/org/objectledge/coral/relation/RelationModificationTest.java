@@ -32,7 +32,7 @@ import org.objectledge.coral.relation.RelationModification.AddOperation;
 import org.objectledge.coral.relation.RelationModification.ClearOperation;
 import org.objectledge.coral.relation.RelationModification.RemoveOperation;
 import org.objectledge.coral.store.Resource;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>

@@ -37,7 +37,7 @@ import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClassFlags;
 import org.objectledge.coral.schema.SchemaIntegrityException;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * 

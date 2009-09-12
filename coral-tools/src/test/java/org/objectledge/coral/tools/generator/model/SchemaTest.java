@@ -30,7 +30,7 @@ package org.objectledge.coral.tools.generator.model;
 import org.jmock.Mock;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * 

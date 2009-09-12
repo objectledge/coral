@@ -32,7 +32,7 @@ import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.tools.SessionFactoryTag;
 import org.objectledge.coral.tools.init.InitBean;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * An integration test for the {@link InitBean}, {@link SessionFactoryTag} and 

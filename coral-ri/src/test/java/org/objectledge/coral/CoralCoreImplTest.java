@@ -39,8 +39,8 @@ import org.objectledge.coral.session.CoralSession;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
+import org.objectledge.test.LedgeTestCase;
 import org.objectledge.threads.ThreadPool;
-import org.objectledge.utils.LedgeTestCase;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
 

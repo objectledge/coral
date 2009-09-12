@@ -45,7 +45,7 @@ import org.objectledge.coral.event.ResourceClassChangeListener;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.Persistent;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * 

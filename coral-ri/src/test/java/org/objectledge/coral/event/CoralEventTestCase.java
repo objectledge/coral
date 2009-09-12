@@ -43,7 +43,7 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ResourceInheritance;
 import org.objectledge.coral.store.ResourceOwnership;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * An abstract test case that mocks a full set of objects used by event related classes.

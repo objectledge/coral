@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.jmock.Mock;
 import org.objectledge.coral.store.Resource;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>

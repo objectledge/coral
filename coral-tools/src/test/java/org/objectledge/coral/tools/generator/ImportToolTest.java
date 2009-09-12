@@ -30,7 +30,7 @@ package org.objectledge.coral.tools.generator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * 

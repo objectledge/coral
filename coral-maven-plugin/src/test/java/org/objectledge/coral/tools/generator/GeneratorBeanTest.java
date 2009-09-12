@@ -27,7 +27,7 @@
 // 
 package org.objectledge.coral.tools.generator;
 
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 public class GeneratorBeanTest extends LedgeTestCase
 {

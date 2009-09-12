@@ -27,7 +27,7 @@
 // 
 package org.objectledge.coral.tools.generator.model;
 
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * 

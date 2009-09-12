@@ -39,7 +39,7 @@ import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.templating.Template;
 import org.objectledge.templating.Templating;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * 

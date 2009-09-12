@@ -44,7 +44,7 @@ import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.Persistent;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * 

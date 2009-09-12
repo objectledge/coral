@@ -31,7 +31,7 @@ import org.apache.commons.pool.KeyedObjectPool;
 import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.query.CoralQuery;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * 

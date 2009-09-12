@@ -32,7 +32,7 @@ import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
-import org.objectledge.utils.LedgeTestCase;
+import org.objectledge.test.LedgeTestCase;
 
 /**
  * 
