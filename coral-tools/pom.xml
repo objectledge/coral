@@ -20,6 +20,12 @@
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-datatypes</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.objectledge</groupId>
+      <artifactId>ledge-components</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <resources>
