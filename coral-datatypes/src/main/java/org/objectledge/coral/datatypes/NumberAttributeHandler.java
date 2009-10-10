@@ -21,7 +21,7 @@ import org.objectledge.database.Database;
  * @version $Id: NumberAttributeHandler.java,v 1.4 2005-01-19 07:34:06 rafal Exp $
  */
 public class NumberAttributeHandler
-    extends AttributeHandlerBase
+    extends AttributeHandlerBase<Number>
 {
     /**
      * The constructor.
@@ -44,14 +44,14 @@ public class NumberAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public long create(Object value, Connection conn)
+    public long create(Number value, Connection conn)
         throws SQLException
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
         stmt.execute(
             "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-            id+", "+((Number)value).toString()+")"
+            id+", "+(value).toString()+")"
         );
         return id;
     }
@@ -59,7 +59,7 @@ public class NumberAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Object retrieve(long id, Connection conn)
+    public Number retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
@@ -77,14 +77,14 @@ public class NumberAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, Number value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
         checkExists(id, stmt);
         stmt.execute(
             "UPDATE "+getTable()+" SET data = "+
-            ((Number)value).toString()+
+            (value).toString()+
             " WHERE data_key = "+id
         );
     }
@@ -112,7 +112,7 @@ public class NumberAttributeHandler
     /**
      * {@inheritDoc}
      */
-    protected Object fromString(String string)
+    protected Number fromString(String string)
     {
         return new BigDecimal(string);
     }    
@@ -120,7 +120,7 @@ public class NumberAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public String toExternalString(Object value)
+    public String toExternalString(Number value)
     {
         checkValue(value);
         return value.toString();

@@ -62,7 +62,7 @@ public class PersistentResourceHandler
     {
         super(coralSchema, instantiator, resourceClass, database, cacheFactory, logger);
         this.persistence = persistence;
-        factory = instantiator.getPersistentFactory(resourceClass.getJavaClass());
+        factory = instantiator.getPersistentFactory((Class<? extends Persistent>)resourceClass.getJavaClass());
         keyColumns = new String[1];
         keyColumns[0] = resourceClass.getDbTable()+"_id";      
     }

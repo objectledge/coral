@@ -20,7 +20,7 @@ import org.objectledge.database.Database;
  * @version $Id: TextAttributeHandler.java,v 1.4 2005-01-19 07:34:06 rafal Exp $
  */
 public class TextAttributeHandler
-    extends AttributeHandlerBase
+    extends AttributeHandlerBase<String>
 {
     /**
      * The constructor.
@@ -43,14 +43,14 @@ public class TextAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public long create(Object value, Connection conn)
+    public long create(String value, Connection conn)
         throws SQLException
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
         stmt.execute(
             "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-            id+", '"+escape((String)value)+"')"
+            id+", '"+escape(value)+"')"
         );
         return id;
     }
@@ -58,7 +58,7 @@ public class TextAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Object retrieve(long id, Connection conn)
+    public String retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
@@ -76,14 +76,14 @@ public class TextAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, String value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
         checkExists(id, stmt);
         stmt.execute(
             "UPDATE "+getTable()+" SET data = '"+
-            escape((String)value)+
+            escape(value)+
             "' WHERE data_key = "+id
         );
     }
@@ -112,9 +112,9 @@ public class TextAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public String toExternalString(Object value)
+    public String toExternalString(String value)
     {
         checkValue(value);
-        return "'"+escape((String)value)+"'";
+        return "'"+escape(value)+"'";
     }
 }

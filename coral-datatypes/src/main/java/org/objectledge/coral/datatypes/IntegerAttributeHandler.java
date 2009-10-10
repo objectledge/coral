@@ -20,7 +20,7 @@ import org.objectledge.database.Database;
  * @version $Id: IntegerAttributeHandler.java,v 1.6 2005-06-22 06:56:59 pablo Exp $
  */
 public class IntegerAttributeHandler
-    extends AttributeHandlerBase
+    extends AttributeHandlerBase<Integer>
 {
     /** preloading cache - values. */
     private int[] cache;
@@ -49,14 +49,14 @@ public class IntegerAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public long create(Object value, Connection conn)
+    public long create(Integer value, Connection conn)
         throws SQLException
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
         stmt.execute(
             "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-            id+", "+((Integer)value).intValue()+")"
+            id+", "+(value).intValue()+")"
         );
         return id;
     }
@@ -64,7 +64,7 @@ public class IntegerAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Object retrieve(long id, Connection conn)
+    public Integer retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length)
@@ -95,19 +95,19 @@ public class IntegerAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, Integer value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length)
         {
-            cache[(int)id] = ((Integer)value).intValue();
+            cache[(int)id] = (value).intValue();
             defined.set((int)id);
         }
         Statement stmt = conn.createStatement();
         checkExists(id, stmt);
         stmt.execute(
             "UPDATE "+getTable()+" SET data = "+
-            ((Integer)value).intValue()+
+            (value).intValue()+
             " WHERE data_key = "+id
         );
     }
@@ -164,7 +164,7 @@ public class IntegerAttributeHandler
     /**
      * {@inheritDoc}
      */
-    protected Object fromString(String string)
+    protected Integer fromString(String string)
     {
         return new Integer(string);
     }
@@ -172,7 +172,7 @@ public class IntegerAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public String toExternalString(Object value)
+    public String toExternalString(Integer value)
     {
         checkValue(value);
         return value.toString();

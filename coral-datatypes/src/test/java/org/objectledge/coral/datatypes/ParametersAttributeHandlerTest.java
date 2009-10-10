@@ -184,7 +184,7 @@ public class ParametersAttributeHandlerTest extends LedgeTestCase
         {
             //ok!
         }
-        Parameters params = (Parameters)handler.toAttributeValue("@empty");
+        Parameters params = handler.toAttributeValue("@empty");
         assertEquals(parameters.getParameterNames().length, 0);
     }
 
@@ -211,19 +211,6 @@ public class ParametersAttributeHandlerTest extends LedgeTestCase
         try
         {
             handler.checkDomain("");
-            fail("should throw the exception");
-        }
-        catch (IllegalArgumentException e)
-        {
-            //ok!
-        }
-    }
-
-    public void testCheckDomainStringObject()
-    {
-        try
-        {
-            handler.checkDomain("", "");
             fail("should throw the exception");
         }
         catch (IllegalArgumentException e)

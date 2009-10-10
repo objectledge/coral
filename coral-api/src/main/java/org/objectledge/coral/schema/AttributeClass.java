@@ -20,7 +20,7 @@ public interface AttributeClass
      * @return the Java class that is associated with this resource attribute
      * type.
      */
-    public Class getJavaClass();
+    public Class<?> getJavaClass();
 
     /**
      * Returns the AttributeHandler implementaion that will manage the

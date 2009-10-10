@@ -17,8 +17,8 @@ import org.objectledge.database.Database;
  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @version $Id: WeakResourceListAttributeHandler.java,v 1.4 2005-02-21 11:52:20 rafal Exp $
  */
-public class WeakResourceListAttributeHandler
-    extends ResourceListAttributeHandler
+public class WeakResourceListAttributeHandler<T extends Resource>
+    extends ResourceListAttributeHandler<T>
 {
     /**
      * The constructor.
@@ -52,7 +52,7 @@ public class WeakResourceListAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Resource[] getResourceReferences(Object value)
+    public Resource[] getResourceReferences(ResourceList<T> value)
     {
         return new Resource[0];
     }
@@ -63,8 +63,8 @@ public class WeakResourceListAttributeHandler
      * @param list list items.
      * @return a ResourceList instance.
      */
-    protected ResourceList instantiate(List list)
+    protected ResourceList<T> instantiate(List list)
     {
-        return new WeakResourceList(coralSessionFactory, list);
+        return new WeakResourceList<T>(coralSessionFactory, list);
     }
 }

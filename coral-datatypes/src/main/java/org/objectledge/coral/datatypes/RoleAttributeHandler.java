@@ -1,10 +1,10 @@
 package org.objectledge.coral.datatypes;
 
-import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
+import org.objectledge.coral.security.Role;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
 
@@ -15,7 +15,7 @@ import org.objectledge.database.Database;
  * @version $Id: RoleAttributeHandler.java,v 1.6 2005-02-08 20:33:42 rafal Exp $
  */
 public class RoleAttributeHandler
-    extends EntityAttributeHandler
+    extends EntityAttributeHandler<Role>
 {
     /**
      * The constructor.
@@ -36,7 +36,7 @@ public class RoleAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity instantiate(long id)
+    protected Role instantiate(long id)
         throws EntityDoesNotExistException
     {
         return coralSecurity.getRole(id);
@@ -45,7 +45,7 @@ public class RoleAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity[] instantiate(String name)
+    protected Role[] instantiate(String name)
     {
         return coralSecurity.getRole(name);
     }

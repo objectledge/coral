@@ -6,6 +6,7 @@ import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
+import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
@@ -176,7 +177,7 @@ public interface CoralStore
      *         present in <code>attributes</code>.
      */
     public Resource createResource(String name, Resource parent, ResourceClass resourceClass, 
-                                   Map attributes)
+                                   Map<AttributeDefinition, String> attributes)
         throws InvalidResourceNameException, UnknownAttributeException, ValueRequiredException;
 
     /**

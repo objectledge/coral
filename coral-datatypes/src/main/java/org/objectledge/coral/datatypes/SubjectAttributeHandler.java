@@ -1,10 +1,10 @@
 package org.objectledge.coral.datatypes;
 
-import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
+import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
 
@@ -15,7 +15,7 @@ import org.objectledge.database.Database;
  * @version $Id: SubjectAttributeHandler.java,v 1.6 2005-02-08 20:33:42 rafal Exp $
  */
 public class SubjectAttributeHandler
-    extends EntityAttributeHandler
+    extends EntityAttributeHandler<Subject>
 {
     /**
      * The constructor.
@@ -36,7 +36,7 @@ public class SubjectAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity instantiate(long id)
+    protected Subject instantiate(long id)
         throws EntityDoesNotExistException
     {
         return coralSecurity.getSubject(id);
@@ -45,15 +45,15 @@ public class SubjectAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity[] instantiate(String name)
+    protected Subject[] instantiate(String name)
     {
         try
         {
-            return new Entity[] { coralSecurity.getSubject(name) };
+            return new Subject[] { coralSecurity.getSubject(name) };
         }
         catch(EntityDoesNotExistException e)
         {
-            return new Entity[0];
+            return new Subject[0];
         }
     }
 }

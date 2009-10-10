@@ -27,7 +27,7 @@ import org.objectledge.parameters.db.DBParametersManager;
  * @version $Id: ParametersAttributeHandler.java,v 1.7 2005-05-05 08:27:12 rafal Exp $
  */
 public class ParametersAttributeHandler
-    extends AttributeHandlerBase
+    extends AttributeHandlerBase<Parameters>
 {
     // instance variables ////////////////////////////////////////////////////
 
@@ -64,13 +64,13 @@ public class ParametersAttributeHandler
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public long create(Object value, Connection conn)
+    public long create(Parameters value, Connection conn)
         throws SQLException
     {
         try
         {
             DBParameters parameters = (DBParameters)dbParametersManager.createContainer();
-            parameters.add((Parameters)value, true);
+            parameters.add(value, true);
             return parameters.getId();  
         }
         catch(DBParametersException e)
@@ -93,7 +93,7 @@ public class ParametersAttributeHandler
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public Object retrieve(long id, Connection conn)
+    public Parameters retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         try
@@ -120,7 +120,7 @@ public class ParametersAttributeHandler
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, Parameters value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         try
@@ -129,7 +129,7 @@ public class ParametersAttributeHandler
             synchronized(parameters)
             {
                 parameters.remove();
-                parameters.add((Parameters)value, true);
+                parameters.add(value, true);
             }   
         }
         catch(DBParametersException e)
@@ -176,7 +176,7 @@ public class ParametersAttributeHandler
      * 
      * @see org.objectledge.coral.schema.AttributeHander#isModified(Object)
      */
-    public boolean isModified(Object value)
+    public boolean isModified(Parameters value)
     {
         return false;
     }
@@ -211,7 +211,7 @@ public class ParametersAttributeHandler
      * @return the attribute object, or <code>null</code> if conversion not
      *         supported. 
      */
-    protected Object fromString(String string)
+    protected Parameters fromString(String string)
     {
         if(string.equals("@empty"))
         {
@@ -229,10 +229,10 @@ public class ParametersAttributeHandler
      * @param value the value to convert.
      * @return a human readable string.
      */
-    public String toPrintableString(Object value)
+    public String toPrintableString(Parameters value)
     {
         checkValue(value);
-        return ((Parameters)value).toString();
+        return (value).toString();
     }
     /**
      * {@inheritDoc}

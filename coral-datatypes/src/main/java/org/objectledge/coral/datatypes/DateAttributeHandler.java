@@ -22,7 +22,7 @@ import org.objectledge.database.DatabaseUtils;
  * @version $Id: DateAttributeHandler.java,v 1.9 2007-11-15 17:36:03 rafal Exp $
  */
 public class DateAttributeHandler
-    extends AttributeHandlerBase
+    extends AttributeHandlerBase<Date>
 {
     /** Preloading cache. */
     private Date[] cache;
@@ -66,14 +66,14 @@ public class DateAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public long create(Object value, Connection conn)
+    public long create(Date value, Connection conn)
         throws SQLException
     {
         long id = getNextId();
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO "+getTable()+
             "(data_key, data) VALUES (?, ?)");
         stmt.setLong(1, id);
-        stmt.setTimestamp(2, new java.sql.Timestamp(((Date)value).getTime()));
+        stmt.setTimestamp(2, new java.sql.Timestamp((value).getTime()));
         stmt.execute();
         return id;
     }
@@ -81,7 +81,7 @@ public class DateAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Object retrieve(long id, Connection conn)
+    public Date retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length)
@@ -112,12 +112,12 @@ public class DateAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, Date value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length)
         {
-            cache[(int)id] = (Date)value;
+            cache[(int)id] = value;
         }
         Statement stmt = null;
         PreparedStatement pstmt = null;
@@ -127,7 +127,7 @@ public class DateAttributeHandler
             checkExists(id, stmt);
             pstmt = conn.prepareStatement("UPDATE "+getTable()+" SET data = ?"+
                 " WHERE data_key = ?");
-            pstmt.setTimestamp(1, new java.sql.Timestamp(((Date)value).getTime()));
+            pstmt.setTimestamp(1, new java.sql.Timestamp((value).getTime()));
             pstmt.setLong(2, id);
             pstmt.execute();
         }
@@ -174,7 +174,7 @@ public class DateAttributeHandler
     /**
      * {@inheritDoc}
      */
-    protected Object fromString(String string)
+    protected Date fromString(String string)
     {
         return parseDate(string);
     }
@@ -182,9 +182,9 @@ public class DateAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public String toExternalString(Object value)
+    public String toExternalString(Date value)
     {
         checkValue(value);
-        return "'"+formatDateTime((Date)value)+"'";
+        return "'"+formatDateTime(value)+"'";
     }
 }

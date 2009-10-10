@@ -219,20 +219,6 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
         }
     }
 
-    public void testCheckDomainStringObject()
-    {
-        try
-        {
-            handler.checkDomain("", "");
-            fail("should throw the exception");
-        }
-        catch (IllegalArgumentException e)
-        {
-            //ok!
-        }
-
-    }
-
     public void testIsComposite()
     {
         assertEquals(false, handler.isComposite());

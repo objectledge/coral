@@ -137,9 +137,9 @@ public class CoralScriptImpl
     private RMLExecutor getExecutor(CoralSession session, Writer out)
         throws InstantiationException
     {
-        Map additional = new HashMap();
+        Map<Class<?>, Object> additional = new HashMap<Class<?>, Object>();
         additional.put(CoralSession.class, session);
         additional.put(Writer.class, out);
-        return (RMLExecutor)instantiator.newInstance(RMLExecutor.class, additional);
+        return instantiator.newInstance(RMLExecutor.class, additional);
     }
 }

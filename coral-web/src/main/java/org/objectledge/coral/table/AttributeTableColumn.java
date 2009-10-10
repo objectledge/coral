@@ -43,7 +43,7 @@ import org.objectledge.table.TableException;
  * @author <a href="rafal@caltha.pl">Rafał Krzewski</a>
  * @version $Id: AttributeTableColumn.java,v 1.2 2008-06-05 16:38:00 rafal Exp $
  */
-public class AttributeTableColumn<V>
+public class AttributeTableColumn<R extends Resource, V>
     extends TableColumn<Resource>
 {
     /**
@@ -67,11 +67,11 @@ public class AttributeTableColumn<V>
      * @param attributeName the attribute name.
      * @param valueComparator the comparator for attribute values.
      */
-    public static <V> Comparator<Resource> getAttributeComparator(ResourceClass resourceClass, 
+    public static <R extends Resource, V> Comparator<R> getAttributeComparator(ResourceClass resourceClass, 
         String attributeName, Comparator<V> valueComparator)
     {
         AttributeDefinition attDef = resourceClass.getAttribute(attributeName);
-        return new AttributeValueComparator<Resource, V>(resourceClass.getJavaClass(), attDef,
+        return new AttributeValueComparator<R, V>((Class<R>)resourceClass.getJavaClass(), attDef,
             valueComparator);        
     }
 }

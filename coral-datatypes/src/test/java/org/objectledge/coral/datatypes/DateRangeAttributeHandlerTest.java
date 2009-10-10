@@ -233,20 +233,6 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
         }
     }
 
-    public void testCheckDomainStringObject()
-    {
-        try
-        {
-            handler.checkDomain("", "");
-            fail("should throw the exception");
-        }
-        catch (IllegalArgumentException e)
-        {
-            //ok!
-        }
-
-    }
-
     public void testIsComposite()
     {
         assertEquals(true, handler.isComposite());

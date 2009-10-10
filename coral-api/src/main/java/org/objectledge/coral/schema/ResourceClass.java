@@ -39,7 +39,7 @@ public interface ResourceClass
      * @return the Java class that is associated with this resource class.
      * type.
      */
-    public Class getJavaClass();
+    public Class<?> getJavaClass();
 
     /**
      * Returns the ResourceHandler implementaion that will manage the

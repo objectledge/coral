@@ -1,9 +1,9 @@
 package org.objectledge.coral.datatypes;
 
-import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
+import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
@@ -15,7 +15,7 @@ import org.objectledge.database.Database;
  * @version $Id: ResourceClassAttributeHandler.java,v 1.6 2005-02-08 20:33:42 rafal Exp $
  */
 public class ResourceClassAttributeHandler
-    extends EntityAttributeHandler
+    extends EntityAttributeHandler<ResourceClass>
 {
     /**
      * The constructor.
@@ -36,7 +36,7 @@ public class ResourceClassAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity instantiate(long id)
+    protected ResourceClass instantiate(long id)
         throws EntityDoesNotExistException
     {
         return coralSchema.getResourceClass(id);
@@ -45,15 +45,15 @@ public class ResourceClassAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity[] instantiate(String name)
+    protected ResourceClass[] instantiate(String name)
     {
         try
         {
-            return new Entity[] { coralSchema.getResourceClass(name) };
+            return new ResourceClass[] { coralSchema.getResourceClass(name) };
         }
         catch(EntityDoesNotExistException e)
         {
-            return new Entity[0];
+            return new ResourceClass[0];
         }
     }
 }

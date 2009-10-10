@@ -20,7 +20,7 @@ import org.objectledge.database.Database;
  * @version $Id: BooleanAttributeHandler.java,v 1.5 2005-01-20 10:48:26 rafal Exp $
  */
 public class BooleanAttributeHandler
-    extends AttributeHandlerBase
+    extends AttributeHandlerBase<Boolean>
 {
     /** Preloading cache - values. */
     private BitSet cache;
@@ -69,14 +69,14 @@ public class BooleanAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public long create(Object value, Connection conn)
+    public long create(Boolean value, Connection conn)
         throws SQLException
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
         stmt.execute(
             "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-            id+", "+(((Boolean)value).booleanValue() ? "1" : "0")+")"
+            id+", "+((value).booleanValue() ? "1" : "0")+")"
         );
         return id;
     }
@@ -84,7 +84,7 @@ public class BooleanAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Object retrieve(long id, Connection conn)
+    public Boolean retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length())
@@ -115,19 +115,19 @@ public class BooleanAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, Boolean value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length())
         {
-            cache.set((int)id, ((Boolean)value).booleanValue());
+            cache.set((int)id, (value).booleanValue());
             defined.set((int)id);
         }
         Statement stmt = conn.createStatement();
         checkExists(id, stmt);
         stmt.execute(
             "UPDATE "+getTable()+" SET data = "+
-            (((Boolean)value).booleanValue() ? "1" : "0")+
+            ((value).booleanValue() ? "1" : "0")+
             " WHERE data_key = "+id
         );
     }
@@ -168,7 +168,7 @@ public class BooleanAttributeHandler
     /**
      * {@inheritDoc}
      */
-    protected Object fromString(String string)
+    protected Boolean fromString(String string)
     {
         if(string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true") || string.equals("1"))
         {
@@ -184,10 +184,10 @@ public class BooleanAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public String toPrintableString(Object value)
+    public String toPrintableString(Boolean value)
     {
         checkValue(value);
-        if(((Boolean)value).booleanValue())
+        if((value).booleanValue())
         {
             return "true";
         }
@@ -200,10 +200,10 @@ public class BooleanAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public String toExternalString(Object value)
+    public String toExternalString(Boolean value)
     {
         checkValue(value);
-        if(((Boolean)value).booleanValue())
+        if((value).booleanValue())
         {
             return "1";
         }

@@ -321,7 +321,7 @@ public class RMLExecutor
             ResourceClass[] parents = entities.resolve(node.getParents());
             for(int i=0; i<parents.length; i++)
             {
-                coralSession.getSchema().addParentClass(rc, parents[i], new HashMap());
+                coralSession.getSchema().addParentClass(rc, parents[i], new HashMap<AttributeDefinition, String>());
             }
             ASTattributeDefinition[] attrs = items(node.getAttributes());
             for(int i=0; i<attrs.length; i++)
@@ -379,7 +379,7 @@ public class RMLExecutor
                     result[1][4] = ResourceClassFlags.toString(rc.getFlags());
                     table(result);
                     ResourceClass[] parents = rc.getParentClasses();
-                    List permissions = new ArrayList();
+                    List<PermissionAssociation> permissions = new ArrayList<PermissionAssociation>();
                     if(parents != null && parents.length > 0)
                     {
                         out.println("Parent classes");
@@ -428,7 +428,7 @@ public class RMLExecutor
                         result[0] = new String[] { "Id", "Permission", "Resource Class" };
                         for(int i=0; i<permissions.size(); i++)
                         {
-                            PermissionAssociation pa = (PermissionAssociation)permissions.get(i);
+                            PermissionAssociation pa = permissions.get(i);
                             result[i+1] = new String[3];
                             result[i+1][0] = pa.getPermission().getIdString();
                             result[i+1][1] = pa.getPermission().getName();
@@ -678,7 +678,7 @@ public class RMLExecutor
         {
             ResourceClass rc = entities.resolve(node.getResourceClass());
             ResourceClass sup = entities.resolve(node.getParentClass());
-            HashMap values = new HashMap();
+            HashMap<AttributeDefinition, String> values = new HashMap<AttributeDefinition, String>();
             if(node.getValues() != null)
             {
                 ASTattribute[] attrDescs = items(node.getValues());
@@ -1164,7 +1164,7 @@ public class RMLExecutor
             ResourceClass rc = entities.resolve(node.getResourceClass());
             Resource parent = node.getParent() != null ?
                 entities.resolve(node.getParent()) : null;
-            HashMap attrs = new HashMap();
+            HashMap<AttributeDefinition, String> attrs = new HashMap<AttributeDefinition, String>();
             ASTattribute[] attrDescs = items(node.getAttributes());
             for(int i=0; i<attrDescs.length; i++)
             {
@@ -1240,7 +1240,7 @@ public class RMLExecutor
                 QueryResults rawResults = coralSession.getQuery().executeQuery(node);
                 FilteredQueryResults results = rawResults.getFiltered();
                 int cols = results.getColumnCount();
-                ArrayList temp = new ArrayList();
+                ArrayList<String[]> temp = new ArrayList<String[]>();
                 String[] heading = new String[cols];
                 int i;
                 for(i=1; i<=cols; i++)
@@ -1586,7 +1586,7 @@ public class RMLExecutor
             Subject subject = entities.resolve(node.getSubject());
             if(node.getResource() == null)
             {
-                ArrayList al = new ArrayList();
+                ArrayList<PermissionAssignment> al = new ArrayList<PermissionAssignment>();
                 Role[] roles = subject.getRoles();
                 for(int i=0; i<roles.length; i++)
                 {
@@ -1601,7 +1601,7 @@ public class RMLExecutor
                                            "Recursive", "Granted by", "Grant date" };
                 for(int i=0; i<al.size(); i++)
                 {
-                    PermissionAssignment pa = (PermissionAssignment)al.get(i);
+                    PermissionAssignment pa = al.get(i);
                     result[i+1] = new String[6];
                     result[i+1][0] = pa.getRole().getName();
                     result[i+1][1] = pa.getResource().getIdString();
@@ -2066,7 +2066,7 @@ public class RMLExecutor
      */
     private void sortAttributes(AttributeDefinition[] attrs)
     {
-        Comparator comp = new Comparator()
+        Comparator<Entity> comp = new Comparator()
             {
                 public int compare(Object o1, Object o2)
                 {
@@ -2091,7 +2091,7 @@ public class RMLExecutor
      */
     private void sortResources(Resource[] data)
     {
-        Comparator comp = new Comparator()
+        Comparator<Entity> comp = new Comparator()
             {
                 public int compare(Object o1, Object o2)
                 {
@@ -2108,7 +2108,7 @@ public class RMLExecutor
      */
     private void sortEntities(Entity[] data)
     {
-        Comparator comp = new Comparator()
+        Comparator<Entity> comp = new Comparator()
             {
                 public int compare(Object o1, Object o2)
                 {

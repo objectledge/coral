@@ -45,7 +45,7 @@ public class SubtreeVisitor
      * {@inheritDoc}
      */
     @Override
-    protected Iterator successors(Resource r)
+    protected Iterator<Resource> successors(Resource r)
     {
         return Arrays.asList(r.getChildren()).iterator();
     }

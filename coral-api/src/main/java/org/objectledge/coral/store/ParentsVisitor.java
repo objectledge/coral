@@ -29,6 +29,7 @@ package org.objectledge.coral.store;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.objectledge.visitor.Visitor;
 
@@ -45,7 +46,7 @@ public class ParentsVisitor
      * {@inheritDoc}
      */
     @Override
-    protected Iterator successors(Resource r)
+    protected Iterator<Resource> successors(Resource r)
     {
         if(r.getParent() != null)
         {
@@ -53,7 +54,8 @@ public class ParentsVisitor
         }
         else
         {
-            return Collections.EMPTY_LIST.iterator();
+            List<Resource> emptyList = Collections.emptyList(); 
+            return emptyList.iterator();
         }
     }
 }

@@ -308,29 +308,29 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 
     private class MockRelation implements Relation
     {
-    	private Map rel = new HashMap();
-		private Map invRel = new HashMap();
+    	private Map<Long, Set<Long>> rel = new HashMap<Long, Set<Long>>();
+		private Map<Long, Set<Long>> invRel = new HashMap<Long, Set<Long>>();
     	private Relation inverted = new InvertedRelation(); 
     	
     	public MockRelation(boolean invertData)
     	{
     		rel.put(new Long(1L), 
-    		new HashSet(Arrays.asList(new Long[] { new Long(4L), new Long(5L), new Long(6L) })));
+    		new HashSet<Long>(Arrays.asList(new Long[] { new Long(4L), new Long(5L), new Long(6L) })));
 			rel.put(new Long(2L), 
-			new HashSet(Arrays.asList(new Long[] { new Long(5L), new Long(6L) })));
+			new HashSet<Long>(Arrays.asList(new Long[] { new Long(5L), new Long(6L) })));
 			rel.put(new Long(3L), 
-			new HashSet(Arrays.asList(new Long[] { new Long(6L) })));
+			new HashSet<Long>(Arrays.asList(new Long[] { new Long(6L) })));
     		
 			invRel.put(new Long(4L), 
-			new HashSet(Arrays.asList(new Long[] { new Long(1L) })));
+			new HashSet<Long>(Arrays.asList(new Long[] { new Long(1L) })));
 			invRel.put(new Long(5L), 
-			new HashSet(Arrays.asList(new Long[] { new Long(1L), new Long(2L) })));
+			new HashSet<Long>(Arrays.asList(new Long[] { new Long(1L), new Long(2L) })));
 			invRel.put(new Long(6L), 
-			new HashSet(Arrays.asList(new Long[] { new Long(1L), new Long(2L), new Long(3L) })));
+			new HashSet<Long>(Arrays.asList(new Long[] { new Long(1L), new Long(2L), new Long(3L) })));
 			
 			if(invertData)
 			{
-				Map temp = rel;
+				Map<Long, Set<Long>> temp = rel;
 				rel = invRel;
 				invRel = temp;
 			}
@@ -363,7 +363,7 @@ public class MinimalRelationModificationTest extends LedgeTestCase
         /**
          * {@inheritDoc}
          */
-        public Set get(long id)
+        public Set<Long> get(long id)
         {
             return getSet(rel, id);
         }
@@ -381,7 +381,7 @@ public class MinimalRelationModificationTest extends LedgeTestCase
          */
         public boolean hasRef(long id, long idInv)
         {
-			Set set = (Set)rel.get(new Long(id));
+			Set<Long> set = rel.get(new Long(id));
 			if(set != null)
 			{
 				return set.contains(new Long(idInv));
@@ -443,16 +443,16 @@ public class MinimalRelationModificationTest extends LedgeTestCase
             return null;
         }
         
-        Set getSet(Map relation, long id)
+        Set<Long> getSet(Map<Long, Set<Long>> relation, long id)
         {
-			Set set = (Set) relation.get(new Long(id));
+			Set<Long> set = relation.get(new Long(id));
 			if(set != null)
 			{
 				return Collections.unmodifiableSet(set);
 			}
 			else
 			{
-				return Collections.EMPTY_SET;
+				return Collections.emptySet();
 			}
         }
         
@@ -486,7 +486,7 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 			/**
 			 * {@inheritDoc}
 			 */
-			public Set get(long id)
+			public Set<Long> get(long id)
 			{
 				return getSet(invRel, id);
 			}

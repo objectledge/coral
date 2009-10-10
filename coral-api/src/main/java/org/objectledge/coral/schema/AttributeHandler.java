@@ -26,7 +26,7 @@ import org.objectledge.coral.store.Resource;
  * @version $Id: AttributeHandler.java,v 1.3 2005-01-20 10:54:21 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
-public interface AttributeHandler
+public interface AttributeHandler<T>
 {
     // constants /////////////////////////////////////////////////////////////
 
@@ -65,7 +65,7 @@ public interface AttributeHandler
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public long create(Object value, Connection conn)
+    public long create(T value, Connection conn)
         throws SQLException;
 
     /**
@@ -80,7 +80,7 @@ public interface AttributeHandler
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public Object retrieve(long id, Connection conn)
+    public T retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException;
 
     /**
@@ -95,7 +95,7 @@ public interface AttributeHandler
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, T value, Connection conn)
         throws EntityDoesNotExistException, SQLException;
 
     /**
@@ -121,7 +121,7 @@ public interface AttributeHandler
      * <code>false</code>.
      * </p>
      */
-    public boolean isModified(Object value);
+    public boolean isModified(T value);
     
     // meta information //////////////////////////////////////////////////////
 
@@ -156,7 +156,7 @@ public interface AttributeHandler
      * @return a <code>Comparator</code> or <code>null</code> if the
      *          attribute class does not have sensible comparison semantics.
      */
-    public Comparator getComparator();
+    public Comparator<T> getComparator();
 
     /**
      * Retruns <code>true</code> if the {@toExternalString()} is supported for
@@ -181,7 +181,7 @@ public interface AttributeHandler
      * @param object the object to be checked/converted. 
      * @return a native representation of the object.
      */
-    public Object toAttributeValue(Object object);
+    public T toAttributeValue(Object object);
 
     /**
      * Converts an attribute value into a human readable string.
@@ -189,7 +189,7 @@ public interface AttributeHandler
      * @param value the value to convert.
      * @return a human readable string.
      */
-    public String toPrintableString(Object value);
+    public String toPrintableString(T value);
     
     /**
      * Converts an attribute value into a string representation suitable for
@@ -200,7 +200,7 @@ public interface AttributeHandler
      * @return a string representation suitable for using in queries agains
      *         the underlying data store.
      */
-    public String toExternalString(Object value);
+    public String toExternalString(T value);
 
     // value domain //////////////////////////////////////////////////////////
 
@@ -218,7 +218,7 @@ public interface AttributeHandler
      * @param value an attribute value.
      * @throws ConstraintViolationException if the value does not fulfill the constraint.
      */
-    public void checkDomain(String domain, Object value)
+    public void checkDomain(String domain, T value)
         throws ConstraintViolationException;
         
     // integrity constraints ////////////////////////////////////////////////
@@ -245,7 +245,7 @@ public interface AttributeHandler
      * @param value the attribute value.
      * @return resources referenced by this attribute.
      */
-    public Resource[] getResourceReferences(Object value);
+    public Resource[] getResourceReferences(T value);
     
     /**
      * Removes all resource attributes from the attribute value.
@@ -257,5 +257,5 @@ public interface AttributeHandler
      * @return <code>true</code> if the attribute value should be
      *         removed form the resource.
      */
-    public boolean clearResourceReferences(Object value);
+    public boolean clearResourceReferences(T value);
 }

@@ -226,20 +226,6 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
         }
     }
 
-    public void testCheckDomainStringObject()
-    {
-        try
-        {
-            booleanHandler.checkDomain("","");
-            fail("should throw the exception");
-        }
-        catch (IllegalArgumentException e)
-        {
-            //ok!
-        }
-
-    }
-
     public void testIsComposite()
     {
         assertEquals(false, booleanHandler.isComposite());

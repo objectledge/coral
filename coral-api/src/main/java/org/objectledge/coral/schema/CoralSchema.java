@@ -354,7 +354,7 @@ public interface CoralSchema
      *         map. 
      */
     public void addParentClass(ResourceClass child, ResourceClass parent, 
-                               Map attributes)
+                               Map<AttributeDefinition, String> attributes)
         throws CircularDependencyException, SchemaIntegrityException, 
                ValueRequiredException;
 

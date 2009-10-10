@@ -31,7 +31,7 @@ public interface ResourceHandler
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public Resource create(Resource delegate, Map attributes, Connection conn)
+    public Resource create(Resource delegate, Map<AttributeDefinition, Object> attributes, Connection conn)
         throws ValueRequiredException, SQLException;
 
     /**
@@ -150,7 +150,7 @@ public interface ResourceHandler
      *         REQUIRED attributes are missing from <code>attributes</code>
      *         map. 
      */
-    public void addParentClass(ResourceClass parent, Map attributes, Connection conn)
+    public void addParentClass(ResourceClass parent, Map<AttributeDefinition, Object> attributes, Connection conn)
         throws ValueRequiredException, SQLException;
     
     /**

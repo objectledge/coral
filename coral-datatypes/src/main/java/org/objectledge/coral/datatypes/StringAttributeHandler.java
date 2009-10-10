@@ -20,7 +20,7 @@ import org.objectledge.database.Database;
  * @version $Id: StringAttributeHandler.java,v 1.5 2005-01-20 10:48:26 rafal Exp $
  */
 public class StringAttributeHandler
-    extends AttributeHandlerBase
+    extends AttributeHandlerBase<String>
 {
     /** preloading cache. */
     private String[] cache;
@@ -63,10 +63,10 @@ public class StringAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public long create(Object value, Connection conn)
+    public long create(String value, Connection conn)
         throws SQLException
     {
-        String str = (String)value;
+        String str = value;
         if(str.length() > 255)
         {
             throw new IllegalArgumentException("maximum lenght of string attributes "+
@@ -86,7 +86,7 @@ public class StringAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Object retrieve(long id, Connection conn)
+    public String retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length)
@@ -117,10 +117,10 @@ public class StringAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, String value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
-        String str = (String)value;
+        String str = value;
         if(str.length() > 255)
         {
             throw new IllegalArgumentException("maximum lenght of string attributes "+
@@ -177,9 +177,9 @@ public class StringAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public String toExternalString(Object value)
+    public String toExternalString(String value)
     {
         checkValue(value);
-        return "'"+escape((String)value)+"'";
+        return "'"+escape(value)+"'";
     }
 }

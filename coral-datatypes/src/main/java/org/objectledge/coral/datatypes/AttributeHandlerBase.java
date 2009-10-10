@@ -28,8 +28,8 @@ import org.objectledge.database.DatabaseUtils;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: AttributeHandlerBase.java,v 1.16 2007-11-15 17:35:40 rafal Exp $
  */
-public abstract class AttributeHandlerBase
-    implements AttributeHandler
+public abstract class AttributeHandlerBase<T>
+    implements AttributeHandler<T>
 {
     // member objects ////////////////////////////////////////////////////////
 
@@ -49,10 +49,10 @@ public abstract class AttributeHandlerBase
     protected AttributeClass attributeClass = null;
     
     /** The attribute object type. */
-    protected Class attributeType = null;
+    protected Class<T> attributeType = null;
 
     /** The attribute value comparator. */
-    protected Comparator comparator = null;
+    protected Comparator<T> comparator = null;
 
     /** <code>true</code> if attribute value comparison is not supported. */
     protected boolean comparatorNotSupported = false;
@@ -84,7 +84,7 @@ public abstract class AttributeHandlerBase
                                  AttributeClass attributeClass)
     {
         this.attributeClass = attributeClass;
-        this.attributeType = attributeClass.getJavaClass();
+        this.attributeType = (Class<T>)attributeClass.getJavaClass();
         this.database = database; 
         this.coralStore = coralStore;
         this.coralSecurity = coralSecurity;
@@ -134,7 +134,7 @@ public abstract class AttributeHandlerBase
      * 
      * @see org.objectledge.coral.schema.AttributeHander#isModified(Object)
      */
-    public boolean isModified(Object value)
+    public boolean isModified(T value)
     {
         return false;
     }
@@ -160,7 +160,7 @@ public abstract class AttributeHandlerBase
     /**
      * {@inheritDoc}
      */
-    public Comparator getComparator()
+    public Comparator<T> getComparator()
     {
         if(comparator == null || comparatorNotSupported)
         {
@@ -186,7 +186,7 @@ public abstract class AttributeHandlerBase
     /**
      * {@inheritDoc}
      */
-    public Object toAttributeValue(Object object)
+    public T toAttributeValue(Object object)
     {
         Object result = null;
         if(object == null)
@@ -207,7 +207,7 @@ public abstract class AttributeHandlerBase
         }
         if(result != null)
         {
-            return result;
+            return (T)result;
         }
         else
         {
@@ -222,7 +222,7 @@ public abstract class AttributeHandlerBase
     /**
      * {@inheritDoc}
      */
-    public String toPrintableString(Object value)
+    public String toPrintableString(T value)
     {
         checkValue(value);
         if(value instanceof Entity)
@@ -238,7 +238,7 @@ public abstract class AttributeHandlerBase
     /**
      * {@inheritDoc}
      */
-    public String toExternalString(Object value)
+    public String toExternalString(T value)
     {
         checkValue(value);
         if(value instanceof Entity)
@@ -270,7 +270,7 @@ public abstract class AttributeHandlerBase
     /**
      * {@inheritDoc}
      */
-    public void checkDomain(String domain, Object value)
+    public void checkDomain(String domain, T value)
         throws ConstraintViolationException
     {
         if(domain != null)
@@ -307,7 +307,7 @@ public abstract class AttributeHandlerBase
     /**
      * {@inheritDoc}
      */
-    public Resource[] getResourceReferences(Object value)
+    public Resource[] getResourceReferences(T value)
     {
         throw new UnsupportedOperationException(attributeClass.getName()+
             " is not a referential attribute type");
@@ -316,7 +316,7 @@ public abstract class AttributeHandlerBase
     /**
      * {@inheritDoc}
      */
-    public boolean clearResourceReferences(Object value)
+    public boolean clearResourceReferences(T value)
     {
         throw new UnsupportedOperationException(attributeClass.getName()+
             " is not a referential attribute type");
@@ -344,7 +344,7 @@ public abstract class AttributeHandlerBase
      * @return the attribute object, or <code>null</code> if conversion not
      *         supported. 
      */
-    protected Object fromString(String string)
+    protected T fromString(String string)
     {
         return null;
     }
@@ -359,7 +359,7 @@ public abstract class AttributeHandlerBase
      * @return the attribute object, or <code>null</code> if conversion not
      *         supported. 
      */
-    protected Object fromObject(Object object)
+    protected T fromObject(Object object)
     {
         return null;
     }
@@ -397,7 +397,7 @@ public abstract class AttributeHandlerBase
      *
      * @param value the value to check.
      */
-    protected void checkValue(Object value)
+    protected void checkValue(T value)
     {
         if(value == null)
         {
@@ -487,7 +487,7 @@ public abstract class AttributeHandlerBase
      * 
      * @return the comparator.
      */
-    protected Comparator createComparator()
+    protected Comparator<T> createComparator()
     {
         if(Comparable.class.isAssignableFrom(attributeType))
         {

@@ -19,7 +19,7 @@ import org.objectledge.database.Database;
  * @version $Id: LongAttributeHandler.java,v 1.4 2005-01-19 07:34:06 rafal Exp $
  */
 public class LongAttributeHandler
-    extends AttributeHandlerBase
+    extends AttributeHandlerBase<Long>
 {
     /**
      * The constructor.
@@ -42,14 +42,14 @@ public class LongAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public long create(Object value, Connection conn)
+    public long create(Long value, Connection conn)
         throws SQLException
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
         stmt.execute(
             "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-            id+", "+((Long)value).longValue()+")"
+            id+", "+(value).longValue()+")"
         );
         return id;
     }
@@ -57,7 +57,7 @@ public class LongAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Object retrieve(long id, Connection conn)
+    public Long retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
@@ -75,14 +75,14 @@ public class LongAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, Long value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
         checkExists(id, stmt);
         stmt.execute(
             "UPDATE "+getTable()+" SET data = "+
-            ((Long)value).longValue()+
+            (value).longValue()+
             " WHERE data_key = "+id
         );
     }
@@ -110,7 +110,7 @@ public class LongAttributeHandler
     /**
      * {@inheritDoc}
      */
-    protected Object fromString(String string)
+    protected Long fromString(String string)
     {
         return new Long(string);
     }
@@ -118,7 +118,7 @@ public class LongAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public String toExternalString(Object value)
+    public String toExternalString(Long value)
     {
         checkValue(value);
         return value.toString();

@@ -1,10 +1,10 @@
 package org.objectledge.coral.datatypes;
 
-import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
+import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
 
@@ -15,7 +15,7 @@ import org.objectledge.database.Database;
  * @version $Id: PermissionAttributeHandler.java,v 1.5 2005-02-08 20:33:42 rafal Exp $
  */
 public class PermissionAttributeHandler
-    extends EntityAttributeHandler
+    extends EntityAttributeHandler<Permission>
 {
     /**
      * The constructor.
@@ -36,7 +36,7 @@ public class PermissionAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity instantiate(long id)
+    protected Permission instantiate(long id)
         throws EntityDoesNotExistException
     {
         return coralSecurity.getPermission(id);
@@ -45,7 +45,7 @@ public class PermissionAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity[] instantiate(String name)
+    protected Permission[] instantiate(String name)
     {
         return coralSecurity.getPermission(name);
     }

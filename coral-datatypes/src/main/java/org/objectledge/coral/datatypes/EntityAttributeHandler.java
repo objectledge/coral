@@ -18,7 +18,8 @@ import org.objectledge.database.Database;
 /**
  * Common base class for various entity attribute handlers.
  */
-public abstract class EntityAttributeHandler extends AttributeHandlerBase
+public abstract class EntityAttributeHandler<T extends Entity>
+    extends AttributeHandlerBase<T>
 {
     /** cached identifiers. */
     protected long[] cache;
@@ -50,7 +51,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      * 
      * @throws EntityDoesNotExistException if the identifier does not designate an existing entity.
      */
-    protected abstract Entity instantiate(long id)
+    protected abstract T instantiate(long id)
         throws EntityDoesNotExistException;
 
     /** 
@@ -59,7 +60,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      * @param name the name of the entity.
      * @return the entity instance.
      */
-    protected abstract Entity[] instantiate(String name);
+    protected abstract T[] instantiate(String name);
 
     /**
      * Preloads all defined attribute values from the database.
@@ -119,7 +120,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      *             in case of database problems. The caller metod should consider rolling back the
      *             whole transaction.
      */
-    public long create(Object value, Connection conn) throws SQLException
+    public long create(T value, Connection conn) throws SQLException
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
@@ -138,7 +139,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      * @throws EntityDoesNotExistException if the requested entity does not exist.
      * @throws SQLException if a database exception occurs.
      */
-    public Object retrieve(long id, Connection conn) throws EntityDoesNotExistException,
+    public T retrieve(long id, Connection conn) throws EntityDoesNotExistException,
         SQLException
     {
         if(cache != null && id < cache.length)
@@ -180,7 +181,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      *             in case of database problems. The caller metod should consider rolling back the
      *             whole transaction.
      */
-    public void update(long id, Object value, Connection conn) throws EntityDoesNotExistException,
+    public void update(long id, T value, Connection conn) throws EntityDoesNotExistException,
         SQLException
     {
         if(cache != null && id < cache.length)
@@ -219,7 +220,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      * @return the attribute object, or <code>null</code> if conversion not
      *         supported. 
      */
-    protected Object fromString(String string)
+    protected T fromString(String string)
     {
         if(Character.isDigit(string.charAt(0)))
         {
@@ -235,7 +236,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
         }
         else
         {
-            Entity[] res = instantiate(string);
+            T[] res = instantiate(string);
             if(res.length == 0)
             {
                 throw new IllegalArgumentException(attributeClass.getName()+" '"+
@@ -256,7 +257,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      * @param value the value to convert.
      * @return a human readable string.
      */
-    public String toPrintableString(Object value)
+    public String toPrintableString(T value)
     {
         checkValue(value);
         return ((Entity)value).getName();
@@ -271,7 +272,7 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      * @return a string representation suitable for using in queries agains
      *         the underlying data store.
      */
-    public String toExternalString(Object value)
+    public String toExternalString(T value)
     {
         checkValue(value);
         return ((Entity)value).getIdString();
@@ -282,25 +283,18 @@ public abstract class EntityAttributeHandler extends AttributeHandlerBase
      * 
      * @return a comparator for the attribute values.
      */
-    protected Comparator createComparator()
+    protected Comparator<T> createComparator()
     {
-         return ENTITY_COMPARATOR;   
+         return new Comparator<T>()
+         {
+             /**
+              * {@inheritDoc}
+              */
+             public int compare(T e1, T e2)
+             {
+                 return e1.getName().compareTo(e2.getName());
+             }
+         };
+             
     }
-
-    /**
-     * Compares ARL entities by name.
-     */
-    private static final Comparator ENTITY_COMPARATOR = 
-        new Comparator()
-        {
-            /**
-             * {@inheritDoc}
-             */
-            public int compare(Object o1, Object o2)
-            {
-                Entity e1 = (Entity)o1;
-                Entity e2 = (Entity)o2;
-                return e1.getName().compareTo(e2.getName());
-            }
-        };
 }

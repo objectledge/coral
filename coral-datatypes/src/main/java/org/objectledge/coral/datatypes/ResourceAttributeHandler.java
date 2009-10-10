@@ -1,6 +1,5 @@
 package org.objectledge.coral.datatypes;
 
-import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
@@ -18,7 +17,7 @@ import org.objectledge.database.Database;
  * @version $Id: ResourceAttributeHandler.java,v 1.6 2005-01-18 12:55:12 rafal Exp $
  */
 public class ResourceAttributeHandler
-    extends EntityAttributeHandler
+    extends EntityAttributeHandler<Resource>
 {
     /**
      * The constructor.
@@ -41,7 +40,7 @@ public class ResourceAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity instantiate(long id)
+    protected Resource instantiate(long id)
         throws EntityDoesNotExistException
     {
         return coralStore.getResource(id);
@@ -50,7 +49,7 @@ public class ResourceAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Entity[] instantiate(String name)
+    protected Resource[] instantiate(String name)
     {
         return coralStore.getResourceByPath(name);
     }
@@ -79,34 +78,23 @@ public class ResourceAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void checkDomain(String domain, Object value)
+    public void checkDomain(String domain, Resource value)
         throws ConstraintViolationException
     {
-        if(domain == null)
+        try
         {
-            if(!(value instanceof Resource))
+            ResourceClass rc = coralSchema.getResourceClass(domain);
+            if(!rc.getJavaClass().isInstance(value))
             {
                 throw new ConstraintViolationException(value.getClass().getName()+
-                                                       " is not a subclass of Resource");
+                                                       "is not a subclass of "+
+                                                       rc.getJavaClass().getName());
             }
         }
-        else
+        catch(EntityDoesNotExistException e)
         {
-            try
-            {
-                ResourceClass rc = coralSchema.getResourceClass(domain);
-                if(!rc.getJavaClass().isInstance(value))
-                {
-                    throw new ConstraintViolationException(value.getClass().getName()+
-                                                           "is not a subclass of "+
-                                                           rc.getJavaClass().getName());
-                }
-            }
-            catch(EntityDoesNotExistException e)
-            {
-                throw new  IllegalArgumentException("malformed constraint '"+domain+
-                                                    "', valid resource class name expected");    
-            }
+            throw new  IllegalArgumentException("malformed constraint '"+domain+
+                                                "', valid resource class name expected");    
         }
     }
 
@@ -123,13 +111,13 @@ public class ResourceAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Resource[] getResourceReferences(Object value)
+    public Resource[] getResourceReferences(Resource value)
     {
         Resource[] result;
         if(value != null)
         {
             result = new Resource[1];
-            result[0] = (Resource)value;
+            result[0] = value;
         }
         else
         {
@@ -141,7 +129,7 @@ public class ResourceAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public boolean clearResourceReferences(Object value)
+    public boolean clearResourceReferences(Resource value)
     {
         return true;
     }
@@ -152,9 +140,9 @@ public class ResourceAttributeHandler
      * @param value the value to convert.
      * @return a human readable string.
      */
-    public String toPrintableString(Object value)
+    public String toPrintableString(Resource value)
     {
         checkValue(value);
-        return ((Resource)value).getPath();
+        return (value).getPath();
     }    
 }

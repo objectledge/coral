@@ -79,6 +79,6 @@ public interface CoralRelationQuery
 	 * @throws MalformedRelationQueryException on query parsing errors
 	 * @throws EntityDoesNotExistException thrown by the resolver
 	 */
-	public Resource[] query(String query, ResourceIdentifierResolver resolver, Set initialIdSet)
+	public Resource[] query(String query, ResourceIdentifierResolver resolver, Set<Long> initialIdSet)
 		throws MalformedRelationQueryException, EntityDoesNotExistException;
 }

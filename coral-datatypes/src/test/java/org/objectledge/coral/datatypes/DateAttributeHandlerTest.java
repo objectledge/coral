@@ -140,15 +140,6 @@ public class DateAttributeHandlerTest extends LedgeTestCase
         
         handler.update(1, currentDate, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));
-        try
-        {
-            handler.update(1, "1000", connection);
-            fail("should throw the excpetion");
-        }
-        catch (EntityDoesNotExistException e)
-        {
-            //ok!
-        }
     }
 
     public void testRetrieveCreate() throws Exception
@@ -214,20 +205,6 @@ public class DateAttributeHandlerTest extends LedgeTestCase
         {
             //ok!
         }
-    }
-
-    public void testCheckDomainStringObject()
-    {
-        try
-        {
-            handler.checkDomain("", "");
-            fail("should throw the exception");
-        }
-        catch (IllegalArgumentException e)
-        {
-            //ok!
-        }
-
     }
 
     public void testIsComposite()

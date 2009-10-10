@@ -21,7 +21,7 @@ import org.objectledge.database.Database;
  * @version $Id: DateRangeAttributeHandler.java,v 1.9 2005-01-19 07:34:06 rafal Exp $
  */
 public class DateRangeAttributeHandler
-    extends AttributeHandlerBase
+    extends AttributeHandlerBase<DateRange>
 {
     /**
      * The constructor.
@@ -44,25 +44,25 @@ public class DateRangeAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public long create(Object value, Connection conn)
+    public long create(DateRange value, Connection conn)
         throws SQLException
     {
         long id = getNextId();
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO "+getTable()+
             "(data_key, start_date, end_date) VALUES (?, ?, ?)");
         stmt.setLong(1, id);
-        stmt.setTimestamp(2, new java.sql.Timestamp(((DateRange)value).getStart().getTime()));
-        stmt.setTimestamp(3, new java.sql.Timestamp(((DateRange)value).getEnd().getTime()));
+        stmt.setTimestamp(2, new java.sql.Timestamp((value).getStart().getTime()));
+        stmt.setTimestamp(3, new java.sql.Timestamp((value).getEnd().getTime()));
         stmt.execute();
         stmt.close();
-        ((DateRange)value).clearModified();
+        (value).clearModified();
         return id;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object retrieve(long id, Connection conn)
+    public DateRange retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
@@ -81,7 +81,7 @@ public class DateRangeAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, DateRange value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
@@ -89,20 +89,20 @@ public class DateRangeAttributeHandler
         stmt.close();
         PreparedStatement pstmt = conn.prepareStatement("UPDATE "+getTable()+
             " SET start_date = ?, end_date = ? WHERE data_key = ?");
-        pstmt.setTimestamp(1, new java.sql.Timestamp(((DateRange)value).getStart().getTime()));
-        pstmt.setTimestamp(2, new java.sql.Timestamp(((DateRange)value).getEnd().getTime()));
+        pstmt.setTimestamp(1, new java.sql.Timestamp((value).getStart().getTime()));
+        pstmt.setTimestamp(2, new java.sql.Timestamp((value).getEnd().getTime()));
         pstmt.setLong(3, id);
         pstmt.execute();
         pstmt.close();
-        ((DateRange)value).clearModified();
+        (value).clearModified();
     }
     
     /**
      * {@inheritDoc}
      */
-    public boolean isModified(Object value)
+    public boolean isModified(DateRange value)
     {
-        return ((DateRange)value).isModified();
+        return (value).isModified();
     }
     
     /**
@@ -118,7 +118,7 @@ public class DateRangeAttributeHandler
     /**
      * {@inheritDoc}
      */
-    protected Object fromString(String string)
+    protected DateRange fromString(String string)
     {
         int pos = string.indexOf("::");
         if(pos < 0)
@@ -133,11 +133,11 @@ public class DateRangeAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public String toPrintableString(Object value)
+    public String toPrintableString(DateRange value)
     {
         checkValue(value);
-        return ((DateRange)value).getStart().toString()+
+        return (value).getStart().toString()+
             " :: "+
-            ((DateRange)value).getEnd().toString();
+            (value).getEnd().toString();
     }
 }

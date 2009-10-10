@@ -26,11 +26,11 @@ import org.objectledge.database.Database;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: ResourceListAttributeHandler.java,v 1.10 2005-02-21 11:52:20 rafal Exp $
  */
-public class ResourceListAttributeHandler
-    extends AttributeHandlerBase
+public class ResourceListAttributeHandler<T extends Resource>
+    extends AttributeHandlerBase<ResourceList<T>>
 {
     /** preloading cache. */
-    protected ResourceList[] cache; 
+    protected ResourceList<T>[] cache; 
     
     /** the CoralSessionFactory. */
     protected CoralSessionFactory coralSessionFactory;
@@ -72,7 +72,7 @@ public class ResourceListAttributeHandler
         );
         if(result.next())
         {
-            ArrayList temp = new ArrayList();
+            List<Long> temp = new ArrayList<Long>();
             long lastId;
             do
             {
@@ -82,7 +82,7 @@ public class ResourceListAttributeHandler
                     temp.add(new Long(result.getLong(2)));
                 }
                 while(result.next() && result.getLong(1) == lastId);
-                ResourceList value = instantiate(temp);
+                ResourceList<T> value = instantiate(temp);
                 value.clearModified();
                 cache[(int)lastId] = value;
                 temp.clear();
@@ -94,7 +94,7 @@ public class ResourceListAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public long create(Object value, Connection conn)
+    public long create(ResourceList<T> value, Connection conn)
         throws SQLException
     {
         long id = getNextId();
@@ -146,12 +146,12 @@ public class ResourceListAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Object retrieve(long id, Connection conn)
+    public ResourceList<T> retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length)
         {
-            ResourceList value = cache[(int)id];
+            ResourceList<T> value = cache[(int)id];
             if(value != null)
             {
                 return value;
@@ -162,12 +162,12 @@ public class ResourceListAttributeHandler
             "SELECT ref FROM "+getTable()+" WHERE data_key = "+id+
             " ORDER BY pos"
         );
-        ArrayList temp = new ArrayList();
+        List<Long> temp = new ArrayList<Long>();
         while(rs.next())
         {
             temp.add(new Long(rs.getLong(1)));
         }
-        ResourceList value =  instantiate(temp);
+        ResourceList<T> value =  instantiate(temp);
         if(cache != null && id < cache.length)
         {
             cache[(int)id] = value;
@@ -179,18 +179,18 @@ public class ResourceListAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public void update(long id, Object value, Connection conn)
+    public void update(long id, ResourceList<T> value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length)
         {
             if(value instanceof ResourceList)
             {
-                cache[(int)id] = (ResourceList)value;
+                cache[(int)id] = value;
             }
             else
             {
-                cache[(int)id] = instantiate((List)value);
+                cache[(int)id] = instantiate(value);
             }
         }
         Statement stmt = conn.createStatement();
@@ -262,16 +262,9 @@ public class ResourceListAttributeHandler
     /**
      * {@inheritDoc}
      */    
-    public boolean isModified(Object value)
+    public boolean isModified(ResourceList<T> value)
     {
-        if(value instanceof ResourceList)
-        {
-            return ((ResourceList)value).isModified();
-        }
-        else
-        {
-            return false;
-        }
+        return value.isModified();
     }
 
     // integrity constraints ////////////////////////////////////////////////    
@@ -295,13 +288,13 @@ public class ResourceListAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public Resource[] getResourceReferences(Object value)
+    public Resource[] getResourceReferences(ResourceList<T> value)
     {
-        List list = (List)value;
+        List<T> list = value;
         Resource[] result = new Resource[list.size()];
         for(int i = 0; i< list.size(); i++)
         {
-            result[i] = (Resource)list.get(i);        
+            result[i] = list.get(i);        
         }
         return result;
     }
@@ -309,9 +302,9 @@ public class ResourceListAttributeHandler
     /**
      * {@inheritDoc}
      */
-    public boolean clearResourceReferences(Object value)
+    public boolean clearResourceReferences(ResourceList<T> value)
     {
-        ((ResourceList)value).removeRange(0, ((ResourceList)value).size());
+        value.removeRange(0, value.size());
         return false;
     }
 
@@ -320,7 +313,7 @@ public class ResourceListAttributeHandler
     /**
      * {@inheritDoc}
      */
-    protected Object fromString(String string)
+    protected ResourceList<T> fromString(String string)
     {
         if(string == null || string.length() == 0)
         {
@@ -330,7 +323,7 @@ public class ResourceListAttributeHandler
         {
             return instantiate(Collections.EMPTY_LIST);
         }
-        List list = new ArrayList();
+        List<Resource> list = new ArrayList<Resource>();
         StringTokenizer st = new StringTokenizer(string);
         while(st.hasMoreTokens())
         {
@@ -372,7 +365,7 @@ public class ResourceListAttributeHandler
      * @param list list items.
      * @return a ResourceList instance.
      */
-    protected ResourceList instantiate(List list)
+    protected ResourceList<T> instantiate(List list)
     {
         return new ResourceList(coralSessionFactory, list);
     }
