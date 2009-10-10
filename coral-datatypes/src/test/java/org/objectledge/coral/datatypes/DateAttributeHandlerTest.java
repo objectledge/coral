@@ -135,11 +135,9 @@ public class DateAttributeHandlerTest extends LedgeTestCase
         mockPreparedStatement.expects(once()).method("setTimestamp").with(eq(1), eq(sqlCurrentDate)).isVoid();        
         mockPreparedStatement.expects(once()).method("setLong").with(eq(2), eq(1L)).isVoid();
         mockPreparedStatement.expects(once()).method("execute").will(returnValue(true));
-        mockStatement.expects(once()).method("close").isVoid();
         mockPreparedStatement.expects(once()).method("close").isVoid();
         
         handler.update(1, currentDate, connection);
-        mockResultSet.expects(once()).method("next").will(returnValue(false));
     }
 
     public void testRetrieveCreate() throws Exception
