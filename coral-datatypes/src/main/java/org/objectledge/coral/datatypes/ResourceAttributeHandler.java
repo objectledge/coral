@@ -81,20 +81,22 @@ public class ResourceAttributeHandler
     public void checkDomain(String domain, Resource value)
         throws ConstraintViolationException
     {
-        try
+        if(domain != null)
         {
-            ResourceClass rc = coralSchema.getResourceClass(domain);
-            if(!rc.getJavaClass().isInstance(value))
+            try
             {
-                throw new ConstraintViolationException(value.getClass().getName()+
-                                                       "is not a subclass of "+
-                                                       rc.getJavaClass().getName());
+                ResourceClass rc = coralSchema.getResourceClass(domain);
+                if(!rc.getJavaClass().isInstance(value))
+                {
+                    throw new ConstraintViolationException(value.getClass().getName()
+                        + "is not a subclass of " + rc.getJavaClass().getName());
+                }
             }
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new  IllegalArgumentException("malformed constraint '"+domain+
-                                                "', valid resource class name expected");    
+            catch(EntityDoesNotExistException e)
+            {
+                throw new IllegalArgumentException("malformed constraint '" + domain
+                    + "', valid resource class name expected");
+            }
         }
     }
 
