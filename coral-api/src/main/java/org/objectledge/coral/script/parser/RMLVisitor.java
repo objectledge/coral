@@ -82,6 +82,7 @@ public interface RMLVisitor
   public Object visit(ASTselectList node, Object data);
   public Object visit(ASTcreateResourceStatement node, Object data);
   public Object visit(ASTfindResourceStatement node, Object data);
+  public Object visit(ASTcopyResourceStatement node, Object data);
   public Object visit(ASTdeleteResourceStatement node, Object data);
   public Object visit(ASTalterResourceSetNameStatement node, Object data);
   public Object visit(ASTalterResourceSetParentStatement node, Object data);

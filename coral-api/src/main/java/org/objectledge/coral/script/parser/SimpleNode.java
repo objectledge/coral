@@ -47,6 +47,7 @@ public class SimpleNode implements Node {
   boolean dir;
   ASTresource resource;
   ASTresource parentResource;
+  ASTresource targetResource;
   ASTclassAndAliasSpecifierList from;
   ASTconditionalExpression where;
   ASTselectList select;

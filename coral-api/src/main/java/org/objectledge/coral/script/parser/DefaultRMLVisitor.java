@@ -859,5 +859,10 @@ public class DefaultRMLVisitor
     {
         return visit((SimpleNode)node, data);
     }
+    
+    public Object visit(ASTcopyResourceStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
 }
 

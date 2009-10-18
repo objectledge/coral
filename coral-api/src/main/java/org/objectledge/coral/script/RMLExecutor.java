@@ -62,6 +62,7 @@ import org.objectledge.coral.script.parser.ASTattributeDefinitionList;
 import org.objectledge.coral.script.parser.ASTattributeFlag;
 import org.objectledge.coral.script.parser.ASTattributeFlagList;
 import org.objectledge.coral.script.parser.ASTattributeList;
+import org.objectledge.coral.script.parser.ASTcopyResourceStatement;
 import org.objectledge.coral.script.parser.ASTcreateAttributeClassStatement;
 import org.objectledge.coral.script.parser.ASTcreatePermissionStatement;
 import org.objectledge.coral.script.parser.ASTcreateRelationStatement;
@@ -1265,6 +1266,28 @@ public class RMLExecutor
                 String[][] result = new String[temp.size()][];
                 temp.toArray(result);
                 table(result);
+            }
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+    
+    public Object visit(ASTcopyResourceStatement node, Object data)
+    {
+        try
+        {
+            Resource resource = entities.resolve(node.getResource());
+            Resource target = entities.resolve(node.getTargetResource());
+            if(node.getRecursive())
+            {
+                coralSession.getStore().copyTree(resource, target, resource.getName());
+            }
+            else
+            {
+                coralSession.getStore().copyResource(resource, target, resource.getName());
             }
         }
         catch(Exception e)

@@ -82,6 +82,7 @@ TOKEN:
     <BY : "BY"> |
     <CLASS : "CLASS"> |
     <CLASS_UNIQUE : "CLASS_UNIQUE"> |
+    <COPY : "COPY"> |
     <CREATE : "CREATE"> |
     <DB : "DB" > |
     <DEFINED : "DEFINED" > |
@@ -523,6 +524,7 @@ void statement() #void :
     ( "CREATE" createStatement() ) |
     ( "FIND" findStatement() ) |
     ( "ALTER" alterStatement() ) |
+    ( "COPY" copyStatement() ) |      
     ( "DELETE" deleteStatement() ) |
     ( "GRANT" grantStatement() ) |
     ( "REVOKE" revokeStatement() ) |
@@ -720,6 +722,13 @@ void alterRelationStatement() #void :
         )             
     )
 }
+
+void copyStatement() #void :
+{
+}
+{
+   ( "RESOURCE" copyResourceStatement() )
+}     
 
 void deleteStatement() #void :
 {
@@ -1419,6 +1428,20 @@ ASTfindResourceStatement findResourceStatement() :
     {
         return jjtThis;
     }
+}
+
+
+void copyResourceStatement() :
+{
+}
+{
+  jjtThis.resource = resource() "TO" jjtThis.targetResource = resource()
+  [ 
+      "RECURSIVE" 
+      { 
+          jjtThis.recursive = true; 
+      } 
+   ]
 }
 
 void deleteResourceStatement() :
