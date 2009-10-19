@@ -58,15 +58,15 @@ public class RelationQueryParserTest extends TestCase
 		try
 		{
 			tree = RelationQueryParser.executeParse(query);
+
+			Visitor visitor = new Visitor();
+			Object result = tree.jjtAccept(visitor, null);
+			assertNull(result);
 		}
 		catch(Exception e)
 		{
 			fail("query is malformed");
-		}
-		
-		Visitor visitor = new Visitor();
-		Object result = tree.jjtAccept(visitor, null);
-		assertNull(result);
+		}		
     }
     
     private class Visitor implements RelationQueryParserVisitor

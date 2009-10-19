@@ -1303,6 +1303,7 @@ public class RMLExecutor
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("null")
     public Object visit(ASTdeleteResourceStatement node, Object data)
     {
         try
