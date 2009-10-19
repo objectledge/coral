@@ -137,7 +137,7 @@ public interface Resource
      * @throws UnknownAttributeException if <code>attribute</code> does not
      *         belong to the resource's class.
      */
-    public Object get(AttributeDefinition<?> attribute)
+    public <T> T get(AttributeDefinition<T> attribute)
         throws UnknownAttributeException;
     
     /**
@@ -153,7 +153,7 @@ public interface Resource
      *         <code>REQUIRED</code> and <code>value</code> is
      *         <code>null</code>.
      */
-    public void set(AttributeDefinition<?> attribute, Object value)
+    public <T> void set(AttributeDefinition<T> attribute, T value)
         throws UnknownAttributeException, ModificationNotPermitedException,
         ValueRequiredException;
 

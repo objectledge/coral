@@ -1413,12 +1413,13 @@ public class RMLExecutor
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public Object visit(ASTalterResourceSetAttributeStatement node, Object data)
     {
         try
         {
             Resource res = entities.resolve(node.getResource());
-            AttributeDefinition<?> atdef = res.getResourceClass().
+            AttributeDefinition<String> atdef = (AttributeDefinition<String>)res.getResourceClass().
                 getAttribute(node.getAttribute().getName());
             res.set(atdef, node.getAttribute().getValue());
             res.update();
