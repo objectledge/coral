@@ -107,6 +107,7 @@ public class ParserAndExecutorTest extends LedgeTestCase
         mockCoralSession.stubs().method("getQuery").will(returnValue(coralQuery));
         mockCoralSession.stubs().method("getRelationManager").will(returnValue(coralRelationManager));
         mockCoralSessionFactory = mock(CoralSessionFactory.class);
+        coralSessionFactory = (CoralSessionFactory)mockCoralSessionFactory.proxy();
         
         executor = new RMLExecutor(coralSession, new OutputStreamWriter(System.out), 
             coralSessionFactory);
