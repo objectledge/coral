@@ -6,6 +6,10 @@ package org.objectledge.coral.store;
 public class InvalidResourceNameException
     extends Exception
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private final String characters;
 
     /**

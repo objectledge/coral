@@ -12,6 +12,11 @@ public class ConstraintViolationException
     extends RuntimeException
 {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Constructs a new exception object with a specified detail message. 
      *
      * @param msg the detail message.
