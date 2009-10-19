@@ -355,14 +355,14 @@ public class SessionCoralSchema implements CoralSchema
     }
 
     @Override
-    public EntityFactory<AttributeClass> getAttributeClassFactory()
+    public EntityFactory<AttributeClass<?>> getAttributeClassFactory()
     {
         session.verify();
         return coral.getSchema().getAttributeClassFactory();
     }
 
     @Override
-    public EntityFactory<AttributeDefinition> getAttributeDefinitionFactory()
+    public EntityFactory<AttributeDefinition<?>> getAttributeDefinitionFactory()
     {
         session.verify();
         return coral.getSchema().getAttributeDefinitionFactory();

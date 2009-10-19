@@ -47,7 +47,7 @@ public class SchemaIntegrityException
      *
      * @return the offending attribute.
      */
-    public AttributeDefinition getAttribute()
+    public AttributeDefinition<?> getAttribute()
     {
         return attribute;
     }
@@ -91,7 +91,7 @@ public class SchemaIntegrityException
     private int type = UNKNOWN;
 
     /** The involved attribute. */
-    private AttributeDefinition attribute = null;
+    private AttributeDefinition<?> attribute = null;
     
     /** The involved resource class. */
     private ResourceClass resourceClass = null;
@@ -126,7 +126,7 @@ public class SchemaIntegrityException
      * @param otherClass the other involved resource class.
      */
     public SchemaIntegrityException(String msg, int type, 
-                                   AttributeDefinition attribute, 
+                                   AttributeDefinition<?> attribute, 
                                    ResourceClass resourceClass, 
                                    boolean superClass,
                                    ResourceClass otherClass)

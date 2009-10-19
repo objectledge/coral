@@ -20,5 +20,5 @@ public interface ResourceClassAttributesChangeListener
      * @param added <code>true</code> if the attribute was added,
      *        <code>false</code> if removed.
      */
-    public void attributesChanged(AttributeDefinition attribute, boolean added);
+    public void attributesChanged(AttributeDefinition<?> attribute, boolean added);
 }

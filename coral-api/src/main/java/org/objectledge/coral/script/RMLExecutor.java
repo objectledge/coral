@@ -322,14 +322,14 @@ public class RMLExecutor
             ResourceClass[] parents = entities.resolve(node.getParents());
             for(int i=0; i<parents.length; i++)
             {
-                coralSession.getSchema().addParentClass(rc, parents[i], new HashMap<AttributeDefinition, String>());
+                coralSession.getSchema().addParentClass(rc, parents[i], new HashMap<AttributeDefinition<?>, Object>());
             }
             ASTattributeDefinition[] attrs = items(node.getAttributes());
             for(int i=0; i<attrs.length; i++)
             {
                 AttributeClass<?> ac = entities.resolve(attrs[i].getAttributeClass());
                 int flags = parseFlags(attrs[i].getFlags());
-                AttributeDefinition atdef = coralSession.getSchema().
+                AttributeDefinition<?> atdef = coralSession.getSchema().
                     createAttribute(attrs[i].getName(), ac, attrs[i].getDomain(), flags);
                 coralSession.getSchema().addAttribute(rc, atdef, null);
             }
@@ -400,7 +400,7 @@ public class RMLExecutor
                         }
                         table(result);
                     }
-                    AttributeDefinition[] attrs = rc.getAllAttributes();
+                    AttributeDefinition<?>[] attrs = rc.getAllAttributes();
                     sortAttributes(attrs);
                     if(attrs != null && attrs.length != 0)
                     {
@@ -584,7 +584,7 @@ public class RMLExecutor
         try
         {
             ResourceClass rc = entities.resolve(node.getResourceClass());
-            AttributeDefinition attr = rc.getAttribute(node.getAttributeName());
+            AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().setName(attr, node.getNewName());
         }
         catch(Exception e)
@@ -602,7 +602,7 @@ public class RMLExecutor
         try
         {
             ResourceClass rc = entities.resolve(node.getResourceClass());
-            AttributeDefinition attr = rc.getAttribute(node.getAttributeName());
+            AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().setFlags(attr, parseFlags(node.getFlags()));
         }
         catch(Exception e)
@@ -620,7 +620,7 @@ public class RMLExecutor
         try
         {
             ResourceClass rc = entities.resolve(node.getResourceClass());
-            AttributeDefinition attr = rc.getAttribute(node.getAttributeName());
+            AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().setDomain(attr, node.getDomain());
         }
         catch(Exception e)
@@ -633,6 +633,7 @@ public class RMLExecutor
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public Object visit(ASTalterResourceClassAddAttributeStatement node, Object data)
     {
         try
@@ -641,9 +642,9 @@ public class RMLExecutor
             ASTattributeDefinition attr = node.getAttributeDefinition();
             AttributeClass<?> ac = entities.resolve(attr.getAttributeClass());
             int flags = parseFlags(attr.getFlags());
-            AttributeDefinition atdef = coralSession.getSchema().
+            AttributeDefinition<?> atdef = coralSession.getSchema().
                 createAttribute(attr.getName(), ac, attr.getDomain(), flags);
-            coralSession.getSchema().addAttribute(rc, atdef, node.getValue());
+            coralSession.getSchema().addAttribute(rc, ((AttributeDefinition<Object>)atdef), node.getValue());
         }
         catch(Exception e)
         {
@@ -660,7 +661,7 @@ public class RMLExecutor
         try
         {
             ResourceClass rc = entities.resolve(node.getResourceClass());
-            AttributeDefinition attr = rc.getAttribute(node.getAttributeName());
+            AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().deleteAttribute(rc, attr);
         }
         catch(Exception e)
@@ -679,13 +680,13 @@ public class RMLExecutor
         {
             ResourceClass rc = entities.resolve(node.getResourceClass());
             ResourceClass sup = entities.resolve(node.getParentClass());
-            HashMap<AttributeDefinition, String> values = new HashMap<AttributeDefinition, String>();
+            HashMap<AttributeDefinition<?>, Object> values = new HashMap<AttributeDefinition<?>, Object>();
             if(node.getValues() != null)
             {
                 ASTattribute[] attrDescs = items(node.getValues());
                 for(int i=0; i<attrDescs.length; i++)
                 {
-                    AttributeDefinition atdef = sup.getAttribute(attrDescs[i].getName());
+                    AttributeDefinition<?> atdef = sup.getAttribute(attrDescs[i].getName());
                     values.put(atdef, attrDescs[i].getValue());
                 }
             }
@@ -1165,11 +1166,11 @@ public class RMLExecutor
             ResourceClass rc = entities.resolve(node.getResourceClass());
             Resource parent = node.getParent() != null ?
                 entities.resolve(node.getParent()) : null;
-            HashMap<AttributeDefinition, String> attrs = new HashMap<AttributeDefinition, String>();
+            HashMap<AttributeDefinition<?>, Object> attrs = new HashMap<AttributeDefinition<?>, Object>();
             ASTattribute[] attrDescs = items(node.getAttributes());
             for(int i=0; i<attrDescs.length; i++)
             {
-                AttributeDefinition atdef = rc.getAttribute(attrDescs[i].getName());
+                AttributeDefinition<?> atdef = rc.getAttribute(attrDescs[i].getName());
                 attrs.put(atdef, attrDescs[i].getValue());
             }
             coralSession.getStore().createResource(name, parent, rc, attrs);
@@ -1195,7 +1196,7 @@ public class RMLExecutor
             if(node.getResource() != null)
             {
                 Resource item = entities.resolve(node.getResource());
-                AttributeDefinition[] attrs = item.getResourceClass().getAllAttributes();
+                AttributeDefinition<?>[] attrs = item.getResourceClass().getAllAttributes();
                 sortAttributes(attrs);
                 String[][] result = new String[attrs.length+1][];
                 result[0] = new String[] { "Declared by", "Name", "Class", "Domain", "Value" };
@@ -1417,7 +1418,7 @@ public class RMLExecutor
         try
         {
             Resource res = entities.resolve(node.getResource());
-            AttributeDefinition atdef = res.getResourceClass().
+            AttributeDefinition<?> atdef = res.getResourceClass().
                 getAttribute(node.getAttribute().getName());
             res.set(atdef, node.getAttribute().getValue());
             res.update();
@@ -1437,7 +1438,7 @@ public class RMLExecutor
         try
         {
             Resource res = entities.resolve(node.getResource());
-            AttributeDefinition atdef = res.getResourceClass().
+            AttributeDefinition<?> atdef = res.getResourceClass().
                 getAttribute(node.getAttributeName());
             res.unset(atdef);
             res.update();
@@ -2091,11 +2092,11 @@ public class RMLExecutor
      * Sort an array of AttributeDefinitions, first by declaring class name,
      * and then by attribute name.
      */
-    private void sortAttributes(AttributeDefinition[] attrs)
+    private void sortAttributes(AttributeDefinition<?>[] attrs)
     {
-        Comparator<AttributeDefinition> comp = new Comparator<AttributeDefinition>()
+        Comparator<AttributeDefinition<?>> comp = new Comparator<AttributeDefinition<?>>()
             {
-                public int compare(AttributeDefinition a1, AttributeDefinition a2)
+                public int compare(AttributeDefinition<?> a1, AttributeDefinition<?> a2)
                 {
                     if(a1.getDeclaringClass().equals(a2.getDeclaringClass()))
                     {

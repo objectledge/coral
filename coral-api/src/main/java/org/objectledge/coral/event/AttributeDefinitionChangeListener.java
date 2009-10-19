@@ -17,5 +17,5 @@ public interface AttributeDefinitionChangeListener
      *
      * @param attributeDefinition the attribute that changed.
      */
-    public void attributeDefinitionChanged(AttributeDefinition attributeDefinition);
+    public void attributeDefinitionChanged(AttributeDefinition<?> attributeDefinition);
 }

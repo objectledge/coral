@@ -8,7 +8,7 @@ import org.objectledge.coral.entity.Entity;
  * @version $Id: AttributeDefinition.java,v 1.1 2004-02-18 14:21:27 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
-public interface AttributeDefinition
+public interface AttributeDefinition<T>
     extends Entity
 {
     /**
@@ -16,7 +16,7 @@ public interface AttributeDefinition
      *
      * @return the class of this attribute.
      */
-    public AttributeClass<?> getAttributeClass();
+    public AttributeClass<T> getAttributeClass();
 
     /**
      * Returns the resource class this attribute belongs to.

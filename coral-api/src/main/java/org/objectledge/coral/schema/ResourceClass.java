@@ -63,7 +63,7 @@ public interface ResourceClass
      *
      * @return attributes declared by this resource class.
      */
-    public AttributeDefinition[] getDeclaredAttributes();
+    public AttributeDefinition<?>[] getDeclaredAttributes();
 
     /**
      * Returns all attributes declared by this resource class and it's parent
@@ -72,7 +72,7 @@ public interface ResourceClass
      * @return all attributes delcared by this resource class and it's parent
      * classes.  
      */
-    public AttributeDefinition[] getAllAttributes();
+    public AttributeDefinition<?>[] getAllAttributes();
 
     /**
      * Returns an attribute with a specified name.
@@ -85,7 +85,7 @@ public interface ResourceClass
      * @throws UnknownAttributeException if the resource class does not have
      *         an attribute of the specififed class.
      */
-    public AttributeDefinition getAttribute(String name)
+    public AttributeDefinition<?> getAttribute(String name)
         throws UnknownAttributeException;
 
     /**
@@ -118,7 +118,7 @@ public interface ResourceClass
      * @throws UnknownAttributeException if the attribute was not declared by the class or one of
      *         it's parent classes.
      */
-    public int getAttributeIndex(AttributeDefinition attr)
+    public int getAttributeIndex(AttributeDefinition<?> attr)
         throws UnknownAttributeException;
 
     /**

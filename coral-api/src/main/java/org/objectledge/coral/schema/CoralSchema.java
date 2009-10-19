@@ -137,7 +137,7 @@ public interface CoralSchema
      * @param flags the flags of the new Attribute.
      * @return a newly created attribute instance.
      */
-    public <T> AttributeDefinition createAttribute(String name, AttributeClass<T> attributeClass,
+    public <T> AttributeDefinition<T> createAttribute(String name, AttributeClass<T> attributeClass,
                                                String domain, int flags);
 
     /**
@@ -145,7 +145,7 @@ public interface CoralSchema
      * 
      * @return all attributes defined by classes in the system.
      */
-    public AttributeDefinition[] getAttribute();
+    public AttributeDefinition<?>[] getAttribute();
 
     /**
      * Returns an attribute definition with the specified id.
@@ -154,7 +154,7 @@ public interface CoralSchema
      * @return the attribute definition.
      * @throws EntityDoesNotExistException if no attribute with given id exists.
      */
-    public AttributeDefinition getAttribute(long id)
+    public AttributeDefinition<?> getAttribute(long id)
         throws EntityDoesNotExistException;
 
     /**
@@ -168,7 +168,7 @@ public interface CoralSchema
      * @throws IllegalArgumentException if the attribute is not declared
      *        by the resourceClass.
      */
-    public void deleteAttribute(ResourceClass resourceClass, AttributeDefinition attribute)
+    public void deleteAttribute(ResourceClass resourceClass, AttributeDefinition<?> attribute)
         throws IllegalArgumentException;
 
     /**
@@ -179,7 +179,7 @@ public interface CoralSchema
      * @throws SchemaIntegrityException if the <code>ResourceClass</code> already
      *         has an attribute with the specified name.
      */
-    public void setName(AttributeDefinition attribute, String name)
+    public void setName(AttributeDefinition<?> attribute, String name)
         throws SchemaIntegrityException;
 
     /**
@@ -188,7 +188,7 @@ public interface CoralSchema
      * @param attribute the attribute to modify.
      * @param domain the new domain of the attirbute.
      */
-    public void setDomain(AttributeDefinition attribute, String domain);
+    public void setDomain(AttributeDefinition<?> attribute, String domain);
 
     /**
      * Changes the flags of the attribute.
@@ -196,7 +196,7 @@ public interface CoralSchema
      * @param attribute the attribute to modify.
      * @param flags the new value of flags.
      */
-    public void setFlags(AttributeDefinition attribute, int flags);
+    public void setFlags(AttributeDefinition<?> attribute, int flags);
                         
     // Resource classes //////////////////////////////////////////////////////
 
@@ -330,8 +330,8 @@ public interface CoralSchema
      * @throws ValueRequiredException if <code>null</code> value was provided
      *         for a REQUIRED attribute.
      */
-    public void addAttribute(ResourceClass resourceClass, 
-                             AttributeDefinition attribute, Object value)
+    public <T> void addAttribute(ResourceClass resourceClass, AttributeDefinition<T> attribute,
+        T value)
         throws SchemaIntegrityException, ValueRequiredException;
     
     /**
@@ -354,7 +354,7 @@ public interface CoralSchema
      *         map. 
      */
     public void addParentClass(ResourceClass child, ResourceClass parent, 
-                               Map<AttributeDefinition, String> attributes)
+                               Map<AttributeDefinition<?>, Object> attributes)
         throws CircularDependencyException, SchemaIntegrityException, 
                ValueRequiredException;
 
@@ -382,7 +382,7 @@ public interface CoralSchema
      * 
      * @return  an EntityFactory for AttributeDefinitions.
      */
-    public EntityFactory<AttributeDefinition> getAttributeDefinitionFactory();
+    public EntityFactory<AttributeDefinition<?>> getAttributeDefinitionFactory();
     
 
     /**

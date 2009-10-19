@@ -444,7 +444,7 @@ public interface CoralEventWhiteboard
      * <code>false</code> if removed.
      */
     public void fireResourceClassAttributesChangeEvent(
-        AttributeDefinition attribute, boolean added);
+        AttributeDefinition<?> attribute, boolean added);
 
     /**
      * Fires a resource tree change event.
@@ -535,5 +535,5 @@ public interface CoralEventWhiteboard
      *
      * @param attributeDefinition the attribute definition.
      */
-    public void fireAttributeDefinitionChangeEvent(AttributeDefinition attributeDefinition);
+    public void fireAttributeDefinitionChangeEvent(AttributeDefinition<?> attributeDefinition);
 }

@@ -177,7 +177,7 @@ public interface CoralStore
      *         present in <code>attributes</code>.
      */
     public Resource createResource(String name, Resource parent, ResourceClass resourceClass, 
-                                   Map<AttributeDefinition, String> attributes)
+                                   Map<AttributeDefinition<?>, Object> attributes)
         throws InvalidResourceNameException, UnknownAttributeException, ValueRequiredException;
 
     /**

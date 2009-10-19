@@ -259,7 +259,7 @@ public abstract class CoralEventListener
      * @param added <code>true</code> if the attribute was added,
      *        <code>false</code> if removed.
      */
-    public void attributesChanged(AttributeDefinition attribute, boolean added)
+    public void attributesChanged(AttributeDefinition<?> attribute, boolean added)
     {
         event("ResourceClassAttributesChange",
               attribute.getId(),
@@ -434,7 +434,7 @@ public abstract class CoralEventListener
      *
      * @param item the AttributeDefinition that changed.
      */
-    public void attributeDefinitionChanged(AttributeDefinition item)
+    public void attributeDefinitionChanged(AttributeDefinition<?> item)
     {
         event("AttributeDefinitionChange",
               item.getId(),

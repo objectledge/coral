@@ -126,7 +126,7 @@ public interface Resource
      * @throws UnknownAttributeException if <code>attribute</code> does not
      *         belong to the resource's class.
      */
-    public boolean isDefined(AttributeDefinition attribute)
+    public boolean isDefined(AttributeDefinition<?> attribute)
         throws UnknownAttributeException;
     
     /**
@@ -137,7 +137,7 @@ public interface Resource
      * @throws UnknownAttributeException if <code>attribute</code> does not
      *         belong to the resource's class.
      */
-    public Object get(AttributeDefinition attribute)
+    public Object get(AttributeDefinition<?> attribute)
         throws UnknownAttributeException;
     
     /**
@@ -153,7 +153,7 @@ public interface Resource
      *         <code>REQUIRED</code> and <code>value</code> is
      *         <code>null</code>.
      */
-    public void set(AttributeDefinition attribute, Object value)
+    public void set(AttributeDefinition<?> attribute, Object value)
         throws UnknownAttributeException, ModificationNotPermitedException,
         ValueRequiredException;
 
@@ -166,7 +166,7 @@ public interface Resource
      * @throws UnknownAttributeException if <code>attribute</code> does not
      *         belong to the resource's class.
      */
-    public void unset(AttributeDefinition attribute)
+    public void unset(AttributeDefinition<?> attribute)
         throws ValueRequiredException, UnknownAttributeException;
     
     /**
@@ -176,7 +176,7 @@ public interface Resource
      * @throws UnknownAttributeException if <code>attribute</code> does not
      *         belong to the resource's class.
      */
-    public void setModified(AttributeDefinition attribute)
+    public void setModified(AttributeDefinition<?> attribute)
         throws UnknownAttributeException;
     
     /**
@@ -187,7 +187,7 @@ public interface Resource
      * @throws UnknownAttributeException if <code>attribute</code> does not
      *         belong to the resource's class.
      */
-    public boolean isModified(AttributeDefinition attribute)
+    public boolean isModified(AttributeDefinition<?> attribute)
         throws UnknownAttributeException;
 
     /**

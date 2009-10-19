@@ -919,11 +919,11 @@ public class CoralSchemaImpl
     }
 
     @Override
-    public EntityFactory<AttributeClass> getAttributeClassFactory()
+    public EntityFactory<AttributeClass<?>> getAttributeClassFactory()
     {
-        return new EntityFactory<AttributeClass>() {
+        return new EntityFactory<AttributeClass<?>>() {
             @Override
-            public AttributeClass getEntity(long id)
+            public AttributeClass<?> getEntity(long id)
                 throws EntityDoesNotExistException
             {
                 return getAttributeClass(id);
@@ -932,11 +932,11 @@ public class CoralSchemaImpl
     }
 
     @Override
-    public EntityFactory<AttributeDefinition> getAttributeDefinitionFactory()
+    public EntityFactory<AttributeDefinition<?>> getAttributeDefinitionFactory()
     {
-        return new EntityFactory<AttributeDefinition>() {
+        return new EntityFactory<AttributeDefinition<?>>() {
             @Override
-            public AttributeDefinition getEntity(long id)
+            public AttributeDefinition<?> getEntity(long id)
                 throws EntityDoesNotExistException
             {
                 return getAttribute(id);

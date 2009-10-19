@@ -383,7 +383,7 @@ public class ResourceClassImpl
     {
         buildAttributeMap();
         Map<String, AttributeDefinition> snapshot = attributeMap;
-        AttributeDefinition attr = (AttributeDefinition)snapshot.get(name);
+        AttributeDefinition attr = snapshot.get(name);
         if(attr == null)
         {
             throw new UnknownAttributeException("resource class "+getName()+
@@ -873,7 +873,7 @@ public class ResourceClassImpl
             
             while(stack.size() > 0)
             {
-                ResourceClass rc = (ResourceClass)stack.remove(stack.size()-1);
+                ResourceClass rc = stack.remove(stack.size()-1);
                 Set rcis;
                 if(rc.equals(this))
                 {
@@ -936,7 +936,7 @@ public class ResourceClassImpl
             
             while(stack.size() > 0)
             {
-                ResourceClass rc = (ResourceClass)stack.remove(stack.size()-1);
+                ResourceClass rc = stack.remove(stack.size()-1);
                 Set rcis;
                 if(rc.equals(this))
                 {
@@ -1097,7 +1097,7 @@ public class ResourceClassImpl
         }
     }
     
-    private synchronized void expandAttributeIndexTable(AttributeDefinition attr)
+    private synchronized void expandAttributeIndexTable(AttributeDefinition<?> attr)
     {
         if(attributeIndexTable != null)
         {            
@@ -1114,7 +1114,7 @@ public class ResourceClassImpl
         }
     }
     
-    private synchronized void expandAttributeIndexTable(List<AttributeDefinition> origAttrs) 
+    private synchronized void expandAttributeIndexTable(List<AttributeDefinition<?>> origAttrs) 
     {
         if(attributeIndexTable != null)
         {            
