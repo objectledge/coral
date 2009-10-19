@@ -12,6 +12,7 @@ import org.objectledge.coral.schema.AttributeClass;
  * @version $Id: FilteredQueryResults.java,v 1.4 2006-04-26 11:10:07 rafal Exp $
  */
 public interface FilteredQueryResults
+    extends Iterable<FilteredQueryResults.Row>
 {
     // iteration over results ////////////////////////////////////////////////
 
@@ -76,7 +77,7 @@ public interface FilteredQueryResults
      * @throws IndexOutOfBoundsException if the index if the index is out of
      *         1..columnCount range.
      */
-    public AttributeClass getColumnType(int index)
+    public AttributeClass<?> getColumnType(int index)
         throws IndexOutOfBoundsException;    
 
     // nested inteface ///////////////////////////////////////////////////////

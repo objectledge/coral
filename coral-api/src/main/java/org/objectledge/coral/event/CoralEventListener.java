@@ -420,7 +420,7 @@ public abstract class CoralEventListener
      *
      * @param item the AttributeClass that changed.
      */
-    public void attributeClassChanged(AttributeClass item)
+    public void attributeClassChanged(AttributeClass<?> item)
     {
         event("AttributeClassChange",
               item.getId(),

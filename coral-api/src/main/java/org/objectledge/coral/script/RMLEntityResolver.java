@@ -279,7 +279,7 @@ public class RMLEntityResolver
      * @throws EntityDoesNotExistException if the node does not describe an existing AttributeClass.
      * @throws AmbigousEntityNameException if multiple AttributeClasss match node's description.
      */
-    public AttributeClass resolve(ASTattributeClass node)
+    public AttributeClass<?> resolve(ASTattributeClass node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
         if(node.getId() != -1)

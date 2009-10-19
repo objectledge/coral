@@ -74,7 +74,7 @@ public class ParserAndExecutorTest extends LedgeTestCase
     private RMLExecutor executor;
     
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+    private AttributeClass<?> attributeClass;
     private Mock mockResourceClass;
     private ResourceClass resourceClass;
     private Mock mockParentResourceClass;
@@ -112,7 +112,7 @@ public class ParserAndExecutorTest extends LedgeTestCase
             coralSessionFactory);
             
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<?>)mockAttributeClass.proxy();
         mockResourceClass = mock(ResourceClass.class);
         resourceClass = (ResourceClass)mockResourceClass.proxy();
         mockParentResourceClass = mock(ResourceClass.class, "mockParentResourceClass");

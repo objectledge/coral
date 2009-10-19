@@ -16,7 +16,7 @@ public interface AttributeDefinition
      *
      * @return the class of this attribute.
      */
-    public AttributeClass getAttributeClass();
+    public AttributeClass<?> getAttributeClass();
 
     /**
      * Returns the resource class this attribute belongs to.

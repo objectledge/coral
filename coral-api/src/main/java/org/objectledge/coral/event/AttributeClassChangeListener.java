@@ -17,5 +17,5 @@ public interface AttributeClassChangeListener
      *
      * @param attributeClass the attributeClass that changed.
      */
-    public void attributeClassChanged(AttributeClass attributeClass);
+    public void attributeClassChanged(AttributeClass<?> attributeClass);
 }

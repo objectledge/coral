@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.objectledge.coral.entity.AmbigousEntityNameException;
@@ -19,6 +18,7 @@ import org.objectledge.coral.relation.RelationModification;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
+import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.ResourceClassFlags;
 import org.objectledge.coral.script.parser.ASTalterAttributeClassSetDbTableStatement;
@@ -187,7 +187,7 @@ public class RMLExecutor
     {
         try
         {
-            AttributeClass[] items;
+            AttributeClass<?>[] items;
             if(node.getId() != -1)
             {
                 items = new AttributeClass[1];
@@ -229,7 +229,7 @@ public class RMLExecutor
     {
         try
         {
-            AttributeClass ac = entities.resolve(node.getAttributeClass());
+            AttributeClass<?> ac = entities.resolve(node.getAttributeClass());
             coralSession.getSchema().deleteAttributeClass(ac);
         }
         catch(Exception e)
@@ -246,7 +246,7 @@ public class RMLExecutor
     {
         try
         {
-            AttributeClass ac = entities.resolve(node.getAttributeClass());
+            AttributeClass<?> ac = entities.resolve(node.getAttributeClass());
             coralSession.getSchema().setName(ac, node.getNewName());
         }
         catch(Exception e)
@@ -263,7 +263,7 @@ public class RMLExecutor
     {
         try
         {
-            AttributeClass ac = entities.resolve(node.getAttributeClass());
+            AttributeClass<?> ac = entities.resolve(node.getAttributeClass());
             coralSession.getSchema().setJavaClass(ac, node.getJavaClass());
         }
         catch(Exception e)
@@ -280,7 +280,7 @@ public class RMLExecutor
     {
         try
         {
-            AttributeClass ac = entities.resolve(node.getAttributeClass());
+            AttributeClass<?> ac = entities.resolve(node.getAttributeClass());
             coralSession.getSchema().setHandlerClass(ac, node.getHandlerClass());
         }
         catch(Exception e)
@@ -297,7 +297,7 @@ public class RMLExecutor
     {
         try
         {
-            AttributeClass ac = entities.resolve(node.getAttributeClass());
+            AttributeClass<?> ac = entities.resolve(node.getAttributeClass());
             coralSession.getSchema().setDbTable(ac, node.getDbTable());
         }
         catch(Exception e)
@@ -327,7 +327,7 @@ public class RMLExecutor
             ASTattributeDefinition[] attrs = items(node.getAttributes());
             for(int i=0; i<attrs.length; i++)
             {
-                AttributeClass ac = entities.resolve(attrs[i].getAttributeClass());
+                AttributeClass<?> ac = entities.resolve(attrs[i].getAttributeClass());
                 int flags = parseFlags(attrs[i].getFlags());
                 AttributeDefinition atdef = coralSession.getSchema().
                     createAttribute(attrs[i].getName(), ac, attrs[i].getDomain(), flags);
@@ -639,7 +639,7 @@ public class RMLExecutor
         {
             ResourceClass rc = entities.resolve(node.getResourceClass());
             ASTattributeDefinition attr = node.getAttributeDefinition();
-            AttributeClass ac = entities.resolve(attr.getAttributeClass());
+            AttributeClass<?> ac = entities.resolve(attr.getAttributeClass());
             int flags = parseFlags(attr.getFlags());
             AttributeDefinition atdef = coralSession.getSchema().
                 createAttribute(attr.getName(), ac, attr.getDomain(), flags);
@@ -1209,8 +1209,8 @@ public class RMLExecutor
                         attrs[i].getDomain() : "";
                     if(item.isDefined(attrs[i]) && item.get(attrs[i]) != null)
                     {
-                        result[i+1][4] = attrs[i].getAttributeClass().
-                            getHandler().toPrintableString(item.get(attrs[i]));
+                        result[i + 1][4] = toPrintableString(attrs[i].getAttributeClass()
+                            .getHandler(), item.get(attrs[i]));
                     }
                     else
                     {
@@ -1249,17 +1249,14 @@ public class RMLExecutor
                     heading[i-1] = results.getColumnName(i);
                 }
                 temp.add(heading);
-                Iterator rows = results.iterator();
-                while(rows.hasNext())
+                for(FilteredQueryResults.Row row : results)
                 {
-                    FilteredQueryResults.Row row = (FilteredQueryResults.Row)rows.next();
                     String[] s = new String[cols];
                     for(i=1; i<=cols; i++)
                     {
                         Object value = row.get(i);
-                        s[i-1] = value != null ?
-                            results.getColumnType(i).getHandler().toPrintableString(value) :
-                            "undefined";
+                        s[i - 1] = value != null ? toPrintableString(results.getColumnType(i)
+                            .getHandler(), value) : "undefined";
                     }
                     temp.add(s);
                 }
@@ -1273,6 +1270,12 @@ public class RMLExecutor
             wrap(e);
         }
         return data;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private String toPrintableString(AttributeHandler<?> handler, Object value)
+    {
+        return ((AttributeHandler<Object>)handler).toPrintableString(value);
     }
     
     public Object visit(ASTcopyResourceStatement node, Object data)
@@ -2089,12 +2092,10 @@ public class RMLExecutor
      */
     private void sortAttributes(AttributeDefinition[] attrs)
     {
-        Comparator<Entity> comp = new Comparator()
+        Comparator<AttributeDefinition> comp = new Comparator<AttributeDefinition>()
             {
-                public int compare(Object o1, Object o2)
+                public int compare(AttributeDefinition a1, AttributeDefinition a2)
                 {
-                    AttributeDefinition a1 = (AttributeDefinition)o1;
-                    AttributeDefinition a2 = (AttributeDefinition)o2;
                     if(a1.getDeclaringClass().equals(a2.getDeclaringClass()))
                     {
                         return a1.getName().compareTo(a2.getName());
@@ -2114,12 +2115,10 @@ public class RMLExecutor
      */
     private void sortResources(Resource[] data)
     {
-        Comparator<Entity> comp = new Comparator()
+        Comparator<Resource> comp = new Comparator<Resource>()
             {
-                public int compare(Object o1, Object o2)
+                public int compare(Resource r1, Resource r2)
                 {
-                    Resource r1 = (Resource)o1;
-                    Resource r2 = (Resource)o2;
                     return r1.getPath().compareTo(r2.getPath());
                 }
             };
@@ -2131,13 +2130,11 @@ public class RMLExecutor
      */
     private void sortEntities(Entity[] data)
     {
-        Comparator<Entity> comp = new Comparator()
+        Comparator<Entity> comp = new Comparator<Entity>()
             {
-                public int compare(Object o1, Object o2)
+                public int compare(Entity e1, Entity e2)
                 {
-                    Entity r1 = (Entity)o1;
-                    Entity r2 = (Entity)o2;
-                    return r1.getName().compareTo(r2.getName());
+                    return e1.getName().compareTo(e2.getName());
                 }
             };
         Arrays.sort(data, comp);

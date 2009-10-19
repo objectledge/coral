@@ -528,7 +528,7 @@ public interface CoralEventWhiteboard
      *
      * @param attributeClass the attribute class.
      */
-    public void fireAttributeClassChangeEvent(AttributeClass attributeClass);
+    public void fireAttributeClassChangeEvent(AttributeClass<?> attributeClass);
 
     /**
      * Fires a attribute definition change event.

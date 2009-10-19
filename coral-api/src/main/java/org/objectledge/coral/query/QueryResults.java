@@ -23,6 +23,7 @@ import org.objectledge.coral.store.Resource;
  * @version $Id: QueryResults.java,v 1.4 2006-04-26 11:10:07 rafal Exp $
  */
 public interface QueryResults
+    extends Iterable<QueryResults.Row>
 {
     // result filtering //////////////////////////////////////////////////////
 

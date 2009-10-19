@@ -23,7 +23,7 @@ public interface CoralSchema
      *
      * @return all {@link AttributeClass}es defined in the system.
      */
-    public AttributeClass[] getAttributeClass();
+    public AttributeClass<?>[] getAttributeClass();
 
     /**
      * Returns the {@link AttributeClass} with a specific identifier.
@@ -33,7 +33,7 @@ public interface CoralSchema
      * @throws EntityDoesNotExistException if the <code>AttributeClass</code>
      *         with the specified identifier does not exist.
      */
-    public AttributeClass getAttributeClass(long id)
+    public AttributeClass<?> getAttributeClass(long id)
         throws EntityDoesNotExistException;
     
     /**
@@ -44,7 +44,7 @@ public interface CoralSchema
      * @throws EntityDoesNotExistException if the <code>AttributeClass</code>
      *         with the specified name does not exist.
      */
-    public AttributeClass getAttributeClass(String name)
+    public AttributeClass<?> getAttributeClass(String name)
         throws EntityDoesNotExistException;
 
     /**
@@ -64,7 +64,7 @@ public interface CoralSchema
      *         <code>handlerClass</code> attributes don't specify valid Java
      *         classes.
      */
-    public AttributeClass createAttributeClass(String name, String javaClass, 
+    public AttributeClass<?> createAttributeClass(String name, String javaClass, 
                                                String handlerClass, String dbTable)
         throws EntityExistsException, JavaClassException;
 
@@ -75,7 +75,7 @@ public interface CoralSchema
      * @throws EntityInUseException if there is a {@link ResourceClass} that
      *         uses the specified <code>AttributeClass</code>.
      */
-    public void deleteAttributeClass(AttributeClass attributeClass)
+    public void deleteAttributeClass(AttributeClass<?> attributeClass)
         throws EntityInUseException;
 
     /**
@@ -86,7 +86,7 @@ public interface CoralSchema
      * @throws EntityExistsException if an attribute class with that name already
      *         exists in the system.
      */
-    public void setName(AttributeClass attributeClass, String name)
+    public void setName(AttributeClass<?> attributeClass, String name)
         throws EntityExistsException;
 
     /**
@@ -98,7 +98,7 @@ public interface CoralSchema
      * @throws JavaClassException if the <code>javaClass</code> does not specify
      *         a valid JavaClass.
      */
-    public void setJavaClass(AttributeClass attributeClass, String javaClass)
+    public void setJavaClass(AttributeClass<?> attributeClass, String javaClass)
         throws JavaClassException;
 
     /**
@@ -111,7 +111,7 @@ public interface CoralSchema
      * @throws JavaClassException if the <code>handlerClass</code> does not
      *         specify a valid JavaClass.
      */
-    public void setHandlerClass(AttributeClass attributeClass, 
+    public void setHandlerClass(AttributeClass<?> attributeClass, 
                                 String handlerClass)
         throws JavaClassException;
     
@@ -124,7 +124,7 @@ public interface CoralSchema
      *        attributes of that class (allows sharing handler classes betweeen
      *        attribute types).
      */
-    public void setDbTable(AttributeClass attributeClass, String dbTable);
+    public void setDbTable(AttributeClass<?> attributeClass, String dbTable);
 
     // Attribute instances ///////////////////////////////////////////////////
 
@@ -137,7 +137,7 @@ public interface CoralSchema
      * @param flags the flags of the new Attribute.
      * @return a newly created attribute instance.
      */
-    public AttributeDefinition createAttribute(String name, AttributeClass attributeClass,
+    public <T> AttributeDefinition createAttribute(String name, AttributeClass<T> attributeClass,
                                                String domain, int flags);
 
     /**
@@ -375,7 +375,7 @@ public interface CoralSchema
      * 
      * @return  an EntityFactory for AttributeClasses.
      */
-    public EntityFactory<AttributeClass> getAttributeClassFactory();
+    public EntityFactory<AttributeClass<?>> getAttributeClassFactory();
 
     /**
      * Provides an EntityFactory for AttributeDefinitions.

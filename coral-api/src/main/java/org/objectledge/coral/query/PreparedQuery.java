@@ -64,7 +64,7 @@ public interface PreparedQuery
      *         specified indedx in the query
      * @throws IllegalArgumentException if a <code>null</code> value is used.
      */
-    public void setParameter(int index, AttributeClass type, Object value)
+    public <T> void setParameter(int index, AttributeClass<T> type, T value)
         throws IndexOutOfBoundsException, IllegalArgumentException;
 
     // convenience methods for the well known attribute types ////////////////
