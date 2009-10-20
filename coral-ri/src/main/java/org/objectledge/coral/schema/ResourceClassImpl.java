@@ -1,7 +1,6 @@
 package org.objectledge.coral.schema;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -645,7 +644,13 @@ public class ResourceClassImpl
         }
         if(item.getChild().equals(this) || item.getChild().isParent(this) && added)
         {
-            expandAttributeIndexTable(Arrays.asList(item.getParent().getAllAttributes()));
+            List<AttributeDefinition<?>> l = new ArrayList<AttributeDefinition<?>>();
+            // arrays and generics don't mix :/
+            for(AttributeDefinition<?> ad : item.getParent().getAllAttributes())
+            {
+                l.add(ad);
+            }
+            expandAttributeIndexTable(l);
         }
         // flush cached information
         childClasses = null;

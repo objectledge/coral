@@ -174,22 +174,22 @@ public abstract class AbstractResource implements Resource
         initDefinitions(delegate.getResourceClass());
     }
     
-    synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, 
+    synchronized void retrieve(Resource delegate, ResourceClass<?> rClass, Connection conn, 
         Object data)
     	throws SQLException
     {
         setDelegate(delegate);
-        for(ResourceClass parent : rClass.getDirectParentClasses())
+        for(ResourceClass<?> parent : rClass.getDirectParentClasses())
         {
             retrieve(delegate, parent, conn, data);
         }
     }
 
-    synchronized void create(Resource delegate, ResourceClass rClass, Map attributes,
+    synchronized void create(Resource delegate, ResourceClass<?> rClass, Map attributes,
         Connection conn) throws SQLException, ValueRequiredException, ConstraintViolationException
     {
         setDelegate(delegate);
-        for (ResourceClass parent : rClass.getDirectParentClasses())
+        for (ResourceClass<?> parent : rClass.getDirectParentClasses())
         {
             create(delegate, parent, attributes, conn);
         }
@@ -211,7 +211,7 @@ public abstract class AbstractResource implements Resource
         }
     }
     
-    synchronized void revert(ResourceClass rClass, Connection conn, Object data)
+    synchronized void revert(ResourceClass<?> rClass, Connection conn, Object data)
 	    throws SQLException
 	{
         // recreate arrays - size might have changed

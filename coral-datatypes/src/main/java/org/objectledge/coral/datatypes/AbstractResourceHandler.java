@@ -31,11 +31,11 @@ import org.objectledge.database.Database;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: AbstractResourceHandler.java,v 1.14 2008-01-01 22:36:16 rafal Exp $
  */
-public abstract class AbstractResourceHandler
-    implements ResourceHandler
+public abstract class AbstractResourceHandler<T extends Resource>
+    implements ResourceHandler<T>
 {
     /** The resource class this handler is responsible for. */
-    protected ResourceClass resourceClass;
+    protected ResourceClass<T> resourceClass;
 
     /** The schema. */
     protected CoralSchema coralSchema;
@@ -65,7 +65,7 @@ public abstract class AbstractResourceHandler
      * @param logger the logger.
      */
     public AbstractResourceHandler(CoralSchema coralSchema, Instantiator instantiator,
-        ResourceClass resourceClass, Database database, CacheFactory cacheFactory, Logger logger)
+        ResourceClass<T> resourceClass, Database database, CacheFactory cacheFactory, Logger logger)
     {
         this.coralSchema = coralSchema;
         this.instantiator = instantiator;
@@ -101,7 +101,7 @@ public abstract class AbstractResourceHandler
     /**
      * {@inheritDoc}
      */
-    public Resource retrieve(Resource delegate, Connection conn, Object data)
+    public T retrieve(Resource delegate, Connection conn, Object data)
         throws SQLException
     {
         checkDelegate(delegate);
@@ -110,9 +110,9 @@ public abstract class AbstractResourceHandler
         {
             data = getData(delegate, conn);
         }
-        ((AbstractResource)res).retrieve(delegate, resourceClass, conn, data);
+        (res).retrieve(delegate, resourceClass, conn, data);
         addToCache(res);
-        return res;
+        return (T)res;
     }
 
     /**
@@ -306,7 +306,7 @@ public abstract class AbstractResourceHandler
      * @param conn the JDBC connection to use.
      * @throws SQLException if the database operation fails.
      */
-    public synchronized void revert(ResourceClass rc, Connection conn)
+    public synchronized void revert(ResourceClass<?> rc, Connection conn)
         throws SQLException
     {
         revert0(rc, conn);

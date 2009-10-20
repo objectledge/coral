@@ -17,5 +17,5 @@ public interface ResourceClassChangeListener
      *
      * @param resourceClass the resourceClass that changed.
      */
-    public void resourceClassChanged(ResourceClass resourceClass);
+    public void resourceClassChanged(ResourceClass<?> resourceClass);
 }

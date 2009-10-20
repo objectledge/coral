@@ -521,7 +521,7 @@ public interface CoralEventWhiteboard
      *
      * @param resourceClass the resource class.
      */
-    public void fireResourceClassChangeEvent(ResourceClass resourceClass);
+    public void fireResourceClassChangeEvent(ResourceClass<?> resourceClass);
 
     /**
      * Fires a attribute class change event.

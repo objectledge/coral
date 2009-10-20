@@ -406,7 +406,7 @@ public abstract class CoralEventListener
      *
      * @param item the ResourceClass that changed.
      */
-    public void resourceClassChanged(ResourceClass item)
+    public void resourceClassChanged(ResourceClass<?> item)
     {
         event("ResourceClassChange",
               item.getId(),

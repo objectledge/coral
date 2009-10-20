@@ -149,7 +149,7 @@ public interface QueryResults
      * @throws IndexOutOfBoundsException if the index if the index is out of
      *         1..columnCount range.
      */
-    public ResourceClass getColumnType(int index)
+    public ResourceClass<?> getColumnType(int index)
         throws IndexOutOfBoundsException;
     
     /**
@@ -160,7 +160,7 @@ public interface QueryResults
      * @throws IllegalArgumentException if no column by the specified name is
      *         present in the results.
      */
-    public ResourceClass getColumnType(String name)
+    public ResourceClass<?> getColumnType(String name)
         throws IllegalArgumentException;
 
     // nested inteface ///////////////////////////////////////////////////////

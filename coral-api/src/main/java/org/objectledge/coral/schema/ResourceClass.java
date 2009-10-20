@@ -5,6 +5,7 @@ import java.util.Set;
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.PermissionAssociation;
+import org.objectledge.coral.store.Resource;
 
 /**
  * Represents a resource class.
@@ -12,7 +13,7 @@ import org.objectledge.coral.security.PermissionAssociation;
  * @version $Id: ResourceClass.java,v 1.6 2007-05-31 20:24:58 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
-public interface ResourceClass
+public interface ResourceClass<T extends Resource>
     extends Entity
 {
     /**
@@ -39,7 +40,7 @@ public interface ResourceClass
      * @return the Java class that is associated with this resource class.
      * type.
      */
-    public Class<?> getJavaClass();
+    public Class<T> getJavaClass();
 
     /**
      * Returns the ResourceHandler implementaion that will manage the
@@ -47,7 +48,7 @@ public interface ResourceClass
      *
      * @return an <code>ResourceHandler</code> implementation.
      */
-    public ResourceHandler getHandler();
+    public ResourceHandler<T> getHandler();
 
     /**
      * Return the name of a database table that holds the data of the
@@ -148,14 +149,14 @@ public interface ResourceClass
      * 
      * @return the parent classes of this resource class.
      */
-    public ResourceClass[] getParentClasses();
+    public ResourceClass<?>[] getParentClasses();
     
     /**
      * Returns the direct parent classes of this resource class.
      *
      * @return the direct parent classes of this resource class.
      */
-    public Set<ResourceClass> getDirectParentClasses();
+    public Set<ResourceClass<?>> getDirectParentClasses();
 
     /**
      * Returns the child classes of this resource class.
@@ -164,14 +165,14 @@ public interface ResourceClass
      *
      * @return the child classes of this resource class.
      */
-    public ResourceClass[] getChildClasses();
+    public ResourceClass<?>[] getChildClasses();
 
     /**
      * Returns the direct child classes of this resource class.
      *
      * @return the direct child classes of this resource class.
      */
-    public Set<ResourceClass> getDirectChildClasses();    
+    public Set<ResourceClass<?>> getDirectChildClasses();    
     
     /**
      * Checks if the specifid class is a child class of this class.
@@ -180,7 +181,7 @@ public interface ResourceClass
      * @return <code>true</code> if the specifid class is a child class of
      * this class. 
      */
-    public boolean isParent(ResourceClass resourceClass);
+    public boolean isParent(ResourceClass<?> resourceClass);
 
     /**
      * Returns the permission associations made for this class.

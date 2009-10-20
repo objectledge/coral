@@ -28,8 +28,8 @@ import org.objectledge.database.DatabaseUtils;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: GenericResourceHandler.java,v 1.23 2008-01-01 22:36:16 rafal Exp $
  */
-public class GenericResourceHandler
-    extends AbstractResourceHandler
+public class GenericResourceHandler<T extends Resource>
+    extends AbstractResourceHandler<T>
 {
     // Member objects ////////////////////////////////////////////////////////
 
@@ -54,8 +54,8 @@ public class GenericResourceHandler
     /**
      * {@inheritDoc}
      */
-    public void addAttribute(AttributeDefinition attribute, 
-                             Object value, Connection conn)
+    public <A> void addAttribute(AttributeDefinition<A> attribute, 
+                             A value, Connection conn)
         throws ValueRequiredException, SQLException
     {
         addAttribute0(resourceClass, attribute, value, conn);
