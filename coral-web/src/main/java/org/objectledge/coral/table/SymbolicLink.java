@@ -42,7 +42,7 @@ public interface SymbolicLink
 {
     // constants /////////////////////////////////////////////////////////////
 
-    /** The name of the Coral resource class. */    
+    /** The name of the ARL resource class. */    
     public static final String CLASS_NAME = "coral.table.SymbolicLink";
 
     // public interface //////////////////////////////////////////////////////
