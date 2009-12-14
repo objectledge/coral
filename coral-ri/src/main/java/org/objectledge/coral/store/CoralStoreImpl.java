@@ -1058,13 +1058,13 @@ public class CoralStoreImpl
         throws InvalidResourceNameException
     {
         checkNameValidity(name);
-        synchronized(resourceByName)
+        String oldName = resource.getName();
+        ResourceImpl delegate = (ResourceImpl)resource.getDelegate();
+        try
         {
-            synchronized(resourceByParentAndName)
+            synchronized(resourceByName)
             {
-                String oldName = resource.getName();
-                ResourceImpl delegate = (ResourceImpl)resource.getDelegate();
-                try
+                synchronized(resourceByParentAndName)
                 {
                     ((ResourceImpl)delegate).setResourceName(name);
                     persistence.save(delegate);
@@ -1095,15 +1095,15 @@ public class CoralStoreImpl
                                 rs.add(resource);
                             }
                         }
-                    } 
-                    coralEventHub.getOutbound().fireResourceChangeEvent(resource, null);
-                }
-                catch(PersistenceException e)
-                {
-                    delegate.setResourceName(oldName);
-                    throw new BackendException("failed to update the resource object", e);
+                    }
                 }
             }
+            coralEventHub.getOutbound().fireResourceChangeEvent(resource, null);
+        }
+        catch(PersistenceException e)
+        {
+            delegate.setResourceName(oldName);
+            throw new BackendException("failed to update the resource object", e);
         }
     }
     
@@ -1132,17 +1132,17 @@ public class CoralStoreImpl
             throw new CircularDependencyException("the resource : '" + child.getPath() +
                 "' is an ancestor of the resource: '" + parent.getPath()+"'");
         }
-        synchronized(resourceById)
+        Resource oldParent = child.getParent();
+        ResourceImpl delegate = (ResourceImpl)child.getDelegate();
+        try
         {
-            synchronized(resourceByName)
+            synchronized(resourceById)
             {
-                synchronized(resourceByParent)
+                synchronized(resourceByName)
                 {
-                    synchronized(resourceByParentAndName)
+                    synchronized(resourceByParent)
                     {
-                        Resource oldParent = child.getParent();
-                        ResourceImpl delegate = (ResourceImpl)child.getDelegate();
-                        try
+                        synchronized(resourceByParentAndName)
                         {
                             delegate.setParent(parent);
                             persistence.save(delegate);
@@ -1178,22 +1178,22 @@ public class CoralStoreImpl
                                 }
                             }
 
-                            if(oldParent != null)
-                            {
-                                coralEventHub.getGlobal().fireResourceTreeChangeEvent(
-                                    new ResourceInheritanceImpl(oldParent, child), false);
-                            }
-                            coralEventHub.getGlobal().fireResourceTreeChangeEvent(
-                                new ResourceInheritanceImpl(parent, child), true);
-                        }
-                        catch(PersistenceException e)
-                        {
-                            delegate.setParent(oldParent);
-                            throw new BackendException("failed to update the resource object", e);
                         }
                     }
                 }
             }
+            if(oldParent != null)
+            {
+                coralEventHub.getGlobal().fireResourceTreeChangeEvent(
+                    new ResourceInheritanceImpl(oldParent, child), false);
+            }
+            coralEventHub.getGlobal().fireResourceTreeChangeEvent(
+                new ResourceInheritanceImpl(parent, child), true);
+        }
+        catch(PersistenceException e)
+        {
+            delegate.setParent(oldParent);
+            throw new BackendException("failed to update the resource object", e);
         }
     }
     
@@ -1204,17 +1204,17 @@ public class CoralStoreImpl
      */
     public void unsetParent(Resource child)  
     {
-        synchronized(resourceById)        
-        {            
-            synchronized(resourceByName)
+        Resource oldParent = child.getParent();
+        ResourceImpl delegate = (ResourceImpl)child.getDelegate();
+        try
+        {
+            synchronized(resourceById)
             {
-                synchronized(resourceByParent)
+                synchronized(resourceByName)
                 {
-                    synchronized(resourceByParentAndName)
+                    synchronized(resourceByParent)
                     {
-                        Resource oldParent = child.getParent();
-                        ResourceImpl delegate = (ResourceImpl)child.getDelegate();
-                        try
+                        synchronized(resourceByParentAndName)
                         {
                             delegate.setParent(null);
                             persistence.save(delegate);
@@ -1236,17 +1236,17 @@ public class CoralStoreImpl
                                 }
                             }
 
-                            coralEventHub.getGlobal().fireResourceTreeChangeEvent(
-                                new ResourceInheritanceImpl(oldParent, child), false);
-                        }
-                        catch(PersistenceException e)
-                        {
-                            delegate.setParent(oldParent);
-                            throw new BackendException("failed to update the resource object", e);
                         }
                     }
                 }
             }
+            coralEventHub.getGlobal().fireResourceTreeChangeEvent(
+                new ResourceInheritanceImpl(oldParent, child), false);
+        }
+        catch(PersistenceException e)
+        {
+            delegate.setParent(oldParent);
+            throw new BackendException("failed to update the resource object", e);
         }
     }
 
