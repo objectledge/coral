@@ -1,0 +1,16 @@
+CREATE RESOURCE CLASS coral.test.Node
+	JAVA CLASS org.objectledge.coral.test.NodeImpl
+	HANDLER CLASS org.objectledge.coral.datatypes.GenericResourceHandler
+	ATTRIBUTES 	(
+		REQUIRED BUILTIN long id,
+		REQUIRED BUILTIN string name,
+		REQUIRED BUILTIN SYNTHETIC string path,
+		BUILTIN resource parent,
+		REQUIRED BUILTIN resource_class resource_class,
+		REQUIRED BUILTIN subject owner,
+		REQUIRED BUILTIN subject created_by,
+		BUILTIN subject modified_by,
+		REQUIRED BUILTIN date creation_time,
+		BUILTIN date modification_time
+	);
+	
