@@ -1,0 +1,12 @@
+<script type="text/javascript">
+<!--
+function closePopup()
+{
+  #if($data.getParameters().get('reload', 'false') == 'true')
+  window.opener.location.href=window.opener.location.href;   
+  #end
+  window.close();
+}
+closePopup();
+-->
+</script>
