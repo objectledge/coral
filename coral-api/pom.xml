@@ -28,19 +28,15 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>2.5</version>
+        <version>2.6</version>
         <executions>
           <execution>
-            <id>javacc</id>
+            <id>jjtree-javacc</id>
             <goals>
               <goal>jjtree-javacc</goal>
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <sourceDirectory>src/main/java</sourceDirectory>
-          <inPlace>true</inPlace>
-        </configuration>
       </plugin>
     </plugins>
   </build>
