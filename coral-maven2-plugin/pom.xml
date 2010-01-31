@@ -20,12 +20,16 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-tools</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -50,6 +54,7 @@
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <settingsFile>src/it/settings.xml</settingsFile>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <addTestClassPath>true</addTestClassPath>
             </configuration>
           </execution>
         </executions>
