@@ -121,7 +121,7 @@ public ${class.implClassName}(#fields($superFields)#if($superFields.size() > 0 &
 $string.wrap("#ctorSignature()")
     {
 #if($superFields.size() > 0)	
-        super(#foreach($field in $superFields), ${field.name}#end);
+        super(#foreach($field in $superFields)${field.name}#if($velocityCount < $superFields.size()), #end#end);
 #end
 #foreach($field in $fields)
         this.${field.name} = ${field.name};
