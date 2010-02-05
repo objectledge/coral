@@ -335,10 +335,9 @@ public class GenericResourceHandler<T extends Resource>
         }
         for(int i=0; i<attrs.length; i++)
         {
-            stmt.execute(
-                "DELETE FROM coral_generic_resource "+
-                "WHERE attribute_definition_id = "+attrs[i].getIdString()
-            );
+            stmt.execute("DELETE FROM coral_generic_resource " + "WHERE attribute_definition_id = "
+                + attrs[i].getIdString() + " AND resource_id IN (SELECT resource_id "
+                + "FROM coral_resource WHERE resource_class_id = " + rc.getIdString() + ")");
         }
         stmt.close();
     }
