@@ -1448,7 +1448,7 @@ void deleteResourceStatement() :
 {
 }
 {
-    entitySpecifier(jjtThis)
+    jjtThis.resource = resource()
     [ 
         "RECURSIVE" 
         { 

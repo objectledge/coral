@@ -1304,39 +1304,12 @@ public class RMLExecutor
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("null")
     public Object visit(ASTdeleteResourceStatement node, Object data)
     {
         try
         {
-            Resource[] items = null;
-            if(node.getId() != -1)
-            {
-                items = new Resource[1];
-                items[0] = coralSession.getStore().getResource(node.getId());
-            }
-            else if(node.getName() != null)
-            {
-                items = coralSession.getStore().getResource(node.getName());
-            }
-            int count = 0;
-            for(int i=0; i<items.length; i++)
-            {
-                if(node.getRecursive())
-                {
-                    count += coralSession.getStore().deleteTree(items[i]);
-                }
-                else
-                {
-                    coralSession.getStore().deleteResource(items[i]);
-                    count++;
-                }
-            }
-            if(count > 1)
-            {
-                out.println("Poof! "+count+" resources deleted. "+
-                            "Hope this was what you wanted.");
-            }
+            Resource resource = entities.resolve(node.getResource());
+            coralSession.getStore().deleteResource(resource);
         }
         catch(Exception e)
         {

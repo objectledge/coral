@@ -19,14 +19,9 @@ public class ASTdeleteResourceStatement extends SimpleNode {
   
   ///////////////////////////////////////////////////////////////////////////////////////////////
   
-  public long getId()
+  public ASTresource getResource()
   {
-      return entityId;
-  }
-  
-  public String getName()
-  {
-      return entityName;
+      return resource;
   }
   
   public boolean getRecursive()
