@@ -31,4 +31,15 @@ public interface Permission
      * specified resource class.
      */
     public boolean isAssociatedWith(ResourceClass permission);
+    
+    /**
+     * Returns all <code>PermissionAssignments</code> defined for this permission on all resources.
+     * <p>
+     * Use this method to acquire information about explicit permission grants on all resources.
+     * Note that this operation involves database access on every invocation. 
+     * </p>
+     * 
+     * @return all assignments of this permission.
+     */
+    public PermissionAssignment[] getPemrissionAssignments(); 
 }

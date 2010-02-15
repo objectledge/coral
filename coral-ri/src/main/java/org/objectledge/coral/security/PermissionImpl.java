@@ -198,6 +198,21 @@ public class PermissionImpl
         return snapshot.contains(item);
     }
     
+    /**
+     * Returns all <code>PermissionAssignments</code> defined for this permission on all resources.
+     * <p>
+     * Use this method to acquire information about explicit permission grants on all resources.
+     * Note that this operation involves database access on every invocation. 
+     * </p>
+     * 
+     * @return all assignments of this permission.
+     */
+    public PermissionAssignment[] getPemrissionAssignments()
+    {
+        Set<PermissionAssignment> pa = coral.getRegistry().getPermissionAssigments(this);
+        return pa.toArray(new PermissionAssignment[pa.size()]);
+    }
+    
     // PermissionAssociationChangeListener interface ////////////////////////////////////////////
 
     /**

@@ -537,7 +537,7 @@ public interface CoralRegistry
      * Resource}.
      */
     public Set<PermissionAssignment> getPermissionAssignments(Resource resource);
- 
+    
      /**
      * Returns permission assignment information for a particular {@link
      * Role}.
@@ -548,6 +548,14 @@ public interface CoralRegistry
      */
     public Set<PermissionAssignment> getPermissionAssignments(Role role);
 
+    /**
+     * Returns permission assignment information for a particular {@link Permission}.
+     * 
+     * @param permission the {@link Permission}
+     * @return permission assignment information for a particular {@link Permission}.
+     */
+    public Set<PermissionAssignment> getPermissionAssigments(Permission permission);
+    
     /**
      * Adds an permission assignment to the persistent storage and in-memory
      * cache. 

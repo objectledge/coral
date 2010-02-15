@@ -1615,6 +1615,22 @@ public class CoralRegistryImpl
             return (Set)items.clone();
         }
     }
+    
+    public Set<PermissionAssignment> getPermissionAssigments(Permission owner)
+    {
+        // this is rarely used - no caching
+        List<PermissionAssignmentImpl> list;
+        try
+        {
+            list = persistence.load("permission_id = "+owner.getIdString(),
+                                    permissionAssignmentFactory);
+        }
+        catch(PersistenceException e)
+        {
+            throw new BackendException("Failed to load PermissionAssignments", e);
+        }
+        return new HashSet<PermissionAssignment>(list);
+    }
 
     /**
      * {@inheritDoc}
