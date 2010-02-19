@@ -381,7 +381,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("failed to query attribute class references", e);
+            throw new BackendException("Failed to query references to " + item, e);
         }
         catch(BackendException ex)
         {
@@ -405,7 +405,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("failed to delete attribute class", e);
+            throw new BackendException("Failed to delete " + item, e);
         }
     }
 
@@ -514,7 +514,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("failed to query resource class references", e);
+            throw new BackendException("Failed to query references to " + item, e);
         }
         catch(BackendException ex)
         {
@@ -538,7 +538,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("failed to delete resource class", e);
+            throw new BackendException("Failed to delete " + item, e);
         }
     }
 
@@ -573,7 +573,7 @@ public class CoralRegistryImpl
                 }
                 catch(PersistenceException e)
                 {
-                    throw new BackendException("Failed to load AttributeDefinitions", e);
+                    throw new BackendException("Failed to load AttributeDefinitions for " + owner, e);
                 }
                 attributeDefinitionRegistry.resolve(list, items);
             }
@@ -683,7 +683,7 @@ public class CoralRegistryImpl
                 }
                 catch(PersistenceException e)
                 {
-                    throw new BackendException("Failed to load ResourceClassInheritances", e);
+                    throw new BackendException("Failed to load ResourceClassInheritance for " + owner, e);
                 }
                 Iterator i = list.iterator();
                 while(i.hasNext())
@@ -709,7 +709,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to save ResourceClassInheritance", e);
+                throw new BackendException("Failed to save " + item.toString(), e);
             }
             ResourceClass parent = item.getParent();
             Set items = (Set)resourceClassInheritanceByResourceClass.get(parent);
@@ -743,7 +743,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to delete ResourceClassInheritance", e);
+                throw new BackendException("Failed to delete " + item, e);
             }
             ResourceClass parent = item.getParent();
             Set items = (Set)resourceClassInheritanceByResourceClass.get(parent);
@@ -871,7 +871,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("failed to query subject references", e);
+            throw new BackendException("Failed to query references to " + item, e);
         }
         catch(BackendException ex)
         {
@@ -895,7 +895,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("Failed to delete Subject", e);
+            throw new BackendException("Failed to delete " + item, e);
         }
     }
 
@@ -1017,7 +1017,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("failed to query role references", e);
+            throw new BackendException("Failed to query references to " + item, e);
         }
         catch(BackendException ex)
         {
@@ -1041,7 +1041,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("Failed to delete Role", e);
+            throw new BackendException("Failed to delete " + item, e);
         }
     }
 
@@ -1154,7 +1154,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("failed to query permission references", e);
+            throw new BackendException("Failed to query references to " + item, e);
         }
         catch(BackendException ex)
         {
@@ -1178,7 +1178,7 @@ public class CoralRegistryImpl
             {
                 log.error("rollback failed", ee);
             }
-            throw new BackendException("Failed to delete Permission", e);
+            throw new BackendException("Failed to delete " + item, e);
         }
     }
 
@@ -1213,7 +1213,7 @@ public class CoralRegistryImpl
                 }
                 catch(PersistenceException e)
                 {
-                    throw new BackendException("Failed to load RoleImplications", e);
+                    throw new BackendException("Failed to load RoleImplications for " + owner, e);
                 }
                 Iterator i = list.iterator();
                 while(i.hasNext())
@@ -1239,7 +1239,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to save RoleImplication", e);
+                throw new BackendException("Failed to save " + item.toString(), e);
             }
             Role superRole = item.getSuperRole();
             Set items = (Set)roleImplicationByRole.get(superRole);
@@ -1274,7 +1274,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to delete RoleImplication", e);
+                throw new BackendException("Failed to delete " + item, e);
             }
             Role superRole = item.getSuperRole();
             Set items = (Set)roleImplicationByRole.get(superRole);
@@ -1314,7 +1314,7 @@ public class CoralRegistryImpl
                 }
                 catch(PersistenceException e)
                 {
-                    throw new BackendException("Failed to load RoleAssignments", e);
+                    throw new BackendException("Failed to load RoleAssignments for " + owner, e);
                 }
                 Iterator i = list.iterator();
                 while(i.hasNext())
@@ -1347,7 +1347,7 @@ public class CoralRegistryImpl
                 }
                 catch(PersistenceException e)
                 {
-                    throw new BackendException("Failed to load RoleAssignments", e);
+                    throw new BackendException("Failed to load RoleAssignments for " + owner, e);
                 }
                 Iterator i = list.iterator();
                 while(i.hasNext())
@@ -1373,7 +1373,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to save RoleAssignment", e);
+                throw new BackendException("Failed to save " + item.toString(), e);
             }
             Set itemsBySubject = (Set)roleAssignmentBySubject.get(item.getSubject());
             if(itemsBySubject != null)
@@ -1402,7 +1402,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to delete RoleAssignment", e);
+                throw new BackendException("Failed to delete " + item, e);
             }
             Set itemsBySubject = (Set)roleAssignmentBySubject.get(item.getSubject());
             if(itemsBySubject != null)
@@ -1440,7 +1440,7 @@ public class CoralRegistryImpl
                 }
                 catch(PersistenceException e)
                 {
-                    throw new BackendException("Failed to load PermissionAssociations", e);
+                    throw new BackendException("Failed to load PermissionAssociations for " + owner, e);
                 }
                 Iterator i = list.iterator();
                 while(i.hasNext())
@@ -1473,7 +1473,7 @@ public class CoralRegistryImpl
                 }
                 catch(PersistenceException e)
                 {
-                    throw new BackendException("Failed to load PermissionAssociations", e);
+                    throw new BackendException("Failed to load PermissionAssociations for " + owner, e);
                 }
                 Iterator i = list.iterator();
                 while(i.hasNext())
@@ -1499,7 +1499,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to save PermissionAssociation", e);
+                throw new BackendException("Failed to save " + item.toString(), e);
             }
             Set itemsByResourceClass = (Set)permissionAssociationByResourceClass.
                 get(item.getResourceClass());
@@ -1530,7 +1530,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to delete PermissionAssociation", e);
+                throw new BackendException("Failed to delete " + item, e);
             }
             Set itemsByResourceClass = (Set)permissionAssociationByResourceClass.
                 get(item.getResourceClass());
@@ -1570,7 +1570,7 @@ public class CoralRegistryImpl
                 }
                 catch(PersistenceException e)
                 {
-                    throw new BackendException("Failed to load PermissionAssignments", e);
+                    throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
                 }
                 Iterator i = list.iterator();
                 while(i.hasNext())
@@ -1603,7 +1603,7 @@ public class CoralRegistryImpl
                 }
                 catch(PersistenceException e)
                 {
-                    throw new BackendException("Failed to load PermissionAssignments", e);
+                    throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
                 }
                 Iterator i = list.iterator();
                 while(i.hasNext())
@@ -1627,7 +1627,7 @@ public class CoralRegistryImpl
         }
         catch(PersistenceException e)
         {
-            throw new BackendException("Failed to load PermissionAssignments", e);
+            throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
         }
         return new HashSet<PermissionAssignment>(list);
     }
@@ -1645,7 +1645,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to save PermissionAssignment", e);
+                throw new BackendException("Failed to save " + item.toString(), e);
             }
             Resource owner = item.getResource();
             Set items = (Set)permissionAssignmentByResource.get(owner);
@@ -1676,7 +1676,7 @@ public class CoralRegistryImpl
             }
             catch(PersistenceException e)
             {
-                throw new BackendException("Failed to delete PermissionAssignment", e);
+                throw new BackendException("Failed to delete " + item, e);
             }
             Resource owner = item.getResource();
             Set items = (Set)permissionAssignmentByResource.get(owner);
@@ -1946,7 +1946,7 @@ public class CoralRegistryImpl
         }
         catch(PersistenceException e)
         {
-            throw new BackendException("failed to load role assignments", e);
+            throw new BackendException("Failed to load RoleAssignments for " + subject, e);
         }
     }
 
@@ -1965,7 +1965,7 @@ public class CoralRegistryImpl
         }
         catch(PersistenceException e)
         {
-            throw new BackendException("failed to load permission assignments", e);
+            throw new BackendException("Failed to load PermissionAssignments for " + subject, e);
         }
     }
 
@@ -1987,7 +1987,7 @@ public class CoralRegistryImpl
         }
         catch(PersistenceException e)
         {
-            throw new BackendException("failed to load role assignments", e);
+            throw new BackendException("Failed to load RoleAssignments for " + subject, e);
         }
         catch(EntityDoesNotExistException e)
         {
@@ -2026,7 +2026,7 @@ public class CoralRegistryImpl
         }
         catch(PersistenceException e)
         {
-            throw new BackendException("failed to load role assignments", e);
+            throw new BackendException("Failed to load RoleAssignments " + subject, e);
         }
         catch(EntityDoesNotExistException e)
         {
