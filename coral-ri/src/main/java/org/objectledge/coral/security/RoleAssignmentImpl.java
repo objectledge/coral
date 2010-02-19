@@ -203,4 +203,16 @@ public class RoleAssignmentImpl
     // implementation specific ///////////////////////////////////////////////
     
     // no setters here.
+    
+    //////////////////////////////////////////////////////////////////////////
+    
+    public String toString()
+    {
+        StringBuilder buff = new StringBuilder();
+        buff.append(getClass().getName()).append(" ");
+        buff.append("Role #").append(role.getIdString()).append(" ");
+        buff.append("Subject #").append(subject.getIdString()).append(" ");
+        buff.append("@").append(Integer.toString(System.identityHashCode(this), 16));
+        return buff.toString();
+    }
 }

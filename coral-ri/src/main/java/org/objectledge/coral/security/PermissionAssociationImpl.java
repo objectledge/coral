@@ -181,4 +181,16 @@ public class PermissionAssociationImpl
     {
         return permission;
     }
+
+    //////////////////////////////////////////////////////////////////////////
+    
+    public String toString()
+    {
+        StringBuilder buff = new StringBuilder();
+        buff.append(getClass().getName()).append(" ");
+        buff.append("Permission #").append(permission.getIdString()).append(" ");
+        buff.append("ResourceClass #").append(resourceClass.getIdString()).append(" ");
+        buff.append("@").append(Integer.toString(System.identityHashCode(this), 16));
+        return buff.toString();
+    }    
 }

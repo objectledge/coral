@@ -178,4 +178,16 @@ public class RoleImplicationImpl
     {
         return subRole;
     }
+
+    //////////////////////////////////////////////////////////////////////////
+    
+    public String toString()
+    {
+        StringBuilder buff = new StringBuilder();
+        buff.append(getClass().getName()).append(" ");
+        buff.append("SuperRole #").append(superRole.getIdString()).append(" ");
+        buff.append("SubRole #").append(subRole.getId()).append(" ");
+        buff.append("@").append(Integer.toString(System.identityHashCode(this), 16));
+        return buff.toString();
+    } 
 }

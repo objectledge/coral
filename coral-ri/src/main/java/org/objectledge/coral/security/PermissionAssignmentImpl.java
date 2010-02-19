@@ -234,4 +234,17 @@ public class PermissionAssignmentImpl
     {
         return inherited;
     }
+
+    //////////////////////////////////////////////////////////////////////////
+    
+    public String toString()
+    {
+        StringBuilder buff = new StringBuilder();
+        buff.append(getClass().getName()).append(" ");
+        buff.append("Role #").append(role.getIdString()).append(" ");
+        buff.append("Resource #").append(resource.getId()).append(" ");
+        buff.append("Permission #").append(permission.getIdString()).append(" ");
+        buff.append("@").append(Integer.toString(System.identityHashCode(this), 16));
+        return buff.toString();
+    } 
 }

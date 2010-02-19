@@ -95,4 +95,16 @@ public class ResourceInheritanceImpl
     {
         return child;
     }
+
+    //////////////////////////////////////////////////////////////////////////
+    
+    public String toString()
+    {
+        StringBuilder buff = new StringBuilder();
+        buff.append(getClass().getName()).append(" ");
+        buff.append("Parent #").append(parent.getIdString()).append(" ");
+        buff.append("Child #").append(child.getId()).append(" ");
+        buff.append("@").append(Integer.toString(System.identityHashCode(this), 16));
+        return buff.toString();
+    }     
 }
