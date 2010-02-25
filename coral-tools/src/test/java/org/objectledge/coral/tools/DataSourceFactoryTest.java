@@ -36,7 +36,7 @@ public class DataSourceFactoryTest
             }
             catch(SQLException e)
             {
-                assertTrue(e.getMessage().contains("no password was provided"));
+                assertTrue(e.getMessage().contains("no password was provided") || e.getMessage().contains("authentication failed"));
             }
         }
     }
