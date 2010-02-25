@@ -1,0 +1,164 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.objectledge</groupId>
+    <artifactId>ledge-common</artifactId>
+    <relativePath>../ledge-common/pom.xml</relativePath>
+    <version>1.0.5</version>
+  </parent>
+  <groupId>org.objectledge.coral</groupId>
+  <artifactId>coral-common</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.5</version>
+  <name>ObjectLedge Coral object oriented database</name>
+  <inceptionYear>2003</inceptionYear>
+  <description>
+    Coral is as an object oriented database. It manages structured resources, that 
+    can be mapped to Java objects in a JDBC relational database. 
+    
+    Besides simple object persistency mechanism Coral provides an expressive 
+    security system, many kinds of resources relations (intrinsic tree organization 
+    or resources, reference attributes, set theory relations) and a powerful query 
+    facility that can use attribute values and resource relations to select objects 
+    from the store.   
+  </description>
+  <licenses>
+    <license>
+      <name>BSD</name>
+      <url>http://opensource.org/licenses/bsd-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <organization>
+    <name>ObjectLedge</name>
+    <url>http://objectledge.org/</url>
+  </organization>
+  <developers>
+    <developer>
+      <id>rafal</id>
+      <name>Rafal Krzewski</name>
+      <email>rafal.krzewski@caltha.pl</email>
+      <organization>Caltha</organization>
+      <organizationUrl>http://caltha.pl</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>project leader</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>pablo</id>
+      <name>Paweł Potempski</name>
+      <email>pawel.potempski@caltha.pl</email>
+      <organization>Caltha</organization>
+      <organizationUrl>http://caltha.pl</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>zwierzem</id>
+      <name>Damian Gajda</name>
+      <email>damian.gajda@gmail.com</email>
+      <organization>Google</organization>
+      <timezone>+1</timezone>
+      <roles>
+        <role>retired developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:svn:http://objectledge.org/svn/coral</connection>
+    <developerConnection>scm:svn:http://objectledge.org/svn/coral</developerConnection>
+    <url>http://objectledge.org/fisheye/browse/coral</url>
+  </scm>
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://objectledge.org/jira/browse/CORAL</url>
+  </issueManagement>
+  <ciManagement>
+    <system>Hudson</system>
+    <url>http://objectledge.org/hudson/view/coral</url>
+  </ciManagement>
+  <modules>
+    <module>../coral-api</module>
+    <module>../coral-ri</module>
+    <module>../coral-datatypes</module>
+    <module>../coral-tools</module>
+    <module>../coral-maven2-plugin</module>
+    <module>../coral-web</module>
+    <module>../coral-browser</module>
+    <module>../coral-touchstone</module>
+  </modules>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.objectledge.coral</groupId>
+        <artifactId>coral-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge.coral</groupId>
+        <artifactId>coral-ri</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge.coral</groupId>
+        <artifactId>coral-datatypes</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge.coral</groupId>
+        <artifactId>coral-web</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge.coral</groupId>
+        <artifactId>coral-tools</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge.coral</groupId>
+        <artifactId>coral-maven2-plugin</artifactId>
+        <version>${project.version}</version>
+        <type>maven-plugin</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>jmock</groupId>
+      <artifactId>jmock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jmock</groupId>
+      <artifactId>jmock-cglib</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-full</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <distributionManagement>
+    <repository>
+      <id>nexus.objectledge.org</id>
+      <name>ObjectLedge releases Nexus repository</name>
+      <url>http://nexus.objectledge.org/nexus/content/repositories/m2releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus.objectledge.org</id>
+      <name>ObjectLedge snapshots Nexus repository</name>
+      <url>http://nexus.objectledge.org/nexus/content/repositories/m2snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>
