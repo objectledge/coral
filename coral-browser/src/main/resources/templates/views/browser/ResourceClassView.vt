@@ -71,7 +71,7 @@ function addPermission()
           <th>Flags</th>
           <th>Delete</th>
         </tr>
-      #foreach($attr in $resourceClass.allAttributes)
+      #foreach($attr in $attributeDefinitions)
         <tr>
           <td>$attr.name</td>
           <td><a href="$link.view('browser.ResourceClassView').set('res_class_id',$attr.declaringClass.id)">$attr.declaringClass.name</a></td>

@@ -56,7 +56,7 @@ function fSub(action)
           <th>Domain</th>
           <th>Value</th>
         </tr>
-      #foreach($attr in $resource.resourceClass.allAttributes)
+      #foreach($attr in $attributeDefinitions)
         <tr>
           <td>${attr.attributeClass.name}</td>
 		  <td><a href="$link.view('browser.AttributeDetails').set('res_id',$resource.id).set('attr_name',$attr.name)">$attr.name</a></td>
