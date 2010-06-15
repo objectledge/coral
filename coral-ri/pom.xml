@@ -6,7 +6,7 @@
     <groupId>org.objectledge.coral</groupId>
     <artifactId>coral-common</artifactId>
     <relativePath>../coral-common/pom.xml</relativePath>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.6</version>
   </parent>
   <artifactId>coral-ri</artifactId>
   <packaging>jar</packaging>
