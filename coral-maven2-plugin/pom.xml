@@ -56,6 +56,12 @@
               <settingsFile>src/it/settings.xml</settingsFile>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <addTestClassPath>true</addTestClassPath>
+              <!--
+                You need to set M2_HOME environment variable for the
+                build to succeed. This is needed for using embedded
+                Maven runtime in m2eclipse
+              -->
+              <mavenHome>${env.M2_HOME}</mavenHome>
             </configuration>
           </execution>
         </executions>
