@@ -35,6 +35,7 @@
       <plugin>
         <groupId>org.objectledge.coral</groupId>
         <artifactId>coral-maven2-plugin</artifactId>
+        <version>${project.version}</version>
         <configuration>
           <sourcesList>src/main/rml-sources-gen.list</sourcesList>
         </configuration>
