@@ -38,6 +38,7 @@
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-maven2-plugin</artifactId>
       <version>${project.version}</version>
+      <type>maven-plugin</type>
     </dependency>
   </dependencies>
   <build>
