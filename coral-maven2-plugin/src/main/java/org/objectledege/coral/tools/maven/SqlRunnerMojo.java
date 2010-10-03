@@ -1,16 +1,11 @@
 package org.objectledege.coral.tools.maven;
 
 import java.io.Reader;
-import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.objectledge.coral.tools.BatchLoader;
-import org.objectledge.coral.tools.DataSourceFactory;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
 
