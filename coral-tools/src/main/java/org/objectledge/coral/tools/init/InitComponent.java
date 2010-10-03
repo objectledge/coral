@@ -5,12 +5,25 @@ import javax.sql.DataSource;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
 
+/**
+ * A component that initializes a database schema for use as Coral store.
+ * 
+ * @author rafal
+ */
 public class InitComponent
 {
+    /** DataSource for accessing the database. */
     private final DataSource dataSource;
     
+    /** Ledge file system for accessing Coral sql scripts on the classpath. */
     private final FileSystem fileSystem;
     
+    /**
+     * Creates a new instance of the component.
+     * 
+     * @param dataSource DataSource for accessing the database.
+     * @param fileSystem Ledge file system for accessing Coral sql scripts on the classpath.
+     */
     public InitComponent(DataSource dataSource, FileSystem fileSystem)
     {
         this.dataSource = dataSource;
