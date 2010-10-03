@@ -21,43 +21,8 @@ import org.objectledge.filesystem.FileSystem;
  * @goal run-sql
  */
 public class SqlRunnerMojo
-    extends AbstractMojo
+    extends AbstractDbMojo
 {
-    /**
-     * Additional classpath elements to be used for loading database the driver.
-     * 
-     * @parameter
-     */
-    private String driverClasspath;
-
-    /**
-     * Class name of the database driver.
-     * 
-     * @parameter
-     */
-    private String dbDriver;
-
-    /**
-     * JDBC URL of the target database.
-     * 
-     * @parameter
-     */
-    private String dbURL;
-
-    /**
-     * User name for database connection.
-     * 
-     * @parameter
-     */
-    private String dbUser;
-
-    /**
-     * Password for database connection.
-     * 
-     * @parameter
-     */
-    private String dbPassword;
-
     /**
      * Basedir for looking up sources list and source files.
      * 
@@ -84,45 +49,26 @@ public class SqlRunnerMojo
         throws MojoExecutionException, MojoFailureException
     {
         Log log = getLog();
+        initDataSource();
         try
         {
-            ClassLoader cl = DataSourceFactory.getDriverClassLoader(driverClasspath);
-            Thread.currentThread().setContextClassLoader(cl);
+            FileSystem fileSystem = FileSystem.getStandardFileSystem(baseDir);
+            BatchLoader loader = new BatchLoader(fileSystem, new MavenDNALogger(log), fileEncoding)
+                {
+                    public void load(Reader in)
+                        throws Exception
+                    {
+                        DatabaseUtils.runScript(dataSource, in);
+                    }
+                };
+            log.info("dbURL " + dbURL);
+            log.info("dbUser " + dbUser);
+            log.info("sqlSourcesList " + sqlSourcesList);
+            loader.loadBatch(sqlSourcesList);
         }
         catch(Exception e)
         {
-            throw new MojoExecutionException("failed to initialize database driver classloader", e);
-        }
-
-        try
-        {
-            final DataSource dataSource = DataSourceFactory.newDataSource(dbDriver, dbURL, dbUser,
-                dbPassword);
-            try
-            {
-                FileSystem fileSystem = FileSystem.getStandardFileSystem(baseDir);
-                BatchLoader loader = new BatchLoader(fileSystem, new MavenDNALogger(log),
-                                fileEncoding)
-                    {
-                        public void load(Reader in)
-                            throws Exception
-                        {
-                            DatabaseUtils.runScript(dataSource, in);
-                        }
-                    };
-                log.info("dbURL " + dbURL);
-                log.info("dbUser " + dbUser);
-                log.info("sqlSourcesList " + sqlSourcesList);
-                loader.loadBatch(sqlSourcesList);
-            }
-            catch(Exception e)
-            {
-                throw new MojoExecutionException("SQL scripts execution failed", e);
-            }
-        }
-        catch(SQLException e)
-        {
-            throw new MojoExecutionException("failed to initialized datasource", e);
+            throw new MojoExecutionException("SQL scripts execution failed", e);
         }
 
     }
