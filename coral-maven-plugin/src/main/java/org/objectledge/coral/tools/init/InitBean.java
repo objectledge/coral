@@ -29,7 +29,6 @@ package org.objectledge.coral.tools.init;
 
 import javax.sql.DataSource;
 
-import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
 
 /**
@@ -41,8 +40,6 @@ import org.objectledge.filesystem.FileSystem;
 public class InitBean
 {
     private DataSource dataSource;
-    
-    private final FileSystem fs = FileSystem.getClasspathFileSystem(); 
     
     /**
      * Sets the dataSource.
@@ -62,65 +59,8 @@ public class InitBean
     public void run()
         throws Exception
     {
-        if(!hasTable("ledge_id_table"))
-        {
-            runScript("sql/database/IdGeneratorTables.sql");
-        }
-        else
-        {
-            runScript("sql/database/IdGeneratorCleanup.sql");
-        }
-        
-        if(!hasTable("ledge_parameters"))
-        {
-            runScript("sql/parameters/db/DBParametersTables.sql");
-        }
-        else
-        {
-            runScript("sql/parameters/db/DBParametersCleanup.sql");
-        }
-        
-        if(!hasTable("ledge_scheduler"))
-        {
-            runScript("sql/scheduler/db/DBSchedulerTables.sql");
-        }
-        else
-        {
-            runScript("sql/scheduler/db/DBSchedulerCleanup.sql");
-        }
-        
-        if(!hasTable("ledge_naming_attribute"))
-        {
-            runScript("sql/naming/db/DBNamingTables.sql");
-        }
-        else
-        {
-            runScript("sql/naming/db/DBNamingCleanup.sql");
-        }
-        
-        if(!hasTable("coral_resource_class"))
-        {
-            runScript("sql/coral/CoralRITables.sql");
-            runScript("sql/coral/CoralDatatypesTables.sql");
-        }
-        else
-        {
-            runScript("sql/coral/CoralDatatypesCleanup.sql");
-            runScript("sql/coral/CoralRICleanup.sql");
-        }
-        runScript("sql/coral/CoralRIInitial.sql");
-        runScript("sql/coral/CoralDatatypesInitial.sql");
-    }
-    
-    private boolean hasTable(String table)
-        throws Exception
-    {
-        return DatabaseUtils.hasTable(dataSource, table);
-    }
-    
-    private void runScript(String path)
-        throws Exception
-    {
-        DatabaseUtils.runScript(dataSource, fs.getReader(path, "UTF-8"));        
+        FileSystem fileSystem = FileSystem.getClasspathFileSystem();
+        InitComponent init = new InitComponent(dataSource, fileSystem);
+        init.run();
     }
 }
