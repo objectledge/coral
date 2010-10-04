@@ -445,9 +445,8 @@ public abstract class AbstractResource implements Resource
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.isModified(attribute);
-        }
-        int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        return modified.get(index);
+        }        
+        return isAttributeModified(attribute);
     }
     
     /**
@@ -869,8 +868,8 @@ public abstract class AbstractResource implements Resource
     protected boolean isAttributeModified(AttributeDefinition attr)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
-		return modified.get(index) || get(attr) != null
-				&& attr.getAttributeClass().getHandler().isModified(get(attr));
+		return modified.get(index) || ids[index] != -1L && attributes[index] != null
+				&& attr.getAttributeClass().getHandler().isModified(attributes[index]);
     }
     
     /**
