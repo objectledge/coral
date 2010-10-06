@@ -202,16 +202,18 @@ public class CoralRelationManagerImpl
 
                 PreparedStatement pstmt = conn.prepareStatement(
 							" DELETE FROM " + relationImpl.getDataTable()
-                            + " WHERE relation_id = " + relationImpl.getIdString()
-                            + " AND resource1 = ? AND resource2 = ?");
+                            + " WHERE relation_id = ?" 
+                            + " AND resource1 = ?"
+                            + " AND resource2 = ?");
                 long[][] data = minimalMod.getRemoved();
                 if (data.length > 0)
                 {
                     for (int i = 0; i < data.length; i++)
                     {
 						// db update
-                        pstmt.setLong(1, data[i][0]);
-                        pstmt.setLong(2, data[i][1]);
+                        pstmt.setLong(1, relationImpl.getId());
+                        pstmt.setLong(2, data[i][0]);
+                        pstmt.setLong(3, data[i][1]);
                         pstmt.addBatch();
 
 						// memory update
@@ -223,16 +225,16 @@ public class CoralRelationManagerImpl
 
                 pstmt = conn.prepareStatement(
                         "INSERT INTO " + relationImpl.getDataTable() 
-                        + "(relation_id, resource1, resource2) VALUES (" + 
-                        relationImpl.getIdString() + ", ?, ?)");
+                        + "(relation_id, resource1, resource2) VALUES (?, ?, ?)");
                 data = minimalMod.getAdded();
                 if (data.length > 0)
                 {
                     for (int i = 0; i < data.length; i++)
                     {
                         // db update
-                        pstmt.setLong(1, data[i][0]);
-                        pstmt.setLong(2, data[i][1]);
+                        pstmt.setLong(1, relationImpl.getId());
+                        pstmt.setLong(2, data[i][0]);
+                        pstmt.setLong(3, data[i][1]);
                         pstmt.addBatch();
 
                         // memory update

@@ -99,8 +99,7 @@ public class ResourceListAttributeHandler<T extends Resource>
     {
         long id = getNextId();
         PreparedStatement pstmt = conn.prepareStatement(
-            "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES ("+
-            id+", ?, ?)"
+            "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES (?, ?, ?)"
         );
         if(value instanceof ResourceList)
         {
@@ -108,8 +107,9 @@ public class ResourceListAttributeHandler<T extends Resource>
             int size = ((ResourceList)value).size();
             for(int i=0; i<size; i++)
             {
-                pstmt.setInt(1, i);
-                pstmt.setLong(2, ids[i]);
+                pstmt.setLong(1, id);
+                pstmt.setInt(2, i);
+                pstmt.setLong(3, ids[i]);
                 pstmt.addBatch();
             }
             ((ResourceList)value).clearModified();
@@ -195,8 +195,7 @@ public class ResourceListAttributeHandler<T extends Resource>
         }
         Statement stmt = conn.createStatement();
         PreparedStatement pstmt = conn.prepareStatement(
-            "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES ("+
-            id+", ?, ?)"
+            "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES (?, ?, ?)"
         );
         if(value instanceof ResourceList)
         {
@@ -204,8 +203,9 @@ public class ResourceListAttributeHandler<T extends Resource>
             int size = ((ResourceList)value).size();
             for(int i=0; i<size; i++)
             {
-                pstmt.setInt(1, i);
-                pstmt.setLong(2, ids[i]);
+                pstmt.setLong(1, id);
+                pstmt.setInt(2, i);
+                pstmt.setLong(3, ids[i]);
                 pstmt.addBatch();
             }
             ((ResourceList)value).clearModified();
