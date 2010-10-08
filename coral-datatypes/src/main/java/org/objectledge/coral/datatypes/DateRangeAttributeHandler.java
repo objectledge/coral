@@ -13,6 +13,7 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * Handles persistency of {@link DateRange} objects.
@@ -66,16 +67,25 @@ public class DateRangeAttributeHandler
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT start_date, end_date FROM "+getTable()+" WHERE data_key = "+id
-        );
-        if(!rs.next())
+        ResultSet rs = null;
+        try
         {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "
-                                                   +getTable());
+            rs = stmt.executeQuery(
+                "SELECT start_date, end_date FROM "+getTable()+" WHERE data_key = "+id
+            );
+            if(!rs.next())
+            {
+                throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "
+                                                       +getTable());
+            }
+            return new DateRange(new Date(rs.getTimestamp(1).getTime()), 
+                new Date(rs.getTimestamp(2).getTime()));
         }
-        return new DateRange(new Date(rs.getTimestamp(1).getTime()), 
-            new Date(rs.getTimestamp(2).getTime()));
+        finally
+        {
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**
@@ -85,17 +95,24 @@ public class DateRangeAttributeHandler
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
-        checkExists(id, stmt);
-        stmt.close();
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE "+getTable()+
-            " SET start_date = ?, end_date = ? WHERE data_key = ?");
-        pstmt.setTimestamp(1, new java.sql.Timestamp((value).getStart().getTime()));
-        pstmt.setTimestamp(2, new java.sql.Timestamp((value).getEnd().getTime()));
-        pstmt.setLong(3, id);
-        pstmt.execute();
-        pstmt.close();
-        (value).clearModified();
-    }
+        try
+        {
+            checkExists(id, stmt);
+            stmt.close();
+            PreparedStatement pstmt = conn.prepareStatement("UPDATE "+getTable()+
+                " SET start_date = ?, end_date = ? WHERE data_key = ?");
+            pstmt.setTimestamp(1, new java.sql.Timestamp((value).getStart().getTime()));
+            pstmt.setTimestamp(2, new java.sql.Timestamp((value).getEnd().getTime()));
+            pstmt.setLong(3, id);
+            pstmt.execute();
+            pstmt.close();
+            (value).clearModified();
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
+    }        
     
     /**
      * {@inheritDoc}

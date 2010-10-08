@@ -133,38 +133,49 @@ public class GenericResourceHandler<T extends Resource>
             return;
         }
         Statement stmt1 = conn.createStatement();
-        ResultSet rs = stmt1.executeQuery(
-            "SELECT resource_id FROM coral_resource WHERE resource_class_id = "+
-            rc.getIdString());
-        
-        // if there are resources to modify, and the attribute is REQUIRED
-        // make sure that a value is present.
-        if(rs.isBeforeFirst())
-        {   
-            if(value == null)
-            {
-                if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
+        Statement stmt2 = conn.createStatement();
+        ResultSet rs = null;
+        try
+        {
+            
+            rs = stmt1.executeQuery(
+                "SELECT resource_id FROM coral_resource WHERE resource_class_id = "+
+                rc.getIdString());
+            
+            // if there are resources to modify, and the attribute is REQUIRED
+            // make sure that a value is present.
+            if(rs.isBeforeFirst())
+            {   
+                if(value == null)
                 {
-                    throw new ValueRequiredException("value for a REQUIRED attribute "+
-                                                     attr.getName()+" is missing");
+                    if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
+                    {
+                        throw new ValueRequiredException("value for a REQUIRED attribute "+
+                            attr.getName()+" is missing");
+                    }
+                }
+                else
+                {
+                    value = attr.getAttributeClass().getHandler().toAttributeValue(value);
+                    attr.getAttributeClass().getHandler().checkDomain(attr.getDomain(), value);
+                    while(rs.next())
+                    {
+                        long resId = rs.getLong(1);
+                        long atId = attr.getAttributeClass().getHandler().create(value, conn);
+                        stmt2.execute(
+                            "INSERT INTO coral_generic_resource "+
+                            "(resource_id, attribute_definition_id, data_key) "+
+                            "VALUES ("+resId+", "+attr.getIdString()+", "+atId+")"
+                        );
+                    }
                 }
             }
-            else
-            {
-                Statement stmt2 = conn.createStatement();
-                value = attr.getAttributeClass().getHandler().toAttributeValue(value);
-                attr.getAttributeClass().getHandler().checkDomain(attr.getDomain(), value);
-                while(rs.next())
-                {
-                    long resId = rs.getLong(1);
-                    long atId = attr.getAttributeClass().getHandler().create(value, conn);
-                    stmt2.execute(
-                        "INSERT INTO coral_generic_resource "+
-                        "(resource_id, attribute_definition_id, data_key) "+
-                        "VALUES ("+resId+", "+attr.getIdString()+", "+atId+")"
-                    );
-                }
-            }
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt2);
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt1);
         }
     }
 
@@ -183,55 +194,65 @@ public class GenericResourceHandler<T extends Resource>
     {
         Statement stmt1 = conn.createStatement();
         Statement stmt2 = conn.createStatement();
-        ResultSet rs = stmt1.executeQuery(
-            "SELECT resource_id FROM coral_resource WHERE resource_class_id = "+
-            rc.getIdString());
-
-        // if there are resources to modify, check if values for all REQUIRED
-        // attributes are present 
-        if(rs.isBeforeFirst())
+        ResultSet rs = null;
+        try
         {
-            for(AttributeDefinition attr: attrs)
+            rs = stmt1.executeQuery(
+                "SELECT resource_id FROM coral_resource WHERE resource_class_id = "+
+                rc.getIdString());
+
+            // if there are resources to modify, check if values for all REQUIRED
+            // attributes are present 
+            if(rs.isBeforeFirst())
             {
-                if((attr.getFlags() & AttributeFlags.BUILTIN) != 0)
+                for(AttributeDefinition attr: attrs)
                 {
-                    continue;
-                }
-                Object value = values.get(attr);
-                if(value == null)
-                {
-                    if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
+                    if((attr.getFlags() & AttributeFlags.BUILTIN) != 0)
                     {
-                        throw new ValueRequiredException("value for a REQUIRED attribute "+
-                                                         attr.getName()+" is missing");
+                        continue;
+                    }
+                    Object value = values.get(attr);
+                    if(value == null)
+                    {
+                        if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
+                        {
+                            throw new ValueRequiredException("value for a REQUIRED attribute "+
+                                                             attr.getName()+" is missing");
+                        }
+                    }
+                    else
+                    {
+                        value = attr.getAttributeClass().getHandler().toAttributeValue(value);
+                        attr.getAttributeClass().getHandler().
+                            checkDomain(attr.getDomain(), value);
+                        values.put(attr, value);
                     }
                 }
-                else
+            }
+            
+            while(rs.next())
+            {
+                long resId = rs.getLong(1);
+                for(AttributeDefinition attr : attrs)
                 {
-                    value = attr.getAttributeClass().getHandler().toAttributeValue(value);
-                    attr.getAttributeClass().getHandler().
-                        checkDomain(attr.getDomain(), value);
-                    values.put(attr, value);
+                    Object value = values.get(attr);
+                    if(value != null)
+                    {
+                        long atId = attr.getAttributeClass().getHandler().create(value, conn);
+                        stmt2.execute(
+                            "INSERT INTO coral_generic_resource "+
+                            "(resource_id, attribute_definition_id, data_key) "+
+                            "VALUES ("+resId+", "+attr.getIdString()+", "+atId+")"
+                        );
+                    }
                 }
             }
         }
-        
-        while(rs.next())
+        finally
         {
-            long resId = rs.getLong(1);
-            for(AttributeDefinition attr : attrs)
-            {
-                Object value = values.get(attr);
-                if(value != null)
-                {
-                    long atId = attr.getAttributeClass().getHandler().create(value, conn);
-                    stmt2.execute(
-                        "INSERT INTO coral_generic_resource "+
-                        "(resource_id, attribute_definition_id, data_key) "+
-                        "VALUES ("+resId+", "+attr.getIdString()+", "+atId+")"
-                    );
-                }
-            }
+            DatabaseUtils.close(stmt2);
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt1);
         }
     }
 
@@ -265,28 +286,19 @@ public class GenericResourceHandler<T extends Resource>
             {
                 long resId = rs.getLong(1);
                 long dataId = rs.getLong(2);
-                try
-                {
-                    System.out.print(".");
-                    cnt++;
-                    if(cnt % 100 == 0)
-                    {
-                        System.out.println(" "+cnt+" ");
-                    }
-                    attr.getAttributeClass().getHandler().delete(dataId, conn);
-                }
-                catch(EntityDoesNotExistException e)
-                {
-                    throw new BackendException("internal error", e);
-                }
+                attr.getAttributeClass().getHandler().delete(dataId, conn);
             }
             stmt.execute("DELETE FROM coral_generic_resource "
                 + "WHERE attribute_definition_id = " + attr.getIdString());
-            System.out.println();
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new BackendException("internal error", e);
         }
         finally
         {
-            DatabaseUtils.close(null, stmt, rs);
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
     }    
 
@@ -307,39 +319,46 @@ public class GenericResourceHandler<T extends Resource>
             atMap.put(attr.getIdObject(), attr);
         }
         Statement stmt = conn.createStatement();
-        ResultSet rs;
-        rs = stmt.executeQuery(
-            "SELECT coral_resource.resource_id, attribute_definition_id, data_key FROM "+
-            "coral_resource, coral_generic_resource "+
-            "WHERE resource_class_id = "+rc.getIdString()+
-            " AND coral_resource.resource_id = coral_generic_resource.resource_id"
-        );
-        int cnt = 0;
-        while(rs.next())
+        ResultSet rs = null;
+        try
         {
-            long resId = rs.getLong(1);
-            long atId = rs.getLong(2);
-            long dataId = rs.getLong(3);
-            AttributeDefinition attr = (AttributeDefinition)atMap.get(new Long(atId));
-            if(attr != null)
+            rs = stmt.executeQuery(
+                "SELECT coral_resource.resource_id, attribute_definition_id, data_key FROM "+
+                "coral_resource, coral_generic_resource "+
+                "WHERE resource_class_id = "+rc.getIdString()+
+                " AND coral_resource.resource_id = coral_generic_resource.resource_id"
+            );
+            int cnt = 0;
+            while(rs.next())
             {
-                try
+                long resId = rs.getLong(1);
+                long atId = rs.getLong(2);
+                long dataId = rs.getLong(3);
+                AttributeDefinition attr = (AttributeDefinition)atMap.get(new Long(atId));
+                if(attr != null)
                 {
-                    attr.getAttributeClass().getHandler().delete(dataId, conn);
-                }
-                catch(EntityDoesNotExistException e)
-                {
-                    throw new BackendException("internal error", e);
+                    try
+                    {
+                        attr.getAttributeClass().getHandler().delete(dataId, conn);
+                    }
+                    catch(EntityDoesNotExistException e)
+                    {
+                        throw new BackendException("internal error", e);
+                    }
                 }
             }
+            for(int i=0; i<attrs.length; i++)
+            {
+                stmt.execute("DELETE FROM coral_generic_resource " + "WHERE attribute_definition_id = "
+                    + attrs[i].getIdString() + " AND resource_id IN (SELECT resource_id "
+                    + "FROM coral_resource WHERE resource_class_id = " + rc.getIdString() + ")");
+            }
         }
-        for(int i=0; i<attrs.length; i++)
+        finally
         {
-            stmt.execute("DELETE FROM coral_generic_resource " + "WHERE attribute_definition_id = "
-                + attrs[i].getIdString() + " AND resource_id IN (SELECT resource_id "
-                + "FROM coral_resource WHERE resource_class_id = " + rc.getIdString() + ")");
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
-        stmt.close();
     }
 
     /**
@@ -358,17 +377,20 @@ public class GenericResourceHandler<T extends Resource>
         Map<AttributeDefinition,Long> dataKeys = new HashMap<AttributeDefinition,Long>();
         keyMap.put(delegate.getIdObject(), dataKeys);
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE "+
-            "resource_id = "+delegate.getIdString()
-        );
+        ResultSet rs = null;
         try
         {
+            rs = stmt.executeQuery(
+                "SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE "+
+                "resource_id = "+delegate.getIdString()
+            );
+
             while(rs.next())
             {
                 dataKeys.put(coralSchema.getAttribute(rs.getLong(1)), 
                     new Long(rs.getLong(2)));
             }
+            return keyMap;
         }
         catch(EntityDoesNotExistException e)
         {
@@ -376,10 +398,9 @@ public class GenericResourceHandler<T extends Resource>
         }
         finally
         {
-            rs.close();
-            stmt.close();
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
-        return keyMap;
     }
 
     /**
@@ -391,16 +412,17 @@ public class GenericResourceHandler<T extends Resource>
         Map<Long,Map<AttributeDefinition,Long>> keyMap = 
             new HashMap<Long,Map<AttributeDefinition,Long>>();
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
-            "NATURAL JOIN coral_resource "+
-            "WHERE resource_class_id = " + rc.getIdString() + " " +
-            "ORDER BY resource_id"
-        );
-        Map dataKeys = null;
-        Long resId = null;
+        ResultSet rs = null;
         try
         {
+            rs = stmt.executeQuery(
+                "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
+                "NATURAL JOIN coral_resource "+
+                "WHERE resource_class_id = " + rc.getIdString() + " " +
+                "ORDER BY resource_id"
+            );
+            Map dataKeys = null;
+            Long resId = null;
             while(rs.next())
             {
                 if(resId == null || resId.longValue() != rs.getLong(1))
@@ -412,6 +434,7 @@ public class GenericResourceHandler<T extends Resource>
                 dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
                     new Long(rs.getLong(3)));
             }
+            return keyMap;        
         }
         catch(EntityDoesNotExistException e)
         {
@@ -419,10 +442,9 @@ public class GenericResourceHandler<T extends Resource>
         }
         finally
         {
-            rs.close();
-            stmt.close();
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
-        return keyMap;        
     }
 
     /**
@@ -433,36 +455,40 @@ public class GenericResourceHandler<T extends Resource>
     {
         Map<Long,Map<AttributeDefinition,Long>> keyMap = 
             new HashMap<Long,Map<AttributeDefinition,Long>>();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
-            "ORDER BY resource_id"
-        );
         Map<AttributeDefinition,Long> dataKeys = null;
         Long resId = null;
+        Statement stmt = conn.createStatement();
+        ResultSet rs = null;
         try
         {
-            while(rs.next())
+            rs = stmt.executeQuery(
+                "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
+                "ORDER BY resource_id"
+            );
+            try
             {
-                if(resId == null || resId.longValue() != rs.getLong(1))
+                while(rs.next())
                 {
-                    resId = new Long(rs.getLong(1));
-                    dataKeys = new HashMap<AttributeDefinition,Long>();
-                    keyMap.put(resId, dataKeys);
+                    if(resId == null || resId.longValue() != rs.getLong(1))
+                    {
+                        resId = new Long(rs.getLong(1));
+                        dataKeys = new HashMap<AttributeDefinition,Long>();
+                        keyMap.put(resId, dataKeys);
+                    }
+                    dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
+                        new Long(rs.getLong(3)));
                 }
-                dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
-                    new Long(rs.getLong(3)));
+                return keyMap;        
             }
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new BackendException("corrupted data", e);
+            catch(EntityDoesNotExistException e)
+            {
+                throw new BackendException("corrupted data", e);
+            }
         }
         finally
         {
-            rs.close();
-            stmt.close();
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
-        return keyMap;        
     }
 }

@@ -181,6 +181,8 @@ public class CoralRelationManagerImpl
 
             boolean shouldCommit = false;
 			Connection conn = null;
+			Statement stmt = null;
+			PreparedStatement pstmt = null;
             try
             {
                 shouldCommit = persistence.getDatabase().beginTransaction();
@@ -192,7 +194,7 @@ public class CoralRelationManagerImpl
                 if (minimalMod.getClear())
                 {
                     // db update
-                    Statement stmt = conn.createStatement();
+                    stmt = conn.createStatement();
                     stmt.execute(" DELETE FROM " + relationImpl.getDataTable()
                             + " WHERE relation_id = " + relationImpl.getIdString());
 
@@ -200,7 +202,7 @@ public class CoralRelationManagerImpl
                     relationImpl.clear();
                 }
 
-                PreparedStatement pstmt = conn.prepareStatement(
+                pstmt = conn.prepareStatement(
 							" DELETE FROM " + relationImpl.getDataTable()
                             + " WHERE relation_id = ?" 
                             + " AND resource1 = ?"
@@ -222,6 +224,7 @@ public class CoralRelationManagerImpl
 					// db update
                     pstmt.executeBatch();
                 }
+                pstmt.close();
 
                 pstmt = conn.prepareStatement(
                         "INSERT INTO " + relationImpl.getDataTable() 
@@ -272,6 +275,8 @@ public class CoralRelationManagerImpl
             }
             finally
             {
+                DatabaseUtils.close(stmt);
+                DatabaseUtils.close(pstmt);
             	DatabaseUtils.close(conn);
             }
         }
@@ -298,10 +303,17 @@ public class CoralRelationManagerImpl
 
             // delete relation contents
 			Statement stmt = conn.createStatement();
-			stmt.execute(
-				"DELETE FROM "+relationImpl.getDataTable()
-				+" WHERE relation_id = "+relationImpl.getIdString()
-			);
+			try
+			{
+    			stmt.execute(
+    				"DELETE FROM "+relationImpl.getDataTable()
+    				+" WHERE relation_id = "+relationImpl.getIdString()
+    			);
+			}
+			finally
+			{
+			    DatabaseUtils.close(stmt);
+			}
 
             relationRegistry.delete((RelationImpl)relation);
 
@@ -345,11 +357,13 @@ public class CoralRelationManagerImpl
         throws SQLException
     {
         Connection conn = null;
+        Statement stmt = null;
+        ResultSet result = null;
         try 
         {
             conn = persistence.getDatabase().getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet result = stmt.executeQuery(
+            stmt = conn.createStatement();
+            result = stmt.executeQuery(
                 "SELECT relation_id, resource1, resource2 FROM coral_relation_data " +
                 "ORDER BY relation_id"
             );
@@ -380,6 +394,8 @@ public class CoralRelationManagerImpl
         }
         finally
         {
+            DatabaseUtils.close(result);
+            DatabaseUtils.close(stmt);
             DatabaseUtils.close(conn);
         }
     }
@@ -388,11 +404,13 @@ public class CoralRelationManagerImpl
         throws SQLException
     {
         Connection conn = null;
+        Statement stmt = null;
+        ResultSet result = null;
         try
         {
             conn = persistence.getDatabase().getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet result = stmt
+            stmt = conn.createStatement();
+            result = stmt
                 .executeQuery("SELECT resource1, resource2 FROM coral_relation_data WHERE" +
                         " relation_id = " + Long.toString(relationId));
             List<Long> temp = new ArrayList<Long>();
@@ -411,6 +429,8 @@ public class CoralRelationManagerImpl
         }
         finally
         {
+            DatabaseUtils.close(result);
+            DatabaseUtils.close(stmt);
             DatabaseUtils.close(conn);
         }
     }

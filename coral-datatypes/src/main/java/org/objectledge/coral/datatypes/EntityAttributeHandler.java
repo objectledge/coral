@@ -14,6 +14,7 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * Common base class for various entity attribute handlers.
@@ -71,16 +72,26 @@ public abstract class EntityAttributeHandler<T extends Entity>
     public void preload(Connection conn) throws SQLException
     {
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT max(data_key) from " + getTable());
-        rs.next();
-        int count = rs.getInt(1);
-        cache = new long[count + 1];
-        defined = new BitSet(count + 1);
-        rs = stmt.executeQuery("SELECT data_key, ref from " + getTable());
-        while(rs.next())
+        ResultSet rs = null;
+        try
         {
-            cache[rs.getInt(1)] = rs.getLong(2);
-            defined.set(rs.getInt(1));
+            rs = stmt.executeQuery("SELECT max(data_key) from " + getTable());
+            rs.next();
+            int count = rs.getInt(1);
+            cache = new long[count + 1];
+            defined = new BitSet(count + 1);
+            rs.close();
+            rs = stmt.executeQuery("SELECT data_key, ref from " + getTable());
+            while(rs.next())
+            {
+                cache[rs.getInt(1)] = rs.getLong(2);
+                defined.set(rs.getInt(1));
+            }
+        }
+        finally
+        {
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
     }
 
@@ -124,10 +135,17 @@ public abstract class EntityAttributeHandler<T extends Entity>
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
-        stmt.execute("INSERT INTO " + getTable() + "(data_key, ref) VALUES (" + id + ", "
-            + ((Entity)value).getIdString() + ")");
-        return id;
-    }
+        try 
+        {
+            stmt.execute("INSERT INTO " + getTable() + "(data_key, ref) VALUES (" + id + ", "
+                + ((Entity)value).getIdString() + ")");
+            return id;
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
+    }        
 
     /**
      * Retrieves an attribute value.
@@ -150,19 +168,28 @@ public abstract class EntityAttributeHandler<T extends Entity>
             }
         }
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT ref FROM " + getTable() + " WHERE data_key = "
-            + id);
-        if(!rs.next())
+        ResultSet rs = null;
+        try
         {
-            throw new EntityDoesNotExistException("Item #" + id + " does not exist in table "
-                + getTable());
+            rs = stmt.executeQuery("SELECT ref FROM " + getTable() + " WHERE data_key = "
+                + id);
+            if(!rs.next())
+            {
+                throw new EntityDoesNotExistException("Item #" + id + " does not exist in table "
+                    + getTable());
+            }
+            if(cache != null && id < cache.length)
+            {
+                cache[(int)id] = rs.getLong(1);
+                defined.set((int)id);
+            }
+            return instantiate(rs.getLong(1));
         }
-        if(cache != null && id < cache.length)
+        finally
         {
-            cache[(int)id] = rs.getLong(1);
-            defined.set((int)id);
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
-        return instantiate(rs.getLong(1));
     }
 
     /**
@@ -190,9 +217,16 @@ public abstract class EntityAttributeHandler<T extends Entity>
             defined.set((int)id);
         }
         Statement stmt = conn.createStatement();
-        checkExists(id, stmt);
-        stmt.execute("UPDATE " + getTable() + " SET ref = " + ((Entity)value).getIdString()
-            + " WHERE data_key = " + id);
+        try
+        {
+            checkExists(id, stmt);
+            stmt.execute("UPDATE " + getTable() + " SET ref = " + ((Entity)value).getIdString()
+                + " WHERE data_key = " + id);
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**

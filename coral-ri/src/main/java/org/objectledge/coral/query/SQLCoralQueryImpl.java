@@ -31,6 +31,7 @@ import org.objectledge.coral.script.parser.DefaultRMLVisitor;
 import org.objectledge.coral.script.parser.RMLVisitor;
 import org.objectledge.coral.script.parser.SimpleNode;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * A QueryService implementation that uses the underlying relational database.
@@ -232,11 +233,13 @@ public class SQLCoralQueryImpl
         }
 
         Connection conn = null;
+        Statement stmt = null;
+        ResultSet results = null;
         try
         {
             conn = database.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet results = stmt.executeQuery(query.toString());
+            stmt = conn.createStatement();
+            results = stmt.executeQuery(query.toString());
             String[][] from = new String[columns.size()][];
             for(int i=0; i<columns.size(); i++)
             {
@@ -249,8 +252,6 @@ public class SQLCoralQueryImpl
             		getItems(statement.getSelect()) : null;
             QueryResults queryResults = new SQLQueryResultsImpl(coral.getSchema(), 
                 coral.getStore(), results, from, select );
-            results.close();
-            stmt.close();
             return queryResults;
         }
         catch(SQLException e)
@@ -259,17 +260,9 @@ public class SQLCoralQueryImpl
         }
         finally
         {
-            if(conn != null)
-            {
-                try
-                {
-                    conn.close();
-                }
-                catch(SQLException e)
-                {
-                    logger.error("failed to close connection", e);
-                }
-            }
+            DatabaseUtils.close(results);
+            DatabaseUtils.close(stmt);
+            DatabaseUtils.close(conn);
         }
     }
 

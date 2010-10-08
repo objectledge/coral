@@ -52,14 +52,24 @@ public class DateAttributeHandler
         throws SQLException
     {
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT max(data_key) from "+getTable());
-        rs.next();
-        int count = rs.getInt(1);
-        cache = new Date[count+1];
-        rs = stmt.executeQuery("SELECT data_key, data from "+getTable());
-        while(rs.next())
+        ResultSet rs = null;
+        try
         {
-            cache[rs.getInt(1)] = new Date(rs.getTimestamp(2).getTime());
+            rs = stmt.executeQuery("SELECT max(data_key) from "+getTable());
+            rs.next();
+            int count = rs.getInt(1);
+            cache = new Date[count+1];
+            rs.close();
+            rs = stmt.executeQuery("SELECT data_key, data from "+getTable());
+            while(rs.next())
+            {
+                cache[rs.getInt(1)] = new Date(rs.getTimestamp(2).getTime());
+            }
+        }
+        finally
+        {
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
     }
 
@@ -74,7 +84,14 @@ public class DateAttributeHandler
             "(data_key, data) VALUES (?, ?)");
         stmt.setLong(1, id);
         stmt.setTimestamp(2, new java.sql.Timestamp((value).getTime()));
-        stmt.execute();
+        try
+        {
+            stmt.execute();
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
         return id;
     }
 
@@ -93,20 +110,29 @@ public class DateAttributeHandler
             }
         }
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT data FROM "+getTable()+" WHERE data_key = "+id
-        );
-        if(!rs.next())
+        ResultSet rs = null;
+        try
         {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
-                getTable());
+            rs = stmt.executeQuery(
+                "SELECT data FROM "+getTable()+" WHERE data_key = "+id
+            );
+            if(!rs.next())
+            {
+                throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
+                    getTable());
+            }
+            Date value = new Date(rs.getTimestamp(1).getTime());
+            if(cache != null && id < cache.length)
+            {
+                cache[(int)id] = value;
+            }
+            return value;
         }
-        Date value = new Date(rs.getTimestamp(1).getTime());
-        if(cache != null && id < cache.length)
+        finally
         {
-            cache[(int)id] = value;
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
-        return value;
     }
 
     /**

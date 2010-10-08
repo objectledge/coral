@@ -19,6 +19,7 @@ import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * Handles persistency of <code>java.util.List</code> objects containing Resources.
@@ -63,31 +64,40 @@ public class ResourceListAttributeHandler<T extends Resource>
         throws SQLException
     {
         Statement stmt = conn.createStatement();
-        ResultSet result = stmt.executeQuery("SELECT max(data_key) from " + getTable());
-        result.next();
-        int count = result.getInt(1);
-        cache = new ResourceList[count + 1];
-        result = stmt.executeQuery(
-            "SELECT data_key, ref FROM "+getTable()+" ORDER BY data_key, pos"
-        );
-        if(result.next())
+        ResultSet result = null;
+        try
         {
-            List<Long> temp = new ArrayList<Long>();
-            long lastId;
-            do
+            result = stmt.executeQuery("SELECT max(data_key) from " + getTable());
+            result.next();
+            int count = result.getInt(1);
+            cache = new ResourceList[count + 1];
+            result = stmt.executeQuery(
+                "SELECT data_key, ref FROM "+getTable()+" ORDER BY data_key, pos"
+            );
+            if(result.next())
             {
+                List<Long> temp = new ArrayList<Long>();
+                long lastId;
                 do
                 {
-                    lastId = result.getLong(1);
-                    temp.add(new Long(result.getLong(2)));
+                    do
+                    {
+                        lastId = result.getLong(1);
+                        temp.add(new Long(result.getLong(2)));
+                    }
+                    while(result.next() && result.getLong(1) == lastId);
+                    ResourceList<T> value = instantiate(temp);
+                    value.clearModified();
+                    cache[(int)lastId] = value;
+                    temp.clear();
                 }
-                while(result.next() && result.getLong(1) == lastId);
-                ResourceList<T> value = instantiate(temp);
-                value.clearModified();
-                cache[(int)lastId] = value;
-                temp.clear();
+                while(!result.isAfterLast());
             }
-            while(!result.isAfterLast());
+        }
+        finally
+        {
+            DatabaseUtils.close(result);
+            DatabaseUtils.close(stmt);
         }
     }
 
@@ -158,22 +168,31 @@ public class ResourceListAttributeHandler<T extends Resource>
             }
         }
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT ref FROM "+getTable()+" WHERE data_key = "+id+
-            " ORDER BY pos"
-        );
-        List<Long> temp = new ArrayList<Long>();
-        while(rs.next())
+        ResultSet rs = null;
+        try
         {
-            temp.add(new Long(rs.getLong(1)));
+            rs = stmt.executeQuery(
+                "SELECT ref FROM "+getTable()+" WHERE data_key = "+id+
+                " ORDER BY pos"
+            );
+            List<Long> temp = new ArrayList<Long>();
+            while(rs.next())
+            {
+                temp.add(new Long(rs.getLong(1)));
+            }
+            ResourceList<T> value =  instantiate(temp);
+            if(cache != null && id < cache.length)
+            {
+                cache[(int)id] = value;
+            }
+            value.clearModified();
+            return value;
         }
-        ResourceList<T> value =  instantiate(temp);
-        if(cache != null && id < cache.length)
+        finally
         {
-            cache[(int)id] = value;
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
-        value.clearModified();
-        return value;
     }
 
     /**
@@ -197,49 +216,57 @@ public class ResourceListAttributeHandler<T extends Resource>
         PreparedStatement pstmt = conn.prepareStatement(
             "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES (?, ?, ?)"
         );
-        if(value instanceof ResourceList)
+        try
         {
-            long[] ids = ((ResourceList)value).getIds();
-            int size = ((ResourceList)value).size();
-            for(int i=0; i<size; i++)
+            if(value instanceof ResourceList)
             {
-                pstmt.setLong(1, id);
-                pstmt.setInt(2, i);
-                pstmt.setLong(3, ids[i]);
-                pstmt.addBatch();
-            }
-            ((ResourceList)value).clearModified();
-        }
-        else
-        {
-            Iterator i = ((List)value).iterator();
-            int position = 0;
-            while(i.hasNext())
-            {
-                Object v = i.next();
-                if(v instanceof Resource)
+                long[] ids = ((ResourceList)value).getIds();
+                int size = ((ResourceList)value).size();
+                for(int i=0; i<size; i++)
                 {
-                    pstmt.setInt(1, position++);
-                    pstmt.setLong(2, ((Resource)v).getId());
+                    pstmt.setLong(1, id);
+                    pstmt.setInt(2, i);
+                    pstmt.setLong(3, ids[i]);
                     pstmt.addBatch();
                 }
-                else if(v instanceof Long)
+                ((ResourceList)value).clearModified();
+            }
+            else
+            {
+                Iterator i = ((List)value).iterator();
+                int position = 0;
+                while(i.hasNext())
                 {
-                    pstmt.setInt(1, position++);
-                    pstmt.setLong(2, ((Long)v).longValue());
-                    pstmt.addBatch();
-                }
-                else
-                {
-                    throw new ClassCastException(v.getClass().getName());
+                    Object v = i.next();
+                    if(v instanceof Resource)
+                    {
+                        pstmt.setInt(1, position++);
+                        pstmt.setLong(2, ((Resource)v).getId());
+                        pstmt.addBatch();
+                    }
+                    else if(v instanceof Long)
+                    {
+                        pstmt.setInt(1, position++);
+                        pstmt.setLong(2, ((Long)v).longValue());
+                        pstmt.addBatch();
+                    }
+                    else
+                    {
+                        throw new ClassCastException(v.getClass().getName());
+                    }
                 }
             }
+            stmt.execute(
+                "DELETE FROM "+getTable()+
+                " WHERE data_key = "+id
+            );
+            pstmt.executeBatch();
         }
-        stmt.execute(
-            "DELETE FROM "+getTable()+
-            " WHERE data_key = "+id
-        );
-        pstmt.executeBatch();
+        finally
+        {
+            DatabaseUtils.close(pstmt);
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**
@@ -253,10 +280,17 @@ public class ResourceListAttributeHandler<T extends Resource>
             cache[(int)id] = null;
         }
         Statement stmt = conn.createStatement();
-        stmt.execute(
-            "DELETE FROM "+getTable()+" WHERE data_key = "+id
-        );
-        releaseId(id);
+        try
+        {
+            stmt.execute(
+                "DELETE FROM "+getTable()+" WHERE data_key = "+id
+            );
+            releaseId(id);
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**

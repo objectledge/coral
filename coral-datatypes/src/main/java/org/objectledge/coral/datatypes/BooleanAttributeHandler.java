@@ -12,6 +12,7 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * Handles persistency of <code>java.lang.Boolean</code> objects.
@@ -58,12 +59,20 @@ public class BooleanAttributeHandler
         int count = rs.getInt(1);
         cache = new BitSet(count+1);
         defined = new BitSet(count+1);
-        rs = stmt.executeQuery("SELECT data_key, data FROM "+getTable());
-        while(rs.next())
+        try
         {
-            cache.set(rs.getInt(1), rs.getBoolean(2));
-            defined.set(rs.getInt(1));
-        }       
+            rs = stmt.executeQuery("SELECT data_key, data FROM "+getTable());
+            while(rs.next())
+            {
+                cache.set(rs.getInt(1), rs.getBoolean(2));
+                defined.set(rs.getInt(1));
+            }
+        }
+        finally
+        {
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
+        }
     }
     
     /**
@@ -74,11 +83,18 @@ public class BooleanAttributeHandler
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
-        stmt.execute(
-            "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-            id+", "+((value).booleanValue() ? "1" : "0")+")"
-        );
-        return id;
+        try
+        {
+            stmt.execute(
+                "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
+                id+", "+((value).booleanValue() ? "1" : "0")+")"
+            );
+            return id;
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**
@@ -95,21 +111,30 @@ public class BooleanAttributeHandler
             }
         }
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT data FROM "+getTable()+" WHERE data_key = "+id
-        );
-        if(!rs.next())
+        ResultSet rs = null;
+        try
         {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
-                getTable());
+            rs = stmt.executeQuery(
+                "SELECT data FROM "+getTable()+" WHERE data_key = "+id
+            );
+            if(!rs.next())
+            {
+                throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
+                    getTable());
+            }
+            boolean value = rs.getBoolean(1);
+            if(cache != null && id < cache.length())
+            {
+                cache.set((int)id, value);
+                defined.set((int)id);
+            }            
+            return value ? Boolean.TRUE : Boolean.FALSE;
         }
-        boolean value = rs.getBoolean(1);
-        if(cache != null && id < cache.length())
+        finally
         {
-            cache.set((int)id, value);
-            defined.set((int)id);
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
-        return value ? Boolean.TRUE : Boolean.FALSE;
     }
 
     /**
@@ -124,12 +149,19 @@ public class BooleanAttributeHandler
             defined.set((int)id);
         }
         Statement stmt = conn.createStatement();
-        checkExists(id, stmt);
-        stmt.execute(
-            "UPDATE "+getTable()+" SET data = "+
-            ((value).booleanValue() ? "1" : "0")+
-            " WHERE data_key = "+id
-        );
+        try
+        {
+            checkExists(id, stmt);
+            stmt.execute(
+                "UPDATE "+getTable()+" SET data = "+
+                ((value).booleanValue() ? "1" : "0")+
+                " WHERE data_key = "+id
+            );
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**

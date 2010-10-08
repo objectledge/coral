@@ -106,12 +106,12 @@ public abstract class AttributeHandlerBase<T>
                 checkExists(id, stmt);
             }
             stmt.execute("DELETE FROM " + getTable() + " WHERE data_key = " + id);
+            releaseId(id);
         }
         finally
         {
             DatabaseUtils.close(stmt);
         }
-        releaseId(id);
     }
     
     /**

@@ -11,6 +11,7 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * Handles persistency of <code>java.lang.String</code> objects that may
@@ -48,11 +49,18 @@ public class TextAttributeHandler
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
-        stmt.execute(
-            "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-            id+", '"+escape(value)+"')"
-        );
-        return id;
+        try
+        {
+            stmt.execute(
+                "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
+                id+", '"+escape(value)+"')"
+            );
+            return id;
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**
@@ -62,15 +70,24 @@ public class TextAttributeHandler
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT data FROM "+getTable()+" WHERE data_key = "+id
-        );
-        if(!rs.next())
+        ResultSet rs = null;
+        try
         {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
-                getTable());
+            rs = stmt.executeQuery(
+                "SELECT data FROM "+getTable()+" WHERE data_key = "+id
+            );
+            if(!rs.next())
+            {
+                throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
+                    getTable());
+            }
+            return unescape(rs.getString(1));
         }
-        return unescape(rs.getString(1));
+        finally
+        {
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**
@@ -80,12 +97,19 @@ public class TextAttributeHandler
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
-        checkExists(id, stmt);
-        stmt.execute(
-            "UPDATE "+getTable()+" SET data = '"+
-            escape(value)+
-            "' WHERE data_key = "+id
-        );
+        try
+        {
+            checkExists(id, stmt);
+            stmt.execute(
+                "UPDATE "+getTable()+" SET data = '"+
+                escape(value)+
+                "' WHERE data_key = "+id
+            );
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
     }
 
     // meta information //////////////////////////////////////////////////////

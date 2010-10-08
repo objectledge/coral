@@ -12,6 +12,7 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * Handles persistency of <code>java.lang.Integer</code> objects.
@@ -54,11 +55,18 @@ public class IntegerAttributeHandler
     {
         long id = getNextId();
         Statement stmt = conn.createStatement();
-        stmt.execute(
-            "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-            id+", "+(value).intValue()+")"
-        );
-        return id;
+        try
+        {
+            stmt.execute(
+                "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
+                id+", "+(value).intValue()+")"
+            );
+            return id;
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**
@@ -75,21 +83,30 @@ public class IntegerAttributeHandler
             }
         }
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(
-            "SELECT data FROM "+getTable()+" WHERE data_key = "+id
-        );
-        if(!rs.next())
+        ResultSet rs = null;
+        try
         {
-            throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
-                getTable());
+            rs = stmt.executeQuery(
+                "SELECT data FROM "+getTable()+" WHERE data_key = "+id
+            );
+            if(!rs.next())
+            {
+                throw new EntityDoesNotExistException("Item #"+id+" does not exist in table "+
+                    getTable());
+            }
+            int value = rs.getInt(1);
+            if(cache != null && id < cache.length)
+            {
+                cache[(int)id] = value;
+                defined.set((int)id);
+            }
+            return new Integer(value);
         }
-        int value = rs.getInt(1);
-        if(cache != null && id < cache.length)
+        finally
         {
-            cache[(int)id] = value;
-            defined.set((int)id);
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }
-        return new Integer(value);
     }
 
     /**
@@ -104,12 +121,19 @@ public class IntegerAttributeHandler
             defined.set((int)id);
         }
         Statement stmt = conn.createStatement();
-        checkExists(id, stmt);
-        stmt.execute(
-            "UPDATE "+getTable()+" SET data = "+
-            (value).intValue()+
-            " WHERE data_key = "+id
-        );
+        try
+        {
+            checkExists(id, stmt);
+            stmt.execute(
+                "UPDATE "+getTable()+" SET data = "+
+                (value).intValue()+
+                " WHERE data_key = "+id
+            );
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**
@@ -129,16 +153,26 @@ public class IntegerAttributeHandler
         throws SQLException
     {
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT max(data_key) from "+getTable());
-        rs.next();
-        int count = rs.getInt(1);
-        cache = new int[count+1];
-        defined = new BitSet(count+1);
-        rs = stmt.executeQuery("SELECT data_key, data from "+getTable());
-        while(rs.next())
+        ResultSet rs = null;
+        try
         {
-            cache[rs.getInt(1)] = rs.getInt(2);
-            defined.set(rs.getInt(1));
+            rs = stmt.executeQuery("SELECT max(data_key) from "+getTable());
+            rs.next();
+            int count = rs.getInt(1);
+            cache = new int[count+1];
+            defined = new BitSet(count+1);
+            rs.close();
+            rs = stmt.executeQuery("SELECT data_key, data from "+getTable());
+            while(rs.next())
+            {
+                cache[rs.getInt(1)] = rs.getInt(2);
+                defined.set(rs.getInt(1));
+            }
+        }
+        finally
+        {
+            DatabaseUtils.close(rs);
+            DatabaseUtils.close(stmt);
         }       
     }
     // meta information //////////////////////////////////////////////////////
