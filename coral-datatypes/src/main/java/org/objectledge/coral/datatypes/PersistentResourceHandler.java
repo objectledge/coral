@@ -17,6 +17,7 @@ import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.DefaultInputRecord;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -177,14 +178,16 @@ public class PersistentResourceHandler
     protected Object getData(Resource delegate, Connection conn) 
         throws SQLException
     {
+        PreparedStatement statement = null;
+        ResultSet rs = null;
     	try
 		{
     		Persistent instance = (Persistent)instantiator.
                 newInstance(resourceClass.getJavaClass());
     		((AbstractResource)instance).setDelegate(delegate);
-            PreparedStatement statement = DefaultInputRecord.
+            statement = DefaultInputRecord.
         		getSelectStatement("resource_id = "+delegate.getIdString(), instance, conn);
-            ResultSet rs = statement.executeQuery();
+            rs = statement.executeQuery();
             InputRecord record = new DefaultInputRecord(rs);
             if(!rs.next())
             {
@@ -200,6 +203,11 @@ public class PersistentResourceHandler
     		throw (SQLException)new SQLException("failed to instantiate helper instance").
                 initCause(e);
 		}
+    	finally
+    	{
+    	    DatabaseUtils.close(rs);
+    	    DatabaseUtils.close(statement);
+    	}
     }
 
     /**

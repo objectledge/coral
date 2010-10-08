@@ -51,13 +51,19 @@ public class DateRangeAttributeHandler
         long id = getNextId();
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO "+getTable()+
             "(data_key, start_date, end_date) VALUES (?, ?, ?)");
-        stmt.setLong(1, id);
-        stmt.setTimestamp(2, new java.sql.Timestamp((value).getStart().getTime()));
-        stmt.setTimestamp(3, new java.sql.Timestamp((value).getEnd().getTime()));
-        stmt.execute();
-        stmt.close();
-        (value).clearModified();
-        return id;
+        try
+        {
+            stmt.setLong(1, id);
+            stmt.setTimestamp(2, new java.sql.Timestamp((value).getStart().getTime()));
+            stmt.setTimestamp(3, new java.sql.Timestamp((value).getEnd().getTime()));
+            stmt.execute();
+            (value).clearModified();
+            return id;
+        }
+        finally
+        {
+            DatabaseUtils.close(stmt);
+        }
     }
 
     /**
@@ -95,22 +101,21 @@ public class DateRangeAttributeHandler
         throws EntityDoesNotExistException, SQLException
     {
         Statement stmt = conn.createStatement();
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE "+getTable()+
+        " SET start_date = ?, end_date = ? WHERE data_key = ?");
         try
         {
             checkExists(id, stmt);
-            stmt.close();
-            PreparedStatement pstmt = conn.prepareStatement("UPDATE "+getTable()+
-                " SET start_date = ?, end_date = ? WHERE data_key = ?");
             pstmt.setTimestamp(1, new java.sql.Timestamp((value).getStart().getTime()));
             pstmt.setTimestamp(2, new java.sql.Timestamp((value).getEnd().getTime()));
             pstmt.setLong(3, id);
             pstmt.execute();
-            pstmt.close();
             (value).clearModified();
         }
         finally
         {
             DatabaseUtils.close(stmt);
+            DatabaseUtils.close(pstmt);
         }
     }        
     

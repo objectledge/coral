@@ -111,46 +111,53 @@ public class ResourceListAttributeHandler<T extends Resource>
         PreparedStatement pstmt = conn.prepareStatement(
             "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES (?, ?, ?)"
         );
-        if(value instanceof ResourceList)
+        try
         {
-            long[] ids = ((ResourceList)value).getIds();
-            int size = ((ResourceList)value).size();
-            for(int i=0; i<size; i++)
+            if(value instanceof ResourceList)
             {
-                pstmt.setLong(1, id);
-                pstmt.setInt(2, i);
-                pstmt.setLong(3, ids[i]);
-                pstmt.addBatch();
-            }
-            ((ResourceList)value).clearModified();
-        }
-        else
-        {
-            Iterator i = ((List)value).iterator();
-            int position = 0;
-            while(i.hasNext())
-            {
-                Object v = i.next();
-                if(v instanceof Resource)
+                long[] ids = ((ResourceList)value).getIds();
+                int size = ((ResourceList)value).size();
+                for(int i=0; i<size; i++)
                 {
-                    pstmt.setInt(1, position++);
-                    pstmt.setLong(2, ((Resource)v).getId());
-                    pstmt.addBatch();
-                } 
-                else if(v instanceof Long)
-                {
-                    pstmt.setInt(1, position++);
-                    pstmt.setLong(2, ((Long)v).longValue());
+                    pstmt.setLong(1, id);
+                    pstmt.setInt(2, i);
+                    pstmt.setLong(3, ids[i]);
                     pstmt.addBatch();
                 }
-                else
+                ((ResourceList)value).clearModified();
+            }
+            else
+            {
+                Iterator i = ((List)value).iterator();
+                int position = 0;
+                while(i.hasNext())
                 {
-                    throw new ClassCastException(v.getClass().getName());
+                    Object v = i.next();
+                    if(v instanceof Resource)
+                    {
+                        pstmt.setInt(1, position++);
+                        pstmt.setLong(2, ((Resource)v).getId());
+                        pstmt.addBatch();
+                    } 
+                    else if(v instanceof Long)
+                    {
+                        pstmt.setInt(1, position++);
+                        pstmt.setLong(2, ((Long)v).longValue());
+                        pstmt.addBatch();
+                    }
+                    else
+                    {
+                        throw new ClassCastException(v.getClass().getName());
+                    }
                 }
             }
+            pstmt.executeBatch();
+            return id;
         }
-        pstmt.executeBatch();
-        return id;
+        finally
+        {
+            DatabaseUtils.close(pstmt);
+        }
     }
 
     /**
