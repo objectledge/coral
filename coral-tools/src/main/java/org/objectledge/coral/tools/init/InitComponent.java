@@ -1,5 +1,8 @@
 package org.objectledge.coral.tools.init;
 
+import java.io.IOException;
+import java.io.Reader;
+
 import javax.sql.DataSource;
 
 import org.objectledge.database.DatabaseUtils;
@@ -97,6 +100,11 @@ public class InitComponent
     private void runScript(String path)
         throws Exception
     {
-        DatabaseUtils.runScript(dataSource, fileSystem.getReader(path, "UTF-8"));        
+        Reader scriptReader = fileSystem.getReader(path, "UTF-8");
+        if(scriptReader == null)
+        {
+            throw new IOException("script " + path + " missing from classpath");
+        }
+        DatabaseUtils.runScript(dataSource, scriptReader);
     }
 }
