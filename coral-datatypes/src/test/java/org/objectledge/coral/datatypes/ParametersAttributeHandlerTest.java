@@ -135,12 +135,16 @@ public class ParametersAttributeHandlerTest extends LedgeTestCase
     public void testCreate() throws Exception
     {
         mockParametersManager.expects(once()).method("createContainer").will(returnValue(dbParameters));
+        mockPreparedStatement.expects(atLeastOnce()).method("close").isVoid();
+        //mockStatement.expects(atLeastOnce()).method("close").isVoid();
         handler.create(parameters, connection);
     }
 
     public void testUpdate() throws Exception
     {
         mockParametersManager.expects(once()).method("getParameters").will(returnValue(dbParameters));
+        mockPreparedStatement.expects(atLeastOnce()).method("close").isVoid();
+        //mockStatement.expects(atLeastOnce()).method("close").isVoid();
         handler.update(1, parameters, connection);
     }
     

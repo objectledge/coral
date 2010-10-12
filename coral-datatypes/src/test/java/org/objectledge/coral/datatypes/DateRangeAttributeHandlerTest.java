@@ -136,12 +136,12 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
         mockStatement.expects(once()).method("close").isVoid();
         String stmt = "UPDATE coral_attribute_date_range SET"+
             " start_date = ?, end_date = ? WHERE data_key = ?";
-        mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockConnection.expects(atLeastOnce()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
         mockPreparedStatement.expects(once()).method("setTimestamp").with(eq(1), eq(rangeStart)).isVoid();        
         mockPreparedStatement.expects(once()).method("setTimestamp").with(eq(2), eq(rangeEnd)).isVoid();        
         mockPreparedStatement.expects(once()).method("setLong").with(eq(3), eq(1L)).isVoid();
         mockPreparedStatement.expects(once()).method("execute").will(returnValue(true));
-        mockPreparedStatement.expects(once()).method("close").isVoid();
+        mockPreparedStatement.expects(atLeastOnce()).method("close").isVoid();
         handler.update(1, range, connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));
         try

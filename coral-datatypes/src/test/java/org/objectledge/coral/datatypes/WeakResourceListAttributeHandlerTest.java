@@ -142,12 +142,14 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "coral_attribute_weak_resource_list" + "(data_key, pos, ref) VALUES (1, ?, ?)";
+        String stmt = "INSERT INTO " + "coral_attribute_weak_resource_list" + "(data_key, pos, ref) VALUES (?, ?, ?)";
         mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expects(once()).method("setLong");
         mockPreparedStatement.expects(once()).method("setInt");
         mockPreparedStatement.expects(once()).method("setLong");
         mockPreparedStatement.expects(once()).method("addBatch");
         mockPreparedStatement.expects(once()).method("executeBatch").will(returnValue(new int[]{1}));
+        mockPreparedStatement.expects(once()).method("close").isVoid();
         
         //mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         handler.create(resourceList, connection);
@@ -155,20 +157,25 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
 
     public void testUpdate() throws Exception
     {
-        String stmt = "INSERT INTO " + "coral_attribute_weak_resource_list" + "(data_key, pos, ref) VALUES (1, ?, ?)";
+        String stmt = "INSERT INTO " + "coral_attribute_weak_resource_list" + "(data_key, pos, ref) VALUES (?, ?, ?)";
         String deleteStmt = "DELETE FROM coral_attribute_weak_resource_list WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(deleteStmt)).will(returnValue(true));
         mockConnection.expects(once()).method("prepareStatement").with(eq(stmt)).will(returnValue(preparedStatement));
+        mockPreparedStatement.expects(once()).method("setLong");
         mockPreparedStatement.expects(once()).method("setInt");
         mockPreparedStatement.expects(once()).method("setLong");
         mockPreparedStatement.expects(once()).method("addBatch");
         mockPreparedStatement.expects(once()).method("executeBatch").will(returnValue(new int[]{1}));
+        mockPreparedStatement.expects(once()).method("close").isVoid();
+        mockStatement.expects(once()).method("close").isVoid();
         handler.update(1, resourceList, connection);
     }
 
     public void testRetrieveCreate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(false));
+        mockResultSet.expects(once()).method("close").isVoid();
+        mockStatement.expects(once()).method("close").isVoid();
         //mockResultSet.expects(once()).method("getLong").will(returnValue(1L));
         handler.retrieve(1, connection);
     }
