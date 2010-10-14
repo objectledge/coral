@@ -93,7 +93,7 @@ public interface QueryResults
      * @throws IllegalArgumentException if no column by the specified name is
      *         present in the results.
      */
-    public List<Resource> getList(String name)
+    public List<? extends Resource> getList(String name)
         throws IllegalArgumentException;
 
     /**
@@ -104,7 +104,7 @@ public interface QueryResults
      * @throws IndexOutOfBoundsException if the index if the index is out of
      *         1..columnCount range.
      */
-    public List<Resource> getList(int index)
+    public List<? extends Resource> getList(int index)
         throws IndexOutOfBoundsException;
 
     // results metadata //////////////////////////////////////////////////////
