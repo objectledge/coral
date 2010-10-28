@@ -19,28 +19,28 @@ public abstract class AbstractDbMojo
     /**
      * Additional classpath elements to be used for loading database the driver.
      * 
-     * @parameter
+     * @parameter expression="${driverClasspath}"
      */
     protected String driverClasspath;
 
     /**
      * Class name of the database driver.
      * 
-     * @parameter
+     * @parameter expression="${dbDriver}"
      */
     protected String dbDriver;
 
     /**
      * JDBC URL of the target database.
      * 
-     * @parameter
+     * @parameter expression="${dbURL}"
      */
     protected String dbURL;
 
     /**
      * User name for database connection.
      * 
-     * @parameter
+     * @parameter expression="${dbUser}"
      */
 
     protected String dbUser;
@@ -48,7 +48,7 @@ public abstract class AbstractDbMojo
     /**
      * Password for database connection.
      * 
-     * @parameter
+     * @parameter expression="${dbPassword}"
      */
     protected String dbPassword;
 
