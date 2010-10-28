@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-ri</artifactId>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
@@ -71,8 +71,8 @@
                 Maven runtime in m2eclipse
               -->
               <mavenHome>${env.M2_HOME}</mavenHome>
-              <showErrors>true</showErrors>
-              <streamLogs>true</streamLogs>
+              <showErrors>false</showErrors>
+              <streamLogs>false</streamLogs>
             </configuration>
           </execution>
         </executions>
