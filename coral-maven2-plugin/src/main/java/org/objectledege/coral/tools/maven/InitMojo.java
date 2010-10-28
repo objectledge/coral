@@ -14,14 +14,20 @@ import org.objectledge.filesystem.FileSystem;
 public class InitMojo
     extends AbstractDbMojo
 {
-
+    /**
+     * Should existing data be dropped?
+     * 
+     * @parameter expression="${force}" default-value="false"
+     */
+    private boolean force;
+    
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
         FileSystem fileSystem = FileSystem.getClasspathFileSystem();
         initDataSource();
-        InitComponent init = new InitComponent(dataSource, fileSystem);
+        InitComponent init = new InitComponent(dataSource, fileSystem, force);
         try 
         {
             init.run();

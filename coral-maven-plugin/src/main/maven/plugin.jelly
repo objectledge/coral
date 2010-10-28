@@ -64,6 +64,7 @@
 	 | Initializes a database for Coral use.
 	 |
 	 | @param dataSource dataSource to process.
+	 | @param force should existing data be dropped?
 	 -->
     <define:jellybean
        name="init"
@@ -234,14 +235,16 @@
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
+      <m:pluginVar plugin="coral-maven-plugin" var="forceInit" property="force"/>
       <echo>
         coral.db.url=${coralDbUrl}
         coral.db.user=${coralDbUser}
         coral.db.password=${coralDbPassword}        
+        force=${forceInit}
 	  </echo>
 	</j:if>
     <coral:dataSource variable="initDataSource"/>
-    <coral:init dataSource="${initDataSource}"/>
+    <coral:init dataSource="${initDataSource}" force="${forceInit}"/>
   </goal>
 
   <!-- // SQL runner //////////////////////////////////////////////////////////////////////// -->

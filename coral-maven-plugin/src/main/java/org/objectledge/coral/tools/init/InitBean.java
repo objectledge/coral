@@ -41,6 +41,8 @@ public class InitBean
 {
     private DataSource dataSource;
     
+    private boolean force;
+    
     /**
      * Sets the dataSource.
      * 
@@ -52,6 +54,16 @@ public class InitBean
     }
     
     /**
+     * Sets the force parameter.
+     *  
+     * @param force should existing data be dropped?
+     */
+    public void setForce(boolean force)
+    {
+        this.force = force;
+    }
+    
+    /**
      * Initializes the database for coral use.
      * 
      * @throws Exception if the initialization failed.
@@ -60,7 +72,7 @@ public class InitBean
         throws Exception
     {
         FileSystem fileSystem = FileSystem.getClasspathFileSystem();
-        InitComponent init = new InitComponent(dataSource, fileSystem);
+        InitComponent init = new InitComponent(dataSource, fileSystem, force);
         init.run();
     }
 }
