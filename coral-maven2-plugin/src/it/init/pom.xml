@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.objectledge.coral</groupId>
   <artifactId>coral-maven2-plugin-init-test</artifactId>
-  <name>Coral Maven2 Plugin Coral DB inita test</name>
+  <name>Coral Maven2 Plugin Coral DB initalizer test</name>
   <packaging>pom</packaging>
   <build>
     <plugins>
