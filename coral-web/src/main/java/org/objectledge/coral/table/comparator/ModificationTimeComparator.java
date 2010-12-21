@@ -11,6 +11,12 @@ import org.objectledge.coral.store.Resource;
 public class ModificationTimeComparator
     extends TimeComparator<Resource>
 {
+    public ModificationTimeComparator()
+    {
+        // modification time is never null, so strategy is irrelevant here
+        super(TimeComparator.SortNulls.LAST);
+    }
+  
     /**
      * {@inheritDoc}
      */

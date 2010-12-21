@@ -11,7 +11,25 @@ import java.util.Date;
  */
 public abstract class TimeComparator<T>
     implements Comparator<T>
-{
+{    
+    public enum SortNulls 
+    {
+        FIRST,
+        LAST
+    };
+    
+    private final SortNulls nullSortStrategy;
+    
+    /**
+     * Creates a new comparator instance with specified null sorting strategy.
+     * 
+     * @param sortNulls
+     */
+    public TimeComparator(SortNulls sortNulls)
+    {
+        this.nullSortStrategy = sortNulls;
+    }
+     
     /** Compares two objects using their date attributes. Dates may be null, the contract is:
      *  <ul>
      *  <li>If both dates are not null, they are simply compared.</li>
@@ -36,12 +54,11 @@ public abstract class TimeComparator<T>
             {
                 return 0;
             }
-            else // d1 is after d2
+            else 
             {
-                return 1;
+                return nullSortStrategy == SortNulls.LAST ? 1 : -1;
             }
         }
-        // if(d2 == null && d1 != null) // d1 is before d2
-        return -1;
+        return nullSortStrategy == SortNulls.LAST ? -1 : 1;
     }
 }

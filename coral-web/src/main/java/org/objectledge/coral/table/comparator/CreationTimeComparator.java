@@ -11,6 +11,12 @@ import org.objectledge.coral.store.Resource;
 public class CreationTimeComparator
     extends TimeComparator<Resource>
 {
+    public CreationTimeComparator()
+    {
+        // creation time is never null, so strategy is irrelevant here
+        super(TimeComparator.SortNulls.LAST);
+    }
+    
     /**
      * {@inheritDoc}
      */
