@@ -1,5 +1,7 @@
 package org.objectledge.coral.table.comparator;
 
+import java.util.Date;
+
 import org.objectledge.coral.store.Resource;
 
 /**
@@ -17,11 +19,8 @@ public class CreationTimeComparator
         super(TimeComparator.SortNulls.LAST);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-	public int compare(Resource r1, Resource r2)
-	{
-		return compareDates(r1.getCreationTime(), r2.getCreationTime());
-	}
+    protected Date getSortCriterionDate(Resource res)
+    {
+        return res.getCreationTime();
+    }
 }

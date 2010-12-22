@@ -1,5 +1,7 @@
 package org.objectledge.coral.table.comparator;
 
+import java.util.Date;
+
 import org.objectledge.coral.store.Resource;
 
 /**
@@ -16,12 +18,9 @@ public class ModificationTimeComparator
         // modification time is never null, so strategy is irrelevant here
         super(TimeComparator.SortNulls.LAST);
     }
-  
-    /**
-     * {@inheritDoc}
-     */
-	public int compare(Resource r1, Resource r2)
-	{
-		return compareDates(r1.getModificationTime(), r2.getModificationTime());
-	}
+
+    protected Date getSortCriterionDate(Resource res)
+    {
+        return res.getModificationTime();
+    }    
 }

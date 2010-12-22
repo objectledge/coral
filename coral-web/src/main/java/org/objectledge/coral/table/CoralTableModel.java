@@ -40,14 +40,14 @@ public class CoralTableModel implements ExtendedTableModel<Resource>
     protected CoralSession coralSession;
 
     /** comparators keyed by column name. */
-    protected Map<String, Comparator<Resource>> comparatorByColumnName = new HashMap<String, Comparator<Resource>>();
+    protected Map<String, Comparator<?>> comparatorByColumnName = new HashMap<String, Comparator<?>>();
 
     /**
      * reverse comparators, used for descending sort, keyed by column name. When a comparator
      * defined in comparatorByColumnName does not have a matching comparator in
      * reverseComparatorByColumnName, Collections.reverse(Comparator) is used.
      */
-    protected Map<String, Comparator<Resource>> reverseComparatorByColumnName = new HashMap<String, Comparator<Resource>>();
+    protected Map<String, Comparator<?>> reverseComparatorByColumnName = new HashMap<String, Comparator<?>>();
 
     /**
      * Creates new CoralTableModel instance.

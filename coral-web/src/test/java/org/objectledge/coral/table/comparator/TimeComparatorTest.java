@@ -5,20 +5,24 @@ import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
+import org.objectledge.coral.store.ResourceImpl;
+
 public class TimeComparatorTest
     extends TestCase
 {
-    public static class DateObject
+    public static class FooResource
+    extends ResourceImpl
     {
         private final Date date;
 
-        public DateObject(Date date)
+        public FooResource(Date date)
         {
+            super(null, null, null);
             this.date = date;
         }
 
         public static class Comparator
-            extends TimeComparator<DateObject>
+            extends TimeComparator<FooResource>
         {
 
             public Comparator(TimeComparator.SortNulls strategy)
@@ -26,48 +30,47 @@ public class TimeComparatorTest
                 super(strategy);
             }
 
-            @Override
-            public int compare(DateObject o1, DateObject o2)
+            protected Date getSortCriterionDate(FooResource res)
             {
-                return compareDates(o1.date, o2.date);
+                return res.date;
             }
         };
     }
 
     public void testCompareBothNotNull()
     {
-        DateObject d1 = new DateObject(new GregorianCalendar(2010, 12, 20).getTime());
-        DateObject d2 = new DateObject(new GregorianCalendar(2010, 12, 21).getTime());
-        DateObject.Comparator c1 = new DateObject.Comparator(TimeComparator.SortNulls.LAST); 
+        FooResource d1 = new FooResource(new GregorianCalendar(2010, 12, 20).getTime());
+        FooResource d2 = new FooResource(new GregorianCalendar(2010, 12, 21).getTime());
+        FooResource.Comparator c1 = new FooResource.Comparator(TimeComparator.SortNulls.LAST); 
         assertTrue(c1.compare(d1, d2) < 0);
-        DateObject.Comparator c2 = new DateObject.Comparator(TimeComparator.SortNulls.FIRST); 
+        FooResource.Comparator c2 = new FooResource.Comparator(TimeComparator.SortNulls.FIRST); 
         assertTrue(c2.compare(d1, d2) < 0);
 
     }
 
     public void testCompareBothNull()
     {
-        DateObject d1 = new DateObject(null);
-        DateObject d2 = new DateObject(null);
-        DateObject.Comparator c1 = new DateObject.Comparator(TimeComparator.SortNulls.LAST); 
+        FooResource d1 = new FooResource(null);
+        FooResource d2 = new FooResource(null);
+        FooResource.Comparator c1 = new FooResource.Comparator(TimeComparator.SortNulls.LAST); 
         assertTrue(c1.compare(d1, d2) == 0);
-        DateObject.Comparator c2 = new DateObject.Comparator(TimeComparator.SortNulls.FIRST); 
+        FooResource.Comparator c2 = new FooResource.Comparator(TimeComparator.SortNulls.FIRST); 
         assertTrue(c2.compare(d1, d2) == 0);
     }
 
     public void testCompareNullAndNotNullNullsLast()
     {
-        DateObject d1 = new DateObject(new GregorianCalendar(2010, 12, 20).getTime());
-        DateObject d2 = new DateObject(null);
-        DateObject.Comparator c = new DateObject.Comparator(TimeComparator.SortNulls.LAST); 
+        FooResource d1 = new FooResource(new GregorianCalendar(2010, 12, 20).getTime());
+        FooResource d2 = new FooResource(null);
+        FooResource.Comparator c = new FooResource.Comparator(TimeComparator.SortNulls.LAST); 
         assertTrue(c.compare(d1, d2) < 0);
     }
 
     public void testCompareNullAndNotNullNullsFirst()
     {
-        DateObject d1 = new DateObject(new GregorianCalendar(2010, 12, 20).getTime());
-        DateObject d2 = new DateObject(null);
-        DateObject.Comparator c = new DateObject.Comparator(TimeComparator.SortNulls.FIRST); 
+        FooResource d1 = new FooResource(new GregorianCalendar(2010, 12, 20).getTime());
+        FooResource d2 = new FooResource(null);
+        FooResource.Comparator c = new FooResource.Comparator(TimeComparator.SortNulls.FIRST); 
         assertTrue(c.compare(d1, d2) > 0);
     }
 }
