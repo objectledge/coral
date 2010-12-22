@@ -14,22 +14,22 @@ import org.objectledge.coral.store.Resource;
 public abstract class TimeComparator<T extends Resource>
     implements Comparator<T>
 {    
-    public enum SortNulls 
+    public enum Nulls 
     {
-        FIRST,
-        LAST
+        EARLY,
+        LATE
     };
     
-    private final SortNulls nullSortStrategy;
+    private final Nulls strategy;
     
     /**
      * Creates a new comparator instance with specified null sorting strategy.
      * 
-     * @param sortNulls
+     * @param strategy
      */
-    public TimeComparator(SortNulls sortNulls)
+    public TimeComparator(Nulls strategy)
     {
-        this.nullSortStrategy = sortNulls;
+        this.strategy = strategy;
     }
      
     /** Compares two objects using their date attributes. Dates may be null, the contract is:
@@ -58,10 +58,10 @@ public abstract class TimeComparator<T extends Resource>
             }
             else 
             {
-                return nullSortStrategy == SortNulls.LAST ? 1 : -1;
+                return strategy == Nulls.LATE ? 1 : -1;
             }
         }
-        return nullSortStrategy == SortNulls.LAST ? -1 : 1;
+        return strategy == Nulls.LATE ? -1 : 1;
     }
     
     /**

@@ -16,7 +16,7 @@ public class ModificationTimeComparator
     public ModificationTimeComparator()
     {
         // modification time is never null, so strategy is irrelevant here
-        super(TimeComparator.SortNulls.LAST);
+        super(TimeComparator.Nulls.LATE);
     }
 
     protected Date getSortCriterionDate(Resource res)
