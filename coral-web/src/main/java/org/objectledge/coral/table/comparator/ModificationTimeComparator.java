@@ -15,11 +15,11 @@ public class ModificationTimeComparator
 {
     public ModificationTimeComparator()
     {
-        // modification time is never null, so strategy is irrelevant here
-        super(TimeComparator.Nulls.LATE);
+        // modification time is never null, so direction is irrelevant here
+        super(TimeComparator.Direction.ASC);
     }
 
-    protected Date getSortCriterionDate(Resource res)
+    protected Date getDate(Resource res)
     {
         return res.getModificationTime();
     }    

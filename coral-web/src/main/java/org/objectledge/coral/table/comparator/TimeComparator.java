@@ -14,54 +14,69 @@ import org.objectledge.coral.store.Resource;
 public abstract class TimeComparator<T extends Resource>
     implements Comparator<T>
 {    
-    public enum Nulls 
+    public enum Direction 
     {
-        EARLY,
-        LATE
+        ASC,
+        DESC
     };
     
-    private final Nulls strategy;
+    private final Direction direction;
     
     /**
-     * Creates a new comparator instance with specified null sorting strategy.
+     * Creates a new comparator instance with specified sort direction.
      * 
-     * @param strategy
+     * @param direction
      */
-    public TimeComparator(Nulls strategy)
+    public TimeComparator(Direction direction)
     {
-        this.strategy = strategy;
+        this.direction = direction;
+    }
+    
+    /**
+     * Returns the sort direction of this comparator instance.
+     * 
+     * @return the sort direction of this comparator instance.
+     */
+    public Direction getDirection()
+    {
+        return direction;
     }
      
-    /** Compares two objects using their date attributes. Dates may be null, the contract is:
-     *  <ul>
-     *  <li>If both dates are not null, they are simply compared.</li>
-     *  <li>If both are null, dates are considered equal</li>
-     *  <li>If one of the dates is null, result depends on the strategy selected in the constructor</li>
-     *  </ul>
+    /**
+     * Compares two objects using their date attributes. Dates may be null, the contract is:
+     * <ul>
+     * <li>If both dates are not null, they are simply compared, but when sort direction is DESC,
+     * comparison is reversed.</li>
+     * <li>If both are null, dates are considered equal</li>
+     * <li>If one of the dates is null, and sort direction is ASC, null date is considered greater,
+     * and when direction is DESC, null date is considered lesser than then non-null date.</li>
+     * </ul>
+     * 
      * @param d1 first date.
      * @param d2 second date.
      * @return the result of the comparison.
      */
     public int compareDates(Date d1, Date d2)
-    {
-        
+    {        
         if(d1 != null && d2 != null)
         {
-            return d1.compareTo(d2);
+            return direction == Direction.ASC ? d1.compareTo(d2) : d2.compareTo(d1);
         }
         
         if(d1 == null)
         {
-            if(d2 == null) // dates are equal
+            if(d2 == null) 
             {
                 return 0;
             }
             else 
             {
-                return strategy == Nulls.LATE ? 1 : -1;
+                // d1 == null && d2 != null
+                return direction == Direction.ASC ? 1 : -1;
             }
         }
-        return strategy == Nulls.LATE ? -1 : 1;
+        // d1 != null && d2 == null
+        return direction == Direction.ASC ? -1 : 1;
     }
     
     /**
@@ -70,7 +85,7 @@ public abstract class TimeComparator<T extends Resource>
      * @param resource
      * @return
      */
-    protected abstract Date getSortCriterionDate(T resource);
+    protected abstract Date getDate(T resource);
     
     /**
      * Compare resources by date, when dates compare resource ids in order to stabilize sort order.
@@ -82,8 +97,8 @@ public abstract class TimeComparator<T extends Resource>
     @Override
     public int compare(T res1, T res2)
     {
-        Date d1 = getSortCriterionDate(res1);
-        Date d2 = getSortCriterionDate(res2);
+        Date d1 = getDate(res1);
+        Date d2 = getDate(res2);
         int rel = compareDates(d1, d2);
         if(rel != 0)
         {
