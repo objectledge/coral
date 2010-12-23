@@ -67,7 +67,7 @@ public class TimeComparatorTest
         assertTrue(c1.compare(d1, d2) < 0);
         assertTrue(c1.compare(d2, d1) > 0);
         FooResource.Comparator c2 = new FooResource.Comparator(TimeComparator.Direction.DESC); 
-        assertTrue(c2.compare(d1, d2) > 0);
-        assertTrue(c2.compare(d2, d1) < 0);
+        assertTrue(c2.compare(d1, d2) < 0);
+        assertTrue(c2.compare(d2, d1) > 0);
     }
 }

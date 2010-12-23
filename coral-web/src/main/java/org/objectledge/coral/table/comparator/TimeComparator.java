@@ -72,11 +72,11 @@ public abstract class TimeComparator<T extends Resource>
             else 
             {
                 // d1 == null && d2 != null
-                return direction == Direction.ASC ? 1 : -1;
+                return 1;
             }
         }
         // d1 != null && d2 == null
-        return direction == Direction.ASC ? -1 : 1;
+        return -1;
     }
     
     /**
