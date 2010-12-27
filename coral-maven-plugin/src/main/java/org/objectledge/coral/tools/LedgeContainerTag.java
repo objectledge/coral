@@ -32,9 +32,6 @@ import org.apache.commons.jelly.JellyTagException;
 import org.apache.commons.jelly.MissingAttributeException;
 import org.apache.commons.jelly.XMLOutput;
 import org.apache.maven.jelly.MavenJellyContext;
-import org.objectledge.container.LedgeContainer;
-import org.objectledge.filesystem.FileSystem;
-import org.objectledge.filesystem.FileSystemProvider;
 import org.picocontainer.MutablePicoContainer;
 
 /**
@@ -49,6 +46,8 @@ public class LedgeContainerTag
     private String variable = "ledgeContainer";
     
     private String ledgeBaseDir = "";
+    
+    private String ledgeConfig = "";
     
     /**
      * Sets the var.
@@ -69,6 +68,16 @@ public class LedgeContainerTag
     {
         this.ledgeBaseDir = ledgeBaseDir;
     }
+    
+    /**
+     * Sets ledge config directory relative to base directory.
+     * 
+     * @param ledgeConfig config directory relative to base directory.
+     */
+    public void setLedgeConfig(String ledgeConfig)
+    {
+        this.ledgeConfig = ledgeConfig;
+    }
 
     /**
      * {@inheritDoc}
@@ -81,11 +90,13 @@ public class LedgeContainerTag
             getVariable(pluginContextVariable);
         String effectiveLedgeBaseDir = this.ledgeBaseDir.length() > 0 ? this.ledgeBaseDir :
             (String)pluginContext.getVariable("ledge.basedir");
+        String effectiveLedgeConfig = this.ledgeConfig.length() > 0 ? this.ledgeConfig :
+            (String)pluginContext.getVariable("ledge.config");
         if(container == null)
         {
             try
             {
-                container = getLedgeContainer(effectiveLedgeBaseDir);
+                container = LedgeContainerHelper.getLedgeContainer(effectiveLedgeBaseDir, effectiveLedgeConfig);
             }
             catch(Exception e)
             {
@@ -94,30 +105,5 @@ public class LedgeContainerTag
             pluginContext.setVariable(pluginContextVariable, container);
         }
         getContext().setVariable(variable, container);
-    }
-
-    /**
-     * Returns a session factory instance.
-     * 
-     * @param ledgeBaseDir the ledge base directory.
-     * @return container instance.
-     * @throws Exception if the factory could not be initialized.
-     */
-    public MutablePicoContainer getLedgeContainer(String ledgeBaseDir)
-        throws Exception
-    {
-        ClassLoader cl = getClassLoader();
-        MutablePicoContainer container = null;
-        Thread.currentThread().setContextClassLoader(cl);
-        FileSystemProvider lfs = new org.objectledge.filesystem.
-            LocalFileSystemProvider("local", ledgeBaseDir);
-        FileSystemProvider cfs = new org.objectledge.filesystem.
-            ClasspathFileSystemProvider("classpath", cl);
-        FileSystem fs = new FileSystem(new FileSystemProvider[] { lfs, cfs }, 4096, 65536);
-        LedgeContainer ledgeContainer = 
-            new LedgeContainer(fs, "config/", cl);
-        container = ledgeContainer.getContainer();
-        container.registerComponentInstance(ClassLoader.class, cl);
-        return container;
     }
 }

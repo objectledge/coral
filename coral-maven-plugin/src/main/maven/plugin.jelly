@@ -122,7 +122,8 @@
     <!--
      | Instantiates Ledge container.
      |
-     | @param dataSource the data source to use.
+     | @param ledgeBaseDir ledge base directory
+     | @param ledgeConfig ledge config directory relative to base directory.
      | @param var the variable to store ledge container into (ledgeContainer, by default).
      -->
     <define:bean name="ledgeContainer"
