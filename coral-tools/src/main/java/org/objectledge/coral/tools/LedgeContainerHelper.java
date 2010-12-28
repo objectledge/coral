@@ -19,6 +19,10 @@ public class LedgeContainerHelper
         throws Exception
     {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if(cl == null)
+        {
+            cl = LedgeContainerHelper.class.getClassLoader();
+        }
         FileSystemProvider lfs = new org.objectledge.filesystem.
             LocalFileSystemProvider("local", ledgeBaseDir);
         FileSystemProvider cfs = new org.objectledge.filesystem.
