@@ -22,6 +22,7 @@ public class LedgeContainerHelper
         if(cl == null)
         {
             cl = LedgeContainerHelper.class.getClassLoader();
+            Thread.currentThread().setContextClassLoader(cl);
         }
         FileSystemProvider lfs = new org.objectledge.filesystem.
             LocalFileSystemProvider("local", ledgeBaseDir);
