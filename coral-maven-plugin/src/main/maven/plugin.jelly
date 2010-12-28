@@ -232,11 +232,11 @@
 
   <goal name="coral:init"
     description="Initializes a relational database for Coral usage">
+    <m:pluginVar plugin="coral-maven-plugin" var="forceInit" property="force"/>
     <j:if test="${maven.debugOn}">
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
       <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
-      <m:pluginVar plugin="coral-maven-plugin" var="forceInit" property="force"/>
       <echo>
         coral.db.url=${coralDbUrl}
         coral.db.user=${coralDbUser}
