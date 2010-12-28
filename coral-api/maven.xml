@@ -35,7 +35,26 @@
          xmlns:ledge="ledge">
 
   <preGoal name="java:compile">
-    <attainGoal name="ledge:javacc"/>
+    <j:set var="maven.javacc.jjtree.package" value="org.objectledge.coral.script.parser"/>
+    <j:set var="maven.javacc.jjtree.grammar" value="src/main/jjtree/org/objectledge/coral/script/parser/RML.jjt"/>
+    <attainGoal name="javacc:jjtree-generate"/>
+
+    <j:set var="maven.javacc.javacc.package" value="org.objectledge.coral.script.parser"/>
+    <j:set var="maven.javacc.javacc.grammar" value="target/generated-src/main/java/org/objectledge/coral/script/parser/RML.jj"/>
+    <attainGoal name="javacc:javacc-generate"/>
+
+    <j:set var="maven.javacc.jjtree.package" value="org.objectledge.coral.relation.query.parser"/>
+    <j:set var="maven.javacc.jjtree.grammar" value="src/main/jjtree/org/objectledge/coral/relation/query/parser/RelationQueryParser.jjt"/>
+    <attainGoal name="javacc:jjtree-generate"/>
+
+    <j:set var="maven.javacc.javacc.package" value="org.objectledge.coral.relation.query.parser"/>
+    <j:set var="maven.javacc.javacc.grammar" value="target/generated-src/main/java/org/objectledge/coral/query/parser/RelationQueryParser.jj"/>
+    <attainGoal name="javacc"/>
+
+    <ant:delete>
+      <ant:fileset dir="target/generated-src/main/java/org/objectledge/coral/script/parser/" includes="AST*.java SimpleNode.java"/>
+      <ant:fileset dir="target/generated-src/main/java/org/objectledge/coral/relation/query/parser/" includes="AST*.java"/>
+    </ant:delete>    
   </preGoal>
 
 </project>

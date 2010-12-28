@@ -59,6 +59,12 @@
   
   <dependencies>
     <dependency>
+      <groupId>maven</groupId>
+      <artifactId>maven-javacc-plugin</artifactId>
+      <version>1.2</version>
+      <type>plugin</type>
+    </dependency>
+    <dependency>
       <groupId>objectledge</groupId>
       <artifactId>ledge-components</artifactId>
       <version>${versions.ledge}</version>
