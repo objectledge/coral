@@ -28,6 +28,7 @@
 package org.objectledge.coral.session;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 
@@ -71,4 +72,11 @@ public interface CoralSessionFactory
      */
     public CoralSession getCurrentSession()
         throws IllegalStateException;
+    
+    /**
+     * Returns all sessions associated with the calling thread.
+     * 
+     * @return all sessions associated with the calling thread.
+     */
+    public List<CoralSession> getAllSessions();
 }

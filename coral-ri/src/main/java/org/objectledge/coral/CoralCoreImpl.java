@@ -27,6 +27,7 @@
 // 
 package org.objectledge.coral;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -392,6 +393,22 @@ public class CoralCoreImpl
             return null;
         }
         return sessionStack.getLast();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<CoralSession> getAllSessions()
+    {        
+        LinkedList<CoralSession> sessionStack = currentSessionStack.get();
+        if(sessionStack == null)
+        {
+            return Collections.emptyList();
+        }
+        else
+        {
+            return new LinkedList<CoralSession>(sessionStack);
+        }
     }
 
     /**

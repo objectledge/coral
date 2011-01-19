@@ -28,6 +28,7 @@
 package org.objectledge.coral.session;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.apache.commons.pool.BaseKeyedPoolableObjectFactory;
 import org.apache.commons.pool.KeyedObjectPool;
@@ -131,6 +132,14 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
             throw new IllegalStateException("no session is associated with this thread");
         }
         return session;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<CoralSession> getAllSessions()
+    {
+        return coral.getAllSessions();
     }
 
     /**

@@ -27,6 +27,8 @@
 // 
 package org.objectledge.coral;
 
+import java.util.List;
+
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.CoralEventWhiteboard;
@@ -178,6 +180,13 @@ public interface CoralCore
      * @return the associated session, may be <code>null</code>.
      */
     public CoralSession getCurrentSession();
+    
+    /**
+     * Returns all sessions associated with the calling thread.
+     * 
+     * @return all sessions associated with the calling thread as an immutable list.
+     */
+    public List<CoralSession> getAllSessions();
     
     /**
      * Returns the Subject assocaited with the calling thread.
