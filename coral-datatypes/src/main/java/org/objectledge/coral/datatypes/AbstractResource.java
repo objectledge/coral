@@ -917,6 +917,11 @@ public abstract class AbstractResource implements Resource
                 }
                 initialized.set(null, Boolean.TRUE);
             }
+            catch(NoSuchFieldException e)
+            {
+                // definitionInitilazed is missing - we assume that *Def fields are not there either
+                return;
+            }
             catch(Exception e)
             {
                 if(e instanceof BackendException)
