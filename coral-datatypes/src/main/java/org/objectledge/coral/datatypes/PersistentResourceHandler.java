@@ -39,9 +39,6 @@ public class PersistentResourceHandler
     /** The persistence. */
     private Persistence persistence;
     
-    /** The instance factory. */
-    private PersistentFactory factory;
-    
     private String[] keyColumns;
     
     /**
@@ -63,7 +60,6 @@ public class PersistentResourceHandler
     {
         super(coralSchema, instantiator, resourceClass, database, cacheFactory, logger);
         this.persistence = persistence;
-        factory = instantiator.getPersistentFactory((Class<? extends Persistent>)resourceClass.getJavaClass());
         keyColumns = new String[1];
         keyColumns[0] = resourceClass.getDbTable()+"_id";      
     }
@@ -237,5 +233,13 @@ public class PersistentResourceHandler
     String[] getKeyColumns()
     {
         return keyColumns;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Class<?> getFallbackResourceImplClass()
+    {
+        return PersistentResource.class;
     }
 }
