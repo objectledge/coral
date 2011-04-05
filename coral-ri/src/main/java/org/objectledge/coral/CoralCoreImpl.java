@@ -485,4 +485,9 @@ public class CoralCoreImpl
             order.get(phase).preloadData(phase);
         }
     }
+    
+    public Logger getLog()
+    {
+        return log;
+    }
 }

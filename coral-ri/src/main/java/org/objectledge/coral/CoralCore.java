@@ -29,6 +29,7 @@ package org.objectledge.coral;
 
 import java.util.List;
 
+import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.entity.CoralRegistry;
 import org.objectledge.coral.event.CoralEventWhiteboard;
@@ -196,4 +197,11 @@ public interface CoralCore
      */
     public Subject getCurrentSubject()
         throws IllegalStateException;
+    
+    // utility //////////////////////////////////////////////////////////////
+    
+    /**
+     * Returns a logger other Coral RI components may use.
+     */
+    public Logger getLog();
 }
