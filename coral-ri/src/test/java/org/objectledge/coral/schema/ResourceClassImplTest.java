@@ -199,7 +199,7 @@ public class ResourceClassImplTest extends LedgeTestCase
         mockInstantiator.expects(once()).method("loadClass").with(eq("<missing class>")).will(throwException(new ClassNotFoundException("<missing class>")));
         try
         {
-            rc.setJavaClass("<missing class>");
+            rc.setJavaClass("<missing class>", false);
             fail("exception expected");
         }
         catch(Exception e)

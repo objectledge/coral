@@ -491,4 +491,12 @@ public class GenericResourceHandler<T extends Resource>
             DatabaseUtils.close(stmt);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Class<?> getFallbackResourceImplClass()
+    {
+        return GenericResource.class;
+    }
 }

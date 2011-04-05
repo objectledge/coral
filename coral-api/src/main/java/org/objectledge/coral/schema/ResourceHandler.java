@@ -198,6 +198,8 @@ public interface ResourceHandler<T extends Resource>
      */
     public void clearResourceReferences(T resource);
     
+    // data preloading //////////////////////////////////////////////////////
+    
     /**
      * Retruns implementation dependent data that can speed up retrieving of all resources in the
      * system.
@@ -208,4 +210,14 @@ public interface ResourceHandler<T extends Resource>
      */
     public Object getData(Connection conn)
         throws SQLException;
+    
+    // fallback resource implementation
+    
+    /**
+     * Returns an implementation of Resource interface that can be used when requested Java 
+     * wrappers are not available.
+     *
+     * @return an implementation of Resource class.
+     */
+    public Class<?> getFallbackResourceImplClass();
 }

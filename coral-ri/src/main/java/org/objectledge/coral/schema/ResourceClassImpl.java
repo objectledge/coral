@@ -154,9 +154,9 @@ public class ResourceClassImpl
         this.instantiator = instantiator;
         this.coral= coral;
         this.coralEventHub = coralEventHub;
-        setJavaClass(javaClass);
         setDbTable(dbTable);
         setHandlerClass(handlerClass);
+        setJavaClass(javaClass, true);
         setFlags(flags);
         coralEventHub.getInbound().addResourceClassChangeListener(this, this);
     }
@@ -228,12 +228,12 @@ public class ResourceClassImpl
         super.setData(record);
         try
         {
-            setJavaClass(record.getString("java_class_name"));
+            setHandlerClass(record.getString("handler_class_name"));
+            setJavaClass(record.getString("java_class_name"), true);
             if(!record.isNull("db_table_name"))
             {
                 setDbTable(record.getString("db_table_name"));
             }
-            setHandlerClass(record.getString("handler_class_name"));
             setFlags(record.getInteger("flags"));
         }
         catch(JavaClassException e)
@@ -777,8 +777,10 @@ public class ResourceClassImpl
      *
      * @param className the Java class that is associated with this resource
      * class.
+     * @param fallbackAllowed when class is not available and fallback is allowed, handler provided
+     * introspection-only implementation will be used, otherwise exception will be thrown.
      */
-    void setJavaClass(String className)
+    void setJavaClass(String className, boolean fallbackAllowed)
         throws JavaClassException
     {
         javaClassName = className;
@@ -788,8 +790,17 @@ public class ResourceClassImpl
         }
         catch(ClassNotFoundException e)
         {
-            javaClass = null;
-            throw new JavaClassException(e.getMessage(), e);
+            if(fallbackAllowed && this.handler != null)
+            {
+                javaClass = handler.getFallbackResourceImplClass();
+                coral.getLog().warn(
+                    className + "is not available. Falling back to handler default: "
+                        + javaClass.getName(), e);
+            }
+            else
+            {
+                throw new JavaClassException(className + "is not available", e);                
+            }
         }
     }
 

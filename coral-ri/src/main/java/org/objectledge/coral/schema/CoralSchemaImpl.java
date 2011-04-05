@@ -455,7 +455,7 @@ public class CoralSchemaImpl
     public void setJavaClass(ResourceClass resourceClass, String javaClass)
         throws JavaClassException
     {
-        ((ResourceClassImpl)resourceClass).setJavaClass(javaClass);
+        ((ResourceClassImpl)resourceClass).setJavaClass(javaClass, false);
         try
         {
             persistence.save((Persistent)resourceClass);
