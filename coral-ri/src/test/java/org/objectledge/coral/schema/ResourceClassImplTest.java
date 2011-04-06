@@ -29,6 +29,7 @@ package org.objectledge.coral.schema;
 
 import java.sql.Connection;
 
+import org.jcontainer.dna.Logger;
 import org.jmock.Mock;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
@@ -73,7 +74,9 @@ public class ResourceClassImplTest extends LedgeTestCase
     private Resource resource;
     private Mock mockConnection;
     private Connection connection;
-
+    private Mock mockLogger;
+    private Logger logger;
+    
     public void setUp()
     {
         mockPersistence = mock(Persistence.class);
@@ -99,6 +102,8 @@ public class ResourceClassImplTest extends LedgeTestCase
         resource = (Resource)mockResource.proxy();
         mockConnection = mock(Connection.class);
         connection = (Connection)mockConnection.proxy();
+        mockLogger = mock(Logger.class);
+        logger = (Logger)mockLogger.proxy();
     }
     
     private ResourceClassImpl createResourceClass(String dbTable)
@@ -132,7 +137,6 @@ public class ResourceClassImplTest extends LedgeTestCase
     public void testMissingHandlerClass()
         throws Exception
     {
-        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
         mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(throwException(new ClassNotFoundException("<handler class>")));
         try
         {
@@ -151,7 +155,6 @@ public class ResourceClassImplTest extends LedgeTestCase
     public void testUninstantiableHandlerClass()
         throws Exception
     {
-        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
         mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
         mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(throwException(new InstantiationException("<handler class>", new Exception("unavailable"))));
         try
@@ -171,7 +174,6 @@ public class ResourceClassImplTest extends LedgeTestCase
     public void testNotImplementingHandlerClass()
         throws Exception
     {
-        mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(returnValue(Object.class));
         mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
         mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(new Object()));
         try
@@ -299,24 +301,25 @@ public class ResourceClassImplTest extends LedgeTestCase
         assertEquals(303, rc.getFlags());
     }
     
-    public void testLoadingJavaClassException()
+    public void testLoadingJavaClassException() throws Exception
     {
         ResourceClassImpl rc = new ResourceClassImpl(persistence, instantiator, coralEventHub, coralCore);
         mockInputRecord.expects(once()).method("getLong").with(eq("resource_class_id")).will(returnValue(-1L));
         mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<resource class>"));
+        mockInputRecord.expects(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
+        mockInstantiator.expects(once()).method("loadClass").with(eq("<handler class>")).will(returnValue(ResourceHandler.class));
+        mockInstantiator.expects(once()).method("newInstance").with(eq(ResourceHandler.class), mapElement(ResourceClass.class, isA(ResourceClass.class))).will(returnValue(resourceHandler));
+        mockResourceHandler.expects(once()).method("getFallbackResourceImplClass").withNoArguments().will(returnValue(Resource.class));
         mockInputRecord.expects(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
         mockInstantiator.expects(once()).method("loadClass").with(eq("<java class>")).will(throwException(new ClassNotFoundException("<java class>")));
-        try
-        {
-            rc.setData(inputRecord);
-            fail("should throw exception");
-        }
-        catch(Exception e)
-        {
-            assertEquals(PersistenceException.class, e.getClass());
-            assertEquals(JavaClassException.class, e.getCause().getClass());
-            assertEquals(ClassNotFoundException.class, e.getCause().getCause().getClass());
-        }
+        mockCoralCore.expects(once()).method("getLog").withNoArguments().will(returnValue(logger));
+        mockLogger.expects(once()).method("warn").withAnyArguments().isVoid();
+        mockInputRecord.expects(once()).method("isNull").with(eq("db_table_name")).will(returnValue(true));
+        mockInputRecord.expects(once()).method("getInteger").with(eq("flags")).will(returnValue(303));  
+        mockCoralEventHub.expects(once()).method("getInbound").will(returnValue(coralEventWhiteboard));
+        mockCoralEventWhiteboard.expects(once()).method("addResourceClassChangeListener").withAnyArguments().isVoid();      
+        rc.setData(inputRecord);
+        assertEquals(Resource.class, rc.getJavaClass());
     }
     
     // events ////////////////////////////////////////////////////////////////////////////////////
