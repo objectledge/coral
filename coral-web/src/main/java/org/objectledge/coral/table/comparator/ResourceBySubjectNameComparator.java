@@ -13,8 +13,8 @@ import org.objectledge.table.comparator.BaseStringComparator;
  * @author <a href="mailto:damian@caltha.pl">Damian Gajda</a>
  * @version $Id: ResourceBySubjectNameComparator.java,v 1.4 2008-06-05 16:37:59 rafal Exp $
  */
-public abstract class ResourceBySubjectNameComparator
-    extends BaseStringComparator<Resource>
+public abstract class ResourceBySubjectNameComparator<T extends Resource>
+    extends BaseStringComparator<T>
 {
     /**
      * Creates new ResourceBySubjectNameComparator instance.

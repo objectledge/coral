@@ -11,8 +11,8 @@ import org.objectledge.coral.store.Resource;
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
  * @version $Id: CreatorNameComparator.java,v 1.2 2005-02-21 14:04:29 rafal Exp $
  */
-public class CreatorNameComparator
-    extends ResourceBySubjectNameComparator
+public class CreatorNameComparator<T extends Resource>
+    extends ResourceBySubjectNameComparator<T>
 {
     /**
      * Creates new CreatorNameComparator instance.

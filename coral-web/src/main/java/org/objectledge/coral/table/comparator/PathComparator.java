@@ -11,8 +11,8 @@ import org.objectledge.table.comparator.BaseStringComparator;
  * @author <a href="mailto:damian@caltha.pl">Damian Gajda</a>
  * @version $Id: PathComparator.java,v 1.4 2008-06-05 16:37:58 rafal Exp $
  */
-public class PathComparator
-    extends BaseStringComparator<Resource>
+public class PathComparator<T extends Resource>
+    extends BaseStringComparator<T>
 {
     /**
      * Comparator constructor.

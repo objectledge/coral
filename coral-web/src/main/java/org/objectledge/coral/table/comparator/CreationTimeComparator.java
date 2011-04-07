@@ -10,8 +10,8 @@ import org.objectledge.coral.store.Resource;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @version $Id: CreationTimeComparator.java,v 1.3 2008-06-05 16:37:58 rafal Exp $
  */
-public class CreationTimeComparator
-    extends TimeComparator<Resource>
+public class CreationTimeComparator<T extends Resource>
+    extends TimeComparator<T>
 {
     public CreationTimeComparator()
     {

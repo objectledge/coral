@@ -11,8 +11,8 @@ import org.objectledge.coral.store.Resource;
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
  * @version $Id: ModifierNameComparator.java,v 1.2 2005-02-21 14:04:29 rafal Exp $
  */
-public class ModifierNameComparator
-    extends ResourceBySubjectNameComparator
+public class ModifierNameComparator<T extends Resource>
+    extends ResourceBySubjectNameComparator<T>
 {
     /**
      * Creates new ModifierNameComparator instance.

@@ -34,20 +34,20 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @version $Id: CoralTableModel.java,v 1.15 2008-06-05 16:37:59 rafal Exp $
  */
-public class CoralTableModel implements ExtendedTableModel<Resource>
+public class CoralTableModel<T extends Resource> implements ExtendedTableModel<T>
 {
     /** coral session. */
     protected CoralSession coralSession;
 
     /** comparators keyed by column name. */
-    protected Map<String, Comparator<?>> comparatorByColumnName = new HashMap<String, Comparator<?>>();
+    protected Map<String, Comparator<T>> comparatorByColumnName = new HashMap<String, Comparator<T>>();
 
     /**
      * reverse comparators, used for descending sort, keyed by column name. When a comparator
      * defined in comparatorByColumnName does not have a matching comparator in
      * reverseComparatorByColumnName, Collections.reverse(Comparator) is used.
      */
-    protected Map<String, Comparator<?>> reverseComparatorByColumnName = new HashMap<String, Comparator<?>>();
+    protected Map<String, Comparator<T>> reverseComparatorByColumnName = new HashMap<String, Comparator<T>>();
 
     /**
      * Creates new CoralTableModel instance.
@@ -80,21 +80,21 @@ public class CoralTableModel implements ExtendedTableModel<Resource>
         // add generic Resource columns
 
         // Subject name comparator columns
-        comparatorByColumnName.put("creator.name", new CreatorNameComparator(locale));
-        comparatorByColumnName.put("modifier.name", new ModifierNameComparator(locale));
-        comparatorByColumnName.put("owner.name", new OwnerNameComparator(locale));
+        comparatorByColumnName.put("creator.name", new CreatorNameComparator<T>(locale));
+        comparatorByColumnName.put("modifier.name", new ModifierNameComparator<T>(locale));
+        comparatorByColumnName.put("owner.name", new OwnerNameComparator<T>(locale));
 
         // Time comparator columns
-        comparatorByColumnName.put("creation.time", new CreationTimeComparator());
-        comparatorByColumnName.put("modification.time", new ModificationTimeComparator());
+        comparatorByColumnName.put("creation.time", new CreationTimeComparator<T>());
+        comparatorByColumnName.put("modification.time", new ModificationTimeComparator<T>());
 
         // Name comparator
-        comparatorByColumnName.put("name", new NameComparator<Resource>(locale));
+        comparatorByColumnName.put("name", new NameComparator<T>(locale));
         // Path comparator
-        comparatorByColumnName.put("path", new PathComparator(locale));
+        comparatorByColumnName.put("path", new PathComparator<T>(locale));
 
         // Id comparator
-        comparatorByColumnName.put("id", new IdComparator<Resource>());
+        comparatorByColumnName.put("id", new IdComparator<T>());
     }
 
     /**
@@ -103,7 +103,7 @@ public class CoralTableModel implements ExtendedTableModel<Resource>
      * @param name name of the column.
      * @param comparator the comparator for the column.
      */
-    public void addColumn(String name, Comparator<Resource> comparator)
+    public void addColumn(String name, Comparator<T> comparator)
     {
         comparatorByColumnName.put(name, comparator);
     }
@@ -115,7 +115,7 @@ public class CoralTableModel implements ExtendedTableModel<Resource>
      * @param attributeName the attribute name.
      * @param valueComparator the comparator for attribute values.
      */
-    public <V> void addColumn(ResourceClass resourceClass, String attributeName,
+    public <V> void addColumn(ResourceClass<T> resourceClass, String attributeName,
         Comparator<V> valueComparator)
     {
         addColumn(attributeName, AttributeTableColumn.getAttributeComparator(resourceClass,
@@ -130,15 +130,15 @@ public class CoralTableModel implements ExtendedTableModel<Resource>
      * @param filters a list of filters to be used while creating the rows set
      * @return table of children
      */
-    public TableRowSet<Resource> getRowSet(TableState state, TableFilter<Resource>[] filters)
+    public TableRowSet<T> getRowSet(TableState state, TableFilter<T>[] filters)
     {
         if(state.getTreeView())
         {
-            return new GenericTreeRowSet<Resource>(state, filters, this);
+            return new GenericTreeRowSet<T>(state, filters, this);
         }
         else
         {
-            return new GenericListRowSet<Resource>(state, filters, this);   
+            return new GenericListRowSet<T>(state, filters, this);   
         }
     }
 
@@ -148,24 +148,24 @@ public class CoralTableModel implements ExtendedTableModel<Resource>
      *
      * @return array of <code>TableColumn</code> objects
      */
-    public TableColumn<Resource>[] getColumns()
+    public TableColumn<T>[] getColumns()
     {
-        TableColumn<Resource>[] columns = new TableColumn[comparatorByColumnName.size()];
+        TableColumn<T>[] columns = new TableColumn[comparatorByColumnName.size()];
         int i=0;
         for(Iterator<String> iter = comparatorByColumnName.keySet().iterator(); iter.hasNext(); i++)
         {
             String columnName = (String)(iter.next());
-            Comparator<Resource> comparator =  (Comparator<Resource>)(comparatorByColumnName.get(columnName));
+            Comparator<T> comparator =  comparatorByColumnName.get(columnName);
             try
             {
-                Comparator<Resource> reverseComparator = (Comparator<Resource>)(reverseComparatorByColumnName.get(columnName));
+                Comparator<T> reverseComparator = reverseComparatorByColumnName.get(columnName);
                 if(reverseComparator != null)
                 {
-                    columns[i] = new TableColumn<Resource>(columnName, comparator, reverseComparator);
+                    columns[i] = new TableColumn<T>(columnName, comparator, reverseComparator);
                 }
                 else
                 {
-                    columns[i] = new TableColumn<Resource>(columnName, comparator);
+                    columns[i] = new TableColumn<T>(columnName, comparator);
                 }
             }
             catch(TableException e)
@@ -197,9 +197,9 @@ public class CoralTableModel implements ExtendedTableModel<Resource>
      * @param id the id of the object
      * @return model object
      */
-    public Resource getObject(String id)
+    public T getObject(String id)
     {
-        Resource resource = null;
+        T resource = null;
         try
         {
             long longId = Long.parseLong(id);
@@ -207,7 +207,7 @@ public class CoralTableModel implements ExtendedTableModel<Resource>
             {
                 return null;
             }
-            resource = coralSession.getStore().getResource(longId);
+            resource = (T)coralSession.getStore().getResource(longId);
         }
         catch(EntityDoesNotExistException e)
         {

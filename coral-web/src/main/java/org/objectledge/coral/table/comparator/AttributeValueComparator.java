@@ -45,7 +45,7 @@ import org.objectledge.coral.store.Resource;
 public class AttributeValueComparator<T extends Resource, V>
     implements Comparator<T>
 {
-    private final AttributeDefinition attrDef;
+    private final AttributeDefinition<V> attrDef;
     private final Comparator<V> valueComparator;
 
     /**
@@ -55,7 +55,7 @@ public class AttributeValueComparator<T extends Resource, V>
      * @param attrDef the attribute definition.
      * @param valueComparator a compartor for the attribute values.
      */
-    public AttributeValueComparator(Class<T> type, AttributeDefinition attrDef,
+    public AttributeValueComparator(Class<T> type, AttributeDefinition<V> attrDef,
         Comparator<V> valueComparator)
     {
         if(!attrDef.getDeclaringClass().getJavaClass().isAssignableFrom(type))

@@ -15,13 +15,13 @@ import org.objectledge.coral.schema.ResourceClass;
  * @author rafal
  */
 public class AttributeDefnitionsComparator
-    implements Comparator<AttributeDefinition>
+    implements Comparator<AttributeDefinition<?>>
 {
     @Override
-    public int compare(AttributeDefinition attr1, AttributeDefinition attr2)
+    public int compare(AttributeDefinition<?> attr1, AttributeDefinition<?> attr2)
     {
-        ResourceClass decl1 = attr1.getDeclaringClass();
-        ResourceClass decl2 = attr2.getDeclaringClass();
+        ResourceClass<?> decl1 = attr1.getDeclaringClass();
+        ResourceClass<?> decl2 = attr2.getDeclaringClass();
         int c = 0;
         if(!decl1.equals(decl2))
         {

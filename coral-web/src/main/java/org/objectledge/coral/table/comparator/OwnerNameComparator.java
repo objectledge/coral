@@ -11,8 +11,8 @@ import org.objectledge.coral.store.Resource;
  * @author <a href="mailto:zwierzem@ngo.pl">Damian Gajda</a>
  * @version $Id: OwnerNameComparator.java,v 1.2 2005-02-21 14:04:29 rafal Exp $
  */
-public class OwnerNameComparator
-    extends ResourceBySubjectNameComparator
+public class OwnerNameComparator<T extends Resource>
+    extends ResourceBySubjectNameComparator<T>
 {
     /**
      * Creates new OwnerNameComparator instance.
