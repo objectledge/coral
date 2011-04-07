@@ -40,9 +40,9 @@ public class ResourceClassView
             long resClassId = parameters.getLong("res_class_id",-1);
             if(resClassId != -1)
             {
-                ResourceClass resourceClass = coralSession.getSchema().getResourceClass(resClassId);
+                ResourceClass<?> resourceClass = coralSession.getSchema().getResourceClass(resClassId);
                 templatingContext.put("resourceClass",resourceClass);
-                List<AttributeDefinition> attributeDefinitionss = new ArrayList<AttributeDefinition>();
+                List<AttributeDefinition<?>> attributeDefinitionss = new ArrayList<AttributeDefinition<?>>();
                 attributeDefinitionss.addAll(Arrays.asList(resourceClass.getAllAttributes()));
                 Collections.sort(attributeDefinitionss, new AttributeDefnitionsComparator());
                 templatingContext.put("attributeDefinitions", attributeDefinitionss);

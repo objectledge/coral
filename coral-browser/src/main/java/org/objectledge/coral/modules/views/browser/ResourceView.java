@@ -8,6 +8,7 @@ import java.util.List;
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.schema.AttributeDefinition;
+import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.table.comparator.AttributeDefnitionsComparator;
@@ -41,8 +42,9 @@ public class ResourceView
             {
                 Resource resource = coralSession.getStore().getResource(resId);
                 templatingContext.put("resource",resource);
-                List<AttributeDefinition> attributeDefinitionss = new ArrayList<AttributeDefinition>();
-                attributeDefinitionss.addAll(Arrays.asList(resource.getResourceClass().getAllAttributes()));
+                List<AttributeDefinition<?>> attributeDefinitionss = new ArrayList<AttributeDefinition<?>>();
+                ResourceClass<?> rClass = resource.getResourceClass();
+                attributeDefinitionss.addAll(Arrays.asList(rClass.getAllAttributes()));
                 Collections.sort(attributeDefinitionss, new AttributeDefnitionsComparator());
                 templatingContext.put("attributeDefinitions", attributeDefinitionss);
             }
