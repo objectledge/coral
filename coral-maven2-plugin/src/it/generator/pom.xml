@@ -1,0 +1,35 @@
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <parent>
+    <artifactId>coral-common</artifactId>
+    <groupId>org.objectledge.coral</groupId>
+    <version>1.0.9</version>
+    <relativePath>../../../../coral-common</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.objectledge.coral</groupId>
+  <artifactId>coral-maven2-plugin-generator-test</artifactId>
+  <name>Coral Maven2 Plugin generator test</name>
+  <packaging>pom</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.objectledge.coral</groupId>
+        <artifactId>coral-maven2-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generator</goal>
+            </goals>
+            <configuration>
+              <packageIncludes>org.objectledge.coral.test</packageIncludes>
+              <packageExcludes>org.objectledge.coral.test.excludes</packageExcludes>
+            </configuration>           
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
