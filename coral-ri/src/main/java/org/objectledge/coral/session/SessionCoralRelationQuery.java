@@ -27,8 +27,6 @@
 // 
 package org.objectledge.coral.session;
 
-import java.util.Set;
-
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.relation.CoralRelationQuery;
@@ -79,5 +77,15 @@ public class SessionCoralRelationQuery implements CoralRelationQuery
     {
         session.verify();
         return coral.getRelationQuery().query(query, resolver, initialIdSet);
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public LongSet queryIds(String query, ResourceIdentifierResolver resolver, LongSet initialIdSet)
+        throws MalformedRelationQueryException, EntityDoesNotExistException
+    {
+        session.verify();
+        return coral.getRelationQuery().queryIds(query, resolver, initialIdSet);
     }
 }

@@ -27,9 +27,6 @@
 //
 package org.objectledge.coral.relation.query;
 
-import java.util.Iterator;
-import java.util.Set;
-
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.relation.CachingResourceIdentifierResolver;
 import org.objectledge.coral.relation.CoralRelationManager;
@@ -76,13 +73,14 @@ public class CoralRelationQueryImpl implements CoralRelationQuery
         return query(query, resolver, null);
     }
 
+    
     /**
      * {@inheritDoc}
      */
-	public Resource[] query(String query, ResourceIdentifierResolver resolver, LongSet initialIdSet)
+    public LongSet queryIds(String query, ResourceIdentifierResolver resolver, LongSet initialIdSet)
         throws MalformedRelationQueryException, EntityDoesNotExistException
-    {
-		SimpleNode tree = null;
+    {        
+        SimpleNode tree = null;
         try
         {
             tree = RelationQueryParser.executeParse(query);
@@ -91,10 +89,10 @@ public class CoralRelationQueryImpl implements CoralRelationQuery
         {
             throw new MalformedRelationQueryException("query is malformed", e);
         }
-
+        
         ResourceIdentifierResolver resolver2 = new CachingResourceIdentifierResolver(resolver);
         QueryExecutor executor = null;
-
+        
         // calculate complexity
         if(initialIdSet != null)
         {
@@ -103,32 +101,44 @@ public class CoralRelationQueryImpl implements CoralRelationQuery
                 new QueryComplexityCalculator(relationManager, resolver2, -1);
             int resultIntersectionCompl = ((Integer)(tree.jjtAccept(calc, null))).intValue();
             resultIntersectionCompl = 
-            	resultIntersectionCompl < size ? resultIntersectionCompl : size;
-
+                resultIntersectionCompl < size ? resultIntersectionCompl : size;
+            
             calc = new QueryComplexityCalculator(relationManager, resolver2, size);
             int leafIntersectionCompl = ((Integer)(tree.jjtAccept(calc, null))).intValue();
-
+            
             // choose executor
             if(leafIntersectionCompl < resultIntersectionCompl)
             {
                 executor = 
-                new UnmappedLeafIntersectQueryExecutor(relationManager, resolver2, initialIdSet);
+                    new UnmappedLeafIntersectQueryExecutor(relationManager, resolver2, initialIdSet);
             }
             else
             {
                 executor = 
-                new ResultIntersectQueryExecutor(relationManager, resolver2, initialIdSet);
+                    new ResultIntersectQueryExecutor(relationManager, resolver2, initialIdSet);
             }
         }
         else
         {
             executor = new QueryExecutor(relationManager, resolver2);
         }
-
+        
         IdSet idSet = (IdSet)(tree.jjtAccept(executor, null));
-        Resource[] resources = new Resource[idSet.getSet().size()];
+        
+        return idSet.getSet();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+	public Resource[] query(String query, ResourceIdentifierResolver resolver, LongSet initialIdSet)
+        throws MalformedRelationQueryException, EntityDoesNotExistException
+    {
+	    LongSet idSet = queryIds(query, resolver, initialIdSet);
+	    
+        Resource[] resources = new Resource[idSet.size()];
         int j=0;
-        for(LongIterator i=idSet.getSet().iterator(); i.hasNext(); j++)
+        for(LongIterator i=idSet.iterator(); i.hasNext(); j++)
         {
             resources[j] = store.getResource(i.next());
         }

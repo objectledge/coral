@@ -27,8 +27,6 @@
 //
 package org.objectledge.coral.relation;
 
-import java.util.Set;
-
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.Resource;
 
@@ -83,4 +81,19 @@ public interface CoralRelationQuery
 	 */
 	public Resource[] query(String query, ResourceIdentifierResolver resolver, LongSet initialIdSet)
 		throws MalformedRelationQueryException, EntityDoesNotExistException;
+
+    /**
+     * Executes a query for resources based on a given relation query string and for efficiency
+     * intersects query results with a given resource id set. Resource identifiers in the query
+     * string are resolved to resource id sets by a given {@link ResourceIdentifierResolver}.
+     *
+     * @param query a string representation of a query
+     * @param resolver resource identifier resolver to be used while executing the query
+     * @param initialIdSet set of resource ids ({@link Long} objects}
+     * @return an array of resources - the query result 
+     * @throws MalformedRelationQueryException on query parsing errors
+     * @throws EntityDoesNotExistException thrown by the resolver
+     */
+    public LongSet queryIds(String query, ResourceIdentifierResolver resolver, LongSet initialIdSet)
+        throws MalformedRelationQueryException, EntityDoesNotExistException;
 }
