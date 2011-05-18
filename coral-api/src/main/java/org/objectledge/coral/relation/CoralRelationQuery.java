@@ -32,6 +32,8 @@ import java.util.Set;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.Resource;
 
+import bak.pcj.set.LongSet;
+
 /**
  * Executes queries based on relations defined between Coral resources. 
  *
@@ -79,6 +81,6 @@ public interface CoralRelationQuery
 	 * @throws MalformedRelationQueryException on query parsing errors
 	 * @throws EntityDoesNotExistException thrown by the resolver
 	 */
-	public Resource[] query(String query, ResourceIdentifierResolver resolver, Set<Long> initialIdSet)
+	public Resource[] query(String query, ResourceIdentifierResolver resolver, LongSet initialIdSet)
 		throws MalformedRelationQueryException, EntityDoesNotExistException;
 }

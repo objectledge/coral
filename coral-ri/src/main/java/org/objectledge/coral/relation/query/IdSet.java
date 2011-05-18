@@ -29,6 +29,8 @@ package org.objectledge.coral.relation.query;
 
 import java.util.Set;
 
+import bak.pcj.set.LongSet;
+
 /**
  * Id set represents a set of resource ids. It is used during query execution.
  * 
@@ -37,14 +39,14 @@ import java.util.Set;
  */
 public class IdSet
 {
-	private Set<Long> set;
+	private LongSet set;
 
 	/**
 	 * Constucts an id set from a set of {@link Long} objects.
 	 *  
 	 * @param set set of ids
 	 */
-	public IdSet(Set<Long> set)
+	public IdSet(LongSet set)
 	{
 		this.set = set;
 	}
@@ -74,7 +76,7 @@ public class IdSet
      * 
      * @return internal set of {@link Long} objects
      */
-    public Set<Long> getSet()
+    public LongSet getSet()
     {
         return set;
     }

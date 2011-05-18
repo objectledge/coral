@@ -42,6 +42,10 @@ import org.objectledge.coral.relation.query.parser.ASTSumExpression;
 import org.objectledge.coral.relation.query.parser.ASTTransitiveRelationMapExpression;
 import org.objectledge.coral.relation.query.parser.SimpleNode;
 
+import bak.pcj.LongIterator;
+import bak.pcj.set.LongOpenHashSet;
+import bak.pcj.set.LongSet;
+
 /**
  * Query executor executes a parsed query and returns the set of queried {@link 
  * org.objectledge.coral.store.Resource} ids.
@@ -138,12 +142,11 @@ public class QueryExecutor extends AbstractQueryVisitor
 	 */
 	public Object doVisit(ASTRelationMapExpression node, Object data, Relation relation)
 	{
-		Set<Long> mapSet = getMapSet(node, data).getSet();
-		Set<Long> resultSet = new HashSet<Long>(mapSet.size());
-		for (Iterator<Long> iter = mapSet.iterator(); iter.hasNext();)
+		LongSet mapSet = getMapSet(node, data).getSet();
+		LongSet resultSet = new LongOpenHashSet(mapSet.size());
+		for (LongIterator iter = mapSet.iterator(); iter.hasNext();)
         {
-            Long id = iter.next();
-			resultSet.addAll(relation.get(id.longValue()));
+			resultSet.addAll(relation.get(iter.next()));
         }
 		return new IdSet(resultSet);
 	}
@@ -160,12 +163,11 @@ public class QueryExecutor extends AbstractQueryVisitor
 	 */
 	public Object doVisit(ASTTransitiveRelationMapExpression node, Object data, Relation relation)
 	{
-		Set<Long> mapSet = getMapSet(node, data).getSet();
-		Set<Long> resultSet = new HashSet<Long>(mapSet.size());
-		for (Iterator<Long> iter = mapSet.iterator(); iter.hasNext();)
+		LongSet mapSet = getMapSet(node, data).getSet();
+		LongSet resultSet = new LongOpenHashSet(mapSet.size());
+		for (LongIterator iter = mapSet.iterator(); iter.hasNext();)
 		{
-			Long id = iter.next();
-			buildTransitiveSet(relation, id, mapSet, resultSet);
+			buildTransitiveSet(relation, iter.next(), mapSet, resultSet);
 		}
 		return new IdSet(resultSet);
 	}
@@ -177,12 +179,12 @@ public class QueryExecutor extends AbstractQueryVisitor
 		return (IdSet) node.jjtGetChild(1).jjtAccept(this, data);
 	}
 
-	private void buildTransitiveSet(Relation relation, Long id, Set<Long> mapSet, Set<Long> resultSet)
+	private void buildTransitiveSet(Relation relation, long id, LongSet mapSet, LongSet resultSet)
 	{
-		Set<Long> localResult = relation.get(id.longValue()); 
-		for (Iterator<Long> iter = localResult.iterator(); iter.hasNext();)
+		LongSet localResult = relation.get(id); 
+		for (LongIterator iter = localResult.iterator(); iter.hasNext();)
         {
-            Long localId = iter.next();
+            long localId = iter.next();
 			if(mapSet.contains(localId))
 			{
 				throw new RuntimeException("circular relation '"+relation.getName()
@@ -203,12 +205,12 @@ public class QueryExecutor extends AbstractQueryVisitor
 	{
 		try
 		{
-			Set<Long> set = resolver.resolveIdentifier(identifier);
+			LongSet set = resolver.resolveIdentifier(identifier);
 			return new IdSet(set);
 		}
 		catch(Exception e)
 		{
-			return new IdSet(new HashSet<Long>());
+			return new IdSet(new LongOpenHashSet());
 		}
 	}
 }

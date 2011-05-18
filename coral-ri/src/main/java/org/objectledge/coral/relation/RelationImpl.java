@@ -37,12 +37,12 @@ import org.objectledge.coral.entity.AbstractEntity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.util.PrimitiveCollections;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 
 import bak.pcj.LongIterator;
-import bak.pcj.adapter.LongSetToSetAdapter;
 import bak.pcj.map.LongKeyMap;
 import bak.pcj.map.LongKeyMapIterator;
 import bak.pcj.map.LongKeyOpenHashMap;
@@ -138,7 +138,7 @@ implements Relation
     /**
      * {@inheritDoc}
      */
-    public Set<Long> get(long id)
+    public LongSet get(long id)
     {
         return get(rel, id);
     }
@@ -425,16 +425,16 @@ implements Relation
     /**
      * Return an array of ids contained in the map under given id.
      */
-    Set<Long> get(LongKeyMap relation, long id)
+    LongSet get(LongKeyMap relation, long id)
     {
         LongSet set = (LongSet) relation.get(id);
         if(set != null)
         {
-        	return Collections.unmodifiableSet((Set<Long>) new LongSetToSetAdapter(set));
+        	return PrimitiveCollections.unmodifiableLongSet(set);
         }
         else
         {
-            return (Set<Long>) Collections.EMPTY_SET;
+            return PrimitiveCollections.EMPTY_LONG_SET;
         }
     }
 
@@ -520,7 +520,7 @@ implements Relation
         /**
          * {@inheritDoc}
          */
-        public Set<Long> get(long id)
+        public LongSet get(long id)
         {
             return RelationImpl.this.get(invRel, id);
         }

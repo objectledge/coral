@@ -36,7 +36,11 @@ import java.util.Set;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.util.PrimitiveCollections;
 import org.objectledge.database.persistence.Persistence;
+
+import bak.pcj.set.LongOpenHashSet;
+import bak.pcj.set.LongSet;
 
 /**
  * Natural tree-realation of the resources.
@@ -55,7 +59,7 @@ public class ResourceHierarchyRelationImpl
     private static final Long ID_OBJECT = new Long(1L);
 
     private static final String ID_STRING = "1";
-
+    
     /** Name of the resource parent-child hierarchy relation. */
     public static final String NAME = "coral.ResourceHierarchy";
 
@@ -102,7 +106,7 @@ public class ResourceHierarchyRelationImpl
     /**
      * {@inheritDoc}
      */
-    public Set get(long id)
+    public LongSet get(long id)
     {
         Resource r;
         Resource[] children;
@@ -110,16 +114,16 @@ public class ResourceHierarchyRelationImpl
         {
             r = store.getResource(id);
             children = store.getResource(r);
-            Set s = new HashSet(children.length);
+            LongSet s = new LongOpenHashSet(children.length);
             for(Resource rx : children)
             {
-                s.add(rx.getIdObject());
+                s.add(rx.getId());
             }
             return s;
         }
         catch(EntityDoesNotExistException e)
         {
-            return Collections.EMPTY_SET;
+            return PrimitiveCollections.EMPTY_LONG_SET;
         }
     }
 
@@ -264,20 +268,20 @@ public class ResourceHierarchyRelationImpl
         /**
          * {@inheritDoc}
          */
-        public Set get(long id)
+        public LongSet get(long id)
         {
             try
             {
                 Resource r = store.getResource(id);
                 if(r.getParent() != null)
                 {
-                    return Collections.singleton(r.getParent().getIdObject());
+                    return PrimitiveCollections.singletonLongSet(r.getParentId());
                 }
-                return Collections.EMPTY_SET;
+                return PrimitiveCollections.EMPTY_LONG_SET;
             }
             catch(EntityDoesNotExistException e)
             {
-                return Collections.EMPTY_SET;
+                return PrimitiveCollections.EMPTY_LONG_SET;
             }
         }
 

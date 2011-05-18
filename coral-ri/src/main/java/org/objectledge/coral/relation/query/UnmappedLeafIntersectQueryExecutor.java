@@ -27,8 +27,6 @@
 //
 package org.objectledge.coral.relation.query;
 
-import java.util.Set;
-
 import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.relation.Relation;
 import org.objectledge.coral.relation.ResourceIdentifierResolver;
@@ -36,6 +34,8 @@ import org.objectledge.coral.relation.query.parser.ASTRelationMapExpression;
 import org.objectledge.coral.relation.query.parser.ASTResourceIdentifierId;
 import org.objectledge.coral.relation.query.parser.ASTResourceIdentifierPath;
 import org.objectledge.coral.relation.query.parser.ASTTransitiveRelationMapExpression;
+
+import bak.pcj.set.LongSet;
 
 /**
  * This kind of a query executor executes a parsed query and while executing it, it intersects
@@ -60,7 +60,7 @@ public class UnmappedLeafIntersectQueryExecutor extends QueryExecutor
     public UnmappedLeafIntersectQueryExecutor(
         CoralRelationManager relationManager,
         ResourceIdentifierResolver resolver,
-		Set initialIdSet)
+		LongSet initialIdSet)
     {
         super(relationManager, resolver);
 		this.initialIdSet = new IdSet(initialIdSet);

@@ -41,6 +41,9 @@ import org.objectledge.coral.relation.query.parser.SimpleNode;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 
+import bak.pcj.LongIterator;
+import bak.pcj.set.LongSet;
+
 /**
  * An implementation of the relation query.
  * 
@@ -76,7 +79,7 @@ public class CoralRelationQueryImpl implements CoralRelationQuery
     /**
      * {@inheritDoc}
      */
-	public Resource[] query(String query, ResourceIdentifierResolver resolver, Set initialIdSet)
+	public Resource[] query(String query, ResourceIdentifierResolver resolver, LongSet initialIdSet)
         throws MalformedRelationQueryException, EntityDoesNotExistException
     {
 		SimpleNode tree = null;
@@ -125,10 +128,9 @@ public class CoralRelationQueryImpl implements CoralRelationQuery
         IdSet idSet = (IdSet)(tree.jjtAccept(executor, null));
         Resource[] resources = new Resource[idSet.getSet().size()];
         int j=0;
-        for(Iterator i=idSet.getSet().iterator(); i.hasNext(); j++)
+        for(LongIterator i=idSet.getSet().iterator(); i.hasNext(); j++)
         {
-            Long id = (Long)(i.next());
-            resources[j] = store.getResource(id.longValue());
+            resources[j] = store.getResource(i.next());
         }
         return resources;
     }

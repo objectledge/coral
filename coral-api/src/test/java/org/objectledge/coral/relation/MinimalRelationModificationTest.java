@@ -36,7 +36,11 @@ import java.util.Set;
 
 import org.jmock.Mock;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.util.PrimitiveCollections;
 import org.objectledge.test.LedgeTestCase;
+
+import bak.pcj.set.LongOpenHashSet;
+import bak.pcj.set.LongSet;
 
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
@@ -306,31 +310,25 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 	}
 
 
-    private class MockRelation implements Relation
+    private static class MockRelation implements Relation
     {
-    	private Map<Long, Set<Long>> rel = new HashMap<Long, Set<Long>>();
-		private Map<Long, Set<Long>> invRel = new HashMap<Long, Set<Long>>();
+    	private Map<Long, LongSet> rel = new HashMap<Long, LongSet>();
+		private Map<Long, LongSet> invRel = new HashMap<Long, LongSet>();
     	private Relation inverted = new InvertedRelation(); 
     	
     	public MockRelation(boolean invertData)
     	{
-    		rel.put(new Long(1L), 
-    		new HashSet<Long>(Arrays.asList(new Long[] { new Long(4L), new Long(5L), new Long(6L) })));
-			rel.put(new Long(2L), 
-			new HashSet<Long>(Arrays.asList(new Long[] { new Long(5L), new Long(6L) })));
-			rel.put(new Long(3L), 
-			new HashSet<Long>(Arrays.asList(new Long[] { new Long(6L) })));
+    		rel.put(new Long(1L), new LongOpenHashSet(new long[] {4L, 5L, 6L}));    		
+			rel.put(new Long(2L), new LongOpenHashSet(new long[] {5L, 6L}));
+			rel.put(new Long(3L), new LongOpenHashSet(new long[] {6L}));
     		
-			invRel.put(new Long(4L), 
-			new HashSet<Long>(Arrays.asList(new Long[] { new Long(1L) })));
-			invRel.put(new Long(5L), 
-			new HashSet<Long>(Arrays.asList(new Long[] { new Long(1L), new Long(2L) })));
-			invRel.put(new Long(6L), 
-			new HashSet<Long>(Arrays.asList(new Long[] { new Long(1L), new Long(2L), new Long(3L) })));
+			invRel.put(new Long(4L), new LongOpenHashSet(new long[] {1L}));
+			invRel.put(new Long(5L), new LongOpenHashSet(new long[] {1L, 2L}));
+			invRel.put(new Long(6L), new LongOpenHashSet(new long[] {1L, 2L, 3L}));
 			
 			if(invertData)
 			{
-				Map<Long, Set<Long>> temp = rel;
+				Map<Long, LongSet> temp = rel;
 				rel = invRel;
 				invRel = temp;
 			}
@@ -363,7 +361,7 @@ public class MinimalRelationModificationTest extends LedgeTestCase
         /**
          * {@inheritDoc}
          */
-        public Set<Long> get(long id)
+        public LongSet get(long id)
         {
             return getSet(rel, id);
         }
@@ -381,10 +379,10 @@ public class MinimalRelationModificationTest extends LedgeTestCase
          */
         public boolean hasRef(long id, long idInv)
         {
-			Set<Long> set = rel.get(new Long(id));
+			LongSet set = rel.get(new Long(id));
 			if(set != null)
 			{
-				return set.contains(new Long(idInv));
+				return set.contains(idInv);
 			}
 			return false;
         }
@@ -443,16 +441,16 @@ public class MinimalRelationModificationTest extends LedgeTestCase
             return null;
         }
         
-        Set<Long> getSet(Map<Long, Set<Long>> relation, long id)
+        LongSet getSet(Map<Long, LongSet> relation, long id)
         {
-			Set<Long> set = relation.get(new Long(id));
+			LongSet set = relation.get(new Long(id));
 			if(set != null)
 			{
-				return Collections.unmodifiableSet(set);
+				return PrimitiveCollections.unmodifiableLongSet(set);
 			}
 			else
 			{
-				return Collections.emptySet();
+				return PrimitiveCollections.EMPTY_LONG_SET;
 			}
         }
         
@@ -486,7 +484,7 @@ public class MinimalRelationModificationTest extends LedgeTestCase
 			/**
 			 * {@inheritDoc}
 			 */
-			public Set<Long> get(long id)
+			public LongSet get(long id)
 			{
 				return getSet(invRel, id);
 			}

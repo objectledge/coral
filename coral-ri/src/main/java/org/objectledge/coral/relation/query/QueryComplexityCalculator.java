@@ -40,6 +40,8 @@ import org.objectledge.coral.relation.query.parser.ASTSumExpression;
 import org.objectledge.coral.relation.query.parser.ASTTransitiveRelationMapExpression;
 import org.objectledge.coral.relation.query.parser.SimpleNode;
 
+import bak.pcj.set.LongSet;
+
 /**
  * Complexity calculator calculates a parsed query complexity and returns the estimated number of
  * operations needed to perform a query.
@@ -190,7 +192,7 @@ public class QueryComplexityCalculator extends AbstractQueryVisitor
 		int size = 0;
 		try
 		{
-			Set set = resolver.resolveIdentifier(identifier);
+			LongSet set = resolver.resolveIdentifier(identifier);
 			size += set.size();
 		}
 		catch(Exception e)

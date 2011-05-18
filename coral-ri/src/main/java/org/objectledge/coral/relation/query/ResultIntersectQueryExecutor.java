@@ -27,11 +27,12 @@
 //
 package org.objectledge.coral.relation.query;
 
-import java.util.Set;
 
 import org.objectledge.coral.relation.CoralRelationManager;
 import org.objectledge.coral.relation.ResourceIdentifierResolver;
 import org.objectledge.coral.relation.query.parser.ASTStart;
+
+import bak.pcj.set.LongSet;
 
 /**
  * This kind of a query executor executes a parsed query and before returning the result intersects
@@ -54,7 +55,7 @@ public class ResultIntersectQueryExecutor extends QueryExecutor
     public ResultIntersectQueryExecutor(
         CoralRelationManager relationManager,
         ResourceIdentifierResolver resolver,
-		Set initialIdSet)
+		LongSet initialIdSet)
     {
         super(relationManager, resolver);
 		this.initialIdSet = new IdSet(initialIdSet);

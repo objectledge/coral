@@ -56,6 +56,8 @@ import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.test.LedgeTestCase;
 
+import bak.pcj.set.LongSet;
+
 /**
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @version $Id: RelationImplTest.java,v 1.16 2009-01-30 13:43:56 rafal Exp $
@@ -140,13 +142,13 @@ public class RelationImplTest extends LedgeTestCase
 
 		assertFalse(relation.isInverted());
 		
-		Set relatedTo1 = relation.get(1L);
+		LongSet relatedTo1 = relation.get(1L);
 		assertEquals(relatedTo1.size(), 3);
-		assertTrue(relatedTo1.contains(new Long(4L)));
-		assertTrue(relatedTo1.contains(new Long(5L)));
-		assertTrue(relatedTo1.contains(new Long(6L)));
+		assertTrue(relatedTo1.contains(4L));
+		assertTrue(relatedTo1.contains(5L));
+		assertTrue(relatedTo1.contains(6L));
 
-		Set relatedTo100 = relation.get(100L);
+		LongSet relatedTo100 = relation.get(100L);
 		assertEquals(relatedTo100.size(), 0);
 
 		assertTrue(relation.hasRef(1L, 4L));
@@ -221,11 +223,11 @@ public class RelationImplTest extends LedgeTestCase
 
 		assertTrue(invRelation.isInverted());
 
-		Set relatedTo6 = invRelation.get(6L);
+		LongSet relatedTo6 = invRelation.get(6L);
 		assertEquals(relatedTo6.size(), 3);
-		assertTrue(relatedTo6.contains(new Long(1L)));
-		assertTrue(relatedTo6.contains(new Long(2L)));
-		assertTrue(relatedTo6.contains(new Long(3L)));
+		assertTrue(relatedTo6.contains(1L));
+		assertTrue(relatedTo6.contains(2L));
+		assertTrue(relatedTo6.contains(3L));
 
 		relatedTo100 = invRelation.get(100L);
 		assertEquals(relatedTo100.size(), 0);

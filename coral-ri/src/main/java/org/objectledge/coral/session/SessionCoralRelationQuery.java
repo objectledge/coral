@@ -36,6 +36,8 @@ import org.objectledge.coral.relation.MalformedRelationQueryException;
 import org.objectledge.coral.relation.ResourceIdentifierResolver;
 import org.objectledge.coral.store.Resource;
 
+import bak.pcj.set.LongSet;
+
 /**
  * Session private wrapper for the Coral relation query component.
  * 
@@ -72,7 +74,7 @@ public class SessionCoralRelationQuery implements CoralRelationQuery
     /** 
      * {@inheritDoc}
      */
-    public Resource[] query(String query, ResourceIdentifierResolver resolver, Set initialIdSet)
+    public Resource[] query(String query, ResourceIdentifierResolver resolver, LongSet initialIdSet)
         throws MalformedRelationQueryException, EntityDoesNotExistException
     {
         session.verify();

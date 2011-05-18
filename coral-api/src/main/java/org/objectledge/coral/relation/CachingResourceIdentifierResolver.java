@@ -33,6 +33,8 @@ import java.util.Set;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 
+import bak.pcj.set.LongSet;
+
 /**
  * A simple {@link Map} based caching wrapper for {@link ResourceIdentifierResolver}
  * implementations.
@@ -44,7 +46,7 @@ public class CachingResourceIdentifierResolver
 implements ResourceIdentifierResolver
 {
 	private ResourceIdentifierResolver resolver;
-	private Map<String, Set<Long>> setCache = new HashMap<String, Set<Long>>();
+	private Map<String, LongSet> setCache = new HashMap<String, LongSet>();
 
 	/**
 	 * Creates the wrapper. 
@@ -58,10 +60,10 @@ implements ResourceIdentifierResolver
 	/**
 	 * {@inheritDoc}
 	 */
-	public Set<Long> resolveIdentifier(String identifier)
+	public LongSet resolveIdentifier(String identifier)
 		throws EntityDoesNotExistException
 	{
-		Set<Long> set = setCache.get(identifier);
+	    LongSet set = setCache.get(identifier);
 		if(set == null)
 		{
 			set = resolver.resolveIdentifier(identifier);

@@ -31,6 +31,8 @@ import java.util.Set;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 
+import bak.pcj.set.LongSet;
+
 /**
  * Resolver for resource idenitifier strings which appear in Relation query strings.
  * An implementation of this interface must resolve identifier strings to resource ids.
@@ -48,6 +50,6 @@ public interface ResourceIdentifierResolver
 	 * @throws EntityDoesNotExistException if there was something wrong while resolving
 	 * 		an indentifier
 	 */
-	public Set<Long> resolveIdentifier(String identifier)
+	public LongSet resolveIdentifier(String identifier)
 		throws EntityDoesNotExistException;
 }

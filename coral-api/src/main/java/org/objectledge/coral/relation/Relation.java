@@ -32,6 +32,8 @@ import java.util.Set;
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.store.Resource;
 
+import bak.pcj.set.LongSet;
+
 /**
  * Represents a many-to-many relationship (a cross reference) among {@link Resource}s. 
  *
@@ -76,7 +78,7 @@ public interface Relation extends Entity
 	 * @param id the Resource id.
 	 * @return the unmodifiable set of resource ids in relation to a given resource id
 	 */
-	public Set<Long> get(long id);
+	public LongSet get(long id);
 
 	/** 
 	 * Returns <code>true</code> if given resource references the other.

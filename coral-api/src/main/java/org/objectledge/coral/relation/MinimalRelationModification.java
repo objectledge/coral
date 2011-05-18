@@ -39,6 +39,9 @@ import org.objectledge.coral.relation.RelationModification.ClearOperation;
 import org.objectledge.coral.relation.RelationModification.ModificationOperation;
 import org.objectledge.coral.relation.RelationModification.RemoveOperation;
 
+import bak.pcj.LongIterator;
+import bak.pcj.set.LongSet;
+
 /**
  * This class constructs and holds a minimal representation of a {@link RelationModification}
  * for a given {@link Relation}.
@@ -193,10 +196,10 @@ public class MinimalRelationModification
 			else if(oper.hasId1())
 			{
 				Long id1 = new Long(oper.getId1());
-				Set<Long> id2set = relation.get(id1.longValue());
-				for (Iterator<Long> iter = id2set.iterator(); iter.hasNext();)
+				LongSet id2set = relation.get(id1.longValue());
+				for (LongIterator iter = id2set.iterator(); iter.hasNext();)
                 {
-                    Long id2 = iter.next();
+                    long id2 = iter.next();
 					remove(new RelationModification.RemoveOperation(id1, id2));
 				}
 
@@ -215,10 +218,10 @@ public class MinimalRelationModification
 			else // if(oper.hasId2())
 			{
 				Long id2 = new Long(oper.getId2());
-				Set<Long> id1set = relation.getInverted().get(id2.longValue());
-				for (Iterator<Long> iter = id1set.iterator(); iter.hasNext();)
+				LongSet id1set = relation.getInverted().get(id2.longValue());
+				for (LongIterator iter = id1set.iterator(); iter.hasNext();)
 				{
-					Long id1 = iter.next();
+					long id1 = iter.next();
 					remove(new RelationModification.RemoveOperation(id1, id2));
 				}
 
