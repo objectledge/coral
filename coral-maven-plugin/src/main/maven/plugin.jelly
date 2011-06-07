@@ -1,0 +1,309 @@
+<?xml version="1.0"?>
+<!--  
+ Copyright (c) 2003, Caltha - Gajda, Krzewski, Mach, Potempski Sp.J. 
+ All rights reserved. 
+ 
+ Redistribution and use in source and binary forms, with or without modification,  
+ are permitted provided that the following conditions are met: 
+ 
+ * Redistributions of source code must retain the above copyright notice,  
+   this list of conditions and the following disclaimer. 
+ * Redistributions in binary form must reproduce the above copyright notice,  
+   this list of conditions and the following disclaimer in the documentation  
+   and/or other materials provided with the distribution. 
+ * Neither the name of the Caltha - Gajda, Krzewski, Mach, Potempski Sp.J.  
+   nor the names of its contributors may be used to endorse or promote products  
+   derived from this software without specific prior written permission. 
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED  
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+ IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,  
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,  
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+ OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,  
+ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)  
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  
+ POSSIBILITY OF SUCH DAMAGE. 
+--> 
+<project 
+  xmlns:j="jelly:core"
+  xmlns:m="jelly:maven"
+  xmlns:define="jelly:define"
+  xmlns:sql="jelly:sql"
+  xmlns:util="jelly:util"
+  xmlns:coral="coral">
+
+  <!--
+   | :::: Taglib ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+   -->
+
+  <define:taglib uri="coral">  
+  
+    <!-- // wrapper generator /////////////////////////////////////////////////////////////// -->
+
+    <!--
+     | Generates Java wrapper files from Coral resource classes.
+     |
+     | @param baseDir the base directory.
+     | @param fileEncoding the character encoding for loading files.
+     | @param importGroups comma separated list of package grouping prefices.
+     | @param packageIncludes comma separated list of package include prefices.
+     | @param packageExcludes comma separated list of package include prefices.
+     | @param headerFile path of the file to use as file header.
+     | @param sourceFiles path of the source files listing file.
+     | @param targetDir the output directory.
+     -->
+    <define:jellybean
+       name="generator"
+       className="org.objectledge.coral.tools.generator.GeneratorBean"/>
+
+    <!-- // initializer ///////////////////////////////////////////////////////////////////// -->
+
+	<!--
+	 | Initializes a database for Coral use.
+	 |
+	 | @param dataSource dataSource to process.
+	 | @param force should existing data be dropped?
+	 -->
+    <define:jellybean
+       name="init"
+       className="org.objectledge.coral.tools.init.InitBean"/>
+       
+    <!-- // Embedding Coral in Maven //////////////////////////////////////////////////////// -->
+       
+    <!--
+     | Determines the JDBC driver class to use.
+     |
+     | @param url the JDBC database url.
+     | @param var the name of the variable to set.
+     -->
+    <define:tag name="dbDriver">
+      <j:set var="dbType" value="${url.substring(5, url.indexOf(':', 5))}"/>
+      <j:set var="dbDriver" value=""/>
+      <m:pluginVar plugin="coral-maven-plugin" var="dbDriver" property="coral.driver.${dbType}"/>
+      <j:if test="${dbDriver == null || dbDriver.legnth() == 0}">
+        <fail>Unknown database type ${dbType}</fail>
+      </j:if>
+      <j:set var="${var}" scope="parent" value="${dbDriver}"/>
+    </define:tag>
+    
+    <!--
+     | Instantiates coral DataSource, based upon coral.db.url, coral.db.user and coral.db.password settings.
+     |
+     | @param var the name of the variable to put DataSource object into.
+     -->
+    <define:bean name="dataSource"
+      className="org.objectledge.coral.tools.DataSourceTag">
+    </define:bean>
+    <!--
+    <define:tag name="dataSource">
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
+      <coral:dbDriver var="coralDbDriver" url="${coralDbUrl}"/>
+      <sql:driver var="coralDataSource" driver="${coralDbDriver}" jdbcURL="${coralDbUrl}" 
+        userName="${coralDbUser}"/>
+      <j:set var="${var}" scope="parent" value="${coralDataSource}"/>
+    </define:tag>
+    -->
+
+    <!--
+     | Instantiates Coral session factory.
+     |
+     | @param dataSource the data source to use.
+     | @param var the variable to store factory into (coralSessionFactory, by default).
+     -->
+    <define:bean name="sessionFactory"
+      className="org.objectledge.coral.tools.SessionFactoryTag">
+    </define:bean>
+
+
+    <!--
+     | Instantiates Ledge container.
+     |
+     | @param ledgeBaseDir ledge base directory
+     | @param ledgeConfig ledge config directory relative to base directory.
+     | @param var the variable to store ledge container into (ledgeContainer, by default).
+     -->
+    <define:bean name="ledgeContainer"
+      className="org.objectledge.coral.tools.LedgeContainerTag">
+    </define:bean>
+ 
+    
+    <!--
+     | Retrieves a Ledge component into Jelly variable.
+     |
+     | @param key component's string key.
+     | @param className component's class key.
+     | @param variable the variable name.
+     | @param scope the variable scope.
+     -->
+    <define:bean name="ledgeComponent"
+      className="org.objectledge.coral.tools.LedgeComponentTag">
+    </define:bean>     
+ 
+
+    <!--
+     | Instantiates a dummy Principal
+     |
+     | @param name the name of the principal.
+     | @param var the variable to store principal into.
+     -->
+    <define:bean name="principal"
+      className="org.objectledge.coral.tools.PrincipalTag">
+    </define:bean>
+
+    <!-- // SQL runner ////////////////////////////////////////////////////////////////////// -->
+    
+    <define:jellybean name="sqlRunner"
+      className="org.objectledge.coral.tools.sql.SqlRunnerBean"/>
+    
+    <!-- // RML runner ////////////////////////////////////////////////////////////////////// -->
+    
+    <define:jellybean name="rmlRunner"
+      className="org.objectledge.coral.tools.rml.RmlRunnerBean"/>
+           
+  </define:taglib>
+
+  <!--
+   | :::: Goals :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+   -->
+  
+  <!-- // wrapper generator ///////////////////////////////////////////////////////////////// -->
+
+  <goal name="coral:generator"
+    description="Generates wrappers for Coral resource classes">
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorFileEncoding" property="coral.generator.file.encoding"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorImportGroups" property="coral.generator.import.groups"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageIncludes" property="coral.generator.package.includes"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorPackageExcludes" property="coral.generator.package.excludes"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorHeaderFile" property="coral.generator.header.file"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSourcesList" property="coral.generator.sources.list"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSqlAttributeInfoFile" property="coral.generator.sql.attributeInfo"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSqlTargetDir" property="coral.generator.sql.targetDir"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSqlTargetPrefix" property="coral.generator.sql.targetPrefix"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="generatorSqlListPath" property="coral.generator.sql.list"/>
+
+    <j:choose>
+      <j:when test="${empty(pom.build.sourceDirectory)}">
+        <echo>No Java sources defined - aborting</echo>
+      </j:when>
+      <j:when test="${empty(generatorSourcesList)}">
+        <echo>No RML sources defined - aborting</echo>
+      </j:when>
+      <j:otherwise>
+        <util:file var="basedirFile" name="${basedir}"/>
+        <j:set var="generatorTargetDirectory" value="${pom.build.sourceDirectory.substring(basedirFile.canonicalPath.length())}"/> 
+	    <j:if test="${maven.debugOn}">
+	      <echo>
+	        coral.generator.file.encoding=${generatorFileEncoding}
+		    coral.generator.import.groups=${generatorImportGroups}
+		    coral.generator.package.includes=${generatorPackageIncludes}
+		    coral.generator.package.excludes=${generatorPackageExcludes}
+		    coral.generator.header.file=${generatorHeaderFile}
+		    coral.generator.sources.list=${generatorSourcesList}
+		    coral.generator.target.directory=${generatorTargetDirectory}
+		    coral.generator.sql.attributeInfo=${generatorSqlAttributeInfoFile}
+		    coral.generator.sql.targetDir=${generatorSqlTargetDir}
+		    coral.generator.sql.targetPrefix=${generatorSqlTargetPrefix}
+		    coral.generator.sql.list=${generatorSqlListPath}
+		  </echo>
+		</j:if>
+	    <coral:generator
+	      baseDir="${basedir}"
+	      fileEncoding="${generatorFileEncoding}"
+	      importGroups="${generatorImportGroups}"
+	      packageIncludes="${generatorPackageIncludes}"
+	      packageExcludes="${generatorPackageExcludes}"
+	      headerFile="${generatorHeaderFile}"
+	      sourceFiles="${generatorSourcesList}"
+	      targetDir="${generatorTargetDirectory}"
+	      sqlAttributeInfoFile="${generatorSqlAttributeInfoFile}"
+	      sqlTargetDir="${generatorSqlTargetDir}"
+	      sqlTargetPrefix="${generatorSqlTargetPrefix}"
+	      sqlListPath="${generatorSqlListPath}"
+	      />
+      </j:otherwise>
+    </j:choose>
+  </goal>
+
+  <!-- // database initializer ////////////////////////////////////////////////////////////// -->
+
+  <goal name="coral:init"
+    description="Initializes a relational database for Coral usage">
+    <m:pluginVar plugin="coral-maven-plugin" var="forceInit" property="force"/>
+    <j:if test="${maven.debugOn}">
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
+      <echo>
+        coral.db.url=${coralDbUrl}
+        coral.db.user=${coralDbUser}
+        coral.db.password=${coralDbPassword}        
+        force=${forceInit}
+	  </echo>
+	</j:if>
+    <coral:dataSource variable="initDataSource"/>
+    <coral:init dataSource="${initDataSource}" force="${forceInit}"/>
+  </goal>
+
+  <!-- // SQL runner //////////////////////////////////////////////////////////////////////// -->
+  
+  <goal name="coral:run-sql"
+    description="Executes SQL scripts contained in the project">
+    <m:pluginVar plugin="coral-maven-plugin" var="coralSqlFileEncoding" property="coral.sql.file.encoding"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="coralSqlSources" property="coral.sql.sources"/>
+    <j:if test="${maven.debugOn}">
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
+      <echo>
+        coral.db.url=${coralDbUrl}
+        coral.db.user=${coralDbUser}
+        coral.db.password=${coralDbPassword}
+        coral.sql.sources=${coralSqlSources}
+        coral.sql.file.encoding=${coralSqlFileEncoding}
+	  </echo>
+	</j:if>
+    <coral:dataSource variable="coralDataSource"/>
+    <coral:sqlRunner dataSource="${coralDataSource}" sourcesList="${coralSqlSources}" 
+      fileEncoding="${coralSqlFileEncoding}" baseDir="${basedir}"/>
+  </goal>
+  
+  <!-- // RML runner //////////////////////////////////////////////////////////////////////// -->
+  
+  <goal name="coral:run-rml"
+    description="Executes RML scripts contained in the project">
+    <m:pluginVar plugin="coral-maven-plugin" var="coralRmlFileEncoding" property="coral.rml.file.encoding"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="coralRmlSubject" property="coral.rml.subject"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="coralRmlSources" property="coral.rml.sources"/>
+    <m:pluginVar plugin="coral-maven-plugin" var="ledgeBaseDir" property="ledge.basedir"/>
+    <j:if test="${maven.debugOn}">
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUrl" property="coral.db.url"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbUser" property="coral.db.user"/>  
+      <m:pluginVar plugin="coral-maven-plugin" var="coralDbPassword" property="coral.db.password"/>
+      <echo>
+        coral.db.url=${coralDbUrl}
+        coral.db.user=${coralDbUser}
+        coral.db.password=${coralDbPassword}
+        coral.rml.subject=${coralRmlSubject}
+        coral.rml.sources=${coralRmlSources}
+        coral.rml.file.encoding=${coralRmlFileEncoding}
+	  </echo>
+	</j:if>
+    <coral:dataSource variable="coralDataSource"/>
+    <coral:sessionFactory dataSource="${coralDataSource}"/>
+    <coral:principal variable="coralPrincipal" name="${coralRmlSubject}"/>
+    <j:set var="coralSession" value="${coralSessionFactory.getSession(coralPrincipal)}"/>
+    <coral:rmlRunner session="${coralSession}" sourcesList="${coralRmlSources}" 
+      fileEncoding="${coralRmlFileEncoding}" baseDir="${basedir}"/>
+  </goal>
+  
+  <!-- // container loader /////////////////////////////////////////////////////////////////// -->
+  
+  <goal name="coral:start-container">
+    <coral:ledgeContainer/>
+  </goal>
+  
+</project>
