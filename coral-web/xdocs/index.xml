@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>Home</title>
+  </properties>
+    
+  <body>
+    <section name="Coral Web">
+      <subsection name="Introduction">
+       <p>
+    Coral Web contains a number of extensions to the ObjectLedge Web table tookit, that
+    allow easy creation rich dynamic interfaces on top of Coral resource model.
+       </p>
+      </subsection>
+    </section>
+  </body>
+</document>
+  
