@@ -30,6 +30,8 @@ package org.objectledge.coral.tools;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.filesystem.FileSystem;
@@ -47,6 +49,8 @@ public abstract class BatchLoader
     private final String fileEncoding;
 
     private final Logger logger;
+    
+    private final Set<String> referencedFiles;
 
     /**
      * Creates new BatchLoader instance.
@@ -56,9 +60,24 @@ public abstract class BatchLoader
      */
     public BatchLoader(FileSystem fileSystem, Logger logger, String fileEncoding)
     {
+        this(fileSystem, logger, fileEncoding, new HashSet<String>());
+    }
+    
+    /**
+     * Creates new BatchLoader instance.
+     * 
+     * @param fileSystem the file system to load file contents from.
+     * @param fileEncoding the encoding of the source files.
+     * @param referencedFiles pathnames of all loaded listing and source files will
+     *        be added to this list.
+     */
+    public BatchLoader(FileSystem fileSystem, Logger logger, String fileEncoding,
+        Set<String> referencedFiles)
+    {
         this.fileSystem = fileSystem;
         this.logger = logger;
         this.fileEncoding = fileEncoding;
+        this.referencedFiles = referencedFiles;
     }
 
     /**
@@ -76,6 +95,7 @@ public abstract class BatchLoader
             throw new IOException("missing listing file " + path);
         }
         logger.info("processing "+path);
+        referencedFiles.add(path);
         LineNumberReader lnr = new LineNumberReader(fileSystem.getReader(path, fileEncoding));
         while(lnr.ready())
         {
@@ -103,6 +123,7 @@ public abstract class BatchLoader
             try
             {
                 logger.debug("loading "+line);
+                referencedFiles.add(line);
                 load(fileSystem.getReader(line, fileEncoding));
             }
             catch(Exception e)

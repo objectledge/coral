@@ -27,6 +27,7 @@
 // 
 package org.objectledge.coral.tools.generator;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
@@ -54,21 +55,25 @@ import org.objectledge.templating.Template;
 import org.objectledge.templating.Templating;
 import org.objectledge.templating.TemplatingContext;
 import org.objectledge.templating.velocity.VelocityTemplating;
+import org.sonatype.plexus.build.incremental.BuildContext;
+import org.sonatype.plexus.build.incremental.ThreadBuildContext;
 
 /**
  * Performs wrapper generation.
- *
+ * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: GeneratorComponent.java,v 1.30 2005-02-21 15:44:54 zwierzem Exp $
  */
 public class GeneratorComponent
 {
+    private static final String BUILD_STATE_ID = "org.objectledge.coral.tools.generator.GeneratorComponent";
+
     /** The Ledge file system. */
     private FileSystem fileSystem;
 
     /** The recognized hint names. */
     private static Set<String> hintNames = new HashSet<String>();
-    
+
     static
     {
         hintNames.add("extends");
@@ -79,7 +84,7 @@ public class GeneratorComponent
 
     /** The ignored hint names. */
     private static Set<String> ignoredHintNames = new HashSet<String>();
-    
+
     static
     {
         // javadoc 1.4
@@ -111,56 +116,53 @@ public class GeneratorComponent
 
     /** The path of source file list. */
     private String sourceFiles;
-        
+
     /** The target directory. */
     private String targetDir;
-    
+
     /** The target directory for SQL files. */
     private String sqlTargetDir;
-    
+
     /** The path prefix of the SQL files in the classpath. */
     private String sqlTargetPrefix;
-    
+
     /** Path to SQL info on AttributeClasses file. */
     private String sqlAttributeInfoFile;
-    
+
     /** Path of the SQL list file to be generated. */
     private String sqlListPath;
-    
+
     /** The RML loader. */
     private RMLModelLoader rmlLoader;
-    
-    /** The batch loader. */
-    private BatchLoader batchLoader;
-    
+
     /** The templating component. */
     private Templating templating;
-    
+
     /** Interface template. */
     private Template interfaceTemplate;
-    
+
     /** Implementation template. */
     private Template implementationTemplate;
-    
+
     /** SQL script template. */
     private Template sqlTemplate;
-    
+
     /** Package prefices used for grouping. */
     private List<String> importGroups = new ArrayList<String>();
-    
+
     /** The file header contents. */
     private String header;
-    
-    /** PrintWriter for informational messages.*/
+
+    /** PrintWriter for informational messages. */
     private Logger log;
-    
+
     /** packages to generate wrappers in. */
     private List<String> packageIncludes;
-    
+
     /** packages to not generate wrappers in. */
     private List<String> packageExcludes;
-    
-    /** custom fields defined by resource class. */ 
+
+    /** custom fields defined by resource class. */
     private Map<ResourceClass, List<Map<String, String>>> fieldMap = new HashMap<ResourceClass, List<Map<String, String>>>();
 
     /**
@@ -182,10 +184,9 @@ public class GeneratorComponent
      * @param out the PrintStream to write informational messages to.
      * @throws Exception if the component could not be initialized.
      */
-    public GeneratorComponent(FileSystem fileSystem, Logger log,
-        String fileEncoding, String sourceFiles, String targetDir, String importGroups,
-        String packageIncludes, String packageExcludes, String headerFile,
- String sqlAttributeInfoFile,
+    public GeneratorComponent(FileSystem fileSystem, Logger log, String fileEncoding,
+        String sourceFiles, String targetDir, String importGroups, String packageIncludes,
+        String packageExcludes, String headerFile, String sqlAttributeInfoFile,
         String sqlTargetDir, String sqlTargetPrefix, String sqlListPath)
         throws Exception
     {
@@ -218,8 +219,8 @@ public class GeneratorComponent
      * @throws Exception if the component could not be initialized.
      */
     GeneratorComponent(String fileEncoding, String sourceFiles, String targetDir,
-        String importGroups, String packageIncludes, String packageExcludes, String headerFile, 
-        String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix, 
+        String importGroups, String packageIncludes, String packageExcludes, String headerFile,
+        String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix,
         String sqlListPath, FileSystem fileSystem, Templating templating,
         final RMLModelLoader rmlLoader, Logger log)
         throws Exception
@@ -238,7 +239,7 @@ public class GeneratorComponent
         this.sqlTargetPrefix = sqlTargetPrefix;
         this.sqlListPath = sqlListPath;
         this.log = log;
-        
+
         if(fileSystem.exists(headerFile))
         {
             header = fileSystem.read(headerFile, fileEncoding);
@@ -247,18 +248,8 @@ public class GeneratorComponent
         {
             header = "";
         }
-        
-        initTemplating();
 
-        batchLoader = new BatchLoader(fileSystem, log, fileEncoding)
-            {
-                @Override
-                protected void load(Reader in)
-                    throws Exception
-                {
-                    rmlLoader.load(in);
-                }
-            };
+        initTemplating();
     }
 
     public static FileSystem initFileSystem(String baseDir)
@@ -305,65 +296,75 @@ public class GeneratorComponent
     public void execute()
         throws Exception
     {
-        loadSources(sourceFiles);
-        loadSQLInfo(sqlAttributeInfoFile);
-        List<ResourceClass> resourceClasses = rmlLoader.getSchema().getResourceClasses();
-        for(Iterator<ResourceClass> i = resourceClasses.iterator(); i.hasNext();)
+        if(rebuildIsNeeded(sourceFiles))
         {
-            ResourceClass rc = i.next();
-            processClass(rc);
+            Set<String> referencedFiles = new HashSet<String>();
+            loadSources(sourceFiles, referencedFiles);
+            loadSQLInfo(sqlAttributeInfoFile);
+            List<ResourceClass> resourceClasses = rmlLoader.getSchema().getResourceClasses();
+            for(Iterator<ResourceClass> i = resourceClasses.iterator(); i.hasNext();)
+            {
+                ResourceClass rc = i.next();
+                processClass(rc, referencedFiles);
+            }
+            String sqlList = generateSQLList();
+            if(sqlList.length() > 0)
+            {
+                if(write(sqlListPath, sqlList, referencedFiles))
+                {
+                    log.info("writing generated SQL list to " + sqlListPath);
+                }
+                else
+                {
+                    log.debug("skipping generated SQL list (not modified)");
+                }
+            }
+            saveBuildState(sourceFiles, referencedFiles);
         }
-        String sqlList = generateSQLList();
-        if(sqlList.length() > 0)
+        else
         {
-        	if(write(sqlListPath, sqlList))
-        	{
-        		log.info("writing generated SQL list to "+sqlListPath);
-        	}
-        	else
-        	{
-        		log.debug("skipping generated SQL list (not modified)");
-        	}
+            log.info("no changes detected - skipping regeneration");
         }
     }
-    
+
     // implementation ///////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Initializes the Velocity templating component.
-     *
+     * 
      * @throws Exception if the required templates are not available.
      */
     void initTemplating()
         throws Exception
     {
-        interfaceTemplate = templating.
-            getTemplate("org/objectledge/coral/tools/generator/Interface");
-        implementationTemplate = templating.
-            getTemplate("org/objectledge/coral/tools/generator/Implementation");
-        sqlTemplate = templating.
-			getTemplate("org/objectledge/coral/tools/generator/SQL");
+        interfaceTemplate = templating
+            .getTemplate("org/objectledge/coral/tools/generator/Interface");
+        implementationTemplate = templating
+            .getTemplate("org/objectledge/coral/tools/generator/Implementation");
+        sqlTemplate = templating.getTemplate("org/objectledge/coral/tools/generator/SQL");
     }
-    
+
     /**
      * Loads custom code along with embedded hints from the specified file.
      * 
      * @param path the path of the file to process.
      * @param hints hint map.
+     * @param referencedFiles TODO
      * @return the custom code found in the file.
      * @throws IOException if the file couldn't be read.
      */
-    String read(String path, Map<String, List<String>> hints)
+    String read(String path, Map<String, List<String>> hints, Set<String> referencedFiles)
         throws IOException
     {
         if(!fileSystem.exists(path))
         {
             return "";
         }
-        
+        referencedFiles.add(path);
+
         LineNumberReader lnr = new LineNumberReader(fileSystem.getReader(path, fileEncoding));
         StringBuilder buff = new StringBuilder();
-        int last=0;
+        int last = 0;
         boolean inCustom = false;
         String in;
         while(true)
@@ -384,7 +385,7 @@ public class GeneratorComponent
             }
             if(inCustom)
             {
-                if(in.indexOf('@') >=0 )
+                if(in.indexOf('@') >= 0)
                 {
                     int a = in.indexOf('@');
                     int b = in.indexOf(' ', a);
@@ -394,7 +395,7 @@ public class GeneratorComponent
                     }
                     if(b > 0)
                     {
-                        String token = in.substring(a+1, b);
+                        String token = in.substring(a + 1, b);
                         if(hintNames.contains(token))
                         {
                             List<String> l = hints.get(token);
@@ -403,7 +404,7 @@ public class GeneratorComponent
                                 l = new ArrayList<String>();
                                 hints.put(token, l);
                             }
-                            StringTokenizer st = new StringTokenizer(in.substring(b+1), ",");
+                            StringTokenizer st = new StringTokenizer(in.substring(b + 1), ",");
                             while(st.hasMoreElements())
                             {
                                 l.add(st.nextToken().trim());
@@ -411,35 +412,37 @@ public class GeneratorComponent
                         }
                         else if(!ignoredHintNames.contains(token))
                         {
-                            throw new IOException("unknown hint @"+token+" in "+path+" at line "+
-                                lnr.getLineNumber());
+                            throw new IOException("unknown hint @" + token + " in " + path
+                                + " at line " + lnr.getLineNumber());
                         }
                     }
                     else
                     {
-                        throw new IOException("malformed hint "+in.substring(a)+" in "+path+
-                            " at line "+lnr.getLineNumber()+" - value expected");   
+                        throw new IOException("malformed hint " + in.substring(a) + " in " + path
+                            + " at line " + lnr.getLineNumber() + " - value expected");
                     }
                 }
                 buff.append(in).append('\n');
             }
         }
         buff.setLength(last);
-        return buff.toString();        
+        return buff.toString();
     }
-    
+
     /**
      * Write the file contents to the disk.
-     * 
-     * <p>If the file already contains specified contents, it is not modified.</p>
+     * <p>
+     * If the file already contains specified contents, it is not modified.
+     * </p>
      * 
      * @param path the path of the file to process.
      * @param contents the new contents of the file.
+     * @param referencedFiles TODO
      * @return <code>true</code> if the file was actually modified.
      * @throws IOException
      * @throws UnsupportedCharactersInFilePathException
      */
-    boolean write(String path, String contents)
+    boolean write(String path, String contents, Set<String> referencedFiles)
         throws IOException, UnsupportedCharactersInFilePathException
     {
         if(!fileSystem.exists(path))
@@ -453,22 +456,34 @@ public class GeneratorComponent
                 return false;
             }
         }
+        referencedFiles.add(path);
         fileSystem.write(path, contents, fileEncoding);
+        BuildContext buildContext = ThreadBuildContext.getContext();
+        buildContext.refresh(new File(path));
         return true;
     }
-    
-    void loadSources(String path)
+
+    void loadSources(String path, Set<String> referencedFiles)
         throws Exception
     {
+        BatchLoader batchLoader = new BatchLoader(fileSystem, log, fileEncoding, referencedFiles)
+            {
+                @Override
+                protected void load(Reader in)
+                    throws Exception
+                {
+                    rmlLoader.load(in);
+                }
+            };
         batchLoader.loadBatch(path);
     }
-    
+
     void loadSQLInfo(String path)
-    	throws Exception
+        throws Exception
     {
         if(!fileSystem.exists(path))
         {
-            throw new Exception("missing attribute SQL info file "+path);
+            throw new Exception("missing attribute SQL info file " + path);
         }
         Reader reader = fileSystem.getReader(path, fileEncoding);
         try
@@ -478,30 +493,30 @@ public class GeneratorComponent
         }
         catch(IOException e)
         {
-            throw new Exception("failed to load atrribute SQL info file "+path, e);
+            throw new Exception("failed to load atrribute SQL info file " + path, e);
         }
     }
 
     String classInterfacePath(ResourceClass rc)
     {
-        return targetDir+"/"+rc.getFQInterfaceClassName().replace('.', '/')+".java";
+        return targetDir + "/" + rc.getFQInterfaceClassName().replace('.', '/') + ".java";
     }
 
     String classImplPath(ResourceClass rc)
     {
-        return targetDir+"/"+rc.getFQImplClassName().replace('.', '/')+".java";
+        return targetDir + "/" + rc.getFQImplClassName().replace('.', '/') + ".java";
     }
-    
+
     String sqlPath(ResourceClass rc)
     {
-    	return sqlTargetDir+"/"+rc.getName().replace('.', '/')+".sql";
+        return sqlTargetDir + "/" + rc.getName().replace('.', '/') + ".sql";
     }
-    
+
     String sqlAltPath(ResourceClass rc)
     {
-    	return sqlTargetPrefix+"/"+rc.getName().replace('.', '/')+".sql";
+        return sqlTargetPrefix + "/" + rc.getName().replace('.', '/') + ".sql";
     }
-    
+
     List<String> split(String string)
     {
         if(string == null || string.length() == 0)
@@ -509,22 +524,22 @@ public class GeneratorComponent
             return Collections.emptyList();
         }
         StringTokenizer st = new StringTokenizer(string, ",");
-        List<String> list = new ArrayList<String>(st.countTokens());  
+        List<String> list = new ArrayList<String>(st.countTokens());
         while(st.hasMoreTokens())
         {
             list.add(st.nextToken());
-        }        
+        }
         return list;
     }
-    
+
     boolean matches(String name, List<String> preficesList)
     {
         for(Iterator<String> i = preficesList.iterator(); i.hasNext();)
         {
             String prefix = i.next();
-            if(prefix.charAt(prefix.length()-1) == '*')
+            if(prefix.charAt(prefix.length() - 1) == '*')
             {
-                if(name.startsWith(prefix.substring(0, prefix.length()-1)))
+                if(name.startsWith(prefix.substring(0, prefix.length() - 1)))
                 {
                     return true;
                 }
@@ -539,8 +554,8 @@ public class GeneratorComponent
         }
         return false;
     }
-    
-    void processClass(ResourceClass rc)
+
+    void processClass(ResourceClass rc, Set<String> referencedFiles)
         throws Exception
     {
         if(rc.hasFlags(ResourceClassFlags.BUILTIN))
@@ -548,20 +563,20 @@ public class GeneratorComponent
             log.debug("skipping " + rc.getName() + " (BUILTIN)");
             return;
         }
-        if(!matches(rc.getPackageName(), packageIncludes)) 
+        if(!matches(rc.getPackageName(), packageIncludes))
         {
             log.debug("skipping " + rc.getName() + " (package " + rc.getPackageName()
                 + " not included)");
-            return;            
+            return;
         }
         if(matches(rc.getPackageName(), packageExcludes))
         {
             log.debug("skipping " + rc.getName() + " (package " + rc.getPackageName()
                 + " excluded)");
-            return;            
+            return;
         }
 
-        if(generateWrapper(rc, classInterfacePath(rc), interfaceTemplate))
+        if(generateWrapper(rc, classInterfacePath(rc), interfaceTemplate, referencedFiles))
         {
             log.info("writing " + rc.getName() + " interface to " + classInterfacePath(rc));
         }
@@ -570,7 +585,7 @@ public class GeneratorComponent
             log.debug("skipping " + rc.getName() + " interface (not modified)");
         }
 
-        if(generateWrapper(rc, classImplPath(rc), implementationTemplate))
+        if(generateWrapper(rc, classImplPath(rc), implementationTemplate, referencedFiles))
         {
             log.info("writing " + rc.getName() + " implementation to " + classImplPath(rc));
         }
@@ -578,17 +593,17 @@ public class GeneratorComponent
         {
             log.debug("skipping " + rc.getName() + " implementation (not modified)");
         }
-        
+
         if(rc.getDbTable() != null && rc.getDbTable().length() > 0)
         {
-        	if(generateSQL(rc, sqlPath(rc), sqlTemplate))
-        	{
+            if(generateSQL(rc, sqlPath(rc), sqlTemplate, referencedFiles))
+            {
                 log.info("writing " + rc.getName() + " SQL script to " + sqlPath(rc));
-        	}
-        	else
-        	{
+            }
+            else
+            {
                 log.debug("skipping " + rc.getName() + " SQL script (not modified)");
-        	}
+            }
         }
     }
 
@@ -598,19 +613,21 @@ public class GeneratorComponent
         int pos = handler.indexOf("Handler");
         return handler.substring(0, pos);
     }
-    
+
     /**
      * @param rc
      * @param path
      * @param template
+     * @param referencedFiles TODO
      * @throws Exception
      */
-    boolean generateWrapper(ResourceClass rc, String path, Template template) 
+    boolean generateWrapper(ResourceClass rc, String path, Template template,
+        Set<String> referencedFiles)
         throws Exception
     {
         TemplatingContext context = templating.createContext();
         Map<String, List<String>> hints = new HashMap<String, List<String>>();
-        String custom = read(path, hints);
+        String custom = read(path, hints, referencedFiles);
         ImportTool imports = new ImportTool(rc.getPackageName(), importGroups);
 
         List<String> importHint = hints.get("import");
@@ -639,19 +656,19 @@ public class GeneratorComponent
         List<Map<String, String>> superFields = new ArrayList<Map<String, String>>();
         if(rc.getImplParentClass() != null)
         {
-            addSuperFields(rc.getImplParentClass(), superFields);
+            addSuperFields(rc.getImplParentClass(), superFields, referencedFiles);
             context.put("implParentClass", rc.getImplParentClass().getImplClassName());
         }
         else
         {
             String ppc = resolvePrimaryParentClass(rc);
             int dot = ppc.lastIndexOf('.');
-            String unqPpc = ppc.substring(dot+1);
+            String unqPpc = ppc.substring(dot + 1);
             context.put("implParentClass", unqPpc);
             context.put("fqImplParentClass", ppc);
             context.put("primaryParentClass", Boolean.TRUE);
         }
-        
+
         context.put("imports", imports);
         context.put("class", rc);
         context.put("header", header);
@@ -661,33 +678,34 @@ public class GeneratorComponent
         context.put("string", new StringTool(100));
 
         String result = template.merge(context);
-        return write(path, result);
+        return write(path, result, referencedFiles);
     }
-    
-    boolean generateSQL(ResourceClass rc, String path, Template template)
-    	throws Exception
+
+    boolean generateSQL(ResourceClass rc, String path, Template template,
+        Set<String> referencedFiles)
+        throws Exception
     {
         TemplatingContext context = templating.createContext();
         context.put("class", rc);
         String result = template.merge(context);
-        return write(path, result);    	
+        return write(path, result, referencedFiles);
     }
-    
+
     String generateSQLList()
     {
-    	StringBuilder buff = new StringBuilder();
+        StringBuilder buff = new StringBuilder();
         List<ResourceClass> resourceClasses = rmlLoader.getSchema().getResourceClasses();
         for(Iterator<ResourceClass> i = resourceClasses.iterator(); i.hasNext();)
         {
             ResourceClass rc = i.next();
             if(rc.getDbTable() != null && rc.getDbTable().length() > 0)
             {
-            	buff.append(sqlAltPath(rc)).append("\n");
+                buff.append(sqlAltPath(rc)).append("\n");
             }
         }
         return buff.toString();
     }
-    
+
     /**
      * Processes field hint into name/type pair list.
      * 
@@ -696,21 +714,23 @@ public class GeneratorComponent
      * @return list of maps with "name" and "type" keys.
      * @throws Exception if the hint list is malformed
      */
-    private List<Map<String, String>> processFieldHint(ResourceClass rc, Map<String, List<String>> hints) throws Exception
+    private List<Map<String, String>> processFieldHint(ResourceClass rc,
+        Map<String, List<String>> hints)
+        throws Exception
     {
         List<String> fieldHint = hints.get("field");
         ArrayList<Map<String, String>> fields = new ArrayList<Map<String, String>>();
         if(fieldHint != null)
         {
             fields.ensureCapacity(fieldHint.size());
-            for(int i=0; i<fieldHint.size(); i++)
+            for(int i = 0; i < fieldHint.size(); i++)
             {
                 Map<String, String> entry = new HashMap<String, String>();
                 StringTokenizer st = new StringTokenizer(fieldHint.get(i));
                 if(st.countTokens() != 2)
                 {
-                    throw new Exception("malformed @field hints - " +
-                            "expected @field <type> <name> pairs");
+                    throw new Exception("malformed @field hints - "
+                        + "expected @field <type> <name> pairs");
                 }
                 entry.put("type", st.nextToken().trim());
                 entry.put("name", st.nextToken().trim());
@@ -727,7 +747,7 @@ public class GeneratorComponent
      * @throws Exception
      * @throws EntityDoesNotExistException
      */
-    private void processExtendsHint(ResourceClass rc, Map<String, List<String>> hints) 
+    private void processExtendsHint(ResourceClass rc, Map<String, List<String>> hints)
         throws Exception, EntityDoesNotExistException
     {
         List<String> extendsHint = hints.get("extends");
@@ -747,24 +767,64 @@ public class GeneratorComponent
         }
     }
 
-    private void addSuperFields(ResourceClass rc, List<Map<String, String>> fields)
-    	throws Exception
+    private void addSuperFields(ResourceClass rc, List<Map<String, String>> fields,
+        Set<String> referencedFiles)
+        throws Exception
     {
         if(!fieldMap.containsKey(rc))
         {
             Map<String, List<String>> hints = new HashMap<String, List<String>>();
-            read(classImplPath(rc), hints);
+            read(classImplPath(rc), hints, referencedFiles);
             processExtendsHint(rc, hints);
             processFieldHint(rc, hints);
         }
-        if(rc.getImplParentClass() != null )
+        if(rc.getImplParentClass() != null)
         {
-            addSuperFields(rc.getImplParentClass(), fields);
+            addSuperFields(rc.getImplParentClass(), fields, referencedFiles);
         }
         List<Map<String, String>> superFields = fieldMap.get(rc);
         if(superFields != null)
         {
-            fields.addAll(superFields);            
+            fields.addAll(superFields);
         }
+    }
+
+    boolean rebuildIsNeeded(String sourceFiles)
+    {
+        BuildContext buildContext = ThreadBuildContext.getContext();
+        if(buildContext.isIncremental())
+        {
+            String savedStateId = BUILD_STATE_ID + sourceFiles;
+            @SuppressWarnings("unchecked")
+            Set<String> referencedFiles = (Set<String>)buildContext.getValue(savedStateId);
+            for(String referncedFile : referencedFiles)
+            {
+                if(buildContext.hasDelta(new File(referncedFile)))
+                    ;
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    void saveBuildState(String sourceFiles, Set<String> referencedFiles)
+    {
+        if(log.isDebugEnabled())
+        {
+            StringBuilder buff = new StringBuilder();
+            List<String> list = new ArrayList<String>(referencedFiles);
+            Collections.sort(list);
+            for(String path : referencedFiles)
+            {
+                buff.append(path).append("\n");
+            }
+            log.debug("saving build state, referenced files:");
+        }
+        BuildContext buildContext = ThreadBuildContext.getContext();
+        String savedStateId = BUILD_STATE_ID + sourceFiles;
+        buildContext.setValue(savedStateId, referencedFiles);
     }
 }

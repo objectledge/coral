@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jcontainer.dna.Logger;
 import org.jmock.Mock;
@@ -77,7 +78,11 @@ public class GeneratorComponentTest
     private Logger logger;
     
     private FileSystem testFileSystem; 
+    
+    private Mock mockReferencedFiles;
+    private Set<String> referencedFiles;
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setUp()
         throws Exception
@@ -109,6 +114,9 @@ public class GeneratorComponentTest
         mockLogger.stubs().method("info").with(ANYTHING).isVoid();
         mockLogger.stubs().method("debug").with(ANYTHING).isVoid();
 
+        mockReferencedFiles = mock(Set.class);   
+        referencedFiles = (Set<String>)mockReferencedFiles.proxy();
+        
         mockFileSystem.stubs().method("exists").with(eq("LICENSE.txt")).will(returnValue(true));
         mockFileSystem.stubs().method("read").with(eq("LICENSE.txt"),eq("UTF-8")).will(returnValue("//license"));
         mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Interface")).will(returnValue(interfaceTemplate));
@@ -126,7 +134,7 @@ public class GeneratorComponentTest
     {
         provideFile("Custom1.java");
         Map<String, List<String>> hints = new HashMap<String, List<String>>();
-        String custom = generatorComponent.read("Custom1.java", hints);
+        String custom = generatorComponent.read("Custom1.java", hints, referencedFiles);
         assertEquals(
             "    // @order a,b,c\n"+
             "    // @import java.util.Date\n"+
@@ -148,7 +156,7 @@ public class GeneratorComponentTest
         Map<String, List<String>> hints = new HashMap<String, List<String>>();
         try
         {
-            generatorComponent.read("Custom2.java", hints);
+            generatorComponent.read("Custom2.java", hints, referencedFiles);
             fail();
         }
         catch(Exception e)
@@ -164,7 +172,7 @@ public class GeneratorComponentTest
         Map<String, List<String>> hints = new HashMap<String, List<String>>();
         try
         {
-            generatorComponent.read("Custom3.java", hints);
+            generatorComponent.read("Custom3.java", hints, referencedFiles);
             fail();
         }
         catch(Exception e)
@@ -178,26 +186,22 @@ public class GeneratorComponentTest
     {
         mockFileSystem.stubs().method("exists").with(eq("Custom4.java")).will(returnValue(false));
         Map<String, List<String>> hints = new HashMap<String, List<String>>();
-        String custom = generatorComponent.read("Custom4.java", hints);
+        String custom = generatorComponent.read("Custom4.java", hints, referencedFiles);
         assertEquals("", custom);
     }
     
     public void testWriteMissing()
         throws Exception
     {
-        mockFileSystem.stubs().method("exists").with(eq("foo/Out.java")).will(returnValue(false));
-        mockFileSystem.expects(once()).method("mkdirs").with(eq("/foo")).isVoid();
-        mockFileSystem.expects(once()).method("write").with(eq("foo/Out.java"), eq("content"), eq("UTF-8")).isVoid();
-        assertTrue(generatorComponent.write("foo/Out.java", "content"));
+        expectFile("foo/Out.java", null, "content");
+        assertTrue(generatorComponent.write("foo/Out.java", "content", referencedFiles));
     }
 
     public void testWriteChanged()
         throws Exception
     {
-        mockFileSystem.stubs().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
-        mockFileSystem.expects(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue("other content"));
-        mockFileSystem.expects(once()).method("write").with(eq("foo/Out.java"), eq("content"), eq("UTF-8")).isVoid();
-        assertTrue(generatorComponent.write("foo/Out.java", "content"));
+        expectFile("foo/Out.java", "previous content", "content");
+        assertTrue(generatorComponent.write("foo/Out.java", "content", referencedFiles));
     }
 
     public void testWriteNotChanged()
@@ -205,7 +209,7 @@ public class GeneratorComponentTest
     {
         mockFileSystem.stubs().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
         mockFileSystem.expects(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue("content"));
-        assertFalse(generatorComponent.write("foo/Out.java", "content"));
+        assertFalse(generatorComponent.write("foo/Out.java", "content", referencedFiles));
     }
     
     public void testLoadSources()
@@ -217,7 +221,7 @@ public class GeneratorComponentTest
         provideFile("schema.rml", reader2);
         mockRMLModelLoader.expects(once()).method("load").with(same(reader1)).isVoid().id("c1");
         mockRMLModelLoader.expects(once()).method("load").with(same(reader2)).isVoid().id("c2");
-        generatorComponent.loadSources("sources.lst");
+        generatorComponent.loadSources("sources.lst", referencedFiles);
     }
     
     public void testLoadSourcesMissing()
@@ -225,7 +229,7 @@ public class GeneratorComponentTest
         dontProvideFile("sourcesMissing.lst");
         try
         {
-            generatorComponent.loadSources("sourcesMissing.lst");
+            generatorComponent.loadSources("sourcesMissing.lst", referencedFiles);
             fail();
         }
         catch(Exception e)
@@ -241,7 +245,7 @@ public class GeneratorComponentTest
         dontProvideFile("missingSchema.rml");
         try
         {
-            generatorComponent.loadSources("sourcesMissingRml.lst");
+            generatorComponent.loadSources("sourcesMissingRml.lst", referencedFiles);
             fail();
         }
         catch(Exception e)
@@ -258,7 +262,7 @@ public class GeneratorComponentTest
         dontProvideFile("missingMasterSources.lst");
         try
         {
-            generatorComponent.loadSources("sourcesMissingInclude.lst");
+            generatorComponent.loadSources("sourcesMissingInclude.lst", referencedFiles);
             fail();
         }
         catch(Exception e)
@@ -294,7 +298,8 @@ public class GeneratorComponentTest
     {
         mockFileSystem.stubs().method("exists").with(eq(path)).will(returnValue(true));
         mockFileSystem.stubs().method("getReader").with(eq(path), eq("UTF-8")).
-            will(returnValue(testFileSystem.getReader(path, "UTF-8")));        
+            will(returnValue(testFileSystem.getReader(path, "UTF-8")));
+        mockReferencedFiles.expects(once()).method("add").with(eq(path)).will(returnValue(false));
     }
 
     private void provideFile(String path, Reader reader)
@@ -303,10 +308,27 @@ public class GeneratorComponentTest
         mockFileSystem.stubs().method("exists").with(eq(path)).will(returnValue(true));
         mockFileSystem.stubs().method("getReader").with(eq(path), eq("UTF-8")).
             will(returnValue(reader));        
+        mockReferencedFiles.expects(once()).method("add").with(eq(path)).will(returnValue(false));
     }
     
     private void dontProvideFile(String path)
     {
-        mockFileSystem.stubs().method("exists").with(eq(path)).will(returnValue(false));        
+        mockFileSystem.stubs().method("exists").with(eq(path)).will(returnValue(false));     
+    }
+    
+    private void expectFile(String path, String previousContent, String content)
+    {
+        if(previousContent == null)
+        {
+            mockFileSystem.stubs().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
+            mockFileSystem.expects(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue(previousContent));
+        }
+        else
+        {
+            mockFileSystem.stubs().method("exists").with(eq(path)).will(returnValue(false));
+            mockFileSystem.expects(once()).method("mkdirs").with(eq(FileSystem.directoryPath(path))).isVoid();
+        }
+        mockFileSystem.expects(once()).method("write").with(eq("foo/Out.java"), eq(content), eq("UTF-8")).isVoid();
+        mockReferencedFiles.expects(once()).method("add").with(eq(path)).will(returnValue(false));
     }
 }
