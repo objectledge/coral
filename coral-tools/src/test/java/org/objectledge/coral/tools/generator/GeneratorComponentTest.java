@@ -27,6 +27,7 @@
 // 
 package org.objectledge.coral.tools.generator;
 
+import java.io.File;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import org.jcontainer.dna.Logger;
 import org.jmock.Mock;
 import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.filesystem.FileSystem;
+import org.objectledge.filesystem.LocalFileSystemProvider;
 import org.objectledge.templating.Template;
 import org.objectledge.templating.Templating;
 import org.objectledge.test.LedgeTestCase;
@@ -53,6 +55,8 @@ public class GeneratorComponentTest
 {
     private Mock mockFileSystem;
     private FileSystem fileSystem;
+    private Mock mockLocalFileSystemProvider;
+    private LocalFileSystemProvider localFileSystemProvider;
     private Mock mockTemplating;
     private Templating templating;
     private Mock mockRMLModelLoader;
@@ -89,6 +93,9 @@ public class GeneratorComponentTest
     {
         mockFileSystem = mock(FileSystem.class);
         fileSystem = (FileSystem)mockFileSystem.proxy();
+        mockLocalFileSystemProvider = mock(LocalFileSystemProvider.class);
+        localFileSystemProvider = (LocalFileSystemProvider)mockLocalFileSystemProvider.proxy();
+        mockFileSystem.stubs().method("getProvider").with(eq("local")).will(returnValue(localFileSystemProvider));
         mockTemplating = mock(Templating.class);
         templating = (Templating)mockTemplating.proxy();
         mockRMLModelLoader = mock(RMLModelLoader.class);
@@ -320,8 +327,8 @@ public class GeneratorComponentTest
     {
         if(previousContent == null)
         {
-            mockFileSystem.stubs().method("exists").with(eq("foo/Out.java")).will(returnValue(true));
-            mockFileSystem.expects(once()).method("read").with(eq("foo/Out.java"), eq("UTF-8")).will(returnValue(previousContent));
+            mockFileSystem.stubs().method("exists").with(eq(path)).will(returnValue(true));
+            mockFileSystem.expects(once()).method("read").with(eq(path), eq("UTF-8")).will(returnValue(previousContent));
         }
         else
         {
@@ -329,6 +336,7 @@ public class GeneratorComponentTest
             mockFileSystem.expects(once()).method("mkdirs").with(eq(FileSystem.directoryPath(path))).isVoid();
         }
         mockFileSystem.expects(once()).method("write").with(eq("foo/Out.java"), eq(content), eq("UTF-8")).isVoid();
+        mockLocalFileSystemProvider.expects(once()).method("getFile").with(eq(path)).will(returnValue(new File(path)));
         mockReferencedFiles.expects(once()).method("add").with(eq(path)).will(returnValue(false));
     }
 }

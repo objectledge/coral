@@ -50,6 +50,7 @@ import org.objectledge.coral.tools.generator.model.ResourceClass;
 import org.objectledge.coral.tools.generator.model.Schema;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.filesystem.FileSystemProvider;
+import org.objectledge.filesystem.LocalFileSystemProvider;
 import org.objectledge.filesystem.UnsupportedCharactersInFilePathException;
 import org.objectledge.templating.Template;
 import org.objectledge.templating.Templating;
@@ -459,7 +460,9 @@ public class GeneratorComponent
         referencedFiles.add(path);
         fileSystem.write(path, contents, fileEncoding);
         BuildContext buildContext = ThreadBuildContext.getContext();
-        buildContext.refresh(new File(path));
+        File fileLocation = ((LocalFileSystemProvider)fileSystem.getProvider("local"))
+            .getFile(path);
+        buildContext.refresh(fileLocation);
         return true;
     }
 
