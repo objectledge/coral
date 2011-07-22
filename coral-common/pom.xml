@@ -164,16 +164,4 @@
       </plugin>
     </plugins>
   </build>
-  <distributionManagement>
-    <repository>
-      <id>nexus.objectledge.org</id>
-      <name>ObjectLedge releases Nexus repository</name>
-      <url>http://nexus.objectledge.org/nexus/content/repositories/m2releases</url>
-    </repository>
-    <snapshotRepository>
-      <id>nexus.objectledge.org</id>
-      <name>ObjectLedge snapshots Nexus repository</name>
-      <url>http://nexus.objectledge.org/nexus/content/repositories/m2snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
 </project>
