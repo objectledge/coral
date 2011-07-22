@@ -28,6 +28,7 @@
     <dependency>
       <groupId>org.objectledge</groupId>
       <artifactId>ledge-web</artifactId>
+      <classifier>classes</classifier>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
