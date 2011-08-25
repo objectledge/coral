@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.objectledge.coral</groupId>
+    <artifactId>coral-common</artifactId>
+    <relativePath>../coral-common/pom.xml</relativePath>
+    <version>1.0.11</version>
+  </parent>
+  <artifactId>coral-browser</artifactId>
+  <packaging>war</packaging>
+  <name>Coral Browser Web Module</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.objectledge.coral</groupId>
+      <artifactId>coral-common</artifactId>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.objectledge.coral</groupId>
+      <artifactId>coral-web</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <attachClasses>true</attachClasses>
+          <classesClassifier /> <!-- due to limitation of maven-war-plugin classifier=classes anyway -->
+          <packagingExcludes>WEB-INF/lib/*.jar,WEB-INF/classes/**</packagingExcludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
