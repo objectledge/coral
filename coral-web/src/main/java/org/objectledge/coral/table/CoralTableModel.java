@@ -150,6 +150,7 @@ public class CoralTableModel<T extends Resource> implements ExtendedTableModel<T
      */
     public TableColumn<T>[] getColumns()
     {
+        @SuppressWarnings("unchecked")
         TableColumn<T>[] columns = new TableColumn[comparatorByColumnName.size()];
         int i=0;
         for(Iterator<String> iter = comparatorByColumnName.keySet().iterator(); iter.hasNext(); i++)
@@ -174,6 +175,28 @@ public class CoralTableModel<T extends Resource> implements ExtendedTableModel<T
             }
         }
         return columns;
+    }
+    
+    /**
+     * Returns a column with the given name.
+     * 
+     * @param name name of the column.
+     * @return a TableColumn, or {@code null} when no such column is present in the model.
+     * @throws TableException when there is a problem accessing or creating the requested column.
+     */
+    public TableColumn<T> getColumn(String name)
+        throws TableException
+    {
+        Comparator<T> comparator = comparatorByColumnName.get(name);
+        Comparator<T> reverseComparator = reverseComparatorByColumnName.get(name);
+        if(reverseComparator != null)
+        {
+            return new TableColumn<T>(name, comparator, reverseComparator);
+        }
+        else
+        {
+            return new TableColumn<T>(name, comparator);
+        }
     }
 
     /**

@@ -7,6 +7,7 @@ import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.table.ExtendedTableModel;
 import org.objectledge.table.TableColumn;
+import org.objectledge.table.TableException;
 import org.objectledge.table.TableFilter;
 import org.objectledge.table.TableRowSet;
 import org.objectledge.table.TableState;
@@ -19,14 +20,14 @@ import org.objectledge.table.generic.GenericTreeRowSet;
  *  * @author <a href="mailto:pablo@caltha.pl">Pawel Potempski</a>
  * @version $Id: GraphTableModel.java,v 1.8 2005-02-21 14:04:39 rafal Exp $
  */
-public class GraphTableModel
-    implements ExtendedTableModel
+public class GraphTableModel<T extends Resource>
+    implements ExtendedTableModel<T>
 {
     /** The embeded cross reference. */
     protected Relation ref;
 
     /** The columns of the list. */
-    protected TableColumn[] columns;
+    protected TableColumn<T>[] columns;
 
     /** logging */
     protected Logger logger;
@@ -52,9 +53,9 @@ public class GraphTableModel
     /**
      * {@inheritDoc}
      */
-    public TableRowSet getRowSet(TableState state, TableFilter[] filters)
+    public TableRowSet<T> getRowSet(TableState state, TableFilter<T>[] filters)
     {
-        return new GenericTreeRowSet(state, filters, this);
+        return new GenericTreeRowSet<T>(state, filters, this);
     }
 
     /**
@@ -63,18 +64,18 @@ public class GraphTableModel
      * @param parent the parent
      * @return table of children
      */
-    public Object[] getChildren(Object parent)
+    public Resource[] getChildren(Resource parent)
     {
         if(parent instanceof Resource)
         {
             Resource[] resources = ref.get((Resource)parent);
-            Object[] children = new Object[resources.length];
+            Resource[] children = new Resource[resources.length];
             System.arraycopy(resources, 0, children, 0, resources.length);
             return children;
         }
         else
         {
-            return new Object[0];
+            return new Resource[0];
         }
     }
     
@@ -86,7 +87,7 @@ public class GraphTableModel
      * @param id the id of the object
      * @return model object
      */
-    public Object getObject(String id)
+    public T getObject(String id)
     {
         Resource resource = null;
         try
@@ -102,7 +103,7 @@ public class GraphTableModel
         {
             logger.error("Coral exception ",e);
         }
-        return resource;
+        return (T)resource;
     }
 
     /**
@@ -114,7 +115,7 @@ public class GraphTableModel
      * @param child model object.
      * @return the id of the object.
      */
-    public String getId(String parent, Object child)
+    public String getId(String parent, T child)
     {
         if(child == null)
         {
@@ -129,8 +130,18 @@ public class GraphTableModel
      *
      * @return array of <code>TableColumn</code> objects
      */
-    public TableColumn[] getColumns()
+    public TableColumn<T>[] getColumns()
     {
         return columns;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TableColumn<T> getColumn(String name)
+        throws TableException
+    {        
+        return null;
     }
 }
