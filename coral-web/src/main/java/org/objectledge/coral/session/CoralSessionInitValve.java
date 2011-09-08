@@ -57,7 +57,7 @@ public class CoralSessionInitValve implements Valve
 		}
 		catch(EntityDoesNotExistException e)
 		{
-			logger.error("failed to init the coral session", e);
+			logger.warn("failed to initialize Coral session", e);
 			CoralSession coralSession = sessionFactory.getAnonymousSession();
 			context.setAttribute(CoralSession.class, coralSession);
 		}

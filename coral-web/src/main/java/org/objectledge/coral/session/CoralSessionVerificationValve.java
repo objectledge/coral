@@ -54,7 +54,8 @@ public class CoralSessionVerificationValve implements Valve
 		CoralSession coralSession = (CoralSession)context.getAttribute(CoralSession.class);
 		if(coralSession != null)
 		{
-			if(!coralSession.getUserPrincipal().equals(principal))
+			Principal previousPrincipal = coralSession.getUserPrincipal();
+            if(!previousPrincipal.equals(principal))
 			{
 			    coralSession.close();
 			    try
@@ -64,7 +65,9 @@ public class CoralSessionVerificationValve implements Valve
 			    }
 				catch(EntityDoesNotExistException e)
 				{
-					logger.error("failed to init the coral session", e);
+                    logger.error(
+                        "failed to switch Coral session from " + previousPrincipal.getName()
+                            + " to " + principal.getName(), e);
 					CoralSession newCoralSession = sessionFactory.getAnonymousSession();
 					context.setAttribute(CoralSession.class, newCoralSession);
 				}	        
