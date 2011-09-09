@@ -8,7 +8,6 @@
     <version>1.0.12-SNAPSHOT</version>
     <relativePath>../coral-common/pom.xml</relativePath>
   </parent>
-  <groupId>org.objectledge.coral</groupId>
   <artifactId>coral-tools</artifactId>
   <name>Coral Tools</name>
   <dependencies>

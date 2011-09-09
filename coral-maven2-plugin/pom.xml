@@ -7,7 +7,6 @@
     <relativePath>../coral-common</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.objectledge.coral</groupId>
   <artifactId>coral-maven2-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Coral Java wrappers generator plugin for Maven2</name>
