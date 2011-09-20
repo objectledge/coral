@@ -1,9 +1,13 @@
 package org.objectledge.coral.tools;
 
+import java.io.IOException;
+
+import org.nanocontainer.integrationkit.PicoCompositionException;
 import org.objectledge.container.LedgeContainer;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.filesystem.FileSystemProvider;
 import org.picocontainer.MutablePicoContainer;
+import org.picocontainer.PicoRegistrationException;
 
 public class LedgeContainerFactory
 {
@@ -16,7 +20,7 @@ public class LedgeContainerFactory
      * @throws Exception if the factory could not be initialized.
      */
     public static MutablePicoContainer newLedgeContainer(String ledgeBaseDir, String ledgeConfig)
-        throws Exception
+        throws IOException, ClassNotFoundException, PicoCompositionException, PicoRegistrationException
     {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl == null)
