@@ -19,23 +19,23 @@ public class SqlRunnerMojo
     extends AbstractDbMojo
 {
     /**
-     * Basedir for looking up sources list and source files.
+     * Base directory for looking up sources lists and source files.
      * 
-     * @parameter expression="${project.basedir.canonicalPath}
+     * @parameter default-value="${project.basedir.canonicalPath}"
      */
     private String baseDir;
 
     /**
      * Location of sources list file.
      * 
-     * @parameter default-value="src/main/resources/sql/sources.list"
+     * @parameter expression="${sqlSourcesList}" default-value="src/main/resources/sql/sources.list"
      */
     private String sqlSourcesList;
 
     /**
      * Character encoding for loading the source files.
      * 
-     * @parameter expression="${coral.sql.file.encodnig}" default-value="UTF-8"
+     * @parameter default-value="UTF-8"
      */
     private String fileEncoding;
 
