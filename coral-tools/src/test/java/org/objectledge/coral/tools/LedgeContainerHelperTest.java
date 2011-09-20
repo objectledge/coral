@@ -10,7 +10,7 @@ public class LedgeContainerHelperTest
     public void testSimpleContainer()
         throws Exception
     {
-        MutablePicoContainer ledgeContainer = LedgeContainerHelper.getLedgeContainer(
+        MutablePicoContainer ledgeContainer = LedgeContainerFactory.newLedgeContainer(
             "src/test/resources/container", "simple");
         assertNotNull(ledgeContainer);
     }

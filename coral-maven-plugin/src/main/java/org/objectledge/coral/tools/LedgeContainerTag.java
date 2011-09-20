@@ -96,7 +96,7 @@ public class LedgeContainerTag
         {
             try
             {
-                container = LedgeContainerHelper.getLedgeContainer(effectiveLedgeBaseDir, effectiveLedgeConfig);
+                container = LedgeContainerFactory.newLedgeContainer(effectiveLedgeBaseDir, effectiveLedgeConfig);
             }
             catch(Exception e)
             {

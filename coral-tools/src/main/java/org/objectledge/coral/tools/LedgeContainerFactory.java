@@ -5,7 +5,7 @@ import org.objectledge.filesystem.FileSystem;
 import org.objectledge.filesystem.FileSystemProvider;
 import org.picocontainer.MutablePicoContainer;
 
-public class LedgeContainerHelper
+public class LedgeContainerFactory
 {
     /**
      * Returns a session factory instance.
@@ -15,13 +15,13 @@ public class LedgeContainerHelper
      * @return container instance.
      * @throws Exception if the factory could not be initialized.
      */
-    public static MutablePicoContainer getLedgeContainer(String ledgeBaseDir, String ledgeConfig)
+    public static MutablePicoContainer newLedgeContainer(String ledgeBaseDir, String ledgeConfig)
         throws Exception
     {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl == null)
         {
-            cl = LedgeContainerHelper.class.getClassLoader();
+            cl = LedgeContainerFactory.class.getClassLoader();
             Thread.currentThread().setContextClassLoader(cl);
         }
         FileSystemProvider lfs = new org.objectledge.filesystem.
