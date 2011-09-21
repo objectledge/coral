@@ -1,6 +1,10 @@
 package org.objectledege.coral.tools.maven;
 
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -15,6 +19,12 @@ import org.objectledge.filesystem.FileSystem;
 import org.objectledge.utils.StackTrace;
 import org.picocontainer.MutablePicoContainer;
 
+/**
+ * A Mojo that executes RML scripts.
+ * 
+ * @author rafal.krzewski@objectledge.org
+ * @goal run-rml
+ */
 public class RmlRunnerMojo
     extends AbstractDbMojo
 {
@@ -32,21 +42,22 @@ public class RmlRunnerMojo
      * @parameter default-value="config"
      */
     private String configDir;
-    
+
     /**
-     * Coral subject to execute scripts as. When not defined scripts will be executed as root subject.
+     * Coral subject to execute scripts as. When not defined scripts will be executed as root
+     * subject.
      * 
      * @parameter expression="${subject}"
      */
     private String subjectName;
-    
+
     /**
      * Location of sources list file.
      * 
      * @parameter expression="${rmlSourcesList}" default-value="src/main/resources/rml/sources.list"
      */
     private String sourcesList;
-    
+
     /**
      * Character encoding for loading the source files.
      * 
@@ -63,11 +74,13 @@ public class RmlRunnerMojo
         CoralSession coralSession;
         try
         {
-            MutablePicoContainer container = LedgeContainerFactory.newLedgeContainer(baseDir, configDir);
-            container.registerComponentInstance("dataSource", dataSource);
+            Map<Object, Object> componentInstances = new HashMap<Object, Object>();
+            componentInstances.put(DataSource.class, dataSource);
+            MutablePicoContainer container = LedgeContainerFactory.newLedgeContainer(baseDir,
+                configDir, componentInstances);
             fileSystem = (FileSystem)container.getComponentInstance(FileSystem.class);
-            CoralSessionFactory factory = (CoralSessionFactory)container.getComponentInstance(
-                CoralSessionFactory.class);
+            CoralSessionFactory factory = (CoralSessionFactory)container
+                .getComponentInstance(CoralSessionFactory.class);
             if(subjectName != null)
             {
                 coralSession = factory.getSession(new DefaultPrincipal(subjectName));
@@ -81,28 +94,30 @@ public class RmlRunnerMojo
         {
             throw new MojoExecutionException("failed to intitialize Coral session", e);
         }
-        
-        final Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(RmlRunnerMojo.class));
+
+        final Logger logger = new Log4JLogger(
+            org.apache.log4j.Logger.getLogger(RmlRunnerMojo.class));
         final CoralSession session = coralSession;
         BatchLoader loader = new BatchLoader(fileSystem, logger, fileEncoding)
-        {
-            public void load(Reader in)
-                throws Exception
             {
-                String result = session.getScript().runScript(in);
-                if(result != null && result.length() > 0)
+                public void load(Reader in)
+                    throws Exception
                 {
-                    logger.info(result);
+                    String result = session.getScript().runScript(in);
+                    if(result != null && result.length() > 0)
+                    {
+                        logger.info(result);
+                    }
                 }
-            }
-        };
+            };
         try
         {
             loader.loadBatch(sourcesList);
         }
         catch(Exception e)
         {
-            throw new MojoFailureException(sourcesList, "script execution failed", new StackTrace(e).toString());
+            throw new MojoFailureException(sourcesList, "script execution failed: "
+                + e.getMessage(), new StackTrace(e).toString());
         }
     }
 }
