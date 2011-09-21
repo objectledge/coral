@@ -11,7 +11,7 @@ public class LedgeContainerHelperTest
         throws Exception
     {
         MutablePicoContainer ledgeContainer = LedgeContainerFactory.newLedgeContainer(
-            "src/test/resources/container", "simple");
+            "src/test/resources/container", "simple", null);
         assertNotNull(ledgeContainer);
     }
 }
