@@ -35,29 +35,5 @@
       <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.objectledge.coral</groupId>
-      <artifactId>coral-maven2-plugin</artifactId>
-      <type>maven-plugin</type>
-    </dependency>
-  </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.objectledge.coral</groupId>
-        <artifactId>coral-maven2-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <sourcesList>src/main/rml-sources-gen.list</sourcesList>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generator</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  </dependencies>  
 </project>
