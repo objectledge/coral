@@ -64,6 +64,7 @@ import org.objectledge.coral.store.CoralStoreImpl;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
+import org.objectledge.pico.DefaultComponentAdapterFactory;
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoContainer;
@@ -177,7 +178,7 @@ public class CoralCoreImpl
         Set<Feature> features)
     {
         this.log = log;
-        container = new DefaultPicoContainer(parentContainer);
+        container = new DefaultPicoContainer(new DefaultComponentAdapterFactory(), parentContainer);
         // register global dependencies
         container.registerComponentInstance(Persistence.class, persistence);
         container.registerComponentInstance(Database.class, persistence.getDatabase());
