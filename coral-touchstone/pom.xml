@@ -34,6 +34,24 @@
       <artifactId>ledge-lgpl</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.objectledge</groupId>
+      <artifactId>ledge-components</artifactId>
+      <classifier>install</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.objectledge.coral</groupId>
+      <artifactId>coral-ri</artifactId>
+      <classifier>install</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.objectledge.coral</groupId>
+      <artifactId>coral-datatypes</artifactId>
+      <classifier>install</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>

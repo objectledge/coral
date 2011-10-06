@@ -39,6 +39,21 @@
       <artifactId>hsqldb</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.objectledge</groupId>
+      <artifactId>ledge-components</artifactId>
+      <classifier>install</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.objectledge.coral</groupId>
+      <artifactId>coral-ri</artifactId>
+      <classifier>install</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.objectledge.coral</groupId>
+      <artifactId>coral-datatypes</artifactId>
+      <classifier>install</classifier>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
