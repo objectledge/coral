@@ -65,6 +65,10 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
         this.log = log;
         GenericKeyedObjectPool.Config poolConfig = new GenericKeyedObjectPool.Config();
         poolConfig.whenExhaustedAction = GenericKeyedObjectPool.WHEN_EXHAUSTED_GROW;
+        poolConfig.maxIdle = coral.getConfig().getSessionPoolSizePerUser();
+        poolConfig.minEvictableIdleTimeMillis = coral.getConfig().getSessionEvictionThreashold();
+        poolConfig.timeBetweenEvictionRunsMillis = coral.getConfig().getSessionEvictionInterval();
+        poolConfig.numTestsPerEvictionRun = coral.getConfig().getSessionTestsPerEvictionRun();
         pool = new GenericKeyedObjectPool(new Factory(), poolConfig);
     }
     
