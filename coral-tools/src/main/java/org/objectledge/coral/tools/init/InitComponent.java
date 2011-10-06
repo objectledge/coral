@@ -61,9 +61,9 @@ public class InitComponent
         }
 
         runScript("sql/database/IdGeneratorTables.sql");
-        runScript("sql/parameters/db/DBParametersTables.sql");
-        runScript("sql/scheduler/db/DBSchedulerTables.sql");
-        runScript("sql/naming/db/DBNamingTables.sql");
+        runScript("sql/parameters/DBParametersTables.sql");
+        runScript("sql/scheduler/DBSchedulerTables.sql");
+        runScript("sql/naming/DBNamingTables.sql");
         runScript("sql/coral/CoralRITables.sql");
         runScript("sql/coral/CoralDatatypesTables.sql");
         runScript("sql/coral/CoralRIInitial.sql");
@@ -86,17 +86,17 @@ public class InitComponent
 
         if(hasTable("ledge_parameters"))
         {
-            runScript("sql/parameters/db/DBParametersDropTables.sql");
+            runScript("sql/parameters/DBParametersDropTables.sql");
         }
 
         if(hasTable("ledge_scheduler"))
         {
-            runScript("sql/scheduler/db/DBSchedulerDropTables.sql");
+            runScript("sql/scheduler/DBSchedulerDropTables.sql");
         }
 
         if(hasTable("ledge_naming_attribute"))
         {
-            runScript("sql/naming/db/DBNamingDropTables.sql");
+            runScript("sql/naming/DBNamingDropTables.sql");
         }
 
         if(hasTable("coral_resource_class"))
