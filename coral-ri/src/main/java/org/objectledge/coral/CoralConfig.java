@@ -44,24 +44,24 @@ public class CoralConfig
     private final int sessionTestsPerEvictionRun;
 
     /**
-     * Default pool size is 8 idle sessions per user.
+     * Default pool size per user.
      */
     private static final int DEFAULT_SESSION_POOL_SIZE_PER_SUBJECT = 8;
 
     /**
-     * Session eviction is performed once per minute by default.
+     * Default session eviction interval.
      */
     private static final int DEFAULT_SESSION_EVICTION_INTERVAL = 60;
 
     /**
-     * Session idle time threshold is 5 minutes by default.
+     * Default session idle time threshold.
      */
     private static final int DEFAULT_SESSION_EVICTION_THRESHOLD = 300;
 
     /**
-     * Number of tests per eviction run is unlimited by default.
+     * Default Number of tests per eviction run.
      */
-    private static final int DEFAULT_SESSION_TESTS_PER_EVICTION_RUN = Integer.MAX_VALUE;
+    private static final int DEFAULT_SESSION_TESTS_PER_EVICTION_RUN = 1000;
 
     /**
      * Creates a default Coral configuration.
