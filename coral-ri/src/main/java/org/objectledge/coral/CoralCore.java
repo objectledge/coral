@@ -61,6 +61,13 @@ public interface CoralCore
      */
     public boolean isEnabled(Feature feature);
     
+    /**
+     * Return Coral configuration.
+     * 
+     * @return configuration object.
+     */
+    public CoralConfig getConfig();
+
     // facilities ///////////////////////////////////////////////////////////////////////////////
     
     /**

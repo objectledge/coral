@@ -28,7 +28,6 @@
 package org.objectledge.coral;
 
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,27 +80,40 @@ public class CoralCoreImpl
     implements CoralCore, Startable
 {
     private CoralRegistry coralRegistry;
+
     private CoralSchema coralSchema;
+
     private CoralSecurity coralSecurity;
+
     private CoralStore coralStore;
+
     private CoralEventWhiteboard coralEventWhiteboard;
+
     private CoralRelationManager coralRelationManager;
+
     private CoralRelationQuery coralRelationQuery;
+
     private CoralQuery coralQuery;
+
     private Instantiator instantiator;
+
     private RMLParserFactory rmlParserFactory;
-    
+
     private MutablePicoContainer container;
-    
+
     private ThreadLocal<CoralSession> currentSession = new ThreadLocal<CoralSession>();
-    private ThreadLocal<LinkedList<CoralSession>> currentSessionStack = 
-        new ThreadLocal<LinkedList<CoralSession>>();
+
+    private ThreadLocal<LinkedList<CoralSession>> currentSessionStack = new ThreadLocal<LinkedList<CoralSession>>();
+
     private final Logger log;
-    private final Set<Feature> features;
+
     private final CacheFactory cacheFactory;
-    
+
+    private final CoralConfig coralConfig;
+
     /**
      * Constructs a Coral instance.
+     * 
      * @param parentContainer the container where Coral is deployed.
      * @param persistence the persitence subsystem.
      * @param cacheFactory the cache factory.
@@ -109,63 +121,37 @@ public class CoralCoreImpl
      * @param log the logger.
      * @param preload attempt to preload data from database.
      */
-    public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence, 
-        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log, 
+    public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence,
+        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log,
         boolean preload)
     {
         this(parentContainer, persistence, cacheFactory, eventWhiteboardFactory, log,
-            (preload ? EnumSet.of(Feature.PRELOAD) : EnumSet.noneOf(Feature.class)));
+                        new CoralConfig());
     }
 
     /**
      * Constructs a Coral instance.
+     * 
      * @param parentContainer the container where Coral is deployed.
      * @param persistence the persitence subsystem.
      * @param cacheFactory the cache factory.
      * @param eventWhiteboardFactory the event whiteboard factory.
      * @param log the logger.
      * @param config component configuration.
-     * @throws ConfigurationException if the provided configuration is incorrect. 
+     * @throws ConfigurationException if the provided configuration is incorrect.
      */
-    public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence, 
-        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log, 
+    public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence,
+        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log,
         Configuration config)
         throws ConfigurationException
     {
         this(parentContainer, persistence, cacheFactory, eventWhiteboardFactory, log,
-            getFeatureSet(config));
+                        new CoralConfig(config));
     }
 
     /**
-     * Build a set of Features from DNA Configuration object.
-     * 
-     * @param config configuration object.
-     * @return set of Features.
-     * @throws ConfigurationException if the provided configuration is incorrect. 
-     */
-    private static Set<Feature> getFeatureSet(Configuration config)
-        throws ConfigurationException
-    {
-        Set<Feature> featureSet = EnumSet.noneOf(Feature.class);
-        Configuration[] features = config.getChild("features").getChildren("feature");
-        for(Configuration feature : features)
-        {
-            String featureName = feature.getValue();
-            try
-            {
-                featureSet.add(Feature.valueOf(featureName));
-            }
-            catch(IllegalArgumentException e)
-            {
-                throw new ConfigurationException("unknown feature "+featureName, 
-                    feature.getPath(), feature.getLocation());
-            }
-        }
-        return featureSet;
-    }
-    
-    /**
      * Constructs a Coral instance.
+     * 
      * @param parentContainer the container where Coral is deployed.
      * @param persistence the persitence subsystem.
      * @param cacheFactory the cache factory.
@@ -173,9 +159,9 @@ public class CoralCoreImpl
      * @param log the logger.
      * @param features the optiona feature set.
      */
-    public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence, 
-        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log, 
-        Set<Feature> features)
+    public CoralCoreImpl(PicoContainer parentContainer, Persistence persistence,
+        CacheFactory cacheFactory, EventWhiteboardFactory eventWhiteboardFactory, Logger log,
+        CoralConfig coralConfig)
     {
         this.log = log;
         container = new DefaultPicoContainer(new DefaultComponentAdapterFactory(), parentContainer);
@@ -185,7 +171,7 @@ public class CoralCoreImpl
         container.registerComponentInstance(CacheFactory.class, cacheFactory);
         container.registerComponentInstance(EventWhiteboardFactory.class, eventWhiteboardFactory);
         container.registerComponentInstance(Logger.class, log);
-        // register self       
+        // register self
         container.registerComponentInstance(CoralCore.class, this);
         // events
         CoralEventHub coralEventHub = new CoralEventHubImpl(eventWhiteboardFactory, null);
@@ -203,17 +189,17 @@ public class CoralCoreImpl
         }
         else
         {
-            rmlParserFactory = (RMLParserFactory)parentContainer.
-                getComponentInstanceOfType(RMLParserFactory.class);
+            rmlParserFactory = (RMLParserFactory)parentContainer
+                .getComponentInstanceOfType(RMLParserFactory.class);
         }
         // component implementations
         container.registerComponentImplementation(CoralRegistry.class, CoralRegistryImpl.class);
         container.registerComponentImplementation(CoralSchema.class, CoralSchemaImpl.class);
         container.registerComponentImplementation(CoralSecurity.class, CoralSecurityImpl.class);
         container.registerComponentImplementation(CoralStore.class, CoralStoreImpl.class);
-        container.registerComponentImplementation(CoralRelationManager.class, 
+        container.registerComponentImplementation(CoralRelationManager.class,
             CoralRelationManagerImpl.class);
-        container.registerComponentImplementation(CoralRelationQuery.class, 
+        container.registerComponentImplementation(CoralRelationQuery.class,
             CoralRelationQueryImpl.class);
         container.registerComponentImplementation(CoralQuery.class, SQLCoralQueryImpl.class);
         // up it goes...
@@ -221,15 +207,15 @@ public class CoralCoreImpl
         coralSchema = (CoralSchema)container.getComponentInstance(CoralSchema.class);
         coralSecurity = (CoralSecurity)container.getComponentInstance(CoralSecurity.class);
         coralStore = (CoralStore)container.getComponentInstance(CoralStore.class);
-        coralRelationManager = (CoralRelationManager)container.
-            getComponentInstance(CoralRelationManager.class);
-        coralRelationQuery = (CoralRelationQuery)container.
-            getComponentInstance(CoralRelationQuery.class);
+        coralRelationManager = (CoralRelationManager)container
+            .getComponentInstance(CoralRelationManager.class);
+        coralRelationQuery = (CoralRelationQuery)container
+            .getComponentInstance(CoralRelationQuery.class);
         coralQuery = (CoralQuery)container.getComponentInstance(CoralQuery.class);
-        
-        this.features = features;
+
+        this.coralConfig = coralConfig;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -237,10 +223,10 @@ public class CoralCoreImpl
     {
         if(isEnabled(Feature.PRELOAD))
         {
-            List startupAdapters = container.
-                getComponentAdaptersOfType(PreloadingParticipant.class);
-            Set<PreloadingParticipant> participants = 
-                new HashSet<PreloadingParticipant>(startupAdapters.size());
+            List startupAdapters = container
+                .getComponentAdaptersOfType(PreloadingParticipant.class);
+            Set<PreloadingParticipant> participants = new HashSet<PreloadingParticipant>(
+                startupAdapters.size());
             for(Object adapter : startupAdapters)
             {
                 participants.add((PreloadingParticipant)((ComponentAdapter)adapter)
@@ -256,28 +242,36 @@ public class CoralCoreImpl
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void stop()
     {
-        // I wish Startable iterface was split back into Startable/Stoppable        
+        // I wish Startable iterface was split back into Startable/Stoppable
     }
 
     // configuration ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean isEnabled(Feature feature)
     {
-        return features.contains(feature);
+        return coralConfig.getFeatures().contains(feature);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public CoralConfig getConfig()
+    {
+        return coralConfig;
+    }
+
     // facilities ///////////////////////////////////////////////////////////////////////////////
-    
-    /** 
+
+    /**
      * {@inheritDoc}
      */
     public CoralRegistry getRegistry()
@@ -285,7 +279,7 @@ public class CoralCoreImpl
         return coralRegistry;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public CoralSchema getSchema()
@@ -293,7 +287,7 @@ public class CoralCoreImpl
         return coralSchema;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public CoralSecurity getSecurity()
@@ -301,15 +295,15 @@ public class CoralCoreImpl
         return coralSecurity;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public CoralStore getStore()
     {
         return coralStore;
     }
-    
-    /** 
+
+    /**
      * {@inheritDoc}
      */
     public CoralEventWhiteboard getEventWhiteboard()
@@ -317,7 +311,7 @@ public class CoralCoreImpl
         return coralEventWhiteboard;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public CoralQuery getQuery()
@@ -325,7 +319,7 @@ public class CoralCoreImpl
         return coralQuery;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public CoralRelationManager getRelationManager()
@@ -333,14 +327,14 @@ public class CoralCoreImpl
         return coralRelationManager;
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public CoralRelationQuery getRelationQuery()
     {
         return coralRelationQuery;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -348,7 +342,7 @@ public class CoralCoreImpl
     {
         return instantiator;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -356,7 +350,7 @@ public class CoralCoreImpl
     {
         return cacheFactory;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -364,7 +358,7 @@ public class CoralCoreImpl
     {
         return rmlParserFactory;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -378,7 +372,7 @@ public class CoralCoreImpl
         }
         sessionStack.add(session);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -395,12 +389,12 @@ public class CoralCoreImpl
         }
         return sessionStack.getLast();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public List<CoralSession> getAllSessions()
-    {        
+    {
         LinkedList<CoralSession> sessionStack = currentSessionStack.get();
         if(sessionStack == null)
         {
@@ -433,7 +427,7 @@ public class CoralCoreImpl
         }
         sessionStack.remove(session);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -442,7 +436,7 @@ public class CoralCoreImpl
         return currentSession.get();
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     public CoralSession setCurrentSession(CoralSession session)
@@ -451,11 +445,12 @@ public class CoralCoreImpl
         currentSession.set(session);
         return previous;
     }
-    
-    /** 
+
+    /**
      * {@inheritDoc}
      */
-    public Subject getCurrentSubject() throws IllegalStateException
+    public Subject getCurrentSubject()
+        throws IllegalStateException
     {
         CoralSession session = getCurrentSession();
         if(session == null)
@@ -467,26 +462,26 @@ public class CoralCoreImpl
             return session.getUserSubject();
         }
     }
-    
+
     // startup //////////////////////////////////////////////////////////////////////////////////
-    
+
     private void preloadData(Set<PreloadingParticipant> participants)
         throws Exception
     {
         SortedMap<Integer, PreloadingParticipant> order = new TreeMap();
-        for (PreloadingParticipant participant : participants)
+        for(PreloadingParticipant participant : participants)
         {
-            for (int phase : participant.getPhases())
+            for(int phase : participant.getPhases())
             {
                 order.put(phase, participant);
             }
         }
-        for (int phase : order.keySet())
+        for(int phase : order.keySet())
         {
             order.get(phase).preloadData(phase);
         }
     }
-    
+
     public Logger getLog()
     {
         return log;
