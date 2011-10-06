@@ -30,6 +30,7 @@ package org.objectledge.coral.session;
 import java.security.Principal;
 
 import org.jmock.Mock;
+import org.objectledge.coral.CoralConfig;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.Subject;
@@ -44,6 +45,8 @@ public class CoralSessionFactoryImplTest extends LedgeTestCase
 {
     private Mock mockCoralCore;
     private CoralCore coralCore;
+
+    private CoralConfig coralConfig;
 
     private CoralSessionFactoryImpl coralSessionFactoryImpl;
 
@@ -64,10 +67,12 @@ public class CoralSessionFactoryImplTest extends LedgeTestCase
 
     public void setUp()
     {
+        coralConfig = new CoralConfig();
         mockCoralCore = mock(CoralCore.class);
         coralCore = (CoralCore)mockCoralCore.proxy();
         mockCoralCore.stubs().method("getInstantiator").will(returnValue(null));
-        mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));        
+        mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));
+        mockCoralCore.stubs().method("getConfig").will(returnValue(coralConfig));
         
         coralSessionFactoryImpl = new CoralSessionFactoryImpl(coralCore, null);
         
