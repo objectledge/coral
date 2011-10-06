@@ -117,8 +117,20 @@
       </dependency>
       <dependency>
         <groupId>org.objectledge.coral</groupId>
+        <artifactId>coral-ri</artifactId>
+        <version>${project.version}</version>
+        <classifier>install</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge.coral</groupId>
         <artifactId>coral-datatypes</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge.coral</groupId>
+        <artifactId>coral-datatypes</artifactId>
+        <version>${project.version}</version>
+        <classifier>install</classifier>
       </dependency>
       <dependency>
         <groupId>org.objectledge.coral</groupId>
