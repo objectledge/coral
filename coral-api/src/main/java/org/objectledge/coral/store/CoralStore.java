@@ -176,8 +176,8 @@ public interface CoralStore
      * @throws ValueRequiredException if a value of a REQIRED attribute is defined
      *         present in <code>attributes</code>.
      */
-    public Resource createResource(String name, Resource parent, ResourceClass resourceClass, 
-                                   Map<AttributeDefinition<?>, Object> attributes)
+    public <T extends Resource> T createResource(String name, Resource parent,
+        ResourceClass<T> resourceClass, Map<AttributeDefinition<? >, Object> attributes)
         throws InvalidResourceNameException, UnknownAttributeException, ValueRequiredException;
 
     /**

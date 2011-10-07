@@ -4,9 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +29,6 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.event.CoralEventHub;
-import org.objectledge.coral.relation.Relation;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CircularDependencyException;
@@ -72,23 +72,23 @@ public class CoralStoreImpl
 
     /** The <code>PersistentFactory</code> for <code>Resource</code>
      * objects. */
-    protected PersistentFactory resourceFactory;
+    private PersistentFactory<ResourceImpl> resourceFactory;
     
     /** <code>Long</code> id -&gt; <code>Resource</code>. */
-    protected Map resourceById;
+    private Map<Long, Resource> resourceById;
     
     /** <code>String</code> name -&gt; <code>Set</code> of <code>Resource</code>. */
-    protected Map resourceByName;
+    private Map<String, Set<Resource>> resourceByName;
     
     /** <code>Resource</code> parent -&gt; <code>Set</code> of children. */
-    protected Map resourceByParent;
+    private Map<Object, Set<ResourceRef>> resourceByParent;
 
     /** <code>Resource</code> parent -&gt; <code>Map</code> of
         <code>String</code> name -&gt ; <code>Set</code> of <code>Resource</code> .*/
-    protected Map resourceByParentAndName;
+    private Map<Object, Map<String, Set<ResourceRef>>> resourceByParentAndName;
 
     /** All resources in the system. */
-    protected Map resourceSet;
+    private Map<String, Set<Resource>> resourceSet;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -113,8 +113,8 @@ public class CoralStoreImpl
         this.resourceFactory = instantiator.getPersistentFactory(ResourceImpl.class);
         this.log = log;
         setupCache(cacheFactory, "resource");
-        resourceByParent = new WeakHashMap();
-        resourceByParentAndName = new WeakHashMap();
+        resourceByParent = new WeakHashMap<Object, Set<ResourceRef>>();
+        resourceByParentAndName = new WeakHashMap<Object, Map<String, Set<ResourceRef>>>();
         cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)resourceByParent);
         cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)resourceByParentAndName);
     }
@@ -154,14 +154,15 @@ public class CoralStoreImpl
         {
             synchronized(resourceSet)
             {
-                Set rs = (Set)resourceSet.get("all");
+                Set<Resource> rs = resourceSet.get("all");
                 if(rs == null)
                 {
                     Connection conn = null;
                     try
                     {
                         conn = persistence.getDatabase().getConnection();
-                        List list = persistence.load(" true ORDER BY resource_id", resourceFactory);
+                        List<ResourceImpl> list = persistence.load(" true ORDER BY resource_id",
+                            resourceFactory);
                         rs = instantiate(list, conn);
                     }
                     catch(Exception e)
@@ -194,14 +195,15 @@ public class CoralStoreImpl
         {
             synchronized(resourceByParent)
             {
-                Set rs = (Set)resourceByParent.get(parent);
-                if(rs == null)
+                Set<Resource> rs;
+                Set<ResourceRef> rrs = (Set<ResourceRef>)resourceByParent.get(parent);
+                if(rrs == null)
                 {
                     Connection conn = null;
                     try
                     {
                         conn = persistence.getDatabase().getConnection();
-                        List list;
+                        List<ResourceImpl> list;
                         if(parent != null)
                         {
                             list = persistence.load("parent = "+parent.getIdString(),
@@ -214,6 +216,7 @@ public class CoralStoreImpl
                         }
                         
                         rs = instantiate(list, conn);
+                        rrs = ref(rs);
                     }
                     catch(Exception e)
                     {
@@ -223,7 +226,11 @@ public class CoralStoreImpl
                     {
                         DatabaseUtils.close(conn);
                     }
-                    resourceByParent.put(parent, rs);
+                    resourceByParent.put(parent, rrs);
+                }
+                else
+                {
+                    rs = deref(rrs);
                 }
                 Resource[] result = new Resource[rs.size()];
                 rs.toArray(result);
@@ -245,7 +252,7 @@ public class CoralStoreImpl
     {
         synchronized(resourceById)
         {
-            Long idObj = new Long(id);
+            Long idObj = Long.valueOf(id);
             Resource res = (Resource)resourceById.get(idObj);
             if(res == null)
             {
@@ -296,14 +303,15 @@ public class CoralStoreImpl
         {
             synchronized(resourceByName)
             {
-                Set rs = (Set)resourceByName.get(name);
+                Set<Resource> rs = resourceByName.get(name);
                 if(rs == null)
                 {
                     Connection conn = null;
                     try
                     {
                         conn = persistence.getDatabase().getConnection();
-                        List list = persistence.load("name = '"+DatabaseUtils.escapeSqlString(name)+"'",
+                        List<ResourceImpl> list = persistence
+                            .load("name = '" + DatabaseUtils.escapeSqlString(name) + "'",
                             resourceFactory);
                         rs = instantiate(list, conn);
                     }
@@ -361,22 +369,25 @@ public class CoralStoreImpl
         {
             synchronized(resourceByParentAndName)
             {
-                Map nameMap = (Map)resourceByParentAndName.get(parent);
+                Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(parent);
                 if(nameMap == null)
                 {
-                    nameMap = new HashMap();
+                    nameMap = new HashMap<String, Set<ResourceRef>>();
                     resourceByParentAndName.put(parent, nameMap);
                 }
-                Set rs = (Set)nameMap.get(name);
-                if(rs == null)
+                Set<Resource> rs;
+                Set<ResourceRef> rrs = nameMap.get(name);
+                if(rrs == null)
                 {
                     Connection conn = null;
                     try
                     {
                         conn = persistence.getDatabase().getConnection();
-                        List list = persistence.load("parent = "+parent.getIdString()+
+                        List<ResourceImpl> list = persistence.load(
+                            "parent = " + parent.getIdString() +
                             " AND name = '"+DatabaseUtils.escapeSqlString(name)+"'", resourceFactory);
                         rs = instantiate(list, conn);
+                        rrs = ref(rs);
                     }
                     catch(Exception e)
                     {
@@ -386,7 +397,11 @@ public class CoralStoreImpl
                     {
                         DatabaseUtils.close(conn);
                     }
-                    nameMap.put(name, rs);
+                    nameMap.put(name, rrs);
+                }
+                else
+                {
+                    rs = deref(rrs);
                 }
                 Resource[] result = new Resource[rs.size()];
                 rs.toArray(result);
@@ -437,8 +452,8 @@ public class CoralStoreImpl
     public Resource[] getResourceByPath(String path)
     {
         StringTokenizer st = new StringTokenizer(path, "/");
-        List in = new ArrayList();
-        List out = new ArrayList();
+        List<Resource> in = new ArrayList<Resource>();
+        List<Resource> out = new ArrayList<Resource>();
         Resource r;
         Resource[] ra;
         if(st.hasMoreTokens())
@@ -538,9 +553,9 @@ public class CoralStoreImpl
     public Resource[] getResourceByPath(Resource start, String path)
     {
         StringTokenizer st = new StringTokenizer(path, "/");
-        List in = new ArrayList();
+        List<Resource> in = new ArrayList<Resource>();
         in.add(start);
-        List out = new ArrayList();
+        List<Resource> out = new ArrayList<Resource>();
         Resource r;
         Resource[] ra;
         if(st.hasMoreTokens())
@@ -623,8 +638,8 @@ public class CoralStoreImpl
      *         present in <code>attributes</code>.
      * @throws InvalidResourceNameException if the name contains invalid chracters.
      */
-    public Resource createResource(String name, Resource parent, ResourceClass resourceClass,
-                                   Map attributes)
+    public <T extends Resource> T createResource(String name, Resource parent,
+        ResourceClass<T> resourceClass, Map<AttributeDefinition<? >, Object> attributes)
         throws InvalidResourceNameException, UnknownAttributeException, ValueRequiredException
     {
         if(name == null || name.equals(""))
@@ -640,7 +655,7 @@ public class CoralStoreImpl
         }
         Connection conn = null;
         boolean shouldCommit = false;
-        Resource res = null;
+        T res = null;
         try
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
@@ -648,8 +663,7 @@ public class CoralStoreImpl
             Resource delegate = new ResourceImpl(persistence, coral, coralEventHub, 
                 name, resourceClass, parent, creator);
             persistence.save((Persistent)delegate);
-            res = delegate.getResourceClass().getHandler().
-                create(delegate, attributes, conn);
+            res = resourceClass.getHandler().create(delegate, attributes, conn);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(BackendException ex)
@@ -698,7 +712,7 @@ public class CoralStoreImpl
         }
         synchronized(resourceByName)
         {
-            Set rs = (Set)resourceByName.get(res.getName());
+            Set<Resource> rs = resourceByName.get(res.getName());
             if(rs != null)
             {
                 rs.add(res);
@@ -708,28 +722,28 @@ public class CoralStoreImpl
         {
             synchronized(resourceByParent)
             {
-                Set children = (Set)resourceByParent.get(parent);
-                if(children != null)
+                Set<ResourceRef> rrs = resourceByParent.get(parent);
+                if(rrs != null)
                 {
-                    children.add(res);
+                    rrs.add(new ResourceRef(res, coral));
                 }
             }
             synchronized(resourceByParentAndName)
             {
-                Map nameMap = (Map)resourceByParentAndName.get(parent);
+                Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(parent);
                 if(nameMap != null)
                 {
-                    Set rs = (Set)nameMap.get(res.getName());
-                    if(rs != null)
+                    Set<ResourceRef> rrs = nameMap.get(res.getName());
+                    if(rrs != null)
                     {
-                        rs.add(res);
+                        rrs.add(new ResourceRef(res, coral));
                     }
                 }
             }
         }                    
         synchronized(resourceSet)
         {
-            Set rs = (Set)resourceSet.get("all");
+            Set<Resource> rs = resourceSet.get("all");
             if(rs != null)
             {
                 rs.add(res);
@@ -771,7 +785,7 @@ public class CoralStoreImpl
                                 shouldCommit = persistence.getDatabase().beginTransaction();
                                 conn = persistence.getDatabase().getConnection();
                                 int count;
-                                Set children = (Set)resourceByParent.get(resource);
+                                Set<ResourceRef> children = resourceByParent.get(resource);
                                 if(children != null)
                                 {
                                     count = children.size();
@@ -786,39 +800,37 @@ public class CoralStoreImpl
                                     throw new EntityInUseException("resource #"+
                                         resource.getIdString() + " has "+count+" children");
                                 }
-                                Set assignments = coral.getRegistry().
-                                    getPermissionAssignments(resource);
-                                Iterator i = assignments.iterator();
-                                while(i.hasNext())
+                                Set<PermissionAssignment> assignments = coral.getRegistry()
+                                    .getPermissionAssignments(resource);
+                                for(PermissionAssignment pa : assignments)
                                 {
-                                    PermissionAssignment pa = (PermissionAssignment)i.next();
                                     coral.getRegistry().deletePermissionAssignment(pa);           
                                 }
-                                resource.getResourceClass().getHandler().
-                                    delete(resource, conn);
+                                resource.getResourceClass().getHandler().delete(resource, conn);
                                 persistence.delete((Persistent)resource.getDelegate());
                                 resourceById.remove(resource.getIdObject());
-                                Set rs = (Set)resourceByName.get(resource.getName());
+                                Set<Resource> rs = resourceByName.get(resource.getName());
                                 if(rs != null)
                                 {
                                     rs.remove(resource);
                                 }
-                                rs = (Set)resourceByParent.get(resource.getParent());
-                                if(rs != null)
+                                Set<ResourceRef> rrs = resourceByParent.get(resource.getParent());
+                                ResourceRef ref = new ResourceRef(resource, coral);
+                                if(rrs != null)
                                 {
-                                    rs.remove(resource);
+                                    rrs.remove(ref);
                                 }
-                                Map nameMap = (Map)resourceByParentAndName.
-                                    get(resource.getParent());
+                                Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName
+                                    .get(resource.getParent());
                                 if(nameMap != null)
                                 {
-                                    rs = (Set)nameMap.get(resource.getName());
-                                    if(rs != null)
+                                    rrs = nameMap.get(resource.getName());
+                                    if(rrs != null)
                                     {
-                                        rs.remove(resource);
+                                        rrs.remove(ref);
                                     }
                                 }
-                                Set all = (Set)resourceSet.get("all");
+                                Set<Resource> all = resourceSet.get("all");
                                 if(all != null)
                                 {
                                     all.remove(resource);
@@ -901,16 +913,16 @@ public class CoralStoreImpl
     public int deleteTree(Resource res)
         throws EntityInUseException
     {
-        List stack = new ArrayList();
-        List order = new ArrayList();
-        stack.add(res);
+        Deque<Resource> stack = new LinkedList<Resource>();
+        List<Resource> order = new ArrayList<Resource>();
+        stack.push(res);
         while(stack.size() > 0)
         {
-            Resource r = (Resource)stack.remove(stack.size()-1);
+            Resource r = stack.pop();
             Resource[] children = getResource(r);
             for(int i=0; i<children.length; i++)
             {
-                stack.add(children[i]);
+                stack.push(children[i]);
             }
             order.add(r);
         }
@@ -921,15 +933,15 @@ public class CoralStoreImpl
         // call all parties interested in cleanup based on resource hierarchy
 		coralEventHub.getGlobal().fireResourceTreeDeletionEvent(res);
 		
-        // sort the resources so that referntial dependency trees
+        // sort the resources so that referential dependency trees
         // (REQUIRED and READONLY scalar references only) are deleted
         // in the proper order
         int count = order.size();
-        List newOrder = new ArrayList(order.size());
+        List<Resource> newOrder = new ArrayList<Resource>(order.size());
         while(!order.isEmpty())
         {
-            Resource r = (Resource)order.get(0);
-            List refTree = getRefTree(r, order);
+            Resource r = order.get(0);
+            List<Resource> refTree = getRefTree(r, order);
             order.removeAll(refTree);
             Collections.reverse(refTree);
             newOrder.addAll(refTree);
@@ -941,18 +953,14 @@ public class CoralStoreImpl
         order = newOrder;
         // break constraints based on composite reference attributes
         // and non-REQUIRED/non-READONLY scalar reference attributes
-        Iterator i = order.iterator();
-        while(i.hasNext())
+        for(Resource r : order)
         {
-            Resource r = (Resource)i.next();
             r.getResourceClass().getHandler().clearResourceReferences(r);
         }
         // break structural constraints
         Resource tmp = getTempNode();
-        i = order.iterator();
-        while(i.hasNext())
+        for(Resource r : order)
         {
-            Resource r = (Resource)i.next();
             try
             {
                 setParent(r, tmp);
@@ -965,27 +973,25 @@ public class CoralStoreImpl
         // perform the deletion
         while(order.size() > 0)
         {
-            Resource r = (Resource)order.remove(order.size()-1);
+            Resource r = order.remove(order.size() - 1);
             deleteResource(r);
         }
         return count;
     }
 
-    private void checkDeletionIntegrityPrequisites(List resources)
+    private void checkDeletionIntegrityPrequisites(List<Resource> resources)
         throws EntityInUseException
     {
-        Iterator i = resources.iterator();
-        List stack = new ArrayList();
-        Set set = new HashSet();
-        while(i.hasNext())
+        Deque<Resource> stack = new LinkedList<Resource>();
+        Set<Resource> set = new HashSet<Resource>();
+        for(Resource r : resources)
         {
-            Resource r = (Resource)i.next();
-            stack.add(r);
+            stack.push(r);
             set.clear();
             set.add(r);
             while(!stack.isEmpty())
             {
-                r = (Resource)stack.remove(stack.size()-1);
+                r = stack.pop();
                 Resource[] deps = r.getResourceClass().getHandler().getResourceReferences(r, false);
                 for(int j=0; j<deps.length; j++)
                 {
@@ -994,7 +1000,7 @@ public class CoralStoreImpl
                         throw new EntityInUseException("referential dependency loop on #"+
                             r.getIdString());            
                     }
-                    stack.add(deps[j]);
+                    stack.push(deps[j]);
                     set.add(deps[j]);
                 }
             }
@@ -1013,7 +1019,7 @@ public class CoralStoreImpl
             {
                 Resource rootResource = getResource(1);
                 ResourceClass rc = coral.getSchema().getResourceClass("coral.Node");
-                return createResource("tmp", rootResource, rc, new HashMap());
+                return createResource("tmp", rootResource, rc, Collections.EMPTY_MAP);
             }
             catch(Exception ee)
             {
@@ -1026,23 +1032,23 @@ public class CoralStoreImpl
         }
     }
 
-    private List getRefTree(Resource r, List all)
+    private List<Resource> getRefTree(Resource r, List<Resource> all)
     {
-        List stack = new ArrayList();
-        List tree = new ArrayList();
-        stack.add(r);
+        Deque<Resource> stack = new LinkedList<Resource>();
+        List<Resource> tree = new ArrayList<Resource>();
+        stack.push(r);
         tree.add(r);
         while(!stack.isEmpty())
         {
-            r = (Resource)stack.remove(stack.size()-1);
+            r = stack.pop();
             Resource[] deps = r.getResourceClass().getHandler().getResourceReferences(r, false);
             for(int j=0; j<deps.length; j++)
             {
-                stack.add(deps[j]);
+                stack.push(deps[j]);
                 tree.add(deps[j]);
             }
         }
-        // prune nodes outsite of the deletion tree
+        // prune nodes outside of the deletion tree
         tree.retainAll(all);
         return tree;
     }
@@ -1068,12 +1074,12 @@ public class CoralStoreImpl
                 {
                     ((ResourceImpl)delegate).setResourceName(name);
                     persistence.save(delegate);
-                    Set rs = (Set)resourceByName.get(oldName);
+                    Set<Resource> rs = resourceByName.get(oldName);
                     if(rs != null)
                     {
                         rs.remove(resource);
                     }
-                    rs = (Set)resourceByName.get(name);
+                    rs = resourceByName.get(name);
                     if(rs != null)
                     {
                         rs.add(resource);
@@ -1081,18 +1087,19 @@ public class CoralStoreImpl
                     Resource parent = resource.getParent();
                     if(parent != null)
                     {
-                        Map nameMap = (Map)resourceByParentAndName.get(parent);
+                        Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(parent);
                         if(nameMap != null)
                         {
-                            rs = (Set)nameMap.get(oldName);
-                            if(rs != null)
+                            Set<ResourceRef> rrs = nameMap.get(oldName);
+                            ResourceRef ref = new ResourceRef(resource, coral);
+                            if(rrs != null)
                             {
-                                rs.remove(resource);
+                                rrs.remove(ref);
                             }
-                            rs = (Set)nameMap.get(name);
-                            if(rs != null)
+                            rrs = nameMap.get(name);
+                            if(rrs != null)
                             {
-                                rs.add(resource);
+                                rrs.add(ref);
                             }
                         }
                     }
@@ -1147,37 +1154,38 @@ public class CoralStoreImpl
                             delegate.setParent(parent);
                             persistence.save(delegate);
 
-                            Set rs = (Set)resourceByParent.get(oldParent);
-                            if(rs != null)
+                            Set<ResourceRef> rrs = resourceByParent.get(oldParent);
+                            ResourceRef ref = new ResourceRef(child, coral);
+                            if(rrs != null)
                             {
-                                rs.remove(child);
+                                rrs.remove(ref);
                             }
-                            rs = (Set)resourceByParent.get(parent);
-                            if(rs != null)
+                            rrs = resourceByParent.get(parent);
+                            if(rrs != null)
                             {
-                                rs.add(child);
+                                rrs.add(ref);
                             }
 
                             String name = child.getName();
-                            Map nameMap = (Map)resourceByParentAndName.get(oldParent);
+                            Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName
+                                .get(oldParent);
                             if(nameMap != null)
                             {
-                                rs = (Set)nameMap.get(name);
-                                if(rs != null)
+                                rrs = nameMap.get(name);
+                                if(rrs != null)
                                 {
-                                    rs.remove(child);
+                                    rrs.remove(ref);
                                 }
                             }
-                            nameMap = (Map)resourceByParentAndName.get(parent);
+                            nameMap = resourceByParentAndName.get(parent);
                             if(nameMap != null)
                             {
-                                rs = (Set)nameMap.get(name);
-                                if(rs != null)
+                                rrs = nameMap.get(name);
+                                if(rrs != null)
                                 {
-                                    rs.add(child);
+                                    rrs.add(ref);
                                 }
                             }
-
                         }
                     }
                 }
@@ -1219,20 +1227,22 @@ public class CoralStoreImpl
                             delegate.setParent(null);
                             persistence.save(delegate);
 
-                            Set rs = (Set)resourceByParent.get(oldParent);
-                            if(rs != null)
+                            Set<ResourceRef> rrs = resourceByParent.get(oldParent);
+                            ResourceRef ref = new ResourceRef(child, coral);
+                            if(rrs != null)
                             {
-                                rs.remove(child);
+                                rrs.remove(ref);
                             }
 
                             String name = child.getName();
-                            Map nameMap = (Map)resourceByParentAndName.get(oldParent);
+                            Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName
+                                .get(oldParent);
                             if(nameMap != null)
                             {
-                                rs = (Set)nameMap.get(name);
-                                if(rs != null)
+                                rrs = nameMap.get(name);
+                                if(rrs != null)
                                 {
-                                    rs.remove(child);
+                                    rrs.remove(ref);
                                 }
                             }
 
@@ -1285,22 +1295,20 @@ public class CoralStoreImpl
      * @param conn the JDBC connection to use.
      * @return a set of concrete resource objects.
      */
-    private Set instantiate(List list, Connection conn)
+    private Set<Resource> instantiate(List<ResourceImpl> list, Connection conn)
         throws SQLException
     {
-        Iterator i = list.iterator();
-        Set result = new HashSet();
-        while(i.hasNext())
+        Set<Resource> result = new HashSet<Resource>();
+        for(ResourceImpl rd : list)
         {
-            Resource res = (Resource)i.next();
-            Long key = res.getIdObject();
+            Long key = rd.getIdObject();
             Resource cached = (Resource)resourceById.get(key);
             if(cached == null)
             {
-                ResourceHandler handler = res.getResourceClass().getHandler();
-                res = handler.retrieve(res, conn, null);
-                result.add(res);
-                resourceById.put(key, res);
+                ResourceHandler<? > handler = rd.getResourceClass().getHandler();
+                Resource r = handler.retrieve(rd, conn, null);
+                result.add(r);
+                resourceById.put(key, r);
             }
             else
             {
@@ -1308,6 +1316,33 @@ public class CoralStoreImpl
             }
         }
         return result;
+    }
+
+    private Set<ResourceRef> ref(Set<Resource> set)
+    {
+        Set<ResourceRef> rset = new HashSet<ResourceRef>(set.size());
+        for(Resource r : set)
+        {
+            rset.add(new ResourceRef(r, coral));
+        }
+        return rset;
+    }
+
+    private Set<Resource> deref(Set<ResourceRef> rset)
+    {
+        try
+        {
+            Set<Resource> set = new HashSet<Resource>(rset.size());
+            for(ResourceRef rr : rset)
+            {
+                set.add(rr.get());
+            }
+            return set;
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new BackendException("inconsistent resource tree", e);
+        }
     }
 
     /**
@@ -1323,8 +1358,8 @@ public class CoralStoreImpl
                                  String destinationName)
         throws InvalidResourceNameException
     {
-        HashMap attrs = new HashMap();
-        AttributeDefinition[] atDefs = source.getResourceClass().getAllAttributes();
+        Map<AttributeDefinition<? >, Object> attrs = new HashMap<AttributeDefinition<? >, Object>();
+        AttributeDefinition<? >[] atDefs = source.getResourceClass().getAllAttributes();
         for(int i=0; i<atDefs.length; i++)
         {
             attrs.put(atDefs[i], source.get(atDefs[i]));
@@ -1376,30 +1411,29 @@ public class CoralStoreImpl
         }
         String srcBasePath = sourceRoot.getPath();
         String dstBasePath = destinationParent.getPath()+"/"+destinationName;
-        ArrayList srcStack = new ArrayList();
-        ArrayList dstStack = new ArrayList();
+        Deque<Resource> srcStack = new LinkedList<Resource>();
+        Deque<Resource> dstStack = new LinkedList<Resource>();
         Resource dstRoot = copyResource(sourceRoot, destinationParent, 
                                         destinationName);
-        srcStack.add(sourceRoot);
-        dstStack.add(dstRoot);
+        srcStack.push(sourceRoot);
+        dstStack.push(dstRoot);
         while(srcStack.size() > 0)
         {
-            Resource src = (Resource)srcStack.remove(srcStack.size()-1);
-            Resource dst = (Resource)dstStack.remove(dstStack.size()-1);
+            Resource src = srcStack.pop();
+            Resource dst = dstStack.pop();
             Resource[] srcChildren = getResource(src);
             for(int i=0; i<srcChildren.length; i++)
             {
-                srcStack.add(srcChildren[i]);
-                dstStack.add(copyResource(srcChildren[i], dst, 
-                                          srcChildren[i].getName()));
+                srcStack.push(srcChildren[i]);
+                dstStack.push(copyResource(srcChildren[i], dst, srcChildren[i].getName()));
             }
         }
 
         dstStack.add(dstRoot);
         while(dstStack.size() > 0)
         {
-            Resource dst = (Resource)dstStack.remove(dstStack.size()-1);
-            AttributeDefinition[] atDefs = dst.getResourceClass().getAllAttributes();
+            Resource dst = dstStack.pop();
+            AttributeDefinition<? >[] atDefs = dst.getResourceClass().getAllAttributes();
             boolean changed = false;
             for(int i=0; i<atDefs.length; i++)
             {
@@ -1432,7 +1466,7 @@ public class CoralStoreImpl
                         {
                             try
                             {
-                                dst.set(atDefs[i], target[0]);
+                                dst.set((AttributeDefinition<Resource>)atDefs[i], target[0]);
                                 changed = true;
                             }
                             catch(Exception e)
@@ -1454,7 +1488,7 @@ public class CoralStoreImpl
             Resource[] children = getResource(dst);
             for(int i=0; i<children.length; i++)
             {
-                dstStack.add(children[i]);
+                dstStack.push(children[i]);
             }
         }
     }
@@ -1577,22 +1611,21 @@ public class CoralStoreImpl
                                 long delegateTime = System.currentTimeMillis();
                                 log.info("preloading resource store: preloading delegates");
                                 conn = persistence.getDatabase().getConnection();
-                                List list = persistence.load(" true ORDER BY resource_id", 
+                                List<ResourceImpl> list = persistence.load(" true ORDER BY resource_id", 
                                         resourceFactory);
                                 log.info("preloading resource store: done preloading delegates in "+
                                     (System.currentTimeMillis()-delegateTime)+"ms");
-                                Map handlerData = new HashMap();
-                                Iterator i = list.iterator();
-                                Set allResources = new HashSet();
+                                Map<Class<? >, Object> handlerData = new HashMap<Class<? >, Object>();                                
+                                Set<Resource> allResources = new HashSet<Resource>();
                                 resourceSet.put("all", allResources);
                                 // A list to protect temp parent keys from GC - they will be keys
                                 // in WeakHashMaps.
-                                List parentKeys = new ArrayList(list.size() / 20);
+                                List<Object> parentKeys = new ArrayList<Object>(list.size() / 20);
                                 // tracking
                                 int tAll = list.size();
                                 int tMark = 0;
                                 int tCnt = 0;
-                                while(i.hasNext())
+                                for(Resource res : list)
                                 {
                                     if(tCnt >= tMark && tCnt > 1)
                                     {
@@ -1601,8 +1634,8 @@ public class CoralStoreImpl
                                         tMark += tAll / 10;
                                     }
                                     tCnt++;
-                                    Resource res = (Resource)i.next();
-                                    ResourceHandler handler = res.getResourceClass().getHandler();
+                                    ResourceHandler<? > handler = res.getResourceClass()
+                                        .getHandler();
                                     Object data = handlerData.get(handler.getClass());
                                     if(data == null)
                                     {
@@ -1623,13 +1656,13 @@ public class CoralStoreImpl
                 
                                     resourceById.put(res.getIdObject(), res);
                                     
-                                    Set nameSet = (Set)resourceByName.get(res.getName());
-                                    if(nameSet == null)
+                                    Set<Resource> rs = resourceByName.get(res.getName());
+                                    if(rs == null)
                                     {
-                                        nameSet = new HashSet();
-                                        resourceByName.put(res.getName(), nameSet);
+                                        rs = new HashSet<Resource>();
+                                        resourceByName.put(res.getName(), rs);
                                     }
-                                    nameSet.add(res);
+                                    rs.add(res);
                                     
                                     Object parentKey;
                                     if(res.getParentId() < res.getId())
@@ -1638,94 +1671,95 @@ public class CoralStoreImpl
                                     }
                                     else
                                     {
-                                        parentKey = new Long(res.getParentId());
+                                        parentKey = Long.valueOf(res.getParentId());
                                         parentKeys.add(parentKey);
                                     }
-                                    Set children = (Set)resourceByParent.get(parentKey);
-                                    if(children == null)
+                                    Set<ResourceRef> rrs = resourceByParent.get(parentKey);
+                                    if(rrs == null)
                                     {
-                                        children = new HashSet();
-                                        resourceByParent.put(parentKey, children);
+                                        rrs = new HashSet<ResourceRef>();
+                                        resourceByParent.put(parentKey, rrs);
                                     }
-                                    children.add(res);
+                                    rrs.add(new ResourceRef(res, coral));
                                     
-                                    Map nameMap = (Map)resourceByParentAndName.get(parentKey);
+                                    Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName
+                                        .get(parentKey);
                                     if(nameMap == null)
                                     {
-                                        nameMap = new HashMap();
+                                        nameMap = new HashMap<String, Set<ResourceRef>>();
                                         resourceByParentAndName.put(parentKey, nameMap);
                                     }
-                                    nameSet = (Set)nameMap.get(res.getName());
-                                    if(nameSet == null)
+                                    rrs = nameMap.get(res.getName());
+                                    if(rrs == null)
                                     {
-                                        nameSet = new HashSet();
-                                        nameMap.put(res.getName(), nameSet);                        
+                                        rrs = new HashSet<ResourceRef>();
+                                        nameMap.put(res.getName(), rrs);
                                     }
-                                    nameSet.add(res);
+                                    rrs.add(new ResourceRef(res, coral));
                                     
-                                    // prevent unecessary queries for leaf nodes' children
-                                    children = (Set)resourceByParent.get(res);
-                                    if(children == null)
+                                    // prevent unnecessary queries for leaf nodes' children
+                                    rrs = resourceByParent.get(res);
+                                    if(rrs == null)
                                     {
-                                        children = new HashSet();
-                                        resourceByParent.put(res, children);
+                                        rrs = new HashSet<ResourceRef>();
+                                        resourceByParent.put(res, rrs);
                                     }
                                 }
-                                i = allResources.iterator();
-                                while(i.hasNext())
+                                for(Resource res : allResources)
                                 {
-                                    Resource res = (Resource)i.next();
                                     if(!resourceByParent.containsKey(res))
                                     {
-                                        resourceByParent.put(res, new HashSet());
-                                        resourceByParentAndName.put(res, new HashMap());
+                                        resourceByParent.put(res, new HashSet<ResourceRef>());
+                                        resourceByParentAndName.put(res, new HashMap<String, Set<ResourceRef>>());
                                     }
                                 }
                                 // resolve numeric keys into resource keys
-                                i = resourceByParent.entrySet().iterator();
-                                // helper map to avoid ConcurrentModificationException
-                                Map additions = new HashMap();
-                                while(i.hasNext())
-                                {
-                                    Map.Entry entry = (Map.Entry)i.next();
+                                // use helper map to avoid ConcurrentModificationException
+                                Map<Object, Set<ResourceRef>> setAdditions = new HashMap<Object, Set<ResourceRef>>();
+                                Set<Object> removals = new HashSet<Object>();
+                                for(Map.Entry<?, Set<ResourceRef>> entry : resourceByParent.entrySet())
+                                {                                
                                     if(entry.getKey() instanceof Long)
                                     {
-                                        i.remove();
+                                        removals.add(entry.getKey());
                                         Object newKey = resourceById.get(entry.getKey());
-                                        Set rs = (Set)resourceByParent.get(newKey);
-                                        if(rs != null)
+                                        Set<ResourceRef> rrs = resourceByParent.get(newKey);
+                                        if(rrs != null)
                                         {
-                                            rs.addAll((Set)entry.getValue());
+                                            rrs.addAll(entry.getValue());
                                         }
                                         else
                                         {
-                                            additions.put(newKey, entry.getValue());
+                                            setAdditions.put(newKey, entry.getValue());
                                         }
                                     }
                                 }
-                                resourceByParent.putAll(additions);
-                                additions.clear();
-                                i = resourceByParentAndName.entrySet().iterator();
-                                while(i.hasNext())
+                                resourceByParent.putAll(setAdditions);
+                                resourceByParent.keySet().removeAll(removals);
+                                Map<Object, Map<String, Set<ResourceRef>>> mapAdditions = new HashMap<Object, Map<String, Set<ResourceRef>>>();
+                                removals.clear();
+                                for(Map.Entry<? , Map<String, Set<ResourceRef>>> entry : resourceByParentAndName
+                                    .entrySet())
                                 {
-                                    Map.Entry entry = (Map.Entry)i.next();
                                     if(entry.getKey() instanceof Long)
                                     {
-                                        i.remove();
+                                        removals.add(entry.getKey());
                                         Object newKey = resourceById.get(entry.getKey());
-                                        Map nm = (Map)resourceByParentAndName.get(newKey);
+                                        Map<String, Set<ResourceRef>> nm = resourceByParentAndName
+                                            .get(newKey);
                                         if(nm != null)
                                         {
-                                            nm.putAll((Map)entry.getValue());
+                                            nm.putAll(entry.getValue());
                                         }
                                         else
                                         {
-                                            additions.put(newKey, entry.getValue());
+                                            mapAdditions.put(newKey, entry.getValue());
                                         }
                                     }
                                 }
-                                resourceByParentAndName.putAll(additions);
-                                additions.clear();
+                                resourceByParentAndName.putAll(mapAdditions);
+                                resourceByParentAndName.keySet().removeAll(removals);
+                                setAdditions.clear();
                                 parentKeys.clear();
                             }
                             finally
