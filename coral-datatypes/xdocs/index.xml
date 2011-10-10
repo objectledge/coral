@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+  <properties>
+    <title>Home</title>
+  </properties>
+    
+  <body>
+    <section name="Coral Datatypes">
+      <subsection name="Introduction">
+       <p>
+         Coral Datatypes module provides implementations of the AttributeHandler and 
+         ResourceHandler part of the Coral API. Attributes handlers for Java primitives
+         as well as other useful classes like date ranges are provided. Two ResourceHandler
+         implementations are provided: one uses a database table per each resource class,
+         the other uses a database table per each attribute class, and supports defining
+         and altering resource classes at run time.
+       </p>
+      </subsection>
+    </section>
+  </body>
+</document>
+  
