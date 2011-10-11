@@ -1,6 +1,0 @@
-bin
-target
-.clover
-*.log
-.settings
-build.properties
