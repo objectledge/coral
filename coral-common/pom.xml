@@ -6,12 +6,12 @@
     <groupId>org.objectledge</groupId>
     <artifactId>ledge-common</artifactId>
     <relativePath>../ledge-common/pom.xml</relativePath>
-    <version>1.0.12-SNAPSHOT</version>
+    <version>1.0.12</version>
   </parent>
   <groupId>org.objectledge.coral</groupId>
   <artifactId>coral-common</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.12-SNAPSHOT</version>
+  <version>1.0.12</version>
   <name>ObjectLedge Coral object oriented database</name>
   <inceptionYear>2003</inceptionYear>
   <description>
