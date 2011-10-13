@@ -1,0 +1,14 @@
+void deleteRecursively(File item)
+{
+	if(item.isDirectory())
+	{
+		for(File child : item.listFiles())
+		{
+			deleteRecursively(child);
+		}
+	}
+	item.delete();
+}
+
+deleteRecursively(new File(basedir, "/src/main/java"));
+deleteRecursively(new File(basedir, "/src/main/resources/sql"));
