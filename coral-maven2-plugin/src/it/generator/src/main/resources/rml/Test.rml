@@ -1,0 +1,12 @@
+CREATE RESOURCE CLASS coral.test.Test
+	JAVA CLASS org.objectledge.coral.test.TestImpl
+	HANDLER CLASS org.objectledge.coral.datatypes.GenericResourceHandler
+	SUPERCLASSES ( coral.Node )
+	ATTRIBUTES (
+		string s1,
+		REQUIRED string s2,
+		READONLY string s3,
+		integer i1,
+		REQUIRED integer i2,
+		READONLY integer i3
+	);
