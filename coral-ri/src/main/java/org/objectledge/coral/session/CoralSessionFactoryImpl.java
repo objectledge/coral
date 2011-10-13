@@ -29,6 +29,7 @@ package org.objectledge.coral.session;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.pool.BaseKeyedPoolableObjectFactory;
 import org.apache.commons.pool.KeyedObjectPool;
@@ -81,6 +82,18 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
         try
         {
             return (CoralSession)pool.borrowObject(user);
+        }
+        catch(NoSuchElementException e)
+        {
+            // commons-pools does not set exception root cause
+            if(e.getMessage().matches("subject .* does not exist"))
+            {
+                throw new EntityDoesNotExistException(e.getMessage());
+            }
+            else
+            {
+                throw new BackendException("unxpected exception for commons-pool", e);
+            }
         }
         catch(EntityDoesNotExistException e)
         {
