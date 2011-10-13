@@ -1,0 +1,15 @@
+# from classpath
+rml/coral/CoralDatatypesInitial.rml
+# local
+src/main/rml/test/Test.rml
+src/main/rml/test/NoRequired.rml
+src/main/rml/test/Derived.rml
+src/main/rml/test/DerivedMultiple.rml
+src/main/rml/test/Excluded1.rml
+src/main/rml/test/Excluded2.rml
+
+src/main/rml/test/Node.rml
+src/main/rml/test/PersistentNode.rml
+
+src/main/rml/test/Persistent.rml
+src/main/rml/test/PersistentDerived.rml
