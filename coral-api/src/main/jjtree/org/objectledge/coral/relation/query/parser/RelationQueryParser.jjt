@@ -1,0 +1,231 @@
+// [x]emacs: fontify this file using java rules -*- java -*-
+
+// 
+// Copyright (c) 2003, 2004, Caltha - Gajda, Krzewski, Mach, Potempski Sp.J. 
+// All rights reserved. 
+//   
+// Redistribution and use in source and binary forms, with or without modification,  
+// are permitted provided that the following conditions are met: 
+//   
+// * Redistributions of source code must retain the above copyright notice,  
+// this list of conditions and the following disclaimer. 
+// * Redistributions in binary form must reproduce the above copyright notice,  
+// this list of conditions and the following disclaimer in the documentation  
+// and/or other materials provided with the distribution. 
+// * Neither the name of the Caltha - Gajda, Krzewski, Mach, Potempski Sp.J.  
+// nor the names of its contributors may be used to endorse or promote products  
+// derived from this software without specific prior written permission. 
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED  
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+// IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,  
+// INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,  
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+// OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,  
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)  
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  
+// POSSIBILITY OF SUCH DAMAGE. 
+//
+
+/*
+ * examples:
+ * 
+ * RES('/path/to/resource');
+ * RES(12345);
+ * 
+ * MAP(!'Name of Relation'){ RES('/path/to/resource') };
+ * MAPTRANS('Name of Relation'){ RES('/path/to/resource') };
+ * 
+ * category usage:
+ * 
+ * MAP('category.References'){ MAPTRANS('coral.ResourceHierarchy'){ RES('/path/to/category') } }
+ * +
+ * MAP('category.References'){ MAPTRANS('coral.ResourceHierarchy'){ RES('/path/to/category2') } };
+ *
+ * second example:
+ * 
+ * MAP('category.References'){ MAPTRANS('coral.ResourceHierarchy'){ RES(1234) } }
+ * +
+ * MAP('category.References'){ MAPTRANS('coral.ResourceHierarchy'){ RES(3213) } };
+ */
+
+options
+{
+    UNICODE_INPUT = true;
+    JAVA_UNICODE_ESCAPE = true;
+
+    CACHE_TOKENS = true;
+
+    STATIC = false;
+    MULTI = true;
+    NODE_USES_PARSER = true;
+    VISITOR = true;
+}
+
+PARSER_BEGIN(RelationQueryParser)
+
+package org.objectledge.coral.relation.query.parser;
+
+import java.io.StringReader;
+import java.io.Reader;
+
+/**
+ * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
+ */
+public class RelationQueryParser
+{
+    public static SimpleNode executeParse(String query)
+	throws Exception
+    {
+	Reader reader = new StringReader(query);
+	RelationQueryParser parser = new RelationQueryParser(reader);
+	SimpleNode n = parser.Start();
+	return n;
+    }
+}
+
+PARSER_END(RelationQueryParser)
+
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+/* Reserved words */
+TOKEN:
+{
+    <SUM : "+"> |
+    <INTERSECT : "*">
+}
+
+/* Literals */
+TOKEN : /* IDENTIFIERS */
+{
+  < IDENTIFIER_ID: <NUM> (<NUM>)* >
+|
+  < IDENTIFIER_PATH: "/" (<LETTER>|<NUM>) (<LETTER>|<NUM>|" "|"/")* >
+|
+  < IDENTIFIER_NAME: (<LETTER>|<NUM>) (<LETTER>|<NUM>|" ")* >
+|
+  < #LETTER: ["_", ".", ",", "-",
+       "\u0041"-"\u005a",
+       "\u0061"-"\u007a",
+       "\u00c0"-"\u00d6",
+       "\u00d8"-"\u00f6",
+       "\u00f8"-"\u00ff",
+       "\u0100"-"\u1fff"
+      ] >
+|
+  < #NUM: ["0"-"9"] >
+}
+
+SimpleNode Start() :
+{}
+{
+    SumExpression() ";"
+    {
+	return jjtThis;
+    }
+}
+
+void SumExpression() #void :
+{}
+{
+    ( IntersectionExpression() ( <SUM> IntersectionExpression() )* ) #SumExpression(>1)
+}
+
+void IntersectionExpression() #void :
+{}
+{
+    ( UnaryExpression() ( <INTERSECT> UnaryExpression() )* ) #IntersectionExpression(>1)
+}
+
+void UnaryExpression() #void :
+{}
+{
+    "(" SumExpression() ")" | ResourceSetExpression()
+}
+
+void ResourceSetExpression() #void :
+{}
+{
+    RelationMapExpression() | TransitiveRelationMapExpression() | ResolveExpression()
+}
+
+void RelationMapExpression() :
+{}
+{
+    "MAP(" RelationExpression() ")" "{" SumExpression() "}"
+}
+
+void TransitiveRelationMapExpression() :
+{}
+{
+    "MAPTRANS(" RelationExpression() ")" "{" SumExpression() "}"
+}
+
+void RelationExpression() #void :
+{}
+{
+    InvertedRelationExpression() | RelationIdentifier()
+}
+
+void InvertedRelationExpression() :
+{}
+{
+    "!" RelationIdentifier()
+}
+
+void RelationIdentifier() #void :
+{}
+{
+    "'" RelationName() "'"
+}
+
+void RelationName() :
+{
+    ASTRelationName node = (ASTRelationName)jjtThis;
+    Token t;
+}
+{
+    t = <IDENTIFIER_NAME>
+    {
+	node.relationName = t.image;
+    }
+}
+
+
+void ResolveExpression() #void :
+{}
+{
+    "RES(" ( "'" ResourceIdentifierPath() "'" | ResourceIdentifierId() ) ")"
+}
+
+void ResourceIdentifierId() :
+{
+    ASTResourceIdentifierId node = (ASTResourceIdentifierId)jjtThis;
+    Token t;
+}
+{
+    t = <IDENTIFIER_ID>
+    {
+	node.identifier = t.image;
+    }
+}
+
+void ResourceIdentifierPath() :
+{
+    ASTResourceIdentifierPath node = (ASTResourceIdentifierPath)jjtThis;
+    Token t;
+}
+{
+    t = <IDENTIFIER_PATH>
+    {
+	node.identifier = t.image;
+    }
+}
