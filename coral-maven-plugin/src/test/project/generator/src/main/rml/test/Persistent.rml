@@ -1,0 +1,9 @@
+CREATE RESOURCE CLASS coral.test.Persistent
+	JAVA CLASS org.objectledge.coral.test.PersistentImpl
+	HANDLER CLASS org.objectledge.coral.datatypes.PersistentResourceHandler
+	DB TABLE persistent
+	ATTRIBUTES 	(
+		date d1,
+		parameters p1,
+		resource res1
+	);
