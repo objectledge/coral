@@ -13,11 +13,6 @@
   <dependencies>
     <dependency>
       <groupId>org.objectledge.coral</groupId>
-      <artifactId>coral-common</artifactId>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-api</artifactId>
     </dependency>
     <dependency>

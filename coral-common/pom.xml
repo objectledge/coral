@@ -129,12 +129,6 @@
       </dependency>
       <dependency>
         <groupId>org.objectledge.coral</groupId>
-        <artifactId>coral-common</artifactId>
-        <type>pom</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.objectledge.coral</groupId>
         <artifactId>coral-api</artifactId>
         <version>${project.version}</version>
       </dependency>
