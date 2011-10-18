@@ -86,7 +86,7 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
         catch(NoSuchElementException e)
         {
             // commons-pools does not set exception root cause
-            if(e.getMessage().matches("subject .* does not exist"))
+            if(e.getMessage().matches(".* subject .* does not exist"))
             {
                 throw new EntityDoesNotExistException(e.getMessage());
             }
