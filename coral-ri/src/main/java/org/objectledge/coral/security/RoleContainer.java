@@ -89,13 +89,16 @@ public class RoleContainer
      *
      * @param role the role to be assigned explicitly to the container.
      */
-    public synchronized void addRole(Role role)
+    public void addRole(Role role)
     {
-        coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
-        explicitRoles.add(role);
-        matchingRoles = null;
-        superRoles = null;
-        subRoles = null;
+        synchronized(this) 
+        {
+            coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
+            explicitRoles.add(role);
+            matchingRoles = null;
+            superRoles = null;
+            subRoles = null;
+        }
         if(permissions != null)
         {
             permissions.flush();
@@ -107,12 +110,15 @@ public class RoleContainer
      *
      * @param role the role to be unassigned explicity from the container.
      */
-    public synchronized void removeRole(Role role)
+    public void removeRole(Role role)
     { 
-        explicitRoles.remove(role);
-        matchingRoles = null;
-        superRoles = null;
-        subRoles = null;
+        synchronized(this)
+        {
+            explicitRoles.remove(role);
+            matchingRoles = null;
+            superRoles = null;
+            subRoles = null;
+        }
         if(permissions != null)
         {
             permissions.flush();
@@ -191,23 +197,26 @@ public class RoleContainer
      * @param added <code>true</code> if the implication was added,
      *        <code>false</code> if removed.
      */
-    public synchronized void roleChanged(RoleImplication implication, boolean added)
+    public void roleChanged(RoleImplication implication, boolean added)
     {
-        Role sup = implication.getSuperRole();
-        Role sub = implication.getSubRole();
         boolean changed = false;
-        if(explicitRoles.contains(sup) || 
-           subRoles != null && subRoles.contains(sup))
+        synchronized(this)
         {
-            subRoles = null;
-            matchingRoles = null;
-            changed = true;
-        }
-        if(explicitRoles.contains(sub) || 
-           superRoles != null && superRoles.contains(sub))
-        {
-            superRoles = null;
-            changed = true;
+            Role sup = implication.getSuperRole();
+            Role sub = implication.getSubRole();
+            if(explicitRoles.contains(sup) || 
+                            subRoles != null && subRoles.contains(sup))
+            {
+                subRoles = null;
+                matchingRoles = null;
+                changed = true;
+            }
+            if(explicitRoles.contains(sub) || 
+                            superRoles != null && superRoles.contains(sub))
+            {
+                superRoles = null;
+                changed = true;
+            }
         }
         if(permissions != null && changed)
         {
