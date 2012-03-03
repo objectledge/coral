@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<config>
+  <alias name="coral.byName">
+    <config>HashMap()</config>    
+    <config>StatisticsMap()</config>    
+  </alias>
+  <alias name="coral.byId">
+    <config>LongKeyOpenHashMap(100, 0.75, 1.0)</config>    
+    <config>StatisticsMap()</config>    
+  </alias>
+  <alias name="coral.all">
+    <config>HashMap()</config>    
+    <config>StatisticsMap()</config>    
+  </alias>
+</config>
