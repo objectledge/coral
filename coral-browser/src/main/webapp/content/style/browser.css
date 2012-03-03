@@ -1,0 +1,352 @@
+body {
+  background: white;
+  color: black;
+  margin: 0px;
+}
+
+table {
+  font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+pre {
+  background-color: #EEEEEE;
+  border: 1px solid #646565;
+  padding: 4px;
+  margin: 8px;
+  font-weight: normal;
+}
+
+/*
+UNIVERSAL CLASSES
+*/
+
+.actionlink {
+  font-weight: bold;
+  text-align: right;
+}
+
+.commandBar {
+  font-weight: bold;
+  text-align: right;
+}
+
+
+/*
+TOP INFO BAR
+small information bar on the top
+*/
+
+.topInfo {
+  margin: 0px;
+  border-bottom: 1px solid black;
+  width: 95%;
+}
+
+.topInfo td {
+  padding: 4px;
+}
+
+.topInfo A:link {
+  color: blue;
+  text-decoration: underline;
+}
+
+.topInfo A:visited {
+  color: blue;
+  text-decoration: underline;
+}
+
+.topInfo A:hover {
+  color: blue;
+  text-decoration: underline;
+}
+
+.topInfo A:active {
+  color: #443344;
+  text-decoration: underline;
+}
+
+
+
+/*
+ADMINISTRATOR's NAVI
+administrators navigation's looks
+*/
+
+.adminNavi {
+  margin: 0px;
+  background-color: #4167CD;
+  text-align: left;
+}
+
+.adminNavi td {
+  color: white;
+  font-weight: bold;
+  padding: 2px;
+}
+
+.adminNavi td.active {
+  color: #999999;
+}
+
+.adminNavi td.special {
+  color: #EE7755;
+}
+
+.adminNavi td.separator {
+  color: #000000;
+}
+
+.adminNavi td.inscription {
+  color: #affaaf;
+}
+
+.adminNavi A:link {
+  color: white;
+  text-decoration: underline;
+}
+
+.adminNavi A:visited {
+  color: white;
+  text-decoration: underline;
+}
+
+.adminNavi A:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.adminNavi A:active {
+  color: #443344;
+  text-decoration: underline;
+}
+
+
+
+/*
+LEFT MENU
+generic looks for all left menus
+*/
+
+.mainMenuNavi {
+  border: 1px solid #AAAAAA;
+}
+
+.mainMenuNavi th {
+  text-align: left;
+  padding: 5px;
+  background-color: #DDEEAA;
+  border-bottom: 1px solid #646565;
+  border-right: 1px solid #646565;
+}
+
+.mainMenuNavi td {
+  padding: 2px;
+  border-right: 1px solid #646565;
+}
+
+.mainMenuNavi td.bottomline {
+  border-bottom: 1px solid #646565;
+}
+
+.mainMenuNavi A:link {
+  color: black;
+  text-decoration: none;
+}
+
+.mainMenuNavi A:visited {
+  color: black;
+  text-decoration: none;
+}
+
+.mainMenuNavi A:hover {
+  color: black;
+  text-decoration: underline;
+}
+
+.mainMenuNavi A:active {
+  color: #443344;
+  text-decoration: underline;
+}
+
+
+/*
+GENERIC LAYOUT
+empty tables for layout parts spread up
+*/
+
+.genericLayout {
+  margin: 0px;
+  padding: 0px;
+  text-align: left;
+  border: 1px solid #999999;
+  background-color: white;
+}
+
+.genericLayout table {
+}
+
+.genericLayout th {
+}
+
+.genericLayout td {
+}
+
+
+
+/*
+GENERIC SCREEN
+generic looks for all the applications
+*/
+
+.genericScreen {
+  border: 1px solid #AAAAAA;
+}
+
+.genericScreen table {
+}
+
+.genericScreen th {
+  text-align: left;
+  padding: 5px;
+  background-color: #DDEEAA;
+  border-bottom: 1px solid #646565;
+}
+
+.genericScreen th.right {
+  border-right: 1px solid #646565;
+  text-align: right;
+}
+
+.genericScreen td {
+  padding: 5px;
+  border-right: 1px solid #646565;
+  border-bottom: 1px solid #646565;
+  font-weight: bold;
+}
+
+
+
+/*
+GENERIC COMPONENT
+generic looks for all the applications
+*/
+
+.genericComponent {
+  margin: 0px;
+  padding: 10px;
+  text-align: left;
+  border-right: 1px solid #646565;
+  border-bottom: 1px solid #646565;
+  background-color: #EEEEEE;
+}
+
+.genericComponent table {
+}
+
+.genericComponent th {
+}
+
+.genericComponent td {
+  padding: 3px;
+}
+
+
+
+/*
+GENERIC ITEM LIST
+for use mostly with tables
+*/
+
+.genericItemList {
+  border: 1px solid #AAAAAA;
+}
+
+.genericItemList th {
+  padding: 5px;
+  background-color: #DDEEAA;
+  border-bottom: 1px solid #646565;
+  border-right: 1px solid #646565;
+}
+
+.genericItemList td {
+  padding: 3px;
+  border-bottom: 1px solid #646565;
+  border-right: 1px solid #646565;
+}
+
+.genericItemList img {
+  border: none;
+}
+
+/*
+GENERIC ITEM TREE
+for use mostly with tables
+*/
+
+.genericItemTree {
+  border: 1px solid #AAAAAA;
+}
+
+.genericItemTree th {
+  background-color: #DDEEAA;
+  border-bottom: 1px solid #646565;
+  border-right: 1px solid #646565;
+}
+
+.genericItemTree td {
+  padding: 0px;
+  border-right: 1px solid #646565;
+}
+
+.genericItemTree td .bottom{
+  padding: 0px;
+  border-bottom: 1px solid #646565;
+  border-right: 1px solid #646565;
+}
+
+.genericItemTree td img {
+  border: 0px;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+/* structure special classes */
+.node-info,
+.node-info2,
+.node-info td,
+.node-info2 td {
+  border: none;
+}
+
+.node-info td,
+.node-info2 td {
+  font-size: 95%;
+  vertical-align: top;
+}
+
+.node-info2 td {
+  border-bottom: 1px solid #eeeeee;
+}
+
+.node-command-head {
+  padding: 5px;
+  background-color: #DDEEAA;
+  border: 1px solid #646565;
+}
+
+.node-info2 div {
+  padding: 10px;
+}
+
+.arrows,
+.arrows a {
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    color: black;
+}
+
+
