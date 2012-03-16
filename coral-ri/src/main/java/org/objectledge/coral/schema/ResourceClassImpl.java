@@ -866,250 +866,315 @@ public class ResourceClassImpl
     /**
      * Initializes {@link #inheritance} set if neccessary.
      */
-    private synchronized void buildInheritance()
+    private void buildInheritance()
     {
         if(inheritance == null)
         {
-            inheritance = coral.getRegistry().getResourceClassInheritance(this);
-            coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, this);
+            synchronized(this)
+            {
+                if(inheritance == null)
+                {
+                    inheritance = coral.getRegistry().getResourceClassInheritance(this);
+                    coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, this);
+                }
+            }
         }
     }
-    
+
     /**
      * Initializes {@link #parentClasses} set if neccessary.
      */
-    private synchronized void buildParentClassSet()
+    private void buildParentClassSet()
     {
         if(parentClasses == null)
         {
-            buildInheritance();
-            Set<ResourceClass> pc = new HashSet<ResourceClass>();
-            ArrayList<ResourceClass> stack = new ArrayList<ResourceClass>();
-            stack.add(this);
-            
-            while(stack.size() > 0)
+            synchronized(this)
             {
-                ResourceClass rc = stack.remove(stack.size()-1);
-                Set rcis;
-                if(rc.equals(this))
+                if(parentClasses == null)
                 {
-                    rcis = inheritance;
-                }
-                else
-                {
-                    pc.add(rc);
-                    rcis = coral.getRegistry().getResourceClassInheritance(rc);
-                    coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
-                    coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, rc);
-                    coralEventHub.getGlobal().addPermissionAssociationChangeListener(this, rc);
-                }
-                Iterator i = rcis.iterator();
-                while(i.hasNext())
-                {
-                    ResourceClassInheritance ir =
-                        (ResourceClassInheritance)i.next();
-                    if(ir.getChild().equals(rc))
+                    buildInheritance();
+                    Set<ResourceClass> pc = new HashSet<ResourceClass>();
+                    ArrayList<ResourceClass> stack = new ArrayList<ResourceClass>();
+                    stack.add(this);
+
+                    while(stack.size() > 0)
                     {
-                        stack.add(ir.getParent());
+                        ResourceClass rc = stack.remove(stack.size() - 1);
+                        Set rcis;
+                        if(rc.equals(this))
+                        {
+                            rcis = inheritance;
+                        }
+                        else
+                        {
+                            pc.add(rc);
+                            rcis = coral.getRegistry().getResourceClassInheritance(rc);
+                            coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(
+                                this, rc);
+                            coralEventHub.getGlobal().addResourceClassAttributesChangeListener(
+                                this, rc);
+                            coralEventHub.getGlobal().addPermissionAssociationChangeListener(this,
+                                rc);
+                        }
+                        Iterator i = rcis.iterator();
+                        while(i.hasNext())
+                        {
+                            ResourceClassInheritance ir = (ResourceClassInheritance)i.next();
+                            if(ir.getChild().equals(rc))
+                            {
+                                stack.add(ir.getParent());
+                            }
+                        }
                     }
+                    parentClasses = pc;
                 }
             }
-            parentClasses = pc;
         }
     }
-    
+
     /**
      * Initializes {@link #directParentClasses} set if neccessary.
      */
-    private synchronized void buildDirectParentClassSet()
+    private void buildDirectParentClassSet()
     {
         if(directParentClasses == null)
         {
-            buildInheritance();
-            Set<ResourceClass> dpc = new HashSet<ResourceClass>();
-            for(ResourceClassInheritance ir : inheritance)
+            synchronized(this)
             {
-                if(ir.getChild().equals(this))
+                if(directParentClasses == null)
                 {
-                    dpc.add(ir.getParent());
-                }                
+                    buildInheritance();
+                    Set<ResourceClass> dpc = new HashSet<ResourceClass>();
+                    for(ResourceClassInheritance ir : inheritance)
+                    {
+                        if(ir.getChild().equals(this))
+                        {
+                            dpc.add(ir.getParent());
+                        }
+                    }
+                    directParentClasses = Collections.unmodifiableSet(dpc);
+                }
             }
-            directParentClasses = Collections.unmodifiableSet(dpc);
         }
     }
-    
+
     /**
      * Initializes {@link #childClasses} set if neccessary.
      */
-    private synchronized void buildChildClassSet()
+    private void buildChildClassSet()
     {
         if(childClasses == null)
         {
-            buildInheritance();
-            Set<ResourceClass> cc = new HashSet<ResourceClass>();
-            ArrayList<ResourceClass> stack = new ArrayList<ResourceClass>();
-            stack.add(this);
-            
-            while(stack.size() > 0)
+            synchronized(this)
             {
-                ResourceClass rc = stack.remove(stack.size()-1);
-                Set rcis;
-                if(rc.equals(this))
+                if(childClasses == null)
                 {
-                    rcis = inheritance;
-                }
-                else
-                {
-                    cc.add(rc);
-                    rcis = coral.getRegistry().getResourceClassInheritance(rc);
-                    coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
-                }
-                Iterator i = rcis.iterator();
-                while(i.hasNext())
-                {
-                    ResourceClassInheritance ir =
-                        (ResourceClassInheritance)i.next();
-                    if(ir.getParent().equals(rc))
+                    buildInheritance();
+                    Set<ResourceClass> cc = new HashSet<ResourceClass>();
+                    ArrayList<ResourceClass> stack = new ArrayList<ResourceClass>();
+                    stack.add(this);
+
+                    while(stack.size() > 0)
                     {
-                        stack.add(ir.getChild());
+                        ResourceClass rc = stack.remove(stack.size() - 1);
+                        Set rcis;
+                        if(rc.equals(this))
+                        {
+                            rcis = inheritance;
+                        }
+                        else
+                        {
+                            cc.add(rc);
+                            rcis = coral.getRegistry().getResourceClassInheritance(rc);
+                            coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(
+                                this, rc);
+                        }
+                        Iterator i = rcis.iterator();
+                        while(i.hasNext())
+                        {
+                            ResourceClassInheritance ir = (ResourceClassInheritance)i.next();
+                            if(ir.getParent().equals(rc))
+                            {
+                                stack.add(ir.getChild());
+                            }
+                        }
                     }
+                    childClasses = cc;
                 }
             }
-            childClasses = cc;
         }
     }
-    
+
     /**
      * Initializes {@link #directChildClasses} set if neccessary.
      */
-    private synchronized void buildDirectChildClassSet()
+    private void buildDirectChildClassSet()
     {
         if(directChildClasses == null)
         {
-            buildInheritance();
-            Set<ResourceClass> dcc = new HashSet<ResourceClass>();
-            for(ResourceClassInheritance ir : inheritance)
+            synchronized(this)
             {
-                if(ir.getParent().equals(this))
+                if(directChildClasses == null)
                 {
-                    dcc.add(ir.getChild());
-                }                
+                    buildInheritance();
+                    Set<ResourceClass> dcc = new HashSet<ResourceClass>();
+                    for(ResourceClassInheritance ir : inheritance)
+                    {
+                        if(ir.getParent().equals(this))
+                        {
+                            dcc.add(ir.getChild());
+                        }
+                    }
+                    directChildClasses = Collections.unmodifiableSet(dcc);
+                }
             }
-            directChildClasses = Collections.unmodifiableSet(dcc);
         }
     }
 
     /**
      * Initializes {@link #declaredAttributes} if neccessary.
      */
-    private synchronized void buildDeclaredAttributeSet()
+    private void buildDeclaredAttributeSet()
     {
         if(declaredAttributes == null)
         {
-            declaredAttributes = coral.getRegistry().getDeclaredAttributes(this);
-            coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, this);
-        }   
+            synchronized(this)
+            {
+                if(declaredAttributes == null)
+                {
+                    declaredAttributes = coral.getRegistry().getDeclaredAttributes(this);
+                    coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, this);
+                }
+            }
+        }
     }
-    
+
     /**
      * Initializes {@link #permissions} if neccessary.
      */
-    private synchronized void buildPermissionSet()
-    {    
+    private void buildPermissionSet()
+    {
         if(permissions == null)
         {
-            buildPermissionAssociationSet();
-            buildParentClassSet();
-            Set<PermissionAssociation> temp = new HashSet<PermissionAssociation>();
-            temp.addAll(permissionAssociations);
-            Iterator i = parentClasses.iterator();
-            while(i.hasNext())
+            synchronized(this)
             {
-                ResourceClassImpl rc = (ResourceClassImpl)i.next();
-                rc.buildPermissionAssociationSet();
-                temp.addAll(rc.permissionAssociations);
+                if(permissions == null)
+                {
+                    buildPermissionAssociationSet();
+                    buildParentClassSet();
+                    Set<PermissionAssociation> temp = new HashSet<PermissionAssociation>();
+                    temp.addAll(permissionAssociations);
+                    Iterator i = parentClasses.iterator();
+                    while(i.hasNext())
+                    {
+                        ResourceClassImpl rc = (ResourceClassImpl)i.next();
+                        rc.buildPermissionAssociationSet();
+                        temp.addAll(rc.permissionAssociations);
+                    }
+                    permissions = new HashSet<Permission>();
+                    i = temp.iterator();
+                    while(i.hasNext())
+                    {
+                        PermissionAssociation pa = (PermissionAssociation)i.next();
+                        permissions.add(pa.getPermission());
+                    }
+                }
             }
-            permissions = new HashSet<Permission>();
-            i = temp.iterator();
-            while(i.hasNext())
-            {
-                PermissionAssociation pa = (PermissionAssociation)i.next();
-                permissions.add(pa.getPermission());
-            }
-        }   
+        }
     }
 
     /**
      * Initalizes {@link #permissionAssociations} if neccessary.
      */
-    private synchronized void buildPermissionAssociationSet()
+    private void buildPermissionAssociationSet()
     {
         if(permissionAssociations == null)
         {
-            permissionAssociations = coral.getRegistry().getPermissionAssociations(this);
-            coralEventHub.getGlobal().addPermissionAssociationChangeListener(this, this);
+            synchronized(this)
+            {
+                if(permissionAssociations == null)
+                {
+                    permissionAssociations = coral.getRegistry().getPermissionAssociations(this);
+                    coralEventHub.getGlobal().addPermissionAssociationChangeListener(this, this);
+                }
+            }
         }
     }
 
     /**
      * Initailizes {@link #attributeMap} if neccessary.
      */
-    private synchronized void buildAttributeMap()
+    private void buildAttributeMap()
     {
         if(attributeMap == null)
         {
-            buildParentClassSet();
-            buildDeclaredAttributeSet();
-            
-            attributeMap = new HashMap<String, AttributeDefinition>();
-            Set ads = declaredAttributes;
-            Iterator i = ads.iterator();
-            while(i.hasNext())
+            synchronized(this)
             {
-                AttributeDefinition attr = (AttributeDefinition)i.next();
-                coralEventHub.getGlobal().addAttributeDefinitionChangeListener(this, attr);
-                attributeMap.put(attr.getName(), attr);
-            }
-            Set rcs = parentClasses;
-            Iterator j = rcs.iterator();
-            while(j.hasNext())
-            {
-                ResourceClassImpl rc = (ResourceClassImpl)j.next();
-                synchronized(rc)
+                if(attributeMap == null)
                 {
-                    rc.buildAttributeMap();
-                    coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, rc);
-                    coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
-                    i = rc.attributeMap.values().iterator();
+                    buildParentClassSet();
+                    buildDeclaredAttributeSet();
+
+                    attributeMap = new HashMap<String, AttributeDefinition>();
+                    Set ads = declaredAttributes;
+                    Iterator i = ads.iterator();
                     while(i.hasNext())
                     {
                         AttributeDefinition attr = (AttributeDefinition)i.next();
                         coralEventHub.getGlobal().addAttributeDefinitionChangeListener(this, attr);
                         attributeMap.put(attr.getName(), attr);
                     }
+                    Set rcs = parentClasses;
+                    Iterator j = rcs.iterator();
+                    while(j.hasNext())
+                    {
+                        ResourceClassImpl rc = (ResourceClassImpl)j.next();
+                        synchronized(rc)
+                        {
+                            rc.buildAttributeMap();
+                            coralEventHub.getGlobal().addResourceClassAttributesChangeListener(
+                                this, rc);
+                            coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(
+                                this, rc);
+                            i = rc.attributeMap.values().iterator();
+                            while(i.hasNext())
+                            {
+                                AttributeDefinition attr = (AttributeDefinition)i.next();
+                                coralEventHub.getGlobal().addAttributeDefinitionChangeListener(
+                                    this, attr);
+                                attributeMap.put(attr.getName(), attr);
+                            }
+                        }
+                    }
                 }
             }
         }
     }
-    
-    private synchronized void buildAttributeIndexTable()
+
+    private void buildAttributeIndexTable()
     {
         if(attributeIndexTable == null)
         {
-            buildAttributeMap();
-            List<AttributeDefinition> attrs = new ArrayList<AttributeDefinition>(attributeMap
-                .values());
-            Collections.sort(attrs, AttributeDefinitionComparator.INSTANCE);
-            long maxId = attrs.get(attrs.size()-1).getId();
-            int[] table = new int[(int)maxId+1];
-            for(AttributeDefinition attr : attrs) 
+            synchronized(this)
             {
-                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                if(attributeIndexTable == null)
                 {
-                    table[(int)attr.getId()] = ++attributeMaxIndex + 1;
+                    buildAttributeMap();
+                    List<AttributeDefinition> attrs = new ArrayList<AttributeDefinition>(
+                        attributeMap.values());
+                    Collections.sort(attrs, AttributeDefinitionComparator.INSTANCE);
+                    long maxId = attrs.get(attrs.size() - 1).getId();
+                    int[] table = new int[(int)maxId + 1];
+                    for(AttributeDefinition attr : attrs)
+                    {
+                        if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                        {
+                            table[(int)attr.getId()] = ++attributeMaxIndex + 1;
+                        }
+                    }
+                    attributeIndexTable = table;
                 }
             }
-            attributeIndexTable = table;
         }
     }
     
