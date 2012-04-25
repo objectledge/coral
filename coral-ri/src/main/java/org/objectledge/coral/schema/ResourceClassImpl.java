@@ -2,13 +2,13 @@ package org.objectledge.coral.schema;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
@@ -23,6 +23,7 @@ import org.objectledge.coral.event.ResourceClassChangeListener;
 import org.objectledge.coral.event.ResourceClassInheritanceChangeListener;
 import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.PermissionAssociation;
+import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -34,9 +35,9 @@ import org.objectledge.database.persistence.PersistenceException;
  * @version $Id: ResourceClassImpl.java,v 1.27 2007-05-31 20:24:54 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
-public class ResourceClassImpl
+public class ResourceClassImpl<T extends Resource>
     extends AbstractEntity
-    implements ResourceClass,
+    implements ResourceClass<T>,
                ResourceClassInheritanceChangeListener,
                ResourceClassAttributesChangeListener,
                AttributeDefinitionChangeListener,
@@ -78,19 +79,19 @@ public class ResourceClassImpl
     private Set<ResourceClassInheritance> inheritance;
 
     /** The parent classes. Contains direct and indirect parents. */
-    private Set<ResourceClass> parentClasses;
+    private Set<ResourceClass<?>> parentClasses;
     
     /** The direct parent classes. */
-    private Set<ResourceClass> directParentClasses;
+    private Set<ResourceClass<?>> directParentClasses;
 
     /** The child classes. Contains direct and indirect children. */
-    private Set<ResourceClass> childClasses;
+    private Set<ResourceClass<?>> childClasses;
     
     /** The direct child classes. */
-    private Set<ResourceClass> directChildClasses;
+    private Set<ResourceClass<?>> directChildClasses;
     
     /** The declared attributes. */
-    private Set<AttributeDefinition> declaredAttributes;
+    private Set<AttributeDefinition<?>> declaredAttributes;
 
     /** The associated permissions. */
     private Set<Permission> permissions;
@@ -99,15 +100,10 @@ public class ResourceClassImpl
     private Set<PermissionAssociation> permissionAssociations;
     
     /** The attributes keyed by name. Contains declared and inherited attributes. */
-    private Map<String, AttributeDefinition> attributeMap;
+    private Map<String, AttributeDefinition<?>> attributeMap;
 
-    /** The attribute indexes, indexed by attribute defnition id. Values stored in the array
-     *  are equal to actual index + 1, and hence 0 marks an invalid entry - an attribute undefined
-     *  for this class. */
-    private int[] attributeIndexTable;
-    
-    /** Largest attribute index used until now. */
-    private int attributeMaxIndex = -1;
+    /** Attribute index table. */
+    private final AtomicReference<AttributeIndexTable> indexTable = new AtomicReference<AttributeIndexTable>();
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -343,7 +339,7 @@ public class ResourceClassImpl
     {
         buildDeclaredAttributeSet();
         // copy on write
-        Set<AttributeDefinition> snapshot = declaredAttributes;
+        Set<AttributeDefinition<?>> snapshot = declaredAttributes;
         AttributeDefinition[] result = new AttributeDefinition[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -360,7 +356,7 @@ public class ResourceClassImpl
     {
         buildAttributeMap();
         // copy on write
-        Map<String, AttributeDefinition> snapshot = attributeMap;
+        Map<String, AttributeDefinition<?>> snapshot = attributeMap;
         AttributeDefinition[] result = new AttributeDefinition[snapshot.size()];
         snapshot.values().toArray(result);
         return result;
@@ -381,7 +377,7 @@ public class ResourceClassImpl
         throws UnknownAttributeException
     {
         buildAttributeMap();
-        Map<String, AttributeDefinition> snapshot = attributeMap;
+        Map<String, AttributeDefinition<?>> snapshot = attributeMap;
         AttributeDefinition attr = snapshot.get(name);
         if(attr == null)
         {
@@ -405,7 +401,7 @@ public class ResourceClassImpl
     {
         buildAttributeMap();
         // copy on write
-        Map<String, AttributeDefinition> snapshot = attributeMap;
+        Map<String, AttributeDefinition<?>> snapshot = attributeMap;
         return snapshot.containsKey(name);
     }
     
@@ -427,17 +423,10 @@ public class ResourceClassImpl
      * @throws UnknownAttributeException if the attribute was not declared by the class or one of
      *         it's parent classes.
      */
-    public int getAttributeIndex(AttributeDefinition attr)
+    public int getAttributeIndex(AttributeDefinition<?> attr)
         throws UnknownAttributeException
     {
-        buildAttributeIndexTable();
-        int index = attributeIndexTable[(int)attr.getId()];
-        if(index == 0)
-        {
-            throw new UnknownAttributeException("attribute " + attr
-                + " does not belong to resource class " + this);
-        }
-        return index - 1;
+        return getAttributeIndexTable().getIndex(attr);        
     }
     
     /**
@@ -447,8 +436,7 @@ public class ResourceClassImpl
      */
     public int getMaxAttributeIndex() 
     {
-        buildAttributeIndexTable();
-        return attributeMaxIndex;
+        return getAttributeIndexTable().getMaxIndex();
     }
 
     /**
@@ -481,7 +469,7 @@ public class ResourceClassImpl
     {
         buildParentClassSet();
         // copy on write
-        Set<ResourceClass> snapshot = parentClasses;
+        Set<ResourceClass<?>> snapshot = parentClasses;
         ResourceClass[] result = new ResourceClass[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -492,7 +480,7 @@ public class ResourceClassImpl
      *
      * @return the direct parent classes of this resource class.
      */    
-    public Set<ResourceClass> getDirectParentClasses()
+    public Set<ResourceClass<?>> getDirectParentClasses()
     {
         buildDirectParentClassSet();
         return directParentClasses;
@@ -524,7 +512,7 @@ public class ResourceClassImpl
     {
         buildChildClassSet();
         // copy on write
-        Set<ResourceClass> snapshot = childClasses;
+        Set<ResourceClass<?>> snapshot = childClasses;
         ResourceClass[] result = new ResourceClass[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -535,7 +523,7 @@ public class ResourceClassImpl
      *
      * @return the direct child classes of this resource class.
      */    
-    public Set<ResourceClass> getDirectChildClasses()
+    public Set<ResourceClass<?>> getDirectChildClasses()
     {
         buildDirectChildClassSet();
         return directChildClasses;
@@ -678,7 +666,7 @@ public class ResourceClassImpl
         {
             if(rc.equals(this))
             {
-                Set<AttributeDefinition> declaredAttributesCopy = new HashSet<AttributeDefinition>(declaredAttributes);
+                Set<AttributeDefinition<?>> declaredAttributesCopy = new HashSet<AttributeDefinition<?>>(declaredAttributes);
                 if(added)
                 {
                     declaredAttributesCopy.add(attribute);
@@ -689,7 +677,7 @@ public class ResourceClassImpl
                 }
                 declaredAttributes = declaredAttributesCopy;
             }
-            Map<String, AttributeDefinition> attributeMapCopy = new HashMap<String, AttributeDefinition>(attributeMap);
+            Map<String, AttributeDefinition<?>> attributeMapCopy = new HashMap<String, AttributeDefinition<?>>(attributeMap);
             if(added)
             {
                 attributeMapCopy.put(attribute.getName(), attribute);
@@ -883,13 +871,13 @@ public class ResourceClassImpl
         if(parentClasses == null)
         {
             buildInheritance();
-            Set<ResourceClass> pc = new HashSet<ResourceClass>();
-            ArrayList<ResourceClass> stack = new ArrayList<ResourceClass>();
+            Set<ResourceClass<?>> pc = new HashSet<ResourceClass<?>>();
+            ArrayList<ResourceClass<?>> stack = new ArrayList<ResourceClass<?>>();
             stack.add(this);
             
             while(stack.size() > 0)
             {
-                ResourceClass rc = stack.remove(stack.size()-1);
+                ResourceClass<?> rc = stack.remove(stack.size()-1);
                 Set rcis;
                 if(rc.equals(this))
                 {
@@ -926,7 +914,7 @@ public class ResourceClassImpl
         if(directParentClasses == null)
         {
             buildInheritance();
-            Set<ResourceClass> dpc = new HashSet<ResourceClass>();
+            Set<ResourceClass<?>> dpc = new HashSet<ResourceClass<?>>();
             for(ResourceClassInheritance ir : inheritance)
             {
                 if(ir.getChild().equals(this))
@@ -946,14 +934,14 @@ public class ResourceClassImpl
         if(childClasses == null)
         {
             buildInheritance();
-            Set<ResourceClass> cc = new HashSet<ResourceClass>();
-            ArrayList<ResourceClass> stack = new ArrayList<ResourceClass>();
+            Set<ResourceClass<?>> cc = new HashSet<ResourceClass<?>>();
+            ArrayList<ResourceClass<?>> stack = new ArrayList<ResourceClass<?>>();
             stack.add(this);
             
             while(stack.size() > 0)
             {
-                ResourceClass rc = stack.remove(stack.size()-1);
-                Set rcis;
+                ResourceClass<?> rc = stack.remove(stack.size()-1);
+                Set<ResourceClassInheritance> rcis;
                 if(rc.equals(this))
                 {
                     rcis = inheritance;
@@ -964,7 +952,7 @@ public class ResourceClassImpl
                     rcis = coral.getRegistry().getResourceClassInheritance(rc);
                     coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
                 }
-                Iterator i = rcis.iterator();
+                Iterator<ResourceClassInheritance> i = rcis.iterator();
                 while(i.hasNext())
                 {
                     ResourceClassInheritance ir =
@@ -987,7 +975,7 @@ public class ResourceClassImpl
         if(directChildClasses == null)
         {
             buildInheritance();
-            Set<ResourceClass> dcc = new HashSet<ResourceClass>();
+            Set<ResourceClass<?>> dcc = new HashSet<ResourceClass<?>>();
             for(ResourceClassInheritance ir : inheritance)
             {
                 if(ir.getParent().equals(this))
@@ -1061,7 +1049,7 @@ public class ResourceClassImpl
             buildParentClassSet();
             buildDeclaredAttributeSet();
             
-            attributeMap = new HashMap<String, AttributeDefinition>();
+            attributeMap = new HashMap<String, AttributeDefinition<?>>();
             Set ads = declaredAttributes;
             Iterator i = ads.iterator();
             while(i.hasNext())
@@ -1092,76 +1080,54 @@ public class ResourceClassImpl
         }
     }
     
-    private synchronized void buildAttributeIndexTable()
+    private AttributeIndexTable getAttributeIndexTable()
     {
-        if(attributeIndexTable == null)
+        AttributeIndexTable t = indexTable.get();
+        if(t == null)
         {
+            // note: multiple threads may enter this block concurrently            
             buildAttributeMap();
-            List<AttributeDefinition> attrs = new ArrayList<AttributeDefinition>(attributeMap
-                .values());
-            Collections.sort(attrs, AttributeDefinitionComparator.INSTANCE);
-            long maxId = attrs.get(attrs.size()-1).getId();
-            int[] table = new int[(int)maxId+1];
-            for(AttributeDefinition attr : attrs) 
+            t = new AttributeIndexTable(attributeMap.values());
+            if(!indexTable.compareAndSet(null, t))
             {
-                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
-                {
-                    table[(int)attr.getId()] = ++attributeMaxIndex + 1;
-                }
-            }
-            attributeIndexTable = table;
-        }
-    }
-    
-    private synchronized void expandAttributeIndexTable(AttributeDefinition<?> attr)
-    {
-        if(attributeIndexTable != null)
-        {            
-            if(attr.getId() >= attributeIndexTable.length)
-            {
-                int[] table = new int[(int)attr.getId()+1];
-                System.arraycopy(attributeIndexTable, 0, table, 0, attributeIndexTable.length);
-                attributeIndexTable = table;            
-            }
-            if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
-            {
-                attributeIndexTable[(int)attr.getId()] = ++attributeMaxIndex + 1;
+                // we're late to the party, pick up table initialized by other thread
+                t = indexTable.get();
             }
         }
+        return t;
     }
     
-    private synchronized void expandAttributeIndexTable(List<AttributeDefinition<?>> origAttrs) 
+    private void expandAttributeIndexTable(AttributeDefinition<?> attr)
     {
-        if(attributeIndexTable != null)
-        {            
-            // List returned from Collections.asList(Object[]) is immutable
-            List<AttributeDefinition> attrs = new ArrayList<AttributeDefinition>(origAttrs);
-            Collections.sort(attrs, AttributeDefinitionComparator.INSTANCE);  
-            long maxId = attrs.get(attrs.size()-1).getId();
-            if(maxId > attributeIndexTable.length)
+        AttributeIndexTable o;
+        AttributeIndexTable n;
+        // serialize table modifications by retrying the update until it completes uninterrupted
+        do
+        {
+            o = indexTable.get();
+            if(o == null)
             {
-                int[] table = new int[(int)maxId+1];
-                System.arraycopy(attributeIndexTable, 0, table, 0, attributeIndexTable.length);
-                attributeIndexTable = table;
+                return;
             }
-            for(AttributeDefinition attr : attrs) 
-            {
-                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
-                {
-                    attributeIndexTable[(int)attr.getId()] = ++attributeMaxIndex + 1;
-                }
-            }        
+            // immutable pattern - create new table by extending previous one with the attribute
+            n = new AttributeIndexTable(o, attr);
         }
+        while(!indexTable.compareAndSet(o, n));
     }
     
-    private static class AttributeDefinitionComparator implements Comparator<AttributeDefinition> 
+    private void expandAttributeIndexTable(List<AttributeDefinition<?>> attrs) 
     {
-        public static final AttributeDefinitionComparator INSTANCE = 
-            new AttributeDefinitionComparator(); 
-        
-        public int compare(AttributeDefinition e1, AttributeDefinition e2)
-        {                   
-            return (int)(e1.getId() - e2.getId());
-        }                
+        AttributeIndexTable o;
+        AttributeIndexTable n;
+        do
+        {
+            o = indexTable.get();
+            if(o == null)
+            {
+                return;
+            }
+            n = new AttributeIndexTable(o, attrs);
+        }
+        while(!indexTable.compareAndSet(o, n));
     }
 }
