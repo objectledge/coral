@@ -17,9 +17,9 @@ import org.objectledge.database.persistence.PersistenceException;
  * @version $Id: AttributeDefinitionImpl.java,v 1.14 2004-12-23 02:22:36 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
-public class AttributeDefinitionImpl
+public class AttributeDefinitionImpl<T>
     extends AbstractEntity
-    implements AttributeDefinition,
+    implements AttributeDefinition<T>,
                AttributeDefinitionChangeListener
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
@@ -29,15 +29,12 @@ public class AttributeDefinitionImpl
     
     /** The component hub. */
     private CoralCore coral;
-    
-    /** The CoralSchema. */
-    private CoralSchema coralSchema;
 
     /** The class of this attribute. */
-    private AttributeClass attributeClass;
+    private AttributeClass<T> attributeClass;
     
     /** The resource class that declares this attribute. */
-    private ResourceClass declaringClass;
+    private ResourceClass<?> declaringClass;
 
     /** The value domain constraint. */
     private String domain;
@@ -76,7 +73,7 @@ public class AttributeDefinitionImpl
      */
     public AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub,
         CoralCore coral, 
-        String name, AttributeClass attributeClass, String domain, int flags)
+        String name, AttributeClass<T> attributeClass, String domain, int flags)
     {
         super(persistence, name);
         this.coralEventHub = coralEventHub;
@@ -155,7 +152,10 @@ public class AttributeDefinitionImpl
         long attributeClassId = record.getLong("attribute_class_id");
         try
         {
-            this.attributeClass = coral.getSchema().getAttributeClass(attributeClassId);
+            @SuppressWarnings("unchecked")
+            AttributeClass<T> attributeClass = (AttributeClass<T>)coral.getSchema()
+                .getAttributeClass(attributeClassId);
+            this.attributeClass = attributeClass;
         }
         catch(EntityDoesNotExistException e)
         {
@@ -211,7 +211,7 @@ public class AttributeDefinitionImpl
      *
      * @return the class of this attribute.
      */
-    public AttributeClass getAttributeClass()
+    public AttributeClass<T> getAttributeClass()
     {
         return attributeClass;
     }
@@ -221,7 +221,7 @@ public class AttributeDefinitionImpl
      *
      * @return the resource class this attribute belongs to.
      */
-    public ResourceClass getDeclaringClass()
+    public ResourceClass<?> getDeclaringClass()
     {
         return declaringClass;
     }
@@ -253,7 +253,7 @@ public class AttributeDefinitionImpl
      *
      * @param declaringClass the resource class this attribute belongs to.
      */
-    void setDeclaringClass(ResourceClass declaringClass)
+    void setDeclaringClass(ResourceClass<?> declaringClass)
     {
         this.declaringClass = declaringClass;
     }
