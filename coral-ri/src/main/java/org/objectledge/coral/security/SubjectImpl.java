@@ -33,21 +33,21 @@ public class SubjectImpl
     /** The component hub. */
     private CoralCore coral;
     
-    /** The permission conatiner. */
+    /** The permission container. */
     private PermissionContainer permissions = null;
     
     /** The role container. */
     private RoleContainer roles = null;
 
     /** The role assignments for this subject. */
-    private Set roleAssignments = null;
+    private Set<RoleAssignment> roleAssignments = null;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Constructs a {@link SubjectImpl}.
      * 
-     * @param persistence the Peristence subsystem.
+     * @param persistence the Persistence subsystem.
      * @param coralEventHub the event hub.
      * @param coral the component hub.
      */
@@ -62,7 +62,7 @@ public class SubjectImpl
     /**
      * Constructs a {@link SubjectImpl}.
      *
-     * @param persistence the Peristence subsystem.
+     * @param persistence the Persistence subsystem.
      * @param coralEventHub the CoralEventHub.
      * @param coral the component hub.
      * 
@@ -175,19 +175,16 @@ public class SubjectImpl
     
 
     /**
-     * Returns the role assigments made for this <code>Subject</code>.
+     * Returns the role assignments made for this <code>Subject</code>.
      *
-     * @return the role assigments made for this <code>Subject</code>.
+     * @return the role assignments made for this <code>Subject</code>.
      */
-    public RoleAssignment[] getRoleAssignments()
+    public synchronized RoleAssignment[] getRoleAssignments()
     {
-        buildRoleAssignments();
-        synchronized(roleAssignments)
-        {
-            RoleAssignment[] result = new RoleAssignment[roleAssignments.size()];
-            roleAssignments.toArray(result);
-            return result;
-        }
+        Set<RoleAssignment> snapshot = buildRoleAssignments();
+        RoleAssignment[] result = new RoleAssignment[snapshot.size()];
+        snapshot.toArray(result);
+        return result;
     }
 
     /**
@@ -197,8 +194,7 @@ public class SubjectImpl
      */
     public Role[] getRoles()
     {
-        buildRoles();
-        Set snapshot = roles.getMatchingRoles();
+        Set<Role> snapshot = buildRoles().getMatchingRoles();
         Role[] result = new Role[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -214,8 +210,7 @@ public class SubjectImpl
      */
     public boolean hasRole(Role role)
     {
-        buildRoles();
-        return roles.isMatchingRole(role);
+        return buildRoles().isMatchingRole(role);
     }   
 
     /**
@@ -228,8 +223,7 @@ public class SubjectImpl
      */
     public Permission[] getPermissions(Resource resource)
     {
-        buildPermissions();
-        return permissions.getPermissions(resource);
+        return buildPermissions().getPermissions(resource);
     }
 
     /**
@@ -243,8 +237,7 @@ public class SubjectImpl
      */
     public boolean hasPermission(Resource resource, Permission permission)
     {
-        buildPermissions();
-        return permissions.hasPermission(resource, permission);
+        return buildPermissions().hasPermission(resource, permission);
     }
 
     /**
@@ -302,61 +295,59 @@ public class SubjectImpl
      * @param added <code>true</code> if the role assignment was added,
      *        <code>false</code> if removed.
      */
-    public void rolesChanged(RoleAssignment ra, boolean added)
+    public synchronized void rolesChanged(RoleAssignment ra, boolean added)
     {
         Subject subject = ra.getSubject();
         if(!subject.equals(this))
         {
             return;
         }
-        synchronized(roleAssignments)
+        if(added)
         {
-            if(added)
+            roleAssignments.add(ra);
+            if(roles != null)
             {
-                roleAssignments.add(ra);
-                if(roles != null)
-                {
-                    roles.addRole(ra.getRole());
-                }
+                roles.addRole(ra.getRole());
             }
-            else
+        }
+        else
+        {
+            roleAssignments.remove(ra);
+            if(roles != null)
             {
-                roleAssignments.remove(ra);
-                if(roles != null)
-                {
-                    roles.removeRole(ra.getRole());
-                }
+                roles.removeRole(ra.getRole());
             }
         }
     }
 
     // private //////////////////////////////////////////////////////////////////////////////////
 
-    private synchronized void buildRoleAssignments()
+    private synchronized Set<RoleAssignment> buildRoleAssignments()
     {
         if(roleAssignments == null)
         {
             roleAssignments = coral.getRegistry().getRoleAssignments(this);
             coralEventHub.getGlobal().addRoleAssignmentChangeListener(this, this);
         }
+        return roleAssignments;
     }
 
-    private synchronized void buildRoles()
+    private synchronized RoleContainer buildRoles()
     {
         if(roles == null)
         {
-            buildRoleAssignments();
-            roles = new RoleContainer(coralEventHub, coral, roleAssignments, false);
+            roles = new RoleContainer(coralEventHub, coral, buildRoleAssignments(), false);
         }
+        return roles;
     }
     
 
-    private synchronized void buildPermissions()
+    private synchronized PermissionContainer buildPermissions()
     {
         if(permissions == null)
         {
-            buildRoles();
-            permissions = new PermissionContainer(coralEventHub, coral, roles);
+            permissions = new PermissionContainer(coralEventHub, coral, buildRoles());
         }
+        return permissions;
     }
 }
