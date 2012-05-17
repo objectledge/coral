@@ -1054,9 +1054,8 @@ public class ResourceClassImpl<T extends Resource>
         AttributeIndexTable t = indexTable.get();
         if(t == null)
         {
-            // note: multiple threads may enter this block concurrently            
-            buildAttributeMap();
-            t = new AttributeIndexTable(attributeMap.values());
+            // note: multiple threads may enter this block concurrently
+            t = new AttributeIndexTable(buildAttributeMap().values());
             if(!indexTable.compareAndSet(null, t))
             {
                 // we're late to the party, pick up table initialized by other thread
