@@ -3,6 +3,8 @@ package org.objectledge.coral.security;
 import java.security.Principal;
 import java.util.Set;
 
+import org.objectledge.collections.ImmutableHashSet;
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractEntity;
@@ -40,7 +42,7 @@ public class SubjectImpl
     private RoleContainer roles = null;
 
     /** The role assignments for this subject. */
-    private Set<RoleAssignment> roleAssignments = null;
+    private ImmutableSet<RoleAssignment> roleAssignments = null;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -179,9 +181,9 @@ public class SubjectImpl
      *
      * @return the role assignments made for this <code>Subject</code>.
      */
-    public synchronized RoleAssignment[] getRoleAssignments()
+    public RoleAssignment[] getRoleAssignments()
     {
-        Set<RoleAssignment> snapshot = buildRoleAssignments();
+        ImmutableSet<RoleAssignment> snapshot = buildRoleAssignments();
         RoleAssignment[] result = new RoleAssignment[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -304,7 +306,7 @@ public class SubjectImpl
         }
         if(added)
         {
-            roleAssignments.add(ra);
+            roleAssignments = roleAssignments.add(ra);
             if(roles != null)
             {
                 roles.addRole(ra.getRole());
@@ -312,7 +314,7 @@ public class SubjectImpl
         }
         else
         {
-            roleAssignments.remove(ra);
+            roleAssignments = roleAssignments.remove(ra);
             if(roles != null)
             {
                 roles.removeRole(ra.getRole());
@@ -322,11 +324,11 @@ public class SubjectImpl
 
     // private //////////////////////////////////////////////////////////////////////////////////
 
-    private synchronized Set<RoleAssignment> buildRoleAssignments()
+    private synchronized ImmutableSet<RoleAssignment> buildRoleAssignments()
     {
         if(roleAssignments == null)
         {
-            roleAssignments = coral.getRegistry().getRoleAssignments(this);
+            roleAssignments = new ImmutableHashSet<RoleAssignment>(coral.getRegistry().getRoleAssignments(this));
             coralEventHub.getGlobal().addRoleAssignmentChangeListener(this, this);
         }
         return roleAssignments;
@@ -336,11 +338,10 @@ public class SubjectImpl
     {
         if(roles == null)
         {
-            roles = new RoleContainer(coralEventHub, coral, buildRoleAssignments(), false);
+            roles = new RoleContainer(coralEventHub, coral, buildRoleAssignments());
         }
         return roles;
     }
-    
 
     private synchronized PermissionContainer buildPermissions()
     {

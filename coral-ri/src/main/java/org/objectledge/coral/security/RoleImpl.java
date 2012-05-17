@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.objectledge.collections.ImmutableHashSet;
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractEntity;
@@ -49,22 +51,14 @@ public class RoleImpl
     private PermissionContainer permissions = null;
 
     /** The permission assignments. */
-    private Set<PermissionAssignment> permissionAssignments;
-
-    /** Read-only thread-safe copy of {@link #permissionAssignments}. */
-    private Set<PermissionAssignment> cpermissionAssignments;
+    private ImmutableSet<PermissionAssignment> permissionAssignments;
     
     /** The role assignments. */
-    private Set<RoleAssignment> roleAssignments;
-
-    /** Read-only thread-safe copy of {@link #roleAssignments}. */
-    private Set<RoleAssignment> croleAssignments;
+    private ImmutableSet<RoleAssignment> roleAssignments;
 
     /** The role implications. */
-    private Set<RoleImplication> implications;
-    
-    /** Read-only thread-safe copy of {@link #implications}. */
-    private Set<RoleImplication> cimplications;
+    private ImmutableSet<RoleImplication> implications;
+   
 
     // Initalization ////////////////////////////////////////////////////////////////////////////
 
@@ -193,8 +187,7 @@ public class RoleImpl
      */
     public RoleImplication[] getImplications()
     {
-        buildImplications();
-        Set<RoleImplication> snapshot = cimplications;
+        ImmutableSet<RoleImplication> snapshot = buildImplications();
         RoleImplication[] result = new RoleImplication[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -209,8 +202,7 @@ public class RoleImpl
      */
     public Role[] getSubRoles()
     {
-        buildRoles();
-        Set<Role> snapshot = roles.getSubRoles();
+        Set<Role> snapshot = buildRoles().getSubRoles();
         Role[] result = new Role[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -223,8 +215,7 @@ public class RoleImpl
      */
     public Role[] getSuperRoles()
     {
-        buildRoles();
-        Set<Role> snapshot = roles.getSuperRoles();
+        Set<Role> snapshot = buildRoles().getSuperRoles();
         Role[] result = new Role[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -240,8 +231,7 @@ public class RoleImpl
      */
     public boolean isSubRole(Role role)
     {
-        buildRoles();
-        return roles.isSubRole(role);
+        return buildRoles().isSubRole(role);
     }
 
     /**
@@ -254,8 +244,7 @@ public class RoleImpl
      */
     public boolean isSuperRole(Role role)
     {
-        buildRoles();
-        return roles.isSuperRole(role);
+        return buildRoles().isSuperRole(role);
     }
     
     /**
@@ -267,8 +256,7 @@ public class RoleImpl
      */
     public RoleAssignment[] getRoleAssignments()
     {
-        buildRoleAssignments();
-        Set<RoleAssignment> snapshot = croleAssignments;
+        ImmutableSet<RoleAssignment> snapshot = buildRoleAssignments();
         RoleAssignment[] result = new RoleAssignment[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -311,8 +299,7 @@ public class RoleImpl
      */
     public PermissionAssignment[] getPermissionAssignments()
     {
-        buildPermissionAssignments();
-        Set<PermissionAssignment> snapshot = cpermissionAssignments;
+        ImmutableSet<PermissionAssignment> snapshot = buildPermissionAssignments();
         PermissionAssignment[] result = new PermissionAssignment[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -350,8 +337,7 @@ public class RoleImpl
      */
     public Permission[] getPermissions(Resource resource)
     {
-        buildPermissions();
-        return permissions.getPermissions(resource);
+        return buildPermissions().getPermissions(resource);
     }
 
     /**
@@ -365,8 +351,7 @@ public class RoleImpl
      */
     public boolean hasPermission(Resource resource, Permission permission)
     {
-        buildPermissions();
-        return permissions.hasPermission(resource, permission);
+        return buildPermissions().hasPermission(resource, permission);
     }
     
     // PermissionAssignmentChangeListener interface /////////////////////////////////////////////
@@ -384,13 +369,12 @@ public class RoleImpl
         {
             if(added)
             {
-                permissionAssignments.add(assignment);
+                permissionAssignments = permissionAssignments.add(assignment);
             }
             else
             {
-                permissionAssignments.remove(assignment);
+                permissionAssignments = permissionAssignments.remove(assignment);
             }
-            cpermissionAssignments = (Set<PermissionAssignment>)((HashSet<PermissionAssignment>)permissionAssignments).clone();
         }
     }
 
@@ -407,13 +391,12 @@ public class RoleImpl
         {
             if(added)
             {
-                roleAssignments.add(assignment);
+                roleAssignments = roleAssignments.add(assignment);
             }
             else
             {
-                roleAssignments.remove(assignment);
+                roleAssignments = roleAssignments.remove(assignment);
             }
-            croleAssignments = (Set<RoleAssignment>)((HashSet<RoleAssignment>)roleAssignments).clone();
         }
     }
 
@@ -431,64 +414,62 @@ public class RoleImpl
         {
             if(added)
             {
-                implications.add(implication);
+                implications = implications.add(implication);
             }
             else
             {
-                implications.remove(implication);
+                implications = implications.remove(implication);
             }
-            cimplications = (Set<RoleImplication>)((HashSet<RoleImplication>)implications).clone();
         }
     }
 
     // Private //////////////////////////////////////////////////////////////////////////////////
 
-    private synchronized void buildImplications()
+    private synchronized ImmutableSet<RoleImplication> buildImplications()
     {
         if(implications == null)
         {
-            implications = coral.getRegistry().getRoleImplications(this);
-            cimplications = (Set<RoleImplication>)((HashSet<RoleImplication>)implications).clone();
+            implications = new ImmutableHashSet<RoleImplication>(coral.getRegistry().getRoleImplications(this));
             coralEventHub.getGlobal().addRoleImplicationChangeListener(this, this);
         }
+        return implications;
     }
 
-    private synchronized void buildRoles()
+    private synchronized RoleContainer buildRoles()
     {
         if(roles == null)
         {
-            Set<Role> roleSet = new HashSet<Role>();
-            roleSet.add(this);
-            roles = new RoleContainer(coralEventHub, coral, roleSet, true);
+            roles = new RoleContainer(coralEventHub, coral, this);
         }
+        return roles;
     }
 
-    private synchronized void buildPermissions()
+    private synchronized PermissionContainer buildPermissions()
     {
         if(permissions == null)
         {
-            buildRoles();
-            permissions = new PermissionContainer(coralEventHub, coral, roles);
+            permissions = new PermissionContainer(coralEventHub, coral, buildRoles());
         }
+        return permissions;
     }
 
-    private synchronized void buildPermissionAssignments()
+    private synchronized ImmutableSet<PermissionAssignment> buildPermissionAssignments()
     {
         if(permissionAssignments == null)
         {
-            permissionAssignments = coral.getRegistry().getPermissionAssignments(this);
-            cpermissionAssignments = (Set<PermissionAssignment>)((HashSet<PermissionAssignment>)permissionAssignments).clone();
+            permissionAssignments = new ImmutableHashSet<PermissionAssignment>(coral.getRegistry().getPermissionAssignments(this));
             coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, this);
         }
+        return permissionAssignments;
     }
 
-    private synchronized void buildRoleAssignments()
+    private synchronized ImmutableSet<RoleAssignment> buildRoleAssignments()
     {
         if(roleAssignments == null)
         {
-            roleAssignments = coral.getRegistry().getRoleAssignments(this);
-            croleAssignments = (Set<RoleAssignment>)((HashSet<RoleAssignment>)roleAssignments).clone();
+            roleAssignments = new ImmutableHashSet<RoleAssignment>(coral.getRegistry().getRoleAssignments(this));
             coralEventHub.getGlobal().addRoleAssignmentChangeListener(this, this);
         }
+        return roleAssignments;
     }
 }

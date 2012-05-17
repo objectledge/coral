@@ -1,15 +1,17 @@
 package org.objectledge.coral.schema;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.objectledge.collections.ImmutableHashMap;
+import org.objectledge.collections.ImmutableHashSet;
+import org.objectledge.collections.ImmutableMap;
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.InstantiationException;
@@ -67,7 +69,7 @@ public class ResourceClassImpl<T extends Resource>
     
     /** The {@link org.objectledge.coral.schema.ResourceHandler} implementation that is responsible
      * for this resource class. */
-    private ResourceHandler handler;
+    private ResourceHandler<T> handler;
 
     /** class flags. */
     private int flags;
@@ -76,31 +78,31 @@ public class ResourceClassImpl<T extends Resource>
     private String dbTable;
 
     /** Inheritance records. Describes direct relationships. */
-    private Set<ResourceClassInheritance> inheritance;
+    private ImmutableSet<ResourceClassInheritance> inheritance;
 
     /** The parent classes. Contains direct and indirect parents. */
-    private Set<ResourceClass<?>> parentClasses;
+    private ImmutableSet<ResourceClass<?>> parentClasses;
     
     /** The direct parent classes. */
-    private Set<ResourceClass<?>> directParentClasses;
+    private ImmutableSet<ResourceClass<?>> directParentClasses;
 
     /** The child classes. Contains direct and indirect children. */
-    private Set<ResourceClass<?>> childClasses;
+    private ImmutableSet<ResourceClass<?>> childClasses;
     
     /** The direct child classes. */
-    private Set<ResourceClass<?>> directChildClasses;
+    private ImmutableSet<ResourceClass<?>> directChildClasses;
     
     /** The declared attributes. */
-    private Set<AttributeDefinition<?>> declaredAttributes;
+    private ImmutableSet<AttributeDefinition<?>> declaredAttributes;
 
     /** The associated permissions. */
-    private Set<Permission> permissions;
+    private ImmutableSet<Permission> permissions;
 
     /** The permission associations. */
-    private Set<PermissionAssociation> permissionAssociations;
+    private ImmutableSet<PermissionAssociation> permissionAssociations;
     
     /** The attributes keyed by name. Contains declared and inherited attributes. */
-    private Map<String, AttributeDefinition<?>> attributeMap;
+    private ImmutableMap<String, AttributeDefinition<?>> attributeMap;
 
     /** Attribute index table. */
     private final AtomicReference<AttributeIndexTable> indexTable = new AtomicReference<AttributeIndexTable>();
@@ -337,9 +339,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public AttributeDefinition[] getDeclaredAttributes()
     {
-        buildDeclaredAttributeSet();
-        // copy on write
-        Set<AttributeDefinition<?>> snapshot = declaredAttributes;
+        ImmutableSet<AttributeDefinition<?>> snapshot = buildDeclaredAttributeSet();
         AttributeDefinition[] result = new AttributeDefinition[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -354,9 +354,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public AttributeDefinition[] getAllAttributes()
     {
-        buildAttributeMap();
-        // copy on write
-        Map<String, AttributeDefinition<?>> snapshot = attributeMap;
+        ImmutableMap<String, AttributeDefinition<?>> snapshot = buildAttributeMap();
         AttributeDefinition[] result = new AttributeDefinition[snapshot.size()];
         snapshot.values().toArray(result);
         return result;
@@ -376,9 +374,8 @@ public class ResourceClassImpl<T extends Resource>
     public AttributeDefinition getAttribute(String name)
         throws UnknownAttributeException
     {
-        buildAttributeMap();
-        Map<String, AttributeDefinition<?>> snapshot = attributeMap;
-        AttributeDefinition attr = snapshot.get(name);
+        ImmutableMap<String, AttributeDefinition<?>> snapshot = buildAttributeMap();
+        AttributeDefinition<?> attr = snapshot.get(name);
         if(attr == null)
         {
             throw new UnknownAttributeException("resource class "+getName()+
@@ -399,9 +396,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public boolean hasAttribute(String name)
     {
-        buildAttributeMap();
-        // copy on write
-        Map<String, AttributeDefinition<?>> snapshot = attributeMap;
+        ImmutableMap<String, AttributeDefinition<?>> snapshot = buildAttributeMap();
         return snapshot.containsKey(name);
     }
     
@@ -452,9 +447,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public ResourceClassInheritance[] getInheritance()
     { 
-        buildInheritance();
-        // copy on write
-        Set<ResourceClassInheritance> snapshot = inheritance;
+        ImmutableSet<ResourceClassInheritance> snapshot = buildInheritance();
         ResourceClassInheritance[] result = new ResourceClassInheritance[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -467,9 +460,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public ResourceClass[] getParentClasses()
     {
-        buildParentClassSet();
-        // copy on write
-        Set<ResourceClass<?>> snapshot = parentClasses;
+        ImmutableSet<ResourceClass<?>> snapshot = buildParentClassSet();
         ResourceClass[] result = new ResourceClass[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -482,8 +473,7 @@ public class ResourceClassImpl<T extends Resource>
      */    
     public Set<ResourceClass<?>> getDirectParentClasses()
     {
-        buildDirectParentClassSet();
-        return directParentClasses;
+        return buildDirectParentClassSet().unmodifiableSet();
     }
 
     /**
@@ -495,9 +485,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public boolean isParent(ResourceClass resourceClass)
     {
-        buildChildClassSet();
-        // copy on write
-        Set snapshot = childClasses;
+        ImmutableSet<ResourceClass<?>> snapshot = buildChildClassSet();
         return snapshot.contains(resourceClass);
     }
 
@@ -510,9 +498,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public ResourceClass[] getChildClasses()
     {
-        buildChildClassSet();
-        // copy on write
-        Set<ResourceClass<?>> snapshot = childClasses;
+        ImmutableSet<ResourceClass<?>> snapshot = buildChildClassSet();
         ResourceClass[] result = new ResourceClass[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -525,8 +511,7 @@ public class ResourceClassImpl<T extends Resource>
      */    
     public Set<ResourceClass<?>> getDirectChildClasses()
     {
-        buildDirectChildClassSet();
-        return directChildClasses;
+        return buildDirectChildClassSet().unmodifiableSet();
     }    
     
     /**
@@ -536,9 +521,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public Permission[] getPermissions()
     {
-        buildPermissionSet();
-        // copy on write
-        Set<Permission> snapshot = permissions;
+        ImmutableSet<Permission> snapshot = buildPermissionSet();
         Permission[] result = new Permission[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -551,9 +534,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public PermissionAssociation[] getPermissionAssociations()
     {
-        buildPermissionAssociationSet();
-        // copy on write
-        Set<PermissionAssociation> snapshot = permissionAssociations;
+        ImmutableSet<PermissionAssociation> snapshot = buildPermissionAssociationSet();
         PermissionAssociation[] result = new PermissionAssociation[snapshot.size()];
         snapshot.toArray(result);
         return result;
@@ -569,9 +550,7 @@ public class ResourceClassImpl<T extends Resource>
      */
     public boolean isAssociatedWith(Permission permission)
     {
-        buildPermissionSet();
-        // copy on write
-        Set snapshot = permissions;
+        ImmutableSet<Permission> snapshot = buildPermissionSet();
         return snapshot.contains(permission);
     }
 
@@ -590,11 +569,9 @@ public class ResourceClassImpl<T extends Resource>
         // direct relationship added / removed
         if(item.getChild().equals(this) || item.getParent().equals(this))
         {
-            // copy on write
-            Set<ResourceClassInheritance> inheritanceCopy = new HashSet<ResourceClassInheritance>(inheritance);
             if(added)
             {
-                inheritanceCopy.add(item);
+                inheritance = inheritance.add(item);
                 if(item.getChild().equals(this))
                 {
                     coralEventHub.getGlobal().
@@ -612,7 +589,7 @@ public class ResourceClassImpl<T extends Resource>
             }
             else
             {
-                inheritanceCopy.remove(item);
+                inheritance = inheritance.remove(item);
                 if(item.getChild().equals(this))
                 {
                     coralEventHub.getGlobal().
@@ -628,7 +605,6 @@ public class ResourceClassImpl<T extends Resource>
                         removeResourceClassInheritanceChangeListener(this, item.getChild());
                 }
             }
-            inheritance = inheritanceCopy;
         }
         if(item.getChild().equals(this) || item.getChild().isParent(this) && added)
         {
@@ -661,33 +637,29 @@ public class ResourceClassImpl<T extends Resource>
     public synchronized void attributesChanged(AttributeDefinition attribute, 
                                                boolean added)
     {
-        ResourceClass rc = attribute.getDeclaringClass();
+        ResourceClass<?> rc = attribute.getDeclaringClass();
         if(rc.equals(this) || parentClasses.contains(rc))
         {
             if(rc.equals(this))
             {
-                Set<AttributeDefinition<?>> declaredAttributesCopy = new HashSet<AttributeDefinition<?>>(declaredAttributes);
                 if(added)
                 {
-                    declaredAttributesCopy.add(attribute);
+                    declaredAttributes = declaredAttributes.add(attribute);
                 }
                 else
                 {
-                    declaredAttributesCopy.remove(attribute);
+                    declaredAttributes = declaredAttributes.remove(attribute);
                 }
-                declaredAttributes = declaredAttributesCopy;
             }
-            Map<String, AttributeDefinition<?>> attributeMapCopy = new HashMap<String, AttributeDefinition<?>>(attributeMap);
             if(added)
             {
-                attributeMapCopy.put(attribute.getName(), attribute);
+                attributeMap = attributeMap.put(attribute.getName(), attribute);
                 expandAttributeIndexTable(attribute);
             }
             else
             {
-                attributeMapCopy.remove(attribute.getName());
+                attributeMap = attributeMap.remove(attribute.getName());
             }
-            attributeMap = attributeMapCopy;
         }
     }
     
@@ -805,10 +777,10 @@ public class ResourceClassImpl<T extends Resource>
         this.handlerClassName = className;
         try
         {
-            Class handlerClass = instantiator.loadClass(className);
-            Map<Class, Object> additional = new HashMap<Class, Object>();
+            Class<?> handlerClass = instantiator.loadClass(className);
+            Map<Class<?>, Object> additional = new HashMap<Class<?>, Object>();
             additional.put(ResourceClass.class, this);
-            handler = (ResourceHandler)instantiator.newInstance(handlerClass, additional);
+            handler = (ResourceHandler<T>)instantiator.newInstance(handlerClass, additional);
         }
         catch(ClassNotFoundException e)
         {
@@ -854,23 +826,24 @@ public class ResourceClassImpl<T extends Resource>
     /**
      * Initializes {@link #inheritance} set if neccessary.
      */
-    private synchronized void buildInheritance()
+    private synchronized ImmutableSet<ResourceClassInheritance> buildInheritance()
     {
         if(inheritance == null)
         {
-            inheritance = coral.getRegistry().getResourceClassInheritance(this);
+            inheritance = new ImmutableHashSet<ResourceClassInheritance>(coral.getRegistry().getResourceClassInheritance(this));
             coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, this);
         }
+        return inheritance;
     }
     
     /**
      * Initializes {@link #parentClasses} set if neccessary.
+     * @return 
      */
-    private synchronized void buildParentClassSet()
+    private synchronized ImmutableSet<ResourceClass<?>> buildParentClassSet()
     {
         if(parentClasses == null)
         {
-            buildInheritance();
             Set<ResourceClass<?>> pc = new HashSet<ResourceClass<?>>();
             ArrayList<ResourceClass<?>> stack = new ArrayList<ResourceClass<?>>();
             stack.add(this);
@@ -878,38 +851,38 @@ public class ResourceClassImpl<T extends Resource>
             while(stack.size() > 0)
             {
                 ResourceClass<?> rc = stack.remove(stack.size()-1);
-                Set rcis;
+                ImmutableSet<ResourceClassInheritance> rcis;
                 if(rc.equals(this))
                 {
-                    rcis = inheritance;
+                    rcis = buildInheritance();
                 }
                 else
                 {
                     pc.add(rc);
-                    rcis = coral.getRegistry().getResourceClassInheritance(rc);
+                    rcis = new ImmutableHashSet<ResourceClassInheritance>(coral.getRegistry().getResourceClassInheritance(rc));
                     coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
                     coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, rc);
                     coralEventHub.getGlobal().addPermissionAssociationChangeListener(this, rc);
                 }
-                Iterator i = rcis.iterator();
-                while(i.hasNext())
+                for(ResourceClassInheritance ir : rcis)
                 {
-                    ResourceClassInheritance ir =
-                        (ResourceClassInheritance)i.next();
                     if(ir.getChild().equals(rc))
                     {
                         stack.add(ir.getParent());
                     }
                 }
+
             }
-            parentClasses = pc;
+            parentClasses = new ImmutableHashSet<ResourceClass<?>>(pc);
         }
+        return parentClasses;
     }
     
     /**
-     * Initializes {@link #directParentClasses} set if neccessary.
+     * Initializes {@link #directParentClasses} set if necessary.
+     * @return 
      */
-    private synchronized void buildDirectParentClassSet()
+    private synchronized ImmutableSet<ResourceClass<?>> buildDirectParentClassSet()
     {
         if(directParentClasses == null)
         {
@@ -922,18 +895,19 @@ public class ResourceClassImpl<T extends Resource>
                     dpc.add(ir.getParent());
                 }                
             }
-            directParentClasses = Collections.unmodifiableSet(dpc);
+            directParentClasses = new ImmutableHashSet<ResourceClass<?>>(dpc);
         }
+        return directParentClasses;
     }
     
     /**
-     * Initializes {@link #childClasses} set if neccessary.
+     * Initializes {@link #childClasses} set if necessary.
+     * @return 
      */
-    private synchronized void buildChildClassSet()
+    private synchronized ImmutableSet<ResourceClass<?>> buildChildClassSet()
     {
         if(childClasses == null)
         {
-            buildInheritance();
             Set<ResourceClass<?>> cc = new HashSet<ResourceClass<?>>();
             ArrayList<ResourceClass<?>> stack = new ArrayList<ResourceClass<?>>();
             stack.add(this);
@@ -941,36 +915,35 @@ public class ResourceClassImpl<T extends Resource>
             while(stack.size() > 0)
             {
                 ResourceClass<?> rc = stack.remove(stack.size()-1);
-                Set<ResourceClassInheritance> rcis;
+                ImmutableSet<ResourceClassInheritance> rcis;
                 if(rc.equals(this))
                 {
-                    rcis = inheritance;
+                    rcis = buildInheritance();
                 }
                 else
                 {
                     cc.add(rc);
-                    rcis = coral.getRegistry().getResourceClassInheritance(rc);
+                    rcis = new ImmutableHashSet<ResourceClassInheritance>(coral.getRegistry().getResourceClassInheritance(rc));
                     coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
                 }
-                Iterator<ResourceClassInheritance> i = rcis.iterator();
-                while(i.hasNext())
+                for(ResourceClassInheritance ir : rcis)
                 {
-                    ResourceClassInheritance ir =
-                        (ResourceClassInheritance)i.next();
                     if(ir.getParent().equals(rc))
                     {
                         stack.add(ir.getChild());
                     }
                 }
             }
-            childClasses = cc;
+            childClasses = new ImmutableHashSet<ResourceClass<?>>(cc);
         }
+        return childClasses;
     }
     
     /**
-     * Initializes {@link #directChildClasses} set if neccessary.
+     * Initializes {@link #directChildClasses} set if necessary.
+     * @return 
      */
-    private synchronized void buildDirectChildClassSet()
+    private synchronized ImmutableSet<ResourceClass<?>> buildDirectChildClassSet()
     {
         if(directChildClasses == null)
         {
@@ -983,101 +956,97 @@ public class ResourceClassImpl<T extends Resource>
                     dcc.add(ir.getChild());
                 }                
             }
-            directChildClasses = Collections.unmodifiableSet(dcc);
+            directChildClasses = new ImmutableHashSet<ResourceClass<?>>(dcc);
         }
+        return directChildClasses;
     }
 
     /**
-     * Initializes {@link #declaredAttributes} if neccessary.
+     * Initializes {@link #declaredAttributes} if necessary.
+     * @return 
      */
-    private synchronized void buildDeclaredAttributeSet()
+    private synchronized ImmutableSet<AttributeDefinition<?>> buildDeclaredAttributeSet()
     {
         if(declaredAttributes == null)
         {
-            declaredAttributes = coral.getRegistry().getDeclaredAttributes(this);
+            declaredAttributes = new ImmutableHashSet<AttributeDefinition<?>>(coral.getRegistry().getDeclaredAttributes(this));
             coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, this);
-        }   
+        }
+        return declaredAttributes;
     }
     
     /**
-     * Initializes {@link #permissions} if neccessary.
+     * Initializes {@link #permissions} if necessary.
+     * @return 
      */
-    private synchronized void buildPermissionSet()
+    private synchronized ImmutableSet<Permission> buildPermissionSet()
     {    
         if(permissions == null)
         {
-            buildPermissionAssociationSet();
-            buildParentClassSet();
-            Set<PermissionAssociation> temp = new HashSet<PermissionAssociation>();
-            temp.addAll(permissionAssociations);
-            Iterator i = parentClasses.iterator();
-            while(i.hasNext())
+            Set<Permission> temp = new HashSet<Permission>();
+            for(PermissionAssociation pa : buildPermissionAssociationSet())
             {
-                ResourceClassImpl rc = (ResourceClassImpl)i.next();
-                rc.buildPermissionAssociationSet();
-                temp.addAll(rc.permissionAssociations);
+                temp.add(pa.getPermission());
             }
-            permissions = new HashSet<Permission>();
-            i = temp.iterator();
-            while(i.hasNext())
+            for(ResourceClass<?> rc : buildParentClassSet())
             {
-                PermissionAssociation pa = (PermissionAssociation)i.next();
-                permissions.add(pa.getPermission());
+                ImmutableSet<PermissionAssociation> rcpa = ((ResourceClassImpl<?>)rc).buildPermissionAssociationSet();
+                for(PermissionAssociation pa : rcpa)
+                {
+                    temp.add(pa.getPermission());
+                }
             }
-        }   
+            permissions = new ImmutableHashSet<Permission>(temp);
+        } 
+        return permissions;
     }
 
     /**
-     * Initalizes {@link #permissionAssociations} if neccessary.
+     * Initializes {@link #permissionAssociations} if necessary.
+     * @return 
      */
-    private synchronized void buildPermissionAssociationSet()
+    private synchronized ImmutableSet<PermissionAssociation> buildPermissionAssociationSet()
     {
         if(permissionAssociations == null)
         {
-            permissionAssociations = coral.getRegistry().getPermissionAssociations(this);
+            permissionAssociations = new ImmutableHashSet<PermissionAssociation>(coral.getRegistry().getPermissionAssociations(this));
             coralEventHub.getGlobal().addPermissionAssociationChangeListener(this, this);
         }
+        return permissionAssociations;
     }
 
     /**
-     * Initailizes {@link #attributeMap} if neccessary.
+     * Initializes {@link #attributeMap} if necessary.
+     * @return 
      */
-    private synchronized void buildAttributeMap()
+    private synchronized ImmutableMap<String, AttributeDefinition<?>> buildAttributeMap()
     {
         if(attributeMap == null)
         {
-            buildParentClassSet();
-            buildDeclaredAttributeSet();
-            
-            attributeMap = new HashMap<String, AttributeDefinition<?>>();
-            Set ads = declaredAttributes;
-            Iterator i = ads.iterator();
-            while(i.hasNext())
+            Map<String, AttributeDefinition<?>> tempAttributeMap = new HashMap<String, AttributeDefinition<?>>();
+            for(AttributeDefinition<?> attr : buildDeclaredAttributeSet())
             {
-                AttributeDefinition attr = (AttributeDefinition)i.next();
                 coralEventHub.getGlobal().addAttributeDefinitionChangeListener(this, attr);
-                attributeMap.put(attr.getName(), attr);
+                tempAttributeMap.put(attr.getName(), attr);
             }
-            Set rcs = parentClasses;
-            Iterator j = rcs.iterator();
-            while(j.hasNext())
+            
+            for(ResourceClass<?> rc : buildParentClassSet())
             {
-                ResourceClassImpl rc = (ResourceClassImpl)j.next();
                 synchronized(rc)
                 {
-                    rc.buildAttributeMap();
+                    ImmutableMap<String, AttributeDefinition<?>> rcam = ((ResourceClassImpl<?>)rc).buildAttributeMap();
                     coralEventHub.getGlobal().addResourceClassAttributesChangeListener(this, rc);
                     coralEventHub.getGlobal().addResourceClassInheritanceChangeListener(this, rc);
-                    i = rc.attributeMap.values().iterator();
-                    while(i.hasNext())
+                    for(AttributeDefinition<?> attr : rcam.values())
                     {
-                        AttributeDefinition attr = (AttributeDefinition)i.next();
                         coralEventHub.getGlobal().addAttributeDefinitionChangeListener(this, attr);
-                        attributeMap.put(attr.getName(), attr);
+                        tempAttributeMap.put(attr.getName(), attr);
                     }
                 }
             }
+            attributeMap = new ImmutableHashMap<String, AttributeDefinition<?>>(tempAttributeMap);
         }
+        return attributeMap;
     }
     
     private AttributeIndexTable getAttributeIndexTable()
