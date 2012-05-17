@@ -303,8 +303,12 @@ public class CoralRegistryImpl
      */
     public ImmutableSet<AttributeClass<?>> getAllAttributeClasses()
     {
-        return new ImmutableHashSet<AttributeClass<?>>(
-            (Collection<? extends AttributeClass<?>>)attributeClassRegistry.get());
+        Set<AttributeClass<?>> s = new HashSet<AttributeClass<?>>();
+        for(AttributeClass<?> ac : attributeClassRegistry.get())
+        {
+            s.add(ac);
+        }
+        return new ImmutableHashSet<AttributeClass<?>>(s);
     }
 
     /**
@@ -417,7 +421,12 @@ public class CoralRegistryImpl
      */
     public ImmutableSet<ResourceClass<?>> getAllResourceClasses()
     {        
-        return new ImmutableHashSet<ResourceClass<?>>((Collection<? extends ResourceClass<?>>)resourceClassRegistry.get());
+        Set<ResourceClass<?>> s = new HashSet<ResourceClass<?>>();
+        for(ResourceClass<?> rc : resourceClassRegistry.get())
+        {
+            s.add(rc);
+        }
+        return new ImmutableHashSet<ResourceClass<?>>(s);
     }
 
     /**
