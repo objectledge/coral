@@ -2,9 +2,9 @@ package org.objectledge.coral.security;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.RoleImplicationChangeListener;
@@ -26,7 +26,7 @@ public class RoleContainer
     /** The component hub. */
     private CoralCore coral;
 
-    /** Expliclitly assigned roles. */
+    /** Explicitly assigned roles. */
     private Set<Role> explicitRoles = new HashSet<Role>();
 
     /** Explicitly and implicitly assigned roles. */
@@ -35,8 +35,8 @@ public class RoleContainer
     /** Direct and indirect super roles of the roles assigned explicitly. */
     private Set<Role> superRoles;
     
-    /** Direct and indirect sub roles of the roles assignmed explicitly -- the
-        implicitly assignmed roles. */
+    /** Direct and indirect sub roles of the roles assigned explicitly -- the
+        implicitly assigned roles. */
     private Set<Role> subRoles;
 
     /** peer permission container */
@@ -50,35 +50,38 @@ public class RoleContainer
      * @param coralEventHub the even hub.
      * @param coral the component hub.
      * 
+     * @param role the role.
+     */
+    public RoleContainer(CoralEventHub coralEventHub, CoralCore coral, 
+        Role role)
+    {
+        this.coralEventHub = coralEventHub;
+        this.coral = coral;
+        explicitRoles.add(role);
+        coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);        
+    }
+    
+    /**
+     * Creates a new role container.
+     *
+     * @param coralEventHub the even hub.
+     * @param coral the component hub.
+     * 
      * @param data the initial roles
      * @param roles <code>true</code> if data set contains 
      *        {@link org.objectledge.coral.security.Role} objects, <code>false</code> if it 
      *        contains {@link org.objectledge.coral.security.RoleAssignment} objects. 
      */
     public RoleContainer(CoralEventHub coralEventHub, CoralCore coral, 
-        Set data, boolean roles)
+        ImmutableSet<RoleAssignment> assignments)
     {
         this.coralEventHub = coralEventHub;
         this.coral = coral;
-        if(roles)
+        for(RoleAssignment assignment : assignments)
         {
-            Iterator i = data.iterator();
-            while(i.hasNext())
-            {
-                Role role = (Role)i.next();
-                explicitRoles.add(role);
-                coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
-            }
-        }
-        else
-        {
-            Iterator i = data.iterator();
-            while(i.hasNext())
-            {
-                Role role = ((RoleAssignment)i.next()).getRole();
-                explicitRoles.add(role);
-                coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
-            }
+            Role role = assignment.getRole();
+            explicitRoles.add(role);
+            coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
         }
     }
 
@@ -241,11 +244,8 @@ public class RoleContainer
                     sup.add(r);
                     coralEventHub.getGlobal().addRoleImplicationChangeListener(this, r);
                 }
-                Set ris = coral.getRegistry().getRoleImplications(r);
-                Iterator i = ris.iterator();
-                while(i.hasNext())
+                for(RoleImplication ri : coral.getRegistry().getRoleImplications(r))
                 {
-                    RoleImplication ri = (RoleImplication)i.next();
                     if(ri.getSubRole().equals(r))
                     {
                         stack.add(ri.getSuperRole());
@@ -273,11 +273,8 @@ public class RoleContainer
                     sub.add(r);
                     coralEventHub.getGlobal().addRoleImplicationChangeListener(this, r);
                 }
-                Set ris = coral.getRegistry().getRoleImplications(r);
-                Iterator i = ris.iterator();
-                while(i.hasNext())
+                for(RoleImplication ri : coral.getRegistry().getRoleImplications(r))
                 {
-                    RoleImplication ri = (RoleImplication)i.next();
                     if(ri.getSuperRole().equals(r))
                     {
                         stack.add(ri.getSubRole());
