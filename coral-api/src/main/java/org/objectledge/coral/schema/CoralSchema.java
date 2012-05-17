@@ -2,6 +2,7 @@ package org.objectledge.coral.schema;
 
 import java.util.Map;
 
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityFactory;
@@ -23,7 +24,7 @@ public interface CoralSchema
      *
      * @return all {@link AttributeClass}es defined in the system.
      */
-    public AttributeClass<?>[] getAttributeClass();
+    public ImmutableSet<AttributeClass<?>> getAllAttributeClasses();
 
     /**
      * Returns the {@link AttributeClass} with a specific identifier.
@@ -145,7 +146,7 @@ public interface CoralSchema
      * 
      * @return all attributes defined by classes in the system.
      */
-    public AttributeDefinition<?>[] getAttribute();
+    public ImmutableSet<AttributeDefinition<?>> getAllAttributes();
 
     /**
      * Returns an attribute definition with the specified id.
@@ -168,7 +169,7 @@ public interface CoralSchema
      * @throws IllegalArgumentException if the attribute is not declared
      *        by the resourceClass.
      */
-    public void deleteAttribute(ResourceClass resourceClass, AttributeDefinition<?> attribute)
+    public void deleteAttribute(ResourceClass<?> resourceClass, AttributeDefinition<?> attribute)
         throws IllegalArgumentException;
 
     /**
@@ -205,7 +206,7 @@ public interface CoralSchema
      *
      * @return all {@link ResourceClass}es defined in the system.
      */
-    public ResourceClass[] getResourceClass();
+    public ImmutableSet<ResourceClass<?>> getAllResourceClasses();
 
     /**
      * Returns the {@link ResourceClass} with a specific identifier.
@@ -215,7 +216,7 @@ public interface CoralSchema
      * @throws EntityDoesNotExistException if the <code>ResourceClass</code>
      *         with the specified identifier does not exist.
      */
-    public ResourceClass getResourceClass(long id)
+    public ResourceClass<?> getResourceClass(long id)
         throws EntityDoesNotExistException;
     
     /**
@@ -226,7 +227,7 @@ public interface CoralSchema
      * @throws EntityDoesNotExistException if the <code>ResourceClass</code>
      *         with the specified name does not exist.
      */
-    public ResourceClass getResourceClass(String name)
+    public ResourceClass<?> getResourceClass(String name)
         throws EntityDoesNotExistException;
 
     /**
@@ -246,7 +247,7 @@ public interface CoralSchema
      *         <code>handlerClass</code> attributes don't specify valid Java
      *         classes.
      */
-    public ResourceClass createResourceClass(String name, String javaClass,
+    public ResourceClass<?> createResourceClass(String name, String javaClass,
                                              String handlerClass, String dbTable, 
                                              int flags)
         throws EntityExistsException, JavaClassException;
@@ -258,7 +259,7 @@ public interface CoralSchema
      * @throws EntityInUseException if there are any instances of this
      *         <code>ResourceClass</code> in the system.
      */
-    public void deleteResourceClass(ResourceClass resourceClass)
+    public void deleteResourceClass(ResourceClass<?> resourceClass)
         throws EntityInUseException;
 
     /**
@@ -269,7 +270,7 @@ public interface CoralSchema
      * @throws EntityExistsException if a resource class with that name already
      *         exists in the system.
      */
-    public void setName(ResourceClass resourceClass, String name)
+    public void setName(ResourceClass<?> resourceClass, String name)
         throws EntityExistsException;
 
     /**
@@ -278,7 +279,7 @@ public interface CoralSchema
      * @param resourceClass the resource class to modify.
      * @param flags the new value of flags.
      */
-    public void setFlags(ResourceClass resourceClass, int flags);
+    public void setFlags(ResourceClass<?> resourceClass, int flags);
 
     /**
      * Sets the Java class corresponding to an <code>ResourceClass</code>.
@@ -289,7 +290,7 @@ public interface CoralSchema
      * @throws JavaClassException if the <code>javaClass</code> does not specify
      *         a valid JavaClass.
      */
-    public void setJavaClass(ResourceClass resourceClass, String javaClass)
+    public void setJavaClass(ResourceClass<?> resourceClass, String javaClass)
         throws JavaClassException;
 
     /**
@@ -302,7 +303,7 @@ public interface CoralSchema
      * @throws JavaClassException if the <code>handlerClass</code> does not
      *         specify a valid JavaClass.
      */
-    public void setHandlerClass(ResourceClass resourceClass, 
+    public void setHandlerClass(ResourceClass<?> resourceClass, 
                                 String handlerClass)
         throws JavaClassException;
 
@@ -315,7 +316,7 @@ public interface CoralSchema
      *        resources of that class (allows sharing handler classes betweeen
      *        resource types).
      */
-    public void setDbTable(ResourceClass resourceClass, String dbTable);
+    public void setDbTable(ResourceClass<?> resourceClass, String dbTable);
 
     /**
      * Adds an attribute to a {@link ResourceClass}.
@@ -330,7 +331,7 @@ public interface CoralSchema
      * @throws ValueRequiredException if <code>null</code> value was provided
      *         for a REQUIRED attribute.
      */
-    public <T> void addAttribute(ResourceClass resourceClass, AttributeDefinition<T> attribute,
+    public <T> void addAttribute(ResourceClass<?> resourceClass, AttributeDefinition<T> attribute,
         T value)
         throws SchemaIntegrityException, ValueRequiredException;
     
@@ -353,7 +354,7 @@ public interface CoralSchema
      *         REQUIRED attributes are missing from <code>attributes</code>
      *         map. 
      */
-    public void addParentClass(ResourceClass child, ResourceClass parent, 
+    public void addParentClass(ResourceClass<?> child, ResourceClass<?> parent, 
                                Map<AttributeDefinition<?>, Object> attributes)
         throws CircularDependencyException, SchemaIntegrityException, 
                ValueRequiredException;
@@ -367,7 +368,7 @@ public interface CoralSchema
      * @throws IllegalArgumentException if <code>parent</code> is not really a
      *         parent of the <code>child</code>.
      */
-    public void deleteParentClass(ResourceClass child, ResourceClass parent)
+    public void deleteParentClass(ResourceClass<?> child, ResourceClass<?> parent)
         throws IllegalArgumentException;
     
     /**
@@ -390,5 +391,5 @@ public interface CoralSchema
      * 
      * @return  an EntityFactory for AttributeClasses.
      */
-    public EntityFactory<ResourceClass> getResourceClassFactory();
+    public EntityFactory<ResourceClass<?>> getResourceClassFactory();
 } 

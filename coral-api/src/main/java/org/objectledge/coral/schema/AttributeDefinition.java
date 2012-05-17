@@ -23,7 +23,7 @@ public interface AttributeDefinition<T>
      *
      * @return the resource class this attribute belongs to.
      */
-    public ResourceClass getDeclaringClass();
+    public ResourceClass<?> getDeclaringClass();
     
     /**
      * Returns the value domain constraint for the attribute.

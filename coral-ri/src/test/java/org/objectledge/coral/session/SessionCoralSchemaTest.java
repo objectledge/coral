@@ -79,6 +79,6 @@ public class SessionCoralSchemaTest extends LedgeTestCase
     public void testGetAttributeClass()
     {
         mockCoralSchema.expects(once()).method("getAttributeClass").will(returnValue(new AttributeClass[0]));
-        sessionCoralSchema.getAttributeClass();
+        sessionCoralSchema.getAllAttributeClasses();
     }
 }

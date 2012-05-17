@@ -18,7 +18,7 @@ public interface PermissionAssociation
      *
      * @return the involved {@link ResourceClass}.
      */
-    public ResourceClass getResourceClass();
+    public ResourceClass<?> getResourceClass();
 
     /**
      * Returns the involved {@link Permission}.

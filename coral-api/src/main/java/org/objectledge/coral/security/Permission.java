@@ -23,14 +23,14 @@ public interface Permission
     public ResourceClass[] getResourceClasses();
 
     /**
-     * Returns <code>true</code> if this permission is assoicated with the
+     * Returns <code>true</code> if this permission is associated with the
      * specified resource class.
      *
      * @param permission the resource class.
-     * @return <code>true</code> if this permission is assoicated with the
+     * @return <code>true</code> if this permission is associated with the
      * specified resource class.
      */
-    public boolean isAssociatedWith(ResourceClass permission);
+    public boolean isAssociatedWith(ResourceClass<?> permission);
     
     /**
      * Returns all <code>PermissionAssignments</code> defined for this permission on all resources.

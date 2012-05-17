@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jcontainer.dna.Logger;
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
@@ -71,9 +72,9 @@ public class CoralSchemaImpl
      *
      * @return all {@link AttributeClass}es defined in the system.
      */
-    public AttributeClass[] getAttributeClass()
+    public ImmutableSet<AttributeClass<?>> getAllAttributeClasses()
     {
-        return coral.getRegistry().getAttributeClass();
+        return coral.getRegistry().getAllAttributeClasses();
     }
 
     /**
@@ -239,9 +240,9 @@ public class CoralSchemaImpl
      * 
      * @return all attributes defined by classes in the system.
      */
-    public AttributeDefinition[] getAttribute()
+    public ImmutableSet<AttributeDefinition<?>> getAllAttributes()
     {
-        return coral.getRegistry().getAttributeDefinition();
+        return coral.getRegistry().getAllAttributeDefinitions();
     }
 
     /**
@@ -354,9 +355,9 @@ public class CoralSchemaImpl
      *
      * @return all {@link ResourceClass}es defined in the system.
      */
-    public ResourceClass[] getResourceClass()
+    public ImmutableSet<ResourceClass<?>> getAllResourceClasses()
     {
-        return coral.getRegistry().getResourceClass();
+        return coral.getRegistry().getAllResourceClasses();
     }
 
     /**
@@ -896,12 +897,11 @@ public class CoralSchemaImpl
             long time = System.currentTimeMillis();
             log.info("preloading attribute values");
             conn = persistence.getDatabase().getConnection();
-            AttributeClass[] classes = getAttributeClass();
-            Set handlers = new HashSet();
-            for(int i = 0; i<classes.length; i++)
+            ImmutableSet<AttributeClass<?>> classes = getAllAttributeClasses();
+            Set<AttributeHandler<?>> handlers = new HashSet<AttributeHandler<?>>();
+            for(AttributeClass<?> cl : classes)
             {
-                AttributeClass cl = classes[i];
-                AttributeHandler handler = cl.getHandler();
+                AttributeHandler<?> handler = cl.getHandler();
                 if(!handlers.contains(handler))
                 {
                     log.info("preloading attribute values: "+cl.getName());
@@ -945,11 +945,11 @@ public class CoralSchemaImpl
     }
 
     @Override
-    public EntityFactory<ResourceClass> getResourceClassFactory()
+    public EntityFactory<ResourceClass<?>> getResourceClassFactory()
     {
-        return new EntityFactory<ResourceClass>() {
+        return new EntityFactory<ResourceClass<?>>() {
             @Override
-            public ResourceClass getEntity(long id)
+            public ResourceClass<?> getEntity(long id)
                 throws EntityDoesNotExistException
             {
                 return getResourceClass(id);

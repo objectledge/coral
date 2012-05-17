@@ -38,7 +38,7 @@ public interface Resource
      *
      * @return the class this resource belongs to.
      */
-    public ResourceClass getResourceClass();
+    public ResourceClass<?> getResourceClass();
 
     /**
      * Returns the {@link Subject} that created this resource.

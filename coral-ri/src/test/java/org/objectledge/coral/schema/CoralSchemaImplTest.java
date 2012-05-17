@@ -183,7 +183,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
     {
         AttributeClass[] ac = new AttributeClass[0];
         mockCoralRegistry.expects(once()).method("getAttributeClass").will(returnValue(ac));
-        assertSame(ac, coralSchema.getAttributeClass());
+        assertSame(ac, coralSchema.getAllAttributeClasses());
     }
     
     public void testGetAttributeClassById()
@@ -291,7 +291,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
     {
         AttributeDefinition[] ad = new AttributeDefinition[0];
         mockCoralRegistry.expects(once()).method("getAttributeDefinition").will(returnValue(ad));
-        assertSame(ad, coralSchema.getAttribute());
+        assertSame(ad, coralSchema.getAllAttributes());
     }
     
     public void testGetAttributeDefinitionById() 
@@ -360,7 +360,7 @@ public class CoralSchemaImplTest extends LedgeTestCase
     {
         ResourceClass[] rc = new ResourceClass[0];
         mockCoralRegistry.expects(once()).method("getResourceClass").will(returnValue(rc));
-        assertSame(rc, coralSchema.getResourceClass());
+        assertSame(rc, coralSchema.getAllResourceClasses());
     }
     
     public void testGetResourceById()

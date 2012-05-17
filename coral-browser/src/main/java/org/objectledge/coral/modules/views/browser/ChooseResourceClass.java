@@ -1,5 +1,8 @@
 package org.objectledge.coral.modules.views.browser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.schema.ResourceClass;
@@ -43,9 +46,10 @@ public class ChooseResourceClass extends BaseBrowserView
                 state.setPageSize(0);
                 state.setSortColumnName("name");
             }
-            ResourceClass[] classes = coralSession.getSchema().getResourceClass();
-            TableModel model = new ListTableModel(classes, columns);
-            TableTool helper = new TableTool(state, null, model);
+            List<ResourceClass<?>> classes = new ArrayList<ResourceClass<?>>(coralSession
+                .getSchema().getAllResourceClasses().unmodifiableSet());
+            TableModel<ResourceClass<?>> model = new ListTableModel<ResourceClass<?>>(classes, columns);
+            TableTool<ResourceClass<?>> helper = new TableTool<ResourceClass<?>>(state, null, model);
             templatingContext.put("table", helper);
         }
         catch (Exception e)

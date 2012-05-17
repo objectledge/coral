@@ -233,7 +233,7 @@ public class RMLEntityResolver
      * @throws EntityDoesNotExistException if the node does not describe an existing ResourceClass.
      * @throws AmbigousEntityNameException if multiple ResourceClasss match node's description.
      */
-    public ResourceClass resolve(ASTresourceClass node)
+    public ResourceClass<?> resolve(ASTresourceClass node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
         if(node.getId() != -1)

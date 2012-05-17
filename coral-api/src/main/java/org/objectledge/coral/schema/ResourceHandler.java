@@ -43,7 +43,7 @@ public interface ResourceHandler<T extends Resource>
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public void delete(T resource, Connection conn)
+    public void delete(Resource resource, Connection conn)
         throws SQLException;
 
     /**
@@ -185,7 +185,7 @@ public interface ResourceHandler<T extends Resource>
      *        the results if <code>true</code>
      * @return resources referenced by this resource.
      */
-    public Resource[] getResourceReferences(T resource, boolean clearable);
+    public Resource[] getResourceReferences(Resource resource, boolean clearable);
     
     /**
      * Removes all resource references that can be auto-cleared 
@@ -196,7 +196,7 @@ public interface ResourceHandler<T extends Resource>
      * 
      * @param resource the resource to clear.
      */
-    public void clearResourceReferences(T resource);
+    public void clearResourceReferences(Resource resource);
     
     // data preloading //////////////////////////////////////////////////////
     

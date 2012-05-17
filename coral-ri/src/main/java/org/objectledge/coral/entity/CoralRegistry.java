@@ -2,6 +2,7 @@ package org.objectledge.coral.entity;
 
 import java.util.Set;
 
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.ResourceClass;
@@ -32,7 +33,7 @@ public interface CoralRegistry
      *
      * @return all {@link AttributeClass}es defined in the system.
      */
-    public AttributeClass[] getAttributeClass();
+    public ImmutableSet<AttributeClass<?>> getAllAttributeClasses();
 
     /**
      * Returns the {@link AttributeClass} with a specific identifier.
@@ -42,7 +43,7 @@ public interface CoralRegistry
      * @throws EntityDoesNotExistException if the <code>AttributeClass</code>
      *         with the specified identifier does not exist.
      */
-    public AttributeClass getAttributeClass(long id)
+    public AttributeClass<?> getAttributeClass(long id)
         throws EntityDoesNotExistException;
     
     /**
@@ -94,7 +95,7 @@ public interface CoralRegistry
      *
      * @return all {@link ResourceClass}es defined in the system.
      */
-    public ResourceClass[] getResourceClass();
+    public ImmutableSet<ResourceClass<?>> getAllResourceClasses();
 
     /**
      * Returns the {@link ResourceClass} with a specific identifier.
@@ -163,7 +164,7 @@ public interface CoralRegistry
      * 
      * @return all attributes defined by classes in the system.
      */
-    public AttributeDefinition[] getAttributeDefinition();
+    public ImmutableSet<AttributeDefinition<?>> getAllAttributeDefinitions();
     
     /**
      * Returns an attribute defienition with the given id.
