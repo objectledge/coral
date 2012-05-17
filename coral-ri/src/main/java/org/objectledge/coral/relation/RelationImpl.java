@@ -30,7 +30,6 @@ package org.objectledge.coral.relation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.AbstractEntity;
