@@ -33,6 +33,8 @@ import java.util.Map;
 
 import org.jcontainer.dna.Logger;
 import org.jmock.Mock;
+import org.objectledge.collections.ImmutableHashSet;
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.CoralRegistry;
@@ -181,8 +183,8 @@ public class CoralSchemaImplTest extends LedgeTestCase
     
     public void testGetAttributeClass()
     {
-        AttributeClass[] ac = new AttributeClass[0];
-        mockCoralRegistry.expects(once()).method("getAttributeClass").will(returnValue(ac));
+        ImmutableSet<AttributeClass<?>> ac = new ImmutableHashSet<AttributeClass<?>>();
+        mockCoralRegistry.expects(once()).method("getAllAttributeClasses").will(returnValue(ac));
         assertSame(ac, coralSchema.getAllAttributeClasses());
     }
     
@@ -289,8 +291,8 @@ public class CoralSchemaImplTest extends LedgeTestCase
     
     public void testGetAttributeDefinition()
     {
-        AttributeDefinition[] ad = new AttributeDefinition[0];
-        mockCoralRegistry.expects(once()).method("getAttributeDefinition").will(returnValue(ad));
+        ImmutableSet<AttributeDefinition<?>> ad = new ImmutableHashSet<AttributeDefinition<?>>();
+        mockCoralRegistry.expects(once()).method("getAllAttributeDefinitions").will(returnValue(ad));
         assertSame(ad, coralSchema.getAllAttributes());
     }
     
@@ -358,8 +360,8 @@ public class CoralSchemaImplTest extends LedgeTestCase
     
     public void testGetResourceClass()
     {
-        ResourceClass[] rc = new ResourceClass[0];
-        mockCoralRegistry.expects(once()).method("getResourceClass").will(returnValue(rc));
+        ImmutableSet<ResourceClass<?>> rc = new ImmutableHashSet<ResourceClass<?>>();
+        mockCoralRegistry.expects(once()).method("getAllResourceClasses").will(returnValue(rc));
         assertSame(rc, coralSchema.getAllResourceClasses());
     }
     
