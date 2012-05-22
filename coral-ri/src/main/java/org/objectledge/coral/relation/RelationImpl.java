@@ -515,17 +515,23 @@ implements Relation
         /**
          * {@inheritDoc}
          */
-        public synchronized Resource[] get(Resource r)
+        public Resource[] get(Resource r)
         {
-            return RelationImpl.get(invRel, r, store);
+            synchronized(RelationImpl.this)
+            {
+                return RelationImpl.get(invRel, r, store);
+            }
         }
 
         /**
          * {@inheritDoc}
          */
-        public synchronized LongSet get(long id)
+        public LongSet get(long id)
         {
-            return RelationImpl.get(invRel, id);
+            synchronized(RelationImpl.this)
+            {
+                return RelationImpl.get(invRel, id);
+            }
         }
 
         /**
@@ -591,14 +597,20 @@ implements Relation
 		/**
 		 * {@inheritDoc}
 		 */
-		public synchronized float getAvgMappingSize()
+		public float getAvgMappingSize()
 		{
-			return RelationImpl.getAvgMappingSize(invRel, resourceIdPairsNum);
+		    synchronized(RelationImpl.this)
+		    {
+		        return RelationImpl.getAvgMappingSize(invRel, resourceIdPairsNum);
+		    }
 		}
         
-        public synchronized long[][] getPairs()
+        public long[][] getPairs()
         {
-            return RelationImpl.getPairs(invRel);
+            synchronized(RelationImpl.this)
+            {
+                return RelationImpl.getPairs(invRel);
+            }
         }
     }
 }
