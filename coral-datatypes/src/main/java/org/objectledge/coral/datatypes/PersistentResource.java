@@ -44,7 +44,7 @@ public class PersistentResource
         
     // interface to PersistentResourceHandler ////////////////////////////////
     
-    synchronized void retrieve(Resource delegate, ResourceClass rClass, Connection conn, 
+    synchronized void retrieve(Resource delegate, ResourceClass<?> rClass, Connection conn, 
         Object data)
     	throws SQLException
 	{
@@ -61,7 +61,7 @@ public class PersistentResource
         }
 	}
 
-    synchronized void revert(ResourceClass rClass, Connection conn, Object data)
+    synchronized void revert(ResourceClass<?> rClass, Connection conn, Object data)
         throws SQLException
     {
         super.revert(rClass, conn, data);
@@ -77,12 +77,12 @@ public class PersistentResource
         }        
     }    
     
-    synchronized void create(Resource delegate, ResourceClass rClass, 
-        Map attributes, Connection conn)
+    synchronized void create(Resource delegate, ResourceClass<?> rClass, 
+        Map<AttributeDefinition<?>, Object> attributes, Connection conn)
     	throws SQLException, ValueRequiredException, ConstraintViolationException
 	{
         super.create(delegate, rClass, attributes, conn);
-        for(AttributeDefinition attr : delegate.getResourceClass().getAllAttributes())
+        for(AttributeDefinition<?> attr : delegate.getResourceClass().getAllAttributes())
         {
             Object value;
             if((attr.getFlags() & AttributeFlags.BUILTIN) != 0)
@@ -156,7 +156,7 @@ public class PersistentResource
 	    throws SQLException
 	{
 	    super.delete(conn);
-        for(AttributeDefinition attr : delegate.getResourceClass().getAllAttributes())
+        for(AttributeDefinition<?> attr : delegate.getResourceClass().getAllAttributes())
         {
             if(!Entity.class.isAssignableFrom(attr.getAttributeClass().getJavaClass()))
             {
@@ -187,11 +187,11 @@ public class PersistentResource
     /**
      * {@inheritDoc}
      */
-    protected Object loadAttribute(AttributeDefinition attribute, long aId)
+    protected <T> T loadAttribute(AttributeDefinition<T> attribute, long aId)
     {
         if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
         {
-            AttributeHandler handler = attribute.getAttributeClass().getHandler();
+            AttributeHandler<T> handler = attribute.getAttributeClass().getHandler();
             return handler.toAttributeValue(""+aId);
         }
         else
@@ -317,7 +317,7 @@ public class PersistentResource
         throws PersistenceException
     {
         id = record.getLong(getTable()+"_id");
-        for(AttributeDefinition attribute : delegate.getResourceClass().getAllAttributes())
+        for(AttributeDefinition<?> attribute : delegate.getResourceClass().getAllAttributes())
         {
             if((attribute.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
