@@ -134,7 +134,7 @@ public abstract class AttributeHandlerBase<T>
      * 
      * @see org.objectledge.coral.schema.AttributeHander#isModified(Object)
      */
-    public boolean isModified(T value)
+    public boolean isModified(Object value)
     {
         return false;
     }
