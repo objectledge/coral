@@ -421,7 +421,7 @@ public abstract class AbstractResource implements Resource
         {
             return delegate.get(attribute);
         }
-        return getLocally(attribute);
+        return getInternal(attribute);
     }
     
     /**
@@ -432,9 +432,8 @@ public abstract class AbstractResource implements Resource
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.isDefined(attribute);
-        }
-        int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        return isDefinedLocally(index);
+        }        
+        return isDefinedInternal(attribute);
     }
     
     /**
@@ -472,11 +471,7 @@ public abstract class AbstractResource implements Resource
         }
         value = attribute.getAttributeClass().getHandler().toAttributeValue(value);
         attribute.getAttributeClass().getHandler().checkDomain(attribute.getDomain(), value);
-        int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        if(setLocally(index, value))
-        {
-            modified.set(index);
-        }
+        setInternal(attribute, value);    
     }
     
     /**
@@ -509,9 +504,7 @@ public abstract class AbstractResource implements Resource
             throw new ValueRequiredException("attribute "+attribute.getName()+
                                              "is declared as REQUIRED");
         }
-        int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        unsetLocally(index);
-        modified.set(index);
+        unsetInternal(attribute);        
     }
  
     /**
@@ -597,102 +590,6 @@ public abstract class AbstractResource implements Resource
     
     // subclass contract ////////////////////////////////////////////////////////////////////////
     
-    /**
-     * Check if the attribute value is defined in this wrapper.
-     * 
-     * @param index the attribute index.
-     * @return <code>true</code> if the attribute value is defined in this wrapper.
-     */
-    private synchronized boolean isDefinedLocally(int index)
-    {
-        if(modified.get(index))
-        {
-            return attributes[index] != null;
-        }
-        else
-        {
-            return attributes[index] != null || ids[index] > 0;
-        } 
-    }
-
-    /**
-     * Retrieve the attribute value defined in this wrapper.
-     * 
-     * @param attribute the attribute definition.
-     * @return the attribute value is defined in this wrapper.
-     */
-    private synchronized <T> T getLocally(AttributeDefinition<T> attribute)
-    {
-        int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        @SuppressWarnings("unchecked")
-        T value = (T)attributes[index];
-        if(modified.get(index))
-        {
-            return value;
-        }
-        else
-        {
-            if(value != null)
-            {
-                return value;
-            }
-            else
-            {
-                long id = ids[index] - 1;
-                if(id == -1)
-                {
-                    return null;
-                }
-                else
-                {
-                    value = loadAttribute(attribute, id);
-                    attributes[index] = value;
-                    return value;
-                }
-            }
-        }        
-    }
-
-    /**
-     * Set the attribute value in this wrapper.
-     * 
-     * @param index the attribute index.
-     * @param value the attribute value.
-     * @return <code>true</code> if values were different.
-     */
-    private synchronized boolean setLocally(int index, Object value)
-    {
-        Object oldValue = attributes[index];
-        if(oldValue == null || value == null)
-        {
-            if(value == null && oldValue == null)
-            {
-                return false;
-            }
-            else
-            {
-                attributes[index] = value;
-                return true;
-            }
-        }
-        if(oldValue.equals(value))
-        {
-            return false;
-        }
-        attributes[index] = value;
-        return true;
-    }
-
-    /**
-     * Unset the attribute value in this wrapper.
-     * 
-     * @param index the attribute index.
-     */
-    private synchronized void unsetLocally(int index)
-    {
-        attributes[index] = null;
-    }
-
     /**
      * Lazy-load attribute value.
      * 
@@ -945,9 +842,47 @@ public abstract class AbstractResource implements Resource
     /////////////////////////////////////////////////////////////////////////////////////////////
     
     /**
+	 * Retrieve the attribute value defined in this wrapper.
+	 * 
+	 * @param attribute the attribute definition.
+	 * @return the attribute value is defined in this wrapper.
+	 */
+	private synchronized <T> T getInternal(AttributeDefinition<T> attribute)
+	{
+	    int index = delegate.getResourceClass().getAttributeIndex(attribute);
+	    @SuppressWarnings("unchecked")
+	    T value = (T)attributes[index];
+	    if(modified.get(index))
+	    {
+	        return value;
+	    }
+	    else
+	    {
+	        if(value != null)
+	        {
+	            return value;
+	        }
+	        else
+	        {
+	            long id = ids[index] - 1;
+	            if(id == -1)
+	            {
+	                return null;
+	            }
+	            else
+	            {
+	                value = loadAttribute(attribute, id);
+	                attributes[index] = value;
+	                return value;
+	            }
+	        }
+	    }        
+	}
+
+	/**
      * Returns the value of the attribute, or the supplied default value if undefined.
      * 
-     * @param attribute the attribute definiiton.
+     * @param attribute the attribute definition.
      * @param defaultValue the default value.
      * @return attribute value.
      */
@@ -978,4 +913,74 @@ public abstract class AbstractResource implements Resource
             }                
         }
     }
+
+	// subclass contract ////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Check if the attribute value is defined in this wrapper.
+	 * 
+	 * @param index the attribute index.
+	 * @return <code>true</code> if the attribute value is defined in this wrapper.
+	 */
+	private synchronized boolean isDefinedInternal(AttributeDefinition<?> attribute)
+	{
+		int index = delegate.getResourceClass().getAttributeIndex(attribute);
+	    if(modified.get(index))
+	    {
+	        return attributes[index] != null;
+	    }
+	    else
+	    {
+	        return attributes[index] != null || ids[index] > 0;
+	    } 
+	}
+
+	/**
+	 * Set the attribute value in this wrapper.
+	 * 
+	 * @param index the attribute index.
+	 * @param value the attribute value.
+	 * @return <code>true</code> if values were different.
+	 */
+	private synchronized void setInternal(AttributeDefinition<?> attribute, Object value)
+	{
+	    int index = delegate.getResourceClass().getAttributeIndex(attribute);
+	    Object oldValue = attributes[index];
+	    boolean attributeModified = true;
+	    if(oldValue == null || value == null)
+	    {
+	        if(value == null && oldValue == null)
+	        {
+	        	attributeModified = false;
+	        }
+	        else
+	        {
+	            attributes[index] = value;
+	            attributeModified = true;
+	        }
+	    }
+	    if(oldValue.equals(value))
+	    {
+	    	attributeModified = false;
+	    }
+	    attributes[index] = value;        
+	    if(attributeModified)
+	    {
+	        modified.set(index);
+	    }
+	}
+
+	// subclass contract ////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Unset the attribute value in this wrapper.
+	 * 
+	 * @param index the attribute index.
+	 */
+	private synchronized void unsetInternal(AttributeDefinition<?> attribute)
+	{
+	    int index = delegate.getResourceClass().getAttributeIndex(attribute);
+	    attributes[index] = null;
+	    modified.set(index);
+	}
 }
