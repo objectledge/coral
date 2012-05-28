@@ -190,7 +190,7 @@ $string.wrap("#createSignature()")
             Map attrs = new HashMap();
 #foreach($attr in $requiredAttributes)
 #if($attr.primitive)
-            attrs.put(rc.getAttribute("${attr.name}"), new ${attr.primitiveWrapper}(${attr.name}));
+            attrs.put(rc.getAttribute("${attr.name}"), ${attr.primitiveWrapper}.valueOf(${attr.name}));
 #else
             attrs.put(rc.getAttribute("${attr.name}"), ${attr.name});
 #end
@@ -252,7 +252,7 @@ $string.wrap("#createSignature()")
      */
     public ${attr.javaType} get${attr.javaName}(${attr.javaType} defaultValue)
     {
-		return ((${attr.primitiveWrapper})getInternal(${attr.name}Def, new ${attr.primitiveWrapper}(defaultValue))).${attr.javaType}Value();
+		return ((${attr.primitiveWrapper})getInternal(${attr.name}Def, ${attr.primitiveWrapper}.valueOf(defaultValue))).${attr.javaType}Value();
 	}
 #else ## $attr.required
 
@@ -277,7 +277,7 @@ $string.wrap("#createSignature()")
     {
         try
         {
-            set(${attr.name}Def, new ${attr.primitiveWrapper}(value));
+            set(${attr.name}Def, ${attr.primitiveWrapper}.valueOf(value));
         }
         catch(ModificationNotPermitedException e)
         {
