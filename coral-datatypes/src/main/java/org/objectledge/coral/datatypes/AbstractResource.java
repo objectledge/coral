@@ -898,7 +898,7 @@ public abstract class AbstractResource implements Resource
      * @param defaultValue the default value.
      * @return attribute value.
      */
-    protected <T> T getInternal(AttributeDefinition<T> attribute, T defaultValue)
+    private <T> T getInternal(AttributeDefinition<T> attribute, T defaultValue)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attribute);
         @SuppressWarnings("unchecked")
