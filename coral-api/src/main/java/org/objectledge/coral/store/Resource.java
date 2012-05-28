@@ -141,6 +141,18 @@ public interface Resource
         throws UnknownAttributeException;
     
     /**
+     * Retrieves the value of a specific attribute.
+     * 
+     * @param attribute the attribute to retrieve.
+     * @param defaultValue value to be returned when the attribute value is undefined.
+     * @return the value of the attribute, or <code>null</code> if undefined.
+     * @throws UnknownAttributeException if <code>attribute</code> does not
+     *         belong to the resource's class.
+     */
+    public <T> T get(AttributeDefinition<T> attribute, T defaultValue)
+        throws UnknownAttributeException;
+    
+    /**
      * Sets the value of a specific attribute.
      * 
      * @param attribute the attribute to set.

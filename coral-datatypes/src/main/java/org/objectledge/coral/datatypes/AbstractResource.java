@@ -427,6 +427,18 @@ public abstract class AbstractResource implements Resource
     /**
      * {@inheritDoc}
      */
+    public <T> T get(AttributeDefinition<T> attribute, T defaultValue) throws UnknownAttributeException
+    {
+        if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
+        {
+            return delegate.get(attribute);
+        }
+        return getInternal(attribute, defaultValue);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public boolean isDefined(AttributeDefinition<?> attribute) throws UnknownAttributeException
     {
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
@@ -886,10 +898,11 @@ public abstract class AbstractResource implements Resource
      * @param defaultValue the default value.
      * @return attribute value.
      */
-    protected <T> Object getInternal(AttributeDefinition<T> attribute, T defaultValue)
+    protected <T> T getInternal(AttributeDefinition<T> attribute, T defaultValue)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        Object value = attributes[index];
+        @SuppressWarnings("unchecked")
+		T value = (T)attributes[index];
         if(value != null)
         {
             return value;
