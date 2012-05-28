@@ -89,7 +89,7 @@ public abstract class AbstractResource implements Resource
     }
     
     /**
-     * Checks if another object represens the same entity.
+     * Checks if another object represents the same entity.
      *
      * <p>This implementation compares the delegates of both resources for
      * equality.</p> 
@@ -118,7 +118,7 @@ public abstract class AbstractResource implements Resource
     /**
      * Returns a String representation of this object.
      *
-     * <p> This method is overriden to augument debugging. The format of the representation is as 
+     * <p> This method is overridden to augment debugging. The format of the representation is as 
      * following: 
      * <blockquote>
      *   <code>javaClass name #id @identity</code>
@@ -198,7 +198,6 @@ public abstract class AbstractResource implements Resource
         {
             if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
-	            AttributeHandler<?> handler = attr.getAttributeClass().getHandler();
 	            Object value = attributes.get(attr);
 	            if(value == null)
 	            {
@@ -568,7 +567,6 @@ public abstract class AbstractResource implements Resource
     public synchronized void revert()
     {
         Connection conn = null;
-        boolean controler = false;
         try
         {
             conn = getDatabase().getConnection();
@@ -595,25 +593,6 @@ public abstract class AbstractResource implements Resource
                 }
             }
         }   
-    }
-
-    // implementation ///////////////////////////////////////////////////////////////////////////
-
-    private void checkAttribute(AttributeDefinition<?> attribute)
-        throws UnknownAttributeException
-    {
-        if(delegate == null)
-        {
-            throw new IllegalStateException("cannot verity attribute against null delegate");
-        }
-        if(!(attribute.getDeclaringClass().equals(delegate.getResourceClass()) ||
-             attribute.getDeclaringClass().isParent(delegate.getResourceClass())))
-        {
-            throw new UnknownAttributeException("class "+delegate.getResourceClass().getName()+
-                                                "does not have a "+attribute.getName()+
-                                                " attribute declared by "+
-                                                attribute.getDeclaringClass().getName());
-        }
     }
     
     // subclass contract ////////////////////////////////////////////////////////////////////////
