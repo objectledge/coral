@@ -241,7 +241,7 @@ $string.wrap("#createSignature()")
     public ${attr.javaType} get${attr.javaName}()
         throws IllegalStateException
     {
-	    ${attr.primitiveWrapper} value = getInternal(${attr.name}Def, null);
+	    ${attr.primitiveWrapper} value = get(${attr.name}Def);
         if(value != null)
         {
             return value.${attr.javaType}Value();
@@ -261,7 +261,7 @@ $string.wrap("#createSignature()")
      */
     public ${attr.javaType} get${attr.javaName}(${attr.javaType} defaultValue)
     {
-		return getInternal(${attr.name}Def, ${attr.primitiveWrapper}.valueOf(defaultValue)).${attr.javaType}Value();
+		return get(${attr.name}Def, ${attr.primitiveWrapper}.valueOf(defaultValue)).${attr.javaType}Value();
 	}
 #else ## $attr.required
 
@@ -272,7 +272,7 @@ $string.wrap("#createSignature()")
      */
     public ${attr.javaType} get${attr.javaName}()
     {
-		return getInternal(${attr.name}Def, null).${attr.javaType}Value();
+		return get(${attr.name}Def).${attr.javaType}Value();
     }    
 #end
 #if(!$attr.readonly)
@@ -324,7 +324,7 @@ $string.wrap("#createSignature()")
      */
     public $attr.javaType get${attr.javaName}()
     {
-        return getInternal(${attr.name}Def, null);
+        return get(${attr.name}Def);
     }
 #if(!$attr.required)
     
@@ -336,7 +336,7 @@ $string.wrap("#createSignature()")
      */
     public $attr.javaType get${attr.javaName}(${attr.javaType} defaultValue)
     {
-        return getInternal(${attr.name}Def, defaultValue);
+        return get(${attr.name}Def, defaultValue);
     }    
 #end
 #if(!$attr.readonly)
