@@ -17,6 +17,7 @@ import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.event.CoralEventHub;
+import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
@@ -386,6 +387,29 @@ public class CoralSchemaImpl
         throws EntityDoesNotExistException
     {
         return coral.getRegistry().getResourceClass(name);
+    }
+    
+    /**
+     * Returns the {@link ResourceClass} object with the specified name.
+     *
+     * @param name the name.
+     * @return the <code>ResourceClass</code> with the given name.
+     * @throws EntityDoesNotExistException if the <code>ResourceClass</code>
+     *         with the specified name does not exist.
+     */
+    public <T extends Resource> ResourceClass<T> getResourceClass(String name, Class<T> rClass)
+        throws EntityDoesNotExistException
+    {
+        ResourceClass<?> resourceClass = coral.getRegistry().getResourceClass(name);
+        if(rClass.isAssignableFrom(resourceClass.getJavaClass()))
+        {
+        	return (ResourceClass<T>)resourceClass;        	
+        }
+        else
+        {
+			throw new IllegalArgumentException("resource class " + name
+					+ " is not compatible with type " + rClass.getName());
+        }
     }
 
     /**

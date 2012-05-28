@@ -42,6 +42,7 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.JavaClassException;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.SchemaIntegrityException;
+import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 
 /**
@@ -241,6 +242,15 @@ public class SessionCoralSchema implements CoralSchema
         return coral.getSchema().getResourceClass(id);
     }
 
+    /** 
+     * {@inheritDoc}
+     */
+    public <T extends Resource> ResourceClass<T> getResourceClass(String name, Class<T> rClass) throws EntityDoesNotExistException
+    {
+        session.verify();
+        return coral.getSchema().getResourceClass(name, rClass);
+    }
+    
     /** 
      * {@inheritDoc}
      */

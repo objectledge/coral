@@ -7,6 +7,7 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
 import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
+import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 
 /**
@@ -230,6 +231,18 @@ public interface CoralSchema
     public ResourceClass<?> getResourceClass(String name)
         throws EntityDoesNotExistException;
 
+    /**
+     * Returns the {@link ResourceClass} object with the specified name.
+     *
+     * @param name the name.
+     * @return the  <code>ResourceClass</code> with the given name.
+     * @throws EntityDoesNotExistException if the <code>ResourceClass</code>
+     *         with the specified name does not exist.
+     */
+    public <T extends Resource> ResourceClass<T> getResourceClass(String name, Class<T> rClass)
+        throws EntityDoesNotExistException;
+
+    
     /**
      * Creates an resource class.
      *
