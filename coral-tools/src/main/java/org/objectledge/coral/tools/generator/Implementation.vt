@@ -30,16 +30,16 @@
 ##
 $imports.add("org.objectledge.coral.BackendException")##
 $imports.add("org.objectledge.coral.entity.EntityDoesNotExistException")##
-#if($attributes.size() > 0)
 $imports.add("org.objectledge.coral.schema.AttributeDefinition")##
-#end
 $imports.add("org.objectledge.coral.schema.ResourceClass")##
 $imports.add("org.objectledge.coral.session.CoralSession")##
 $imports.add("org.objectledge.coral.store.Resource")##
 $imports.add("org.objectledge.coral.store.ValueRequiredException")##
 $imports.add("org.objectledge.coral.store.InvalidResourceNameException")##
+#if($requiredAttributes.size() > 0)
 $imports.add("java.util.Map")##
 $imports.add("java.util.HashMap")##
+#end
 ##
 #if($class.implParentClass)
 $imports.add($class.implParentClass.getFQImplClassName())##
@@ -83,7 +83,11 @@ public class ${class.implClassName}
 #if($attributes.size() > 0)
 #foreach($attr in $attributes)
     /** The AttributeDefinition object for the <code>${attr.name}</code> attribute. */
-    private static AttributeDefinition ${attr.name}Def;
+#if($attr.primitive)	
+    private static AttributeDefinition<${attr.primitiveWrapper}> ${attr.name}Def;
+#else
+	private static AttributeDefinition<${attr.javaType}> ${attr.name}Def;
+#end
 
 #end
 #end
@@ -186,8 +190,9 @@ $string.wrap("#createSignature()")
     {
         try
         {
-            ResourceClass rc = session.getSchema().getResourceClass("${class.name}");
-            Map attrs = new HashMap();
+            ResourceClass<${class.interfaceClassName}> rc = session.getSchema().getResourceClass("${class.name}", ${class.interfaceClassName}.class);
+#if($requiredAttributes.size() > 0)
+			Map<AttributeDefinition<?>, Object> attrs = new HashMap<AttributeDefinition<?>, Object>();
 #foreach($attr in $requiredAttributes)
 #if($attr.primitive)
             attrs.put(rc.getAttribute("${attr.name}"), ${attr.primitiveWrapper}.valueOf(${attr.name}));
@@ -196,6 +201,10 @@ $string.wrap("#createSignature()")
 #end
 #end
             Resource res = session.getStore().createResource(name, parent, rc, attrs);
+#else
+		    Resource res = session.getStore().createResource(name, parent, rc,
+                java.util.Collections.<AttributeDefinition<?>, Object> emptyMap());			
+#end
             if(!(res instanceof ${class.interfaceClassName}))
             {
                 throw new BackendException("incosistent schema: created object is "+
@@ -232,7 +241,7 @@ $string.wrap("#createSignature()")
     public ${attr.javaType} get${attr.javaName}()
         throws IllegalStateException
     {
-	    ${attr.primitiveWrapper} value = (${attr.primitiveWrapper})getInternal(${attr.name}Def, null);
+	    ${attr.primitiveWrapper} value = getInternal(${attr.name}Def, null);
         if(value != null)
         {
             return value.${attr.javaType}Value();
@@ -252,7 +261,7 @@ $string.wrap("#createSignature()")
      */
     public ${attr.javaType} get${attr.javaName}(${attr.javaType} defaultValue)
     {
-		return ((${attr.primitiveWrapper})getInternal(${attr.name}Def, ${attr.primitiveWrapper}.valueOf(defaultValue))).${attr.javaType}Value();
+		return getInternal(${attr.name}Def, ${attr.primitiveWrapper}.valueOf(defaultValue)).${attr.javaType}Value();
 	}
 #else ## $attr.required
 
@@ -263,7 +272,7 @@ $string.wrap("#createSignature()")
      */
     public ${attr.javaType} get${attr.javaName}()
     {
-		return ((${attr.primitiveWrapper})getInternal(${attr.name}Def, null)).${attr.javaType}Value();
+		return getInternal(${attr.name}Def, null).${attr.javaType}Value();
     }    
 #end
 #if(!$attr.readonly)
@@ -315,7 +324,7 @@ $string.wrap("#createSignature()")
      */
     public $attr.javaType get${attr.javaName}()
     {
-        return (${attr.javaType})getInternal(${attr.name}Def, null);
+        return getInternal(${attr.name}Def, null);
     }
 #if(!$attr.required)
     
@@ -327,7 +336,7 @@ $string.wrap("#createSignature()")
      */
     public $attr.javaType get${attr.javaName}(${attr.javaType} defaultValue)
     {
-        return (${attr.javaType})getInternal(${attr.name}Def, defaultValue);
+        return getInternal(${attr.name}Def, defaultValue);
     }    
 #end
 #if(!$attr.readonly)
