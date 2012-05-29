@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.event.CoralEventHub;
@@ -15,6 +14,10 @@ import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.ResourceTreeChangeListener;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ResourceInheritance;
+
+import com.google.common.base.Function;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 
 /**
  * A helper class for managing a set of permissions.
@@ -37,7 +40,8 @@ public class PermissionContainer
     private RoleContainer roles;
 
     /** Cache of permission information */
-    private Map<Resource, PermissionsInfo> piCache = new WeakHashMap<Resource, PermissionsInfo>();
+    private Map<Resource, PermissionsInfo> piCache = CacheBuilder.newBuilder().weakKeys()
+        .build(CacheLoader.from(new ResourceToPermissionsInfo())).asMap();
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -54,7 +58,6 @@ public class PermissionContainer
         this.coral = coral;
         this.roles = roles;
         roles.setPermissionContainer(this);
-        coral.getCacheFactory().registerForPeriodicExpunge((WeakHashMap<?,?>)piCache);
     }
 
     // Permissions //////////////////////////////////////////////////////////////////////////////
@@ -112,7 +115,7 @@ public class PermissionContainer
      * @param item permission assignment information.
      * @param added was the permission added, or removed?
      */
-    public synchronized void permissionsChanged(PermissionAssignment item, boolean added)
+    public void permissionsChanged(PermissionAssignment item, boolean added)
     {
         flush(item.getResource());
     }
@@ -129,7 +132,7 @@ public class PermissionContainer
      * @param item resource relationship information.
      * @param added was the relationship added or removed.
      */
-    public synchronized void resourceTreeChanged(ResourceInheritance item, boolean added)
+    public void resourceTreeChanged(ResourceInheritance item, boolean added)
     {
         flush(item.getChild());
         if(added)
@@ -145,27 +148,13 @@ public class PermissionContainer
      * Returns the chain of permissions info starting from res all the way up to hierarchy root.
      * Always returns at least one element. PermissionsInfo for res is always the first element.
      */
-    private synchronized List<PermissionsInfo> getPermissionsInfo(Resource res)
+    private List<PermissionsInfo> getPermissionsInfo(Resource res)
     {
         List<PermissionsInfo> piList = new ArrayList<PermissionsInfo>();
-        Set<Role> roleSet = null;
         Resource cur = res;
         while(cur != null)
         {
-            PermissionsInfo pi = piCache.get(cur);
-            if(pi == null)
-            {
-                if(roleSet == null)
-                {
-                    roleSet = roles.getMatchingRoles();
-                }
-                Set<PermissionAssignment> paSet = coral.getRegistry().getPermissionAssignments(cur);
-                pi = new PermissionsInfo(roleSet, paSet);
-                piCache.put(cur, pi);
-                coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, cur);
-                coralEventHub.getGlobal().addResourceTreeChangeListener(this, cur);
-            }
-            piList.add(pi);
+            piList.add(piCache.get(cur));
             cur = cur.getParent();
         }
         return piList;
@@ -178,7 +167,7 @@ public class PermissionContainer
      * assignments) change.
      * </p>
      */
-    synchronized void flush()
+    void flush()
     {
         piCache.clear();
     }
@@ -188,7 +177,7 @@ public class PermissionContainer
      * 
      * @param r the resource to flush permissions information on.
      */
-    synchronized void flush(Resource r)
+    void flush(Resource r)
     {
         piCache.remove(r);
         // we assume than number of PermissionInfo entries is significantly smaller than number of resource's descendants
@@ -202,8 +191,23 @@ public class PermissionContainer
             }
         }
     }
+    
+    private class ResourceToPermissionsInfo
+        implements Function<Resource, PermissionsInfo>
+    {
+        @Override
+        public PermissionsInfo apply(Resource res)
+        {
+            coralEventHub.getGlobal().addPermissionAssignmentChangeListener(
+                PermissionContainer.this, res);
+            coralEventHub.getGlobal().addResourceTreeChangeListener(PermissionContainer.this, res);
+            
+            return new PermissionsInfo(roles.getMatchingRoles(), coral.getRegistry()
+                .getPermissionAssignments(res));
+        }
+    }
 
-    private class PermissionsInfo
+    private static class PermissionsInfo
     {
         private Set<Permission> inherited;
 
