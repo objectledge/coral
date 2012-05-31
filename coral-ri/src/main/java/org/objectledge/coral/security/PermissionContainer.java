@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
+import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
@@ -18,6 +19,7 @@ import org.objectledge.coral.store.ResourceInheritance;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * A helper class for managing a set of permissions.
@@ -40,8 +42,8 @@ public class PermissionContainer
     private RoleContainer roles;
 
     /** Cache of permission information */
-    private Map<Resource, PermissionsInfo> piCache = CacheBuilder.newBuilder().weakKeys()
-        .build(CacheLoader.from(new ResourceToPermissionsInfo())).asMap();
+    private LoadingCache<Resource, PermissionsInfo> piCache = CacheBuilder.newBuilder().weakKeys()
+        .build(CacheLoader.from(new ResourceToPermissionsInfo()));
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -150,14 +152,21 @@ public class PermissionContainer
      */
     private List<PermissionsInfo> getPermissionsInfo(Resource res)
     {
-        List<PermissionsInfo> piList = new ArrayList<PermissionsInfo>();
-        Resource cur = res;
-        while(cur != null)
+        try
         {
-            piList.add(piCache.get(cur));
-            cur = cur.getParent();
+            List<PermissionsInfo> piList = new ArrayList<PermissionsInfo>();
+            Resource cur = res;
+            while(cur != null)
+            {
+                piList.add(piCache.get(cur));
+                cur = cur.getParent();
+            }
+            return piList;
         }
-        return piList;
+        catch(ExecutionException e)
+        {
+            throw new BackendException("unexpected exception while generating permission info", e.getCause());
+        }
     }
 
     /**
@@ -169,7 +178,7 @@ public class PermissionContainer
      */
     void flush()
     {
-        piCache.clear();
+        piCache.invalidateAll();
     }
 
     /**
@@ -179,9 +188,9 @@ public class PermissionContainer
      */
     void flush(Resource r)
     {
-        piCache.remove(r);
+        piCache.invalidate(r);
         // we assume than number of PermissionInfo entries is significantly smaller than number of resource's descendants
-        Iterator<Resource> i = piCache.keySet().iterator();
+        Iterator<Resource> i = piCache.asMap().keySet().iterator();
         while(i.hasNext())
         {
             Resource res = i.next();
