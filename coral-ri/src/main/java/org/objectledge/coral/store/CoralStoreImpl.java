@@ -1045,8 +1045,10 @@ public class CoralStoreImpl
             try
             {
                 Resource rootResource = getResource(1);
-                ResourceClass rc = coral.getSchema().getResourceClass("coral.Node");
-                return createResource("tmp", rootResource, rc, Collections.EMPTY_MAP);
+                ResourceClass<Resource> rc = coral.getSchema().getResourceClass("coral.Node",
+                    Resource.class);
+                return createResource("tmp", rootResource, rc,
+                    Collections.<AttributeDefinition<?>, Object> emptyMap());
             }
             catch(Exception ee)
             {
@@ -1487,7 +1489,9 @@ public class CoralStoreImpl
                         {
                             try
                             {
-                                dst.set((AttributeDefinition<Resource>)atDefs[i], target[0]);
+                                @SuppressWarnings("unchecked")
+                                AttributeDefinition<Resource> resAtDef = (AttributeDefinition<Resource>)atDefs[i];
+                                dst.set(resAtDef, target[0]);
                                 changed = true;
                             }
                             catch(Exception e)
