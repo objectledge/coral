@@ -972,7 +972,7 @@ public abstract class AbstractResource implements Resource
 	            attributeModified = true;
 	        }
 	    }
-	    if(oldValue.equals(value))
+	    else if(oldValue.equals(value))
 	    {
 	    	attributeModified = false;
 	    }
