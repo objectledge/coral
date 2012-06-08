@@ -3,6 +3,7 @@ package org.objectledge.coral.store;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -206,22 +207,21 @@ public class CoralStoreImpl
     {
         Set<Resource> rs = null;
         Set<ResourceRef> rrs = null;
+        Collection<ResourceRef> rrsc = null;
         
-        try
+        r.lock();
+        rrs = (Set<ResourceRef>)resourceByParent.get(parent);
+        if(rrs != null)
         {
-            r.lock();
-            rrs = (Set<ResourceRef>)resourceByParent.get(parent);
-            if(rrs != null)
-            {
-                rs = deref(rrs);
-            }
+            rrsc = new ArrayList<ResourceRef>(rrs);
         }
-        finally
-        {
-            r.unlock();
-        }
+        r.unlock();
         
-        if(rrs == null)
+        if(rrsc != null)
+        {
+            rs = deref(rrsc);
+        }
+        else
         {
             Connection conn = null;
             try
@@ -238,7 +238,6 @@ public class CoralStoreImpl
                     list = persistence.load("parent IS NULL",
                         resourceFactory);
                 }
-                
                 rs = instantiate(list, conn);
                 rrs = ref(rs);
             }
@@ -398,28 +397,27 @@ public class CoralStoreImpl
     public Resource[] getResource(Resource parent, String name)
     {
         Set<ResourceRef> rrs = null;
+        Collection<ResourceRef> rrsc = null;
         Set<Resource> rs = null;
         Map<String, Set<ResourceRef>> nameMap;
 
-        try
+        r.lock();
+        nameMap = resourceByParentAndName.get(parent);
+        if(nameMap != null)
         {
-            r.lock();        
-            nameMap = resourceByParentAndName.get(parent);
-            if(nameMap != null)
+            rrs = nameMap.get(name);
+            if(rrs != null)
             {
-                rrs = nameMap.get(name);
-                if(rrs != null)
-                {
-                    rs = deref(rrs);
-                }
+                rrsc = new ArrayList<ResourceRef>(rrs);
             }
         }
-        finally
+        r.unlock();
+
+        if(rrsc != null)
         {
-            r.unlock();
+            rs = deref(rrsc);
         }
-        
-        if(rrs == null)
+        else
         {
             Connection conn = null;
             try
@@ -1351,7 +1349,7 @@ public class CoralStoreImpl
         return rset;
     }
 
-    private Set<Resource> deref(Set<ResourceRef> rset)
+    private Set<Resource> deref(Collection<ResourceRef> rset)
     {
         try
         {
