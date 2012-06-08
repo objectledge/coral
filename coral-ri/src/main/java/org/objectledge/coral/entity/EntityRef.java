@@ -14,20 +14,20 @@ import org.objectledge.coral.CoralCore;
 public abstract class EntityRef<E extends Entity>
 {
     /** The Coral core. */
-    protected CoralCore coralCore;
+    protected final CoralCore coralCore;
 
     /** Identifier of the entity. */
-    private long id;
+    private final long id;
     
     /** Necessary to implement equals() method at the abstract class level. */
-    private Class<E> entityClass;
+    private final Class<E> entityClass;
+
+    /** Pre-computed hashcode */
+    private final int hashCode;
 
     /** Weak reference to the entity object. */
-    private WeakReference<E> ref;
+    private volatile WeakReference<E> ref;
     
-    /** Precomputed hashcode */
-    private int hashCode;
-
     /**
      * Resolves identifier to a concrete Entity object using Coral core.
      * 
@@ -81,7 +81,7 @@ public abstract class EntityRef<E extends Entity>
      * @return the referent Entity.
      * @throws EntityDoesNotExistException
      */
-    public synchronized E get()
+    public E get()
         throws EntityDoesNotExistException
     {
         E entity = ref.get();
@@ -106,14 +106,13 @@ public abstract class EntityRef<E extends Entity>
     /**
      * Equals operation based on underlying entity class & id equalities.
      */
-    @SuppressWarnings("unchecked")
     public boolean equals(Object o)
     {
         if(o == null || !(o instanceof EntityRef))
         {
             return false;
         }
-        EntityRef r = (EntityRef)o;
+        EntityRef<?> r = (EntityRef<?>)o;
         return r.entityClass.equals(entityClass) && r.id == id;
     }
     
