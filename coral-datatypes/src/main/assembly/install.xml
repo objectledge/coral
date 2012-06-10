@@ -8,11 +8,11 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>src/main/sql</directory>
+      <directory>src/main/resources/sql</directory>
       <outputDirectory>sql</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>src/main/rml</directory>
+      <directory>src/main/resources/rml</directory>
       <outputDirectory>rml</outputDirectory>
     </fileSet>
   </fileSets>
