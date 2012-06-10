@@ -170,7 +170,7 @@ public class CoralStoreImpl
             try
             {
                 conn = persistence.getDatabase().getConnection();
-                List<ResourceImpl> list = persistence.load(" true ORDER BY resource_id",
+                List<ResourceImpl> list = persistence.load(" 1 = 1 ORDER BY resource_id",
                     resourceFactory);
                 rs = instantiate(list, conn);
             }
