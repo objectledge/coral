@@ -159,18 +159,16 @@ public class PermissionContainer
         Resource cur = res;
         while(cur != null)
         {
-            ResourceRef ref = new ResourceRef(cur, coral);
-            PermissionsInfo pi = piCache.get(ref);
+            PermissionsInfo pi = piCache.get(new ResourceRef(cur.getId(), coral));
             if(pi == null)
             {
-                coralEventHub.getGlobal().addPermissionAssignmentChangeListener(
-                    PermissionContainer.this, res);
-                coralEventHub.getGlobal().addResourceTreeChangeListener(
-                    PermissionContainer.this, res);
+                coralEventHub.getGlobal().addPermissionAssignmentChangeListener(this, cur);
+                coralEventHub.getGlobal().addResourceTreeChangeListener(this, cur);
 
                 pi = new PermissionsInfo(roles.getMatchingRoles(), coral.getRegistry()
-                    .getPermissionAssignments(res));
-                piCache.put(ref, pi);
+                    .getPermissionAssignments(cur));
+
+                piCache.put(new ResourceRef(cur, coral, queue), pi);
             }
             piList.add(pi);
             cur = cur.getParent();
