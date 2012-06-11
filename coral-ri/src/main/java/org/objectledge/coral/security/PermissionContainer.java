@@ -1,25 +1,24 @@
 package org.objectledge.coral.security;
 
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
+import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.ResourceTreeChangeListener;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ResourceInheritance;
-
-import com.google.common.base.Function;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import org.objectledge.coral.store.ResourceRef;
 
 /**
  * A helper class for managing a set of permissions.
@@ -42,8 +41,11 @@ public class PermissionContainer
     private RoleContainer roles;
 
     /** Cache of permission information */
-    private LoadingCache<Resource, PermissionsInfo> piCache = CacheBuilder.newBuilder().weakKeys()
-        .build(CacheLoader.from(new ResourceToPermissionsInfo()));
+    private ConcurrentMap<ResourceRef, PermissionsInfo> piCache = new ConcurrentHashMap<ResourceRef, PermissionsInfo>();
+
+    private final ReferenceQueue<Resource> queue = new ReferenceQueue<Resource>();
+
+    private static final int DRAIN_LIMIT = 16;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -152,21 +154,28 @@ public class PermissionContainer
      */
     private List<PermissionsInfo> getPermissionsInfo(Resource res)
     {
-        try
+        drainQueue();
+        List<PermissionsInfo> piList = new ArrayList<PermissionsInfo>();
+        Resource cur = res;
+        while(cur != null)
         {
-            List<PermissionsInfo> piList = new ArrayList<PermissionsInfo>();
-            Resource cur = res;
-            while(cur != null)
+            ResourceRef ref = new ResourceRef(cur, coral);
+            PermissionsInfo pi = piCache.get(ref);
+            if(pi == null)
             {
-                piList.add(piCache.get(cur));
-                cur = cur.getParent();
+                coralEventHub.getGlobal().addPermissionAssignmentChangeListener(
+                    PermissionContainer.this, res);
+                coralEventHub.getGlobal().addResourceTreeChangeListener(
+                    PermissionContainer.this, res);
+
+                pi = new PermissionsInfo(roles.getMatchingRoles(), coral.getRegistry()
+                    .getPermissionAssignments(res));
+                piCache.put(ref, pi);
             }
-            return piList;
+            piList.add(pi);
+            cur = cur.getParent();
         }
-        catch(ExecutionException e)
-        {
-            throw new BackendException("unexpected exception while generating permission info", e.getCause());
-        }
+        return piList;
     }
 
     /**
@@ -178,7 +187,8 @@ public class PermissionContainer
      */
     void flush()
     {
-        piCache.invalidateAll();
+        drainQueue();
+        piCache.clear();
     }
 
     /**
@@ -188,31 +198,38 @@ public class PermissionContainer
      */
     void flush(Resource r)
     {
-        piCache.invalidate(r);
+        drainQueue();
+        piCache.remove(new ResourceRef(r.getId(), coral));
         // we assume than number of PermissionInfo entries is significantly smaller than number of resource's descendants
-        Iterator<Resource> i = piCache.asMap().keySet().iterator();
+        Iterator<ResourceRef> i = piCache.keySet().iterator();
         while(i.hasNext())
         {
-            Resource res = i.next();
-            if(coral.getStore().isAncestor(r, res))
+            ResourceRef res = i.next();
+            try
             {
-                i.remove();
+                if(coral.getStore().isAncestor(r, res.get()))
+                {
+                    i.remove();
+                }
+            }
+            catch(EntityDoesNotExistException e)
+            {
+                // resource is gone, ignore
             }
         }
     }
-    
-    private class ResourceToPermissionsInfo
-        implements Function<Resource, PermissionsInfo>
+
+    private void drainQueue()
     {
-        @Override
-        public PermissionsInfo apply(Resource res)
+        int drainCount = DRAIN_LIMIT;
+        Reference<Resource> ref;
+        while(drainCount-- > 0 && (ref = (Reference<Resource>)queue.poll()) != null)
         {
-            coralEventHub.getGlobal().addPermissionAssignmentChangeListener(
-                PermissionContainer.this, res);
-            coralEventHub.getGlobal().addResourceTreeChangeListener(PermissionContainer.this, res);
-            
-            return new PermissionsInfo(roles.getMatchingRoles(), coral.getRegistry()
-                .getPermissionAssignments(res));
+            Resource r = ref.get();
+            if(r != null)
+            {
+                piCache.remove(new ResourceRef(r.getId(), coral));
+            }
         }
     }
 
