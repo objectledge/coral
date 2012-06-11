@@ -27,6 +27,9 @@ public abstract class EntityRef<E extends Entity>
 
     /** Weak reference to the entity object. */
     private volatile WeakReference<E> ref;
+
+    /** Queue that the reference should be associated with. */
+    private final ReferenceQueue<E> queue;
     
     /**
      * Resolves identifier to a concrete Entity object using Coral core.
@@ -48,6 +51,7 @@ public abstract class EntityRef<E extends Entity>
     {
         this.coralCore = coralCore;
         this.entityClass = entityClass;
+        this.queue = queue;
         ref = new WeakReference<E>(entity, queue);
         if(entity != null)
         {
@@ -69,7 +73,8 @@ public abstract class EntityRef<E extends Entity>
     public EntityRef(Class<E> entityClass, long id, CoralCore coralCore, ReferenceQueue<E> queue)
     {
         this.coralCore = coralCore;
-        ref = new WeakReference<E>(null);
+        this.queue = queue;
+        this.ref = null;
         this.entityClass = entityClass;
         this.id = id;
         this.hashCode = entityClass.hashCode() ^ (int)(id * 0x11111111);
@@ -84,11 +89,15 @@ public abstract class EntityRef<E extends Entity>
     public E get()
         throws EntityDoesNotExistException
     {
-        E entity = ref.get();
+        E entity = null;
+        if(ref != null)
+        {
+            entity = ref.get();
+        }
         if(entity == null && id != -1L)
         {
             entity = resolve(id);
-            ref = new WeakReference<E>(entity);
+            ref = new WeakReference<E>(entity, queue);
         }
         return entity;
     }
