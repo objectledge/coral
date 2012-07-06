@@ -1312,7 +1312,14 @@ public class RMLExecutor
         try
         {
             Resource resource = entities.resolve(node.getResource());
-            coralSession.getStore().deleteResource(resource);
+            if(node.getRecursive())
+            {
+                coralSession.getStore().deleteTree(resource);
+            }
+            else
+            {
+                coralSession.getStore().deleteResource(resource);
+            }
         }
         catch(Exception e)
         {
