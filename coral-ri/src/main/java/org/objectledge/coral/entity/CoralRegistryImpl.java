@@ -4,7 +4,6 @@ package org.objectledge.coral.entity;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -503,10 +502,10 @@ public class CoralRegistryImpl
                     coral.getSchema().deleteParentClass(item, rci[i].getParent());
                 }
             }
-            Permission[] perms = item.getPermissions();
+            PermissionAssociation[] perms = item.getPermissionAssociations();
             for(int i=0; i<perms.length; i++)
             {
-                coral.getSecurity().deletePermission(item, perms[i]);
+                coral.getSecurity().deletePermission(item, perms[i].getPermission());
             }
             resourceClassRegistry.delete((ResourceClassImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
