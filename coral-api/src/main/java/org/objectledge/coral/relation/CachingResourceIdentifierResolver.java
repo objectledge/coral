@@ -29,7 +29,6 @@ package org.objectledge.coral.relation;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 

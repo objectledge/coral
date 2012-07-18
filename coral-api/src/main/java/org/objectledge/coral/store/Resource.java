@@ -38,7 +38,7 @@ public interface Resource
      *
      * @return the class this resource belongs to.
      */
-    public ResourceClass getResourceClass();
+    public ResourceClass<?> getResourceClass();
 
     /**
      * Returns the {@link Subject} that created this resource.
@@ -138,6 +138,18 @@ public interface Resource
      *         belong to the resource's class.
      */
     public <T> T get(AttributeDefinition<T> attribute)
+        throws UnknownAttributeException;
+    
+    /**
+     * Retrieves the value of a specific attribute.
+     * 
+     * @param attribute the attribute to retrieve.
+     * @param defaultValue value to be returned when the attribute value is undefined.
+     * @return the value of the attribute, or <code>null</code> if undefined.
+     * @throws UnknownAttributeException if <code>attribute</code> does not
+     *         belong to the resource's class.
+     */
+    public <T> T get(AttributeDefinition<T> attribute, T defaultValue)
         throws UnknownAttributeException;
     
     /**

@@ -286,7 +286,7 @@ public interface CoralSecurity
      * @param resourceClass the resource class.
      * @param permission permission.
      */
-    public void addPermission(ResourceClass resourceClass, Permission permission);
+    public void addPermission(ResourceClass<?> resourceClass, Permission permission);
     
     /**
      * Unassociates a {@link Permission} with a {@link ResourceClass}.
@@ -296,7 +296,7 @@ public interface CoralSecurity
      * @throws IllegalArgumentException if the <code>permission</code> is not
      *         associated with the <code>resourceClass</code>.
      */
-    public void deletePermission(ResourceClass resourceClass, Permission permission)
+    public void deletePermission(ResourceClass<?> resourceClass, Permission permission)
         throws IllegalArgumentException;
     
     /**

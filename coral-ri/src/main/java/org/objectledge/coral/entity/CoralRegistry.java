@@ -2,6 +2,7 @@ package org.objectledge.coral.entity;
 
 import java.util.Set;
 
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.ResourceClass;
@@ -32,7 +33,7 @@ public interface CoralRegistry
      *
      * @return all {@link AttributeClass}es defined in the system.
      */
-    public AttributeClass[] getAttributeClass();
+    public ImmutableSet<AttributeClass<?>> getAllAttributeClasses();
 
     /**
      * Returns the {@link AttributeClass} with a specific identifier.
@@ -42,7 +43,7 @@ public interface CoralRegistry
      * @throws EntityDoesNotExistException if the <code>AttributeClass</code>
      *         with the specified identifier does not exist.
      */
-    public AttributeClass getAttributeClass(long id)
+    public AttributeClass<?> getAttributeClass(long id)
         throws EntityDoesNotExistException;
     
     /**
@@ -53,7 +54,7 @@ public interface CoralRegistry
      * @throws EntityDoesNotExistException if the <code>AttributeClass</code>
      *         with the specified name does not exist.
      */
-    public AttributeClass getAttributeClass(String name)
+    public AttributeClass<?> getAttributeClass(String name)
         throws EntityDoesNotExistException;
 
     /**
@@ -63,7 +64,7 @@ public interface CoralRegistry
      * @throws EntityExistsException if an attribute class with specified name
      *         already exists.
      */
-    public void addAttributeClass(AttributeClass attributeClass)
+    public void addAttributeClass(AttributeClass<?> attributeClass)
         throws EntityExistsException;
     
     /**
@@ -73,7 +74,7 @@ public interface CoralRegistry
      * @throws EntityInUseException if there is an <code>ResourceClass</code>
      *         that has attributes of this class.
      */
-    public void deleteAttributeClass(AttributeClass attributeClass)
+    public void deleteAttributeClass(AttributeClass<?> attributeClass)
         throws EntityInUseException;
 
     /**
@@ -84,7 +85,7 @@ public interface CoralRegistry
      * @throws EntityExistsException if an attribute class with specified name
      *         already exists.
      */
-    public void renameAttributeClass(AttributeClass item, String name)
+    public void renameAttributeClass(AttributeClass<?> item, String name)
         throws EntityExistsException;
 
     // Schema - ResourceClass ////////////////////////////////////////////////
@@ -94,7 +95,7 @@ public interface CoralRegistry
      *
      * @return all {@link ResourceClass}es defined in the system.
      */
-    public ResourceClass[] getResourceClass();
+    public ImmutableSet<ResourceClass<?>> getAllResourceClasses();
 
     /**
      * Returns the {@link ResourceClass} with a specific identifier.
@@ -104,7 +105,7 @@ public interface CoralRegistry
      * @throws EntityDoesNotExistException if the <code>ResourceClass</code>
      *         with the specified identifier does not exist.
      */
-    public ResourceClass getResourceClass(long id)
+    public ResourceClass<?> getResourceClass(long id)
         throws EntityDoesNotExistException;
 
     /**
@@ -115,7 +116,7 @@ public interface CoralRegistry
      * @throws EntityDoesNotExistException if the <code>ResourceClass</code>
      *         with the specified name does not exist.
      */
-    public ResourceClass getResourceClass(String name)
+    public ResourceClass<?> getResourceClass(String name)
         throws EntityDoesNotExistException;
 
     /**
@@ -125,7 +126,7 @@ public interface CoralRegistry
      * @throws EntityExistsException if an resource class with specified name
      *         already exists.
      */
-    public void addResourceClass(ResourceClass item)
+    public void addResourceClass(ResourceClass<?> item)
         throws EntityExistsException;
 
     /**
@@ -134,7 +135,7 @@ public interface CoralRegistry
      * @param item the <code>ResourceClass</code> to remove.
      * @throws EntityInUseException if there any resource of this class exists.
      */
-    public void deleteResourceClass(ResourceClass item)
+    public void deleteResourceClass(ResourceClass<?> item)
         throws EntityInUseException;
 
     /**
@@ -145,7 +146,7 @@ public interface CoralRegistry
      * @throws EntityExistsException if an resource class with specified name
      *         already exists.
      */
-    public void renameResourceClass(ResourceClass item, String name)
+    public void renameResourceClass(ResourceClass<?> item, String name)
         throws EntityExistsException;
 
     // Schema - AttributeDefinition //////////////////////////////////////////
@@ -156,14 +157,14 @@ public interface CoralRegistry
      * @param resourceClass the resource class.
      * @return attributes defined by a particular {@link ResourceClass}.
      */
-    public Set<AttributeDefinition> getDeclaredAttributes(ResourceClass resourceClass);
+    public Set<AttributeDefinition<?>> getDeclaredAttributes(ResourceClass<?> resourceClass);
 
     /**
      * Returns all attributes defined by classes in the system.
      * 
      * @return all attributes defined by classes in the system.
      */
-    public AttributeDefinition[] getAttributeDefinition();
+    public ImmutableSet<AttributeDefinition<?>> getAllAttributeDefinitions();
     
     /**
      * Returns an attribute defienition with the given id.
@@ -172,7 +173,7 @@ public interface CoralRegistry
      * @return an attribute defienition with the given id.
      * @throws EntityDoesNotExistException if no such attribute exists.
      */
-    public AttributeDefinition getAttributeDefinition(long id)
+    public AttributeDefinition<?> getAttributeDefinition(long id)
         throws EntityDoesNotExistException;
 
     /**
@@ -183,7 +184,7 @@ public interface CoralRegistry
      * @throws EntityExistsException if an attribute class with specified name
      *         already exists.
      */
-    public void renameAttributeDefinition(AttributeDefinition item, String name)
+    public void renameAttributeDefinition(AttributeDefinition<?> item, String name)
         throws EntityExistsException;
 
     /**
@@ -192,14 +193,14 @@ public interface CoralRegistry
      *
      * @param item the {@link AttributeDefinition} to add.
      */
-    public void addAttributeDefinition(AttributeDefinition item);
+    public void addAttributeDefinition(AttributeDefinition<?> item);
 
     /**
      * Removes resource class from the persitent storage and in-memory cache.
      *
      * @param item the <code>ResourceClass</code> to remove.
      */
-    public void deleteAttributeDefinition(AttributeDefinition item);
+    public void deleteAttributeDefinition(AttributeDefinition<?> item);
 
     // Schema - ResourceClassInheritance /////////////////////////////////////
 
@@ -210,7 +211,7 @@ public interface CoralRegistry
      * @param resourceClass the resource class.
      * @return a set of {@link ResourceClassInheritance} objects.
      */
-    public Set<ResourceClassInheritance> getResourceClassInheritance(ResourceClass resourceClass);
+    public Set<ResourceClassInheritance> getResourceClassInheritance(ResourceClass<?> resourceClass);
 
     /**
      * Adds an resource class inheritance record to the persistent storage and
@@ -501,7 +502,7 @@ public interface CoralRegistry
      * @param resourceClass the resourceClass.
      * @return pemission associations for a particular {@link ResourceClass}.
      */
-    public Set<PermissionAssociation> getPermissionAssociations(ResourceClass resourceClass);
+    public Set<PermissionAssociation> getPermissionAssociations(ResourceClass<?> resourceClass);
     
     /**
      * Returns pemission associations for a particular {@link Permission}.

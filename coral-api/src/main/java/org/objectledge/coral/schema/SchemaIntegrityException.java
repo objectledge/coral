@@ -57,7 +57,7 @@ public class SchemaIntegrityException
      *
      * @return the offending class.
      */
-    public ResourceClass getConflictingClass()
+    public ResourceClass<?> getConflictingClass()
     {
         return resourceClass;
     }
@@ -82,7 +82,7 @@ public class SchemaIntegrityException
      *
      * @return the other involved class.
      */
-    public ResourceClass getOtherClass()
+    public ResourceClass<?> getOtherClass()
     {
         return otherClass;
     }
@@ -94,14 +94,14 @@ public class SchemaIntegrityException
     private AttributeDefinition<?> attribute = null;
     
     /** The involved resource class. */
-    private ResourceClass resourceClass = null;
+    private ResourceClass<?> resourceClass = null;
 
     /** Is resourceClass a super class of the class on which the opertaion was
      *  performed? */
     private boolean superClass = false;
     
     /** The other involved class. */
-    private ResourceClass otherClass = null;
+    private ResourceClass<?> otherClass = null;
 
     /** 
      * Construcs a new exception object with the specified detail message.
@@ -127,9 +127,9 @@ public class SchemaIntegrityException
      */
     public SchemaIntegrityException(String msg, int type, 
                                    AttributeDefinition<?> attribute, 
-                                   ResourceClass resourceClass, 
+                                   ResourceClass<?> resourceClass, 
                                    boolean superClass,
-                                   ResourceClass otherClass)
+                                   ResourceClass<?> otherClass)
     {
         super(msg);
         this.type = type;

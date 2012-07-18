@@ -36,17 +36,17 @@ public class GenericResource
     
     // Package private ///////////////////////////////////////////////////////
 
-    synchronized void retrieve(Resource delegate, ResourceClass rClass, 
+    synchronized void retrieve(Resource delegate, ResourceClass<?> rClass, 
                                  Connection conn, Object data)
         throws SQLException
     {
         super.retrieve(delegate, rClass, conn, data);
-        Map<Long,Map<AttributeDefinition,Long>> dataKeyMap = 
-            (Map<Long,Map<AttributeDefinition,Long>>)data;
-        Map<AttributeDefinition,Long> dataKeys = dataKeyMap.get(delegate.getIdObject());
+        Map<Long,Map<AttributeDefinition<?>,Long>> dataKeyMap = 
+            (Map<Long,Map<AttributeDefinition<?>,Long>>)data;
+        Map<AttributeDefinition<?>,Long> dataKeys = dataKeyMap.get(delegate.getIdObject());
         if(dataKeys != null)
         {            
-            for(AttributeDefinition declared : rClass.getDeclaredAttributes())
+            for(AttributeDefinition<?> declared : rClass.getDeclaredAttributes())
             {
                 Long id = dataKeys.get(declared);
                 if(id != null)
@@ -57,16 +57,16 @@ public class GenericResource
         }
     }
 
-    synchronized void revert(ResourceClass rClass, Connection conn, Object data)
+    synchronized void revert(ResourceClass<?> rClass, Connection conn, Object data)
         throws SQLException
     {
         super.revert(rClass, conn, data);
-        Map<Long,Map<AttributeDefinition,Long>> dataKeyMap = 
-            (Map<Long,Map<AttributeDefinition,Long>>)data;
-        Map<AttributeDefinition,Long> dataKeys = dataKeyMap.get(delegate.getIdObject());
+        Map<Long,Map<AttributeDefinition<?>,Long>> dataKeyMap = 
+            (Map<Long,Map<AttributeDefinition<?>,Long>>)data;
+        Map<AttributeDefinition<?>,Long> dataKeys = dataKeyMap.get(delegate.getIdObject());
         if(dataKeys != null)
         {          
-            for(AttributeDefinition declared : rClass.getDeclaredAttributes())
+            for(AttributeDefinition<?> declared : rClass.getDeclaredAttributes())
             {
                 Long id = dataKeys.get(declared);
                 if(id != null)
@@ -77,8 +77,8 @@ public class GenericResource
         }
     }
 
-    synchronized void create(Resource delegate, ResourceClass rClass, 
-                               Map attributes, Connection conn)
+    synchronized void create(Resource delegate, ResourceClass<?> rClass, 
+                               Map<AttributeDefinition<?>, Object> attributes, Connection conn)
         throws SQLException, ValueRequiredException, ConstraintViolationException
     {
         super.create(delegate, rClass, attributes, conn);
@@ -86,7 +86,7 @@ public class GenericResource
         try
         {
             
-            for(AttributeDefinition attr : rClass.getDeclaredAttributes())
+            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
@@ -140,7 +140,7 @@ public class GenericResource
         Statement stmt = conn.createStatement();
         try
         {
-            for(AttributeDefinition attr : delegate.getResourceClass().getAllAttributes())
+            for(AttributeDefinition<?> attr : delegate.getResourceClass().getAllAttributes())
             {
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
@@ -210,7 +210,7 @@ public class GenericResource
     {
         super.delete(conn);
         AttributeDefinition[] declared = delegate.getResourceClass().getAllAttributes();
-        for(AttributeDefinition attr : declared)
+        for(AttributeDefinition<?> attr : declared)
         {
             if((attr.getFlags() & AttributeFlags.BUILTIN) == 0) 
             {                

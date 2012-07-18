@@ -30,7 +30,6 @@ package org.objectledge.coral.relation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.AbstractEntity;
@@ -59,6 +58,12 @@ public class RelationImpl
 extends AbstractEntity
 implements Relation
 {
+    // implementation -----------------------------------------------------------------------------
+    
+    private static int initialSetCapacity = 128;
+
+    private static final long[][] BLANK = new long[0][];
+
     /** Store is used to retrieve resources. */
     private CoralStore store;
     
@@ -73,6 +78,8 @@ implements Relation
 	private int resourceIdPairsNum = 0;
 
     // initialization -----------------------------------------------------------------------------
+
+    private InvertedRelation invertedRelation = new InvertedRelation();
 
     /**
      * Creates a relationship from provided definition.
@@ -109,8 +116,6 @@ implements Relation
 
     // public api ---------------------------------------------------------------------------------
 
-    private InvertedRelation invertedRelation = new InvertedRelation();
-
     /**
      * {@inheritDoc}
      */
@@ -130,15 +135,15 @@ implements Relation
     /**
      * {@inheritDoc}
      */
-    public Resource[] get(Resource r)
+    public synchronized Resource[] get(Resource r)
     {
-        return get(rel, r);
+        return get(rel, r, store);
     }
 
     /**
      * {@inheritDoc}
      */
-    public LongSet get(long id)
+    public synchronized LongSet get(long id)
     {
         return get(rel, id);
     }
@@ -154,7 +159,7 @@ implements Relation
     /**
      * {@inheritDoc}
      */
-    public boolean hasRef(long id, long idInv)
+    public synchronized boolean hasRef(long id, long idInv)
     {
         LongSet set = (LongSet)rel.get(id);
         if(set != null)
@@ -167,7 +172,7 @@ implements Relation
     /**
      * {@inheritDoc}
      */
-    public int size()
+    public synchronized int size()
     {
         return calcSetsSizeSum(rel);
     }
@@ -175,32 +180,12 @@ implements Relation
 	/**
 	 * {@inheritDoc}
 	 */
-	public float getAvgMappingSize()
+	public synchronized float getAvgMappingSize()
 	{
-		return getAvgMappingSize(rel);
-	}
-
-	float getAvgMappingSize(LongKeyMap relation)
-	{
-		int numSets = relation.size();
-		if(numSets != 0)
-		{
-			return (float) resourceIdPairsNum / (float) numSets;
-		}
-		else
-		{
-			if(resourceIdPairsNum != 0)
-			{
-				throw new IllegalStateException("inconsistent state");
-			}
-			return 0F;
-		}
+		return getAvgMappingSize(rel, resourceIdPairsNum);
 	}
 
     // persistence api ----------------------------------------------------------------------------
-
-    /** The key columns. */
-    private static final String[] KEY_COLUMNS = { "relation_id" };
 
     /**
      * {@inheritDoc}
@@ -209,6 +194,19 @@ implements Relation
     {
         return "coral_relation";
     }
+
+    /**
+     * Returns a name of a database table used for storing relations contents.
+     * 
+     * @return name of a database table.  
+     */
+    String getDataTable()
+    {
+    	return "coral_relation_data";
+    }
+
+    /** The key columns. */
+    private static final String[] KEY_COLUMNS = { "relation_id" };
 
     /**
      * {@inheritDoc}
@@ -221,7 +219,7 @@ implements Relation
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setData(InputRecord record) throws PersistenceException
+	public synchronized void setData(InputRecord record) throws PersistenceException
 	{
 		super.setData(record);
 		long[] def = coralRelationManager.getRelationDefinition(this);
@@ -252,50 +250,7 @@ implements Relation
         this.resourceIdPairsNum = calcSetsSizeSum(rel);
     }
 
-    /**
-	 * Returns a name of a database table used for storing relations contents.
-	 * 
-	 * @return name of a database table.  
-	 */
-	String getDataTable()
-	{
-		return "coral_relation_data";
-	}
-    
-	private int calcSetsSizeSum(LongKeyMap relation)
-	{
-		int totalSize = 0;
-		for(LongKeyMapIterator i = relation.entries(); i.hasNext(); )
-		{
-			i.next();
-			LongSet relSet = (LongSet) i.getValue();
-			totalSize += relSet.size();
-		}
-		return totalSize;
-	}
-    
-    private static final long[][] BLANK = new long[0][];
-    
-    private long[][] getPairs(LongKeyMap relation)
-    {
-        List<long[]> temp = new ArrayList<long[]>();
-        for(LongKeyMapIterator i = relation.entries(); i.hasNext(); )
-        {
-        	i.next();
-        	LongSet tailSet = (LongSet)i.getValue();
-        	for(LongIterator j = tailSet.iterator(); j.hasNext(); )
-        	{
-                long[] pair = new long[2];
-                pair[0] = i.getKey();
-                pair[1] = j.next();
-                temp.add(pair);
-        	}
-        }
-        Collections.sort(temp, PairComparator.INSTANCE);
-        return temp.toArray(BLANK);
-    }
-    
-    public long[][] getPairs()
+    public synchronized long[][] getPairs()
     {
         return getPairs(rel);
     }
@@ -382,12 +337,58 @@ implements Relation
 
     // implementation -----------------------------------------------------------------------------
 
-    private static int initialSetCapacity = 128;
+    private static int calcSetsSizeSum(LongKeyMap relation)
+    {
+    	int totalSize = 0;
+    	for(LongKeyMapIterator i = relation.entries(); i.hasNext(); )
+    	{
+    		i.next();
+    		LongSet relSet = (LongSet) i.getValue();
+    		totalSize += relSet.size();
+    	}
+    	return totalSize;
+    }
+
+    private static float getAvgMappingSize(LongKeyMap relation, int numPairs)
+    {
+    	int numSets = relation.size();
+    	if(numSets != 0)
+    	{
+    		return (float) numPairs / (float) numSets;
+    	}
+    	else
+    	{
+    		if(numPairs != 0)
+    		{
+    			throw new IllegalStateException("inconsistent state");
+    		}
+    		return 0F;
+    	}
+    }
+
+    private static long[][] getPairs(LongKeyMap relation)
+    {
+        List<long[]> temp = new ArrayList<long[]>();
+        for(LongKeyMapIterator i = relation.entries(); i.hasNext(); )
+        {
+        	i.next();
+        	LongSet tailSet = (LongSet)i.getValue();
+        	for(LongIterator j = tailSet.iterator(); j.hasNext(); )
+        	{
+                long[] pair = new long[2];
+                pair[0] = i.getKey();
+                pair[1] = j.next();
+                temp.add(pair);
+        	}
+        }
+        Collections.sort(temp, PairComparator.INSTANCE);
+        return temp.toArray(BLANK);
+    }
 
     /**
      * Returns a set for a given id key and relation, maybe creates it.
      */
-    private LongSet maybeCreateSet(LongKeyMap relation, long idk)
+    private static LongSet maybeCreateSet(LongKeyMap relation, long idk)
     {
         return maybeCreateSet(relation, idk, initialSetCapacity);
     }
@@ -395,7 +396,7 @@ implements Relation
     /**
      * Returns a set for a given id key and relation, maybe creates it.
      */
-    private LongSet maybeCreateSet(LongKeyMap relation, long idk, int initialCapacity)
+    private static LongSet maybeCreateSet(LongKeyMap relation, long idk, int initialCapacity)
     {
         LongSet set = (LongSet) relation.get(idk);
         if(set == null)
@@ -408,13 +409,14 @@ implements Relation
 
     /**
      * Returns resources referenced by a given resource in the relation.
+     * @param store CoralStore
      */
-    Resource[] get(LongKeyMap relation, Resource r)
+    private static Resource[] get(LongKeyMap relation, Resource r, CoralStore store)
     {
         LongSet set = (LongSet)relation.get(r.getId());
         if(set != null)
         {
-            return instantiate(set);
+            return instantiate(set, store);
         }
         else
         {
@@ -425,7 +427,7 @@ implements Relation
     /**
      * Return an array of ids contained in the map under given id.
      */
-    LongSet get(LongKeyMap relation, long id)
+    private static LongSet get(LongKeyMap relation, long id)
     {
         LongSet set = (LongSet) relation.get(id);
         if(set != null)
@@ -442,9 +444,10 @@ implements Relation
      * Returns an array of Resources with given identifiers.
      *
      * @param a indentifier array.
+     * @param store CoralStore
      * @return Resource array.
      */
-    private Resource[] instantiate(LongSet a)
+    static private Resource[] instantiate(LongSet a, CoralStore store)
     {
         Resource[] res = new Resource[a.size()];
         try
@@ -464,7 +467,7 @@ implements Relation
     }
     
 	
-	private LongKeyMap makeLongKeyMap(int size)
+	private static LongKeyMap makeLongKeyMap(int size)
 	{
 		if(size <= 0)
 		{
@@ -476,7 +479,7 @@ implements Relation
 		}
 	}
 	
-	private LongSet makeLongSet(int size)
+	private static LongSet makeLongSet(int size)
 	{
 		if(size <= 0)
 		{
@@ -514,7 +517,10 @@ implements Relation
          */
         public Resource[] get(Resource r)
         {
-            return RelationImpl.this.get(invRel, r);
+            synchronized(RelationImpl.this)
+            {
+                return RelationImpl.get(invRel, r, store);
+            }
         }
 
         /**
@@ -522,7 +528,10 @@ implements Relation
          */
         public LongSet get(long id)
         {
-            return RelationImpl.this.get(invRel, id);
+            synchronized(RelationImpl.this)
+            {
+                return RelationImpl.get(invRel, id);
+            }
         }
 
         /**
@@ -590,12 +599,18 @@ implements Relation
 		 */
 		public float getAvgMappingSize()
 		{
-			return RelationImpl.this.getAvgMappingSize(invRel);
+		    synchronized(RelationImpl.this)
+		    {
+		        return RelationImpl.getAvgMappingSize(invRel, resourceIdPairsNum);
+		    }
 		}
         
         public long[][] getPairs()
         {
-            return RelationImpl.this.getPairs(invRel);
+            synchronized(RelationImpl.this)
+            {
+                return RelationImpl.getPairs(invRel);
+            }
         }
     }
 }

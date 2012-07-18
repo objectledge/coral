@@ -27,8 +27,6 @@
 //
 package org.objectledge.coral.relation;
 
-import java.util.Set;
-
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 
 import bak.pcj.set.LongSet;

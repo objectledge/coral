@@ -16,12 +16,12 @@ public interface ResourceClassInheritance
      *
      * @return the parent class in this relationship.
      */
-    public ResourceClass getParent();
+    public ResourceClass<?> getParent();
     
     /**
      * Returns the child class in this relationship.
      *
      * @return the child class in this relationship.
      */
-    public ResourceClass getChild();
+    public ResourceClass<?> getChild();
 }

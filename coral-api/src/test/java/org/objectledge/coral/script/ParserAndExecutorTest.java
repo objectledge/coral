@@ -151,7 +151,7 @@ public class ParserAndExecutorTest extends LedgeTestCase
     public void testFindAttributeClass()
         throws Exception
     {
-        mockCoralSchema.expects(once()).method("getAttributeClass").will(returnValue(null));
+        mockCoralSchema.expects(once()).method("getAllAttributeClasses").will(returnValue(null));
         execute("FIND ATTRIBUTE CLASS;");
 
         mockCoralSchema.expects(once()).method("getAttributeClass").with(eq(1L)).
@@ -309,7 +309,7 @@ public class ParserAndExecutorTest extends LedgeTestCase
     public void testFindResourceClass()
         throws Exception
     {
-        mockCoralSchema.expects(once()).method("getResourceClass").will(returnValue(null));
+        mockCoralSchema.expects(once()).method("getAllResourceClasses").will(returnValue(null));
         execute("FIND RESOURCE CLASS;");
 
         mockCoralSchema.expects(once()).method("getResourceClass").with(eq(1L)).

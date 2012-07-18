@@ -121,7 +121,7 @@ public interface AttributeHandler<T>
      * <code>false</code>.
      * </p>
      */
-    public boolean isModified(T value);
+    public boolean isModified(Object value);
     
     // meta information //////////////////////////////////////////////////////
 

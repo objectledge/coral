@@ -8,7 +8,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>src/main/sql</directory>
+      <directory>src/main/resources/sql</directory>
       <outputDirectory>sql</outputDirectory>
     </fileSet>
   </fileSets>

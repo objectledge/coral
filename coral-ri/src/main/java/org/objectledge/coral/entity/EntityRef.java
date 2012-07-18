@@ -14,20 +14,23 @@ import org.objectledge.coral.CoralCore;
 public abstract class EntityRef<E extends Entity>
 {
     /** The Coral core. */
-    protected CoralCore coralCore;
+    protected final CoralCore coralCore;
 
     /** Identifier of the entity. */
-    private long id;
+    private final long id;
     
     /** Necessary to implement equals() method at the abstract class level. */
-    private Class<E> entityClass;
+    private final Class<E> entityClass;
+
+    /** Pre-computed hashcode */
+    private final int hashCode;
 
     /** Weak reference to the entity object. */
-    private WeakReference<E> ref;
-    
-    /** Precomputed hashcode */
-    private int hashCode;
+    private volatile WeakReference<E> ref;
 
+    /** Queue that the reference should be associated with. */
+    private final ReferenceQueue<E> queue;
+    
     /**
      * Resolves identifier to a concrete Entity object using Coral core.
      * 
@@ -48,6 +51,7 @@ public abstract class EntityRef<E extends Entity>
     {
         this.coralCore = coralCore;
         this.entityClass = entityClass;
+        this.queue = queue;
         ref = new WeakReference<E>(entity, queue);
         if(entity != null)
         {
@@ -69,7 +73,8 @@ public abstract class EntityRef<E extends Entity>
     public EntityRef(Class<E> entityClass, long id, CoralCore coralCore, ReferenceQueue<E> queue)
     {
         this.coralCore = coralCore;
-        ref = new WeakReference<E>(null);
+        this.queue = queue;
+        this.ref = null;
         this.entityClass = entityClass;
         this.id = id;
         this.hashCode = entityClass.hashCode() ^ (int)(id * 0x11111111);
@@ -81,14 +86,18 @@ public abstract class EntityRef<E extends Entity>
      * @return the referent Entity.
      * @throws EntityDoesNotExistException
      */
-    public synchronized E get()
+    public E get()
         throws EntityDoesNotExistException
     {
-        E entity = ref.get();
+        E entity = null;
+        if(ref != null)
+        {
+            entity = ref.get();
+        }
         if(entity == null && id != -1L)
         {
             entity = resolve(id);
-            ref = new WeakReference<E>(entity);
+            ref = new WeakReference<E>(entity, queue);
         }
         return entity;
     }
@@ -106,14 +115,13 @@ public abstract class EntityRef<E extends Entity>
     /**
      * Equals operation based on underlying entity class & id equalities.
      */
-    @SuppressWarnings("unchecked")
     public boolean equals(Object o)
     {
         if(o == null || !(o instanceof EntityRef))
         {
             return false;
         }
-        EntityRef r = (EntityRef)o;
+        EntityRef<?> r = (EntityRef<?>)o;
         return r.entityClass.equals(entityClass) && r.id == id;
     }
     

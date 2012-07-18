@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -200,7 +201,7 @@ public class RMLExecutor
             }
             else
             {
-                items = coralSession.getSchema().getAttributeClass();
+                items = (AttributeClass<?>[])coralSession.getSchema().getAllAttributeClasses().toArray();
             }
             String[][] result = new String[items.length+1][];
             result[0] = new String[] { "Id", "Name", "Java class", "Handler class", "DB table" };
@@ -452,7 +453,9 @@ public class RMLExecutor
             }
             else
             {
-                ResourceClass[] items = coralSession.getSchema().getResourceClass();
+                ImmutableSet<ResourceClass<?>> allResourceClasses = coralSession.getSchema().getAllResourceClasses();
+                ResourceClass[] items = new ResourceClass[allResourceClasses.size()];
+                allResourceClasses.toArray(items);                
                 sortEntities(items);
                 result = new String[items.length+1][];
                 result[0] = new String[] { "Id", "Name", "Java class" };

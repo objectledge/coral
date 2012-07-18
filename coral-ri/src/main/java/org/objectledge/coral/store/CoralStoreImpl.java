@@ -3,6 +3,7 @@ package org.objectledge.coral.store;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -89,7 +90,9 @@ public class CoralStoreImpl
 
     /** All resources in the system. */
     private Map<String, Set<Resource>> resourceSet;
-
+    
+    private final Object lock = new Object();
+    
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
     /**
@@ -118,7 +121,6 @@ public class CoralStoreImpl
         cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)resourceByParent);
         cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)resourceByParentAndName);
     }
-
 
     /**
      * Initializes the caches.
@@ -150,36 +152,45 @@ public class CoralStoreImpl
      */
     public Resource[] getResource()
     {
-        synchronized(resourceById)
+        Set<Resource> rs;
+        Resource[] result = null;
+        synchronized(lock)
         {
-            synchronized(resourceSet)
+            rs = resourceSet.get("all");
+            if(rs != null)
             {
-                Set<Resource> rs = resourceSet.get("all");
-                if(rs == null)
-                {
-                    Connection conn = null;
-                    try
-                    {
-                        conn = persistence.getDatabase().getConnection();
-                        List<ResourceImpl> list = persistence.load(" true ORDER BY resource_id",
-                            resourceFactory);
-                        rs = instantiate(list, conn);
-                    }
-                    catch(Exception e)
-                    {
-                        throw new BackendException("failed to load resource objects", e);
-                    }
-                    finally
-                    {
-                        DatabaseUtils.close(conn);
-                    }
-                    resourceSet.put("all", rs);
-                }
-                Resource[] result = new Resource[rs.size()];
+                result = new Resource[rs.size()];
                 rs.toArray(result);
-                return result;
             }
         }
+        
+        if(rs == null)
+        {
+            Connection conn = null;
+            try
+            {
+                conn = persistence.getDatabase().getConnection();
+                List<ResourceImpl> list = persistence.load(" 1 = 1 ORDER BY resource_id",
+                    resourceFactory);
+                rs = instantiate(list, conn);
+            }
+            catch(Exception e)
+            {
+                throw new BackendException("failed to load resource objects", e);
+            }
+            finally
+            {
+                DatabaseUtils.close(conn);
+            }
+            result = new Resource[rs.size()];
+            rs.toArray(result);
+            
+            synchronized(lock)
+            {
+                resourceSet.put("all", rs);
+            }
+        }
+        return result;
     }
 
     /**
@@ -191,52 +202,61 @@ public class CoralStoreImpl
      */
     public Resource[] getResource(Resource parent)
     {
-        synchronized(resourceById)
+        Set<Resource> rs = null;
+        Set<ResourceRef> rrs = null;
+        Collection<ResourceRef> rrsc = null;
+        
+        synchronized(lock)
         {
-            synchronized(resourceByParent)
+            rrs = (Set<ResourceRef>)resourceByParent.get(parent);
+            if(rrs != null)
             {
-                Set<Resource> rs;
-                Set<ResourceRef> rrs = (Set<ResourceRef>)resourceByParent.get(parent);
-                if(rrs == null)
+                rrsc = new ArrayList<ResourceRef>(rrs);
+            }
+        }
+        
+        if(rrsc != null)
+        {
+            rs = deref(rrsc);
+        }
+        else
+        {
+            Connection conn = null;
+            try
+            {
+                conn = persistence.getDatabase().getConnection();
+                List<ResourceImpl> list;
+                if(parent != null)
                 {
-                    Connection conn = null;
-                    try
-                    {
-                        conn = persistence.getDatabase().getConnection();
-                        List<ResourceImpl> list;
-                        if(parent != null)
-                        {
-                            list = persistence.load("parent = "+parent.getIdString(),
-                                resourceFactory);
-                        }
-                        else
-                        {
-                            list = persistence.load("parent IS NULL",
-                                resourceFactory);
-                        }
-                        
-                        rs = instantiate(list, conn);
-                        rrs = ref(rs);
-                    }
-                    catch(Exception e)
-                    {
-                        throw new BackendException("failed to load resource objects", e);
-                    }
-                    finally
-                    {
-                        DatabaseUtils.close(conn);
-                    }
-                    resourceByParent.put(parent, rrs);
+                    list = persistence.load("parent = "+parent.getIdString(),
+                        resourceFactory);
                 }
                 else
                 {
-                    rs = deref(rrs);
+                    list = persistence.load("parent IS NULL",
+                        resourceFactory);
                 }
-                Resource[] result = new Resource[rs.size()];
-                rs.toArray(result);
-                return result;
+                rs = instantiate(list, conn);
+                rrs = ref(rs);
+            }
+            catch(Exception e)
+            {
+                throw new BackendException("failed to load resource objects", e);
+            }
+            finally
+            {
+                DatabaseUtils.close(conn);
+            }
+            
+            synchronized(lock)
+            {
+                resourceByParent.put(parent, rrs);
             }
         }
+
+        Resource[] result = new Resource[rs.size()];
+        rs.toArray(result);
+        return result;
     }
 
     /**
@@ -250,45 +270,52 @@ public class CoralStoreImpl
     public Resource getResource(long id)
         throws EntityDoesNotExistException
     {
-        synchronized(resourceById)
+        Long idObj = Long.valueOf(id);
+        Resource res;
+        
+        synchronized(lock)
         {
-            Long idObj = Long.valueOf(id);
-            Resource res = (Resource)resourceById.get(idObj);
-            if(res == null)
+            res = (Resource)resourceById.get(idObj);
+        }
+        
+        if(res == null)
+        {
+            Connection conn = null;
+            try
             {
-                Connection conn = null;
-                try
+                conn = persistence.getDatabase().getConnection();
+                res = (Resource)persistence.load(id,resourceFactory);
+                if(res != null)
                 {
-                    conn = persistence.getDatabase().getConnection();
-                    res = (Resource)persistence.load(id,resourceFactory);
-                    if(res != null)
-                    {
-                        res = res.getResourceClass().getHandler().retrieve(res, conn, null);
-                    }
-                    else
-                    {
-                        throw new EntityDoesNotExistException("resource #"+id+" does not exist");
-                    }
+                    res = res.getResourceClass().getHandler().retrieve(res, conn, null);
                 }
-                catch(Exception e)
+                else
                 {
-                    if(e instanceof EntityDoesNotExistException)
-                    {
-                        throw (EntityDoesNotExistException)e;
-                    }
-                    else
-                    {
-                        throw new BackendException("failed to load resource #"+id, e);
-                    }
+                    throw new EntityDoesNotExistException("resource #"+id+" does not exist");
                 }
-                finally
+            }
+            catch(Exception e)
+            {
+                if(e instanceof EntityDoesNotExistException)
                 {
-                    DatabaseUtils.close(conn);
+                    throw (EntityDoesNotExistException)e;
                 }
+                else
+                {
+                    throw new BackendException("failed to load resource #"+id, e);
+                }
+            }
+            finally
+            {
+                DatabaseUtils.close(conn);
+            }
+            
+            synchronized(lock)
+            {
                 resourceById.put(idObj, res);
             }
-            return res;
         }
+        return res;
     }
     
     /**
@@ -299,37 +326,46 @@ public class CoralStoreImpl
      */
     public Resource[] getResource(String name)
     {
-        synchronized(resourceById)
+        Resource[] result = null;
+        Set<Resource> rs;
+        synchronized(lock)
         {
-            synchronized(resourceByName)
+            rs = resourceByName.get(name);
+            if(rs != null)
             {
-                Set<Resource> rs = resourceByName.get(name);
-                if(rs == null)
-                {
-                    Connection conn = null;
-                    try
-                    {
-                        conn = persistence.getDatabase().getConnection();
-                        List<ResourceImpl> list = persistence
-                            .load("name = '" + DatabaseUtils.escapeSqlString(name) + "'",
-                            resourceFactory);
-                        rs = instantiate(list, conn);
-                    }
-                    catch(Exception e)
-                    {
-                        throw new BackendException("failed to load resource objects", e);
-                    }
-                    finally
-                    {
-                        DatabaseUtils.close(conn);
-                    }
-                    resourceByName.put(name, rs);
-                }
-                Resource[] result = new Resource[rs.size()];
+                result = new Resource[rs.size()];
                 rs.toArray(result);
-                return result;
             }
         }
+        
+        if(rs == null)
+        {
+            Connection conn = null;
+            try
+            {
+                conn = persistence.getDatabase().getConnection();
+                List<ResourceImpl> list = persistence
+                    .load("name = '" + DatabaseUtils.escapeSqlString(name) + "'",
+                    resourceFactory);
+                rs = instantiate(list, conn);
+            }
+            catch(Exception e)
+            {
+                throw new BackendException("failed to load resource objects", e);
+            }
+            finally
+            {
+                DatabaseUtils.close(conn);
+            }
+            result = new Resource[rs.size()];
+            rs.toArray(result);
+            
+            synchronized(lock)
+            {
+                resourceByName.put(name, rs);
+            }
+        }
+        return result;
     }
 
     /**
@@ -365,49 +401,64 @@ public class CoralStoreImpl
      */
     public Resource[] getResource(Resource parent, String name)
     {
-        synchronized(resourceById)
+        Set<ResourceRef> rrs = null;
+        Collection<ResourceRef> rrsc = null;
+        Set<Resource> rs = null;
+        Map<String, Set<ResourceRef>> nameMap;
+
+        synchronized(lock)
         {
-            synchronized(resourceByParentAndName)
+            nameMap = resourceByParentAndName.get(parent);
+            if(nameMap != null)
             {
-                Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(parent);
+                rrs = nameMap.get(name);
+                if(rrs != null)
+                {
+                    rrsc = new ArrayList<ResourceRef>(rrs);
+                }
+            }
+        }
+
+        if(rrsc != null)
+        {
+            rs = deref(rrsc);
+        }
+        else
+        {
+            Connection conn = null;
+            try
+            {
+                conn = persistence.getDatabase().getConnection();
+                List<ResourceImpl> list = persistence.load(
+                    "parent = " + parent.getIdString() +
+                    " AND name = '"+DatabaseUtils.escapeSqlString(name)+"'", resourceFactory);
+                rs = instantiate(list, conn);
+                rrs = ref(rs);
+            }
+            catch(Exception e)
+            {
+                throw new BackendException("failed to load resource objects", e);
+            }
+            finally
+            {
+                DatabaseUtils.close(conn);
+            }
+            
+            synchronized(lock)
+            {
+                nameMap = resourceByParentAndName.get(parent);
                 if(nameMap == null)
                 {
                     nameMap = new HashMap<String, Set<ResourceRef>>();
                     resourceByParentAndName.put(parent, nameMap);
                 }
-                Set<Resource> rs;
-                Set<ResourceRef> rrs = nameMap.get(name);
-                if(rrs == null)
-                {
-                    Connection conn = null;
-                    try
-                    {
-                        conn = persistence.getDatabase().getConnection();
-                        List<ResourceImpl> list = persistence.load(
-                            "parent = " + parent.getIdString() +
-                            " AND name = '"+DatabaseUtils.escapeSqlString(name)+"'", resourceFactory);
-                        rs = instantiate(list, conn);
-                        rrs = ref(rs);
-                    }
-                    catch(Exception e)
-                    {
-                        throw new BackendException("failed to load resource objects", e);
-                    }
-                    finally
-                    {
-                        DatabaseUtils.close(conn);
-                    }
-                    nameMap.put(name, rrs);
-                }
-                else
-                {
-                    rs = deref(rrs);
-                }
-                Resource[] result = new Resource[rs.size()];
-                rs.toArray(result);
-                return result;
-            }            
+                nameMap.put(name, rrs);
+            }
         }
+ 
+        Resource[] result = new Resource[rs.size()];
+        rs.toArray(result);
+        return result;
     }
 
     /**
@@ -706,44 +757,33 @@ public class CoralStoreImpl
         {
             DatabaseUtils.close(conn);
         }
-        synchronized(resourceById)
+        
+        synchronized(lock)
         {
             resourceById.put(res.getIdObject(), res);
-        }
-        synchronized(resourceByName)
-        {
             Set<Resource> rs = resourceByName.get(res.getName());
             if(rs != null)
             {
                 rs.add(res);
             }
-        }
-        if(parent != null)
-        {
-            synchronized(resourceByParent)
+            if(parent != null)
             {
                 Set<ResourceRef> rrs = resourceByParent.get(parent);
                 if(rrs != null)
                 {
                     rrs.add(new ResourceRef(res, coral));
                 }
-            }
-            synchronized(resourceByParentAndName)
-            {
                 Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(parent);
                 if(nameMap != null)
                 {
-                    Set<ResourceRef> rrs = nameMap.get(res.getName());
+                    rrs = nameMap.get(res.getName());
                     if(rrs != null)
                     {
                         rrs.add(new ResourceRef(res, coral));
                     }
                 }
             }
-        }                    
-        synchronized(resourceSet)
-        {
-            Set<Resource> rs = resourceSet.get("all");
+            rs = resourceSet.get("all");
             if(rs != null)
             {
                 rs.add(res);
@@ -768,127 +808,123 @@ public class CoralStoreImpl
     	// inform listeners that the resource is about to be deleted
     	coralEventHub.getGlobal().fireResourceDeletionEvent(resource);
     	
-        synchronized(resourceById)
+        Connection conn = null;
+        boolean shouldCommit = false;
+        try
         {
-            synchronized(resourceByName)
+            shouldCommit = persistence.getDatabase().beginTransaction();
+            conn = persistence.getDatabase().getConnection();
+            int count = 0;
+            Set<ResourceRef> children;
+            
+            synchronized(lock)
             {
-                synchronized(resourceByParent)
+                children = resourceByParent.get(resource);
+                if(children != null)
                 {
-                    synchronized(resourceByParentAndName)
-                    {
-                        synchronized(resourceSet)
-                        {
-                            Connection conn = null;
-                            boolean shouldCommit = false;
-                            try
-                            {
-                                shouldCommit = persistence.getDatabase().beginTransaction();
-                                conn = persistence.getDatabase().getConnection();
-                                int count;
-                                Set<ResourceRef> children = resourceByParent.get(resource);
-                                if(children != null)
-                                {
-                                    count = children.size();
-                                }
-                                else
-                                {
-                                    count = persistence.count("coral_resource", "parent = "+
-                                                                  resource.getIdString());
-                                }
-                                if(count != 0)
-                                {
-                                    throw new EntityInUseException("resource #"+
-                                        resource.getIdString() + " has "+count+" children");
-                                }
-                                Set<PermissionAssignment> assignments = coral.getRegistry()
-                                    .getPermissionAssignments(resource);
-                                for(PermissionAssignment pa : assignments)
-                                {
-                                    coral.getRegistry().deletePermissionAssignment(pa);           
-                                }
-                                resource.getResourceClass().getHandler().delete(resource, conn);
-                                persistence.delete((Persistent)resource.getDelegate());
-                                resourceById.remove(resource.getIdObject());
-                                Set<Resource> rs = resourceByName.get(resource.getName());
-                                if(rs != null)
-                                {
-                                    rs.remove(resource);
-                                }
-                                Set<ResourceRef> rrs = resourceByParent.get(resource.getParent());
-                                ResourceRef ref = new ResourceRef(resource, coral);
-                                if(rrs != null)
-                                {
-                                    rrs.remove(ref);
-                                }
-                                Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName
-                                    .get(resource.getParent());
-                                if(nameMap != null)
-                                {
-                                    rrs = nameMap.get(resource.getName());
-                                    if(rrs != null)
-                                    {
-                                        rrs.remove(ref);
-                                    }
-                                }
-                                Set<Resource> all = resourceSet.get("all");
-                                if(all != null)
-                                {
-                                    all.remove(resource);
-                                }
-                                persistence.getDatabase().commitTransaction(shouldCommit);
-                            }
-                            catch(BackendException ex)
-                            {
-                                try
-                                {
-                                    persistence.getDatabase().rollbackTransaction(shouldCommit);
-                                }
-                                catch(SQLException ee)
-                                {
-                                    log.error("rollback failed", ee);
-                                }
-                                throw ex;
-                            }
-                            catch(EntityInUseException ex)
-                            {
-                                try
-                                {
-                                    persistence.getDatabase().rollbackTransaction(shouldCommit);
-                                }
-                                catch(SQLException ee)
-                                {
-                                    log.error("rollback failed", ee);
-                                }
-                                throw ex;
-                            }
-                            catch(Exception e)
-                            {
-                                try
-                                {
-                                    persistence.getDatabase().rollbackTransaction(shouldCommit);
-                                }
-                                catch(SQLException ee)
-                                {
-                                    log.error("rollback failed", ee);
-                                }
-                                if(e instanceof SQLException)
-                                {
-                                    SQLException sqle = (SQLException)e;
-                                    log.error("resource removal: SQLState:"+
-                                              sqle.getSQLState()+
-                                              " error code:"+sqle.getErrorCode(), e);
-                                }
-                                throw new BackendException("failed to delete resource #"+
-                                    resource.getIdString(), e);
-                            }
-                            finally
-                            {
-                                DatabaseUtils.close(conn);
-                            }
-                        }
-                    }
+                    count = children.size();
                 }
             }
+ 
+            if(children == null)
+            {
+                count = persistence.count("coral_resource", "parent = "+
+                                              resource.getIdString());
+            }
+            if(count != 0)
+            {
+                throw new EntityInUseException("resource #"+
+                    resource.getIdString() + " has "+count+" children");
+            }
+            Set<PermissionAssignment> assignments = coral.getRegistry()
+                .getPermissionAssignments(resource);
+            for(PermissionAssignment pa : assignments)
+            {
+                coral.getRegistry().deletePermissionAssignment(pa);           
+            }
+            resource.getResourceClass().getHandler().delete(resource, conn);
+            persistence.delete((Persistent)resource.getDelegate());
+            
+            synchronized(lock)
+            {
+                resourceById.remove(resource.getIdObject());
+                Set<Resource> rs = resourceByName.get(resource.getName());
+                if(rs != null)
+                {
+                    rs.remove(resource);
+                }
+                Set<ResourceRef> rrs = resourceByParent.get(resource.getParent());
+                ResourceRef ref = new ResourceRef(resource, coral);
+                if(rrs != null)
+                {
+                    rrs.remove(ref);
+                }
+                Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(resource
+                    .getParent());
+                if(nameMap != null)
+                {
+                    rrs = nameMap.get(resource.getName());
+                    if(rrs != null)
+                    {
+                        rrs.remove(ref);
+                    }
+                }
+                Set<Resource> all = resourceSet.get("all");
+                if(all != null)
+                {
+                    all.remove(resource);
+                }
+            }
+            
+            persistence.getDatabase().commitTransaction(shouldCommit);
+        }
+        catch(BackendException ex)
+        {
+            try
+            {
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
+            }
+            catch(SQLException ee)
+            {
+                log.error("rollback failed", ee);
+            }
+            throw ex;
+        }
+        catch(EntityInUseException ex)
+        {
+            try
+            {
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
+            }
+            catch(SQLException ee)
+            {
+                log.error("rollback failed", ee);
+            }
+            throw ex;
+        }
+        catch(Exception e)
+        {
+            try
+            {
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
+            }
+            catch(SQLException ee)
+            {
+                log.error("rollback failed", ee);
+            }
+            if(e instanceof SQLException)
+            {
+                SQLException sqle = (SQLException)e;
+                log.error("resource removal: SQLState:"+
+                          sqle.getSQLState()+
+                          " error code:"+sqle.getErrorCode(), e);
+            }
+            throw new BackendException("failed to delete resource #"+
+                resource.getIdString(), e);
+        }
+        finally
+        {
+            DatabaseUtils.close(conn);
         }
     }
 
@@ -1007,7 +1043,7 @@ public class CoralStoreImpl
         }
     }
     
-    private synchronized Resource getTempNode()
+    private Resource getTempNode()
     {
         try
         {
@@ -1018,8 +1054,10 @@ public class CoralStoreImpl
             try
             {
                 Resource rootResource = getResource(1);
-                ResourceClass rc = coral.getSchema().getResourceClass("coral.Node");
-                return createResource("tmp", rootResource, rc, Collections.EMPTY_MAP);
+                ResourceClass<Resource> rc = coral.getSchema().getResourceClass("coral.Node",
+                    Resource.class);
+                return createResource("tmp", rootResource, rc,
+                    Collections.<AttributeDefinition<?>, Object> emptyMap());
             }
             catch(Exception ee)
             {
@@ -1068,43 +1106,42 @@ public class CoralStoreImpl
         ResourceImpl delegate = (ResourceImpl)resource.getDelegate();
         try
         {
-            synchronized(resourceByName)
+            ((ResourceImpl)delegate).setResourceName(name);
+            persistence.save(delegate);
+            
+            synchronized(lock)
             {
-                synchronized(resourceByParentAndName)
+                Set<Resource> rs = resourceByName.get(oldName);
+                if(rs != null)
                 {
-                    ((ResourceImpl)delegate).setResourceName(name);
-                    persistence.save(delegate);
-                    Set<Resource> rs = resourceByName.get(oldName);
-                    if(rs != null)
+                    rs.remove(resource);
+                }
+                rs = resourceByName.get(name);
+                if(rs != null)
+                {
+                    rs.add(resource);
+                }
+                Resource parent = resource.getParent();
+                if(parent != null)
+                {
+                    Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(parent);
+                    if(nameMap != null)
                     {
-                        rs.remove(resource);
-                    }
-                    rs = resourceByName.get(name);
-                    if(rs != null)
-                    {
-                        rs.add(resource);
-                    }
-                    Resource parent = resource.getParent();
-                    if(parent != null)
-                    {
-                        Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(parent);
-                        if(nameMap != null)
+                        Set<ResourceRef> rrs = nameMap.get(oldName);
+                        ResourceRef ref = new ResourceRef(resource, coral);
+                        if(rrs != null)
                         {
-                            Set<ResourceRef> rrs = nameMap.get(oldName);
-                            ResourceRef ref = new ResourceRef(resource, coral);
-                            if(rrs != null)
-                            {
-                                rrs.remove(ref);
-                            }
-                            rrs = nameMap.get(name);
-                            if(rrs != null)
-                            {
-                                rrs.add(ref);
-                            }
+                            rrs.remove(ref);
+                        }
+                        rrs = nameMap.get(name);
+                        if(rrs != null)
+                        {
+                            rrs.add(ref);
                         }
                     }
                 }
             }
+            
             coralEventHub.getOutbound().fireResourceChangeEvent(resource, null);
         }
         catch(PersistenceException e)
@@ -1143,53 +1180,44 @@ public class CoralStoreImpl
         ResourceImpl delegate = (ResourceImpl)child.getDelegate();
         try
         {
-            synchronized(resourceById)
+            delegate.setParent(parent);
+            persistence.save(delegate);
+
+            synchronized(lock)
             {
-                synchronized(resourceByName)
+                Set<ResourceRef> rrs = resourceByParent.get(oldParent);
+                ResourceRef ref = new ResourceRef(child, coral);
+                if(rrs != null)
                 {
-                    synchronized(resourceByParent)
+                    rrs.remove(ref);
+                }
+                rrs = resourceByParent.get(parent);
+                if(rrs != null)
+                {
+                    rrs.add(ref);
+                }
+
+                String name = child.getName();
+                Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(oldParent);
+                if(nameMap != null)
+                {
+                    rrs = nameMap.get(name);
+                    if(rrs != null)
                     {
-                        synchronized(resourceByParentAndName)
-                        {
-                            delegate.setParent(parent);
-                            persistence.save(delegate);
-
-                            Set<ResourceRef> rrs = resourceByParent.get(oldParent);
-                            ResourceRef ref = new ResourceRef(child, coral);
-                            if(rrs != null)
-                            {
-                                rrs.remove(ref);
-                            }
-                            rrs = resourceByParent.get(parent);
-                            if(rrs != null)
-                            {
-                                rrs.add(ref);
-                            }
-
-                            String name = child.getName();
-                            Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName
-                                .get(oldParent);
-                            if(nameMap != null)
-                            {
-                                rrs = nameMap.get(name);
-                                if(rrs != null)
-                                {
-                                    rrs.remove(ref);
-                                }
-                            }
-                            nameMap = resourceByParentAndName.get(parent);
-                            if(nameMap != null)
-                            {
-                                rrs = nameMap.get(name);
-                                if(rrs != null)
-                                {
-                                    rrs.add(ref);
-                                }
-                            }
-                        }
+                        rrs.remove(ref);
+                    }
+                }
+                nameMap = resourceByParentAndName.get(parent);
+                if(nameMap != null)
+                {
+                    rrs = nameMap.get(name);
+                    if(rrs != null)
+                    {
+                        rrs.add(ref);
                     }
                 }
             }
+  
             if(oldParent != null)
             {
                 coralEventHub.getGlobal().fireResourceTreeChangeEvent(
@@ -1216,40 +1244,30 @@ public class CoralStoreImpl
         ResourceImpl delegate = (ResourceImpl)child.getDelegate();
         try
         {
-            synchronized(resourceById)
+            delegate.setParent(null);
+            persistence.save(delegate);
+
+            synchronized(lock)
             {
-                synchronized(resourceByName)
+                Set<ResourceRef> rrs = resourceByParent.get(oldParent);
+                ResourceRef ref = new ResourceRef(child, coral);
+                if(rrs != null)
                 {
-                    synchronized(resourceByParent)
+                    rrs.remove(ref);
+                }
+
+                String name = child.getName();
+                Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(oldParent);
+                if(nameMap != null)
+                {
+                    rrs = nameMap.get(name);
+                    if(rrs != null)
                     {
-                        synchronized(resourceByParentAndName)
-                        {
-                            delegate.setParent(null);
-                            persistence.save(delegate);
-
-                            Set<ResourceRef> rrs = resourceByParent.get(oldParent);
-                            ResourceRef ref = new ResourceRef(child, coral);
-                            if(rrs != null)
-                            {
-                                rrs.remove(ref);
-                            }
-
-                            String name = child.getName();
-                            Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName
-                                .get(oldParent);
-                            if(nameMap != null)
-                            {
-                                rrs = nameMap.get(name);
-                                if(rrs != null)
-                                {
-                                    rrs.remove(ref);
-                                }
-                            }
-
-                        }
+                        rrs.remove(ref);
                     }
                 }
             }
+
             coralEventHub.getGlobal().fireResourceTreeChangeEvent(
                 new ResourceInheritanceImpl(oldParent, child), false);
         }
@@ -1299,22 +1317,39 @@ public class CoralStoreImpl
         throws SQLException
     {
         Set<Resource> result = new HashSet<Resource>();
-        for(ResourceImpl rd : list)
+        Set<ResourceImpl> toLoad = new HashSet<ResourceImpl>();
+        Map<Long, Resource> loaded = new HashMap<Long, Resource>();
+        
+        synchronized(lock)
         {
-            Long key = rd.getIdObject();
-            Resource cached = (Resource)resourceById.get(key);
-            if(cached == null)
+            for(ResourceImpl rd : list)
             {
-                ResourceHandler<? > handler = rd.getResourceClass().getHandler();
-                Resource r = handler.retrieve(rd, conn, null);
-                result.add(r);
-                resourceById.put(key, r);
-            }
-            else
-            {
-                result.add(cached);
+                Long key = rd.getIdObject();
+                Resource cached = (Resource)resourceById.get(key);
+                if(cached != null)
+                {
+                    result.add(cached);
+                }
+                else
+                {
+                    toLoad.add(rd);
+                }
             }
         }
+        
+        for(ResourceImpl rd : toLoad)
+        {
+            ResourceHandler<? > handler = rd.getResourceClass().getHandler();
+            Resource r = handler.retrieve(rd, conn, null);
+            result.add(r);
+            loaded.put(rd.getIdObject(), r);
+        }
+        
+        synchronized(lock)
+        {
+            resourceById.putAll(loaded);
+        }
+        
         return result;
     }
 
@@ -1328,7 +1363,7 @@ public class CoralStoreImpl
         return rset;
     }
 
-    private Set<Resource> deref(Set<ResourceRef> rset)
+    private Set<Resource> deref(Collection<ResourceRef> rset)
     {
         try
         {
@@ -1466,7 +1501,9 @@ public class CoralStoreImpl
                         {
                             try
                             {
-                                dst.set((AttributeDefinition<Resource>)atDefs[i], target[0]);
+                                @SuppressWarnings("unchecked")
+                                AttributeDefinition<Resource> resAtDef = (AttributeDefinition<Resource>)atDefs[i];
+                                dst.set(resAtDef, target[0]);
                                 changed = true;
                             }
                             catch(Exception e)
@@ -1595,181 +1632,164 @@ public class CoralStoreImpl
     {
         long time = System.currentTimeMillis();
         log.info("preloading resource store");
-        synchronized(resourceById)
+        Connection conn = null;
+        try
         {
-            synchronized(resourceByName)
+            synchronized(lock)
             {
-                synchronized(resourceByParent)
+                long delegateTime = System.currentTimeMillis();
+                log.info("preloading resource store: preloading delegates");
+                conn = persistence.getDatabase().getConnection();
+                List<ResourceImpl> list = persistence.load(" true ORDER BY resource_id",
+                    resourceFactory);
+                log.info("preloading resource store: done preloading delegates in "
+                    + (System.currentTimeMillis() - delegateTime) + "ms");
+                Map<Class<?>, Object> handlerData = new HashMap<Class<?>, Object>();
+                Set<Resource> allResources = new HashSet<Resource>();
+                resourceSet.put("all", allResources);
+                // A list to protect temp parent keys from GC - they will be keys
+                // in WeakHashMaps.
+                List<Object> parentKeys = new ArrayList<Object>(list.size() / 20);
+                // tracking
+                int tAll = list.size();
+                int tMark = 0;
+                int tCnt = 0;
+                for(Resource res : list)
                 {
-                    synchronized(resourceByParentAndName)
+                    if(tCnt >= tMark && tCnt > 1)
                     {
-                        synchronized(resourceSet)
+                        log.info("preloading resource store " + tCnt + " of " + tAll + " (" + tCnt
+                            * 100 / tAll + "%) complete");
+                        tMark += tAll / 10;
+                    }
+                    tCnt++;
+                    ResourceHandler<?> handler = res.getResourceClass().getHandler();
+                    Object data = handlerData.get(handler.getClass());
+                    if(data == null)
+                    {
+                        long handlerDataTime = System.currentTimeMillis();
+                        log.info("preloading resource store: preloading handler " + "data for "
+                            + handler.getClass().getName());
+                        data = handler.getData(conn);
+                        handlerData.put(handler.getClass(), data);
+                        log.info("preloading resource store: done "
+                            + "preloading handler data for " + handler.getClass().getName()
+                            + " in " + (System.currentTimeMillis() - handlerDataTime) + "ms");
+                    }
+                    res = handler.retrieve(res, conn, data);
+
+                    allResources.add(res);
+
+                    resourceById.put(res.getIdObject(), res);
+
+                    Set<Resource> rs = resourceByName.get(res.getName());
+                    if(rs == null)
+                    {
+                        rs = new HashSet<Resource>();
+                        resourceByName.put(res.getName(), rs);
+                    }
+                    rs.add(res);
+
+                    Object parentKey;
+                    if(res.getParentId() < res.getId())
+                    {
+                        parentKey = res.getParent();
+                    }
+                    else
+                    {
+                        parentKey = Long.valueOf(res.getParentId());
+                        parentKeys.add(parentKey);
+                    }
+                    Set<ResourceRef> rrs = resourceByParent.get(parentKey);
+                    if(rrs == null)
+                    {
+                        rrs = new HashSet<ResourceRef>();
+                        resourceByParent.put(parentKey, rrs);
+                    }
+                    rrs.add(new ResourceRef(res, coral));
+
+                    Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(parentKey);
+                    if(nameMap == null)
+                    {
+                        nameMap = new HashMap<String, Set<ResourceRef>>();
+                        resourceByParentAndName.put(parentKey, nameMap);
+                    }
+                    rrs = nameMap.get(res.getName());
+                    if(rrs == null)
+                    {
+                        rrs = new HashSet<ResourceRef>();
+                        nameMap.put(res.getName(), rrs);
+                    }
+                    rrs.add(new ResourceRef(res, coral));
+
+                    // prevent unnecessary queries for leaf nodes' children
+                    rrs = resourceByParent.get(res);
+                    if(rrs == null)
+                    {
+                        rrs = new HashSet<ResourceRef>();
+                        resourceByParent.put(res, rrs);
+                    }
+                }
+                for(Resource res : allResources)
+                {
+                    if(!resourceByParent.containsKey(res))
+                    {
+                        resourceByParent.put(res, new HashSet<ResourceRef>());
+                        resourceByParentAndName.put(res, new HashMap<String, Set<ResourceRef>>());
+                    }
+                }
+                // resolve numeric keys into resource keys
+                // use helper map to avoid ConcurrentModificationException
+                Map<Object, Set<ResourceRef>> setAdditions = new HashMap<Object, Set<ResourceRef>>();
+                Set<Object> removals = new HashSet<Object>();
+                for(Map.Entry<?, Set<ResourceRef>> entry : resourceByParent.entrySet())
+                {
+                    if(entry.getKey() instanceof Long)
+                    {
+                        removals.add(entry.getKey());
+                        Object newKey = resourceById.get(entry.getKey());
+                        Set<ResourceRef> rrs = resourceByParent.get(newKey);
+                        if(rrs != null)
                         {
-                            Connection conn = null;
-                            try
-                            {
-                                long delegateTime = System.currentTimeMillis();
-                                log.info("preloading resource store: preloading delegates");
-                                conn = persistence.getDatabase().getConnection();
-                                List<ResourceImpl> list = persistence.load(" true ORDER BY resource_id", 
-                                        resourceFactory);
-                                log.info("preloading resource store: done preloading delegates in "+
-                                    (System.currentTimeMillis()-delegateTime)+"ms");
-                                Map<Class<? >, Object> handlerData = new HashMap<Class<? >, Object>();                                
-                                Set<Resource> allResources = new HashSet<Resource>();
-                                resourceSet.put("all", allResources);
-                                // A list to protect temp parent keys from GC - they will be keys
-                                // in WeakHashMaps.
-                                List<Object> parentKeys = new ArrayList<Object>(list.size() / 20);
-                                // tracking
-                                int tAll = list.size();
-                                int tMark = 0;
-                                int tCnt = 0;
-                                for(Resource res : list)
-                                {
-                                    if(tCnt >= tMark && tCnt > 1)
-                                    {
-                                        log.info("preloading resource store "+tCnt+" of "+tAll+
-                                            " ("+tCnt*100/tAll+"%) complete");
-                                        tMark += tAll / 10;
-                                    }
-                                    tCnt++;
-                                    ResourceHandler<? > handler = res.getResourceClass()
-                                        .getHandler();
-                                    Object data = handlerData.get(handler.getClass());
-                                    if(data == null)
-                                    {
-                                        long handlerDataTime = System.currentTimeMillis();
-                                        log.info("preloading resource store: preloading handler " +
-                                                "data for "+handler.getClass().getName());
-                                        data = handler.getData(conn);
-                                        handlerData.put(handler.getClass(), data);
-                                        log.info("preloading resource store: done "
-                                                + "preloading handler data for "
-                                                + handler.getClass().getName() + " in "
-                                                + (System.currentTimeMillis() - handlerDataTime)
-                                                + "ms");
-                                    }
-                                    res = handler.retrieve(res, conn, data);
-                
-                                    allResources.add(res);
-                
-                                    resourceById.put(res.getIdObject(), res);
-                                    
-                                    Set<Resource> rs = resourceByName.get(res.getName());
-                                    if(rs == null)
-                                    {
-                                        rs = new HashSet<Resource>();
-                                        resourceByName.put(res.getName(), rs);
-                                    }
-                                    rs.add(res);
-                                    
-                                    Object parentKey;
-                                    if(res.getParentId() < res.getId())
-                                    {
-                                        parentKey = res.getParent();
-                                    }
-                                    else
-                                    {
-                                        parentKey = Long.valueOf(res.getParentId());
-                                        parentKeys.add(parentKey);
-                                    }
-                                    Set<ResourceRef> rrs = resourceByParent.get(parentKey);
-                                    if(rrs == null)
-                                    {
-                                        rrs = new HashSet<ResourceRef>();
-                                        resourceByParent.put(parentKey, rrs);
-                                    }
-                                    rrs.add(new ResourceRef(res, coral));
-                                    
-                                    Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName
-                                        .get(parentKey);
-                                    if(nameMap == null)
-                                    {
-                                        nameMap = new HashMap<String, Set<ResourceRef>>();
-                                        resourceByParentAndName.put(parentKey, nameMap);
-                                    }
-                                    rrs = nameMap.get(res.getName());
-                                    if(rrs == null)
-                                    {
-                                        rrs = new HashSet<ResourceRef>();
-                                        nameMap.put(res.getName(), rrs);
-                                    }
-                                    rrs.add(new ResourceRef(res, coral));
-                                    
-                                    // prevent unnecessary queries for leaf nodes' children
-                                    rrs = resourceByParent.get(res);
-                                    if(rrs == null)
-                                    {
-                                        rrs = new HashSet<ResourceRef>();
-                                        resourceByParent.put(res, rrs);
-                                    }
-                                }
-                                for(Resource res : allResources)
-                                {
-                                    if(!resourceByParent.containsKey(res))
-                                    {
-                                        resourceByParent.put(res, new HashSet<ResourceRef>());
-                                        resourceByParentAndName.put(res, new HashMap<String, Set<ResourceRef>>());
-                                    }
-                                }
-                                // resolve numeric keys into resource keys
-                                // use helper map to avoid ConcurrentModificationException
-                                Map<Object, Set<ResourceRef>> setAdditions = new HashMap<Object, Set<ResourceRef>>();
-                                Set<Object> removals = new HashSet<Object>();
-                                for(Map.Entry<?, Set<ResourceRef>> entry : resourceByParent.entrySet())
-                                {                                
-                                    if(entry.getKey() instanceof Long)
-                                    {
-                                        removals.add(entry.getKey());
-                                        Object newKey = resourceById.get(entry.getKey());
-                                        Set<ResourceRef> rrs = resourceByParent.get(newKey);
-                                        if(rrs != null)
-                                        {
-                                            rrs.addAll(entry.getValue());
-                                        }
-                                        else
-                                        {
-                                            setAdditions.put(newKey, entry.getValue());
-                                        }
-                                    }
-                                }
-                                resourceByParent.putAll(setAdditions);
-                                resourceByParent.keySet().removeAll(removals);
-                                Map<Object, Map<String, Set<ResourceRef>>> mapAdditions = new HashMap<Object, Map<String, Set<ResourceRef>>>();
-                                removals.clear();
-                                for(Map.Entry<? , Map<String, Set<ResourceRef>>> entry : resourceByParentAndName
-                                    .entrySet())
-                                {
-                                    if(entry.getKey() instanceof Long)
-                                    {
-                                        removals.add(entry.getKey());
-                                        Object newKey = resourceById.get(entry.getKey());
-                                        Map<String, Set<ResourceRef>> nm = resourceByParentAndName
-                                            .get(newKey);
-                                        if(nm != null)
-                                        {
-                                            nm.putAll(entry.getValue());
-                                        }
-                                        else
-                                        {
-                                            mapAdditions.put(newKey, entry.getValue());
-                                        }
-                                    }
-                                }
-                                resourceByParentAndName.putAll(mapAdditions);
-                                resourceByParentAndName.keySet().removeAll(removals);
-                                setAdditions.clear();
-                                parentKeys.clear();
-                            }
-                            finally
-                            {
-                                DatabaseUtils.close(conn);
-                            }
+                            rrs.addAll(entry.getValue());
+                        }
+                        else
+                        {
+                            setAdditions.put(newKey, entry.getValue());
                         }
                     }
                 }
+                resourceByParent.putAll(setAdditions);
+                resourceByParent.keySet().removeAll(removals);
+                Map<Object, Map<String, Set<ResourceRef>>> mapAdditions = new HashMap<Object, Map<String, Set<ResourceRef>>>();
+                removals.clear();
+                for(Map.Entry<?, Map<String, Set<ResourceRef>>> entry : resourceByParentAndName
+                    .entrySet())
+                {
+                    if(entry.getKey() instanceof Long)
+                    {
+                        removals.add(entry.getKey());
+                        Object newKey = resourceById.get(entry.getKey());
+                        Map<String, Set<ResourceRef>> nm = resourceByParentAndName.get(newKey);
+                        if(nm != null)
+                        {
+                            nm.putAll(entry.getValue());
+                        }
+                        else
+                        {
+                            mapAdditions.put(newKey, entry.getValue());
+                        }
+                    }
+                }
+                resourceByParentAndName.putAll(mapAdditions);
+                resourceByParentAndName.keySet().removeAll(removals);
+                setAdditions.clear();
+                parentKeys.clear();
             }
+        }
+        finally
+        {
+            DatabaseUtils.close(conn);
         }
         time = System.currentTimeMillis() - time;
         log.info("finished preloading resource store in "+time+"ms");

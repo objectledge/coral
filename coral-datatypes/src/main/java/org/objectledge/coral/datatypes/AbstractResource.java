@@ -89,7 +89,7 @@ public abstract class AbstractResource implements Resource
     }
     
     /**
-     * Checks if another object represens the same entity.
+     * Checks if another object represents the same entity.
      *
      * <p>This implementation compares the delegates of both resources for
      * equality.</p> 
@@ -118,7 +118,7 @@ public abstract class AbstractResource implements Resource
     /**
      * Returns a String representation of this object.
      *
-     * <p> This method is overriden to augument debugging. The format of the representation is as 
+     * <p> This method is overridden to augment debugging. The format of the representation is as 
      * following: 
      * <blockquote>
      *   <code>javaClass name #id @identity</code>
@@ -185,19 +185,19 @@ public abstract class AbstractResource implements Resource
         }
     }
 
-    synchronized void create(Resource delegate, ResourceClass<?> rClass, Map attributes,
-        Connection conn) throws SQLException, ValueRequiredException, ConstraintViolationException
+    synchronized void create(Resource delegate, ResourceClass<?> rClass,
+        Map<AttributeDefinition<?>, Object> attributes, Connection conn)
+        throws SQLException, ValueRequiredException, ConstraintViolationException
     {
         setDelegate(delegate);
         for (ResourceClass<?> parent : rClass.getDirectParentClasses())
         {
             create(delegate, parent, attributes, conn);
         }
-        for(AttributeDefinition attr : rClass.getDeclaredAttributes())
+        for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
         {
             if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
-	            AttributeHandler handler = attr.getAttributeClass().getHandler();
 	            Object value = attributes.get(attr);
 	            if(value == null)
 	            {
@@ -219,7 +219,7 @@ public abstract class AbstractResource implements Resource
         attributes = new Object[arraySize];
         ids = new long[arraySize];
         modified = new BitSet(arraySize);
-        for(ResourceClass parent : rClass.getDirectParentClasses())
+        for(ResourceClass<?> parent : rClass.getDirectParentClasses())
 	    {
             revert(parent, conn, data);
 	    }
@@ -297,7 +297,7 @@ public abstract class AbstractResource implements Resource
      *
      * @return the class this resource belongs to.
      */
-    public ResourceClass getResourceClass()
+    public ResourceClass<?> getResourceClass()
     {
         return delegate.getResourceClass();
     }
@@ -415,32 +415,43 @@ public abstract class AbstractResource implements Resource
     /**
      * {@inheritDoc}
      */
-    public Object get(AttributeDefinition attribute) throws UnknownAttributeException
+    public <T> T get(AttributeDefinition<T> attribute) throws UnknownAttributeException
     {
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.get(attribute);
         }
-        return getLocally(attribute);
+        return getInternal(attribute);
     }
     
     /**
      * {@inheritDoc}
      */
-    public boolean isDefined(AttributeDefinition attribute) throws UnknownAttributeException
+    public <T> T get(AttributeDefinition<T> attribute, T defaultValue) throws UnknownAttributeException
+    {
+        if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
+        {
+            return delegate.get(attribute);
+        }
+        return getInternal(attribute, defaultValue);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isDefined(AttributeDefinition<?> attribute) throws UnknownAttributeException
     {
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
             return delegate.isDefined(attribute);
-        }
-        int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        return isDefinedLocally(index);
+        }        
+        return isDefinedInternal(attribute);
     }
     
     /**
      * {@inheritDoc}
      */
-    public boolean isModified(AttributeDefinition attribute) throws UnknownAttributeException
+    public boolean isModified(AttributeDefinition<?> attribute) throws UnknownAttributeException
     {
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
@@ -452,7 +463,7 @@ public abstract class AbstractResource implements Resource
     /**
      * {@inheritDoc}
      */
-    public void set(AttributeDefinition attribute, Object value) throws UnknownAttributeException,
+    public <T> void set(AttributeDefinition<T> attribute, T value) throws UnknownAttributeException,
         ModificationNotPermitedException, ValueRequiredException
     {
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
@@ -472,17 +483,13 @@ public abstract class AbstractResource implements Resource
         }
         value = attribute.getAttributeClass().getHandler().toAttributeValue(value);
         attribute.getAttributeClass().getHandler().checkDomain(attribute.getDomain(), value);
-        int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        if(setLocally(index, value))
-        {
-            modified.set(index);
-        }
+        setInternal(attribute, value);    
     }
     
     /**
      * {@inheritDoc}
      */    
-    public void setModified(AttributeDefinition attribute) throws UnknownAttributeException
+    public void setModified(AttributeDefinition<?> attribute) throws UnknownAttributeException
     {
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
         {
@@ -496,7 +503,7 @@ public abstract class AbstractResource implements Resource
     /**
      * {@inheritDoc}
      */
-    public void unset(AttributeDefinition attribute) throws ValueRequiredException,
+    public void unset(AttributeDefinition<?> attribute) throws ValueRequiredException,
         UnknownAttributeException
     {
         if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
@@ -509,9 +516,7 @@ public abstract class AbstractResource implements Resource
             throw new ValueRequiredException("attribute "+attribute.getName()+
                                              "is declared as REQUIRED");
         }
-        int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        unsetLocally(index);
-        modified.set(index);
+        unsetInternal(attribute);        
     }
  
     /**
@@ -567,11 +572,10 @@ public abstract class AbstractResource implements Resource
     public synchronized void revert()
     {
         Connection conn = null;
-        boolean controler = false;
         try
         {
             conn = getDatabase().getConnection();
-            AbstractResourceHandler handler = (AbstractResourceHandler)delegate.getResourceClass()
+            AbstractResourceHandler<?> handler = (AbstractResourceHandler<?>)delegate.getResourceClass()
                 .getHandler();
             Object data = handler.getData(delegate, conn); 
             revert(delegate.getResourceClass(), conn, data);
@@ -595,123 +599,9 @@ public abstract class AbstractResource implements Resource
             }
         }   
     }
-
-    // implementation ///////////////////////////////////////////////////////////////////////////
-
-    private void checkAttribute(AttributeDefinition attribute)
-        throws UnknownAttributeException
-    {
-        if(delegate == null)
-        {
-            throw new IllegalStateException("cannot verity attribute against null delegate");
-        }
-        if(!(attribute.getDeclaringClass().equals(delegate.getResourceClass()) ||
-             attribute.getDeclaringClass().isParent(delegate.getResourceClass())))
-        {
-            throw new UnknownAttributeException("class "+delegate.getResourceClass().getName()+
-                                                "does not have a "+attribute.getName()+
-                                                " attribute declared by "+
-                                                attribute.getDeclaringClass().getName());
-        }
-    }
     
     // subclass contract ////////////////////////////////////////////////////////////////////////
     
-    /**
-     * Check if the attribute value is defined in this wrapper.
-     * 
-     * @param index the attribute index.
-     * @return <code>true</code> if the attribute value is defined in this wrapper.
-     */
-    private synchronized boolean isDefinedLocally(int index)
-    {
-        if(modified.get(index))
-        {
-            return attributes[index] != null;
-        }
-        else
-        {
-            return attributes[index] != null || ids[index] > 0;
-        } 
-    }
-
-    /**
-     * Retrieve the attribute value defined in this wrapper.
-     * 
-     * @param attribute the attribute definition.
-     * @return the attribute value is defined in this wrapper.
-     */
-    private synchronized Object getLocally(AttributeDefinition attribute)
-    {
-        int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        Object value = attributes[index];
-        if(modified.get(index))
-        {
-            return value;
-        }
-        else
-        {
-            if(value != null)
-            {
-                return value;
-            }
-            else
-            {
-                long id = ids[index] - 1;
-                if(id == -1)
-                {
-                    return null;
-                }
-                else
-                {
-                    value = loadAttribute(attribute, id);
-                    attributes[index] = value;
-                    return value;
-                }
-            }
-        }        
-    }
-
-    /**
-     * Set the attribute value in this wrapper.
-     * 
-     * @param index the attribute index.
-     * @param value the attribute value.
-     * @return <code>true</code> if values were different.
-     */
-    private synchronized boolean setLocally(int index, Object value)
-    {
-        Object oldValue = attributes[index];
-        if(oldValue == null || value == null)
-        {
-            if(value == null && oldValue == null)
-            {
-                return false;
-            }
-            else
-            {
-                attributes[index] = value;
-                return true;
-            }
-        }
-        if(oldValue.equals(value))
-        {
-            return false;
-        }
-        attributes[index] = value;
-        return true;
-    }
-
-    /**
-     * Unset the attribute value in this wrapper.
-     * 
-     * @param index the attribute index.
-     */
-    private synchronized void unsetLocally(int index)
-    {
-        attributes[index] = null;
-    }
-
     /**
      * Lazy-load attribute value.
      * 
@@ -719,7 +609,7 @@ public abstract class AbstractResource implements Resource
      * @param aId attribute value id.
      * @return attribute value.
      */
-    protected Object loadAttribute(AttributeDefinition attribute, long aId)
+    protected <T> T loadAttribute(AttributeDefinition<T> attribute, long aId)
     {
         Connection conn = null;
         try
@@ -762,9 +652,9 @@ public abstract class AbstractResource implements Resource
     /**
      * {@inheritDoc}
      */
-    protected long updateAttribute(AttributeDefinition attribute, long id, Object value)
+    protected <T> long updateAttribute(AttributeDefinition<T> attribute, long id, T value)
     {
-        AttributeHandler handler = attribute.getAttributeClass().getHandler();
+        AttributeHandler<T> handler = attribute.getAttributeClass().getHandler();
         Connection conn = null;
         try
         {
@@ -817,7 +707,7 @@ public abstract class AbstractResource implements Resource
      * @param attr the attribute.
      * @param value the value.
      */
-    protected void setAttribute(AttributeDefinition attr, Object value)
+    protected void setAttribute(AttributeDefinition<?> attr, Object value)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
         attributes[index] = value;
@@ -829,7 +719,7 @@ public abstract class AbstractResource implements Resource
      * @param attr the attribute.
      * @return the value.
      */
-    protected Object getAttribute(AttributeDefinition attr)
+    protected Object getAttribute(AttributeDefinition<?> attr)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
         return attributes[index];
@@ -841,7 +731,7 @@ public abstract class AbstractResource implements Resource
      * @param attr the attribute.
      * @param id the identifier.
      */
-    protected void setValueId(AttributeDefinition attr, long id)
+    protected void setValueId(AttributeDefinition<?> attr, long id)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
         ids[index] = id + 1;
@@ -853,7 +743,7 @@ public abstract class AbstractResource implements Resource
      * @param attr the attribute.
      * @return the identifier.
      */
-    protected long getValueId(AttributeDefinition attr)
+    protected long getValueId(AttributeDefinition<?> attr)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
         return ids[index] - 1;
@@ -865,7 +755,7 @@ public abstract class AbstractResource implements Resource
      * @param attr the attribute.
      * @return <code>true</code> if the attribute was modified.
      */
-    protected boolean isAttributeModified(AttributeDefinition attr)
+    protected boolean isAttributeModified(AttributeDefinition<?> attr)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
 		return modified.get(index) || ids[index] != -1L && attributes[index] != null
@@ -885,7 +775,7 @@ public abstract class AbstractResource implements Resource
      */
     private Database getDatabase()
     {
-        return ((AbstractResourceHandler)delegate.getResourceClass().getHandler()).getDatabase();
+        return ((AbstractResourceHandler<?>)delegate.getResourceClass().getHandler()).getDatabase();
     }
 
     /**
@@ -893,12 +783,12 @@ public abstract class AbstractResource implements Resource
      */
     protected Logger getLogger()
     {
-        return ((AbstractResourceHandler)delegate.getResourceClass().getHandler()).getLogger();
+        return ((AbstractResourceHandler<?>)delegate.getResourceClass().getHandler()).getLogger();
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     
-    private void initDefinitions(ResourceClass rClass)
+    private void initDefinitions(ResourceClass<?> rClass)
     {
         synchronized(getClass())
         {
@@ -908,7 +798,7 @@ public abstract class AbstractResource implements Resource
                 initialized.setAccessible(true);
                 if(!((Boolean)initialized.get(null)).booleanValue())
                 {
-                    Class cl = getClass();
+                    Class<?> cl = getClass();
                     while(Resource.class.isAssignableFrom(cl))
                     {
                         initDefinitions(cl, rClass);
@@ -934,7 +824,7 @@ public abstract class AbstractResource implements Resource
         }
     }
 
-    private void initDefinitions(Class cl, ResourceClass rClass)
+    private void initDefinitions(Class<?> cl, ResourceClass<?> rClass)
     {
         for(Field f : cl.getDeclaredFields())
         {
@@ -944,7 +834,7 @@ public abstract class AbstractResource implements Resource
                 String attrName = f.getName().substring(0, f.getName().length() - 3);
                 try
                 {
-                    AttributeDefinition attr = rClass.getAttribute(attrName);
+                    AttributeDefinition<?> attr = rClass.getAttribute(attrName);
                     f.setAccessible(true);
                     f.set(null, attr);
                 }
@@ -964,16 +854,55 @@ public abstract class AbstractResource implements Resource
     /////////////////////////////////////////////////////////////////////////////////////////////
     
     /**
+	 * Retrieve the attribute value defined in this wrapper.
+	 * 
+	 * @param attribute the attribute definition.
+	 * @return the attribute value is defined in this wrapper.
+	 */
+	private synchronized <T> T getInternal(AttributeDefinition<T> attribute)
+	{
+	    int index = delegate.getResourceClass().getAttributeIndex(attribute);
+	    @SuppressWarnings("unchecked")
+	    T value = (T)attributes[index];
+	    if(modified.get(index))
+	    {
+	        return value;
+	    }
+	    else
+	    {
+	        if(value != null)
+	        {
+	            return value;
+	        }
+	        else
+	        {
+	            long id = ids[index] - 1;
+	            if(id == -1)
+	            {
+	                return null;
+	            }
+	            else
+	            {
+	                value = loadAttribute(attribute, id);
+	                attributes[index] = value;
+	                return value;
+	            }
+	        }
+	    }        
+	}
+
+	/**
      * Returns the value of the attribute, or the supplied default value if undefined.
      * 
-     * @param attribute the attribute definiiton.
+     * @param attribute the attribute definition.
      * @param defaultValue the default value.
      * @return attribute value.
      */
-    protected Object getInternal(AttributeDefinition attribute, Object defaultValue)
+    private <T> T getInternal(AttributeDefinition<T> attribute, T defaultValue)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attribute);
-        Object value = attributes[index];
+        @SuppressWarnings("unchecked")
+		T value = (T)attributes[index];
         if(value != null)
         {
             return value;
@@ -997,4 +926,74 @@ public abstract class AbstractResource implements Resource
             }                
         }
     }
+
+	// subclass contract ////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Check if the attribute value is defined in this wrapper.
+	 * 
+	 * @param index the attribute index.
+	 * @return <code>true</code> if the attribute value is defined in this wrapper.
+	 */
+	private synchronized boolean isDefinedInternal(AttributeDefinition<?> attribute)
+	{
+		int index = delegate.getResourceClass().getAttributeIndex(attribute);
+	    if(modified.get(index))
+	    {
+	        return attributes[index] != null;
+	    }
+	    else
+	    {
+	        return attributes[index] != null || ids[index] > 0;
+	    } 
+	}
+
+	/**
+	 * Set the attribute value in this wrapper.
+	 * 
+	 * @param index the attribute index.
+	 * @param value the attribute value.
+	 * @return <code>true</code> if values were different.
+	 */
+	private synchronized void setInternal(AttributeDefinition<?> attribute, Object value)
+	{
+	    int index = delegate.getResourceClass().getAttributeIndex(attribute);
+	    Object oldValue = attributes[index];
+	    boolean attributeModified = true;
+	    if(oldValue == null || value == null)
+	    {
+	        if(value == null && oldValue == null)
+	        {
+	        	attributeModified = false;
+	        }
+	        else
+	        {
+	            attributes[index] = value;
+	            attributeModified = true;
+	        }
+	    }
+	    else if(oldValue.equals(value))
+	    {
+	    	attributeModified = false;
+	    }
+	    attributes[index] = value;        
+	    if(attributeModified)
+	    {
+	        modified.set(index);
+	    }
+	}
+
+	// subclass contract ////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Unset the attribute value in this wrapper.
+	 * 
+	 * @param index the attribute index.
+	 */
+	private synchronized void unsetInternal(AttributeDefinition<?> attribute)
+	{
+	    int index = delegate.getResourceClass().getAttributeIndex(attribute);
+	    attributes[index] = null;
+	    modified.set(index);
+	}
 }

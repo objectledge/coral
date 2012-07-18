@@ -29,6 +29,7 @@ package org.objectledge.coral.session;
 
 import java.util.Map;
 
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityExistsException;
@@ -41,6 +42,7 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.JavaClassException;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.SchemaIntegrityException;
+import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 
 /**
@@ -69,16 +71,16 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public AttributeClass[] getAttributeClass()
+    public ImmutableSet<AttributeClass<?>> getAllAttributeClasses()
     {
         session.verify();
-        return coral.getSchema().getAttributeClass();
+        return coral.getSchema().getAllAttributeClasses();
     }
 
     /** 
      * {@inheritDoc}
      */
-    public AttributeClass getAttributeClass(long id) throws EntityDoesNotExistException
+    public AttributeClass<?> getAttributeClass(long id) throws EntityDoesNotExistException
     {
         session.verify();
         return coral.getSchema().getAttributeClass(id);
@@ -87,7 +89,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public AttributeClass getAttributeClass(String name) throws EntityDoesNotExistException
+    public AttributeClass<?> getAttributeClass(String name) throws EntityDoesNotExistException
     {
         session.verify();
         return coral.getSchema().getAttributeClass(name);
@@ -96,7 +98,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public AttributeClass createAttributeClass(
+    public AttributeClass<?> createAttributeClass(
         String name,
         String javaClass,
         String handlerClass,
@@ -110,7 +112,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void deleteAttributeClass(AttributeClass attributeClass) throws EntityInUseException
+    public void deleteAttributeClass(AttributeClass<?> attributeClass) throws EntityInUseException
     {
         session.verify();
         coral.getSchema().deleteAttributeClass(attributeClass);
@@ -119,7 +121,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setName(AttributeClass attributeClass, String name) throws EntityExistsException
+    public void setName(AttributeClass<?> attributeClass, String name) throws EntityExistsException
     {
         session.verify();
         coral.getSchema().setName(attributeClass, name);
@@ -128,7 +130,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setJavaClass(AttributeClass attributeClass, String javaClass)
+    public void setJavaClass(AttributeClass<?> attributeClass, String javaClass)
         throws JavaClassException
     {
         session.verify();
@@ -138,7 +140,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setHandlerClass(AttributeClass attributeClass, String handlerClass)
+    public void setHandlerClass(AttributeClass<?> attributeClass, String handlerClass)
         throws JavaClassException
     {
         session.verify();
@@ -148,7 +150,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setDbTable(AttributeClass attributeClass, String dbTable)
+    public void setDbTable(AttributeClass<?> attributeClass, String dbTable)
     {
         session.verify();
         coral.getSchema().setDbTable(attributeClass, dbTable);
@@ -157,9 +159,9 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public AttributeDefinition createAttribute(
+    public <T> AttributeDefinition<T> createAttribute(
         String name,
-        AttributeClass attributeClass,
+        AttributeClass<T> attributeClass,
         String domain,
         int flags)
     {
@@ -170,16 +172,16 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public AttributeDefinition[] getAttribute()
+    public ImmutableSet<AttributeDefinition<?>> getAllAttributes()
     {
         session.verify();
-        return coral.getSchema().getAttribute();
+        return coral.getSchema().getAllAttributes();
     }
 
     /** 
      * {@inheritDoc}
      */
-    public AttributeDefinition getAttribute(long id) throws EntityDoesNotExistException
+    public AttributeDefinition<?> getAttribute(long id) throws EntityDoesNotExistException
     {
         session.verify();
         return coral.getSchema().getAttribute(id);
@@ -188,7 +190,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void deleteAttribute(ResourceClass resourceClass, AttributeDefinition attribute)
+    public void deleteAttribute(ResourceClass<?> resourceClass, AttributeDefinition<?> attribute)
         throws IllegalArgumentException
     {
         session.verify();
@@ -198,7 +200,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setName(AttributeDefinition attribute, String name) throws SchemaIntegrityException
+    public void setName(AttributeDefinition<?> attribute, String name) throws SchemaIntegrityException
     {
         session.verify();
         coral.getSchema().setName(attribute, name);
@@ -207,7 +209,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setDomain(AttributeDefinition attribute, String domain)
+    public void setDomain(AttributeDefinition<?> attribute, String domain)
     {
         session.verify();
         coral.getSchema().setDomain(attribute, domain);
@@ -216,7 +218,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setFlags(AttributeDefinition attribute, int flags)
+    public void setFlags(AttributeDefinition<?> attribute, int flags)
     {
         session.verify();
         coral.getSchema().setFlags(attribute, flags);
@@ -225,16 +227,16 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public ResourceClass[] getResourceClass()
+    public ImmutableSet<ResourceClass<?>> getAllResourceClasses()
     {
         session.verify();
-        return coral.getSchema().getResourceClass();
+        return coral.getSchema().getAllResourceClasses();
     }
 
     /** 
      * {@inheritDoc}
      */
-    public ResourceClass getResourceClass(long id) throws EntityDoesNotExistException
+    public ResourceClass<?> getResourceClass(long id) throws EntityDoesNotExistException
     {
         session.verify();
         return coral.getSchema().getResourceClass(id);
@@ -243,7 +245,16 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public ResourceClass getResourceClass(String name) throws EntityDoesNotExistException
+    public <T extends Resource> ResourceClass<T> getResourceClass(String name, Class<T> rClass) throws EntityDoesNotExistException
+    {
+        session.verify();
+        return coral.getSchema().getResourceClass(name, rClass);
+    }
+    
+    /** 
+     * {@inheritDoc}
+     */
+    public ResourceClass<?> getResourceClass(String name) throws EntityDoesNotExistException
     {
         session.verify();
         return coral.getSchema().getResourceClass(name);
@@ -252,7 +263,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public ResourceClass createResourceClass(
+    public ResourceClass<?> createResourceClass(
         String name,
         String javaClass,
         String handlerClass,
@@ -268,7 +279,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void deleteResourceClass(ResourceClass resourceClass) throws EntityInUseException
+    public void deleteResourceClass(ResourceClass<?> resourceClass) throws EntityInUseException
     {
         session.verify();
         coral.getSchema().deleteResourceClass(resourceClass);
@@ -277,7 +288,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setName(ResourceClass resourceClass, String name) throws EntityExistsException
+    public void setName(ResourceClass<?> resourceClass, String name) throws EntityExistsException
     {
         session.verify();
         coral.getSchema().setName(resourceClass, name);
@@ -286,7 +297,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setFlags(ResourceClass resourceClass, int flags)
+    public void setFlags(ResourceClass<?> resourceClass, int flags)
     {
         session.verify();
         coral.getSchema().setFlags(resourceClass, flags);
@@ -295,7 +306,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setJavaClass(ResourceClass resourceClass, String javaClass)
+    public void setJavaClass(ResourceClass<?> resourceClass, String javaClass)
         throws JavaClassException
     {
         session.verify();
@@ -305,7 +316,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setHandlerClass(ResourceClass resourceClass, String handlerClass)
+    public void setHandlerClass(ResourceClass<?> resourceClass, String handlerClass)
         throws JavaClassException
     {
         session.verify();
@@ -315,7 +326,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void setDbTable(ResourceClass resourceClass, String dbTable)
+    public void setDbTable(ResourceClass<?> resourceClass, String dbTable)
     {
         session.verify();
         coral.getSchema().setDbTable(resourceClass, dbTable);
@@ -324,10 +335,10 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void addAttribute(
-        ResourceClass resourceClass,
-        AttributeDefinition attribute,
-        Object value)
+    public <T> void addAttribute(
+        ResourceClass<?> resourceClass,
+        AttributeDefinition<T> attribute,
+        T value)
         throws SchemaIntegrityException, ValueRequiredException
     {
         session.verify();
@@ -337,7 +348,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void addParentClass(ResourceClass child, ResourceClass parent, Map attributes)
+    public void addParentClass(ResourceClass<?> child, ResourceClass<?> parent, Map<AttributeDefinition<?>, Object> attributes)
         throws CircularDependencyException, SchemaIntegrityException, ValueRequiredException
     {
         session.verify();
@@ -347,7 +358,7 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void deleteParentClass(ResourceClass child, ResourceClass parent)
+    public void deleteParentClass(ResourceClass<?> child, ResourceClass<?> parent)
         throws IllegalArgumentException
     {
         session.verify();
@@ -369,7 +380,7 @@ public class SessionCoralSchema implements CoralSchema
     }
 
     @Override
-    public EntityFactory<ResourceClass> getResourceClassFactory()
+    public EntityFactory<ResourceClass<?>> getResourceClassFactory()
     {
         session.verify();
         return coral.getSchema().getResourceClassFactory();

@@ -5,17 +5,12 @@
   <parent>
     <artifactId>coral-common</artifactId>
     <groupId>org.objectledge.coral</groupId>
-    <version>1.0.12.1</version>
+    <version>1.0.13</version>
     <relativePath>../coral-common/pom.xml</relativePath>
   </parent>
   <artifactId>coral-tools</artifactId>
   <name>Coral Tools</name>
   <dependencies>
-    <dependency>
-      <groupId>org.objectledge.coral</groupId>
-      <artifactId>coral-common</artifactId>
-      <type>pom</type>
-    </dependency>
     <dependency>
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-api</artifactId>

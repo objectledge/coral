@@ -33,6 +33,7 @@ import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.ResourceClass;
@@ -85,9 +86,9 @@ public class CoralSchemaTest
     public void testBuiltinAttributeClasses()
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
-        AttributeClass[] classes = session.getSchema().getAttributeClass();
+        ImmutableSet<AttributeClass<?>> classes = session.getSchema().getAllAttributeClasses();
         session.close();
-        assertTrue(classes.length > 0);
+        assertTrue(classes.size() > 0);
     }
     
     public void testAttributeClassOperations()
@@ -119,9 +120,9 @@ public class CoralSchemaTest
     public void testBuiltinResourceClasses()
     {
         CoralSession session = coralSessionFactory.getAnonymousSession();
-        ResourceClass[] classes = session.getSchema().getResourceClass();
+        ImmutableSet<ResourceClass<?>> classes = session.getSchema().getAllResourceClasses();
         session.close();
-        assertTrue(classes.length > 0);
+        assertTrue(classes.size() > 0);
     }    
 
     public void testResourceClassOperations()

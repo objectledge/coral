@@ -735,6 +735,14 @@ public class RelationImplTest extends LedgeTestCase
         {
 			throw new UnsupportedOperationException();
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Object get(AttributeDefinition attribute, Object defaultValue) throws UnknownAttributeException
+        {
+			throw new UnsupportedOperationException();
+        }
 
         /**
          * {@inheritDoc}

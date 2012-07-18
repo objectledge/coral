@@ -579,6 +579,21 @@ public class ResourceImpl
     }
     
     /**
+     * Retrieves the value of a specific attribute.
+     * 
+     * @param attribute the attribute to retrieve.
+     * @return the value of the attribute, or <code>null</code> if undefined.
+     * @throws UnknownAttributeException if <code>attribute</code> does not
+     *         belong to the resource's class.
+     */
+    public Object get(AttributeDefinition attribute, Object defaultValue)
+        throws UnknownAttributeException
+    {
+    	Object value = get(attribute);
+    	return value != null ? value : defaultValue;
+    }
+    
+    /**
      * Sets the value of a specific attribute.
      * 
      * @param attribute the attribute to set.

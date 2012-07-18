@@ -2,16 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.objectledge</groupId>
-    <artifactId>ledge-common</artifactId>
-    <relativePath>../ledge-common/pom.xml</relativePath>
-    <version>1.0.12.2</version>
-  </parent>
   <groupId>org.objectledge.coral</groupId>
   <artifactId>coral-common</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.12.1</version>
+  <version>1.0.13</version>
   <name>ObjectLedge Coral object oriented database</name>
   <inceptionYear>2003</inceptionYear>
   <description>
@@ -96,15 +90,43 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <versions.ledge>1.0.13</versions.ledge>
   </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.objectledge.coral</groupId>
-        <artifactId>coral-common</artifactId>
-        <type>pom</type>
+        <groupId>org.objectledge</groupId>
+        <artifactId>ledge-components</artifactId>
+        <version>${versions.ledge}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge</groupId>
+        <artifactId>ledge-components</artifactId>
+        <type>test-jar</type>
+        <version>${versions.ledge}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge</groupId>
+        <artifactId>ledge-components</artifactId>
+        <version>${versions.ledge}</version>
+        <classifier>install</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge</groupId>
+        <artifactId>ledge-container</artifactId>
+        <version>${versions.ledge}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge</groupId>
+        <artifactId>ledge-lgpl</artifactId>
+        <version>${versions.ledge}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.objectledge</groupId>
+        <artifactId>ledge-web</artifactId>
+        <classifier>classes</classifier>
         <version>${project.version}</version>
-      </dependency>    
+      </dependency>
       <dependency>
         <groupId>org.objectledge.coral</groupId>
         <artifactId>coral-api</artifactId>
@@ -148,32 +170,113 @@
         <version>${project.version}</version>
         <type>maven-plugin</type>
       </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.1</version>
+      </dependency>
+      <dependency>
+        <groupId>hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <version>1.7.2.2</version>
+      </dependency>
+      <dependency>
+        <groupId>dbunit</groupId>
+        <artifactId>dbunit</artifactId>
+        <version>2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.resource</groupId>
+        <artifactId>connector-api</artifactId>
+        <version>1.5</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.4</version>
+      </dependency>
+      <dependency>
+      	<groupId>com.google.guava</groupId>
+      	<artifactId>guava</artifactId>
+      	<version>12.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>jmock</groupId>
       <artifactId>jmock</artifactId>
-      <scope>test</scope>
+      <version>1.0.0.RC1</version>
     </dependency>
     <dependency>
       <groupId>jmock</groupId>
       <artifactId>jmock-cglib</artifactId>
-      <scope>test</scope>
+      <version>1.0.0.RC1</version>
     </dependency>
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib-full</artifactId>
-      <scope>test</scope>
+      <version>2.0.2</version>
     </dependency>
   </dependencies>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.3.1</version>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.3.1</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Build-Date>${maven.build.timestamp}</Build-Date>
+                <Build-Id>${buildId}</Build-Id>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>2.1.1</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Build-Date>${maven.build.timestamp}</Build-Date>
+                <Build-Id>${buildId}</Build-Id>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.codehaus.sonar</groupId>
         <artifactId>sonar-maven3-plugin</artifactId>
-        <version>2.11</version>
+        <version>2.14</version>
       </plugin>
     </plugins>
   </build>
+  <distributionManagement>
+    <repository>
+      <id>nexus.objectledge.org</id>
+      <name>ObjectLedge releases Nexus repository</name>
+      <url>http://nexus.objectledge.org/nexus/content/repositories/m2releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus.objectledge.org</id>
+      <name>ObjectLedge snapshots Nexus repository</name>
+      <url>http://nexus.objectledge.org/nexus/content/repositories/m2snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

@@ -1,11 +1,16 @@
 package org.objectledge.coral.modules.views.browser;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.table.comparator.NameComparator;
 import org.objectledge.i18n.I18nContext;
 import org.objectledge.parameters.Parameters;
 import org.objectledge.pipeline.ProcessingException;
@@ -30,11 +35,13 @@ public class AddAttribute extends BaseBrowserView
     {
         try
         {
-            AttributeClass[] attributeClass = coralSession.getSchema().getAttributeClass();
+            List<AttributeClass<?>> attributeClass = new ArrayList<AttributeClass<?>>(coralSession
+                .getSchema().getAllAttributeClasses().unmodifiableSet());
+            Collections.sort(attributeClass, new NameComparator<AttributeClass<?>>(i18nContext.getLocale()));
             templatingContext.put("attrClasses", attributeClass);
             templatingContext.put("flags", new AttributeFlags());
             long resClassId = parameters.getLong("res_class_id",-1);
-            ResourceClass resourceClass = coralSession.getSchema().getResourceClass(resClassId);
+            ResourceClass<?> resourceClass = coralSession.getSchema().getResourceClass(resClassId);
             templatingContext.put("resourceClass", resourceClass);
         }
         catch (Exception e)

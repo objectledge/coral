@@ -14,6 +14,8 @@ import java.util.WeakHashMap;
 import org.jcontainer.dna.ConfigurationException;
 import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
+import org.objectledge.collections.ImmutableHashSet;
+import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.Instantiator;
@@ -298,18 +300,20 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public AttributeClass[] getAttributeClass()
+    public ImmutableSet<AttributeClass<?>> getAllAttributeClasses()
     {
-        Set all = attributeClassRegistry.get();
-        AttributeClass[] result = new AttributeClass[all.size()];
-        all.toArray(result);
-        return result;
+        Set<AttributeClass<?>> s = new HashSet<AttributeClass<?>>();
+        for(AttributeClass<?> ac : attributeClassRegistry.get())
+        {
+            s.add(ac);
+        }
+        return new ImmutableHashSet<AttributeClass<?>>(s);
     }
 
     /**
      * {@inheritDoc}
      */
-    public AttributeClass getAttributeClass(long id)
+    public AttributeClass<?> getAttributeClass(long id)
         throws EntityDoesNotExistException
     {
         return (AttributeClass)attributeClassRegistry.get(id);
@@ -318,12 +322,12 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public AttributeClass getAttributeClass(String name)
+    public AttributeClass<?> getAttributeClass(String name)
         throws EntityDoesNotExistException
     {
         try
         {
-            return (AttributeClass)attributeClassRegistry.getUnique(name);
+            return (AttributeClass<?>)attributeClassRegistry.getUnique(name);
         }
         catch(AmbigousEntityNameException e)
         {
@@ -334,7 +338,7 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public void addAttributeClass(AttributeClass item)
+    public void addAttributeClass(AttributeClass<?> item)
         throws EntityExistsException
     {
         attributeClassRegistry.addUnique((AttributeClassImpl)item);
@@ -343,7 +347,7 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public void renameAttributeClass(AttributeClass item, String name)
+    public void renameAttributeClass(AttributeClass<?> item, String name)
         throws EntityExistsException
     {
         attributeClassRegistry.renameUnique((AttributeClassImpl)item, name);
@@ -352,7 +356,7 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public void deleteAttributeClass(AttributeClass item)
+    public void deleteAttributeClass(AttributeClass<?> item)
         throws EntityInUseException
     {
         boolean shouldCommit = false;
@@ -414,32 +418,34 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public ResourceClass[] getResourceClass()
-    {
-        Set all = resourceClassRegistry.get();
-        ResourceClass[] result = new ResourceClass[all.size()];
-        all.toArray(result);
-        return result;
+    public ImmutableSet<ResourceClass<?>> getAllResourceClasses()
+    {        
+        Set<ResourceClass<?>> s = new HashSet<ResourceClass<?>>();
+        for(ResourceClass<?> rc : resourceClassRegistry.get())
+        {
+            s.add(rc);
+        }
+        return new ImmutableHashSet<ResourceClass<?>>(s);
     }
 
     /**
      * {@inheritDoc}
      */
-    public ResourceClass getResourceClass(long id)
+    public ResourceClass<?> getResourceClass(long id)
         throws EntityDoesNotExistException
     {
-        return (ResourceClass)resourceClassRegistry.get(id);
+        return (ResourceClass<?>)resourceClassRegistry.get(id);
     }
     
     /**
      * {@inheritDoc}
      */
-    public ResourceClass getResourceClass(String name)
+    public ResourceClass<?> getResourceClass(String name)
         throws EntityDoesNotExistException
     {
         try
         {
-            return (ResourceClass)resourceClassRegistry.getUnique(name);
+            return (ResourceClass<?>)resourceClassRegistry.getUnique(name);
         }
         catch(AmbigousEntityNameException e)
         {
@@ -450,16 +456,16 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public void addResourceClass(ResourceClass item)
+    public void addResourceClass(ResourceClass<?> item)
         throws EntityExistsException
     {
-        resourceClassRegistry.addUnique((ResourceClassImpl)item);
+        resourceClassRegistry.addUnique((ResourceClassImpl<?>)item);
     }
     
     /**
      * {@inheritDoc}
      */
-    public void deleteResourceClass(ResourceClass item)
+    public void deleteResourceClass(ResourceClass<?> item)
         throws EntityInUseException
     {
         boolean shouldCommit = false;
@@ -545,7 +551,7 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public void renameResourceClass(ResourceClass item, String name)
+    public void renameResourceClass(ResourceClass<?> item, String name)
         throws EntityExistsException
     {
         resourceClassRegistry.renameUnique((ResourceClassImpl)item, name);
@@ -556,7 +562,7 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public Set getDeclaredAttributes(ResourceClass owner)
+    public Set getDeclaredAttributes(ResourceClass<?> owner)
     {
         synchronized(resourceClassLock)
         {
@@ -584,15 +590,15 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */    
-    public AttributeDefinition[] getAttributeDefinition()
+    public ImmutableSet<AttributeDefinition<?>> getAllAttributeDefinitions()
     {
         synchronized(resourceClassLock)
         {
             Set defs = attributeDefinitionRegistry.get();
             for(Iterator i = defs.iterator(); i.hasNext(); )
             {
-                AttributeDefinition def = (AttributeDefinition)i.next();
-                ResourceClass owner = def.getDeclaringClass();
+                AttributeDefinition<?> def = (AttributeDefinition<?>)i.next();
+                ResourceClass<?> owner = def.getDeclaringClass();
                 Set items = (Set)attributeDefinitionByResourceClass.get(owner);
                 if(items == null)
                 {
@@ -601,30 +607,28 @@ public class CoralRegistryImpl
                 }
                 items.add(def);
             }
-            AttributeDefinition[] result = new AttributeDefinition[defs.size()];
-            defs.toArray(result);
-            return result;
+            return new ImmutableHashSet<AttributeDefinition<?>>(defs);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public AttributeDefinition getAttributeDefinition(long id)
+    public AttributeDefinition<?> getAttributeDefinition(long id)
         throws EntityDoesNotExistException
     {
-        return (AttributeDefinition)attributeDefinitionRegistry.get(id);
+        return (AttributeDefinition<?>)attributeDefinitionRegistry.get(id);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addAttributeDefinition(AttributeDefinition item)
+    public void addAttributeDefinition(AttributeDefinition<?> item)
     {
         synchronized(resourceClassLock)
         {
-            attributeDefinitionRegistry.add((AttributeDefinitionImpl)item);
-            ResourceClass owner = item.getDeclaringClass();
+            attributeDefinitionRegistry.add((AttributeDefinitionImpl<?>)item);
+            ResourceClass<?> owner = item.getDeclaringClass();
             Set items = (Set)attributeDefinitionByResourceClass.get(owner);
             if(items == null)
             {
@@ -638,20 +642,20 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public void renameAttributeDefinition(AttributeDefinition item, String name)
+    public void renameAttributeDefinition(AttributeDefinition<?> item, String name)
     {
-        attributeDefinitionRegistry.rename((AttributeDefinitionImpl)item, name);
+        attributeDefinitionRegistry.rename((AttributeDefinitionImpl<?>)item, name);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void deleteAttributeDefinition(AttributeDefinition item)
+    public void deleteAttributeDefinition(AttributeDefinition<?> item)
     {
         synchronized(resourceClassLock)
         {
-            attributeDefinitionRegistry.delete((AttributeDefinitionImpl)item);
-            ResourceClass owner = item.getDeclaringClass();
+            attributeDefinitionRegistry.delete((AttributeDefinitionImpl<?>)item);
+            ResourceClass<?> owner = item.getDeclaringClass();
             Set items = (Set)attributeDefinitionByResourceClass.get(owner);
             if(items != null)
             {
@@ -665,7 +669,7 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public Set getResourceClassInheritance(ResourceClass owner)
+    public Set getResourceClassInheritance(ResourceClass<?> owner)
     {
         synchronized(resourceClassLock)
         {
@@ -711,7 +715,7 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
-            ResourceClass parent = item.getParent();
+            ResourceClass<?> parent = item.getParent();
             Set items = (Set)resourceClassInheritanceByResourceClass.get(parent);
             if(items == null)
             {
@@ -719,7 +723,7 @@ public class CoralRegistryImpl
                 resourceClassInheritanceByResourceClass.put(parent, items);
             }
             items.add(item);
-            ResourceClass child = item.getChild();
+            ResourceClass<?> child = item.getChild();
             items = (Set)resourceClassInheritanceByResourceClass.get(child);
             if(items == null)
             {
@@ -745,13 +749,13 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to delete " + item, e);
             }
-            ResourceClass parent = item.getParent();
+            ResourceClass<?> parent = item.getParent();
             Set items = (Set)resourceClassInheritanceByResourceClass.get(parent);
             if(items != null)
             {
                 items.remove(item);
             }
-            ResourceClass child = item.getChild();
+            ResourceClass<?> child = item.getChild();
             items = (Set)resourceClassInheritanceByResourceClass.get(child);
             if(items != null)
             {

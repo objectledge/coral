@@ -29,6 +29,7 @@ package org.objectledge.coral.session;
 
 import org.apache.commons.pool.KeyedObjectPool;
 import org.jmock.Mock;
+import org.objectledge.collections.ImmutableHashSet;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.CoralSchema;
@@ -78,7 +79,7 @@ public class SessionCoralSchemaTest extends LedgeTestCase
     
     public void testGetAttributeClass()
     {
-        mockCoralSchema.expects(once()).method("getAttributeClass").will(returnValue(new AttributeClass[0]));
-        sessionCoralSchema.getAttributeClass();
+        mockCoralSchema.expects(once()).method("getAllAttributeClasses").will(returnValue(new ImmutableHashSet<AttributeClass<?>>()));
+        sessionCoralSchema.getAllAttributeClasses();
     }
 }
