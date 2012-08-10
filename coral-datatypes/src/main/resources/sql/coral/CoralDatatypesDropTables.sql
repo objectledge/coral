@@ -41,4 +41,5 @@ DROP TABLE coral_attribute_number;
 DROP TABLE coral_attribute_long;
 DROP TABLE coral_attribute_integer;
 DROP TABLE coral_attribute_boolean;
+DROP TABLE coral_attribute_mapping;
 DROP TABLE coral_generic_resource;

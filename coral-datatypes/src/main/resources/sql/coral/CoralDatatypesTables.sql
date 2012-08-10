@@ -170,3 +170,14 @@ CREATE TABLE coral_attribute_weak_resource_list (
         ref BIGINT,
         PRIMARY KEY (data_key, pos)
 );
+
+-- attribute to SQL mapping for tabular model -------------------------------
+
+CREATE TABLE coral_attribute_mapping (
+  attribute_class_id BIGINT NOT NULL,
+  is_fk boolean NOT NULL,
+  sql_type VARCHAR(32),
+  fk_table VARCHAR(64),
+  fk_key_column VARCHAR(64)
+);
+

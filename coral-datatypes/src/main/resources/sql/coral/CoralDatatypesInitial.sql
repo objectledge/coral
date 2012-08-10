@@ -339,8 +339,45 @@ INSERT INTO coral_attribute_definition VALUES(
 
 INSERT INTO ledge_id_table VALUES (21, 'coral_attribute_definition');
 
+-- attribute to SQL mapping for tabular model -------------------------------
+
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type) 
+VALUES(1, false, 'VARCHAR(255)');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type) 
+VALUES(2, false, 'VARCHAR');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type) 
+VALUES(3, false, 'BOOLEAN');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type) 
+VALUES(4, false, 'INTEGER');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type) 
+VALUES(5, false, 'BIGINT');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type) 
+VALUES(6, false, 'DECIMAL');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type) 
+VALUES(7, false, 'TIMESTAMP');
+
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type, fk_table, fk_key_column) 
+VALUES(8, true, 'BIGINT', 'coral_resource_class', 'resource_class_id');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type, fk_table, fk_key_column) 
+VALUES(9, true, 'BIGINT', 'coral_resource', 'resource_id');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type, fk_table, fk_key_column) 
+VALUES(10, true, 'BIGINT', 'coral_subject', 'subject_id');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type, fk_table, fk_key_column) 
+VALUES(11, true, 'BIGINT', 'coral_role', 'role_id');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type, fk_table, fk_key_column) 
+VALUES(12, true, 'BIGINT', 'coral_permission', 'permission_id');
+
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type, fk_table, fk_key_column) 
+VALUES(13, true, 'BIGINT', 'coral_attribute_date_range', 'data_key');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type, fk_table, fk_key_column) 
+VALUES(14, true, 'BIGINT', 'ledge_parameters', 'parameters_id');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type, fk_table, fk_key_column) 
+VALUES(15, true, 'BIGINT', 'coral_attribute_resource_list', 'data_key');
+INSERT INTO coral_attribute_mapping (attribute_class_id, is_fk, sql_type, fk_table, fk_key_column) 
+VALUES(16, true, 'BIGINT', 'coral_attribute_weak_resource_list', 'data_key');
+
 -- root resource -------------------------------------------------------------
 
-INSERT INTO coral_resource values(1, 1, NULL, 'root' ,1 ,NOW(), 1, 1, NOW());
+INSERT INTO coral_resource VALUES(1, 1, NULL, 'root' ,1 ,NOW(), 1, 1, NOW());
 INSERT INTO ledge_id_table VALUES (2, 'coral_resource');
 
