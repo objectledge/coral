@@ -24,6 +24,10 @@
       <artifactId>ledge-container</artifactId>
     </dependency>
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-datatypes</artifactId>
       <classifier>install</classifier>
@@ -71,8 +75,21 @@
         <directory>src/main/java</directory>
         <includes>
           <include>**/*.vt</include>
+          <include>**/*.sql</include>
         </includes>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>src/test/java</directory>
+        <includes>
+          <include>**/*.sql</include>
+          <include>**/*.bin</include>
+        </includes>
+      </testResource>
+    </testResources>
   </build>
 </project>
