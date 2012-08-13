@@ -59,14 +59,6 @@ CREATE TABLE coral_resource_class_inheritance (
         PRIMARY KEY (parent, child)
 );
 
-ALTER TABLE coral_resource_class_inheritance 
-        ADD FOREIGN KEY (parent)
-        REFERENCES coral_resource_class (resource_class_id);
-
-ALTER TABLE coral_resource_class_inheritance
-        ADD FOREIGN KEY (child)
-        REFERENCES coral_resource_class (resource_class_id);
-
 CREATE TABLE coral_attribute_definition (
         attribute_definition_id BIGINT NOT NULL,
         resource_class_id BIGINT NOT NULL,
@@ -76,14 +68,6 @@ CREATE TABLE coral_attribute_definition (
         flags INTEGER DEFAULT 0 NOT NULL,
         PRIMARY KEY (attribute_definition_id)
 );
-
-ALTER TABLE coral_attribute_definition 
-        ADD FOREIGN KEY (resource_class_id)
-        REFERENCES coral_resource_class (resource_class_id);
-
-ALTER TABLE coral_attribute_definition
-        ADD FOREIGN KEY (attribute_class_id)
-        REFERENCES coral_attribute_class (attribute_class_id);
 
 -- CoralSecrity -------------------------------------------------------------
         
@@ -107,13 +91,6 @@ CREATE TABLE coral_role_implication (
         PRIMARY KEY (super_role, sub_role)
 );
 
-ALTER TABLE coral_role_implication 
-        ADD FOREIGN KEY (super_role)
-        REFERENCES coral_role (role_id);
-
-ALTER TABLE coral_role_implication
-        ADD FOREIGN KEY (sub_role)
-        REFERENCES coral_role (role_id);
 
 CREATE TABLE coral_role_assignment (
         subject_id BIGINT NOT NULL,
@@ -123,18 +100,6 @@ CREATE TABLE coral_role_assignment (
         granting_allowed CHAR(1),
         PRIMARY KEY (subject_id, role_id)
 );
-
-ALTER TABLE coral_role_assignment
-        ADD FOREIGN KEY (subject_id)
-        REFERENCES coral_subject(subject_id);
-
-ALTER TABLE coral_role_assignment
-        ADD FOREIGN KEY (role_id)
-        REFERENCES coral_role(role_id);
-
-ALTER TABLE coral_role_assignment
-        ADD FOREIGN KEY (grantor)
-        REFERENCES coral_subject(subject_id);
 
 CREATE TABLE coral_permission (
         permission_id BIGINT NOT NULL,
@@ -156,26 +121,6 @@ CREATE TABLE coral_resource (
         modification_time TIMESTAMP,
         PRIMARY KEY (resource_id)
 );
-
-ALTER TABLE coral_resource
-        ADD FOREIGN KEY (resource_class_id)
-        REFERENCES coral_resource_class (resource_class_id);
-
-ALTER TABLE coral_resource
-        ADD CONSTRAINT resource_parent_fk FOREIGN KEY (parent)
-        REFERENCES coral_resource (resource_id);
-
-ALTER TABLE coral_resource
-        ADD FOREIGN KEY (created_by)
-        REFERENCES coral_subject (subject_id);
-
-ALTER TABLE coral_resource
-        ADD FOREIGN KEY (owned_by)
-        REFERENCES coral_subject (subject_id);
-
-ALTER TABLE coral_resource
-        ADD FOREIGN KEY (modified_by)
-        REFERENCES coral_subject (subject_id);
 
 CREATE INDEX coral_resource_parent ON coral_resource (parent);
 
@@ -199,30 +144,6 @@ CREATE TABLE coral_permission_association (
         PRIMARY KEY (resource_class_id, permission_id)
 );
 
-ALTER TABLE coral_permission_assignment
-        ADD FOREIGN KEY (resource_id)
-        REFERENCES coral_resource (resource_id);
-
-ALTER TABLE coral_permission_assignment
-        ADD FOREIGN KEY (role_id)
-        REFERENCES coral_role (role_id);
-
-ALTER TABLE coral_permission_assignment
-        ADD FOREIGN KEY (permission_id)
-        REFERENCES coral_permission (permission_id);
-
-ALTER TABLE coral_permission_assignment
-        ADD FOREIGN KEY (grantor)
-        REFERENCES coral_subject (subject_id);
-
-ALTER TABLE coral_permission_association
-        ADD FOREIGN KEY (resource_class_id)
-        REFERENCES coral_resource_class (resource_class_id);
-
-ALTER TABLE coral_permission_association
-        ADD FOREIGN KEY (permission_id)
-        REFERENCES coral_permission (permission_id);
-
 -- CoralRelation ---------------------------------------------------------------
 
 CREATE TABLE coral_relation (
@@ -238,15 +159,4 @@ CREATE TABLE coral_relation_data (
         PRIMARY KEY (relation_id, resource1, resource2)
 );
 
-ALTER TABLE coral_relation_data
-        ADD FOREIGN KEY (relation_id)
-        REFERENCES coral_relation (relation_id);
-
-ALTER TABLE coral_relation_data
-        ADD FOREIGN KEY (resource1)
-        REFERENCES coral_resource (resource_id);
-
-ALTER TABLE coral_relation_data
-        ADD FOREIGN KEY (resource2)
-        REFERENCES coral_resource (resource_id);
 

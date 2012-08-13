@@ -65,7 +65,9 @@ public class InitComponent
         runScript("sql/scheduler/DBSchedulerTables.sql");
         runScript("sql/naming/DBNamingTables.sql");
         runScript("sql/coral/CoralRITables.sql");
+        runScript("sql/coral/CoralRIConstraints.sql");
         runScript("sql/coral/CoralDatatypesTables.sql");
+        runScript("sql/coral/CoralDatatypesConstraints.sql");
         runScript("sql/coral/CoralRIInitial.sql");
         runScript("sql/coral/CoralDatatypesInitial.sql");
     }
