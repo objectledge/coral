@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.objectledge.filesystem.FileSystem;
+
 public class ScriptLoaderTest
     extends TestCase
 {
@@ -14,7 +16,7 @@ public class ScriptLoaderTest
     public void testLoader()
         throws Exception
     {
-        ScriptLoader.loadScripts(this, null);
+        ScriptLoader.loadScripts(this, null, FileSystem.getClasspathFileSystem());
         assertEquals("SELECT 1 = 1\n", one);
         assertTrue(Arrays.equals(new byte[] { 32, 32, 32, 32, 32 }, two));
     }

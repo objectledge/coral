@@ -6,17 +6,11 @@ import java.lang.reflect.Field;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.objectledge.filesystem.ClasspathFileSystemProvider;
 import org.objectledge.filesystem.FileSystem;
-import org.objectledge.filesystem.FileSystemProvider;
 
 public class ScriptLoader
 {
-    private static FileSystem fs = new FileSystem(
-        new FileSystemProvider[] { new ClasspathFileSystemProvider("classpath",
-            ScriptLoader.class.getClassLoader()) }, 4069, 65536);
-
-    public static void loadScripts(Object obj, String suffix)
+    public static void loadScripts(Object obj, String suffix, FileSystem fs)
     {
         try
         {
