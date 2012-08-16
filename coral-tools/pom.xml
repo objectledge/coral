@@ -79,17 +79,5 @@
         </includes>
       </resource>
     </resources>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>src/test/java</directory>
-        <includes>
-          <include>**/*.sql</include>
-          <include>**/*.bin</include>
-        </includes>
-      </testResource>
-    </testResources>
   </build>
 </project>
