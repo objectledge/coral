@@ -1,0 +1,8 @@
+CREATE RESOURCE CLASS test
+JAVA CLASS 'org.objectledge.coral.test.TestResourceImpl'
+HANDLER CLASS 'org.objectledge.coral.datatypes.GenericResourceHandler'
+ATTRIBUTES (
+  string s,
+  integer i
+);
+
