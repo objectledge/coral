@@ -161,7 +161,7 @@ INSERT INTO coral_resource_class VALUES(
 		'coral.Node', 
         'org.objectledge.coral.datatypes.NodeImpl', 
         'org.objectledge.coral.datatypes.GenericResourceHandler',
-        '',
+        NULL,
         4);
 
 INSERT INTO coral_resource_class VALUES(
@@ -169,7 +169,7 @@ INSERT INTO coral_resource_class VALUES(
 		'coral.PersistentNode', 
         'org.objectledge.coral.datatypes.PersistentNodeImpl', 
         'org.objectledge.coral.datatypes.PersistentResourceHandler',
-        '',
+        NULL,
         4);
         
 INSERT INTO ledge_id_table VALUES (3, 'coral_resource_class');
