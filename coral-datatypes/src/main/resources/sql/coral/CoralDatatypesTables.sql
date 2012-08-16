@@ -144,8 +144,9 @@ CREATE TABLE coral_attribute_weak_resource_list (
 CREATE TABLE coral_attribute_mapping (
   attribute_class_id BIGINT NOT NULL,
   is_fk boolean NOT NULL,
-  sql_type VARCHAR(32),
+  sql_type VARCHAR(32) NOT NULL,
   fk_table VARCHAR(64),
-  fk_key_column VARCHAR(64)
+  fk_key_column VARCHAR(64),
+  is_custom boolean
 );
 
