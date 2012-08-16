@@ -33,7 +33,7 @@ public class PersistentResource
     // instance variables ////////////////////////////////////////////////////
 
     /** the unique id of the resource in it's db table. */
-    protected long id = -1;
+    protected boolean saved = false;
 
     /**
      * Constructor.
@@ -53,7 +53,10 @@ public class PersistentResource
         {
             Map<Long,InputRecord> inputRecordMap = (Map<Long,InputRecord>)data;
         	InputRecord in = inputRecordMap.get(delegate.getIdObject());
-            setData(in);
+            if(in != null)
+            {
+                setData(in);
+            }
         }
         catch(PersistenceException e)
         {
@@ -69,7 +72,10 @@ public class PersistentResource
         {
             Map<Long,InputRecord> inputRecordMap = (Map<Long,InputRecord>)data;
             InputRecord in = inputRecordMap.get(delegate.getIdObject());
-            setData(in);
+            if(in != null)
+            {
+                setData(in);
+            }
         }
         catch(PersistenceException e)
         {
@@ -225,7 +231,6 @@ public class PersistentResource
     public void getData(OutputRecord record)
         throws PersistenceException
     {
-        record.setLong(getTable()+"_id", id);
         record.setLong("resource_id", delegate.getId());
         for(AttributeDefinition attribute : delegate.getResourceClass().getAllAttributes())
         {
@@ -316,7 +321,6 @@ public class PersistentResource
     public void setData(InputRecord record)
         throws PersistenceException
     {
-        id = record.getLong(getTable()+"_id");
         for(AttributeDefinition<?> attribute : delegate.getResourceClass().getAllAttributes())
         {
             if((attribute.getFlags() & AttributeFlags.BUILTIN) == 0)
@@ -359,33 +363,23 @@ public class PersistentResource
      */
     public boolean getSaved()
     {
-        return id != -1;
+        return saved;
     }
     
     /**
      * Sets the 'saved' flag for the object.
-     *
-     * <p>The id generation will take place only for objects that declare a
-     * single column primary key. Othre objects will receive a <code>-1</code>
-     * as the <code>id</code> parameter. After this call is made on an object,
-     * subsequent calls to {@link #getSaved()} on the same object should
-     * return true.</p> 
-     *
+     * <p>
+     * The id generation will take place only for objects that declare a single column primary key.
+     * Other objects will receive a <code>-1</code> as the <code>id</code> parameter. After this
+     * call is made on an object, subsequent calls to {@link #getSaved()} on the same object should
+     * return true.
+     * </p>
+     * 
      * @param id The generated value of the primary key.
      */
     public void setSaved(long id)
     {
-        this.id = id;
-    }
-    
-    /**
-     * Gets the local identifier unique for object class. 
-     * 
-     * @return the persistent id.
-     */
-    public long getPersistentId()
-    {
-    	return id;
+        this.saved = true;
     }
 
     /**

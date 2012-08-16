@@ -22,7 +22,6 @@ import org.objectledge.database.persistence.DefaultInputRecord;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.Persistent;
-import org.objectledge.database.persistence.PersistentFactory;
 
 /**
  * An implementation of {@ResourceHandler} interface using the
@@ -181,17 +180,21 @@ public class PersistentResourceHandler
     		Persistent instance = (Persistent)instantiator.
                 newInstance(resourceClass.getJavaClass());
     		((AbstractResource)instance).setDelegate(delegate);
-            statement = DefaultInputRecord.
-        		getSelectStatement("resource_id = "+delegate.getIdString(), instance, conn);
-            rs = statement.executeQuery();
-            InputRecord record = new DefaultInputRecord(rs);
-            if(!rs.next())
+            Map<Long, InputRecord> data = new HashMap<Long, InputRecord>();
+            if(delegate.getResourceClass().getDbTable() != null)
             {
-            	throw new SQLException("missing data for "+delegate.getResourceClass().getName()+
-            				" WHERE resource_id = "+delegate.getIdString());
+                statement = DefaultInputRecord.getSelectStatement(
+                    "resource_id = " + delegate.getIdString(), instance, conn);
+                rs = statement.executeQuery();
+                InputRecord record = new DefaultInputRecord(rs);
+                if(!rs.next())
+                {
+                    throw new SQLException("missing data for "
+                        + delegate.getResourceClass().getName() + " WHERE resource_id = "
+                        + delegate.getIdString());
+                }
+                data.put(delegate.getIdObject(), record);
             }
-            Map<Long,InputRecord> data = new HashMap<Long,InputRecord>();
-            data.put(delegate.getIdObject(), record);
             return data;
 		}
     	catch(org.objectledge.coral.InstantiationException e)
