@@ -223,12 +223,14 @@ public class ResourceListAttributeHandler<T extends Resource>
         PreparedStatement pstmt = conn.prepareStatement(
             "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES (?, ?, ?)"
         );
+        boolean doInsert = false;
         try
         {
             if(value instanceof ResourceList)
             {
                 long[] ids = ((ResourceList)value).getIds();
                 int size = ((ResourceList)value).size();
+                doInsert = size > 0;
                 for(int i=0; i<size; i++)
                 {
                     pstmt.setLong(1, id);
@@ -241,6 +243,7 @@ public class ResourceListAttributeHandler<T extends Resource>
             else
             {
                 Iterator i = ((List)value).iterator();
+                doInsert = i.hasNext();
                 int position = 0;
                 while(i.hasNext())
                 {
@@ -267,7 +270,10 @@ public class ResourceListAttributeHandler<T extends Resource>
                 "DELETE FROM "+getTable()+
                 " WHERE data_key = "+id
             );
-            pstmt.executeBatch();
+            if(doInsert)
+            {
+                pstmt.executeBatch();
+            }
         }
         finally
         {
