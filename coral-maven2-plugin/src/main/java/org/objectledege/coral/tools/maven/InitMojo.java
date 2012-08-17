@@ -28,9 +28,10 @@ public class InitMojo
     {
         FileSystem fileSystem = FileSystem.getClasspathFileSystem();
         initDataSource();
-        InitComponent init = new InitComponent(dataSource, fileSystem, force);
         try 
         {
+            InitComponent init = new InitComponent(dataSource, fileSystem, force,
+                new MavenDNALogger(getLog()));
             init.run();
 
             getLog().info("disconnecting from the db");
