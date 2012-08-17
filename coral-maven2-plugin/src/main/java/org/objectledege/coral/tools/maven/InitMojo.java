@@ -3,6 +3,7 @@ package org.objectledege.coral.tools.maven;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.objectledge.coral.tools.init.InitComponent;
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
 
 /**
@@ -31,6 +32,8 @@ public class InitMojo
         try 
         {
             init.run();
+
+            DatabaseUtils.shutdown(dataSource);
         }
         catch(Exception e)
         {

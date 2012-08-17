@@ -13,6 +13,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.objectledge.coral.tools.DataSourceFactory;
 import org.objectledge.coral.tools.transform.GenericToTabular;
 import org.objectledge.coral.tools.transform.TransformationComponent;
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
 
 /**
@@ -158,6 +159,7 @@ public class ModelTransformerMojo
                 finally
                 {
                     targetConn.close();
+                    DatabaseUtils.shutdown(target);
                 }
             }
             catch(SQLException e)
@@ -168,6 +170,7 @@ public class ModelTransformerMojo
             finally
             {
                 sourceConn.close();
+                DatabaseUtils.shutdown(source);
             }
         }
         catch(SQLException e)
