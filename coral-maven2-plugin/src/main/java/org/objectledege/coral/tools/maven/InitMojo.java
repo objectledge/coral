@@ -33,6 +33,7 @@ public class InitMojo
         {
             init.run();
 
+            getLog().info("disconnecting from the db");
             DatabaseUtils.shutdown(dataSource);
         }
         catch(Exception e)
