@@ -81,7 +81,10 @@ public abstract class CoralTestCase extends TestCase
         if(!DatabaseUtils.hasTable(ds, "coral_resource_class"))
         {        
             DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRITables.sql", "UTF-8"));   
-            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesTables.sql", "UTF-8"));               
+            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRIConstraints.sql", "UTF-8"));
+            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesTables.hsql.sql", "UTF-8"));               
+            DatabaseUtils.runScript(ds,
+                fs.getReader("sql/coral/CoralDatatypesConstraints.sql", "UTF-8"));
         }
         else
         {
