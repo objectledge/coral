@@ -99,10 +99,12 @@
             <configuration>
               <dbDriver>org.postgresql.Driver</dbDriver>
               <driverClasspath>/usr/share/java/postgresql-jdbc3.jar</driverClasspath>
-              <dbUser>cyklotron</dbUser>
-              <dbPassword>12345</dbPassword>
               <sourceURL>jdbc:postgresql://localhost/portal</sourceURL>
+              <sourceUser>cyklotron</sourceUser>
+              <sourcePassword>12345</sourcePassword>
               <targetURL>jdbc:postgresql://localhost/lcmst</targetURL>
+              <targetUser>cyklotron</targetUser>
+              <targetPassword>12345</targetPassword>
               <sourcesList>script/sources.list</sourcesList>
             </configuration>
           </plugin>

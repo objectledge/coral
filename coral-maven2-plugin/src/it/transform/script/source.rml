@@ -6,3 +6,19 @@ ATTRIBUTES (
   integer i
 );
 
+CREATE RESOURCE 'test1'
+RESOURCE CLASS 'test'
+PARENT 1
+ATTRIBUTES ( 
+  s = 'a',
+  i = 1
+);
+
+CREATE RESOURCE 'test2'
+RESOURCE CLASS 'test'
+PARENT 1
+ATTRIBUTES ( 
+  s = 'b',
+  i = 2
+);
+
