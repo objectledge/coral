@@ -335,8 +335,11 @@ public class GenericToTabular
                         .append(rs.getString(3));
                     lastTable = table;
                 }
-                buff.append("\n)\n");
-                out.add(buff.toString());
+                if(lastTable != null)
+                {
+                    buff.append("\n)\n");
+                    out.add(buff.toString());
+                }
             }
             finally
             {
