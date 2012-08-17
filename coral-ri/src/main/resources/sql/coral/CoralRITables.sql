@@ -97,7 +97,7 @@ CREATE TABLE coral_role_assignment (
         role_id BIGINT NOT NULL,
         grantor BIGINT NOT NULL,
         grant_time TIMESTAMP NOT NULL,
-        granting_allowed CHAR(1),
+        granting_allowed BOOLEAN,
         PRIMARY KEY (subject_id, role_id)
 );
 
@@ -132,7 +132,7 @@ CREATE TABLE coral_permission_assignment (
         resource_id BIGINT NOT NULL,
         role_id BIGINT NOT NULL,
         permission_id BIGINT NOT NULL,
-        is_inherited CHAR(1) NOT NULL,
+        is_inherited BOOLEAN NOT NULL,
         grantor BIGINT NOT NULL,
         grant_time TIMESTAMP NOT NULL,
         PRIMARY KEY (resource_id, role_id, permission_id)

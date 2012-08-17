@@ -250,7 +250,8 @@ public class CoralSecurityTest
         session.getSecurity().grant(role, subject, true);
         DefaultTable expectedTable = new DefaultTable("coral_role_assignment",
             coralRoleAssignmentColumns);
-        expectedTable.addRow(new Object[] { subject.getIdObject(), role.getIdObject(), new Long(1), "1" });
+        expectedTable.addRow(new Object[] { subject.getIdObject(), role.getIdObject(), new Long(1),
+                        Boolean.TRUE });
         ITable actualTable = databaseConnection.createQueryTable("coral_role_assignment",
             "SELECT subject_id, role_id, grantor, granting_allowed FROM coral_role_assignment"+
             " WHERE role_id = "+role.getIdString());
@@ -280,7 +281,8 @@ public class CoralSecurityTest
         session.getSecurity().grant(resource, role, permission, true);
         DefaultTable expectedTable = new DefaultTable("coral_permission_assignment",
             coralPermissionAssignmentColumns);
-        expectedTable.addRow(new Object[] { resource.getIdObject(), role.getIdObject(),  permission.getIdObject(), "1", new Long(1) });
+        expectedTable.addRow(new Object[] { resource.getIdObject(), role.getIdObject(),
+                        permission.getIdObject(), Boolean.TRUE, new Long(1) });
         ITable actualTable = databaseConnection.createQueryTable("coral_permission_assignment",
             "SELECT resource_id, role_id, permission_id, is_inherited, grantor FROM coral_permission_assignment"+
             " WHERE role_id = "+role.getIdString());
@@ -309,9 +311,9 @@ public class CoralSecurityTest
         stmt.execute("INSERT INTO coral_permission VALUES(1,'permission')");
         stmt.execute("INSERT INTO coral_permission_association VALUES(1,1)");
         stmt.execute("INSERT INTO coral_resource VALUES(2,3,1,'resource',1,NOW(),1,1,NOW())");
-        stmt.execute("INSERT INTO coral_role VALUES(3, 'role')");
+        stmt.execute("INSERT INTO coral_role (role_id, name) VALUES(3, 'role')");
         stmt.execute("INSERT INTO coral_role_implication VALUES(1,3)");
-        stmt.execute("INSERT INTO coral_permission_assignment VALUES(2,3,1,'1',1,NOW())");
+        stmt.execute("INSERT INTO coral_permission_assignment VALUES(2,3,1,TRUE,1,NOW())");
         DatabaseUtils.close(stmt);
         databaseConnection.close();
         CoralSession session = coralSessionFactory.getRootSession();

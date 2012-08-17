@@ -44,7 +44,7 @@ INSERT INTO coral_subject VALUES (1, 'root');
 INSERT INTO coral_subject VALUES (2, 'anonymous');
 INSERT INTO ledge_id_table VALUES (3, 'coral_subject');
 
-INSERT INTO coral_role_assignment VALUES(1, 1, 1, NOW(), 'Y');
+INSERT INTO coral_role_assignment VALUES(1, 1, 1, NOW(), TRUE);
 
 -- relations ----------------------------------------------------------------
 
