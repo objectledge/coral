@@ -582,16 +582,25 @@ public class GenericToTabular
                 buff.append("  ) a").append(i);
                 if(i > 1)
                 {
-                    buff.append(" on (coalesce(");
-                    for(int j = 1; j <= i - 1; j++)
+                    buff.append(" on (");
+                    if(i > 2)
                     {
-                        buff.append("a").append(j).append(".resource_id");
-                        if(j < i - 1)
+                        buff.append("coalesce(");
+                        for(int j = 1; j <= i - 1; j++)
                         {
-                            buff.append(", ");
+                            buff.append("a").append(j).append(".resource_id");
+                            if(j < i - 1)
+                            {
+                                buff.append(", ");
+                            }
                         }
+                        buff.append(")");
                     }
-                    buff.append(") = a").append(i).append(".resource_id)\n");
+                    else
+                    {
+                        buff.append("a").append(i - 1).append(".resource_id");
+                    }
+                    buff.append(" = a").append(i).append(".resource_id)\n");
                 }
             }
             return buff.toString();
