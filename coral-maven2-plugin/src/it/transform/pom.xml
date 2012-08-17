@@ -27,8 +27,10 @@
         <configuration>
           <dbDriver>org.hsqldb.jdbcDriver</dbDriver>
           <dbUser>sa</dbUser>
-          <sourceURL>jdbc:hsqldb:file:target/tansform-source</sourceURL>
-          <targetURL>jdbc:hsqldb:file:target/tansform-source</targetURL>
+          <sourceURL>jdbc:hsqldb:file:target/transform-source</sourceURL>
+          <sourceUser>sa</sourceUser>
+          <targetURL>jdbc:hsqldb:file:target/transform-target</targetURL>
+          <targetUser>sa</targetUser>
           <sourcesList>script/sources.list</sourcesList>
           <force>true</force>
         </configuration>
@@ -45,7 +47,7 @@
             <artifactId>coral-maven2-plugin</artifactId>
             <version>${project.version}</version>
             <configuration>
-              <dbURL>jdbc:hsqldb:file:target/tansform-source</dbURL>
+              <dbURL>jdbc:hsqldb:file:target/transform-source</dbURL>
             </configuration>
           </plugin>
         </plugins>
@@ -60,7 +62,7 @@
             <artifactId>coral-maven2-plugin</artifactId>
             <version>${project.version}</version>
             <configuration>
-              <dbURL>jdbc:hsqldb:file:target/tansform-target</dbURL>
+              <dbURL>jdbc:hsqldb:file:target/transform-target</dbURL>
             </configuration>
           </plugin>
         </plugins>
