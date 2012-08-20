@@ -28,6 +28,10 @@
       <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-datatypes</artifactId>
       <classifier>install</classifier>
