@@ -2,7 +2,12 @@ package org.objectledge.coral.tools.init;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -117,8 +122,52 @@ public class InitComponent
 
         if(hasTable("coral_resource_class"))
         {
+            cleanupPersistentResourceTables();
             runScript("sql/coral/CoralDatatypesDropTables.sql");
             runScript("sql/coral/CoralRIDropTables.sql");
+        }
+    }
+
+    private void cleanupPersistentResourceTables()
+        throws SQLException
+    {
+        Connection conn = dataSource.getConnection();
+        try
+        {
+            Statement stmt = conn.createStatement();
+            try
+            {
+                List<String> tables = new ArrayList<String>();
+                ResultSet rset = stmt
+                    .executeQuery("SELECT db_table_name FROM coral_resource_class WHERE db_table_name IS NOT NULL");
+                try
+                {
+                    while(rset.next())
+                    {
+                        tables.add(rset.getString(1));
+                    }
+                }
+                finally
+                {
+                    rset.close();
+                }
+                if(tables.size() > 0)
+                {
+                    logger.info("dropping PersitentResource tables");
+                    for(String table : tables)
+                    {
+                        stmt.execute("DROP TABLE " + table);
+                    }
+                }
+            }
+            finally
+            {
+                stmt.close();
+            }
+        }
+        finally
+        {
+            conn.close();
         }
     }
 
