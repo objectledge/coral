@@ -136,7 +136,7 @@ INSERT INTO coral_attribute_class VALUES(
 		'parameters',
 		'org.objectledge.parameters.Parameters', 
 		'org.objectledge.coral.datatypes.ParametersAttributeHandler',
-		'coral_attribute_parameters');
+		'ledge_parameters');
 
 INSERT INTO coral_attribute_class VALUES(
 		15, 
