@@ -72,12 +72,16 @@ public class GenericToTabular
 
     }
 
-    private static String transformTableName(String name)
+    // these two methods need to go to PersitentResourceHandler
+
+    public static String transformTableName(String name)
     {
         return name.replace('.', '_');
     }
 
-    private static String transformColumnName(String name)
+    // a full list of reserved SQL keywords needs to be used
+
+    public static String transformColumnName(String name)
     {
         if(name.equals("limit") || name.equals("offset") || name.equals("default")
             || name.equals("primary") || name.equals("from") || name.equals("to"))
