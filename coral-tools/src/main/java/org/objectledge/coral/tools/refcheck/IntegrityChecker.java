@@ -2,11 +2,15 @@ package org.objectledge.coral.tools.refcheck;
 
 import static java.lang.String.format;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -56,6 +60,14 @@ public class IntegrityChecker
 
     private String orphanedGenericResource;
 
+    private String resourceDomains;
+
+    private String resourceDomainsGenericCheck;
+
+    private StringWriter fixesStringWriter;
+
+    private PrintWriter fixes;
+
     public IntegrityChecker(Connection conn, FileSystem fileSystem, Logger log)
         throws SQLException
     {
@@ -66,6 +78,8 @@ public class IntegrityChecker
             String.format(".%s.sql", dbType.getSuffix()), ".sql");
         hierarchy = getResourceClassesHierarchy();
         classNames = getResourceClassNames();
+        fixesStringWriter = new StringWriter();
+        fixes = new PrintWriter(fixesStringWriter);
     }
 
     public void run()
@@ -76,6 +90,9 @@ public class IntegrityChecker
         checkGenericAttributes();
         checkSharedGenericAttributes();
         checkOrphanedGenericResourceRecors();
+        checkResourceReferenceDomain();
+        fixes.flush();
+        System.out.println(fixesStringWriter.toString());
     }
 
     private void checkGenericRequiredAttributes()
@@ -109,9 +126,14 @@ public class IntegrityChecker
                             {
                                 while(rset2.next())
                                 {
-                                    log.error("missing required attribute resource_id="
-                                        + rset2.getLong(1) + " attribute_defnition_id="
-                                        + rset2.getLong(2) + " data_key=" + rset2.getLong(3));
+                                    final long resId = rset2.getLong(1);
+                                    final long attrDefId = rset2.getLong(2);
+                                    final long dataKey = rset2.getLong(3);
+                                    final String msg = format(
+                                        "missing required attribute resource_id=%d attribute_defnition_id=%d (%s) data_key=%d",
+                                        resId, attrDefId, attrName, dataKey);
+                                    log.error(msg);
+                                    fixes.println("-- " + msg);
                                 }
                             }
                             finally
@@ -163,8 +185,10 @@ public class IntegrityChecker
                         {
                             while(rset2.next())
                             {
-                                log.error(format("null value in %s data_key = %d", table,
-                                    rset2.getLong(1)));
+                                final long dataKey = rset2.getLong(1);
+                                log.error(format("null value in %s data_key = %d", table, dataKey));
+                                fixes.println(format("DELETE FROM %s WHERE data_key = %d;", table,
+                                    dataKey));
                             }
                         }
                         finally
@@ -266,7 +290,7 @@ public class IntegrityChecker
     private void checkGenericAttributes()
         throws SQLException
     {
-        log.info("checking null attribute values");
+        log.info("checking attribute value to generic attribute matching");
         Statement stmt1 = conn.createStatement();
         try
         {
@@ -298,6 +322,19 @@ public class IntegrityChecker
                                 {
                                     log.error(format("coral_generic_resource.data_key=%d %s.%s=%d",
                                         rset2.getLong(1), table, column, rset2.getLong(2)));
+                                    if(rset2.getLong(1) == 0 && rset2.wasNull())
+                                    {
+                                        fixes.println(format("DELETE FROM %s WHERE %s = %d;",
+                                            table,
+                                            column, rset2.getLong(2)));
+                                    }
+                                    else
+                                    {
+                                        fixes
+                                            .println(format(
+                                                "DELETE FROM coral_generic_resource WHERE data_key = %d AND attribute_definition_id = %d;",
+                                                rset2.getLong(1), rset2.getLong(3)));
+                                    }
                                 }
                             }
                         }
@@ -357,9 +394,11 @@ public class IntegrityChecker
                             while(rset2.next())
                             {
 
-                                log.error(format(
+                                final String msg = format(
                                     "%s.%s=%d is joined with %d coral_generic_resource_records",
-                                    table, column, rset2.getLong(1), rset2.getInt(2)));
+                                    table, column, rset2.getLong(1), rset2.getInt(2));
+                                log.error(msg);
+                                fixes.println("-- " + msg);
                             }
                         }
                         finally
@@ -396,9 +435,13 @@ public class IntegrityChecker
             {
                 while(rset.next())
                 {
+                    final long dataKey = rset.getLong(1);
                     log.error(format(
                         "coral_generic_resource.resource_id=%d does not have corresponding coral_resource",
-                        rset.getLong(1)));
+                        dataKey));
+                    fixes.println(format(
+                        "DELETE FROM coral_generic_resource WHREE resource_id = %d;",
+                        dataKey));
                 }
             }
             finally
@@ -410,5 +453,90 @@ public class IntegrityChecker
         {
             stmt.close();
         }
+    }
+
+    private void checkResourceReferenceDomain()
+        throws SQLException
+    {
+        log.info("checking resource reference attributes domain constraints");
+        Statement stmt1 = conn.createStatement();
+        try
+        {
+            Statement stmt2 = conn.createStatement();
+            try
+            {
+                ResultSet rset1 = stmt1.executeQuery(resourceDomains);
+                try
+                {
+                    while(rset1.next())
+                    {
+                        long classId = rset1.getLong(1);
+                        String attrDefClass = rset1.getString(2);
+                        long attributeId = rset1.getLong(3);
+                        String attrName = rset1.getString(4);
+                        String domain = rset1.getString(5);
+                        long domainClassId = rset1.getLong(6);
+                        if(domainClassId == 0 && rset1.wasNull())
+                        {
+                            final String msg = format(
+                                "%s.%s attribute has invalid domain %s thad does not correspond to an exiting resource class",
+                                attrDefClass, attrName, domain);
+                            log.error(msg);
+                            fixes.println("-- " + msg);
+                        }
+                        else
+                        {
+                            log.info(format("  checking %s.%s resource(%s)", attrDefClass,
+                                attrName, domain));
+                            String attrClasses = mkString(hierarchy.get(classId), "(", ", ", ")");
+                            String domClasses = mkString(hierarchy.get(domainClassId), "(", ", ",
+                                ")");
+                            String query = format(resourceDomainsGenericCheck, attrClasses,
+                                attributeId, domClasses);
+
+                            ResultSet rset2 = stmt2.executeQuery(query);
+                            while(rset2.next())
+                            {
+                                long resId = rset2.getLong(1);
+                                long resId2 = rset2.getLong(4);
+                                String resClass2 = classNames.get(rset2.getLong(5));
+                                log.error(format(
+                                    "reosurce_id = %d attribute %s is %d of type %s not compatible with %s",
+                                    resId, attrName, resId2, resClass2, domain));
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    rset1.close();
+                }
+            }
+            finally
+            {
+                stmt2.close();
+            }
+        }
+        finally
+        {
+            stmt1.close();
+        }
+    }
+
+    private <T> String mkString(Collection<T> coll, String pre, String sep, String post)
+    {
+        StringBuilder buff = new StringBuilder();
+        Iterator<T> i = coll.iterator();
+        buff.append(pre);
+        while(i.hasNext())
+        {
+            buff.append(i.next());
+            if(i.hasNext())
+            {
+                buff.append(sep);
+            }
+        }
+        buff.append(post);
+        return buff.toString();
     }
 }

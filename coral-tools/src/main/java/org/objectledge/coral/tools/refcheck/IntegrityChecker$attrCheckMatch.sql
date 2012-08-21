@@ -1,9 +1,11 @@
 select
   g.data_key as g_data_key,
-  a.data_key as a_data_key
+  a.data_key as a_data_key,
+  g.attribute_definition_id
 from 
   (select 
-     g.data_key
+     g.data_key,
+     g.attribute_definition_id
    from coral_attribute_definition ad,
      coral_generic_resource g
    where ad.attribute_class_id = %d
