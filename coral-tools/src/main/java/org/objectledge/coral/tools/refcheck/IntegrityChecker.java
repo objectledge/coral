@@ -54,6 +54,8 @@ public class IntegrityChecker
 
     private String attrCheckMatchMulti2;
 
+    private String orphanedGenericResource;
+
     public IntegrityChecker(Connection conn, FileSystem fileSystem, Logger log)
         throws SQLException
     {
@@ -69,10 +71,11 @@ public class IntegrityChecker
     public void run()
         throws SQLException
     {
-        // checkGenericRequiredAttributes();
-        // checkGenericNullAttributeValues();
-        // checkGenericAttributes();
+        checkGenericRequiredAttributes();
+        checkGenericNullAttributeValues();
+        checkGenericAttributes();
         checkSharedGenericAttributes();
+        checkOrphanedGenericResourceRecors();
     }
 
     private void checkGenericRequiredAttributes()
@@ -382,4 +385,30 @@ public class IntegrityChecker
         }
     }
 
+    private void checkOrphanedGenericResourceRecors()
+        throws SQLException
+    {
+        Statement stmt = conn.createStatement();
+        try
+        {
+            ResultSet rset = stmt.executeQuery(orphanedGenericResource);
+            try
+            {
+                while(rset.next())
+                {
+                    log.error(format(
+                        "coral_generic_resource.resource_id=%d does not have corresponding coral_resource",
+                        rset.getLong(1)));
+                }
+            }
+            finally
+            {
+                rset.close();
+            }
+        }
+        finally
+        {
+            stmt.close();
+        }
+    }
 }
