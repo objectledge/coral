@@ -69,6 +69,10 @@ public class IntegrityChecker
 
     private String tabularAttributeLocations;
 
+    private String tabularReqAttrClasses;
+
+    private String tabularReqAttrResources;
+
     // fixes
 
     private StringWriter fixesStringWriter;
@@ -98,6 +102,7 @@ public class IntegrityChecker
         checkSharedGenericAttributes();
         checkOrphanedGenericResourceRecords();
         checkResourceReferenceDomain();
+        checkTabularRequiredAttributes();
         fixes.flush();
         System.out.println(fixesStringWriter.toString());
     }
@@ -586,6 +591,69 @@ public class IntegrityChecker
                                 {
                                     rset2.close();
                                 }
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    rset1.close();
+                }
+            }
+            finally
+            {
+                stmt2.close();
+            }
+        }
+        finally
+        {
+            stmt1.close();
+        }
+    }
+
+    private void checkTabularRequiredAttributes()
+        throws SQLException
+    {
+        log.info("checking tabular resources consistency");
+        Statement stmt1 = conn.createStatement();
+        try
+        {
+            Statement stmt2 = conn.createStatement();
+            try
+            {
+                ResultSet rset1 = stmt1.executeQuery(tabularReqAttrClasses);
+                try
+                {
+                    while(rset1.next())
+                    {
+                        long classId = rset1.getLong(1);
+                        String tableName = rset1.getString(2);
+                        for(long subClassId : hierarchy.get(classId))
+                        {
+                            final String subclassName = classNames.get(subClassId);
+                            log.info("  checking class "
+                                + subclassName
+                                + (subClassId != classId ? (" for superclass " + classNames
+                                    .get(classId)) : ""));
+
+                            String query = format(tabularReqAttrResources, tableName, subClassId);
+                            // System.out.println(query);
+                            ResultSet rset2 = stmt2.executeQuery(query);
+                            try
+                            {
+                                while(rset2.next())
+                                {
+                                    long resId = rset2.getLong(1);
+                                    final String msg = format(
+                                        "row is missing from %s for resource_id=%d of type %s",
+                                        tableName, resId, subclassName);
+                                    log.error(msg);
+                                    fixes.println("-- " + msg);
+                                }
+                            }
+                            finally
+                            {
+                                rset2.close();
                             }
                         }
                     }
