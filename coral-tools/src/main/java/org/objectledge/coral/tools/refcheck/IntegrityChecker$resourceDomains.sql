@@ -4,7 +4,8 @@ select
   ad.attribute_definition_id,
   ad.name ad_name,
   ad.domain,
-  dr.resource_class_id domain_class_id
+  dr.resource_class_id domain_class_id,
+  ar.db_table_name
 from 
   coral_attribute_class ac 
 join  

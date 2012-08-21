@@ -10,6 +10,7 @@ from
      coral_generic_resource g
    where ad.attribute_class_id = %d
      and g.attribute_definition_id = ad.attribute_definition_id
+%s
   ) g full outer join
   (select 
      %s data_key

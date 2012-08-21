@@ -45,31 +45,31 @@ CREATE TABLE coral_generic_resource (
 
 CREATE TABLE coral_attribute_boolean (
         data_key BIGINT NOT NULL,
-        data INTEGER,
+        data BOOLEAN NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_integer (
         data_key BIGINT NOT NULL,
-        data INTEGER,
+        data INTEGER NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_long (
         data_key BIGINT NOT NULL,
-        data BIGINT,
+        data BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_number (
         data_key BIGINT NOT NULL,
-        data DECIMAL,
+        data DECIMAL NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_string (
         data_key BIGINT NOT NULL,
-        data VARCHAR(255),
+        data VARCHAR(255) NOT NULL,
         PRIMARY KEY (data_key)
 );
 
@@ -78,13 +78,13 @@ CREATE TABLE coral_attribute_string (
 
 CREATE TABLE coral_attribute_text (
         data_key BIGINT NOT NULL,
-        data VARCHAR,
+        data VARCHAR NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_date (
         data_key BIGINT NOT NULL,
-        data TIMESTAMP,
+        data TIMESTAMP NOT NULL,
         PRIMARY KEY (data_key)
 );
 
@@ -97,45 +97,45 @@ CREATE TABLE coral_attribute_date_range (
 
 CREATE TABLE coral_attribute_resource_class (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_resource (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_subject (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_role (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_permission (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_resource_list (
         data_key BIGINT NOT NULL,
         pos INTEGER NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key, pos)
 );
         
 CREATE TABLE coral_attribute_weak_resource_list (
         data_key BIGINT NOT NULL,
         pos INTEGER NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key, pos)
 );
 

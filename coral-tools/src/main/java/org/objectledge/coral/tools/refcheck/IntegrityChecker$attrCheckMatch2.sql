@@ -4,11 +4,13 @@ select
 from 
   (select
      g.resource_id, 
-     g.data_key
+     g.data_key,
+     ad.attribute_definition_id
    from coral_attribute_definition ad,
      coral_generic_resource g
    where ad.attribute_class_id = %d
      and g.attribute_definition_id = ad.attribute_definition_id
+%s
   ) g join
   (select 
      %s data_key

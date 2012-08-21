@@ -16,6 +16,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.jcontainer.dna.Logger;
+import org.objectledge.coral.tools.transform.GenericToTabular;
 import org.objectledge.database.DatabaseType;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.pico.inject.FileSystemResourceInjector;
@@ -64,6 +65,12 @@ public class IntegrityChecker
 
     private String resourceDomainsGenericCheck;
 
+    private String resourceDomainsTabularCheck;
+
+    private String tabularAttributeLocations;
+
+    // fixes
+
     private StringWriter fixesStringWriter;
 
     private PrintWriter fixes;
@@ -89,7 +96,7 @@ public class IntegrityChecker
         checkGenericNullAttributeValues();
         checkGenericAttributes();
         checkSharedGenericAttributes();
-        checkOrphanedGenericResourceRecors();
+        checkOrphanedGenericResourceRecords();
         checkResourceReferenceDomain();
         fixes.flush();
         System.out.println(fixesStringWriter.toString());
@@ -287,6 +294,47 @@ public class IntegrityChecker
         return map;
     }
 
+    private String getTabularAttributeValueQuery(long attrClassId, boolean includeResourceId)
+        throws SQLException
+    {
+        Statement stmt = conn.createStatement();
+        try
+        {
+            ResultSet rset = stmt.executeQuery(format(tabularAttributeLocations, attrClassId));
+            try
+            {
+                StringBuilder buff = new StringBuilder();
+                while(rset.next())
+                {
+                    String column = rset.getString(1);
+                    String table = rset.getString(2);
+                    long attrDefId = rset.getLong(3);
+                    buff.append("   union all select\n");
+                    if(includeResourceId)
+                    {
+                        buff.append("     resource_id,\n");
+                    }
+                    buff.append("     ").append(GenericToTabular.transformColumnName(column))
+                        .append(",\n");
+                    buff.append("     ").append(attrDefId).append(" attribute_definition_id\n");
+                    buff.append("   from ").append(GenericToTabular.transformTableName(table))
+                        .append("\n");
+                    buff.append("   where ").append(GenericToTabular.transformColumnName(column))
+                        .append(" is not null\n");
+                }
+                return buff.toString();
+            }
+            finally
+            {
+                rset.close();
+            }
+        }
+        finally
+        {
+            stmt.close();
+        }
+    }
+
     private void checkGenericAttributes()
         throws SQLException
     {
@@ -306,11 +354,13 @@ public class IntegrityChecker
                         long attrClass = rset1.getLong(1);
                         String table = rset1.getString(2);
                         String column = rset1.getString(3);
+                        boolean isMulti = rset1.getBoolean(4);
 
                         String query;
                         final boolean resourceList = table.contains("list");
                         query = format(resourceList ? attrCheckMatchMulti : attrCheckMatch,
-                            attrClass, column, table);
+                            attrClass, isMulti ? getTabularAttributeValueQuery(attrClass, false)
+                                : "", column, table);
                         log.info("  checking table " + table);
                         // System.out.println(query);
                         ResultSet rset2 = stmt2.executeQuery(query);
@@ -325,8 +375,7 @@ public class IntegrityChecker
                                     if(rset2.getLong(1) == 0 && rset2.wasNull())
                                     {
                                         fixes.println(format("DELETE FROM %s WHERE %s = %d;",
-                                            table,
-                                            column, rset2.getLong(2)));
+                                            table, column, rset2.getLong(2)));
                                     }
                                     else
                                     {
@@ -380,12 +429,14 @@ public class IntegrityChecker
                         long attrClass = rset1.getLong(1);
                         String table = rset1.getString(2);
                         String column = rset1.getString(3);
+                        boolean isMulti = rset1.getBoolean(4);
 
                         String query;
                         final boolean resourceList = table.contains("list")
                             || table.contains("parameters");
                         query = format(resourceList ? attrCheckMatchMulti2 : attrCheckMatch2,
-                            attrClass, column, table);
+                            attrClass, isMulti ? getTabularAttributeValueQuery(attrClass, true)
+                                : "", column, table);
                         log.info("  checking table " + table);
                         // System.out.println(query);
                         ResultSet rset2 = stmt2.executeQuery(query);
@@ -424,7 +475,7 @@ public class IntegrityChecker
         }
     }
 
-    private void checkOrphanedGenericResourceRecors()
+    private void checkOrphanedGenericResourceRecords()
         throws SQLException
     {
         Statement stmt = conn.createStatement();
@@ -440,8 +491,7 @@ public class IntegrityChecker
                         "coral_generic_resource.resource_id=%d does not have corresponding coral_resource",
                         dataKey));
                     fixes.println(format(
-                        "DELETE FROM coral_generic_resource WHREE resource_id = %d;",
-                        dataKey));
+                        "DELETE FROM coral_generic_resource WHREE resource_id = %d;", dataKey));
                 }
             }
             finally
@@ -495,14 +545,47 @@ public class IntegrityChecker
                                 attributeId, domClasses);
 
                             ResultSet rset2 = stmt2.executeQuery(query);
-                            while(rset2.next())
+                            try
                             {
-                                long resId = rset2.getLong(1);
-                                long resId2 = rset2.getLong(4);
-                                String resClass2 = classNames.get(rset2.getLong(5));
-                                log.error(format(
-                                    "reosurce_id = %d attribute %s is %d of type %s not compatible with %s",
-                                    resId, attrName, resId2, resClass2, domain));
+                                while(rset2.next())
+                                {
+                                    long resId = rset2.getLong(1);
+                                    long resId2 = rset2.getLong(4);
+                                    String resClass2 = classNames.get(rset2.getLong(5));
+                                    log.error(format(
+                                        "resource_id = %d attribute %s is %d of type %s not compatible with %s",
+                                        resId, attrName, resId2, resClass2, domain));
+                                }
+                            }
+                            finally
+                            {
+                                rset2.close();
+                            }
+
+                            if(rset1.getString(7) != null)
+                            {
+                                query = format(resourceDomainsTabularCheck, attributeId,
+                                    GenericToTabular.transformTableName(classNames.get(classId)),
+                                    GenericToTabular.transformColumnName(attrName), domClasses);
+                                // System.out.println(query);
+
+                                rset2 = stmt2.executeQuery(query);
+                                try
+                                {
+                                    while(rset2.next())
+                                    {
+                                        long resId = rset2.getLong(1);
+                                        long resId2 = rset2.getLong(4);
+                                        String resClass2 = classNames.get(rset2.getLong(5));
+                                        log.error(format(
+                                            "resource_id = %d attribute %s is %d of type %s not compatible with %s",
+                                            resId, attrName, resId2, resClass2, domain));
+                                    }
+                                }
+                                finally
+                                {
+                                    rset2.close();
+                                }
                             }
                         }
                     }
