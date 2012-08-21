@@ -50,6 +50,10 @@ public class IntegrityChecker
 
     private String attrCheckMatchMulti;
 
+    private String attrCheckMatch2;
+
+    private String attrCheckMatchMulti2;
+
     public IntegrityChecker(Connection conn, FileSystem fileSystem, Logger log)
         throws SQLException
     {
@@ -65,9 +69,10 @@ public class IntegrityChecker
     public void run()
         throws SQLException
     {
-        checkGenericRequiredAttributes();
-        checkGenericNullAttributeValues();
-        checkGenericAttributes();
+        // checkGenericRequiredAttributes();
+        // checkGenericNullAttributeValues();
+        // checkGenericAttributes();
+        checkSharedGenericAttributes();
     }
 
     private void checkGenericRequiredAttributes()
@@ -95,7 +100,7 @@ public class IntegrityChecker
                             String className = classNames.get(descClassId);
                             String query = format(genericRequiredData, attrId, attrTable, fkColumn,
                                 descClassId, attrId, fkColumn);
-                            log.info("  checking attribute " + attrName + " in class " + className);                 
+                            log.info("  checking attribute " + attrName + " in class " + className);
                             ResultSet rset2 = stmt2.executeQuery(query);
                             try
                             {
@@ -277,8 +282,8 @@ public class IntegrityChecker
 
                         String query;
                         final boolean resourceList = table.contains("list");
-                        query = format(resourceList ? attrCheckMatchMulti
-                            : attrCheckMatch, attrClass, column, table);
+                        query = format(resourceList ? attrCheckMatchMulti : attrCheckMatch,
+                            attrClass, column, table);
                         log.info("  checking table " + table);
                         // System.out.println(query);
                         ResultSet rset2 = stmt2.executeQuery(query);
@@ -316,8 +321,65 @@ public class IntegrityChecker
         }
     }
 
-    private void checkMultivaluedAttributes()
+    private void checkSharedGenericAttributes()
+        throws SQLException
     {
+        log.info("checking null attribute values");
+        Statement stmt1 = conn.createStatement();
+        try
+        {
+            Statement stmt2 = conn.createStatement();
+            try
+            {
+                ResultSet rset1 = stmt1.executeQuery(attrCheckList);
+                // System.out.println(attrCheckList);
+                try
+                {
+                    while(rset1.next())
+                    {
+                        long attrClass = rset1.getLong(1);
+                        String table = rset1.getString(2);
+                        String column = rset1.getString(3);
 
+                        String query;
+                        final boolean resourceList = table.contains("list")
+                            || table.contains("parameters");
+                        query = format(resourceList ? attrCheckMatchMulti2 : attrCheckMatch2,
+                            attrClass, column, table);
+                        log.info("  checking table " + table);
+                        // System.out.println(query);
+                        ResultSet rset2 = stmt2.executeQuery(query);
+                        try
+                        {
+                            while(rset2.next())
+                            {
+
+                                log.error(format(
+                                    "%s.%s=%d is joined with %d coral_generic_resource_records",
+                                    table, column, rset2.getLong(1), rset2.getInt(2)));
+                            }
+                        }
+                        finally
+                        {
+                            rset2.close();
+                        }
+                    }
+
+                }
+                finally
+                {
+                    rset1.close();
+                }
+            }
+            finally
+            {
+                stmt2.close();
+            }
+        }
+        finally
+        {
+            stmt1.close();
+        }
     }
+
 }
