@@ -1,5 +1,7 @@
 package org.objectledge.coral.tools.refcheck;
 
+import static java.lang.String.format;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +31,7 @@ public class IntegrityChecker
     private final Logger log;
 
     private SetMultimap<Long, Long> hierarchy;
-    
+
     private SortedMap<Long, String> classNames;
 
     // injected queries
@@ -39,6 +41,14 @@ public class IntegrityChecker
     private String genericRequiredData;
 
     private String classHierarchy;
+
+    private String nullAttrValues;
+
+    private String attrCheckList;
+
+    private String attrCheckMatch;
+
+    private String attrCheckMatchMulti;
 
     public IntegrityChecker(Connection conn, FileSystem fileSystem, Logger log)
         throws SQLException
@@ -56,6 +66,8 @@ public class IntegrityChecker
         throws SQLException
     {
         checkGenericRequiredAttributes();
+        checkGenericNullAttributeValues();
+        checkGenericAttributes();
     }
 
     private void checkGenericRequiredAttributes()
@@ -81,9 +93,9 @@ public class IntegrityChecker
                         for(Long descClassId : hierarchy.get(classId))
                         {
                             String className = classNames.get(descClassId);
-                            String query = String.format(genericRequiredData, attrId, attrTable,
-                                fkColumn, descClassId, attrId, fkColumn);
-                            log.info("  checking attribute " + attrName + " in class " + className);
+                            String query = format(genericRequiredData, attrId, attrTable, fkColumn,
+                                descClassId, attrId, fkColumn);
+                            log.info("  checking attribute " + attrName + " in class " + className);                 
                             ResultSet rset2 = stmt2.executeQuery(query);
                             try
                             {
@@ -100,6 +112,59 @@ public class IntegrityChecker
                             }
                         }
                     }
+                }
+                finally
+                {
+                    rset1.close();
+                }
+            }
+            finally
+            {
+                stmt2.close();
+            }
+        }
+        finally
+        {
+            stmt1.close();
+        }
+    }
+
+    private void checkGenericNullAttributeValues()
+        throws SQLException
+    {
+        log.info("checking null attribute values");
+        Statement stmt1 = conn.createStatement();
+        try
+        {
+            Statement stmt2 = conn.createStatement();
+            try
+            {
+                ResultSet rset1 = stmt1.executeQuery(nullAttrValues);
+                try
+                {
+                    while(rset1.next())
+                    {
+                        String table = rset1.getString(1);
+                        String column = rset1.getString(2);
+
+                        String query = format("SELECT data_key FROM %s WHERE %s IS NULL", table,
+                            column);
+                        log.info("  checking table " + table);
+                        ResultSet rset2 = stmt2.executeQuery(query);
+                        try
+                        {
+                            while(rset2.next())
+                            {
+                                log.error(format("null value in %s data_key = %d", table,
+                                    rset2.getLong(1)));
+                            }
+                        }
+                        finally
+                        {
+                            rset2.close();
+                        }
+                    }
+
                 }
                 finally
                 {
@@ -190,9 +255,65 @@ public class IntegrityChecker
         return map;
     }
 
-    private void checkGenericScalarAttributes()
+    private void checkGenericAttributes()
+        throws SQLException
     {
+        log.info("checking null attribute values");
+        Statement stmt1 = conn.createStatement();
+        try
+        {
+            Statement stmt2 = conn.createStatement();
+            try
+            {
+                ResultSet rset1 = stmt1.executeQuery(attrCheckList);
+                // System.out.println(attrCheckList);
+                try
+                {
+                    while(rset1.next())
+                    {
+                        long attrClass = rset1.getLong(1);
+                        String table = rset1.getString(2);
+                        String column = rset1.getString(3);
 
+                        String query;
+                        final boolean resourceList = table.contains("list");
+                        query = format(resourceList ? attrCheckMatchMulti
+                            : attrCheckMatch, attrClass, column, table);
+                        log.info("  checking table " + table);
+                        // System.out.println(query);
+                        ResultSet rset2 = stmt2.executeQuery(query);
+                        try
+                        {
+                            while(rset2.next())
+                            {
+                                if(!resourceList || (rset2.getLong(1) == 0 && rset2.wasNull()))
+                                {
+                                    log.error(format("coral_generic_resource.data_key=%d %s.%s=%d",
+                                        rset2.getLong(1), table, column, rset2.getLong(2)));
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            rset2.close();
+                        }
+                    }
+
+                }
+                finally
+                {
+                    rset1.close();
+                }
+            }
+            finally
+            {
+                stmt2.close();
+            }
+        }
+        finally
+        {
+            stmt1.close();
+        }
     }
 
     private void checkMultivaluedAttributes()

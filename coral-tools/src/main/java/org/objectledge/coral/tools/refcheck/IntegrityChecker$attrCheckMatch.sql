@@ -10,7 +10,7 @@ from
      and g.attribute_definition_id = ad.attribute_definition_id
   ) g full outer join
   (select 
-     data_key
+     %s data_key
    from
      %s
   ) a on (g.data_key = a.data_key) 
