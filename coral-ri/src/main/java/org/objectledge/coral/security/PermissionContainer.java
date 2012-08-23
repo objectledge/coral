@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -280,5 +281,33 @@ public class PermissionContainer
                 pCol.addAll(nonInherited);
             }
         }
+    }
+
+    public String toString()
+    {
+        StringBuilder buff = new StringBuilder();
+        buff.append("[");
+        Iterator<Role> ri = roles.getMatchingRoles().iterator();
+        while(ri.hasNext())
+        {
+            buff.append(ri.next().getName());
+            if(ri.hasNext())
+            {
+                buff.append(", ");
+            }
+        }
+        buff.append("] = {");
+        Iterator<Map.Entry<ResourceRef, PermissionsInfo>> i = piCache.entrySet().iterator();
+        while(i.hasNext())
+        {
+            Map.Entry<ResourceRef, PermissionsInfo> entry = i.next();
+            buff.append(entry.getKey().getId()).append("=").append(entry.getValue().toString());
+            if(i.hasNext())
+            {
+                buff.append(", ");
+            }
+        }
+        buff.append("}");
+        return buff.toString();
     }
 }
