@@ -202,11 +202,13 @@ public class BooleanAttributeHandler
      */
     protected Boolean fromString(String string)
     {
-        if(string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true") || string.equals("1"))
+        if(string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true") || string.equals("1")
+            || string.equalsIgnoreCase("t"))
         {
             return Boolean.TRUE;
         }
-        if(string.equalsIgnoreCase("false") || string.equalsIgnoreCase("no") || string.equals("0"))
+        if(string.equalsIgnoreCase("false") || string.equalsIgnoreCase("no") || string.equals("0")
+            || string.equalsIgnoreCase("f"))
         {
             return Boolean.FALSE;
         }
