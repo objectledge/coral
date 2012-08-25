@@ -170,8 +170,7 @@ public class CoralStoreImpl
             try
             {
                 conn = persistence.getDatabase().getConnection();
-                List<ResourceImpl> list = persistence.load(" 1 = 1 ORDER BY resource_id",
-                    resourceFactory);
+                List<ResourceImpl> list = persistence.load(resourceFactory);
                 rs = instantiate(list, conn);
             }
             catch(Exception e)
@@ -228,13 +227,11 @@ public class CoralStoreImpl
                 List<ResourceImpl> list;
                 if(parent != null)
                 {
-                    list = persistence.load("parent = "+parent.getIdString(),
-                        resourceFactory);
+                    list = persistence.load(resourceFactory, "parent = ?", parent.getId());
                 }
                 else
                 {
-                    list = persistence.load("parent IS NULL",
-                        resourceFactory);
+                    list = persistence.load(resourceFactory, "parent IS NULL");
                 }
                 rs = instantiate(list, conn);
                 rrs = ref(rs);
@@ -284,7 +281,7 @@ public class CoralStoreImpl
             try
             {
                 conn = persistence.getDatabase().getConnection();
-                res = (Resource)persistence.load(id,resourceFactory);
+                res = (Resource)persistence.load(resourceFactory, id);
                 if(res != null)
                 {
                     res = res.getResourceClass().getHandler().retrieve(res, conn, null);
@@ -344,9 +341,7 @@ public class CoralStoreImpl
             try
             {
                 conn = persistence.getDatabase().getConnection();
-                List<ResourceImpl> list = persistence
-                    .load("name = '" + DatabaseUtils.escapeSqlString(name) + "'",
-                    resourceFactory);
+                List<ResourceImpl> list = persistence.load(resourceFactory, "name = ?", name);
                 rs = instantiate(list, conn);
             }
             catch(Exception e)
@@ -429,9 +424,8 @@ public class CoralStoreImpl
             try
             {
                 conn = persistence.getDatabase().getConnection();
-                List<ResourceImpl> list = persistence.load(
-                    "parent = " + parent.getIdString() +
-                    " AND name = '"+DatabaseUtils.escapeSqlString(name)+"'", resourceFactory);
+                List<ResourceImpl> list = persistence.load(resourceFactory,
+                    "parent = ? AND name = ?", parent.getId(), name);
                 rs = instantiate(list, conn);
                 rrs = ref(rs);
             }
@@ -1640,8 +1634,7 @@ public class CoralStoreImpl
                 long delegateTime = System.currentTimeMillis();
                 log.info("preloading resource store: preloading delegates");
                 conn = persistence.getDatabase().getConnection();
-                List<ResourceImpl> list = persistence.load(" true ORDER BY resource_id",
-                    resourceFactory);
+                List<ResourceImpl> list = persistence.load(resourceFactory);
                 log.info("preloading resource store: done preloading delegates in "
                     + (System.currentTimeMillis() - delegateTime) + "ms");
                 Map<Class<?>, Object> handlerData = new HashMap<Class<?>, Object>();

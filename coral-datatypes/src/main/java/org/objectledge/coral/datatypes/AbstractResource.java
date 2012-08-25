@@ -577,7 +577,7 @@ public abstract class AbstractResource implements Resource
             conn = getDatabase().getConnection();
             AbstractResourceHandler<?> handler = (AbstractResourceHandler<?>)delegate.getResourceClass()
                 .getHandler();
-            Object data = handler.getData(delegate, conn); 
+            Object data = handler.getData(delegate, conn, null); 
             revert(delegate.getResourceClass(), conn, data);
         }
         catch(SQLException e)

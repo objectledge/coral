@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
@@ -83,15 +84,15 @@ public class NotificationEventBridgeImpl
 
     /** The <code>PersistentFactory</code> for <code>AttributeDefinition</code>
      * objects. */
-    private PersistentFactory attributeDefinitionFactory;
+    private PersistentFactory<? extends AttributeDefinition> attributeDefinitionFactory;
 
     /** The <code>PersistentFactory</code> for <code>RoleAssignment</code>
      * objects. */
-    private PersistentFactory roleAssignmentFactory; 
+    private PersistentFactory<? extends RoleAssignment> roleAssignmentFactory;
 
     /** The <code>PersistentFactory</code> for <code>PermissionAssignment</code>
      * objects. */
-    private PersistentFactory permissionAssignmentFactory;
+    private PersistentFactory<? extends PermissionAssignment> permissionAssignmentFactory;
 
     // initialization ///////////////////////////////////////////////////////
     
@@ -259,7 +260,7 @@ public class NotificationEventBridgeImpl
             
             if("PermissionAssociationChange".equals(type))
             {
-                ResourceClass rc = coral.getSchema().getResourceClass(entity1);
+                ResourceClass<?> rc = coral.getSchema().getResourceClass(entity1);
                 Permission p = coral.getSecurity().getPermission(entity2);
                 PermissionAssociation pa = 
                     new PermissionAssociationImpl(coral, rc, p);
@@ -270,12 +271,12 @@ public class NotificationEventBridgeImpl
                 PermissionAssignment pa = null;
                 if(added)
                 {
-                    pa = (PermissionAssignment)persistence.load(
-                        "resource_id = "+entity1+" AND "+
-                        "role_id = "+entity2+" AND "+
-                        "permission_id = "+entity3,
-                        permissionAssignmentFactory
-                    );
+                    List<PermissionAssignment> paList = (List<PermissionAssignment>)persistence
+                        .load(permissionAssignmentFactory,
+                            "resource_id = ? AND role_id = ? AND permission_id = ?", entity1,
+                            entity2, entity3);
+                    // assert paList.size() == 1;
+                    pa = paList.get(0);
                 }
                 else
                 {
@@ -292,11 +293,11 @@ public class NotificationEventBridgeImpl
                 RoleAssignment ra = null;
                 if(added)
                 {
-                    ra = (RoleAssignment)persistence.load(
-                        "subject_id = "+entity1+" AND "+
-                        "role_id = "+entity2,
-                        roleAssignmentFactory
-                    );
+                    List<RoleAssignment> raList = (List<RoleAssignment>)persistence.load(
+                        roleAssignmentFactory,
+                        "subject_id = ? AND role_id = ?", entity1, entity2);
+                    // assert raList.size() == 1
+                    ra = raList.get(0);
                 }
                 else
                 {
@@ -315,16 +316,15 @@ public class NotificationEventBridgeImpl
             }
             else if("ResourceClassInheritanceChange".equals(type)) 
             {
-                ResourceClass p = coral.getSchema().getResourceClass(entity1);
-                ResourceClass c = coral.getSchema().getResourceClass(entity2);
+                ResourceClass<?> p = coral.getSchema().getResourceClass(entity1);
+                ResourceClass<?> c = coral.getSchema().getResourceClass(entity2);
                 ResourceClassInheritance rci = 
                     new ResourceClassInheritanceImpl(coral, p, c);
                 event.fireResourceClassInheritanceChangeEvent(rci, added);
             }
             else if("ResourceClassAttributesChange".equals(type)) 
             {
-                AttributeDefinition a = (AttributeDefinition)persistence.load(
-                    entity1, attributeDefinitionFactory);
+                AttributeDefinition<?> a = persistence.load(attributeDefinitionFactory, entity1);
                 event.fireResourceClassAttributesChangeEvent(a, added);
             }
             else if("ResourceTreeChange".equals(type)) 
@@ -383,18 +383,17 @@ public class NotificationEventBridgeImpl
 			}
             else if("ResourceClassChange".equals(type)) 
             {
-                ResourceClass rc = coral.getSchema().getResourceClass(entity1);
+                ResourceClass<?> rc = coral.getSchema().getResourceClass(entity1);
                 event.fireResourceClassChangeEvent(rc);
             }
             else if("AttributeClassChange".equals(type)) 
             {
-                AttributeClass ac = coral.getSchema().getAttributeClass(entity1);
+                AttributeClass<?> ac = coral.getSchema().getAttributeClass(entity1);
                 event.fireAttributeClassChangeEvent(ac);
             }
             else if("AttributeDefinictionChange".equals(type)) 
             {
-                AttributeDefinition a = (AttributeDefinition)persistence.
-                    load(entity1, attributeDefinitionFactory);
+                AttributeDefinition<?> a = persistence.load(attributeDefinitionFactory, entity1);
                 event.fireAttributeDefinitionChangeEvent(a);
             }
             else

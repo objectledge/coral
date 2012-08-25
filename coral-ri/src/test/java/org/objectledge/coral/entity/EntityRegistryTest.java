@@ -106,7 +106,7 @@ public class EntityRegistryTest
     {
         EntityRegistry reg = createRegistry();
         List list = new ArrayList(0);
-        mockPersistence.expects(once()).method("load").with(NULL, ANYTHING).will(returnValue(list));
+        mockPersistence.expects(once()).method("load").with(ANYTHING).will(returnValue(list));
         assertEquals(0, reg.get().size());
         // no load this time
         reg.get();
@@ -116,7 +116,8 @@ public class EntityRegistryTest
         throws Exception
     {
         EntityRegistry reg = createRegistry();
-        mockPersistence.expects(once()).method("load").with(eq(1L), ANYTHING).will(
+        mockPersistence.expects(once()).method("load").with(ANYTHING, eq(1L))
+            .will(
             returnValue(redEntity));
         assertSame(redEntity, reg.get(1L));
         // no load this time
@@ -129,7 +130,8 @@ public class EntityRegistryTest
         EntityRegistry reg = createRegistry();
         List list = new ArrayList(1);
         list.add(redEntity);
-        mockPersistence.expects(once()).method("load").with(eq("name = 'fred'"), ANYTHING).will(
+        mockPersistence.expects(once()).method("load")
+            .with(ANYTHING, eq("name = ?"), eq(new Object[] { "fred" })).will(
             returnValue(list));
         Set result = reg.get("fred");
         assertEquals(1, result.size());
@@ -144,8 +146,8 @@ public class EntityRegistryTest
         EntityRegistry reg = createRegistry();
         List list = new ArrayList(1);
         list.add(redEntity);
-        mockPersistence.expects(once()).method("load").with(eq("name = 'fred'"), ANYTHING).will(
-            returnValue(list));
+        mockPersistence.expects(once()).method("load")
+            .with(ANYTHING, eq("name = ?"), eq(new Object[] { "fred" })).will(returnValue(list));
         assertSame(redEntity, reg.getUnique("fred"));
         // no load this time
         reg.getUnique("fred");
