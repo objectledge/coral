@@ -1,5 +1,6 @@
 package org.objectledge.coral.datatypes;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -32,6 +33,8 @@ public class PersistentResource
 {
     // instance variables ////////////////////////////////////////////////////
 
+    public static final String[] KEY_COLUMNS = new String[] { "resource_id" };
+
     /** the unique id of the resource in it's db table. */
     protected boolean saved = false;
 
@@ -44,6 +47,21 @@ public class PersistentResource
         
     // interface to PersistentResourceHandler ////////////////////////////////
     
+    private Map<ResourceClass<?>, InputRecord> getData(Resource deletage, Object data)
+    {
+        @SuppressWarnings("unchecked")
+        Map<Long, Map<ResourceClass<?>, InputRecord>> rMap = (Map<Long, Map<ResourceClass<?>, InputRecord>>)data;
+        Map<ResourceClass<?>, InputRecord> rcMap = rMap.get(deletage.getIdObject());
+        if(rcMap != null)
+        {
+            return rcMap;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     synchronized void retrieve(Resource delegate, ResourceClass<?> rClass, Connection conn, 
         Object data)
     	throws SQLException
@@ -51,8 +69,7 @@ public class PersistentResource
         super.retrieve(delegate, rClass, conn, data);
         try
         {
-            Map<Long,InputRecord> inputRecordMap = (Map<Long,InputRecord>)data;
-        	InputRecord in = inputRecordMap.get(delegate.getIdObject());
+            Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
             if(in != null)
             {
                 setData(in);
@@ -70,8 +87,7 @@ public class PersistentResource
         super.revert(rClass, conn, data);
         try
         {
-            Map<Long,InputRecord> inputRecordMap = (Map<Long,InputRecord>)data;
-            InputRecord in = inputRecordMap.get(delegate.getIdObject());
+            Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
             if(in != null)
             {
                 setData(in);
@@ -221,8 +237,7 @@ public class PersistentResource
      */
     public String[] getKeyColumns()
     {
-        return ((PersistentResourceHandler)delegate.getResourceClass().getHandler()).
-            getKeyColumns();
+        return KEY_COLUMNS;
     }
 
     /**
@@ -315,39 +330,101 @@ public class PersistentResource
         }
     }
     
+    private void setData(Map<ResourceClass<?>, InputRecord> records)
+        throws PersistenceException
+    {
+        for(Map.Entry<ResourceClass<?>, InputRecord> entry : records.entrySet())
+        {
+            InputRecord record = entry.getValue();
+            if(record != null)
+            {
+                for(AttributeDefinition<?> attr : entry.getKey().getDeclaredAttributes())
+                {
+                    if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                    {
+                        setAttribute(attr, record, this);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     public void setData(InputRecord record)
         throws PersistenceException
     {
-        for(AttributeDefinition<?> attribute : delegate.getResourceClass().getAllAttributes())
+        throw new UnsupportedOperationException("should not be called directly");
+    }
+
+    private static <T> void setAttribute(AttributeDefinition<T> attr, InputRecord data,
+        AbstractResource instance)
+        throws PersistenceException
+    {
+        Class<T> aClass = attr.getAttributeClass().getJavaClass();
+        final String name = attr.getName();
+        if(attr.getAttributeClass().getHandler().supportsExternalString())
         {
-            if((attribute.getFlags() & AttributeFlags.BUILTIN) == 0)
+            Object value = null;
+            if(!data.isNull(name))
             {
-                if(!record.isNull(attribute.getName()))
+                if(aClass.equals(Boolean.class))
                 {
-                    AttributeHandler handler = attribute.getAttributeClass().getHandler();
-                    if(attribute.getAttributeClass().getJavaClass().equals(Date.class))
-                    {
-                        Date value = record.getDate(attribute.getName());
-                        setAttribute(attribute, value);
-                    }
-                    else 
-                    {
-                        if(handler.supportsExternalString())
-                        {
-                            Object value = handler.
-                                toAttributeValue(record.getString(attribute.getName()));
-                            setAttribute(attribute, value);
-                        }
-                        else
-                        {
-                            long valueId = record.getLong(attribute.getName());
-                            setValueId(attribute, valueId);
-                        }
-                    }
+                    value = data.getBoolean(name);
                 }
+                if(aClass.equals(Byte.class))
+                {
+                    value = data.getByte(name);
+                }
+                if(aClass.equals(Short.class))
+                {
+                    value = data.getShort(name);
+                }
+                if(aClass.equals(Integer.class))
+                {
+                    value = data.getInteger(name);
+                }
+                if(aClass.equals(Long.class))
+                {
+                    value = data.getLong(name);
+                }
+                if(aClass.equals(BigDecimal.class))
+                {
+                    value = data.getBigDecimal(name);
+                }
+                if(aClass.equals(Byte.class))
+                {
+                    value = data.getByte(name);
+                }
+                if(aClass.equals(Float.class))
+                {
+                    value = data.getFloat(name);
+                }
+                if(aClass.equals(Double.class))
+                {
+                    value = data.getDouble(name);
+                }
+                if(aClass.equals(String.class))
+                {
+                    value = data.getString(name);
+                }
+                if(java.util.Date.class.isAssignableFrom(aClass))
+                {
+                    value = data.getDate(name);
+                }
+            }
+            instance.setAttribute(attr, value);
+        }
+        else
+        {
+            if(data.isNull(name))
+            {
+                instance.setValueId(attr, -1);
+            }
+            else
+            {
+                instance.setValueId(attr, data.getLong(name));
             }
         }
     }
