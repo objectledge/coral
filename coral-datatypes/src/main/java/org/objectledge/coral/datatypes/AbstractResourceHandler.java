@@ -106,11 +106,8 @@ public abstract class AbstractResourceHandler<T extends Resource>
     {
         checkDelegate(delegate);
         AbstractResource res = instantiate(resourceClass);
-        if(data == null)
-        {
-            data = getData(delegate, conn);
-        }
-        (res).retrieve(delegate, resourceClass, conn, data);
+        data = getData(delegate, conn, data);
+        res.retrieve(delegate, resourceClass, conn, data);
         addToCache(res);
         return (T)res;
     }
@@ -125,7 +122,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
         checkDelegate(delegate);
         if(data == null)
         {
-            data = getData(delegate, conn);
+            data = getData(delegate, conn, null);
         }
         ((AbstractResource)resource).revert(resourceClass, conn, data);
     }
@@ -350,10 +347,12 @@ public abstract class AbstractResourceHandler<T extends Resource>
      * 
      * @param delegate the security delegate object.
      * @param conn database connection.
+     * @param prev data produced by previous handler, or {@code null} if the handler is first one in
+     *        the chain.
      * @return opaque data object.
      * @throws SQLException if information retrieval fails.
      */
-    protected abstract Object getData(Resource delegate, Connection conn)
+    protected abstract Object getData(Resource delegate, Connection conn, Object prev)
         throws SQLException;
 
     /**

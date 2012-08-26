@@ -369,7 +369,7 @@ public class GenericResourceHandler<T extends Resource>
      * @return the map of data keys.
      * @throws SQLException if happens.
      */    
-    public Object getData(Resource delegate, Connection conn)
+    public Object getData(Resource delegate, Connection conn, Object prev)
         throws SQLException
     {       
         Map<Long,Map<AttributeDefinition,Long>> keyMap = 
