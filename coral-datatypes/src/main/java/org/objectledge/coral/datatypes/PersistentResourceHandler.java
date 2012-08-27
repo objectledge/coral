@@ -2,6 +2,7 @@ package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,8 +82,77 @@ public class PersistentResourceHandler
     public void addAttribute(AttributeDefinition attribute, Object value, Connection conn)
         throws ValueRequiredException, SQLException
     {
-        // throw new UnsupportedOperationException("schema modifications are not supported"+
-        // " for this resource class");
+        boolean tableShouldExist = false;
+        for(AttributeDefinition<?> attr : attribute.getDeclaringClass().getDeclaredAttributes())
+        {
+            if(!attr.equals(attribute) && (attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+            {
+                tableShouldExist = true;
+            }
+        }
+        Statement stmt = conn.createStatement();
+        try
+        {
+            CoralAttributeMapping repr;
+            try
+            {
+                repr = persistence.load(CoralAttributeMapping.FACTORY, attribute
+                    .getAttributeClass().getId());
+            }
+            catch(PersistenceException e)
+            {
+                throw new SQLException("failed to retrieve attribute mapping data", e);
+            }
+            StringBuilder buff = new StringBuilder();
+            if(!tableShouldExist)
+            {
+                buff.append("CREATE TABLE ");
+                buff.append(attribute.getDeclaringClass().getDbTable());
+                buff.append(" (\n resource_id BIGINT,\n ");
+                buff.append(attribute.getName()).append(" ");
+                buff.append(repr.getSqlType());
+                if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
+                {
+                    buff.append(" NOT NULL");
+                }
+                buff.append(",\n PRIMARY KEY (resource_id)");
+                if(repr.isFk() || repr.isCustom())
+                {
+                    buff.append(",\n FOREIGN KEY (").append(attribute.getName()).append(") ");
+                    buff.append("\n REFERENCES ").append(repr.getFkTable());
+                    buff.append("(").append(repr.getFkKeyColumn()).append(")");
+                }
+                buff.append("\n)");
+                stmt.execute(buff.toString());
+            }
+            else
+            {
+                buff.append("ALTER TABLE ");
+                buff.append(attribute.getDeclaringClass().getDbTable());
+                buff.append("\n ADD COLUMN ");
+                buff.append(attribute.getName()).append(" ");
+                buff.append(repr.getSqlType());
+                if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
+                {
+                    buff.append(" NOT NULL");
+                }
+                stmt.execute(buff.toString());
+                if(repr.isFk() || repr.isCustom())
+                {
+                    buff.setLength(0);
+                    buff.append("ALTER TABLE ");
+                    buff.append(attribute.getDeclaringClass().getDbTable());
+                    buff.append("\n ADD FOREIGN KEY (").append(attribute.getName()).append(") ");
+                    buff.append("\n REFERENCES ").append(repr.getFkTable());
+                    buff.append("(").append(repr.getFkKeyColumn()).append(")");
+                    stmt.execute(buff.toString());
+                }
+            }
+        }
+        finally
+        {
+            stmt.close();
+        }
     }
 
     /**
@@ -292,7 +362,7 @@ public class PersistentResourceHandler
     {
         return null;
     }
-    
+
     /**
      * @return Returns the persistence.
      */
