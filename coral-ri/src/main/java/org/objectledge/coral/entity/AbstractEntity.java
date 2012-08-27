@@ -155,7 +155,10 @@ public abstract class AbstractEntity
     public void getData(OutputRecord record)
         throws PersistenceException
     {
-        record.setLong(getKeyColumns()[0], id);
+        if(id != -1L)
+        {
+            record.setLong(getKeyColumns()[0], id);
+        }
         record.setString("name", name);
     }
     
