@@ -18,6 +18,7 @@ import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
+import org.objectledge.database.DatabaseUtils;
 
 /**
  * Test for the tabular backend.
@@ -169,5 +170,48 @@ public class PersistentResourcesTest
         ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
         databaseConnection.close();
         assertEquals(expected, actual);
+    }
+
+    public void testDeleteAttributes()
+        throws Exception
+    {
+        testCreateResource();
+
+        schema.deleteAttribute(testClass, aresource);
+        Column[] trimmedCols = new Column[testTableCols.length - 1];
+        System.arraycopy(testTableCols, 0, trimmedCols, 0, testTableCols.length - 1);
+        DefaultTable expected = new DefaultTable("test", trimmedCols);
+        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7) });
+        expected.addRow(new Object[] { testRes2.getIdObject(), "bar", Integer.valueOf(9) });
+        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        databaseConnection.close();
+        assertEquals(expected, actual);
+
+        schema.deleteAttribute(testClass, anint);
+        Column[] trimmedCols2 = new Column[trimmedCols.length - 1];
+        System.arraycopy(trimmedCols, 0, trimmedCols2, 0, trimmedCols.length - 1);
+        expected = new DefaultTable("test", trimmedCols2);
+        expected.addRow(new Object[] { testRes1.getIdObject(), "foo" });
+        expected.addRow(new Object[] { testRes2.getIdObject(), "bar" });
+        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        databaseConnection.close();
+        assertEquals(expected, actual);
+
+        schema.deleteAttribute(testClass, astring);
+        assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
+
+        assertEquals(0, testClass.getDeclaredAttributes().length);
+        assertEquals(1, store.getResource("test1").length);
+    }
+
+    public void testDeleteResourceClass()
+        throws Exception
+    {
+        testCreateResource();
+
+        store.deleteResource(testRes2);
+        store.deleteResource(testRes1);
+        schema.deleteResourceClass(testClass);
+        assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
     }
 }

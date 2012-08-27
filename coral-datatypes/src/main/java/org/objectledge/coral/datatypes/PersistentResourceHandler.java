@@ -142,7 +142,10 @@ public class PersistentResourceHandler
                     buff.setLength(0);
                     buff.append("ALTER TABLE ");
                     buff.append(attribute.getDeclaringClass().getDbTable());
-                    buff.append("\n ADD FOREIGN KEY (").append(attribute.getName()).append(") ");
+                    buff.append("\n ADD CONSTRAINT fk_")
+                        .append(attribute.getDeclaringClass().getDbTable()).append("_")
+                        .append(attribute.getName());
+                    buff.append(" FOREIGN KEY (").append(attribute.getName()).append(") ");
                     buff.append("\n REFERENCES ").append(repr.getFkTable());
                     buff.append("(").append(repr.getFkKeyColumn()).append(")");
                     stmt.execute(buff.toString());
@@ -171,8 +174,53 @@ public class PersistentResourceHandler
     public void deleteAttribute(AttributeDefinition attribute, Connection conn)
         throws SQLException
     {
-        throw new UnsupportedOperationException("schema modifications are not supported"
-            + " for this resource class");
+        boolean shouldDropTable = true;
+        for(AttributeDefinition<?> attr : attribute.getDeclaringClass().getDeclaredAttributes())
+        {
+            if(!attr.equals(attribute) && (attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+            {
+                shouldDropTable = false;
+            }
+        }
+        Statement stmt = conn.createStatement();
+        try
+        {
+            CoralAttributeMapping repr;
+            try
+            {
+                repr = persistence.load(CoralAttributeMapping.FACTORY, attribute
+                    .getAttributeClass().getId());
+            }
+            catch(PersistenceException e)
+            {
+                throw new SQLException("failed to retrieve attribute mapping data", e);
+            }
+            StringBuilder buff = new StringBuilder();
+            if(shouldDropTable)
+            {
+                buff.append("DROP TABLE ").append(attribute.getDeclaringClass().getDbTable());
+            }
+            else
+            {
+                if(repr.isFk() || repr.isCustom())
+                {
+                    buff.append("ALTER TABLE ").append(attribute.getDeclaringClass().getDbTable());
+                    buff.append("\n DROP CONSTRAINT fk_")
+                        .append(attribute.getDeclaringClass().getDbTable()).append("_")
+                        .append(attribute.getName());
+                    stmt.execute(buff.toString());
+                    buff.setLength(0);
+
+                }
+                buff.append("ALTER TABLE ").append(attribute.getDeclaringClass().getDbTable())
+                    .append("\n DROP COLUMN ").append(attribute.getName());
+            }
+            stmt.execute(buff.toString());
+        }
+        finally
+        {
+            stmt.close();
+        }
     }
 
     /**
