@@ -59,6 +59,8 @@ public abstract class CoralTestCase extends TestCase
     protected IDatabaseConnection databaseConnection;
     
     protected Logger log;
+
+    protected DataSource dataSource;
     
     public void setUp()
         throws Exception
@@ -68,17 +70,17 @@ public abstract class CoralTestCase extends TestCase
         container = new LedgeContainer(fs, "/config", getClass().getClassLoader()); 
         coralSessionFactory = (CoralSessionFactory)container.getContainer().
             getComponentInstance(CoralSessionFactory.class);
-        DataSource ds = (DataSource)container.getContainer().
+        dataSource = (DataSource)container.getContainer().
             getComponentInstanceOfType(ThreadDataSource.class);
         log = Logger.getLogger(getClass());
 
-        InitComponent init = new InitComponent(ds, fs, true, new Log4JLogger(log));
+        InitComponent init = new InitComponent(dataSource, fs, true, new Log4JLogger(log));
         init.run();
 
         IdGenerator idGenerator = (IdGenerator)container.getContainer().
             getComponentInstanceOfType(IdGenerator.class);
         idGenerator.getNextId("global_transaction_hack");
-        databaseConnection = new DatabaseDataSourceConnection(ds);
+        databaseConnection = new DatabaseDataSourceConnection(dataSource);
     }
     
     public void tearDown()
