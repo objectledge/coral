@@ -144,7 +144,10 @@ public class InitComponent
                 {
                     while(rset.next())
                     {
-                        tables.add(rset.getString(1));
+                        if(DatabaseUtils.hasTable(dataSource, rset.getString(1)))
+                        {
+                            tables.add(rset.getString(1));
+                        }
                     }
                 }
                 finally
