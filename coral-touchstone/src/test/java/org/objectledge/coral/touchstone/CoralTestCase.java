@@ -37,9 +37,10 @@ import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.container.LedgeContainer;
 import org.objectledge.coral.session.CoralSessionFactory;
-import org.objectledge.database.DatabaseUtils;
+import org.objectledge.coral.tools.init.InitComponent;
 import org.objectledge.database.IdGenerator;
 import org.objectledge.database.ThreadDataSource;
 import org.objectledge.filesystem.FileSystem;
@@ -69,35 +70,15 @@ public abstract class CoralTestCase extends TestCase
             getComponentInstance(CoralSessionFactory.class);
         DataSource ds = (DataSource)container.getContainer().
             getComponentInstanceOfType(ThreadDataSource.class);
-        if(!DatabaseUtils.hasTable(ds, "ledge_id_table"))
-        {
-            DatabaseUtils.runScript(ds, fs.getReader("sql/database/IdGeneratorTables.sql", "UTF-8"));   
-        }
-        if(!DatabaseUtils.hasTable(ds, "ledge_parameters"))
-        {
-            DatabaseUtils.runScript(ds,
-                fs.getReader("sql/parameters/DBParametersTables.sql", "UTF-8"));
-        }
-        if(!DatabaseUtils.hasTable(ds, "coral_resource_class"))
-        {        
-            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRITables.sql", "UTF-8"));   
-            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRIConstraints.sql", "UTF-8"));
-            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesTables.hsql.sql", "UTF-8"));               
-            DatabaseUtils.runScript(ds,
-                fs.getReader("sql/coral/CoralDatatypesConstraints.sql", "UTF-8"));
-        }
-        else
-        {
-            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesCleanup.sql", "UTF-8"));               
-            DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRICleanup.sql", "UTF-8"));   
-        }
-        DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralRIInitial.sql", "UTF-8"));   
-        DatabaseUtils.runScript(ds, fs.getReader("sql/coral/CoralDatatypesInitial.sql", "UTF-8")); 
+        log = Logger.getLogger(getClass());
+
+        InitComponent init = new InitComponent(ds, fs, true, new Log4JLogger(log));
+        init.run();
+
         IdGenerator idGenerator = (IdGenerator)container.getContainer().
             getComponentInstanceOfType(IdGenerator.class);
         idGenerator.getNextId("global_transaction_hack");
         databaseConnection = new DatabaseDataSourceConnection(ds);
-        log = Logger.getLogger(getClass());
     }
     
     public void tearDown()

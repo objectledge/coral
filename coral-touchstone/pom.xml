@@ -25,6 +25,10 @@
       <artifactId>coral-datatypes</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.objectledge.coral</groupId>
+      <artifactId>coral-tools</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.objectledge</groupId>
       <artifactId>ledge-lgpl</artifactId>
     </dependency>
