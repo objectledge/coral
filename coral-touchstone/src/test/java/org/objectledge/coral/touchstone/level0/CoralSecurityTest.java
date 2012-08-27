@@ -304,9 +304,9 @@ public class CoralSecurityTest
         throws Exception
     {
         Statement stmt = databaseConnection.getConnection().createStatement();
-        stmt.execute("INSERT INTO coral_resource_class VALUES(3, "+
-            "'alt_node', 'org.objectledge.coral.datatypes.NodeImpl',"+ 
-            "'org.objectledge.coral.datatypes.GenericResourceHandler', '', 4)");
+        stmt.execute("INSERT INTO coral_resource_class VALUES(3, "
+            + "'alt_node', 'org.objectledge.coral.datatypes.NodeImpl',"
+            + "'org.objectledge.coral.datatypes.GenericResourceHandler', NULL, 4)");
         stmt.execute("INSERT INTO coral_resource_class_inheritance VALUES(1,3)");
         stmt.execute("INSERT INTO coral_permission VALUES(1,'permission')");
         stmt.execute("INSERT INTO coral_permission_association VALUES(1,1)");

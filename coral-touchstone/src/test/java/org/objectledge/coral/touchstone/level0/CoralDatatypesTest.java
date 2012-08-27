@@ -166,9 +166,9 @@ public class CoralDatatypesTest extends CoralTestCase
     {
         super.setUp();
         Statement stmt = databaseConnection.getConnection().createStatement();
-        stmt.execute("INSERT INTO coral_resource_class VALUES(3, "+
-            "'test', 'org.objectledge.coral.datatypes.NodeImpl',"+ 
-            "'org.objectledge.coral.datatypes.GenericResourceHandler', '', 0)");
+        stmt.execute("INSERT INTO coral_resource_class VALUES(3, "
+            + "'test', 'org.objectledge.coral.datatypes.NodeImpl',"
+            + "'org.objectledge.coral.datatypes.GenericResourceHandler', NULL, 0)");
         
         stmt.execute("INSERT INTO coral_resource VALUES(2,3,1,'resource',1,NOW(),1,1,NOW())");
 
