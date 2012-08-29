@@ -1,5 +1,6 @@
 package org.objectledge.coral.touchstone.level1;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,8 @@ import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
 import org.objectledge.database.DatabaseUtils;
+import org.objectledge.parameters.DefaultParameters;
+import org.objectledge.parameters.Parameters;
 
 /**
  * Test for the tabular backend.
@@ -34,30 +37,48 @@ public class PersistentResourcesTest
 
     private CoralStore store;
 
-    private AttributeClass<String> stringClass;
+    private AttributeClass<String> stringAttrClass;
 
-    private AttributeClass<Integer> intClass;
+    private AttributeClass<Integer> intAttrClass;
 
-    private AttributeClass<Resource> resClass;
+    private AttributeClass<Resource> resourceAttrClass;
+
+    private AttributeClass<Boolean> booleanAttrClass;
+
+    private AttributeClass<Parameters> parametersAttrClass;
 
     private Resource root;
 
-    private ResourceClass<?> testClass;
+    private ResourceClass<?> testResourceClass;
 
-    private AttributeDefinition<String> astring;
+    private AttributeDefinition<String> a1;
 
-    private AttributeDefinition<Integer> anint;
+    private AttributeDefinition<Integer> a2;
 
-    private AttributeDefinition<Resource> aresource;
+    private AttributeDefinition<Resource> a3;
 
     private Column[] testTableCols = { new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
-                    new Column("ASTRING", DataType.VARCHAR, Column.NULLABLE),
-                    new Column("ANINT", DataType.INTEGER, Column.NO_NULLS),
-                    new Column("ARESOURCE", DataType.BIGINT, Column.NULLABLE) };
+                    new Column("A1", DataType.VARCHAR, Column.NULLABLE),
+                    new Column("A2", DataType.INTEGER, Column.NO_NULLS),
+                    new Column("A3", DataType.BIGINT, Column.NULLABLE) };
+
+    private Column[] secondTableCols = {
+                    new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
+                    new Column("A4", DataType.BOOLEAN, Column.NULLABLE),
+                    new Column("A5", DataType.BIGINT, Column.NO_NULLS) };
+
+    private Column[] parametersTableCols = { new Column("PARAMETERS_ID", DataType.BIGINT),
+                    new Column("NAME", DataType.VARCHAR), new Column("VALUE", DataType.VARCHAR) };
 
     private Resource testRes1;
 
     private Resource testRes2;
+
+    private ResourceClass<?> secondResourceClass;
+
+    private AttributeDefinition<Boolean> a4;
+
+    private AttributeDefinition<Parameters> a5;
 
     @Override
     public void setUp()
@@ -66,9 +87,11 @@ public class PersistentResourcesTest
         super.setUp();
         coral = coralSessionFactory.getRootSession();
         schema = coral.getSchema();
-        stringClass = (AttributeClass<String>)schema.getAttributeClass("string");
-        intClass = (AttributeClass<Integer>)schema.getAttributeClass("integer");
-        resClass = (AttributeClass<Resource>)schema.getAttributeClass("resource");
+        stringAttrClass = (AttributeClass<String>)schema.getAttributeClass("string");
+        intAttrClass = (AttributeClass<Integer>)schema.getAttributeClass("integer");
+        resourceAttrClass = (AttributeClass<Resource>)schema.getAttributeClass("resource");
+        booleanAttrClass = (AttributeClass<Boolean>)schema.getAttributeClass("boolean");
+        parametersAttrClass = (AttributeClass<Parameters>)schema.getAttributeClass("parameters");
         store = coral.getStore();
         root = store.getResource(CoralStore.ROOT_RESOURCE);
     }
@@ -84,20 +107,19 @@ public class PersistentResourcesTest
     public void testCreateClass()
         throws Exception
     {
-        testClass = schema.createResourceClass("test", PersistentResource.class.getName(),
+        testResourceClass = schema.createResourceClass("test", PersistentResource.class.getName(),
             PersistentResourceHandler.class.getName(), "test", 0);
-        astring = schema.createAttribute("astring", stringClass, null, 0);
-        schema.addAttribute(testClass, astring, null);
-        anint = schema.createAttribute("anint", intClass, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(testClass, anint, Integer.valueOf(0));
-        aresource = schema.createAttribute("aresource", resClass, "test", 0);
-        schema.addAttribute(testClass, aresource, null);
+        a1 = schema.createAttribute("a1", stringAttrClass, null, 0);
+        schema.addAttribute(testResourceClass, a1, null);
+        a2 = schema.createAttribute("a2", intAttrClass, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(testResourceClass, a2, Integer.valueOf(0));
+        a3 = schema.createAttribute("a3", resourceAttrClass, "test", 0);
+        schema.addAttribute(testResourceClass, a3, null);
 
         ITable expected = new DefaultTable("test", testTableCols);
         ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
         databaseConnection.close();
         assertEquals(actual, expected);
-
     }
 
     public void testCreateResource()
@@ -106,13 +128,14 @@ public class PersistentResourcesTest
         testCreateClass();
 
         Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
-        attributes.put(astring, "foo");
-        attributes.put(anint, 7);
-        testRes1 = store.createResource("test1", root, testClass, attributes);
-        attributes.put(astring, "bar");
-        attributes.put(anint, 9);
-        attributes.put(aresource, testRes1);
-        testRes2 = store.createResource("test2", root, testClass, attributes);
+        attributes.put(a1, "foo");
+        attributes.put(a2, 7);
+        testRes1 = store.createResource("test1", root, testResourceClass, attributes);
+
+        attributes.put(a1, "bar");
+        attributes.put(a2, 9);
+        attributes.put(a3, testRes1);
+        testRes2 = store.createResource("test2", root, testResourceClass, attributes);
 
         DefaultTable expected = new DefaultTable("test", testTableCols);
         expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7), null });
@@ -128,10 +151,10 @@ public class PersistentResourcesTest
     {
         testCreateResource();
 
-        testRes1.set(astring, "baz");
+        testRes1.set(a1, "baz");
         testRes1.update();
-        testRes2.set(anint, 11);
-        testRes2.unset(aresource);
+        testRes2.set(a2, 11);
+        testRes2.unset(a3);
         testRes2.update();
 
         DefaultTable expected = new DefaultTable("test", testTableCols);
@@ -147,15 +170,15 @@ public class PersistentResourcesTest
     {
         testCreateResource();
 
-        testRes1.set(astring, "baz");
+        testRes1.set(a1, "baz");
         testRes1.revert();
-        testRes2.set(anint, 11);
-        testRes2.unset(aresource);
+        testRes2.set(a2, 11);
+        testRes2.unset(a3);
         testRes2.revert();
 
-        assertEquals("foo", testRes1.get(astring));
-        assertEquals(Integer.valueOf(9), testRes2.get(anint));
-        assertEquals(testRes1, testRes2.get(aresource));
+        assertEquals("foo", testRes1.get(a1));
+        assertEquals(Integer.valueOf(9), testRes2.get(a2));
+        assertEquals(testRes1, testRes2.get(a3));
     }
 
     public void testDeleteResource()
@@ -177,7 +200,7 @@ public class PersistentResourcesTest
     {
         testCreateResource();
 
-        schema.deleteAttribute(testClass, aresource);
+        schema.deleteAttribute(testResourceClass, a3);
         Column[] trimmedCols = new Column[testTableCols.length - 1];
         System.arraycopy(testTableCols, 0, trimmedCols, 0, testTableCols.length - 1);
         DefaultTable expected = new DefaultTable("test", trimmedCols);
@@ -187,7 +210,7 @@ public class PersistentResourcesTest
         databaseConnection.close();
         assertEquals(expected, actual);
 
-        schema.deleteAttribute(testClass, anint);
+        schema.deleteAttribute(testResourceClass, a2);
         Column[] trimmedCols2 = new Column[trimmedCols.length - 1];
         System.arraycopy(trimmedCols, 0, trimmedCols2, 0, trimmedCols.length - 1);
         expected = new DefaultTable("test", trimmedCols2);
@@ -197,10 +220,10 @@ public class PersistentResourcesTest
         databaseConnection.close();
         assertEquals(expected, actual);
 
-        schema.deleteAttribute(testClass, astring);
+        schema.deleteAttribute(testResourceClass, a1);
         assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
 
-        assertEquals(0, testClass.getDeclaredAttributes().length);
+        assertEquals(0, testResourceClass.getDeclaredAttributes().length);
         assertEquals(1, store.getResource("test1").length);
     }
 
@@ -211,7 +234,71 @@ public class PersistentResourcesTest
 
         store.deleteResource(testRes2);
         store.deleteResource(testRes1);
-        schema.deleteResourceClass(testClass);
+        schema.deleteResourceClass(testResourceClass);
         assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
+    }
+
+    public void createTwoLevelClasses()
+        throws Exception
+    {
+        testCreateClass();
+
+        secondResourceClass = schema.createResourceClass("second",
+            PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
+            "second", 0);
+        schema.addParentClass(secondResourceClass, testResourceClass,
+            Collections.<AttributeDefinition<?>, Object> emptyMap());
+        a4 = schema.createAttribute("a4", booleanAttrClass, null, 0);
+        schema.addAttribute(secondResourceClass, a4, null);
+        a5 = schema.createAttribute("a5", parametersAttrClass, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(secondResourceClass, a5, null);
+
+        ITable expected = new DefaultTable("second", secondTableCols);
+        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM second");
+        databaseConnection.close();
+        assertEquals(actual, expected);
+    }
+
+    public void testTwoLevelResources()
+        throws Exception
+    {
+        createTwoLevelClasses();
+
+        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
+        attributes.put(a1, "foo");
+        attributes.put(a2, 7);
+        testRes1 = store.createResource("test1", root, testResourceClass, attributes);
+
+        attributes.put(a1, "bar");
+        attributes.put(a2, 9);
+        attributes.put(a3, testRes1);
+        attributes.put(a4, true);
+        Parameters p = new DefaultParameters();
+        p.set("ok", true);
+        p.set("number", 11);
+        attributes.put(a5, p);
+        testRes2 = store.createResource("test2", root, secondResourceClass, attributes);
+
+        DefaultTable expected = new DefaultTable("test", testTableCols);
+        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7), null });
+        expected.addRow(new Object[] { testRes2.getIdObject(), "bar", Integer.valueOf(9),
+                        testRes1.getIdObject() });
+        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("second", secondTableCols);
+        expected.addRow(new Object[] { testRes2.getIdObject(), Boolean.TRUE, 0L });
+        actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("ledge_parameters", parametersTableCols);
+        expected.addRow(new Object[] { 0L, "", "" });
+        expected.addRow(new Object[] { 0L, "ok", "true" });
+        expected.addRow(new Object[] { 0L, "number", "11" });
+        actual = databaseConnection.createQueryTable("ledge_parameters",
+            "SELECT * FROM ledge_parameters");
+        assertEquals(expected, actual);
+
+        databaseConnection.close();
     }
 }
