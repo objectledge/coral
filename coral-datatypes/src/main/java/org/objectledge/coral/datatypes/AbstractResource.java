@@ -719,10 +719,11 @@ public abstract class AbstractResource implements Resource
      * @param attr the attribute.
      * @return the value.
      */
-    protected Object getAttribute(AttributeDefinition<?> attr)
+    @SuppressWarnings("unchecked")
+    protected <T> T getAttribute(AttributeDefinition<T> attr)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
-        return attributes[index];
+        return (T)attributes[index];
     }
     
     /**
