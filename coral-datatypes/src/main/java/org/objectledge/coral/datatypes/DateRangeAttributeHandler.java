@@ -34,8 +34,8 @@ public class DateRangeAttributeHandler
      * @param attributeClass the attribute class.
      */
     public DateRangeAttributeHandler(Database database, CoralStore coralStore,
-                                     CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                     AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema,
+        AttributeClass<DateRange> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

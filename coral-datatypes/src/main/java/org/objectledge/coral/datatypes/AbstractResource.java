@@ -186,7 +186,7 @@ public abstract class AbstractResource implements Resource
     }
 
     synchronized void create(Resource delegate, ResourceClass<?> rClass,
-        Map<AttributeDefinition<?>, Object> attributes, Connection conn)
+        Map<AttributeDefinition<?>, ?> attributes, Connection conn)
         throws SQLException, ValueRequiredException, ConstraintViolationException
     {
         setDelegate(delegate);

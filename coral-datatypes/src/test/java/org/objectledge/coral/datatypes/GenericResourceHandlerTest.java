@@ -82,15 +82,19 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     private Mock mockInstantiator;
     private Instantiator instantiator;
     private Mock mockResourceClass;
-    private ResourceClass resourceClass;
+
+    private ResourceClass<Node> resourceClass;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<?> attributeClass;
     private Mock mockAttributeHandler;
-    private AttributeHandler attributeHandler;
+
+    private AttributeHandler<?> attributeHandler;
     
     
     private Mock mockAttributeDefinition;
-    private AttributeDefinition attributeDefinition;
+
+    private AttributeDefinition<?> attributeDefinition;
 
     private Mock mockConnection;
     private Connection connection;
@@ -100,7 +104,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     private ResultSet resultSet;
     
     // not mock  
-    private GenericResourceHandler handler;
+    private GenericResourceHandler<Node> handler;
     private NodeImpl node;
     
     public void setUp() throws Exception
@@ -123,11 +127,11 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockAttributeHandler.stubs().method("shouldRetrieveAfterCreate").will(returnValue(false));
         mockAttributeHandler.stubs().method("create").will(returnValue(1L));
         mockAttributeHandler.stubs().method("delete");
-        attributeHandler = (AttributeHandler)mockAttributeHandler.proxy();        
+        attributeHandler = (AttributeHandler<?>)mockAttributeHandler.proxy();
         
         mockAttributeClass = mock(AttributeClass.class);
         mockAttributeClass.stubs().method("getHandler").will(returnValue(attributeHandler));
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();        
+        attributeClass = (AttributeClass<?>)mockAttributeClass.proxy();
         
         mockAttributeDefinition = mock(AttributeDefinition.class);
         mockAttributeDefinition.stubs().method("getFlags").will(returnValue(1));
@@ -136,7 +140,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockAttributeDefinition.stubs().method("getDomain").will(returnValue(""));
         mockAttributeDefinition.stubs().method("getIdObject").will(returnValue(new Long(1L)));
         mockAttributeDefinition.stubs().method("getIdString").will(returnValue("1"));
-        attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
+        attributeDefinition = (AttributeDefinition<?>)mockAttributeDefinition.proxy();
         
         mockCoralStore = mock(CoralStore.class);
         coralStore = (CoralStore)mockCoralStore.proxy();
@@ -155,7 +159,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockResourceClass.stubs().method("getAllAttributes").will(returnValue(new AttributeDefinition[]{attributeDefinition}));
         mockResourceClass.stubs().method("getMaxAttributeIndex").will(returnValue(new Integer(0)));
         mockResourceClass.stubs().method("getAttributeIndex").will(returnValue(new Integer(0)));
-        resourceClass = (ResourceClass)mockResourceClass.proxy();
+        resourceClass = (ResourceClass<Node>)mockResourceClass.proxy();
         
         mockCoralSchema = mock(CoralSchema.class);
         mockCoralSchema.stubs().method("getResourceClass").will(returnValue(resourceClass));
@@ -188,7 +192,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         connection = (Connection)mockConnection.proxy();              
                 
         
-        handler = new GenericResourceHandler(coralSchema, resourceClass, database,
+        handler = new GenericResourceHandler<Node>(coralSchema, resourceClass, database,
             instantiator, cacheFactory, logger);
                                              
     }
@@ -203,7 +207,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         throws Exception
     {
         String stmt = "INSERT INTO coral_generic_resource (resource_id, attribute_definition_id, data_key) VALUES (1, 1, 1)";
-        Map attributes = new HashMap();
+        Map<AttributeDefinition<?>, String> attributes = new HashMap<AttributeDefinition<?>, String>();
         attributes.put(attributeDefinition, "foo");
         mockAttributeHandler.expects(once()).method("create").with(eq("foo"),ANYTHING).will(returnValue(1L));
         mockAttributeHandler.expects(atLeastOnce()).method("isModified").with(eq("foo")).will(returnValue(false));
@@ -227,7 +231,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     public void testDelete()
         throws Exception
     {
-        Map<AttributeDefinition,Object> attrs = new HashMap<AttributeDefinition,Object>();
+        Map<AttributeDefinition<?>, String> attrs = new HashMap<AttributeDefinition<?>, String>();
         attrs.put(attributeDefinition, "");
         Resource n = handler.create(resource, attrs, connection);
         handler.delete(n, connection);

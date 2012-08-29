@@ -57,7 +57,8 @@ public class NumberAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<Number> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -82,7 +83,7 @@ public class NumberAttributeHandlerTest extends LedgeTestCase
         mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<Number>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(BigDecimal.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("number"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_number"));

@@ -78,7 +78,7 @@ public class GenericResource
     }
 
     synchronized void create(Resource delegate, ResourceClass<?> rClass, 
-                               Map<AttributeDefinition<?>, Object> attributes, Connection conn)
+        Map<AttributeDefinition<?>, ?> attributes, Connection conn)
         throws SQLException, ValueRequiredException, ConstraintViolationException
     {
         super.create(delegate, rClass, attributes, conn);

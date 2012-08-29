@@ -16,8 +16,8 @@ import org.objectledge.database.Database;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: ResourceAttributeHandler.java,v 1.6 2005-01-18 12:55:12 rafal Exp $
  */
-public class ResourceAttributeHandler
-    extends EntityAttributeHandler<Resource>
+public class ResourceAttributeHandler<T extends Resource>
+    extends EntityAttributeHandler<T>
 {
     /**
      * The constructor.
@@ -29,8 +29,7 @@ public class ResourceAttributeHandler
      * @param attributeClass the attribute class.
      */
     public ResourceAttributeHandler(Database database, CoralStore coralStore,
-                                     CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                     AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<T> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }
@@ -40,18 +39,18 @@ public class ResourceAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected Resource instantiate(long id)
+    protected T instantiate(long id)
         throws EntityDoesNotExistException
     {
-        return coralStore.getResource(id);
+        return (T)coralStore.getResource(id);
     }
     
     /**
      * {@inheritDoc} 
      */
-    protected Resource[] instantiate(String name)
+    protected T[] instantiate(String name)
     {
-        return coralStore.getResourceByPath(name);
+        return (T[])coralStore.getResourceByPath(name);
     }
 
     // value domain /////////////////////////////////////////////////////////////////////////////
@@ -85,7 +84,7 @@ public class ResourceAttributeHandler
         {
             try
             {
-                ResourceClass rc = coralSchema.getResourceClass(domain);
+                ResourceClass<?> rc = coralSchema.getResourceClass(domain);
                 if(!rc.getJavaClass().isInstance(value))
                 {
                     throw new ConstraintViolationException(value.getClass().getName()
@@ -142,7 +141,7 @@ public class ResourceAttributeHandler
      * @param value the value to convert.
      * @return a human readable string.
      */
-    public String toPrintableString(Resource value)
+    public String toPrintableString(T value)
     {
         checkValue(value);
         return (value).getPath();

@@ -34,8 +34,7 @@ public class NumberAttributeHandler
      * @param attributeClass the attribute class.
      */
     public NumberAttributeHandler(Database database, CoralStore coralStore,
-                                   CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                   AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<Number> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

@@ -64,7 +64,8 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSession;
     private CoralSession coralSession;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<ResourceList<Resource>> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -78,9 +79,10 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
 
     private Mock mockResource;
     private Resource resource;
-    private ResourceList resourceList;
 
-    private ResourceListAttributeHandler handler;
+    private ResourceList<Resource> resourceList;
+
+    private ResourceListAttributeHandler<Resource, ResourceList<Resource>> handler;
 
     public void setUp() throws Exception
     {
@@ -103,11 +105,12 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
         coralSessionFactory = (CoralSessionFactory)mockCoralSessionFactory.proxy();
         mockCoralSessionFactory.stubs().method("getCurrentSession").will(returnValue(coralSession));
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<ResourceList<Resource>>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(ResourceList.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("resource_list"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_resource_list"));
-        handler = new ResourceListAttributeHandler(database, coralStore, coralSecurity, 
+        handler = new ResourceListAttributeHandler<Resource, ResourceList<Resource>>(database,
+            coralStore, coralSecurity,
             coralSchema, coralSessionFactory, attributeClass);
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
@@ -135,9 +138,9 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
         mockCoralStore.stubs().method("getResourceByPath").with(eq("/foo")).will(returnValue(resourceArray));
         mockCoralStore.stubs().method("getResourceByPath").with(eq("/missing")).will(returnValue(new Resource[0]));
         
-        ArrayList list = new ArrayList();
+        ArrayList<Resource> list = new ArrayList<Resource>();
         list.add(resource);
-        resourceList = new ResourceList(coralSessionFactory, list);
+        resourceList = new ResourceList<Resource>(coralSessionFactory, list);
     }
 
     public void testAttributeHandlerBase()
@@ -249,7 +252,7 @@ public class ResourceListAttributeHandlerTest extends LedgeTestCase
     {
         try
         {
-            handler.checkDomain("", "");
+            handler.checkDomain("", handler.toAttributeValue("@empty"));
             fail("should throw the exception");
         }
         catch (IllegalArgumentException e)

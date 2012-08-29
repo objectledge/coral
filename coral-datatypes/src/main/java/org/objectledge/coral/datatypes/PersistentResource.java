@@ -101,7 +101,7 @@ public class PersistentResource
     }
 
     synchronized void create(Resource delegate, ResourceClass<?> rClass,
-        Map<AttributeDefinition<?>, Object> attributes, Connection conn)
+        Map<AttributeDefinition<?>, ?> attributes, Connection conn)
         throws SQLException, ValueRequiredException, ConstraintViolationException
     {
         super.create(delegate, rClass, attributes, conn);
@@ -600,7 +600,7 @@ public class PersistentResource
      */
     protected Persistence getPersistence()
     {
-        return ((PersistentResourceHandler)delegate.getResourceClass().getHandler())
+        return ((PersistentResourceHandler<?>)delegate.getResourceClass().getHandler())
             .getPersistence();
     }
 }

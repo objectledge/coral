@@ -64,7 +64,8 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSession;
     private CoralSession coralSession;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<WeakResourceList<Resource>> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -78,9 +79,10 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
 
     private Mock mockResource;
     private Resource resource;
-    private WeakResourceList resourceList;
 
-    private WeakResourceListAttributeHandler handler;
+    private WeakResourceList<Resource> resourceList;
+
+    private WeakResourceListAttributeHandler<Resource> handler;
 
     public void setUp() throws Exception
     {
@@ -104,11 +106,12 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
         coralSessionFactory = (CoralSessionFactory)mockCoralSessionFactory.proxy();
         mockCoralSessionFactory.stubs().method("getCurrentSession").will(returnValue(coralSession));
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<WeakResourceList<Resource>>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(WeakResourceList.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("weak_resource_list"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_weak_resource_list"));
-        handler = new WeakResourceListAttributeHandler(database, coralStore, coralSecurity, 
+        handler = new WeakResourceListAttributeHandler<Resource>(database, coralStore,
+            coralSecurity,
             coralSchema, coralSessionFactory, attributeClass);
         mockResultSet = mock(ResultSet.class);
         resultSet = (ResultSet)mockResultSet.proxy();
@@ -130,9 +133,9 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
         mockResource.stubs().method("getPath").will(returnValue("/foo"));
         resource = (Resource)mockResource.proxy();
         
-        ArrayList list = new ArrayList();
+        ArrayList<Resource> list = new ArrayList<Resource>();
         list.add(resource);
-        resourceList = new WeakResourceList(coralSessionFactory, list);
+        resourceList = new WeakResourceList<Resource>(coralSessionFactory, list);
     }
 
     public void testAttributeHandlerBase()
@@ -244,7 +247,7 @@ public class WeakResourceListAttributeHandlerTest extends LedgeTestCase
     {
         try
         {
-            handler.checkDomain("", "");
+            handler.checkDomain("", handler.toAttributeValue("@empty"));
             fail("should throw the exception");
         }
         catch (IllegalArgumentException e)

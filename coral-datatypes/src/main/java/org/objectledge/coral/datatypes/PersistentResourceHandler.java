@@ -32,8 +32,8 @@ import org.objectledge.database.persistence.Persistent;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: PersistentResourceHandler.java,v 1.19 2008-01-01 22:36:16 rafal Exp $
  */
-public class PersistentResourceHandler
-    extends AbstractResourceHandler
+public class PersistentResourceHandler<T extends PersistentResource>
+    extends AbstractResourceHandler<T>
 {
     // instance variables ////////////////////////////////////////////////////
 
@@ -53,7 +53,7 @@ public class PersistentResourceHandler
      * @throws Exception if there is a problem instantiating an resource object.
      */
     public PersistentResourceHandler(CoralSchema coralSchema, CoralSecurity coralSecurity,
-        ResourceClass resourceClass, Database database, Persistence persistence,
+        ResourceClass<T> resourceClass, Database database, Persistence persistence,
         Instantiator instantiator, CacheFactory cacheFactory, Logger logger)
         throws Exception
     {
@@ -79,7 +79,7 @@ public class PersistentResourceHandler
      * @throws ValueRequiredException if <code>null</code> value was provided for a REQUIRED
      *         attribute.
      */
-    public void addAttribute(AttributeDefinition attribute, Object value, Connection conn)
+    public <A> void addAttribute(AttributeDefinition<A> attribute, A value, Connection conn)
         throws ValueRequiredException, SQLException
     {
         boolean tableShouldExist = false;
@@ -171,7 +171,7 @@ public class PersistentResourceHandler
      * @throws SQLException in case of database problems. The caller metod should consider rolling
      *         back the whole transaction.
      */
-    public void deleteAttribute(AttributeDefinition attribute, Connection conn)
+    public void deleteAttribute(AttributeDefinition<?> attribute, Connection conn)
         throws SQLException
     {
         boolean shouldDropTable = true;
@@ -240,7 +240,8 @@ public class PersistentResourceHandler
      * @throws ValueRequiredException if values for any of parent class REQUIRED attributes are
      *         missing from <code>attributes</code> map.
      */
-    public void addParentClass(ResourceClass parent, Map attributes, Connection conn)
+    public void addParentClass(ResourceClass<?> parent, Map<AttributeDefinition<?>, ?> attributes,
+        Connection conn)
         throws ValueRequiredException, SQLException
     {
         // throw new UnsupportedOperationException("schema modifications are not supported"+
@@ -260,7 +261,7 @@ public class PersistentResourceHandler
      * @throws SQLException in case of database problems. The caller metod should consider rolling
      *         back the whole transaction.
      */
-    public void deleteParentClass(ResourceClass parent, Connection conn)
+    public void deleteParentClass(ResourceClass<?> parent, Connection conn)
         throws SQLException
     {
         throw new UnsupportedOperationException("schema modifications are not supported"
@@ -400,7 +401,7 @@ public class PersistentResourceHandler
     /**
      * {@inheritDoc}
      */
-    protected Object getData(ResourceClass rc, Connection conn)
+    protected Object getData(ResourceClass<?> rc, Connection conn)
         throws SQLException
     {
         return null;

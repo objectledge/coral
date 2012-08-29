@@ -39,8 +39,7 @@ public class BooleanAttributeHandler
      * @param attributeClass the attribute class.
      */
     public BooleanAttributeHandler(Database database, CoralStore coralStore,
-                                   CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                   AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<Boolean> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

@@ -38,8 +38,7 @@ public abstract class EntityAttributeHandler<T extends Entity>
      * @param attributeClass the attribute class.
      */
     public EntityAttributeHandler(Database database, CoralStore coralStore,
-                                 CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                 AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<T> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

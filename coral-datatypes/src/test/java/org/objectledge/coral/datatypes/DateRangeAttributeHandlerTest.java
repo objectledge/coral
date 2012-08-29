@@ -59,7 +59,8 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<DateRange> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -88,7 +89,7 @@ public class DateRangeAttributeHandlerTest extends LedgeTestCase
         mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<DateRange>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(DateRange.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("date_range"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_date_range"));

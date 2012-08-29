@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -44,7 +45,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     protected Instantiator instantiator;
 
     /** resource sets, keyed by resource class. Resources are kept through weak references. */
-    private Map<ResourceClass, WeakHashMap<AbstractResource, Object>> cache = new HashMap<ResourceClass, WeakHashMap<AbstractResource, Object>>();
+    private Map<ResourceClass<?>, WeakHashMap<AbstractResource, Object>> cache = new HashMap<ResourceClass<?>, WeakHashMap<AbstractResource, Object>>();
 
     /** the database. */
     private Database database;
@@ -78,14 +79,14 @@ public abstract class AbstractResourceHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public Resource create(Resource delegate, Map attributes, Connection conn)
+    public T create(Resource delegate, Map<AttributeDefinition<?>, ?> attributes, Connection conn)
         throws ValueRequiredException, SQLException
     {
         checkDelegate(delegate);
-        AbstractResource res = instantiate(resourceClass);
+        AbstractResource res = (AbstractResource)instantiate(resourceClass);
         res.create(delegate, resourceClass, attributes, conn);
         addToCache(res);
-        return res;
+        return (T)res;
     }
 
     /**
@@ -105,7 +106,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
         throws SQLException
     {
         checkDelegate(delegate);
-        AbstractResource res = instantiate(resourceClass);
+        AbstractResource res = (AbstractResource)instantiate(resourceClass);
         data = getData(delegate, conn, data);
         res.retrieve(delegate, resourceClass, conn, data);
         addToCache(res);
@@ -115,7 +116,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public void revert(Resource resource, Connection conn, Object data)
+    public void revert(T resource, Connection conn, Object data)
         throws SQLException
     {
         Resource delegate = resource.getDelegate();
@@ -130,7 +131,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public void update(Resource resource, Connection conn)
+    public void update(T resource, Connection conn)
         throws SQLException
     {
         checkResource(resource);
@@ -142,10 +143,10 @@ public abstract class AbstractResourceHandler<T extends Resource>
      */
     public Resource[] getResourceReferences(Resource resource, boolean clearable)
     {
-        ArrayList temp = new ArrayList();
+        List<Resource> temp = new ArrayList<Resource>();
         for (AttributeDefinition attr : resourceClass.getAllAttributes())
         {
-            AttributeHandler handler = attr.getAttributeClass().getHandler();
+            AttributeHandler<?> handler = attr.getAttributeClass().getHandler();
             if(handler.containsResourceReferences()
                 && resource.isDefined(attr)
                 && (clearable || (!handler.isComposite() && (attr.getFlags() & (AttributeFlags.READONLY | AttributeFlags.REQUIRED)) != 0))
@@ -166,7 +167,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
      */
     public void clearResourceReferences(Resource resource)
     {
-        for (AttributeDefinition attr : resourceClass.getAllAttributes())
+        for (AttributeDefinition<?> attr : resourceClass.getAllAttributes())
         {
             AttributeHandler handler = attr.getAttributeClass().getHandler();
             if(handler.containsResourceReferences()
@@ -201,13 +202,13 @@ public abstract class AbstractResourceHandler<T extends Resource>
      * @return implementation object.
      * @throws BackendException if failed to instantiate.
      */
-    protected AbstractResource instantiate(ResourceClass rClass)
+    protected <U extends Resource> U instantiate(ResourceClass<U> rClass)
         throws BackendException
     {
-        AbstractResource res;
+        U res;
         try
         {
-            res = (AbstractResource)instantiator.newInstance(rClass.getJavaClass());
+            res = instantiator.newInstance(rClass.getJavaClass());
         }
         catch(VirtualMachineError e)
         {
@@ -265,7 +266,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     private void addToCache(AbstractResource res)
     {
         addToCache0(res.getResourceClass(), res);
-        for (ResourceClass parent : res.getResourceClass().getParentClasses())
+        for(ResourceClass<?> parent : res.getResourceClass().getParentClasses())
         {
             addToCache0(parent, res);
         }
@@ -277,7 +278,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
      * @param rc a ResourceClass to use for cache key.
      * @param res a Resource.
      */
-    private void addToCache0(ResourceClass rc, AbstractResource res)
+    private void addToCache0(ResourceClass<?> rc, AbstractResource res)
     {
         WeakHashMap<AbstractResource,Object> rset;
         synchronized(cache)
@@ -307,7 +308,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
         throws SQLException
     {
         revert0(rc, conn);
-        for (ResourceClass child : rc.getDirectChildClasses())
+        for(ResourceClass<?> child : rc.getDirectChildClasses())
         {
             child.getHandler().revert(child, conn);
         }
@@ -320,7 +321,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
      * @param conn connection to read data from.
      * @throws SQLException if data reading fails.
      */
-    private void revert0(ResourceClass rc, Connection conn)
+    private void revert0(ResourceClass<?> rc, Connection conn)
         throws SQLException
     {
         WeakHashMap<AbstractResource,Object> rset;
@@ -363,7 +364,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
      * @return opaque data object.
      * @throws SQLException if information retrieval fails.
      */
-    protected abstract Object getData(ResourceClass rc, Connection conn)
+    protected abstract Object getData(ResourceClass<?> rc, Connection conn)
         throws SQLException;
 
     /**

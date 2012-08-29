@@ -68,10 +68,10 @@ public class ResourceList<T extends Resource>
      * @param coralSessionFactory the Coral session factory. 
      * @param elements the collection of resources or identifiers.
      */
-    public ResourceList(CoralSessionFactory coralSessionFactory, Collection elements)
+    public ResourceList(CoralSessionFactory coralSessionFactory, Collection<?> elements)
     {
         this(coralSessionFactory);
-        Iterator i = elements.iterator();
+        Iterator<?> i = elements.iterator();
         size = elements.size();
         capacity = size+CAPACITY_INCREMENT;
         ids = new long[capacity];

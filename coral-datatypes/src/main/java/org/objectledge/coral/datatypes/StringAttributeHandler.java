@@ -36,8 +36,7 @@ public class StringAttributeHandler
      * @param attributeClass the attribute class.
      */
     public StringAttributeHandler(Database database, CoralStore coralStore,
-                                  CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                  AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<String> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

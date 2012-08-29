@@ -43,7 +43,7 @@ public class GenericResourceHandler<T extends Resource>
      * @param cacheFactory the cache factory.
      * @param logger the logger.
      */
-    public GenericResourceHandler(CoralSchema coralSchema, ResourceClass resourceClass,
+    public GenericResourceHandler(CoralSchema coralSchema, ResourceClass<T> resourceClass,
         Database database, Instantiator instantiator, CacheFactory cacheFactory, Logger logger)
     {
         super(coralSchema, instantiator, resourceClass, database, cacheFactory, logger);
@@ -59,7 +59,7 @@ public class GenericResourceHandler<T extends Resource>
         throws ValueRequiredException, SQLException
     {
         addAttribute0(resourceClass, attribute, value, conn);
-        for(ResourceClass child : resourceClass.getDirectChildClasses())
+        for(ResourceClass<?> child : resourceClass.getDirectChildClasses())
         {
             child.getHandler().addAttribute(attribute, value, conn);
         }
@@ -69,11 +69,11 @@ public class GenericResourceHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public void deleteAttribute(AttributeDefinition attribute, Connection conn)
+    public void deleteAttribute(AttributeDefinition<?> attribute, Connection conn)
         throws SQLException
     {
         deleteAttribute0(resourceClass, attribute, conn);
-        for(ResourceClass child : resourceClass.getDirectChildClasses())
+        for(ResourceClass<?> child : resourceClass.getDirectChildClasses())
         {
             child.getHandler().deleteAttribute(attribute, conn);
         }
@@ -83,12 +83,12 @@ public class GenericResourceHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public void addParentClass(ResourceClass parent, Map values, Connection conn)
+    public void addParentClass(ResourceClass<?> parent, Map<AttributeDefinition<?>, ?> values, Connection conn)
         throws ValueRequiredException, SQLException
     {
         AttributeDefinition[] attrs = parent.getAllAttributes();
         addAttribute0(resourceClass, attrs, values, conn);
-        for(ResourceClass child : resourceClass.getDirectChildClasses())
+        for(ResourceClass<?> child : resourceClass.getDirectChildClasses())
         {
             child.getHandler().addParentClass(parent, values, conn);
         }
@@ -98,14 +98,14 @@ public class GenericResourceHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public void deleteParentClass(ResourceClass parent, Connection conn)
+    public void deleteParentClass(ResourceClass<?> parent, Connection conn)
         throws SQLException
     {
         AttributeDefinition[] attrs = parent.getAllAttributes();
         deleteAttribute0(resourceClass, attrs, conn);
-        for(ResourceClass child : resourceClass.getDirectChildClasses())
+        for(ResourceClass<?> child : resourceClass.getDirectChildClasses())
         {
-        	for(AttributeDefinition attr : attrs)
+            for(AttributeDefinition<?> attr : attrs)
         	{
                 child.getHandler().deleteAttribute(attr, conn);        		
         	}
@@ -124,8 +124,8 @@ public class GenericResourceHandler<T extends Resource>
      * <code>null</code>).
      * @param conn the JDBC connection to use.
      */
-    private void addAttribute0(ResourceClass rc, AttributeDefinition attr, 
-                               Object value, Connection conn)
+    private <A> void addAttribute0(ResourceClass<T> rc, AttributeDefinition<A> attr, A value,
+        Connection conn)
         throws ValueRequiredException, SQLException, ConstraintViolationException
     {
         if((attr.getFlags() & AttributeFlags.BUILTIN) != 0)
@@ -188,8 +188,8 @@ public class GenericResourceHandler<T extends Resource>
      * AttributeDefinition object (<code>null</code> values permitted).
      * @param conn the JDBC connection to use.
      */
-    private void addAttribute0(ResourceClass rc, AttributeDefinition[] attrs, 
-                               Map values, Connection conn)
+    private void addAttribute0(ResourceClass<T> rc, AttributeDefinition[] attrs, Map values,
+        Connection conn)
         throws ValueRequiredException, SQLException, ConstraintViolationException
     {
         Statement stmt1 = conn.createStatement();
@@ -263,7 +263,7 @@ public class GenericResourceHandler<T extends Resource>
      * @param attr the attribute to remove.
      * @param conn the JDBC connection to use.
      */
-    private void deleteAttribute0(ResourceClass rc, AttributeDefinition attr, 
+    private <A> void deleteAttribute0(ResourceClass<T> rc, AttributeDefinition<A> attr,
                                   Connection conn)
         throws SQLException
     {
@@ -309,12 +309,12 @@ public class GenericResourceHandler<T extends Resource>
      * @param attrs the attributes to remove.
      * @param conn the JDBC connection to use.
      */
-    private void deleteAttribute0(ResourceClass rc, AttributeDefinition[] attrs, 
+    private void deleteAttribute0(ResourceClass<T> rc, AttributeDefinition[] attrs,
                                   Connection conn)
         throws SQLException
     {
-        Map atMap = new HashMap();
-        for(AttributeDefinition attr : attrs)
+        Map<Long, AttributeDefinition<?>> atMap = new HashMap<Long, AttributeDefinition<?>>();
+        for(AttributeDefinition<?> attr : attrs)
         {
             atMap.put(attr.getIdObject(), attr);
         }
@@ -334,7 +334,7 @@ public class GenericResourceHandler<T extends Resource>
                 long resId = rs.getLong(1);
                 long atId = rs.getLong(2);
                 long dataId = rs.getLong(3);
-                AttributeDefinition attr = (AttributeDefinition)atMap.get(new Long(atId));
+                AttributeDefinition<?> attr = atMap.get(new Long(atId));
                 if(attr != null)
                 {
                     try
@@ -406,11 +406,10 @@ public class GenericResourceHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public Object getData(ResourceClass rc, Connection conn)
+    public Object getData(ResourceClass<?> rc, Connection conn)
         throws SQLException
     {
-        Map<Long,Map<AttributeDefinition,Long>> keyMap = 
-            new HashMap<Long,Map<AttributeDefinition,Long>>();
+        Map<Long, Map<AttributeDefinition<?>, Long>> keyMap = new HashMap<Long, Map<AttributeDefinition<?>, Long>>();
         Statement stmt = conn.createStatement();
         ResultSet rs = null;
         try
@@ -421,14 +420,14 @@ public class GenericResourceHandler<T extends Resource>
                 "WHERE resource_class_id = " + rc.getIdString() + " " +
                 "ORDER BY resource_id"
             );
-            Map dataKeys = null;
+            Map<AttributeDefinition<?>, Long> dataKeys = null;
             Long resId = null;
             while(rs.next())
             {
-                if(resId == null || resId.longValue() != rs.getLong(1))
+                if(dataKeys == null || resId == null || resId.longValue() != rs.getLong(1))
                 {
                     resId = new Long(rs.getLong(1));
-                    dataKeys = new HashMap();
+                    dataKeys = new HashMap<AttributeDefinition<?>, Long>();
                     keyMap.put(resId, dataKeys);
                 }
                 dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
@@ -450,12 +449,11 @@ public class GenericResourceHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public Map getData(Connection conn)
+    public Object getData(Connection conn)
         throws SQLException
     {
-        Map<Long,Map<AttributeDefinition,Long>> keyMap = 
-            new HashMap<Long,Map<AttributeDefinition,Long>>();
-        Map<AttributeDefinition,Long> dataKeys = null;
+        Map<Long, Map<AttributeDefinition<?>, Long>> keyMap = new HashMap<Long, Map<AttributeDefinition<?>, Long>>();
+        Map<AttributeDefinition<?>, Long> dataKeys = null;
         Long resId = null;
         Statement stmt = conn.createStatement();
         ResultSet rs = null;
@@ -469,10 +467,10 @@ public class GenericResourceHandler<T extends Resource>
             {
                 while(rs.next())
                 {
-                    if(resId == null || resId.longValue() != rs.getLong(1))
+                    if(dataKeys == null || resId == null || resId.longValue() != rs.getLong(1))
                     {
                         resId = new Long(rs.getLong(1));
-                        dataKeys = new HashMap<AttributeDefinition,Long>();
+                        dataKeys = new HashMap<AttributeDefinition<?>, Long>();
                         keyMap.put(resId, dataKeys);
                     }
                     dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
