@@ -116,7 +116,7 @@ public class PersistentResourceHandler
                     buff.append(" NOT NULL");
                 }
                 buff.append(",\n PRIMARY KEY (resource_id)");
-                if(repr.isFk() || repr.isCustom())
+                if(repr.isFk())
                 {
                     buff.append(",\n FOREIGN KEY (").append(attribute.getName()).append(") ");
                     buff.append("\n REFERENCES ").append(repr.getFkTable());
@@ -137,7 +137,7 @@ public class PersistentResourceHandler
                     buff.append(" NOT NULL");
                 }
                 stmt.execute(buff.toString());
-                if(repr.isFk() || repr.isCustom())
+                if(repr.isFk())
                 {
                     buff.setLength(0);
                     buff.append("ALTER TABLE ");
@@ -202,7 +202,7 @@ public class PersistentResourceHandler
             }
             else
             {
-                if(repr.isFk() || repr.isCustom())
+                if(repr.isFk())
                 {
                     buff.append("ALTER TABLE ").append(attribute.getDeclaringClass().getDbTable());
                     buff.append("\n DROP CONSTRAINT fk_")
