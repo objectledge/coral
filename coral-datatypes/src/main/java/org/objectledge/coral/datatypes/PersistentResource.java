@@ -122,6 +122,7 @@ public class PersistentResource
                 try
                 {
                     getPersistence().save(createPersistenView(delegate, rClass, attributes, conn));
+                    this.saved = true;
                 }
                 catch(PersistenceException e)
                 {
@@ -591,7 +592,7 @@ public class PersistentResource
      */
     public void setSaved(long id)
     {
-        this.saved = true;
+        // noop. saved is set by create method directly
     }
 
     /**
