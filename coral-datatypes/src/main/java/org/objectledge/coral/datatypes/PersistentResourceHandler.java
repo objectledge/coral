@@ -335,7 +335,27 @@ public class PersistentResourceHandler
     private InputRecord getInputRecord(Resource delegate, final ResourceClass<?> rClass)
         throws SQLException, PersistenceException, InstantiationException
     {
-        Persistent instance = new Persistent()
+        List<InputRecord> irs = persistence.loadInputRecords(retrievePersistentView(rClass), "resource_id = ?",
+            delegate.getId());
+        if(irs.isEmpty())
+        {
+            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+            {
+                if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
+                {
+                    throw new SQLException("missing data for "
+                        + delegate.getResourceClass().getName() + " WHERE resource_id = "
+                        + delegate.getIdString());
+                }
+            }
+            return null;
+        }
+        return irs.get(0);
+    }
+
+    private Persistent retrievePersistentView(final ResourceClass<?> rClass)
+    {
+        return new Persistent()
             {
                 @Override
                 public String getTable()
@@ -375,22 +395,6 @@ public class PersistentResourceHandler
                     throw new UnsupportedOperationException();
                 }
             };
-        List<InputRecord> irs = persistence.loadInputRecords(instance, "resource_id = ?",
-            delegate.getId());
-        if(irs.isEmpty())
-        {
-            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
-            {
-                if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
-                {
-                    throw new SQLException("missing data for "
-                        + delegate.getResourceClass().getName() + " WHERE resource_id = "
-                        + delegate.getIdString());
-                }
-            }
-            return null;
-        }
-        return irs.get(0);
     }
 
     /**
