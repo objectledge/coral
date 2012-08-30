@@ -22,13 +22,17 @@ class AttributeIndexTable
     /** Largest attribute index used. */
     private final int maxIndex;
 
+    /** ResourceClass this table belongs to */
+    private final ResourceClass<?> rClass;
+
     /**
      * Creates a new index table for a given collection of attributes.
      * 
      * @param attrs attributes.
      */
-    public AttributeIndexTable(Collection<AttributeDefinition<?>> attrs)
+    public AttributeIndexTable(Collection<AttributeDefinition<?>> attrs, ResourceClass<?> rClass)
     {
+        this.rClass = rClass;
         table = new int[maxId(attrs) + 1];
         int index = 1;
         for(AttributeDefinition<?> attr : attrs)
@@ -49,6 +53,7 @@ class AttributeIndexTable
      */
     public AttributeIndexTable(AttributeIndexTable prev, AttributeDefinition<?> attr)
     {
+        this.rClass = prev.rClass;
         table = new int[Math.max(prev.table.length, (int)attr.getId())];
         System.arraycopy(prev.table, 0, table, 0, prev.table.length);
         maxIndex = prev.maxIndex + 1;
@@ -66,6 +71,7 @@ class AttributeIndexTable
      */
     public AttributeIndexTable(AttributeIndexTable prev, Collection<AttributeDefinition<?>> attrs)
     {
+        this.rClass = prev.rClass;
         table = new int[maxId(attrs) + 1];
         System.arraycopy(prev.table, 0, table, 0, prev.table.length);
         int index = prev.maxIndex;
@@ -104,7 +110,7 @@ class AttributeIndexTable
         if(index == 0)
         {
             throw new UnknownAttributeException("attribute " + attr
-                + " does not belong to resource class " + this);
+                + " does not belong to resource class " + rClass);
         }
         return index - 1;
     }
