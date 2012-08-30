@@ -45,7 +45,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     protected Instantiator instantiator;
 
     /** resource sets, keyed by resource class. Resources are kept through weak references. */
-    private Map<ResourceClass<?>, WeakHashMap<AbstractResource, Object>> cache = new HashMap<ResourceClass<?>, WeakHashMap<AbstractResource, Object>>();
+    protected Map<ResourceClass<?>, WeakHashMap<AbstractResource, Object>> cache = new HashMap<ResourceClass<?>, WeakHashMap<AbstractResource, Object>>();
 
     /** the database. */
     private Database database;
