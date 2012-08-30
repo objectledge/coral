@@ -1,11 +1,12 @@
 package org.objectledge.coral.schema;
 
+import java.sql.SQLException;
+
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssociation;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Represents resource class inheritance relationship.
@@ -113,15 +114,16 @@ public class ResourceClassInheritanceImpl
     
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         record.setLong("parent", parent.getId());
         record.setLong("child", child.getId());
@@ -129,15 +131,16 @@ public class ResourceClassInheritanceImpl
 
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         long parentId = record.getLong("parent");
         try
@@ -146,7 +149,7 @@ public class ResourceClassInheritanceImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load ResourceClassInheritance", e);
+            throw new SQLException("Failed to load ResourceClassInheritance", e);
         }
         long childId = record.getLong("child");
         try
@@ -155,7 +158,7 @@ public class ResourceClassInheritanceImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load ResourceClassInheritance", e);
+            throw new SQLException("Failed to load ResourceClassInheritance", e);
         }
     }
 

@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.jcontainer.dna.Logger;
@@ -35,7 +36,6 @@ import org.objectledge.coral.store.ResourceInheritanceImpl;
 import org.objectledge.coral.store.ResourceOwnership;
 import org.objectledge.coral.store.ResourceOwnershipImpl;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.PersistentFactory;
 import org.objectledge.event.EventWhiteboard;
 import org.objectledge.notification.Notification;
@@ -405,7 +405,7 @@ public class NotificationEventBridgeImpl
         {
             throw new BackendException("invalid entity id", e);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("invalid entity id", e);
         }

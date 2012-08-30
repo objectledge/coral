@@ -17,7 +17,6 @@ import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 
 /**
@@ -65,17 +64,10 @@ public class PersistentResource
         throws SQLException
     {
         super.retrieve(delegate, rClass, conn, data);
-        try
+        Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
+        if(in != null)
         {
-            Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
-            if(in != null)
-            {
-                setData(in);
-            }
-        }
-        catch(PersistenceException e)
-        {
-            throw new BackendException("failed to restore resource state", e);
+            setData(in);
         }
     }
 
@@ -83,17 +75,10 @@ public class PersistentResource
         throws SQLException
     {
         super.revert(rClass, conn, data);
-        try
+        Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
+        if(in != null)
         {
-            Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
-            if(in != null)
-            {
-                setData(in);
-            }
-        }
-        catch(PersistenceException e)
-        {
-            throw new BackendException("failed to restore resource state", e);
+            setData(in);
         }
     }
 
@@ -116,15 +101,8 @@ public class PersistentResource
             }
             if(hasConcreteAttributes)
             {
-                try
-                {
-                    getPersistence().save(new CreateView(this, rClass, attributes, conn));
-                    this.saved = true;
-                }
-                catch(PersistenceException e)
-                {
-                    throw new SQLException(e);
-                }
+                getPersistence().save(new CreateView(this, rClass, attributes, conn));
+                this.saved = true;
             }
         }
     }
@@ -143,28 +121,21 @@ public class PersistentResource
     private void update(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
-        try
+        if(rClass.getDbTable() != null)
         {
-            if(rClass.getDbTable() != null)
+            boolean hasConcreteAttributes = false;
+            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
-                boolean hasConcreteAttributes = false;
-                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+                if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
                 {
-                    if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
-                    {
-                        hasConcreteAttributes = true;
-                        break;
-                    }
-                }
-                if(hasConcreteAttributes)
-                {
-                    getPersistence().save(new UpdateView(this, rClass, conn));
+                    hasConcreteAttributes = true;
+                    break;
                 }
             }
-        }
-        catch(PersistenceException e)
-        {
-            throw new BackendException("failed to update resource state", e);
+            if(hasConcreteAttributes)
+            {
+                getPersistence().save(new UpdateView(this, rClass, conn));
+            }
         }
     }
 
@@ -203,28 +174,21 @@ public class PersistentResource
     private void delete(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
-        try
+        if(rClass.getDbTable() != null)
         {
-            if(rClass.getDbTable() != null)
+            boolean hasConcreteAttributes = false;
+            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
-                boolean hasConcreteAttributes = false;
-                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+                if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
                 {
-                    if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
-                    {
-                        hasConcreteAttributes = true;
-                        break;
-                    }
-                }
-                if(hasConcreteAttributes)
-                {
-                    getPersistence().delete(new DeleteView(delegate, rClass));
+                    hasConcreteAttributes = true;
+                    break;
                 }
             }
-        }
-        catch(PersistenceException e)
-        {
-            throw new BackendException("failed to delete resource state", e);
+            if(hasConcreteAttributes)
+            {
+                getPersistence().delete(new DeleteView(delegate, rClass));
+            }
         }
     }
 
@@ -247,7 +211,7 @@ public class PersistentResource
     // Persistent interface //////////////////////////////////////////////////
 
     private void setData(Map<ResourceClass<?>, InputRecord> records)
-        throws PersistenceException
+        throws SQLException
     {
         for(Map.Entry<ResourceClass<?>, InputRecord> entry : records.entrySet())
         {
@@ -267,9 +231,8 @@ public class PersistentResource
 
     private static <T> void setAttribute(AttributeDefinition<T> attr, InputRecord data,
         AbstractResource instance)
-        throws PersistenceException
+        throws SQLException
     {
-        Class<T> aClass = attr.getAttributeClass().getJavaClass();
         final String name = attr.getName();
         if(attr.getAttributeClass().getHandler().supportsExternalString())
         {
@@ -331,14 +294,14 @@ public class PersistentResource
 
         @Override
         public void getData(OutputRecord record)
-            throws PersistenceException
+            throws SQLException
         {
             throw new UnsupportedOperationException();
         }
 
         @Override
         public void setData(InputRecord record)
-            throws PersistenceException
+            throws SQLException
         {
             throw new UnsupportedOperationException();
         }
@@ -376,27 +339,20 @@ public class PersistentResource
 
         @Override
         public void getData(OutputRecord record)
-            throws PersistenceException
+            throws SQLException
         {
             record.setLong("resource_id", instance.delegate.getId());
-            try
+            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
-                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+                if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
                 {
-                    if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
-                    {
-                        getAttribute(attr, record);
-                    }
+                    getAttribute(attr, record);
                 }
-            }
-            catch(SQLException e)
-            {
-                throw new PersistenceException("failed to save resource data", e);
             }
         }
 
         private <T> void getAttribute(AttributeDefinition<T> attr, OutputRecord record)
-            throws PersistenceException, SQLException
+            throws SQLException, SQLException
         {
             T value = (T)attrValues.get(attr);
             String name = attr.getName();
@@ -485,30 +441,23 @@ public class PersistentResource
 
         @Override
         public void getData(OutputRecord record)
-            throws PersistenceException
+            throws SQLException
         {
             record.setLong("resource_id", instance.delegate.getId());
-            try
+            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
-                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+                if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
                 {
-                    if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
+                    if(instance.isAttributeModified(attr))
                     {
-                        if(instance.isAttributeModified(attr))
-                        {
-                            getAttribute(attr, record);
-                        }
+                        getAttribute(attr, record);
                     }
                 }
-            }
-            catch(SQLException e)
-            {
-                throw new PersistenceException("failed to save resource data", e);
             }
         }
 
         private <A> void getAttribute(AttributeDefinition<A> attr, OutputRecord record)
-            throws PersistenceException, SQLException
+            throws SQLException, SQLException
         {
             String name = attr.getName();
             A value = instance.getAttribute(attr);
@@ -597,7 +546,7 @@ public class PersistentResource
 
         @Override
         public void getData(OutputRecord record)
-            throws PersistenceException
+            throws SQLException
         {
             record.setLong("resource_id", delegate.getId());
         }

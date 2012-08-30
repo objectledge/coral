@@ -1,8 +1,9 @@
 package org.objectledge.coral.entity;
 
+import java.sql.SQLException;
+
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.PersistentObject;
 
 /**
@@ -54,25 +55,27 @@ public abstract class AbstractAssociation
 
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public abstract void getData(OutputRecord record)
-        throws PersistenceException;
+        throws SQLException;
     
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public abstract void setData(InputRecord record)
-        throws PersistenceException;
+        throws SQLException;
 }

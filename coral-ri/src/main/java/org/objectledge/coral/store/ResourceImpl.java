@@ -1,6 +1,7 @@
 package org.objectledge.coral.store;
 
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +25,6 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * The ''security delegate'' Resource implementation.
@@ -268,10 +268,10 @@ public class ResourceImpl
      * are <code>Persistent</code>.</p>
      *
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.getData(record);
         record.setLong("resource_class_id", resourceClass.getId());
@@ -297,10 +297,10 @@ public class ResourceImpl
      * are <code>Persistent</code>.</p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.setData(record);
         try
@@ -322,7 +322,7 @@ public class ResourceImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load Resource #"+id, e);
+            throw new SQLException("Failed to load Resource #"+id, e);
         }
     }
 
@@ -693,7 +693,7 @@ public class ResourceImpl
         {
             persistence.save(this);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("failed to update resource's persitent image", e);
         }

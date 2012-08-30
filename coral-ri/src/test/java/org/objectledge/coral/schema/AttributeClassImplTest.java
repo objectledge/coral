@@ -27,6 +27,8 @@
 // 
 package org.objectledge.coral.schema;
 
+import java.sql.SQLException;
+
 import org.jmock.Mock;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.InstantiationException;
@@ -37,7 +39,6 @@ import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.test.LedgeTestCase;
 
@@ -272,7 +273,7 @@ public class AttributeClassImplTest extends LedgeTestCase
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy(), 
             "<class name>", "<java class>", "<handler class>", "<db table>");
-        mockPersistence.expects(once()).method("revert").with(eq(ac)).will(throwException(new PersistenceException("revert failed")));
+        mockPersistence.expects(once()).method("revert").with(eq(ac)).will(throwException(new SQLException("revert failed")));
         AttributeClassChangeListener listener = (AttributeClassChangeListener)ac;
         try
         {
@@ -282,7 +283,7 @@ public class AttributeClassImplTest extends LedgeTestCase
         catch(Exception e)
         {
             assertEquals(BackendException.class, e.getClass());
-            assertEquals(PersistenceException.class, e.getCause().getClass());
+            assertEquals(SQLException.class, e.getCause().getClass());
             assertEquals("revert failed", e.getCause().getMessage());
         }            
     }

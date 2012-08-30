@@ -29,10 +29,10 @@ package org.objectledge.coral.relation;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.jmock.Mock;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
@@ -53,7 +53,6 @@ import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.test.LedgeTestCase;
 
 import bak.pcj.set.LongSet;
@@ -132,7 +131,7 @@ public class RelationImplTest extends LedgeTestCase
         {
             relation.setData(inputRecord);
         }
-        catch (PersistenceException e)
+        catch (SQLException e)
         {
             fail("Peristence exception occured");
         }

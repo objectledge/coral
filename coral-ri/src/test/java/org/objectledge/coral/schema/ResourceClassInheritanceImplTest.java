@@ -27,13 +27,14 @@
 // 
 package org.objectledge.coral.schema;
 
+import java.sql.SQLException;
+
 import org.jmock.Mock;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.test.LedgeTestCase;
 
 /**
@@ -158,7 +159,7 @@ public class ResourceClassInheritanceImplTest extends LedgeTestCase
         }
         catch(Exception e)
         {
-            assertEquals(PersistenceException.class, e.getClass());
+            assertEquals(SQLException.class, e.getClass());
             assertEquals(EntityDoesNotExistException.class, e.getCause().getClass());
             assertEquals("missing resource class", e.getCause().getMessage());
         }
@@ -179,7 +180,7 @@ public class ResourceClassInheritanceImplTest extends LedgeTestCase
         }
         catch(Exception e)
         {
-            assertEquals(PersistenceException.class, e.getClass());
+            assertEquals(SQLException.class, e.getClass());
             assertEquals(EntityDoesNotExistException.class, e.getCause().getClass());
             assertEquals("missing resource class", e.getCause().getMessage());
         }

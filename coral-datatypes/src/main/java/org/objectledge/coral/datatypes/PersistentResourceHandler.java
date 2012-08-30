@@ -21,7 +21,6 @@ import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 
 /**
@@ -93,15 +92,8 @@ public class PersistentResourceHandler<T extends PersistentResource>
         try
         {
             CoralAttributeMapping repr;
-            try
-            {
-                repr = persistence.load(CoralAttributeMapping.FACTORY, attribute
-                    .getAttributeClass().getId());
-            }
-            catch(PersistenceException e)
-            {
-                throw new SQLException("failed to retrieve attribute mapping data", e);
-            }
+            repr = persistence.load(CoralAttributeMapping.FACTORY, attribute.getAttributeClass()
+                .getId());
             StringBuilder buff = new StringBuilder();
             if(!tableShouldExist)
             {
@@ -185,15 +177,8 @@ public class PersistentResourceHandler<T extends PersistentResource>
         try
         {
             CoralAttributeMapping repr;
-            try
-            {
-                repr = persistence.load(CoralAttributeMapping.FACTORY, attribute
-                    .getAttributeClass().getId());
-            }
-            catch(PersistenceException e)
-            {
-                throw new SQLException("failed to retrieve attribute mapping data", e);
-            }
+            repr = persistence.load(CoralAttributeMapping.FACTORY, attribute.getAttributeClass()
+                .getId());
             StringBuilder buff = new StringBuilder();
             if(shouldDropTable)
             {
@@ -308,19 +293,14 @@ public class PersistentResourceHandler<T extends PersistentResource>
             }
             return data;
         }
-        catch(PersistenceException e)
-        {
-            throw new SQLException("failed to retrieve data", e);
-        }
         catch(org.objectledge.coral.InstantiationException e)
         {
-            throw (SQLException)new SQLException("failed to instantiate helper instance")
-                .initCause(e);
+            throw new SQLException("failed to instantiate helper instance", e);
         }
     }
 
     private Map<ResourceClass<?>, InputRecord> getInputRecords(Resource delegate)
-        throws SQLException, PersistenceException, InstantiationException
+        throws SQLException, SQLException, InstantiationException
     {
         Map<ResourceClass<?>, InputRecord> map = new HashMap<ResourceClass<?>, InputRecord>();
         map.put(delegate.getResourceClass(), getInputRecord(delegate, delegate.getResourceClass()));
@@ -335,7 +315,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
     }
 
     private InputRecord getInputRecord(Resource delegate, final ResourceClass<?> rClass)
-        throws SQLException, PersistenceException, InstantiationException
+        throws SQLException, SQLException, InstantiationException
     {
         List<InputRecord> irs = persistence.loadInputRecords(PersistentResource.getView(rClass),
             "resource_id = ?", delegate.getId());

@@ -1,11 +1,12 @@
 package org.objectledge.coral.security;
 
+import java.sql.SQLException;
+
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssociation;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Represents implication relationship between two roles.
@@ -116,10 +117,10 @@ public class RoleImplicationImpl
      * are <code>Persistent</code>.</p>
      *
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         record.setLong("super_role", superRole.getId());
         record.setLong("sub_role", subRole.getId());
@@ -132,10 +133,10 @@ public class RoleImplicationImpl
      * are <code>Persistent</code>.</p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         long superRoleId = record.getLong("super_role");
         try
@@ -144,7 +145,7 @@ public class RoleImplicationImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load RoleImplication", e);
+            throw new SQLException("Failed to load RoleImplication", e);
         }
         long subRoleId = record.getLong("sub_role");
         try
@@ -153,7 +154,7 @@ public class RoleImplicationImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load RoleImplication", e);
+            throw new SQLException("Failed to load RoleImplication", e);
         }
     }
 

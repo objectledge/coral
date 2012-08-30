@@ -1,6 +1,7 @@
 package org.objectledge.coral.security;
 
 import java.security.Principal;
+import java.sql.SQLException;
 import java.util.Set;
 
 import org.objectledge.collections.ImmutableHashSet;
@@ -15,7 +16,6 @@ import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * A representation of an user or application accessing the resource store.
@@ -111,10 +111,10 @@ public class SubjectImpl
      * are <code>Persistent</code>.</p>
      *
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.getData(record);
     }
@@ -126,10 +126,10 @@ public class SubjectImpl
      * are <code>Persistent</code>.</p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.setData(record);
         coralEventHub.getInbound().addSubjectChangeListener(this, this);
@@ -150,7 +150,7 @@ public class SubjectImpl
             {
                 persistence.revert(this);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("failed to revert entity state", e);
             }

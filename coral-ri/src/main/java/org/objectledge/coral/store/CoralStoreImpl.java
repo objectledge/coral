@@ -41,7 +41,6 @@ import org.objectledge.coral.security.PermissionAssignment;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
 
@@ -735,18 +734,6 @@ public class CoralStoreImpl
             }
             throw new BackendException("failed to create resource", e);
         }
-        catch(PersistenceException e)
-        {
-            try
-            {
-                persistence.getDatabase().rollbackTransaction(shouldCommit);
-            }
-            catch(SQLException ee)
-            {
-                log.error("rollback failed", ee);
-            }
-            throw new BackendException("failed to create resource", e);
-        }
         finally
         {
             DatabaseUtils.close(conn);
@@ -1138,7 +1125,7 @@ public class CoralStoreImpl
             
             coralEventHub.getOutbound().fireResourceChangeEvent(resource, null);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             delegate.setResourceName(oldName);
             throw new BackendException("failed to update the resource object", e);
@@ -1220,7 +1207,7 @@ public class CoralStoreImpl
             coralEventHub.getGlobal().fireResourceTreeChangeEvent(
                 new ResourceInheritanceImpl(parent, child), true);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             delegate.setParent(oldParent);
             throw new BackendException("failed to update the resource object", e);
@@ -1265,7 +1252,7 @@ public class CoralStoreImpl
             coralEventHub.getGlobal().fireResourceTreeChangeEvent(
                 new ResourceInheritanceImpl(oldParent, child), false);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             delegate.setParent(oldParent);
             throw new BackendException("failed to update the resource object", e);
@@ -1291,7 +1278,7 @@ public class CoralStoreImpl
             coralEventHub.getGlobal().fireResourceOwnershipChangeEvent(
                 new ResourceOwnershipImpl(owner, resource), true);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             delegate.setOwner(oldOwner);
             throw new BackendException("failed to update the resource object", e);
@@ -1622,7 +1609,7 @@ public class CoralStoreImpl
     }
     
     private void preloadResources()
-        throws SQLException, PersistenceException
+        throws SQLException, SQLException
     {
         long time = System.currentTimeMillis();
         log.info("preloading resource store");

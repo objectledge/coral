@@ -1,5 +1,7 @@
 package org.objectledge.coral.schema;
 
+import java.sql.SQLException;
+
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractEntity;
@@ -9,7 +11,6 @@ import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Represents a concrete attribute of an resource class.
@@ -112,15 +113,16 @@ public class AttributeDefinitionImpl<T>
 
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.getData(record);
         record.setLong("attribute_class_id", attributeClass.getId());
@@ -138,15 +140,16 @@ public class AttributeDefinitionImpl<T>
 
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.setData(record);
         long attributeClassId = record.getLong("attribute_class_id");
@@ -159,7 +162,7 @@ public class AttributeDefinitionImpl<T>
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load AttributeDefinition #"+id, e);
+            throw new SQLException("Failed to load AttributeDefinition #" + id, e);
         }
         long declaringClassId = record.getLong("resource_class_id");
         try
@@ -168,7 +171,7 @@ public class AttributeDefinitionImpl<T>
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load AttributeDefinition #"+id, e);
+            throw new SQLException("Failed to load AttributeDefinition #" + id, e);
         }
         if(record.isNull("domain"))
         {
@@ -197,7 +200,7 @@ public class AttributeDefinitionImpl<T>
             {
                 persistence.revert(this);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("failed to revert entity state", e);
             }

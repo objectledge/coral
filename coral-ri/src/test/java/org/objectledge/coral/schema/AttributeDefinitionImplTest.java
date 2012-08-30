@@ -27,6 +27,8 @@
 // 
 package org.objectledge.coral.schema;
 
+import java.sql.SQLException;
+
 import org.jmock.Mock;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
@@ -36,7 +38,6 @@ import org.objectledge.coral.event.CoralEventWhiteboard;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.test.LedgeTestCase;
 
 /**
@@ -206,7 +207,7 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
         }
         catch(Exception e)
         {
-            assertEquals(PersistenceException.class, e.getClass());
+            assertEquals(SQLException.class, e.getClass());
             assertEquals(EntityDoesNotExistException.class, e.getCause().getClass());
             assertEquals("missing attribute class", e.getCause().getMessage());
         }
@@ -230,7 +231,7 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
         }
         catch(Exception e)
         {
-            assertEquals(PersistenceException.class, e.getClass());
+            assertEquals(SQLException.class, e.getClass());
             assertEquals(EntityDoesNotExistException.class, e.getCause().getClass());
             assertEquals("missing resource class", e.getCause().getMessage());
         }
@@ -261,7 +262,7 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
         mockCoralEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener");
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
-        mockPersistence.expects(once()).method("revert").with(same(def)).will(throwException(new PersistenceException("revert failed")));
+        mockPersistence.expects(once()).method("revert").with(same(def)).will(throwException(new SQLException("revert failed")));
         try
         {
             def.attributeDefinitionChanged(def);
@@ -270,7 +271,7 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
         catch(RuntimeException e)
         {
             assertEquals(BackendException.class, e.getClass());
-            assertEquals(PersistenceException.class, e.getCause().getClass());
+            assertEquals(SQLException.class, e.getCause().getClass());
             assertEquals("revert failed", e.getCause().getMessage());
         }
     }

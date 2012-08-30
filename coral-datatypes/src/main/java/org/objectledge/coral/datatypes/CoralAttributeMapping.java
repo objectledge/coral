@@ -1,8 +1,9 @@
 package org.objectledge.coral.datatypes;
 
+import java.sql.SQLException;
+
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
 
@@ -99,7 +100,7 @@ public class CoralAttributeMapping
 
     @Override
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         classId = record.getLong("attribute_class_id");
         isFk = record.getBoolean("is_fk");
@@ -121,7 +122,7 @@ public class CoralAttributeMapping
 
     @Override
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         throw new UnsupportedOperationException();
     }

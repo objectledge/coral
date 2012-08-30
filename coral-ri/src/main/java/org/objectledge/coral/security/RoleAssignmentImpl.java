@@ -1,5 +1,6 @@
 package org.objectledge.coral.security;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.objectledge.coral.CoralCore;
@@ -7,7 +8,6 @@ import org.objectledge.coral.entity.AbstractAssignment;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * An implementation of {@link org.objectledge.coral.security.RoleAssignment} interface.
@@ -121,10 +121,10 @@ public class RoleAssignmentImpl
      * are <code>Persistent</code>.</p>
      *
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.getData(record);
         record.setLong("subject_id", subject.getId());
@@ -139,10 +139,10 @@ public class RoleAssignmentImpl
      * are <code>Persistent</code>.</p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.setData(record);
         long roleId = record.getLong("role_id");
@@ -152,7 +152,7 @@ public class RoleAssignmentImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load RoleAssignment", e);
+            throw new SQLException("Failed to load RoleAssignment", e);
         }
         long subjectId = record.getLong("subject_id");
         try
@@ -161,7 +161,7 @@ public class RoleAssignmentImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load RoleAssignment", e);
+            throw new SQLException("Failed to load RoleAssignment", e);
         }
         grantingAllowed = record.getBoolean("granting_allowed");
     }

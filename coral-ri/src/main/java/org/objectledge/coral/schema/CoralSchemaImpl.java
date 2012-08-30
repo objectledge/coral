@@ -21,7 +21,6 @@ import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 
 /**
@@ -178,7 +177,7 @@ public class CoralSchemaImpl
         {
             persistence.save((Persistent)attributeClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update AttributeClass", e);
         }
@@ -204,7 +203,7 @@ public class CoralSchemaImpl
         {
             persistence.save((Persistent)attributeClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update AttributeClass", e);
         }
@@ -227,7 +226,7 @@ public class CoralSchemaImpl
         {
             persistence.save((Persistent)attributeClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update AttributeClass", e);
         }
@@ -322,7 +321,7 @@ public class CoralSchemaImpl
         {
             persistence.save((Persistent)attribute);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update Attribute", e);
         }
@@ -342,7 +341,7 @@ public class CoralSchemaImpl
         {
             persistence.save((Persistent)attribute);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update Attribute", e);
         }
@@ -485,7 +484,7 @@ public class CoralSchemaImpl
         {
             persistence.save((Persistent)resourceClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to save ResourceClass", e);
         }
@@ -511,7 +510,7 @@ public class CoralSchemaImpl
         {
             persistence.save((Persistent)resourceClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to save ResourceClass", e);
         }
@@ -534,7 +533,7 @@ public class CoralSchemaImpl
         {
             persistence.save((Persistent)resoureceClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update ResourceClass", e);
         }
@@ -554,7 +553,7 @@ public class CoralSchemaImpl
         {
             persistence.save((Persistent)resourceClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update resource class", e);
         }

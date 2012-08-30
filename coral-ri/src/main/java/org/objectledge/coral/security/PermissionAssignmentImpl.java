@@ -1,5 +1,6 @@
 package org.objectledge.coral.security;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.objectledge.coral.BackendException;
@@ -10,7 +11,6 @@ import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ResourceRef;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Represents assigment of a {@link org.objectledge.coral.security.Permission} on a 
@@ -137,15 +137,16 @@ public class PermissionAssignmentImpl
 
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.getData(record);
         record.setLong("resource_id", resource.getId());
@@ -156,15 +157,16 @@ public class PermissionAssignmentImpl
 
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.setData(record);
         try
@@ -178,7 +180,7 @@ public class PermissionAssignmentImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load PermissionAssignment", e);
+            throw new SQLException("Failed to load PermissionAssignment", e);
         }
         inherited = record.getBoolean("is_inherited");
     }

@@ -1,5 +1,6 @@
 package org.objectledge.coral.schema;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,7 +30,6 @@ import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Represents a resource class.
@@ -187,15 +187,16 @@ public class ResourceClassImpl<T extends Resource>
 
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.getData(record);
         record.setString("java_class_name", javaClassName);
@@ -213,15 +214,16 @@ public class ResourceClassImpl<T extends Resource>
 
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.setData(record);
         try
@@ -236,7 +238,7 @@ public class ResourceClassImpl<T extends Resource>
         }
         catch(JavaClassException e)
         {
-            throw new PersistenceException("Failed to load ResourceClass #"+id, e);
+            throw new SQLException("Failed to load ResourceClass #" + id, e);
         }
         coralEventHub.getInbound().addResourceClassChangeListener(this, this);
     }
@@ -256,7 +258,7 @@ public class ResourceClassImpl<T extends Resource>
             {
                 persistence.revert(this);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("failed to revert entity state", e);
             }
