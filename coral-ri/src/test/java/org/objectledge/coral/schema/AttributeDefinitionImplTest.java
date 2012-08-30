@@ -111,7 +111,6 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, "<domain>", 303);
         def.setDeclaringClass(resourceClass);
-        mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_definition_id"), eq(-1L));
         mockOutputRecord.expects(once()).method("setString").with(eq("name"), eq("<attribute>"));
         mockAttributeClass.expects(once()).method("getId").will(returnValue(1L));
         mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_class_id"), eq(1L));
@@ -131,7 +130,6 @@ public class AttributeDefinitionImplTest extends LedgeTestCase
         AttributeDefinitionImpl def = new AttributeDefinitionImpl(persistence, coralEventHub, coralCore, 
             "<attribute>", attributeClass, null, 303);
         def.setDeclaringClass(resourceClass);
-        mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_definition_id"), eq(-1L));
         mockOutputRecord.expects(once()).method("setString").with(eq("name"), eq("<attribute>"));
         mockAttributeClass.expects(once()).method("getId").will(returnValue(1L));
         mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_class_id"), eq(1L));

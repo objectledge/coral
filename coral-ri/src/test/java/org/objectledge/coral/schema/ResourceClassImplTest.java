@@ -42,7 +42,6 @@ import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.test.LedgeTestCase;
 
 /**
@@ -226,7 +225,6 @@ public class ResourceClassImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassImpl rc = createResourceClass("<db table>");
-        mockOutputRecord.expects(once()).method("setLong").with(eq("resource_class_id"),eq(-1L));
         mockOutputRecord.expects(once()).method("setString").with(eq("name"),eq("<resource class>"));
         mockOutputRecord.expects(once()).method("setString").with(eq("java_class_name"),eq("<java class>"));
         mockOutputRecord.expects(once()).method("setString").with(eq("handler_class_name"),eq("<handler class>"));
@@ -240,7 +238,6 @@ public class ResourceClassImplTest extends LedgeTestCase
         throws Exception
     {
         ResourceClassImpl rc = createResourceClass(null);
-        mockOutputRecord.expects(once()).method("setLong").with(eq("resource_class_id"),eq(-1L));
         mockOutputRecord.expects(once()).method("setString").with(eq("name"),eq("<resource class>"));
         mockOutputRecord.expects(once()).method("setString").with(eq("java_class_name"),eq("<java class>"));
         mockOutputRecord.expects(once()).method("setString").with(eq("handler_class_name"),eq("<handler class>"));

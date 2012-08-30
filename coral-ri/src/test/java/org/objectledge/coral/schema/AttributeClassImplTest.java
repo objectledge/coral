@@ -185,7 +185,6 @@ public class AttributeClassImplTest extends LedgeTestCase
             "<class name>", "<java class>", "<handler class>", "<db table>");
         Persistent p = (Persistent)ac;    
         assertEquals("coral_attribute_class", p.getTable());
-        mockOutputRecord.expects(once()).method("setLong").with(eq("attribute_class_id"), eq(-1L));
         mockOutputRecord.expects(once()).method("setString").with(eq("name"), eq("<class name>"));        
         mockOutputRecord.expects(once()).method("setString").with(eq("db_table_name"), eq("<db table>"));
         mockOutputRecord.expects(once()).method("setString").with(eq("java_class_name"), eq("<java class>"));
@@ -205,13 +204,14 @@ public class AttributeClassImplTest extends LedgeTestCase
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy()); 
         Persistent p = (Persistent)ac;
-        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(-1L));   
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id"))
+            .will(returnValue(1L));
         mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<class name>"));        
         mockInputRecord.expects(once()).method("getString").with(eq("db_table_name")).will(returnValue("<db table>"));
         mockInputRecord.expects(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));
         mockInputRecord.expects(once()).method("getString").with(eq("handler_class_name")).will(returnValue("<handler class>"));
         p.setData((InputRecord)mockInputRecord.proxy());
-        assertEquals(-1L, ac.getId());
+        assertEquals(1L, ac.getId());
         assertEquals("<class name>", ac.getName());
         assertEquals("<db table>", ac.getDbTable());
         assertEquals(Object.class, ac.getJavaClass());
@@ -225,7 +225,8 @@ public class AttributeClassImplTest extends LedgeTestCase
         AttributeClass ac = new AttributeClassImpl((Persistence)mockPersistence.proxy(), 
             (Instantiator)mockInstantiator.proxy(), (CoralEventHub)mockCoralEventHub.proxy()); 
         Persistent p = (Persistent)ac;
-        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id")).will(returnValue(-1L));   
+        mockInputRecord.expects(once()).method("getLong").with(eq("attribute_class_id"))
+            .will(returnValue(1L));
         mockInputRecord.expects(once()).method("getString").with(eq("name")).will(returnValue("<class name>"));        
         mockInputRecord.expects(once()).method("getString").with(eq("db_table_name")).will(returnValue("<db table>"));
         mockInputRecord.expects(once()).method("getString").with(eq("java_class_name")).will(returnValue("<java class>"));

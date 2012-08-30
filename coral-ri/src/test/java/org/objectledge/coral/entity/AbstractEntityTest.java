@@ -120,7 +120,6 @@ public class AbstractEntityTest extends LedgeTestCase
     public void testStoring() throws PersistenceException
     {
         BlueEntity blue = new BlueEntity((Persistence)mockPersistence.proxy(), "<blue 1>");
-        mockOutputRecord.expects(once()).method("setLong").with(eq("blue_entity_id"), eq(-1L));
         mockOutputRecord.expects(once()).method("setString").with(eq("name"), eq("<blue 1>"));
         blue.getData((OutputRecord)mockOutputRecord.proxy());
         blue.getKeyColumns();
