@@ -1,5 +1,7 @@
 package org.objectledge.coral.schema;
 
+import static java.lang.Math.max;
+
 import java.util.Collection;
 
 import org.objectledge.coral.entity.Entity;
@@ -54,7 +56,7 @@ class AttributeIndexTable
     public AttributeIndexTable(AttributeIndexTable prev, AttributeDefinition<?> attr)
     {
         this.rClass = prev.rClass;
-        table = new int[Math.max(prev.table.length, (int)attr.getId())];
+        table = new int[Math.max(prev.table.length, (int)attr.getId() + 1)];
         System.arraycopy(prev.table, 0, table, 0, prev.table.length);
         maxIndex = prev.maxIndex + 1;
         if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
@@ -72,7 +74,7 @@ class AttributeIndexTable
     public AttributeIndexTable(AttributeIndexTable prev, Collection<AttributeDefinition<?>> attrs)
     {
         this.rClass = prev.rClass;
-        table = new int[maxId(attrs) + 1];
+        table = new int[max(prev.table.length, maxId(attrs) + 1)];
         System.arraycopy(prev.table, 0, table, 0, prev.table.length);
         int index = prev.maxIndex;
         for(AttributeDefinition<?> attr : attrs)
