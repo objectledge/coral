@@ -136,13 +136,38 @@ public class PersistentResource
         throws SQLException
     {
         super.update(conn);
+        update(delegate.getResourceClass(), conn);
+        for(ResourceClass<?> rClass : delegate.getResourceClass().getParentClasses())
+        {
+            update(rClass, conn);
+        }
+    }
+
+    protected void update(ResourceClass<?> rClass, Connection conn)
+        throws SQLException
+    {
         try
         {
-            getPersistence().save(this);
+            if(rClass.getDbTable() != null)
+            {
+                boolean hasConcreteAttributes = false;
+                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+                {
+                    if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
+                    {
+                        hasConcreteAttributes = true;
+                        break;
+                    }
+                }
+                if(hasConcreteAttributes)
+                {
+                    getPersistence().save(new UpdateView(this, rClass, conn));
+                }
+            }
         }
         catch(PersistenceException e)
         {
-            throw new BackendException("failed to store resource state", e);
+            throw new BackendException("failed to update resource state", e);
         }
     }
 
@@ -466,7 +491,7 @@ public class PersistentResource
         @Override
         public String[] getKeyColumns()
         {
-            return new String[] { "resource_id" };
+            return KEY_COLUMNS;
         }
 
         @Override
@@ -558,6 +583,149 @@ public class PersistentResource
         public void setSaved(long id)
         {
             // noop
+        }
+    }
+
+    private static class UpdateView
+        implements Persistent
+    {
+        private final PersistentResource instance;
+
+        private final ResourceClass<?> rClass;
+
+        private final Connection conn;
+
+        public UpdateView(final PersistentResource instance, final ResourceClass<?> rClass,
+            final Connection conn)
+        {
+            this.instance = instance;
+            this.rClass = rClass;
+            this.conn = conn;
+        }
+
+        @Override
+        public String getTable()
+        {
+            return rClass.getDbTable();
+        }
+
+        @Override
+        public String[] getKeyColumns()
+        {
+            return KEY_COLUMNS;
+        }
+
+        @Override
+        public void getData(OutputRecord record)
+            throws PersistenceException
+        {
+            record.setLong("resource_id", instance.delegate.getId());
+            try
+            {
+                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+                {
+                    if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
+                    {
+                        if(instance.isAttributeModified(attr))
+                        {
+                            getAttribute(attr, record);
+                        }
+                    }
+                }
+            }
+            catch(SQLException e)
+            {
+                throw new PersistenceException("failed to save resource data", e);
+            }
+        }
+
+        private <A> void getAttribute(AttributeDefinition<A> attr, OutputRecord record)
+            throws PersistenceException, SQLException
+        {
+            String name = attr.getName();
+            A value = instance.getAttribute(attr);
+
+            if(attr.getAttributeClass().getHandler().supportsExternalString())
+            {
+                record.set(name, value);
+            }
+            else
+            {
+                long id = instance.getValueId(attr);
+                if(Entity.class.isAssignableFrom(attr.getAttributeClass().getJavaClass()))
+                {
+                    if(value != null)
+                    {
+                        long valueId = ((Entity)value).getId();
+                        record.setLong(name, valueId);
+                        instance.setValueId(attr, valueId);
+                    }
+                    else
+                    {
+                        record.setNull(name);
+                        instance.setValueId(attr, -1L);
+                    }
+                }
+                else
+                {
+                    AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
+                    if(value != null)
+                    {
+                        if(id == -1L)
+                        {
+                            long newId = handler.create(value, conn);
+                            record.setLong(name, newId);
+                            instance.setValueId(attr, newId);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                handler.update(id, value, conn);
+                            }
+                            catch(EntityDoesNotExistException e)
+                            {
+                                throw new BackendException("Internal error", e);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(id != -1L)
+                        {
+                            try
+                            {
+                                handler.delete(id, conn);
+                            }
+                            catch(EntityDoesNotExistException e)
+                            {
+                                throw new BackendException("Internal error", e);
+                            }
+                            record.setNull(name);
+                            instance.setValueId(attr, -1L);
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void setData(InputRecord record)
+            throws PersistenceException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean getSaved()
+        {
+            return true;
+        }
+
+        @Override
+        public void setSaved(long id)
+        {
+            throw new UnsupportedOperationException();
         }
     }
 }

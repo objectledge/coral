@@ -259,7 +259,7 @@ public class PersistentResourcesTest
         assertEquals(actual, expected);
     }
 
-    public void testTwoLevelResources()
+    public void testCreateTwoLevelResources()
         throws Exception
     {
         createTwoLevelClasses();
@@ -300,5 +300,42 @@ public class PersistentResourcesTest
         assertEquals(expected, actual);
 
         databaseConnection.close();
+    }
+
+    public void testUpdateTwoLevelResources()
+        throws Exception
+    {
+        testCreateTwoLevelResources();
+
+        testRes1.set(a1, "foo_1");
+        testRes1.set(a3, testRes2);
+
+        testRes2.set(a1, "bar_1");
+        testRes2.unset(a3);
+        testRes2.set(a4, false);
+        testRes2.get(a5).set("number", 22);
+
+        testRes1.update();
+        testRes2.update();
+
+        DefaultTable expected = new DefaultTable("test", testTableCols);
+        expected.addRow(new Object[] { testRes1.getIdObject(), "foo_1", Integer.valueOf(7),
+                        testRes2.getIdObject() });
+        expected.addRow(new Object[] { testRes2.getIdObject(), "bar_1", Integer.valueOf(9), null });
+        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("second", secondTableCols);
+        expected.addRow(new Object[] { testRes2.getIdObject(), Boolean.FALSE, 0L });
+        actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("ledge_parameters", parametersTableCols);
+        expected.addRow(new Object[] { 0L, "", "" });
+        expected.addRow(new Object[] { 0L, "ok", "true" });
+        expected.addRow(new Object[] { 0L, "number", "22" });
+        actual = databaseConnection.createQueryTable("ledge_parameters",
+            "SELECT * FROM ledge_parameters");
+        assertEquals(expected, actual);
     }
 }
