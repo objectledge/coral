@@ -337,5 +337,31 @@ public class PersistentResourcesTest
         actual = databaseConnection.createQueryTable("ledge_parameters",
             "SELECT * FROM ledge_parameters");
         assertEquals(expected, actual);
+
+        databaseConnection.close();
+    }
+
+    public void testDeleteTwoLevelResources()
+        throws Exception
+    {
+        testCreateTwoLevelResources();
+
+        store.deleteResource(testRes2);
+        store.deleteResource(testRes1);
+
+        DefaultTable expected = new DefaultTable("test", testTableCols);
+        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("second", secondTableCols);
+        actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("ledge_parameters", parametersTableCols);
+        actual = databaseConnection.createQueryTable("ledge_parameters",
+            "SELECT * FROM ledge_parameters");
+        assertEquals(expected, actual);
+
+        databaseConnection.close();
     }
 }

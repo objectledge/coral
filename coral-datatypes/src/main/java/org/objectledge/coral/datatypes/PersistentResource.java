@@ -3,7 +3,6 @@ package org.objectledge.coral.datatypes;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.Map;
 
 import org.objectledge.coral.BackendException;
@@ -30,7 +29,6 @@ import org.objectledge.database.persistence.Persistent;
  */
 public class PersistentResource
     extends AbstractResource
-    implements Persistent
 {
     // instance variables ////////////////////////////////////////////////////
 
@@ -143,7 +141,7 @@ public class PersistentResource
         }
     }
 
-    protected void update(ResourceClass<?> rClass, Connection conn)
+    private void update(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
         try
@@ -175,9 +173,11 @@ public class PersistentResource
         throws SQLException
     {
         super.delete(conn);
+
         for(AttributeDefinition<?> attr : delegate.getResourceClass().getAllAttributes())
         {
-            if(!Entity.class.isAssignableFrom(attr.getAttributeClass().getJavaClass()))
+            if(!attr.getAttributeClass().getHandler().supportsExternalString()
+                && !Entity.class.isAssignableFrom(attr.getAttributeClass().getJavaClass()))
             {
                 long valueId = getValueId(attr);
                 if(valueId != -1L)
@@ -193,9 +193,35 @@ public class PersistentResource
                 }
             }
         }
+
+        delete(delegate.getResourceClass(), conn);
+        for(ResourceClass<?> rClass : delegate.getResourceClass().getParentClasses())
+        {
+            delete(rClass, conn);
+        }
+    }
+
+    private void delete(ResourceClass<?> rClass, Connection conn)
+        throws SQLException
+    {
         try
         {
-            getPersistence().delete(this);
+            if(rClass.getDbTable() != null)
+            {
+                boolean hasConcreteAttributes = false;
+                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+                {
+                    if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
+                    {
+                        hasConcreteAttributes = true;
+                        break;
+                    }
+                }
+                if(hasConcreteAttributes)
+                {
+                    getPersistence().delete(new DeleteView(delegate, rClass));
+                }
+            }
         }
         catch(PersistenceException e)
         {
@@ -211,7 +237,7 @@ public class PersistentResource
         if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
         {
             AttributeHandler<T> handler = attribute.getAttributeClass().getHandler();
-            return handler.toAttributeValue("" + aId);
+            return handler.toAttributeValue(Long.toString(aId));
         }
         else
         {
@@ -220,112 +246,6 @@ public class PersistentResource
     }
 
     // Persistent interface //////////////////////////////////////////////////
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getTable()
-    {
-        return delegate.getResourceClass().getDbTable();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String[] getKeyColumns()
-    {
-        return KEY_COLUMNS;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void getData(OutputRecord record)
-        throws PersistenceException
-    {
-        record.setLong("resource_id", delegate.getId());
-        for(AttributeDefinition attribute : delegate.getResourceClass().getAllAttributes())
-        {
-            AttributeHandler handler = attribute.getAttributeClass().getHandler();
-            Object value = null;
-            if((attribute.getFlags() & AttributeFlags.BUILTIN) != 0)
-            {
-                value = delegate.get(attribute);
-            }
-            else
-            {
-                value = getAttribute(attribute);
-            }
-            if(!attribute.getName().equals("id"))
-            {
-                if(handler.supportsExternalString())
-                {
-                    if(value != null)
-                    {
-                        if(value instanceof Date)
-                        {
-                            record.setTimestamp(attribute.getName(), (Date)value);
-                        }
-                        else
-                        {
-                            if(value instanceof String)
-                            {
-                                record.setString(attribute.getName(), (String)value);
-                            }
-                            else
-                            {
-                                record.setString(attribute.getName(),
-                                    handler.toExternalString(value));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        record.setNull(attribute.getName());
-                    }
-                }
-                else if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
-                {
-                    if(isAttributeModified(attribute))
-                    {
-                        if(value != null)
-                        {
-                            record.setLong(attribute.getName(), ((Entity)value).getId());
-                        }
-                        else
-                        {
-                            record.setNull(attribute.getName());
-                        }
-                    }
-                    else
-                    {
-                        long attrId = getValueId(attribute);
-                        if(attrId != -1L)
-                        {
-                            record.setLong(attribute.getName(), attrId);
-                        }
-                        else
-                        {
-                            record.setNull(attribute.getName());
-                        }
-                    }
-                }
-                else
-                {
-                    long attrId = getValueId(attribute);
-                    attrId = updateAttribute(attribute, attrId, value);
-                    if(attrId != -1L)
-                    {
-                        record.setLong(attribute.getName(), attrId);
-                    }
-                    else
-                    {
-                        record.setNull(attribute.getName());
-                    }
-                }
-            }
-        }
-    }
 
     private void setData(Map<ResourceClass<?>, InputRecord> records)
         throws PersistenceException
@@ -344,15 +264,6 @@ public class PersistentResource
                 }
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setData(InputRecord record)
-        throws PersistenceException
-    {
-        throw new UnsupportedOperationException("should not be called directly");
     }
 
     private static <T> void setAttribute(AttributeDefinition<T> attr, InputRecord data,
@@ -423,93 +334,12 @@ public class PersistentResource
     }
 
     /**
-     * Returns the 'saved' flag for the object.
-     * <p>
-     * The flag is off for objects that haven't been saved in the db yet, thus need
-     * <code>INSERT</code> statemets, and on for object that have already been saved, thus need
-     * <code>UPDATE</code> statements.
-     * </p>
-     * 
-     * @return the state of 'saved' flag.
-     */
-    public boolean getSaved()
-    {
-        return saved;
-    }
-
-    /**
-     * Sets the 'saved' flag for the object.
-     * <p>
-     * The id generation will take place only for objects that declare a single column primary key.
-     * Other objects will receive a <code>-1</code> as the <code>id</code> parameter. After this
-     * call is made on an object, subsequent calls to {@link #getSaved()} on the same object should
-     * return true.
-     * </p>
-     * 
-     * @param id The generated value of the primary key.
-     */
-    public void setSaved(long id)
-    {
-        // noop. saved is set by create method directly
-    }
-
-    /**
      * @return Returns the persistence.
      */
-    protected Persistence getPersistence()
+    private Persistence getPersistence()
     {
         return ((PersistentResourceHandler<?>)delegate.getResourceClass().getHandler())
             .getPersistence();
-    }
-
-    static class RetrieveView
-        implements Persistent
-    {
-        private final ResourceClass<?> rClass;
-
-        public RetrieveView(ResourceClass<?> rClass)
-        {
-            this.rClass = rClass;
-
-        }
-
-        @Override
-        public String getTable()
-        {
-            return rClass.getDbTable();
-        }
-
-        @Override
-        public String[] getKeyColumns()
-        {
-            return PersistentResource.KEY_COLUMNS;
-        }
-
-        @Override
-        public void getData(OutputRecord record)
-            throws PersistenceException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setData(InputRecord record)
-            throws PersistenceException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean getSaved()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setSaved(long id)
-        {
-            throw new UnsupportedOperationException();
-        }
     }
 
     private static class CreateView
@@ -633,6 +463,56 @@ public class PersistentResource
         public void setSaved(long id)
         {
             // noop
+        }
+    }
+
+    static class RetrieveView
+        implements Persistent
+    {
+        private final ResourceClass<?> rClass;
+
+        public RetrieveView(ResourceClass<?> rClass)
+        {
+            this.rClass = rClass;
+
+        }
+
+        @Override
+        public String getTable()
+        {
+            return rClass.getDbTable();
+        }
+
+        @Override
+        public String[] getKeyColumns()
+        {
+            return PersistentResource.KEY_COLUMNS;
+        }
+
+        @Override
+        public void getData(OutputRecord record)
+            throws PersistenceException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setData(InputRecord record)
+            throws PersistenceException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean getSaved()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setSaved(long id)
+        {
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -778,4 +658,57 @@ public class PersistentResource
             throw new UnsupportedOperationException();
         }
     }
+
+    private class DeleteView
+        implements Persistent
+    {
+        private final ResourceClass<?> rClass;
+
+        private final Resource delegate;
+
+        public DeleteView(Resource delegate, ResourceClass<?> rClass)
+        {
+            this.delegate = delegate;
+            this.rClass = rClass;
+        }
+
+        @Override
+        public String getTable()
+        {
+            return rClass.getDbTable();
+        }
+
+        @Override
+        public String[] getKeyColumns()
+        {
+            return PersistentResource.KEY_COLUMNS;
+        }
+
+        @Override
+        public void getData(OutputRecord record)
+            throws PersistenceException
+        {
+            record.setLong("resource_id", delegate.getId());
+        }
+
+        @Override
+        public void setData(InputRecord record)
+            throws PersistenceException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean getSaved()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setSaved(long id)
+        {
+            throw new UnsupportedOperationException();
+        }
+    }
+
 }
