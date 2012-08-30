@@ -121,7 +121,7 @@ public class PersistentResource
             {
                 try
                 {
-                    getPersistence().save(createPersistenView(delegate, rClass, attributes, conn));
+                    getPersistence().save(new CreateView(this, rClass, attributes, conn));
                     this.saved = true;
                 }
                 catch(PersistenceException e)
@@ -397,173 +397,6 @@ public class PersistentResource
         }
     }
 
-    private static <T> void setAttribute(AttributeDefinition<T> attr,
-        Map<AttributeDefinition<?>, ?> attrValues, AbstractResource instance, OutputRecord record,
-        Connection conn)
-        throws PersistenceException, SQLException
-    {
-        T value = (T)attrValues.get(attr);
-        String name = attr.getName();
-        AttributeHandler<T> handler = attr.getAttributeClass().getHandler();
-        if(value != null)
-        {
-            value = handler.toAttributeValue(value);
-            handler.checkDomain(attr.getDomain(), value);
-        }
-
-        if(attr.getAttributeClass().getHandler().supportsExternalString())
-        {
-            Class<T> aClass = attr.getAttributeClass().getJavaClass();
-            if(value == null)
-            {
-                record.setNull(name);
-            }
-            else
-            {
-                if(aClass.equals(Boolean.class))
-                {
-                    record.setBoolean(name, (Boolean)value);
-                }
-                if(aClass.equals(Byte.class))
-                {
-                    record.setByte(name, (Byte)value);
-                }
-                if(aClass.equals(Short.class))
-                {
-                    record.setShort(name, (Short)value);
-                }
-                if(aClass.equals(Integer.class))
-                {
-                    record.setInteger(name, (Integer)value);
-                }
-                if(aClass.equals(Long.class))
-                {
-                    record.setLong(name, (Long)value);
-                }
-                if(aClass.equals(BigDecimal.class))
-                {
-                    record.setBigDecimal(name, (BigDecimal)value);
-                }
-                if(aClass.equals(Float.class))
-                {
-                    record.setFloat(name, (Float)value);
-                }
-                if(aClass.equals(Double.class))
-                {
-                    record.setDouble(name, (Double)value);
-                }
-                if(aClass.equals(String.class))
-                {
-                    record.setString(name, (String)value);
-                }
-                if(java.util.Date.class.isAssignableFrom(aClass))
-                {
-                    record.setDate(name, (java.util.Date)value);
-                }
-            }
-        }
-        else
-        {
-            long valueId = -1;
-            if(value != null)
-            {
-                if(value instanceof Entity)
-                {
-                    valueId = ((Entity)value).getId();
-                }
-                else
-                {
-                    valueId = handler.create(value, conn);
-                    if(handler.shouldRetrieveAfterCreate())
-                    {
-                        try
-                        {
-                            value = handler.retrieve(valueId, conn);
-                        }
-                        catch(EntityDoesNotExistException e)
-                        {
-                            throw new BackendException("data integrity error", e);
-                        }
-                    }
-                }
-                record.setLong(name, valueId);
-            }
-            else
-            {
-                record.setNull(name);
-            }
-            instance.setValueId(attr, valueId);
-        }
-        instance.setAttribute(attr, value);
-    }
-
-    static void getData(OutputRecord record, AbstractResource instance,
-        ResourceClass<?> rClass, Map<AttributeDefinition<?>, ?> attrValues, Connection conn)
-        throws PersistenceException
-    {
-        try
-        {
-            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
-            {
-                if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
-                {
-                    setAttribute(attr, attrValues, instance, record, conn);
-                }
-            }
-        }
-        catch(SQLException e)
-        {
-            throw new PersistenceException("failed to save resource data", e);
-        }
-    }
-
-    private Persistent createPersistenView(final Resource delegate, final ResourceClass<?> rClass,
-        final Map<AttributeDefinition<?>, ?> attrValues, final Connection conn)
-    {
-        return new Persistent()
-            {
-                @Override
-                public String getTable()
-                {
-                    return rClass.getDbTable();
-                }
-
-                @Override
-                public String[] getKeyColumns()
-                {
-                    return new String[] { "resource_id" };
-                }
-
-                @Override
-                public void getData(OutputRecord record)
-                    throws PersistenceException
-                {
-                    record.setLong("resource_id", delegate.getId());
-                    PersistentResource.getData(record, PersistentResource.this, rClass, attrValues,
-                        conn);
-                }
-
-                @Override
-                public void setData(InputRecord record)
-                    throws PersistenceException
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public boolean getSaved()
-                {
-                    return false;
-                }
-
-                @Override
-                public void setSaved(long id)
-                {
-                    // noop
-                }
-            };
-    }
-
     /**
      * Returns the 'saved' flag for the object.
      * <p>
@@ -602,5 +435,129 @@ public class PersistentResource
     {
         return ((PersistentResourceHandler<?>)delegate.getResourceClass().getHandler())
             .getPersistence();
+    }
+
+    private static class CreateView
+        implements Persistent
+    {
+        private final PersistentResource instance;
+
+        private final ResourceClass<?> rClass;
+
+        private final Map<AttributeDefinition<?>, ?> attrValues;
+
+        private final Connection conn;
+
+        public CreateView(final PersistentResource instance, final ResourceClass<?> rClass,
+            final Map<AttributeDefinition<?>, ?> attrValues, final Connection conn)
+        {
+            this.instance = instance;
+            this.rClass = rClass;
+            this.attrValues = attrValues;
+            this.conn = conn;
+        }
+
+        @Override
+        public String getTable()
+        {
+            return rClass.getDbTable();
+        }
+
+        @Override
+        public String[] getKeyColumns()
+        {
+            return new String[] { "resource_id" };
+        }
+
+        @Override
+        public void getData(OutputRecord record)
+            throws PersistenceException
+        {
+            record.setLong("resource_id", instance.delegate.getId());
+            try
+            {
+                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+                {
+                    if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
+                    {
+                        getAttribute(attr, record);
+                    }
+                }
+            }
+            catch(SQLException e)
+            {
+                throw new PersistenceException("failed to save resource data", e);
+            }
+        }
+
+        private <T> void getAttribute(AttributeDefinition<T> attr, OutputRecord record)
+            throws PersistenceException, SQLException
+        {
+            T value = (T)attrValues.get(attr);
+            String name = attr.getName();
+            AttributeHandler<T> handler = attr.getAttributeClass().getHandler();
+            if(value != null)
+            {
+                value = handler.toAttributeValue(value);
+                handler.checkDomain(attr.getDomain(), value);
+            }
+
+            if(attr.getAttributeClass().getHandler().supportsExternalString())
+            {
+                record.set(name, value);
+            }
+            else
+            {
+                long valueId = -1;
+                if(value != null)
+                {
+                    if(value instanceof Entity)
+                    {
+                        valueId = ((Entity)value).getId();
+                    }
+                    else
+                    {
+                        valueId = handler.create(value, conn);
+                        if(handler.shouldRetrieveAfterCreate())
+                        {
+                            try
+                            {
+                                value = handler.retrieve(valueId, conn);
+                            }
+                            catch(EntityDoesNotExistException e)
+                            {
+                                throw new BackendException("data integrity error", e);
+                            }
+                        }
+                    }
+                    record.setLong(name, valueId);
+                }
+                else
+                {
+                    record.setNull(name);
+                }
+                instance.setValueId(attr, valueId);
+            }
+            instance.setAttribute(attr, value);
+        }
+
+        @Override
+        public void setData(InputRecord record)
+            throws PersistenceException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean getSaved()
+        {
+            return false;
+        }
+
+        @Override
+        public void setSaved(long id)
+        {
+            // noop
+        }
     }
 }
