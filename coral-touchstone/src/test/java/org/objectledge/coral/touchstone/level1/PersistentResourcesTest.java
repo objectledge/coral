@@ -1,6 +1,6 @@
 package org.objectledge.coral.touchstone.level1;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -246,8 +246,9 @@ public class PersistentResourcesTest
         secondResourceClass = schema.createResourceClass("second",
             PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
             "second", 0);
-        schema.addParentClass(secondResourceClass, testResourceClass,
-            Collections.<AttributeDefinition<?>, Object> emptyMap());
+        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
+        attributes.put(a2, 0);
+        schema.addParentClass(secondResourceClass, testResourceClass, attributes);
         a4 = schema.createAttribute("a4", booleanAttrClass, null, 0);
         schema.addAttribute(secondResourceClass, a4, null);
         a5 = schema.createAttribute("a5", parametersAttrClass, null, AttributeFlags.REQUIRED);
@@ -363,5 +364,52 @@ public class PersistentResourcesTest
         assertEquals(expected, actual);
 
         databaseConnection.close();
+    }
+
+    public void testCreateTwoLevelResourceClassWithRequiredAttributes()
+        throws Exception
+    {
+        testCreateClass();
+
+        secondResourceClass = schema.createResourceClass("second",
+            PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
+            "second", 0);
+        a4 = schema.createAttribute("a4", booleanAttrClass, null, 0);
+        schema.addAttribute(secondResourceClass, a4, null);
+        a5 = schema.createAttribute("a5", parametersAttrClass, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(secondResourceClass, a5, null);
+
+        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
+        Parameters p = new DefaultParameters();
+        attributes.put(a5, p);
+        testRes2 = store.createResource("test2", root, secondResourceClass, attributes);
+
+        attributes.clear();
+        attributes.put(a2, 9);
+
+        schema.addParentClass(secondResourceClass, testResourceClass, attributes);
+
+        DefaultTable expected = new DefaultTable("test", testTableCols);
+        expected.addRow(new Object[] { testRes2.getIdObject(), null, Integer.valueOf(9), null });
+        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("second", secondTableCols);
+        expected.addRow(new Object[] { testRes2.getIdObject(), null, 0L });
+        actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("ledge_parameters", parametersTableCols);
+        expected.addRow(new Object[] { 0L, "", "" });
+        actual = databaseConnection.createQueryTable("ledge_parameters",
+            "SELECT * FROM ledge_parameters");
+        assertEquals(expected, actual);
+
+        databaseConnection.close();
+
+        assertTrue(Arrays.asList(secondResourceClass.getParentClasses())
+            .contains(testResourceClass));
+        assertTrue(Arrays.asList(secondResourceClass.getAllAttributes()).contains(a2));
+        assertEquals(Integer.valueOf(9), testRes2.get(a2));
     }
 }

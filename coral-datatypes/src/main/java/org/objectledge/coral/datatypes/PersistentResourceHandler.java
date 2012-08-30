@@ -1,6 +1,8 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -19,6 +21,7 @@ import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
+import org.objectledge.database.persistence.DefaultOutputRecord;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.Persistent;
@@ -228,8 +231,71 @@ public class PersistentResourceHandler<T extends PersistentResource>
         Connection conn)
         throws ValueRequiredException, SQLException
     {
-        // throw new UnsupportedOperationException("schema modifications are not supported"+
-        // " for this resource class");
+        for(AttributeDefinition<?> attr : parent.getAllAttributes())
+        {
+            if((attr.getFlags() & AttributeFlags.REQUIRED) != 0
+                && (attr.getFlags() & AttributeFlags.BUILTIN) == 0 && !attributes.containsKey(attr))
+            {
+                throw new ValueRequiredException("missing value for REQUIRED attribute "
+                    + attr.getName());
+            }
+        }
+        if(!attributes.isEmpty())
+        {
+            addParentClass(parent, resourceClass, attributes, conn);
+            for(ResourceClass<?> child : resourceClass.getChildClasses())
+            {
+                if(child.getDbTable() != null)
+                {
+                    addParentClass(parent, child, attributes, conn);
+                }
+            }
+        }
+    }
+
+    private void addParentClass(ResourceClass<?> parent, ResourceClass<?> child,
+        Map<AttributeDefinition<?>, ?> attributes, Connection conn)
+        throws SQLException
+    {
+        PreparedStatement stmt = conn
+            .prepareStatement("SELECT resource_id FROM coral_resource WHERE resource_class_id = ?");
+        try
+        {
+            stmt.setLong(1, child.getId());
+
+            Persistent view = PersistentResource.getCreateView(parent, attributes, conn);
+            PreparedStatement out = DefaultOutputRecord.getInsertStatement(view, conn);
+            try
+            {
+                ResultSet rset = stmt.executeQuery();
+                try
+                {
+                    boolean batchReady = false;
+                    while(rset.next())
+                    {
+                        out.setLong(1, rset.getLong(1));
+                        out.addBatch();
+                        batchReady = true;
+                    }
+                    if(batchReady)
+                    {
+                        out.executeBatch();
+                    }
+                }
+                finally
+                {
+                    rset.close();
+                }
+            }
+            finally
+            {
+                out.close();
+            }
+        }
+        finally
+        {
+            stmt.close();
+        }
     }
 
     /**
@@ -317,8 +383,8 @@ public class PersistentResourceHandler<T extends PersistentResource>
     private InputRecord getInputRecord(Resource delegate, final ResourceClass<?> rClass)
         throws SQLException, SQLException, InstantiationException
     {
-        List<InputRecord> irs = persistence.loadInputRecords(PersistentResource.getView(rClass),
-            "resource_id = ?", delegate.getId());
+        List<InputRecord> irs = persistence.loadInputRecords(
+            PersistentResource.getRetrieveView(rClass), "resource_id = ?", delegate.getId());
         if(irs.isEmpty())
         {
             for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())

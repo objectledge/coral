@@ -2,6 +2,7 @@ package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Map;
 
 import org.objectledge.coral.BackendException;
@@ -11,7 +12,12 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.schema.UnknownAttributeException;
+import org.objectledge.coral.security.PermissionAssignment;
+import org.objectledge.coral.security.Role;
+import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.ConstraintViolationException;
+import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.persistence.InputRecord;
@@ -265,9 +271,18 @@ public class PersistentResource
             .getPersistence();
     }
 
-    static Persistent getView(ResourceClass<?> rClass)
+    static Persistent getRetrieveView(ResourceClass<?> rClass)
     {
         return new RetrieveView(rClass);
+    }
+
+    static Persistent getCreateView(final ResourceClass<?> rClass,
+        final Map<AttributeDefinition<?>, ?> attrValues,
+        final Connection conn)
+    {
+        PersistentResource instance = new PersistentResource();
+        instance.setDelegate(new SyntheticDelegate(rClass));
+        return new CreateView(instance, rClass, attrValues, conn);
     }
 
     private static abstract class PersistentView
@@ -549,6 +564,182 @@ public class PersistentResource
             throws SQLException
         {
             record.setLong("resource_id", delegate.getId());
+        }
+    }
+
+    private static class SyntheticDelegate
+        implements Resource
+    {
+        private final ResourceClass<?> rClass;
+
+        public SyntheticDelegate(ResourceClass<?> rClass)
+        {
+            this.rClass = rClass;
+        }
+
+        @Override
+        public long getId()
+        {
+            return -1l;
+        }
+
+        @Override
+        public Long getIdObject()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getIdString()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getName()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getPath()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ResourceClass<?> getResourceClass()
+        {
+            return rClass;
+        }
+
+        @Override
+        public Subject getCreatedBy()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Date getCreationTime()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Subject getModifiedBy()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Date getModificationTime()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Subject getOwner()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public PermissionAssignment[] getPermissionAssignments()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public PermissionAssignment[] getPermissionAssignments(Role role)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Resource getParent()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public long getParentId()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Resource[] getChildren()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean isDefined(AttributeDefinition<?> attribute)
+            throws UnknownAttributeException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> T get(AttributeDefinition<T> attribute)
+            throws UnknownAttributeException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> T get(AttributeDefinition<T> attribute, T defaultValue)
+            throws UnknownAttributeException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <T> void set(AttributeDefinition<T> attribute, T value)
+            throws UnknownAttributeException, ModificationNotPermitedException,
+            ValueRequiredException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void unset(AttributeDefinition<?> attribute)
+            throws ValueRequiredException, UnknownAttributeException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setModified(AttributeDefinition<?> attribute)
+            throws UnknownAttributeException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean isModified(AttributeDefinition<?> attribute)
+            throws UnknownAttributeException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void update()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void revert()
+        {
+            throw new UnsupportedOperationException();
+
+        }
+
+        @Override
+        public Resource getDelegate()
+        {
+            throw new UnsupportedOperationException();
         }
     }
 }
