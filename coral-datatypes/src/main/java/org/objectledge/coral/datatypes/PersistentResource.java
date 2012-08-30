@@ -462,6 +462,56 @@ public class PersistentResource
             .getPersistence();
     }
 
+    static class RetrieveView
+        implements Persistent
+    {
+        private final ResourceClass<?> rClass;
+
+        public RetrieveView(ResourceClass<?> rClass)
+        {
+            this.rClass = rClass;
+
+        }
+
+        @Override
+        public String getTable()
+        {
+            return rClass.getDbTable();
+        }
+
+        @Override
+        public String[] getKeyColumns()
+        {
+            return PersistentResource.KEY_COLUMNS;
+        }
+
+        @Override
+        public void getData(OutputRecord record)
+            throws PersistenceException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setData(InputRecord record)
+            throws PersistenceException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean getSaved()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setSaved(long id)
+        {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private static class CreateView
         implements Persistent
     {

@@ -11,6 +11,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
+import org.objectledge.coral.datatypes.PersistentResource.RetrieveView;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CoralSchema;
@@ -20,7 +21,6 @@ import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.InputRecord;
-import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
@@ -336,7 +336,8 @@ public class PersistentResourceHandler<T extends PersistentResource>
     private InputRecord getInputRecord(Resource delegate, final ResourceClass<?> rClass)
         throws SQLException, PersistenceException, InstantiationException
     {
-        List<InputRecord> irs = persistence.loadInputRecords(retrievePersistentView(rClass), "resource_id = ?",
+        List<InputRecord> irs = persistence.loadInputRecords(new RetrieveView(
+            rClass), "resource_id = ?",
             delegate.getId());
         if(irs.isEmpty())
         {
@@ -352,50 +353,6 @@ public class PersistentResourceHandler<T extends PersistentResource>
             return null;
         }
         return irs.get(0);
-    }
-
-    private Persistent retrievePersistentView(final ResourceClass<?> rClass)
-    {
-        return new Persistent()
-            {
-                @Override
-                public String getTable()
-                {
-                    return rClass.getDbTable();
-                }
-
-                @Override
-                public String[] getKeyColumns()
-                {
-                    return PersistentResource.KEY_COLUMNS;
-                }
-
-                @Override
-                public void getData(OutputRecord record)
-                    throws PersistenceException
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public void setData(InputRecord record)
-                    throws PersistenceException
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public boolean getSaved()
-                {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public void setSaved(long id)
-                {
-                    throw new UnsupportedOperationException();
-                }
-            };
     }
 
     /**
