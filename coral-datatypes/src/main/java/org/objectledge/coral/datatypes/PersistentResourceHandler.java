@@ -6,12 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
-import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
@@ -251,6 +253,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
                 }
             }
         }
+        revert(resourceClass, conn);
     }
 
     private void addParentClass(ResourceClass<?> parent, ResourceClass<?> child,
@@ -340,33 +343,26 @@ public class PersistentResourceHandler<T extends PersistentResource>
     protected Object getData(Resource delegate, Connection conn, Object prev)
         throws SQLException
     {
-        try
+        Map<Long, Map<ResourceClass<?>, InputRecord>> data;
+        if(prev == null)
         {
-            Map<Long, Map<ResourceClass<?>, InputRecord>> data;
-            if(prev == null)
-            {
-                data = new HashMap<Long, Map<ResourceClass<?>, InputRecord>>();
-            }
-            else
-            {
-                @SuppressWarnings("unchecked")
-                final Map<Long, Map<ResourceClass<?>, InputRecord>> cast = (Map<Long, Map<ResourceClass<?>, InputRecord>>)prev;
-                data = cast;
-            }
-            if(delegate.getResourceClass().getDbTable() != null)
-            {
-                data.put(delegate.getIdObject(), getInputRecords(delegate));
-            }
-            return data;
+            data = new HashMap<Long, Map<ResourceClass<?>, InputRecord>>();
         }
-        catch(org.objectledge.coral.InstantiationException e)
+        else
         {
-            throw new SQLException("failed to instantiate helper instance", e);
+            @SuppressWarnings("unchecked")
+            final Map<Long, Map<ResourceClass<?>, InputRecord>> cast = (Map<Long, Map<ResourceClass<?>, InputRecord>>)prev;
+            data = cast;
         }
+        if(delegate.getResourceClass().getDbTable() != null)
+        {
+            data.put(delegate.getIdObject(), getInputRecords(delegate));
+        }
+        return data;
     }
 
     private Map<ResourceClass<?>, InputRecord> getInputRecords(Resource delegate)
-        throws SQLException, SQLException, InstantiationException
+        throws SQLException
     {
         Map<ResourceClass<?>, InputRecord> map = new HashMap<ResourceClass<?>, InputRecord>();
         map.put(delegate.getResourceClass(), getInputRecord(delegate, delegate.getResourceClass()));
@@ -381,7 +377,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
     }
 
     private InputRecord getInputRecord(Resource delegate, final ResourceClass<?> rClass)
-        throws SQLException, SQLException, InstantiationException
+        throws SQLException
     {
         List<InputRecord> irs = persistence.loadInputRecords(
             PersistentResource.getRetrieveView(rClass), "resource_id = ?", delegate.getId());
@@ -407,7 +403,24 @@ public class PersistentResourceHandler<T extends PersistentResource>
     protected Object getData(ResourceClass<?> rc, Connection conn)
         throws SQLException
     {
-        return null;
+        WeakHashMap<AbstractResource, Object> rset;
+        synchronized(cache)
+        {
+            rset = cache.get(rc);
+        }
+        Map<Long, Map<ResourceClass<?>, InputRecord>> data = new HashMap<Long, Map<ResourceClass<?>, InputRecord>>();
+        if(rset != null)
+        {
+            synchronized(rset)
+            {
+                Set<AbstractResource> orig = new HashSet<AbstractResource>(rset.keySet());
+                for(AbstractResource r : orig)
+                {
+                    data.put(r.getIdObject(), getInputRecords(r));
+                }
+            }
+        }
+        return data;
     }
 
     /**
