@@ -1,6 +1,5 @@
 package org.objectledge.coral.datatypes;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
@@ -277,46 +276,7 @@ public class PersistentResource
             Object value = null;
             if(!data.isNull(name))
             {
-                if(aClass.equals(Boolean.class))
-                {
-                    value = data.getBoolean(name);
-                }
-                if(aClass.equals(Byte.class))
-                {
-                    value = data.getByte(name);
-                }
-                if(aClass.equals(Short.class))
-                {
-                    value = data.getShort(name);
-                }
-                if(aClass.equals(Integer.class))
-                {
-                    value = data.getInteger(name);
-                }
-                if(aClass.equals(Long.class))
-                {
-                    value = data.getLong(name);
-                }
-                if(aClass.equals(BigDecimal.class))
-                {
-                    value = data.getBigDecimal(name);
-                }
-                if(aClass.equals(Float.class))
-                {
-                    value = data.getFloat(name);
-                }
-                if(aClass.equals(Double.class))
-                {
-                    value = data.getDouble(name);
-                }
-                if(aClass.equals(String.class))
-                {
-                    value = data.getString(name);
-                }
-                if(java.util.Date.class.isAssignableFrom(aClass))
-                {
-                    value = data.getDate(name);
-                }
+                value = data.getObject(name);
             }
             instance.setAttribute(attr, value);
         }
@@ -342,24 +302,19 @@ public class PersistentResource
             .getPersistence();
     }
 
-    private static class CreateView
+    static Persistent getView(ResourceClass<?> rClass)
+    {
+        return new RetrieveView(rClass);
+    }
+
+    private static abstract class PersistentView
         implements Persistent
     {
-        private final PersistentResource instance;
+        protected final ResourceClass<?> rClass;
 
-        private final ResourceClass<?> rClass;
-
-        private final Map<AttributeDefinition<?>, ?> attrValues;
-
-        private final Connection conn;
-
-        public CreateView(final PersistentResource instance, final ResourceClass<?> rClass,
-            final Map<AttributeDefinition<?>, ?> attrValues, final Connection conn)
+        public PersistentView(final ResourceClass<?> rClass)
         {
-            this.instance = instance;
             this.rClass = rClass;
-            this.attrValues = attrValues;
-            this.conn = conn;
         }
 
         @Override
@@ -372,6 +327,51 @@ public class PersistentResource
         public String[] getKeyColumns()
         {
             return KEY_COLUMNS;
+        }
+
+        @Override
+        public void getData(OutputRecord record)
+            throws PersistenceException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setData(InputRecord record)
+            throws PersistenceException
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean getSaved()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setSaved(long id)
+        {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private static class CreateView
+        extends PersistentView
+    {
+        private final PersistentResource instance;
+
+        private final Map<AttributeDefinition<?>, ?> attrValues;
+
+        private final Connection conn;
+
+        public CreateView(final PersistentResource instance, final ResourceClass<?> rClass,
+            final Map<AttributeDefinition<?>, ?> attrValues, final Connection conn)
+        {
+            super(rClass);
+            this.instance = instance;
+            this.attrValues = attrValues;
+            this.conn = conn;
         }
 
         @Override
@@ -447,13 +447,6 @@ public class PersistentResource
         }
 
         @Override
-        public void setData(InputRecord record)
-            throws PersistenceException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public boolean getSaved()
         {
             return false;
@@ -466,83 +459,28 @@ public class PersistentResource
         }
     }
 
-    static class RetrieveView
-        implements Persistent
+    private static class RetrieveView
+        extends PersistentView
     {
-        private final ResourceClass<?> rClass;
-
         public RetrieveView(ResourceClass<?> rClass)
         {
-            this.rClass = rClass;
-
-        }
-
-        @Override
-        public String getTable()
-        {
-            return rClass.getDbTable();
-        }
-
-        @Override
-        public String[] getKeyColumns()
-        {
-            return PersistentResource.KEY_COLUMNS;
-        }
-
-        @Override
-        public void getData(OutputRecord record)
-            throws PersistenceException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setData(InputRecord record)
-            throws PersistenceException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean getSaved()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setSaved(long id)
-        {
-            throw new UnsupportedOperationException();
+            super(rClass);
         }
     }
 
     private static class UpdateView
-        implements Persistent
+        extends PersistentView
     {
         private final PersistentResource instance;
-
-        private final ResourceClass<?> rClass;
 
         private final Connection conn;
 
         public UpdateView(final PersistentResource instance, final ResourceClass<?> rClass,
             final Connection conn)
         {
+            super(rClass);
             this.instance = instance;
-            this.rClass = rClass;
             this.conn = conn;
-        }
-
-        @Override
-        public String getTable()
-        {
-            return rClass.getDbTable();
-        }
-
-        @Override
-        public String[] getKeyColumns()
-        {
-            return KEY_COLUMNS;
         }
 
         @Override
@@ -640,48 +578,21 @@ public class PersistentResource
         }
 
         @Override
-        public void setData(InputRecord record)
-            throws PersistenceException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public boolean getSaved()
         {
             return true;
         }
-
-        @Override
-        public void setSaved(long id)
-        {
-            throw new UnsupportedOperationException();
-        }
     }
 
     private class DeleteView
-        implements Persistent
+        extends PersistentView
     {
-        private final ResourceClass<?> rClass;
-
         private final Resource delegate;
 
         public DeleteView(Resource delegate, ResourceClass<?> rClass)
         {
+            super(rClass);
             this.delegate = delegate;
-            this.rClass = rClass;
-        }
-
-        @Override
-        public String getTable()
-        {
-            return rClass.getDbTable();
-        }
-
-        @Override
-        public String[] getKeyColumns()
-        {
-            return PersistentResource.KEY_COLUMNS;
         }
 
         @Override
@@ -690,25 +601,5 @@ public class PersistentResource
         {
             record.setLong("resource_id", delegate.getId());
         }
-
-        @Override
-        public void setData(InputRecord record)
-            throws PersistenceException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean getSaved()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setSaved(long id)
-        {
-            throw new UnsupportedOperationException();
-        }
     }
-
 }

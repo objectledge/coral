@@ -11,7 +11,6 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.InstantiationException;
 import org.objectledge.coral.Instantiator;
-import org.objectledge.coral.datatypes.PersistentResource.RetrieveView;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CoralSchema;
@@ -299,7 +298,9 @@ public class PersistentResourceHandler<T extends PersistentResource>
             }
             else
             {
-                data = (Map<Long, Map<ResourceClass<?>, InputRecord>>)prev;
+                @SuppressWarnings("unchecked")
+                final Map<Long, Map<ResourceClass<?>, InputRecord>> cast = (Map<Long, Map<ResourceClass<?>, InputRecord>>)prev;
+                data = cast;
             }
             if(delegate.getResourceClass().getDbTable() != null)
             {
@@ -336,9 +337,8 @@ public class PersistentResourceHandler<T extends PersistentResource>
     private InputRecord getInputRecord(Resource delegate, final ResourceClass<?> rClass)
         throws SQLException, PersistenceException, InstantiationException
     {
-        List<InputRecord> irs = persistence.loadInputRecords(new RetrieveView(
-            rClass), "resource_id = ?",
-            delegate.getId());
+        List<InputRecord> irs = persistence.loadInputRecords(PersistentResource.getView(rClass),
+            "resource_id = ?", delegate.getId());
         if(irs.isEmpty())
         {
             for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
