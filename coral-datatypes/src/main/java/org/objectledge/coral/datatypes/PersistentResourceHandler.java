@@ -105,18 +105,12 @@ public class PersistentResourceHandler<T extends PersistentResource>
                 buff.append("CREATE TABLE ");
                 buff.append(attribute.getDeclaringClass().getDbTable());
                 buff.append(" (\n resource_id BIGINT,\n ");
-                buff.append(attribute.getName()).append(" ");
-                buff.append(repr.getSqlType());
-                if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
-                {
-                    buff.append(" NOT NULL");
-                }
+                columnSpec(attribute, value, repr, buff);
                 buff.append(",\n PRIMARY KEY (resource_id)");
                 if(repr.isFk())
                 {
-                    buff.append(",\n FOREIGN KEY (").append(attribute.getName()).append(") ");
-                    buff.append("\n REFERENCES ").append(repr.getFkTable());
-                    buff.append("(").append(repr.getFkKeyColumn()).append(")");
+                    buff.append(",\n ");
+                    constraintSpec(attribute, repr, buff);
                 }
                 buff.append("\n)");
                 stmt.execute(buff.toString());
@@ -126,24 +120,15 @@ public class PersistentResourceHandler<T extends PersistentResource>
                 buff.append("ALTER TABLE ");
                 buff.append(attribute.getDeclaringClass().getDbTable());
                 buff.append("\n ADD COLUMN ");
-                buff.append(attribute.getName()).append(" ");
-                buff.append(repr.getSqlType());
-                if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
-                {
-                    buff.append(" NOT NULL");
-                }
+                columnSpec(attribute, value, repr, buff);
                 stmt.execute(buff.toString());
                 if(repr.isFk())
                 {
                     buff.setLength(0);
                     buff.append("ALTER TABLE ");
                     buff.append(attribute.getDeclaringClass().getDbTable());
-                    buff.append("\n ADD CONSTRAINT fk_")
-                        .append(attribute.getDeclaringClass().getDbTable()).append("_")
-                        .append(attribute.getName());
-                    buff.append(" FOREIGN KEY (").append(attribute.getName()).append(") ");
-                    buff.append("\n REFERENCES ").append(repr.getFkTable());
-                    buff.append("(").append(repr.getFkKeyColumn()).append(")");
+                    buff.append("\n ADD ");
+                    constraintSpec(attribute, repr, buff);
                     stmt.execute(buff.toString());
                 }
             }
@@ -152,6 +137,32 @@ public class PersistentResourceHandler<T extends PersistentResource>
         {
             stmt.close();
         }
+    }
+
+    private <A> void columnSpec(AttributeDefinition<A> attribute, A value,
+        CoralAttributeMapping repr, StringBuilder buff)
+    {
+        buff.append(attribute.getName()).append(" ");
+        buff.append(repr.getSqlType());
+        if(value != null && !repr.isCustom())
+        {
+            buff.append(" DEFAULT ");
+            buff.append(attribute.getAttributeClass().getHandler().toExternalString(value));
+        }
+        if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0 && !repr.isCustom())
+        {
+            buff.append(" NOT NULL");
+        }
+    }
+
+    private <A> void constraintSpec(AttributeDefinition<A> attribute, CoralAttributeMapping repr,
+        StringBuilder buff)
+    {
+        buff.append("CONSTRAINT fk_").append(attribute.getDeclaringClass().getDbTable())
+            .append("_").append(attribute.getName());
+        buff.append(" FOREIGN KEY (").append(attribute.getName()).append(") ");
+        buff.append("\n REFERENCES ").append(repr.getFkTable());
+        buff.append("(").append(repr.getFkKeyColumn()).append(")");
     }
 
     /**
