@@ -132,6 +132,42 @@ public class PersistentResourceHandler<T extends PersistentResource>
                     stmt.execute(buff.toString());
                 }
             }
+            if(repr.isCustom() && value != null)
+            {
+                PreparedStatement pstmt = conn.prepareStatement("UPDATE "
+                    + attribute.getDeclaringClass().getDbTable() + " SET " + attribute.getName()
+                    + " = ? WHERE resource_id = ?");
+                try
+                {
+                    ResultSet rset = stmt.executeQuery("SELECT resource_id FROM "
+                        + attribute.getDeclaringClass().getDbTable());
+                    try
+                    {
+                        boolean batchReady = false;
+                        while(rset.next())
+                        {
+                            pstmt.setLong(1,
+                                attribute.getAttributeClass().getHandler().create(value, conn));
+                            pstmt.setLong(2, rset.getLong(1));
+                            pstmt.addBatch();
+                            batchReady = true;
+                        }
+                        if(batchReady)
+                        {
+                            pstmt.executeBatch();
+                        }
+                    }
+                    finally
+                    {
+                        rset.close();
+                    }
+                }
+                finally
+                {
+                    pstmt.close();
+                }
+                revert(resourceClass, conn);
+            }
         }
         finally
         {
