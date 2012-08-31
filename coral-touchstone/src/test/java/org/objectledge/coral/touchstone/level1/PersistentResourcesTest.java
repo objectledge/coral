@@ -412,4 +412,22 @@ public class PersistentResourcesTest
         assertTrue(Arrays.asList(secondResourceClass.getAllAttributes()).contains(a2));
         assertEquals(Integer.valueOf(9), testRes2.get(a2));
     }
+
+    public void testRevertTwolevelResource()
+        throws Exception
+    {
+        testCreateTwoLevelResources();
+
+        testRes1.set(a1, "baz");
+        testRes1.revert();
+        testRes2.set(a2, 11);
+        testRes2.unset(a3);
+        testRes2.set(a4, false);
+        testRes2.revert();
+
+        assertEquals("foo", testRes1.get(a1));
+        assertEquals(Integer.valueOf(9), testRes2.get(a2));
+        assertEquals(testRes1, testRes2.get(a3));
+        assertEquals(Boolean.TRUE, testRes2.get(a4));
+    }
 }
