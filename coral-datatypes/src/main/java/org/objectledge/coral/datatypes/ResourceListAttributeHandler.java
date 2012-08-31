@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -112,6 +113,7 @@ public class ResourceListAttributeHandler<T extends Resource, L extends Resource
         );
         try
         {
+            boolean batchReady = false;
             if(value instanceof ResourceList)
             {
                 long[] ids = value.getIds();
@@ -122,6 +124,7 @@ public class ResourceListAttributeHandler<T extends Resource, L extends Resource
                     pstmt.setInt(2, i);
                     pstmt.setLong(3, ids[i]);
                     pstmt.addBatch();
+                    batchReady = true;
                 }
                 value.clearModified();
             }
@@ -137,12 +140,14 @@ public class ResourceListAttributeHandler<T extends Resource, L extends Resource
                         pstmt.setInt(1, position++);
                         pstmt.setLong(2, ((Resource)v).getId());
                         pstmt.addBatch();
+                        batchReady = true;
                     } 
                     else if(v instanceof Long)
                     {
                         pstmt.setInt(1, position++);
                         pstmt.setLong(2, ((Long)v).longValue());
                         pstmt.addBatch();
+                        batchReady = true;
                     }
                     else
                     {
@@ -150,7 +155,10 @@ public class ResourceListAttributeHandler<T extends Resource, L extends Resource
                     }
                 }
             }
-            pstmt.executeBatch();
+            if(batchReady)
+            {
+                pstmt.executeBatch();
+            }
             return id;
         }
         finally
