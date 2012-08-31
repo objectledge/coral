@@ -139,8 +139,8 @@ public class PersistentResource
                     if(isModified(attr))
                     {
                         hasChangedAttributes = true;
+                        break;
                     }
-                    break;
                 }
             }
             if(hasConcreteAttributes && hasChangedAttributes)
