@@ -130,15 +130,20 @@ public class PersistentResource
         if(rClass.getDbTable() != null)
         {
             boolean hasConcreteAttributes = false;
+            boolean hasChangedAttributes = false;
             for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
                 if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
                 {
                     hasConcreteAttributes = true;
+                    if(isModified(attr))
+                    {
+                        hasChangedAttributes = true;
+                    }
                     break;
                 }
             }
-            if(hasConcreteAttributes)
+            if(hasConcreteAttributes && hasChangedAttributes)
             {
                 getPersistence().save(new UpdateView(this, rClass, conn));
             }
