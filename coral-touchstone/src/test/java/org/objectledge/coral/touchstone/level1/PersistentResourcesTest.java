@@ -1,15 +1,20 @@
 package org.objectledge.coral.touchstone.level1;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.dbunit.dataset.Column;
+import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.datatypes.PersistentResourceHandler;
+import org.objectledge.coral.datatypes.ResourceList;
+import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
@@ -47,6 +52,8 @@ public class PersistentResourcesTest
 
     private AttributeClass<Parameters> parametersAttrClass;
 
+    private AttributeClass<ResourceList<Resource>> resourceListAttrClass;
+
     private Resource root;
 
     private ResourceClass<?> testResourceClass;
@@ -70,6 +77,11 @@ public class PersistentResourcesTest
     private Column[] parametersTableCols = { new Column("PARAMETERS_ID", DataType.BIGINT),
                     new Column("NAME", DataType.VARCHAR), new Column("VALUE", DataType.VARCHAR) };
 
+    private Column[] resourceListTableCols = {
+                    new Column("DATA_KEY", DataType.BIGINT, Column.NO_NULLS),
+                    new Column("POS", DataType.INTEGER, Column.NO_NULLS),
+                    new Column("REF", DataType.BIGINT, Column.NO_NULLS) };
+
     private Resource testRes1;
 
     private Resource testRes2;
@@ -79,6 +91,8 @@ public class PersistentResourcesTest
     private AttributeDefinition<Boolean> a4;
 
     private AttributeDefinition<Parameters> a5;
+
+    private AttributeDefinition<ResourceList<Resource>> a6;
 
     @Override
     public void setUp()
@@ -92,6 +106,8 @@ public class PersistentResourcesTest
         resourceAttrClass = (AttributeClass<Resource>)schema.getAttributeClass("resource");
         booleanAttrClass = (AttributeClass<Boolean>)schema.getAttributeClass("boolean");
         parametersAttrClass = (AttributeClass<Parameters>)schema.getAttributeClass("parameters");
+        resourceListAttrClass = (AttributeClass<ResourceList<Resource>>)schema
+            .getAttributeClass("resource_list");
         store = coral.getStore();
         root = store.getResource(CoralStore.ROOT_RESOURCE);
     }
@@ -475,5 +491,39 @@ public class PersistentResourcesTest
         final AttributeDefinition<?>[] ad2 = secondResourceClass.getAllAttributes();
         Arrays.sort(ad2, byId);
         assertTrue(Arrays.equals(ad1, ad2));
+    }
+
+    public void testDeleteTwoLevelResourceClass()
+        throws Exception
+    {
+        testCreateTwoLevelResources();
+
+        a6 = schema.createAttribute("a6", resourceListAttrClass, null, AttributeFlags.REQUIRED);
+        final ResourceList<Resource> defValue = resourceListAttrClass.getHandler()
+            .toAttributeValue(new ArrayList<Resource>());
+        schema.addAttribute(testResourceClass, a6, defValue);
+
+        testRes1.get(a6).add(testRes1);
+        testRes1.setModified(a6);
+        testRes1.update();
+        testRes2.get(a6).add(testRes2);
+        testRes2.setModified(a6);
+        testRes2.update();
+
+        DefaultTable expected = new DefaultTable("coral_attribute_resource_list",
+            resourceListTableCols);
+        row(expected, 0, 0, testRes1.getId());
+        row(expected, 1, 0, testRes2.getId());
+        ITable actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
+            "SELECT * FROM coral_attribute_resource_list");
+        assertEquals(expected, actual);
+
+        databaseConnection.close();
+    }
+
+    private static void row(DefaultTable table, Object... columns)
+        throws DataSetException
+    {
+        table.addRow(columns);
     }
 }
