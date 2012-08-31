@@ -405,6 +405,21 @@ public class ResourceListAttributeHandler<T extends Resource, L extends Resource
         return instantiate(list);
     }
 
+    @Override
+    protected L fromObject(Object object)
+    {
+        if(object instanceof List)
+        {
+            return instantiate((List<?>)object);
+        }
+        if(object.getClass().isArray()
+            && Resource.class.isAssignableFrom(object.getClass().getComponentType()))
+        {
+            return instantiate(Arrays.asList(object));
+        }
+        return null;
+    }
+
     /**
      * Instantiates a resource list.
      * 
