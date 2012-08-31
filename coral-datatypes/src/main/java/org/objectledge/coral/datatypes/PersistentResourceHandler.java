@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -132,39 +134,72 @@ public class PersistentResourceHandler<T extends PersistentResource>
                     stmt.execute(buff.toString());
                 }
             }
-            if(repr.isCustom() && value != null)
+            if(value != null && (repr.isCustom() || tableShouldExist))
             {
-                PreparedStatement pstmt = conn.prepareStatement("UPDATE "
-                    + attribute.getDeclaringClass().getDbTable() + " SET " + attribute.getName()
-                    + " = ? WHERE resource_id = ?");
+                String sql;
+                PreparedStatement outStmt;
+                if(tableShouldExist)
+                {
+                    sql = "UPDATE " + attribute.getDeclaringClass().getDbTable() + " SET "
+                        + attribute.getName() + " = ? WHERE resource_id = ?";
+                }
+                else
+                {
+                    sql = "INSERT INTO " + attribute.getDeclaringClass().getDbTable() + " ("
+                        + attribute.getName() + ", resource_id) VALUES (?, ?)";
+                }
+                outStmt = conn.prepareStatement(sql);
                 try
                 {
-                    ResultSet rset = stmt.executeQuery("SELECT resource_id FROM "
-                        + attribute.getDeclaringClass().getDbTable());
+                    PreparedStatement inStmt = conn
+                        .prepareStatement("SELECT resource_id FROM coral_resource WHERE resource_class_id = ?");
                     try
                     {
-                        boolean batchReady = false;
-                        while(rset.next())
+                        List<ResourceClass<?>> rClasses = new ArrayList<ResourceClass<?>>();
+                        rClasses.add(attribute.getDeclaringClass());
+                        rClasses.addAll(Arrays.asList(attribute.getDeclaringClass()
+                            .getChildClasses()));
+                        for(ResourceClass<?> rClass : rClasses)
                         {
-                            pstmt.setLong(1,
-                                attribute.getAttributeClass().getHandler().create(value, conn));
-                            pstmt.setLong(2, rset.getLong(1));
-                            pstmt.addBatch();
-                            batchReady = true;
-                        }
-                        if(batchReady)
-                        {
-                            pstmt.executeBatch();
+                            inStmt.setLong(1, rClass.getId());
+                            ResultSet rset = inStmt.executeQuery();
+                            try
+                            {
+                                boolean batchReady = false;
+                                while(rset.next())
+                                {
+                                    if(repr.isCustom())
+                                    {
+                                        outStmt.setLong(1, attribute.getAttributeClass()
+                                            .getHandler().create(value, conn));
+                                    }
+                                    else
+                                    {
+                                        DefaultOutputRecord.setValue(1, value, -1, outStmt);
+                                    }
+                                    outStmt.setLong(2, rset.getLong(1));
+                                    outStmt.addBatch();
+                                    batchReady = true;
+                                }
+                                if(batchReady)
+                                {
+                                    outStmt.executeBatch();
+                                }
+                            }
+                            finally
+                            {
+                                rset.close();
+                            }
                         }
                     }
                     finally
                     {
-                        rset.close();
+                        inStmt.close();
                     }
                 }
                 finally
                 {
-                    pstmt.close();
+                    outStmt.close();
                 }
                 revert(resourceClass, conn);
             }
