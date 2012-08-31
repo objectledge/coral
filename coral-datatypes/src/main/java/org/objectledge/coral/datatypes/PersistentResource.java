@@ -510,9 +510,10 @@ public class PersistentResource
                     {
                         if(id == -1L)
                         {
-                            long newId = handler.create(value, conn);
-                            record.setLong(name, newId);
-                            instance.setValueId(attr, newId);
+                            id = handler.create(value, conn);
+                            record.setLong(name, id);
+                            instance.setValueId(attr, id);
+                            record.setLong(name, id);
                         }
                         else
                         {
@@ -541,6 +542,7 @@ public class PersistentResource
                             record.setNull(name);
                             instance.setValueId(attr, -1L);
                         }
+                        record.setNull(name);
                     }
                 }
             }
