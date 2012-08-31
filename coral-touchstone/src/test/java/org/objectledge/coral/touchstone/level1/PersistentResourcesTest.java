@@ -238,7 +238,7 @@ public class PersistentResourcesTest
         assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
     }
 
-    public void createTwoLevelClasses()
+    public void testCreateTwoLevelClasses()
         throws Exception
     {
         testCreateClass();
@@ -263,7 +263,7 @@ public class PersistentResourcesTest
     public void testCreateTwoLevelResources()
         throws Exception
     {
-        createTwoLevelClasses();
+        testCreateTwoLevelClasses();
 
         Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
         attributes.put(a1, "foo");
@@ -413,7 +413,7 @@ public class PersistentResourcesTest
         assertEquals(Integer.valueOf(9), testRes2.get(a2));
     }
 
-    public void testRevertTwolevelResource()
+    public void testRevertTwoLevelResource()
         throws Exception
     {
         testCreateTwoLevelResources();
@@ -429,5 +429,41 @@ public class PersistentResourcesTest
         assertEquals(Integer.valueOf(9), testRes2.get(a2));
         assertEquals(testRes1, testRes2.get(a3));
         assertEquals(Boolean.TRUE, testRes2.get(a4));
+    }
+
+    public void testDeleteTwoLevelAttribute()
+        throws Exception
+    {
+        testCreateTwoLevelResources();
+
+        schema.deleteAttribute(testResourceClass, a3);
+        Column[] trimmedCols = new Column[testTableCols.length - 1];
+        System.arraycopy(testTableCols, 0, trimmedCols, 0, testTableCols.length - 1);
+        DefaultTable expected = new DefaultTable("test", trimmedCols);
+        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7) });
+        expected.addRow(new Object[] { testRes2.getIdObject(), "bar", Integer.valueOf(9) });
+        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        databaseConnection.close();
+        assertEquals(expected, actual);
+
+        schema.deleteAttribute(testResourceClass, a2);
+        Column[] trimmedCols2 = new Column[trimmedCols.length - 1];
+        System.arraycopy(trimmedCols, 0, trimmedCols2, 0, trimmedCols.length - 1);
+        expected = new DefaultTable("test", trimmedCols2);
+        expected.addRow(new Object[] { testRes1.getIdObject(), "foo" });
+        expected.addRow(new Object[] { testRes2.getIdObject(), "bar" });
+        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        databaseConnection.close();
+        assertEquals(expected, actual);
+
+        schema.deleteAttribute(testResourceClass, a1);
+        assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
+
+        assertEquals(0, testResourceClass.getDeclaredAttributes().length);
+        assertEquals(1, store.getResource("test1").length);
+        assertEquals(1, store.getResource("test2").length);
+
+        assertTrue(Arrays.equals(secondResourceClass.getDeclaredAttributes(),
+            secondResourceClass.getAllAttributes()));
     }
 }
