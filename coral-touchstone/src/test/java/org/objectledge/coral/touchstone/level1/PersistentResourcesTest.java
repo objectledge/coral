@@ -463,7 +463,17 @@ public class PersistentResourcesTest
         assertEquals(1, store.getResource("test1").length);
         assertEquals(1, store.getResource("test2").length);
 
-        assertTrue(Arrays.equals(secondResourceClass.getDeclaredAttributes(),
-            secondResourceClass.getAllAttributes()));
+        Comparator<Entity> byId = new Comparator<Entity>()
+            {
+                public int compare(Entity e1, Entity e2)
+                {
+                    return (int)(e1.getId() - e2.getId());
+                }
+            };
+        final AttributeDefinition<?>[] ad1 = secondResourceClass.getDeclaredAttributes();
+        Arrays.sort(ad1, byId);
+        final AttributeDefinition<?>[] ad2 = secondResourceClass.getAllAttributes();
+        Arrays.sort(ad2, byId);
+        assertTrue(Arrays.equals(ad1, ad2));
     }
 }
