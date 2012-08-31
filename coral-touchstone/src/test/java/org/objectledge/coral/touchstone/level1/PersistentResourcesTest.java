@@ -177,8 +177,9 @@ public class PersistentResourcesTest
         expected.addRow(new Object[] { testRes1.getIdObject(), "baz", Integer.valueOf(7), null });
         expected.addRow(new Object[] { testRes2.getIdObject(), "bar", Integer.valueOf(11), null });
         ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        databaseConnection.close();
         assertEquals(expected, actual);
+
+        databaseConnection.close();
     }
 
     public void testRevertResource()
@@ -491,6 +492,34 @@ public class PersistentResourcesTest
         final AttributeDefinition<?>[] ad2 = secondResourceClass.getAllAttributes();
         Arrays.sort(ad2, byId);
         assertTrue(Arrays.equals(ad1, ad2));
+
+        a6 = schema.createAttribute("a6", resourceListAttrClass, null, AttributeFlags.REQUIRED);
+        final ResourceList<Resource> defValue = resourceListAttrClass.getHandler()
+            .toAttributeValue(new ArrayList<Resource>());
+        schema.addAttribute(testResourceClass, a6, defValue);
+
+        testRes1.get(a6).add(testRes1);
+        testRes1.setModified(a6);
+        testRes1.update();
+        testRes2.get(a6).add(testRes2);
+        testRes2.setModified(a6);
+        testRes2.update();
+
+        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
+        row(expected, 0, 0, testRes1.getId());
+        row(expected, 1, 0, testRes2.getId());
+        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
+            "SELECT * FROM coral_attribute_resource_list");
+        assertEquals(expected, actual);
+        databaseConnection.close();
+
+        schema.deleteAttribute(testResourceClass, a6);
+
+        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
+        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
+            "SELECT * FROM coral_attribute_resource_list");
+        assertEquals(expected, actual);
+        databaseConnection.close();
     }
 
     public void testDeleteTwoLevelResourceClass()
@@ -517,7 +546,20 @@ public class PersistentResourcesTest
         ITable actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
             "SELECT * FROM coral_attribute_resource_list");
         assertEquals(expected, actual);
+        databaseConnection.close();
 
+        schema.deleteParentClass(secondResourceClass, testResourceClass);
+
+        expected = new DefaultTable("test", testTableCols);
+        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7), null });
+        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
+        row(expected, 0, 0, testRes1.getId());
+        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
+            "SELECT * FROM coral_attribute_resource_list");
+        assertEquals(expected, actual);
         databaseConnection.close();
     }
 
