@@ -132,4 +132,15 @@ public abstract class EntityRef<E extends Entity>
     {
         return hashCode;
     }
+
+    public String toString()
+    {
+        StringBuilder buff = new StringBuilder();
+        buff.append(getClass().getName());
+        buff.append(" #");
+        buff.append(id);
+        buff.append(" @");
+        buff.append(Integer.toString(System.identityHashCode(this), 16));
+        return buff.toString();
+    }
 }
