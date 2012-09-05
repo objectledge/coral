@@ -7,18 +7,24 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.ResourceTreeChangeListener;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ResourceInheritance;
 import org.objectledge.coral.store.ResourceRef;
+
+import bak.pcj.list.LongArrayDeque;
+import bak.pcj.list.LongDeque;
+import bak.pcj.list.LongList;
+import bak.pcj.set.LongOpenHashSet;
+import bak.pcj.set.LongSet;
 
 /**
  * A helper class for managing a set of permissions.
@@ -78,7 +84,7 @@ public class PermissionContainer
         List<PermissionsInfo> piList = getPermissionsInfo(res);
         List<Permission> pList = new ArrayList<Permission>();
         PermissionsInfo piRes = piList.get(0);
-        for (PermissionsInfo pi : piList)
+        for(PermissionsInfo pi : piList)
         {
             pi.addTo(pList, pi == piRes);
         }
@@ -97,7 +103,7 @@ public class PermissionContainer
     {
         List<PermissionsInfo> piList = getPermissionsInfo(res);
         PermissionsInfo piRes = piList.get(0);
-        for (PermissionsInfo pi : piList)
+        for(PermissionsInfo pi : piList)
         {
             if(pi.hasPermission(perm, pi == piRes))
             {
@@ -157,6 +163,14 @@ public class PermissionContainer
         drainQueue();
         List<PermissionsInfo> piList = new ArrayList<PermissionsInfo>();
         Resource cur = res;
+        LongDeque resourceChain = new LongArrayDeque();
+        while(cur != null)
+        {
+            resourceChain.add(cur.getId());
+            cur = cur.getParent();
+        }
+        cur = res;
+
         while(cur != null)
         {
             PermissionsInfo pi = piCache.get(new ResourceRef(cur.getId(), coral));
@@ -166,12 +180,13 @@ public class PermissionContainer
                 coralEventHub.getGlobal().addResourceTreeChangeListener(this, cur);
 
                 pi = new PermissionsInfo(roles.getMatchingRoles(), coral.getRegistry()
-                    .getPermissionAssignments(cur));
+                    .getPermissionAssignments(cur), resourceChain);
 
                 piCache.put(new ResourceRef(cur, coral, queue), pi);
             }
             piList.add(pi);
             cur = cur.getParent();
+            resourceChain.removeFirst();
         }
         return piList;
     }
@@ -197,22 +212,13 @@ public class PermissionContainer
     void flush(Resource r)
     {
         drainQueue();
-        piCache.remove(new ResourceRef(r.getId(), coral));
-        // we assume than number of PermissionInfo entries is significantly smaller than number of resource's descendants
-        Iterator<ResourceRef> i = piCache.keySet().iterator();
+        Iterator<PermissionsInfo> i = piCache.values().iterator();
+        final long id = r.getId();
         while(i.hasNext())
         {
-            ResourceRef res = i.next();
-            try
+            if(i.next().dependsOn(id))
             {
-                if(coral.getStore().isAncestor(r, res.get()))
-                {
-                    i.remove();
-                }
-            }
-            catch(EntityDoesNotExistException e)
-            {
-                // resource is gone, ignore
+                i.remove();
             }
         }
     }
@@ -237,9 +243,12 @@ public class PermissionContainer
 
         private Set<Permission> nonInherited;
 
-        public PermissionsInfo(Set<Role> roleSet, Set<PermissionAssignment> paSet)
+        private LongSet resourceSet;
+
+        public PermissionsInfo(Set<Role> roleSet, Set<PermissionAssignment> paSet,
+            LongList resourceChain)
         {
-            for (PermissionAssignment pa : paSet)
+            for(PermissionAssignment pa : paSet)
             {
                 if(roleSet.contains(pa.getRole()))
                 {
@@ -261,6 +270,8 @@ public class PermissionContainer
                     }
                 }
             }
+            this.resourceSet = new LongOpenHashSet(resourceChain.size(), 0.5);
+            this.resourceSet.addAll(resourceChain);
         }
 
         public boolean hasPermission(Permission p, boolean includeNonInherited)
@@ -280,5 +291,65 @@ public class PermissionContainer
                 pCol.addAll(nonInherited);
             }
         }
+
+        public boolean dependsOn(long resourceId)
+        {
+            return resourceSet.contains(resourceId);
+        }
+
+        public String toString()
+        {
+            StringBuilder buff = new StringBuilder();
+            buff.append(resourceSet.toString());
+            toString(inherited, buff);
+            toString(nonInherited, buff);
+            return buff.toString();
+        }
+
+        private static void toString(Set<Permission> perms, StringBuilder buff)
+        {
+            buff.append("[");
+            if(perms != null)
+            {
+                Iterator<Permission> i = perms.iterator();
+                while(i.hasNext())
+                {
+                    buff.append(i.next().getName());
+                    if(i.hasNext())
+                    {
+                        buff.append(", ");
+                    }
+                }
+            }
+            buff.append("]");
+        }
+    }
+
+    public String toString()
+    {
+        StringBuilder buff = new StringBuilder();
+        buff.append("[");
+        Iterator<Role> ri = roles.getMatchingRoles().iterator();
+        while(ri.hasNext())
+        {
+            buff.append(ri.next().getName());
+            if(ri.hasNext())
+            {
+                buff.append(", ");
+            }
+        }
+        buff.append("] = {");
+        Iterator<Map.Entry<ResourceRef, PermissionsInfo>> i = piCache.entrySet().iterator();
+        while(i.hasNext())
+        {
+            Map.Entry<ResourceRef, PermissionsInfo> entry = i.next();
+            buff.append(entry.getKey().getId()).append("=").append(entry.getValue().toString());
+            if(i.hasNext())
+            {
+                buff.append(", ");
+            }
+        }
+        buff.append("}");
+        return buff.toString();
     }
 }

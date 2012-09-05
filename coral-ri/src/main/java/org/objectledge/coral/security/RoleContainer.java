@@ -304,4 +304,9 @@ public class RoleContainer
     {
         this.permissions = permissions;
     }
+
+    public String toString()
+    {
+        return matchingRoles.toString();
+    }
 }
