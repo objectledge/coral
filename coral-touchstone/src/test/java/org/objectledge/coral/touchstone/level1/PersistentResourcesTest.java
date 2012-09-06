@@ -550,8 +550,13 @@ public class PersistentResourcesTest
 
         schema.deleteParentClass(secondResourceClass, testResourceClass);
 
-        expected = new DefaultTable("test", testTableCols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7), null });
+        Column[] expTestTableCols = new Column[testTableCols.length + 1];
+        System.arraycopy(testTableCols, 0, expTestTableCols, 0, testTableCols.length);
+        expTestTableCols[testTableCols.length] = new Column("A6", DataType.BIGINT, Column.NO_NULLS);
+
+        expected = new DefaultTable("test", expTestTableCols);
+        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7), null,
+                        Integer.valueOf(0) });
         actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
         assertEquals(expected, actual);
 
