@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +18,7 @@ import java.util.WeakHashMap;
 import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.Instantiator;
+import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CoralSchema;
@@ -136,71 +138,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
             }
             if(value != null && (repr.isCustom() || tableShouldExist))
             {
-                String sql;
-                PreparedStatement outStmt;
-                if(tableShouldExist)
-                {
-                    sql = "UPDATE " + attribute.getDeclaringClass().getDbTable() + " SET "
-                        + attribute.getName() + " = ? WHERE resource_id = ?";
-                }
-                else
-                {
-                    sql = "INSERT INTO " + attribute.getDeclaringClass().getDbTable() + " ("
-                        + attribute.getName() + ", resource_id) VALUES (?, ?)";
-                }
-                outStmt = conn.prepareStatement(sql);
-                try
-                {
-                    PreparedStatement inStmt = conn
-                        .prepareStatement("SELECT resource_id FROM coral_resource WHERE resource_class_id = ?");
-                    try
-                    {
-                        List<ResourceClass<?>> rClasses = new ArrayList<ResourceClass<?>>();
-                        rClasses.add(attribute.getDeclaringClass());
-                        rClasses.addAll(Arrays.asList(attribute.getDeclaringClass()
-                            .getChildClasses()));
-                        for(ResourceClass<?> rClass : rClasses)
-                        {
-                            inStmt.setLong(1, rClass.getId());
-                            ResultSet rset = inStmt.executeQuery();
-                            try
-                            {
-                                boolean batchReady = false;
-                                while(rset.next())
-                                {
-                                    if(repr.isCustom())
-                                    {
-                                        outStmt.setLong(1, attribute.getAttributeClass()
-                                            .getHandler().create(value, conn));
-                                    }
-                                    else
-                                    {
-                                        DefaultOutputRecord.setValue(1, value, -1, outStmt);
-                                    }
-                                    outStmt.setLong(2, rset.getLong(1));
-                                    outStmt.addBatch();
-                                    batchReady = true;
-                                }
-                                if(batchReady)
-                                {
-                                    outStmt.executeBatch();
-                                }
-                            }
-                            finally
-                            {
-                                rset.close();
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        inStmt.close();
-                    }
-                }
-                finally
-                {
-                    outStmt.close();
-                }
+                addAttributeValues(attribute, value, repr, conn, tableShouldExist);
                 revert(resourceClass, conn);
             }
         }
@@ -236,6 +174,77 @@ public class PersistentResourceHandler<T extends PersistentResource>
         buff.append("(").append(repr.getFkKeyColumn()).append(")");
     }
 
+    private <A> void addAttributeValues(AttributeDefinition<A> attribute, A value,
+        CoralAttributeMapping repr, Connection conn, boolean tableShouldExist)
+        throws SQLException
+    {
+        String sql;
+        PreparedStatement outStmt;
+        if(tableShouldExist)
+        {
+            sql = "UPDATE " + attribute.getDeclaringClass().getDbTable() + " SET "
+                + attribute.getName() + " = ? WHERE resource_id = ?";
+        }
+        else
+        {
+            sql = "INSERT INTO " + attribute.getDeclaringClass().getDbTable() + " ("
+                + attribute.getName() + ", resource_id) VALUES (?, ?)";
+        }
+        outStmt = conn.prepareStatement(sql);
+        try
+        {
+            PreparedStatement inStmt = conn
+                .prepareStatement("SELECT resource_id FROM coral_resource WHERE resource_class_id = ?");
+            try
+            {
+                List<ResourceClass<?>> rClasses = new ArrayList<ResourceClass<?>>();
+                rClasses.add(attribute.getDeclaringClass());
+                rClasses.addAll(Arrays.asList(attribute.getDeclaringClass()
+                    .getChildClasses()));
+                for(ResourceClass<?> rClass : rClasses)
+                {
+                    inStmt.setLong(1, rClass.getId());
+                    ResultSet rset = inStmt.executeQuery();
+                    try
+                    {
+                        boolean batchReady = false;
+                        while(rset.next())
+                        {
+                            if(repr.isCustom())
+                            {
+                                outStmt.setLong(1, attribute.getAttributeClass()
+                                    .getHandler().create(value, conn));
+                            }
+                            else
+                            {
+                                DefaultOutputRecord.setValue(1, value, -1, outStmt);
+                            }
+                            outStmt.setLong(2, rset.getLong(1));
+                            outStmt.addBatch();
+                            batchReady = true;
+                        }
+                        if(batchReady)
+                        {
+                            outStmt.executeBatch();
+                        }
+                    }
+                    finally
+                    {
+                        rset.close();
+                    }
+                }
+            }
+            finally
+            {
+                inStmt.close();
+            }
+        }
+        finally
+        {
+            outStmt.close();
+        }
+    }
+
     /**
      * Called when an attribute is removed from a structured resource class.
      * <p>
@@ -266,6 +275,11 @@ public class PersistentResourceHandler<T extends PersistentResource>
             CoralAttributeMapping repr;
             repr = persistence.load(CoralAttributeMapping.FACTORY, attribute.getAttributeClass()
                 .getId());
+            if(repr.isCustom())
+            {
+                deleteAttributeValues(attribute, conn);
+            }
+
             StringBuilder buff = new StringBuilder();
             if(shouldDropTable)
             {
@@ -287,6 +301,34 @@ public class PersistentResourceHandler<T extends PersistentResource>
                     .append("\n DROP COLUMN ").append(attribute.getName());
             }
             stmt.execute(buff.toString());
+        }
+        finally
+        {
+            stmt.close();
+        }
+    }
+
+    private <A> void deleteAttributeValues(AttributeDefinition<A> attribute, Connection conn)
+        throws SQLException
+    {
+        String columnName = attribute.getName();
+        StringBuilder buff = new StringBuilder();
+        buff.append("SELECT ").append(columnName);
+        buff.append("\nFROM ").append(attribute.getDeclaringClass().getDbTable());
+        buff.append("\nWHERE ").append(columnName).append(" IS NOT NULL");
+        buff.append("\nGROUP BY ").append(columnName);
+        Statement stmt = conn.createStatement();
+        try
+        {
+            ResultSet rset = stmt.executeQuery(buff.toString());
+            while(rset.next())
+            {
+                attribute.getAttributeClass().getHandler().delete(rset.getLong(1), conn);
+            }
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new SQLException("failed to delete attribute value", e);
         }
         finally
         {
@@ -399,8 +441,107 @@ public class PersistentResourceHandler<T extends PersistentResource>
     public void deleteParentClass(ResourceClass<?> parent, Connection conn)
         throws SQLException
     {
-        throw new UnsupportedOperationException("schema modifications are not supported"
-            + " for this resource class");
+        deleteAttributeValues(parent, this.resourceClass, conn);
+        deleteDataRows(parent, this.resourceClass, conn);
+    }
+
+    private void deleteAttributeValues(ResourceClass<?> parent, ResourceClass<?> child,
+        Connection conn)
+        throws SQLException
+    {
+        List<AttributeDefinition<?>> customAttrs = new ArrayList<AttributeDefinition<?>>();
+        for(AttributeDefinition<?> attr : parent.getDeclaredAttributes())
+        {
+            if(!attr.getAttributeClass().getHandler().supportsExternalString())
+            {
+                customAttrs.add(attr);
+            }
+        }
+        if(!customAttrs.isEmpty())
+        {
+            StringBuilder buff = new StringBuilder();
+            buff.append(child.getIdString());
+            for(ResourceClass<?> rc : child.getChildClasses())
+            {
+                buff.append(", ").append(rc.getIdString());
+            }
+            String classIds = buff.toString();
+            buff.setLength(0);
+
+            buff.append("SELECT ");
+            Iterator<AttributeDefinition<?>> i = customAttrs.iterator();
+            while(i.hasNext())
+            {
+                buff.append("d.").append(i.next().getName());
+                if(i.hasNext())
+                {
+                    buff.append(", ");
+                }
+            }
+            buff.append("\nFROM ").append(parent.getDbTable()).append(" d ");
+            buff.append("\nJOIN coral_resource r USING (resource_id)");
+            buff.append("\nWHERE r.resource_class_id in (");
+            buff.append(classIds).append(")");
+            Statement stmt = conn.createStatement();
+            try
+            {
+                ResultSet rset = stmt.executeQuery(buff.toString());
+                try
+                {
+                    while(rset.next())
+                    {
+                        for(int j = 0; j < customAttrs.size(); j++)
+                        {
+                            customAttrs.get(j).getAttributeClass().getHandler()
+                                .delete(rset.getLong(j + 1), conn);
+                        }
+                    }
+                }
+                finally
+                {
+                    rset.close();
+                }
+            }
+            catch(EntityDoesNotExistException e)
+            {
+                throw new SQLException("failed to delete attribute value", e);
+            }
+            finally
+            {
+                stmt.close();
+            }
+        }
+    }
+
+    private void deleteDataRows(ResourceClass<?> parent, ResourceClass<?> child, Connection conn)
+        throws SQLException
+    {
+        StringBuilder buff = new StringBuilder();
+        buff.append(child.getIdString());
+        for(ResourceClass<?> rc : child.getChildClasses())
+        {
+            buff.append(", ").append(rc.getIdString());
+        }
+        String classIds = buff.toString();
+        buff.setLength(0);
+
+        buff.append("DELETE FROM ").append(parent.getDbTable());
+        buff.append("\nWHERE resource_id IN (");
+        buff.append("\nSELECT resource_id");
+        buff.append("\nFROM coral_resource");
+        buff.append("\nWHERE resource_class_id in (");
+        buff.append(classIds).append(")");
+        buff.append("\n)");
+
+        Statement stmt = conn.createStatement();
+        try
+        {
+            stmt.execute(buff.toString());
+        }
+        finally
+        {
+            stmt.close();
+        }
     }
 
     // implementation ////////////////////////////////////////////////////////
