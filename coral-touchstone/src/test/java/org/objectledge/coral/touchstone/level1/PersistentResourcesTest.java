@@ -629,6 +629,63 @@ public class PersistentResourcesTest
         databaseConnection.close();
     }
 
+    public void testCustomAttributeOps()
+        throws Exception
+    {
+        testResourceClass = schema.createResourceClass("test", PersistentResource.class.getName(),
+            PersistentResourceHandler.class.getName(), "test", 0);
+        a6 = schema.createAttribute("a6", resourceListAttrClass, null, 0);
+        schema.addAttribute(testResourceClass, a6, null);
+        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
+        testRes1 = store.createResource("test1", root, testResourceClass, attributes);
+
+        Column[] t1a6Cols = new Column[] {
+                        new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
+                        new Column("A6", DataType.BIGINT, Column.NULLABLE) };
+
+        DefaultTable expected = new DefaultTable("test", t1a6Cols);
+        expected.addRow(new Object[] { testRes1.getIdObject(), null });
+        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
+        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
+            "SELECT * FROM coral_attribute_resource_list");
+        assertEquals(expected, actual);
+
+        databaseConnection.close();
+
+        testRes1.set(a6, new ResourceList<Resource>(coralSessionFactory));
+        testRes1.update();
+
+        expected = new DefaultTable("test", t1a6Cols);
+        expected.addRow(new Object[] { testRes1.getIdObject(), Integer.valueOf(0) });
+        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
+        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
+            "SELECT * FROM coral_attribute_resource_list");
+        assertEquals(expected, actual);
+
+        databaseConnection.close();
+
+        testRes1.unset(a6);
+        testRes1.update();
+
+        expected = new DefaultTable("test", t1a6Cols);
+        expected.addRow(new Object[] { testRes1.getIdObject(), null });
+        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
+        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
+            "SELECT * FROM coral_attribute_resource_list");
+        assertEquals(expected, actual);
+
+        databaseConnection.close();
+    }
+
     private static void row(DefaultTable table, Object... columns)
         throws DataSetException
     {
