@@ -421,6 +421,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
                     boolean batchReady = false;
                     while(rset.next())
                     {
+                        DefaultOutputRecord.refeshInsertStatement(view, out);
                         out.setLong(1, rset.getLong(1));
                         out.addBatch();
                         batchReady = true;

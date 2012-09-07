@@ -109,7 +109,7 @@ public class PersistentResource
             }
             if(hasConcreteAttributes)
             {
-                getPersistence().save(new CreateView(this, rClass, attributes, conn));
+                getPersistence().save(new CreateView(this, rClass, attributes, conn, true));
                 this.saved = true;
             }
         }
@@ -284,12 +284,11 @@ public class PersistentResource
     }
 
     static Persistent getCreateView(final ResourceClass<?> rClass,
-        final Map<AttributeDefinition<?>, ?> attrValues,
-        final Connection conn)
+        final Map<AttributeDefinition<?>, ?> attrValues, final Connection conn)
     {
         PersistentResource instance = new PersistentResource();
         instance.setDelegate(new SyntheticDelegate(rClass));
-        return new CreateView(instance, rClass, attrValues, conn);
+        return new CreateView(instance, rClass, attrValues, conn, false);
     }
 
     private static abstract class PersistentView
@@ -350,13 +349,17 @@ public class PersistentResource
 
         private final Connection conn;
 
+        private boolean insertCustomAttrs;
+
         public CreateView(final PersistentResource instance, final ResourceClass<?> rClass,
-            final Map<AttributeDefinition<?>, ?> attrValues, final Connection conn)
+            final Map<AttributeDefinition<?>, ?> attrValues, final Connection conn,
+            final boolean immediateCustomAttrs)
         {
             super(rClass);
             this.instance = instance;
             this.attrValues = attrValues;
             this.conn = conn;
+            this.insertCustomAttrs = immediateCustomAttrs;
         }
 
         @Override
@@ -371,6 +374,7 @@ public class PersistentResource
                     getAttribute(attr, record);
                 }
             }
+            insertCustomAttrs = true;
         }
 
         private <T> void getAttribute(AttributeDefinition<T> attr, OutputRecord record)
@@ -400,16 +404,19 @@ public class PersistentResource
                     }
                     else
                     {
-                        valueId = handler.create(value, conn);
-                        if(handler.shouldRetrieveAfterCreate())
+                        if(insertCustomAttrs)
                         {
-                            try
+                            valueId = handler.create(value, conn);
+                            if(handler.shouldRetrieveAfterCreate())
                             {
-                                value = handler.retrieve(valueId, conn);
-                            }
-                            catch(EntityDoesNotExistException e)
-                            {
-                                throw new BackendException("data integrity error", e);
+                                try
+                                {
+                                    value = handler.retrieve(valueId, conn);
+                                }
+                                catch(EntityDoesNotExistException e)
+                                {
+                                    throw new BackendException("data integrity error", e);
+                                }
                             }
                         }
                     }
