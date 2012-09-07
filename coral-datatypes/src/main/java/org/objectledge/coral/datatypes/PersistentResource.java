@@ -1,5 +1,7 @@
 package org.objectledge.coral.datatypes;
 
+import static org.objectledge.coral.datatypes.PersistentResourceHandler.columnName;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -73,7 +75,7 @@ public class PersistentResource
         Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
         if(in != null)
         {
-            setData(in);
+            setData(in, conn);
         }
     }
 
@@ -84,7 +86,7 @@ public class PersistentResource
         Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
         if(in != null)
         {
-            setData(in);
+            setData(in, conn);
         }
     }
 
@@ -221,7 +223,7 @@ public class PersistentResource
 
     // Persistent interface //////////////////////////////////////////////////
 
-    private void setData(Map<ResourceClass<?>, InputRecord> records)
+    private void setData(Map<ResourceClass<?>, InputRecord> records, Connection conn)
         throws SQLException
     {
         for(Map.Entry<ResourceClass<?>, InputRecord> entry : records.entrySet())
@@ -233,7 +235,7 @@ public class PersistentResource
                 {
                     if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                     {
-                        setAttribute(attr, record, this);
+                        setAttribute(attr, record, this, conn);
                     }
                 }
             }
@@ -241,10 +243,10 @@ public class PersistentResource
     }
 
     private static <T> void setAttribute(AttributeDefinition<T> attr, InputRecord data,
-        AbstractResource instance)
+        AbstractResource instance, Connection conn)
         throws SQLException
     {
-        final String name = attr.getName();
+        final String name = columnName(attr, conn);
         if(attr.getAttributeClass().getHandler().supportsExternalString())
         {
             Object value = null;
@@ -375,7 +377,7 @@ public class PersistentResource
             throws SQLException, SQLException
         {
             T value = (T)attrValues.get(attr);
-            String name = attr.getName();
+            String name = columnName(attr, conn);
             AttributeHandler<T> handler = attr.getAttributeClass().getHandler();
             if(value != null)
             {
@@ -479,7 +481,7 @@ public class PersistentResource
         private <A> void getAttribute(AttributeDefinition<A> attr, OutputRecord record)
             throws SQLException, SQLException
         {
-            String name = attr.getName();
+            String name = columnName(attr, conn);
             A value = instance.getAttribute(attr);
 
             if(attr.getAttributeClass().getHandler().supportsExternalString())

@@ -65,7 +65,7 @@ public class PersistentResourcesTest
     private AttributeDefinition<Resource> a3;
 
     private Column[] testTableCols = { new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
-                    new Column("A1", DataType.VARCHAR, Column.NULLABLE),
+                    new Column("SELECT_", DataType.VARCHAR, Column.NULLABLE),
                     new Column("A2", DataType.INTEGER, Column.NO_NULLS),
                     new Column("A3", DataType.BIGINT, Column.NULLABLE) };
 
@@ -125,7 +125,7 @@ public class PersistentResourcesTest
     {
         testResourceClass = schema.createResourceClass("test", PersistentResource.class.getName(),
             PersistentResourceHandler.class.getName(), "test", 0);
-        a1 = schema.createAttribute("a1", stringAttrClass, null, 0);
+        a1 = schema.createAttribute("select", stringAttrClass, null, 0);
         schema.addAttribute(testResourceClass, a1, null);
         a2 = schema.createAttribute("a2", intAttrClass, null, AttributeFlags.REQUIRED);
         schema.addAttribute(testResourceClass, a2, Integer.valueOf(0));
