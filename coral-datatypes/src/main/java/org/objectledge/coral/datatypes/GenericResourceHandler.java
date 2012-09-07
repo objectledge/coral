@@ -272,24 +272,27 @@ public class GenericResourceHandler<T extends Resource>
         try
         {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT count(*) from coral_generic_resource WHERE " +
-                "attribute_definition_id = " + attr.getIdString());
+            String sql = "SELECT count(*) from coral_generic_resource g, coral_resource r WHERE "
+                + " g.attribute_definition_id = " + attr.getIdString()
+                + " AND r.resource_class_id = " + rc.getIdString();
+            rs = stmt.executeQuery(sql);
             rs.next();
-            System.out.println("deleting attribute "+attr.getName()+" from "+rc.getName()+": "+
-                rs.getInt(1)+" items");
             rs = stmt.executeQuery("SELECT coral_resource.resource_id, data_key FROM "
                 + "coral_resource, coral_generic_resource " + "WHERE resource_class_id = "
                 + rc.getIdString() + " AND attribute_definition_id = " + attr.getIdString()
                 + " AND coral_resource.resource_id = coral_generic_resource.resource_id");
-            int cnt = 0;
             while(rs.next())
             {
-                long resId = rs.getLong(1);
                 long dataId = rs.getLong(2);
                 attr.getAttributeClass().getHandler().delete(dataId, conn);
             }
-            stmt.execute("DELETE FROM coral_generic_resource "
-                + "WHERE attribute_definition_id = " + attr.getIdString());
+            sql = "DELETE FROM coral_generic_resource "
+                + "WHERE (resource_id, attribute_definition_id) "
+                + "IN (SELECT coral_resource.resource_id, attribute_definition_id" + " FROM "
+                + "coral_resource, coral_generic_resource" + " WHERE resource_class_id = "
+                + rc.getIdString() + " AND attribute_definition_id = " + attr.getIdString()
+                + " AND coral_resource.resource_id = coral_generic_resource.resource_id)";
+            stmt.execute(sql);
         }
         catch(EntityDoesNotExistException e)
         {
