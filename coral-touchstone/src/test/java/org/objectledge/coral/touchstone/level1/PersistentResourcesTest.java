@@ -578,7 +578,22 @@ public class PersistentResourcesTest
         expTable("coral_attribute_resource_list", resourceListCols);
         assertExpTable();
 
-        databaseConnection.close();
+        firstRes.get(a6).add(firstRes);
+        firstRes.update();
+
+        expTable("coral_attribute_resource_list", resourceListCols);
+        expRow(0L, 0, firstRes.getIdObject());
+        assertExpTable();
+
+        firstRes.get(a6).add(firstRes);
+        firstRes.get(a6).add(firstRes);
+        firstRes.update();
+
+        expTable("coral_attribute_resource_list", resourceListCols);
+        expRow(0L, 0, firstRes.getIdObject());
+        expRow(0L, 1, firstRes.getIdObject());
+        expRow(0L, 2, firstRes.getIdObject());
+        assertExpTable();
 
         firstRes.unset(a6);
         firstRes.update();
