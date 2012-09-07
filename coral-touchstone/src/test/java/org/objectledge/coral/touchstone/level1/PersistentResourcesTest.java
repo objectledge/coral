@@ -20,6 +20,7 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
@@ -54,6 +55,8 @@ public class PersistentResourcesTest
 
     private AttributeClass<ResourceList<Resource>> resourceListAttrClass;
 
+    private AttributeClass<Subject> subjectAttrClass;
+
     private Resource root;
 
     private ResourceClass<?> testResourceClass;
@@ -73,6 +76,10 @@ public class PersistentResourcesTest
                     new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
                     new Column("A4", DataType.BOOLEAN, Column.NULLABLE),
                     new Column("A5", DataType.BIGINT, Column.NO_NULLS) };
+
+    private Column[] thirdTableCols = {
+                    new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
+                    new Column("A7", DataType.BIGINT, Column.NO_NULLS) };
 
     private Column[] parametersTableCols = { new Column("PARAMETERS_ID", DataType.BIGINT),
                     new Column("NAME", DataType.VARCHAR), new Column("VALUE", DataType.VARCHAR) };
@@ -94,6 +101,10 @@ public class PersistentResourcesTest
 
     private AttributeDefinition<ResourceList<Resource>> a6;
 
+    private ResourceClass<?> thirdResourceClass;
+
+    private AttributeDefinition<Subject> a7;
+
     @Override
     public void setUp()
         throws Exception
@@ -108,6 +119,7 @@ public class PersistentResourcesTest
         parametersAttrClass = (AttributeClass<Parameters>)schema.getAttributeClass("parameters");
         resourceListAttrClass = (AttributeClass<ResourceList<Resource>>)schema
             .getAttributeClass("resource_list");
+        subjectAttrClass = (AttributeClass<Subject>)schema.getAttributeClass("subject");
         store = coral.getStore();
         root = store.getResource(CoralStore.ROOT_RESOURCE);
     }
@@ -255,7 +267,7 @@ public class PersistentResourcesTest
         assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
     }
 
-    public void testCreateTwoLevelClasses()
+    public void testCreateMultiLevelClasses()
         throws Exception
     {
         testCreateClass();
@@ -265,22 +277,71 @@ public class PersistentResourcesTest
             "second", 0);
         Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
         attributes.put(a2, 0);
-        schema.addParentClass(secondResourceClass, testResourceClass, attributes);
         a4 = schema.createAttribute("a4", booleanAttrClass, null, 0);
         schema.addAttribute(secondResourceClass, a4, null);
         a5 = schema.createAttribute("a5", parametersAttrClass, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(secondResourceClass, a5, null);
+        schema.addAttribute(secondResourceClass, a5, new DefaultParameters());
 
         ITable expected = new DefaultTable("second", secondTableCols);
         ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM second");
         databaseConnection.close();
         assertEquals(actual, expected);
+
+        thirdResourceClass = schema.createResourceClass("third",
+            PersistentResource.class.getName(), PersistentResourceHandler.class.getName(), "third",
+            0);
+        attributes.put(a5, new DefaultParameters());
+        a7 = schema.createAttribute("a7", subjectAttrClass, null, 0);
+        schema.addAttribute(thirdResourceClass, a7, null);
+
+        schema.addParentClass(thirdResourceClass, secondResourceClass, attributes);
+        schema.addParentClass(secondResourceClass, testResourceClass, attributes);
     }
 
-    public void testCreateTwoLevelResources()
+    public void testCreateMultiLevelClasses2()
         throws Exception
     {
-        testCreateTwoLevelClasses();
+        testResourceClass = schema.createResourceClass("test", PersistentResource.class.getName(),
+            PersistentResourceHandler.class.getName(), "test", 0);
+        a1 = schema.createAttribute("select", stringAttrClass, null, 0);
+        schema.addAttribute(testResourceClass, a1, null);
+        a3 = schema.createAttribute("a3", resourceAttrClass, "test", 0);
+        schema.addAttribute(testResourceClass, a3, null);
+
+        secondResourceClass = schema.createResourceClass("second",
+            PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
+            "second", 0);
+        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
+        schema.addParentClass(secondResourceClass, testResourceClass, attributes);
+        a4 = schema.createAttribute("a4", booleanAttrClass, null, 0);
+        schema.addAttribute(secondResourceClass, a4, null);
+        a5 = schema.createAttribute("a5", parametersAttrClass, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(secondResourceClass, a5, new DefaultParameters());
+
+        attributes.put(a5, new DefaultParameters());
+        testRes2 = store.createResource("test2", root, secondResourceClass, attributes);
+
+        a2 = schema.createAttribute("a2", intAttrClass, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(testResourceClass, a2, Integer.valueOf(0));
+
+        DefaultTable expected = new DefaultTable("second", secondTableCols);
+        expected.addRow(new Object[] { testRes2.getIdObject(), null, 0L });
+        ITable actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
+        assertEquals(expected, actual);
+
+        expected = new DefaultTable("ledge_parameters", parametersTableCols);
+        expected.addRow(new Object[] { 0L, "", "" });
+        actual = databaseConnection.createQueryTable("ledge_parameters",
+            "SELECT * FROM ledge_parameters");
+        assertEquals(expected, actual);
+
+        databaseConnection.close();
+    }
+
+    public void testCreateMultiLevelResources()
+        throws Exception
+    {
+        testCreateMultiLevelClasses();
 
         Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
         attributes.put(a1, "foo");
@@ -320,10 +381,10 @@ public class PersistentResourcesTest
         databaseConnection.close();
     }
 
-    public void testUpdateTwoLevelResources()
+    public void testUpdateMultiLevelResources()
         throws Exception
     {
-        testCreateTwoLevelResources();
+        testCreateMultiLevelResources();
 
         testRes1.set(a1, "foo_1");
         testRes1.set(a3, testRes2);
@@ -359,10 +420,10 @@ public class PersistentResourcesTest
         databaseConnection.close();
     }
 
-    public void testDeleteTwoLevelResources()
+    public void testDeleteMultiLevelResources()
         throws Exception
     {
-        testCreateTwoLevelResources();
+        testCreateMultiLevelResources();
 
         store.deleteResource(testRes2);
         store.deleteResource(testRes1);
@@ -383,7 +444,7 @@ public class PersistentResourcesTest
         databaseConnection.close();
     }
 
-    public void testCreateTwoLevelResourceClassWithRequiredAttributes()
+    public void testCreateMultiLevelResourceClassWithRequiredAttributes()
         throws Exception
     {
         testCreateClass();
@@ -430,10 +491,10 @@ public class PersistentResourcesTest
         assertEquals(Integer.valueOf(9), testRes2.get(a2));
     }
 
-    public void testRevertTwoLevelResource()
+    public void testRevertMultiLevelResource()
         throws Exception
     {
-        testCreateTwoLevelResources();
+        testCreateMultiLevelResources();
 
         testRes1.set(a1, "baz");
         testRes1.revert();
@@ -448,10 +509,10 @@ public class PersistentResourcesTest
         assertEquals(Boolean.TRUE, testRes2.get(a4));
     }
 
-    public void testDeleteTwoLevelAttribute()
+    public void testDeleteMultiLevelAttribute()
         throws Exception
     {
-        testCreateTwoLevelResources();
+        testCreateMultiLevelResources();
 
         schema.deleteAttribute(testResourceClass, a3);
         Column[] trimmedCols = new Column[testTableCols.length - 1];
@@ -522,10 +583,10 @@ public class PersistentResourcesTest
         databaseConnection.close();
     }
 
-    public void testDeleteTwoLevelResourceClass()
+    public void testDeleteMultiLevelResourceClass()
         throws Exception
     {
-        testCreateTwoLevelResources();
+        testCreateMultiLevelResources();
 
         a6 = schema.createAttribute("a6", resourceListAttrClass, null, AttributeFlags.REQUIRED);
         final ResourceList<Resource> defValue = resourceListAttrClass.getHandler()
