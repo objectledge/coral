@@ -316,9 +316,11 @@ public class ResourceListAttributeHandler<T extends Resource, L extends Resource
     /**
      * {@inheritDoc}
      */    
-    public boolean isModified(L value)
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean isModified(Object value)
     {
-        return value.isModified();
+        return ((L)value).isModified();
     }
 
     // integrity constraints ////////////////////////////////////////////////    
