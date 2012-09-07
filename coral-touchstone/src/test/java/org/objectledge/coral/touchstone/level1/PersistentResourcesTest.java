@@ -6,11 +6,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
+import org.objectledge.container.LedgeContainer;
 import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.datatypes.PersistentResourceHandler;
 import org.objectledge.coral.datatypes.ResourceList;
@@ -22,10 +26,14 @@ import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
 import org.objectledge.database.DatabaseUtils;
+import org.objectledge.database.IdGenerator;
+import org.objectledge.database.ThreadDataSource;
+import org.objectledge.filesystem.FileSystem;
 import org.objectledge.parameters.DefaultParameters;
 import org.objectledge.parameters.Parameters;
 
@@ -684,6 +692,37 @@ public class PersistentResourcesTest
         assertEquals(expected, actual);
 
         databaseConnection.close();
+    }
+
+    public void testRetrieval()
+        throws Exception
+    {
+        testCreateResource();
+
+        Resource r = store.getResource(testRes1.getId());
+        assertEquals(testRes1, r);
+
+        coral.close();
+        container.killContainer();
+
+        FileSystem fs = FileSystem.getStandardFileSystem("src/test/resources");
+        container = new LedgeContainer(fs, "/config", getClass().getClassLoader());
+        coralSessionFactory = (CoralSessionFactory)container.getContainer().getComponentInstance(
+            CoralSessionFactory.class);
+        dataSource = (DataSource)container.getContainer().getComponentInstanceOfType(
+            ThreadDataSource.class);
+        log = Logger.getLogger(getClass());
+
+        IdGenerator idGenerator = (IdGenerator)container.getContainer().getComponentInstanceOfType(
+            IdGenerator.class);
+        idGenerator.getNextId("global_transaction_hack");
+
+        coral = coralSessionFactory.getRootSession();
+        store = coral.getStore();
+
+        r = store.getResource(testRes1.getId());
+        assertEquals("foo", r.get(a1));
+        assertEquals(Integer.valueOf(7), r.get(a2));
     }
 
     private static void row(DefaultTable table, Object... columns)
