@@ -35,8 +35,12 @@ import org.apache.log4j.Logger;
 import org.dbunit.Assertion;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.Column;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.DefaultTable;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.datatype.DataType;
 import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.container.LedgeContainer;
 import org.objectledge.coral.session.CoralSessionFactory;
@@ -52,11 +56,25 @@ import org.objectledge.filesystem.FileSystem;
  */
 public abstract class CoralTestCase extends TestCase
 {
+    protected static Column col(String name, DataType type)
+    {
+        return new Column(name, type, Column.NULLABLE);
+    }
+
+    protected static Column nnCol(String name, DataType type)
+    {
+        return new Column(name, type, Column.NO_NULLS);
+    }
+
     protected CoralSessionFactory coralSessionFactory;
     
     protected LedgeContainer container;
     
     protected IDatabaseConnection databaseConnection;
+
+    private DefaultTable expected;
+
+    private ITable actual;
     
     protected Logger log;
 
@@ -91,6 +109,11 @@ public abstract class CoralTestCase extends TestCase
     
     // DbUnit assertions
     
+    protected void expTable(String table, Column... columns)
+    {
+        expected = new DefaultTable(table, columns);
+    }
+
     public void assertEquals(IDataSet expected, IDataSet actual)
         throws Exception
     {
@@ -101,5 +124,26 @@ public abstract class CoralTestCase extends TestCase
         throws Exception
     {
         Assertion.assertEquals(expected, actual);
+    }
+
+    protected void expRow(Object... values)
+        throws DataSetException
+    {
+        expected.addRow(values);
+    }
+
+    protected void assertExpTable()
+        throws Exception
+    {
+        String table = expected.getTableMetaData().getTableName();
+        actual = databaseConnection.createQueryTable(table, "SELECT * FROM " + table);
+        try
+        {
+            assertEquals(expected, actual);
+        }
+        finally
+        {
+            databaseConnection.close();
+        }
     }
 }

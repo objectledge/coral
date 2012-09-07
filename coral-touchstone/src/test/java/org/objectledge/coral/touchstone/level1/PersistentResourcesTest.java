@@ -1,6 +1,5 @@
 package org.objectledge.coral.touchstone.level1;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -10,9 +9,6 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.dbunit.dataset.Column;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.DefaultTable;
-import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 import org.objectledge.container.LedgeContainer;
 import org.objectledge.coral.datatypes.PersistentResource;
@@ -51,23 +47,27 @@ public class PersistentResourcesTest
 
     private CoralStore store;
 
-    private AttributeClass<String> stringAttrClass;
+    private Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
 
-    private AttributeClass<Integer> intAttrClass;
+    private AttributeClass<String> stringAttr;
 
-    private AttributeClass<Resource> resourceAttrClass;
+    private AttributeClass<Integer> intAttr;
 
-    private AttributeClass<Boolean> booleanAttrClass;
+    private AttributeClass<Resource> resourceAttr;
 
-    private AttributeClass<Parameters> parametersAttrClass;
+    private AttributeClass<Boolean> booleanAttr;
 
-    private AttributeClass<ResourceList<Resource>> resourceListAttrClass;
+    private AttributeClass<Parameters> parametersAttr;
 
-    private AttributeClass<Subject> subjectAttrClass;
+    private AttributeClass<ResourceList<Resource>> resourceListAttr;
 
-    private Resource root;
+    private AttributeClass<Subject> subjectAttr;
 
-    private ResourceClass<?> testResourceClass;
+    private ResourceClass<?> firstClass;
+
+    private ResourceClass<?> seconClass;
+
+    private ResourceClass<?> thirdClass;
 
     private AttributeDefinition<String> a1;
 
@@ -75,43 +75,35 @@ public class PersistentResourcesTest
 
     private AttributeDefinition<Resource> a3;
 
-    private Column[] testTableCols = { new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
-                    new Column("SELECT_", DataType.VARCHAR, Column.NULLABLE),
-                    new Column("A2", DataType.INTEGER, Column.NO_NULLS),
-                    new Column("A3", DataType.BIGINT, Column.NULLABLE) };
-
-    private Column[] secondTableCols = {
-                    new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
-                    new Column("A4", DataType.BOOLEAN, Column.NULLABLE),
-                    new Column("A5", DataType.BIGINT, Column.NO_NULLS) };
-
-    private Column[] thirdTableCols = {
-                    new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
-                    new Column("A7", DataType.BIGINT, Column.NO_NULLS) };
-
-    private Column[] parametersTableCols = { new Column("PARAMETERS_ID", DataType.BIGINT),
-                    new Column("NAME", DataType.VARCHAR), new Column("VALUE", DataType.VARCHAR) };
-
-    private Column[] resourceListTableCols = {
-                    new Column("DATA_KEY", DataType.BIGINT, Column.NO_NULLS),
-                    new Column("POS", DataType.INTEGER, Column.NO_NULLS),
-                    new Column("REF", DataType.BIGINT, Column.NO_NULLS) };
-
-    private Resource testRes1;
-
-    private Resource testRes2;
-
-    private ResourceClass<?> secondResourceClass;
-
     private AttributeDefinition<Boolean> a4;
 
     private AttributeDefinition<Parameters> a5;
 
     private AttributeDefinition<ResourceList<Resource>> a6;
 
-    private ResourceClass<?> thirdResourceClass;
-
     private AttributeDefinition<Subject> a7;
+
+    private Column[] firstCols = { nnCol("RESOURCE_ID", DataType.BIGINT),
+                    col("SELECT_", DataType.VARCHAR), nnCol("A2", DataType.INTEGER),
+                    col("A3", DataType.BIGINT) };
+
+    private Column[] secondCols = { nnCol("RESOURCE_ID", DataType.BIGINT),
+                    col("A4", DataType.BOOLEAN), nnCol("A5", DataType.BIGINT) };
+
+    private Column[] thirdCols = { nnCol("RESOURCE_ID", DataType.BIGINT),
+                    nnCol("A7", DataType.BIGINT) };
+
+    private Column[] parametersCols = { nnCol("PARAMETERS_ID", DataType.BIGINT),
+                    nnCol("NAME", DataType.VARCHAR), nnCol("VALUE", DataType.VARCHAR) };
+
+    private Column[] resourceListCols = { nnCol("DATA_KEY", DataType.BIGINT),
+                    nnCol("POS", DataType.INTEGER), nnCol("REF", DataType.BIGINT) };
+
+    private Resource rootRes;
+
+    private Resource firstRes;
+
+    private Resource secondRes;
 
     @Override
     public void setUp()
@@ -120,16 +112,16 @@ public class PersistentResourcesTest
         super.setUp();
         coral = coralSessionFactory.getRootSession();
         schema = coral.getSchema();
-        stringAttrClass = (AttributeClass<String>)schema.getAttributeClass("string");
-        intAttrClass = (AttributeClass<Integer>)schema.getAttributeClass("integer");
-        resourceAttrClass = (AttributeClass<Resource>)schema.getAttributeClass("resource");
-        booleanAttrClass = (AttributeClass<Boolean>)schema.getAttributeClass("boolean");
-        parametersAttrClass = (AttributeClass<Parameters>)schema.getAttributeClass("parameters");
-        resourceListAttrClass = (AttributeClass<ResourceList<Resource>>)schema
+        stringAttr = (AttributeClass<String>)schema.getAttributeClass("string");
+        intAttr = (AttributeClass<Integer>)schema.getAttributeClass("integer");
+        resourceAttr = (AttributeClass<Resource>)schema.getAttributeClass("resource");
+        booleanAttr = (AttributeClass<Boolean>)schema.getAttributeClass("boolean");
+        parametersAttr = (AttributeClass<Parameters>)schema.getAttributeClass("parameters");
+        resourceListAttr = (AttributeClass<ResourceList<Resource>>)schema
             .getAttributeClass("resource_list");
-        subjectAttrClass = (AttributeClass<Subject>)schema.getAttributeClass("subject");
+        subjectAttr = (AttributeClass<Subject>)schema.getAttributeClass("subject");
         store = coral.getStore();
-        root = store.getResource(CoralStore.ROOT_RESOURCE);
+        rootRes = store.getResource(CoralStore.ROOT_RESOURCE);
     }
 
     @Override
@@ -143,19 +135,17 @@ public class PersistentResourcesTest
     public void testCreateClass()
         throws Exception
     {
-        testResourceClass = schema.createResourceClass("test", PersistentResource.class.getName(),
-            PersistentResourceHandler.class.getName(), "test", 0);
-        a1 = schema.createAttribute("select", stringAttrClass, null, 0);
-        schema.addAttribute(testResourceClass, a1, null);
-        a2 = schema.createAttribute("a2", intAttrClass, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(testResourceClass, a2, Integer.valueOf(0));
-        a3 = schema.createAttribute("a3", resourceAttrClass, "test", 0);
-        schema.addAttribute(testResourceClass, a3, null);
+        firstClass = schema.createResourceClass("first", PersistentResource.class.getName(),
+            PersistentResourceHandler.class.getName(), "first", 0);
+        a1 = schema.createAttribute("select", stringAttr, null, 0);
+        schema.addAttribute(firstClass, a1, null);
+        a2 = schema.createAttribute("a2", intAttr, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(firstClass, a2, 0);
+        a3 = schema.createAttribute("a3", resourceAttr, "first", 0);
+        schema.addAttribute(firstClass, a3, null);
 
-        ITable expected = new DefaultTable("test", testTableCols);
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        databaseConnection.close();
-        assertEquals(actual, expected);
+        expTable("first", firstCols);
+        assertExpTable();
     }
 
     public void testCreateResource()
@@ -163,23 +153,19 @@ public class PersistentResourcesTest
     {
         testCreateClass();
 
-        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
         attributes.put(a1, "foo");
         attributes.put(a2, 7);
-        testRes1 = store.createResource("test1", root, testResourceClass, attributes);
+        firstRes = store.createResource("test1", rootRes, firstClass, attributes);
 
         attributes.put(a1, "bar");
         attributes.put(a2, 9);
-        attributes.put(a3, testRes1);
-        testRes2 = store.createResource("test2", root, testResourceClass, attributes);
+        attributes.put(a3, firstRes);
+        secondRes = store.createResource("test2", rootRes, firstClass, attributes);
 
-        DefaultTable expected = new DefaultTable("test", testTableCols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7), null });
-        expected.addRow(new Object[] { testRes2.getIdObject(), "bar", Integer.valueOf(9),
-                        testRes1.getIdObject() });
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        databaseConnection.close();
-        assertEquals(expected, actual);
+        expTable("first", firstCols);
+        expRow(firstRes.getIdObject(), "foo", 7, null);
+        expRow(secondRes.getIdObject(), "bar", 9, firstRes.getIdObject());
+        assertExpTable();
     }
 
     public void testUpdateResource()
@@ -187,19 +173,16 @@ public class PersistentResourcesTest
     {
         testCreateResource();
 
-        testRes1.set(a1, "baz");
-        testRes1.update();
-        testRes2.set(a2, 11);
-        testRes2.unset(a3);
-        testRes2.update();
+        firstRes.set(a1, "baz");
+        firstRes.update();
+        secondRes.set(a2, 11);
+        secondRes.unset(a3);
+        secondRes.update();
 
-        DefaultTable expected = new DefaultTable("test", testTableCols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "baz", Integer.valueOf(7), null });
-        expected.addRow(new Object[] { testRes2.getIdObject(), "bar", Integer.valueOf(11), null });
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        assertEquals(expected, actual);
-
-        databaseConnection.close();
+        expTable("first", firstCols);
+        expRow(firstRes.getIdObject(), "baz", 7, null);
+        expRow(secondRes.getIdObject(), "bar", 11, null);
+        assertExpTable();
     }
 
     public void testRevertResource()
@@ -207,15 +190,15 @@ public class PersistentResourcesTest
     {
         testCreateResource();
 
-        testRes1.set(a1, "baz");
-        testRes1.revert();
-        testRes2.set(a2, 11);
-        testRes2.unset(a3);
-        testRes2.revert();
+        firstRes.set(a1, "baz");
+        firstRes.revert();
+        secondRes.set(a2, 11);
+        secondRes.unset(a3);
+        secondRes.revert();
 
-        assertEquals("foo", testRes1.get(a1));
-        assertEquals(Integer.valueOf(9), testRes2.get(a2));
-        assertEquals(testRes1, testRes2.get(a3));
+        assertEquals("foo", firstRes.get(a1));
+        assertEquals(Integer.valueOf(9), secondRes.get(a2));
+        assertEquals(firstRes, secondRes.get(a3));
     }
 
     public void testDeleteResource()
@@ -223,13 +206,11 @@ public class PersistentResourcesTest
     {
         testCreateResource();
 
-        store.deleteResource(testRes2);
-        store.deleteResource(testRes1);
+        store.deleteResource(secondRes);
+        store.deleteResource(firstRes);
 
-        DefaultTable expected = new DefaultTable("test", testTableCols);
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        databaseConnection.close();
-        assertEquals(expected, actual);
+        expTable("first", firstCols);
+        assertExpTable();
     }
 
     public void testDeleteAttributes()
@@ -237,30 +218,24 @@ public class PersistentResourcesTest
     {
         testCreateResource();
 
-        schema.deleteAttribute(testResourceClass, a3);
-        Column[] trimmedCols = new Column[testTableCols.length - 1];
-        System.arraycopy(testTableCols, 0, trimmedCols, 0, testTableCols.length - 1);
-        DefaultTable expected = new DefaultTable("test", trimmedCols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7) });
-        expected.addRow(new Object[] { testRes2.getIdObject(), "bar", Integer.valueOf(9) });
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        databaseConnection.close();
-        assertEquals(expected, actual);
+        schema.deleteAttribute(firstClass, a3);
 
-        schema.deleteAttribute(testResourceClass, a2);
-        Column[] trimmedCols2 = new Column[trimmedCols.length - 1];
-        System.arraycopy(trimmedCols, 0, trimmedCols2, 0, trimmedCols.length - 1);
-        expected = new DefaultTable("test", trimmedCols2);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "foo" });
-        expected.addRow(new Object[] { testRes2.getIdObject(), "bar" });
-        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        databaseConnection.close();
-        assertEquals(expected, actual);
+        expTable("first", firstCols[0], firstCols[1], firstCols[2]);
+        expRow(firstRes.getIdObject(), "foo", 7);
+        expRow(secondRes.getIdObject(), "bar", 9);
+        assertExpTable();
 
-        schema.deleteAttribute(testResourceClass, a1);
-        assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
+        schema.deleteAttribute(firstClass, a2);
 
-        assertEquals(0, testResourceClass.getDeclaredAttributes().length);
+        expTable("first", firstCols[0], firstCols[1]);
+        expRow(firstRes.getIdObject(), "foo");
+        expRow(secondRes.getIdObject(), "bar");
+        assertExpTable();
+
+        schema.deleteAttribute(firstClass, a1);
+        assertFalse(DatabaseUtils.hasTable(dataSource, "first"));
+
+        assertEquals(0, firstClass.getDeclaredAttributes().length);
         assertEquals(1, store.getResource("test1").length);
     }
 
@@ -269,10 +244,10 @@ public class PersistentResourcesTest
     {
         testCreateResource();
 
-        store.deleteResource(testRes2);
-        store.deleteResource(testRes1);
-        schema.deleteResourceClass(testResourceClass);
-        assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
+        store.deleteResource(secondRes);
+        store.deleteResource(firstRes);
+        schema.deleteResourceClass(firstClass);
+        assertFalse(DatabaseUtils.hasTable(dataSource, "first"));
     }
 
     public void testCreateMultiLevelClasses()
@@ -280,70 +255,64 @@ public class PersistentResourcesTest
     {
         testCreateClass();
 
-        secondResourceClass = schema.createResourceClass("second",
+        seconClass = schema.createResourceClass("second",
             PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
             "second", 0);
-        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
         attributes.put(a2, 0);
-        a4 = schema.createAttribute("a4", booleanAttrClass, null, 0);
-        schema.addAttribute(secondResourceClass, a4, null);
-        a5 = schema.createAttribute("a5", parametersAttrClass, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(secondResourceClass, a5, new DefaultParameters());
+        a4 = schema.createAttribute("a4", booleanAttr, null, 0);
+        schema.addAttribute(seconClass, a4, null);
+        a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(seconClass, a5, new DefaultParameters());
 
-        ITable expected = new DefaultTable("second", secondTableCols);
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM second");
-        databaseConnection.close();
-        assertEquals(actual, expected);
+        expTable("second", secondCols);
+        assertExpTable();
 
-        thirdResourceClass = schema.createResourceClass("third",
+        thirdClass = schema.createResourceClass("third",
             PersistentResource.class.getName(), PersistentResourceHandler.class.getName(), "third",
             0);
         attributes.put(a5, new DefaultParameters());
-        a7 = schema.createAttribute("a7", subjectAttrClass, null, 0);
-        schema.addAttribute(thirdResourceClass, a7, null);
+        a7 = schema.createAttribute("a7", subjectAttr, null, 0);
+        schema.addAttribute(thirdClass, a7, null);
 
-        schema.addParentClass(thirdResourceClass, secondResourceClass, attributes);
-        schema.addParentClass(secondResourceClass, testResourceClass, attributes);
+        expTable("third", thirdCols);
+        assertExpTable();
+
+        schema.addParentClass(thirdClass, seconClass, attributes);
+        schema.addParentClass(seconClass, firstClass, attributes);
     }
 
     public void testCreateMultiLevelClasses2()
         throws Exception
     {
-        testResourceClass = schema.createResourceClass("test", PersistentResource.class.getName(),
-            PersistentResourceHandler.class.getName(), "test", 0);
-        a1 = schema.createAttribute("select", stringAttrClass, null, 0);
-        schema.addAttribute(testResourceClass, a1, null);
-        a3 = schema.createAttribute("a3", resourceAttrClass, "test", 0);
-        schema.addAttribute(testResourceClass, a3, null);
+        firstClass = schema.createResourceClass("first", PersistentResource.class.getName(),
+            PersistentResourceHandler.class.getName(), "first", 0);
+        a1 = schema.createAttribute("select", stringAttr, null, 0);
+        schema.addAttribute(firstClass, a1, null);
+        a3 = schema.createAttribute("a3", resourceAttr, "first", 0);
+        schema.addAttribute(firstClass, a3, null);
 
-        secondResourceClass = schema.createResourceClass("second",
+        seconClass = schema.createResourceClass("second",
             PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
             "second", 0);
-        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
-        schema.addParentClass(secondResourceClass, testResourceClass, attributes);
-        a4 = schema.createAttribute("a4", booleanAttrClass, null, 0);
-        schema.addAttribute(secondResourceClass, a4, null);
-        a5 = schema.createAttribute("a5", parametersAttrClass, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(secondResourceClass, a5, new DefaultParameters());
+        schema.addParentClass(seconClass, firstClass, attributes);
+        a4 = schema.createAttribute("a4", booleanAttr, null, 0);
+        schema.addAttribute(seconClass, a4, null);
+        a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(seconClass, a5, new DefaultParameters());
 
         attributes.put(a5, new DefaultParameters());
-        testRes2 = store.createResource("test2", root, secondResourceClass, attributes);
+        secondRes = store.createResource("test2", rootRes, seconClass, attributes);
 
-        a2 = schema.createAttribute("a2", intAttrClass, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(testResourceClass, a2, Integer.valueOf(0));
+        a2 = schema.createAttribute("a2", intAttr, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(firstClass, a2, 0);
 
-        DefaultTable expected = new DefaultTable("second", secondTableCols);
-        expected.addRow(new Object[] { testRes2.getIdObject(), null, 0L });
-        ITable actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
-        assertEquals(expected, actual);
+        expTable("second", secondCols);
+        expRow(secondRes.getIdObject(), null, 0L);
+        assertExpTable();
 
-        expected = new DefaultTable("ledge_parameters", parametersTableCols);
-        expected.addRow(new Object[] { 0L, "", "" });
-        actual = databaseConnection.createQueryTable("ledge_parameters",
-            "SELECT * FROM ledge_parameters");
-        assertEquals(expected, actual);
-
-        databaseConnection.close();
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        assertExpTable();
     }
 
     public void testCreateMultiLevelResources()
@@ -351,42 +320,34 @@ public class PersistentResourcesTest
     {
         testCreateMultiLevelClasses();
 
-        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
         attributes.put(a1, "foo");
         attributes.put(a2, 7);
-        testRes1 = store.createResource("test1", root, testResourceClass, attributes);
+        firstRes = store.createResource("test1", rootRes, firstClass, attributes);
 
         attributes.put(a1, "bar");
         attributes.put(a2, 9);
-        attributes.put(a3, testRes1);
+        attributes.put(a3, firstRes);
         attributes.put(a4, true);
         Parameters p = new DefaultParameters();
         p.set("ok", true);
         p.set("number", 11);
         attributes.put(a5, p);
-        testRes2 = store.createResource("test2", root, secondResourceClass, attributes);
+        secondRes = store.createResource("test2", rootRes, seconClass, attributes);
 
-        DefaultTable expected = new DefaultTable("test", testTableCols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7), null });
-        expected.addRow(new Object[] { testRes2.getIdObject(), "bar", Integer.valueOf(9),
-                        testRes1.getIdObject() });
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        assertEquals(expected, actual);
+        expTable("first", firstCols);
+        expRow(firstRes.getIdObject(), "foo", 7, null);
+        expRow(secondRes.getIdObject(), "bar", 9, firstRes.getIdObject());
+        assertExpTable();
 
-        expected = new DefaultTable("second", secondTableCols);
-        expected.addRow(new Object[] { testRes2.getIdObject(), Boolean.TRUE, 0L });
-        actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
-        assertEquals(expected, actual);
+        expTable("second", secondCols);
+        expRow(secondRes.getIdObject(), true, 0L);
+        assertExpTable();
 
-        expected = new DefaultTable("ledge_parameters", parametersTableCols);
-        expected.addRow(new Object[] { 0L, "", "" });
-        expected.addRow(new Object[] { 0L, "ok", "true" });
-        expected.addRow(new Object[] { 0L, "number", "11" });
-        actual = databaseConnection.createQueryTable("ledge_parameters",
-            "SELECT * FROM ledge_parameters");
-        assertEquals(expected, actual);
-
-        databaseConnection.close();
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        expRow(0L, "ok", "true");
+        expRow(0L, "number", "11");
+        assertExpTable();
     }
 
     public void testUpdateMultiLevelResources()
@@ -394,38 +355,31 @@ public class PersistentResourcesTest
     {
         testCreateMultiLevelResources();
 
-        testRes1.set(a1, "foo_1");
-        testRes1.set(a3, testRes2);
+        firstRes.set(a1, "foo_1");
+        firstRes.set(a3, secondRes);
 
-        testRes2.set(a1, "bar_1");
-        testRes2.unset(a3);
-        testRes2.set(a4, false);
-        testRes2.get(a5).set("number", 22);
+        secondRes.set(a1, "bar_1");
+        secondRes.unset(a3);
+        secondRes.set(a4, false);
+        secondRes.get(a5).set("number", 22);
 
-        testRes1.update();
-        testRes2.update();
+        firstRes.update();
+        secondRes.update();
 
-        DefaultTable expected = new DefaultTable("test", testTableCols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "foo_1", Integer.valueOf(7),
-                        testRes2.getIdObject() });
-        expected.addRow(new Object[] { testRes2.getIdObject(), "bar_1", Integer.valueOf(9), null });
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        assertEquals(expected, actual);
+        expTable("first", firstCols);
+        expRow(firstRes.getIdObject(), "foo_1", 7, secondRes.getIdObject());
+        expRow(secondRes.getIdObject(), "bar_1", 9, null);
+        assertExpTable();
 
-        expected = new DefaultTable("second", secondTableCols);
-        expected.addRow(new Object[] { testRes2.getIdObject(), Boolean.FALSE, 0L });
-        actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
-        assertEquals(expected, actual);
+        expTable("second", secondCols);
+        expRow(secondRes.getIdObject(), false, 0L);
+        assertExpTable();
 
-        expected = new DefaultTable("ledge_parameters", parametersTableCols);
-        expected.addRow(new Object[] { 0L, "", "" });
-        expected.addRow(new Object[] { 0L, "ok", "true" });
-        expected.addRow(new Object[] { 0L, "number", "22" });
-        actual = databaseConnection.createQueryTable("ledge_parameters",
-            "SELECT * FROM ledge_parameters");
-        assertEquals(expected, actual);
-
-        databaseConnection.close();
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        expRow(0L, "ok", "true");
+        expRow(0L, "number", "22");
+        assertExpTable();
     }
 
     public void testDeleteMultiLevelResources()
@@ -433,23 +387,17 @@ public class PersistentResourcesTest
     {
         testCreateMultiLevelResources();
 
-        store.deleteResource(testRes2);
-        store.deleteResource(testRes1);
+        store.deleteResource(secondRes);
+        store.deleteResource(firstRes);
 
-        DefaultTable expected = new DefaultTable("test", testTableCols);
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        assertEquals(expected, actual);
+        expTable("first", firstCols);
+        assertExpTable();
 
-        expected = new DefaultTable("second", secondTableCols);
-        actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
-        assertEquals(expected, actual);
+        expTable("second", secondCols);
+        assertExpTable();
 
-        expected = new DefaultTable("ledge_parameters", parametersTableCols);
-        actual = databaseConnection.createQueryTable("ledge_parameters",
-            "SELECT * FROM ledge_parameters");
-        assertEquals(expected, actual);
-
-        databaseConnection.close();
+        expTable("ledge_parameters", parametersCols);
+        assertExpTable();
     }
 
     public void testCreateMultiLevelResourceClassWithRequiredAttributes()
@@ -457,46 +405,38 @@ public class PersistentResourcesTest
     {
         testCreateClass();
 
-        secondResourceClass = schema.createResourceClass("second",
+        seconClass = schema.createResourceClass("second",
             PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
             "second", 0);
-        a4 = schema.createAttribute("a4", booleanAttrClass, null, 0);
-        schema.addAttribute(secondResourceClass, a4, null);
-        a5 = schema.createAttribute("a5", parametersAttrClass, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(secondResourceClass, a5, null);
+        a4 = schema.createAttribute("a4", booleanAttr, null, 0);
+        schema.addAttribute(seconClass, a4, null);
+        a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(seconClass, a5, null);
 
-        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
-        Parameters p = new DefaultParameters();
-        attributes.put(a5, p);
-        testRes2 = store.createResource("test2", root, secondResourceClass, attributes);
+        attributes.put(a5, new DefaultParameters());
+        secondRes = store.createResource("test2", rootRes, seconClass, attributes);
 
         attributes.clear();
         attributes.put(a2, 9);
 
-        schema.addParentClass(secondResourceClass, testResourceClass, attributes);
+        schema.addParentClass(seconClass, firstClass, attributes);
 
-        DefaultTable expected = new DefaultTable("test", testTableCols);
-        expected.addRow(new Object[] { testRes2.getIdObject(), null, Integer.valueOf(9), null });
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        assertEquals(expected, actual);
+        expTable("first", firstCols);
+        expRow(secondRes.getIdObject(), null, 9, null);
+        assertExpTable();
 
-        expected = new DefaultTable("second", secondTableCols);
-        expected.addRow(new Object[] { testRes2.getIdObject(), null, 0L });
-        actual = databaseConnection.createQueryTable("second", "SELECT * FROM second");
-        assertEquals(expected, actual);
+        expTable("second", secondCols);
+        expRow(secondRes.getIdObject(), null, 0L);
+        assertExpTable();
 
-        expected = new DefaultTable("ledge_parameters", parametersTableCols);
-        expected.addRow(new Object[] { 0L, "", "" });
-        actual = databaseConnection.createQueryTable("ledge_parameters",
-            "SELECT * FROM ledge_parameters");
-        assertEquals(expected, actual);
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        assertExpTable();
 
-        databaseConnection.close();
-
-        assertTrue(Arrays.asList(secondResourceClass.getParentClasses())
-            .contains(testResourceClass));
-        assertTrue(Arrays.asList(secondResourceClass.getAllAttributes()).contains(a2));
-        assertEquals(Integer.valueOf(9), testRes2.get(a2));
+        assertTrue(Arrays.asList(seconClass.getParentClasses())
+            .contains(firstClass));
+        assertTrue(Arrays.asList(seconClass.getAllAttributes()).contains(a2));
+        assertEquals(Integer.valueOf(9), secondRes.get(a2));
     }
 
     public void testRevertMultiLevelResource()
@@ -504,17 +444,17 @@ public class PersistentResourcesTest
     {
         testCreateMultiLevelResources();
 
-        testRes1.set(a1, "baz");
-        testRes1.revert();
-        testRes2.set(a2, 11);
-        testRes2.unset(a3);
-        testRes2.set(a4, false);
-        testRes2.revert();
+        firstRes.set(a1, "baz");
+        firstRes.revert();
+        secondRes.set(a2, 11);
+        secondRes.unset(a3);
+        secondRes.set(a4, false);
+        secondRes.revert();
 
-        assertEquals("foo", testRes1.get(a1));
-        assertEquals(Integer.valueOf(9), testRes2.get(a2));
-        assertEquals(testRes1, testRes2.get(a3));
-        assertEquals(Boolean.TRUE, testRes2.get(a4));
+        assertEquals("foo", firstRes.get(a1));
+        assertEquals(Integer.valueOf(9), secondRes.get(a2));
+        assertEquals(firstRes, secondRes.get(a3));
+        assertEquals(Boolean.TRUE, secondRes.get(a4));
     }
 
     public void testDeleteMultiLevelAttribute()
@@ -522,30 +462,25 @@ public class PersistentResourcesTest
     {
         testCreateMultiLevelResources();
 
-        schema.deleteAttribute(testResourceClass, a3);
-        Column[] trimmedCols = new Column[testTableCols.length - 1];
-        System.arraycopy(testTableCols, 0, trimmedCols, 0, testTableCols.length - 1);
-        DefaultTable expected = new DefaultTable("test", trimmedCols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7) });
-        expected.addRow(new Object[] { testRes2.getIdObject(), "bar", Integer.valueOf(9) });
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        databaseConnection.close();
-        assertEquals(expected, actual);
+        schema.deleteAttribute(firstClass, a3);
 
-        schema.deleteAttribute(testResourceClass, a2);
-        Column[] trimmedCols2 = new Column[trimmedCols.length - 1];
-        System.arraycopy(trimmedCols, 0, trimmedCols2, 0, trimmedCols.length - 1);
-        expected = new DefaultTable("test", trimmedCols2);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "foo" });
-        expected.addRow(new Object[] { testRes2.getIdObject(), "bar" });
-        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        databaseConnection.close();
-        assertEquals(expected, actual);
+        expTable("first", firstCols[0], firstCols[1], firstCols[2]);
+        expRow(firstRes.getIdObject(), "foo", 7);
+        expRow(secondRes.getIdObject(), "bar", 9);
+        assertExpTable();
 
-        schema.deleteAttribute(testResourceClass, a1);
-        assertFalse(DatabaseUtils.hasTable(dataSource, "test"));
+        schema.deleteAttribute(firstClass, a2);
 
-        assertEquals(0, testResourceClass.getDeclaredAttributes().length);
+        expTable("first", firstCols[0], firstCols[1]);
+        expRow(firstRes.getIdObject(), "foo");
+        expRow(secondRes.getIdObject(), "bar");
+        assertExpTable();
+
+        schema.deleteAttribute(firstClass, a1);
+
+        assertFalse(DatabaseUtils.hasTable(dataSource, "first"));
+
+        assertEquals(0, firstClass.getDeclaredAttributes().length);
         assertEquals(1, store.getResource("test1").length);
         assertEquals(1, store.getResource("test2").length);
 
@@ -556,39 +491,31 @@ public class PersistentResourcesTest
                     return (int)(e1.getId() - e2.getId());
                 }
             };
-        final AttributeDefinition<?>[] ad1 = secondResourceClass.getDeclaredAttributes();
+        final AttributeDefinition<?>[] ad1 = seconClass.getDeclaredAttributes();
         Arrays.sort(ad1, byId);
-        final AttributeDefinition<?>[] ad2 = secondResourceClass.getAllAttributes();
+        final AttributeDefinition<?>[] ad2 = seconClass.getAllAttributes();
         Arrays.sort(ad2, byId);
         assertTrue(Arrays.equals(ad1, ad2));
 
-        a6 = schema.createAttribute("a6", resourceListAttrClass, null, AttributeFlags.REQUIRED);
-        final ResourceList<Resource> defValue = resourceListAttrClass.getHandler()
-            .toAttributeValue(new ArrayList<Resource>());
-        schema.addAttribute(testResourceClass, a6, defValue);
+        a6 = schema.createAttribute("a6", resourceListAttr, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(firstClass, a6, new ResourceList<Resource>(coralSessionFactory));
 
-        testRes1.get(a6).add(testRes1);
-        testRes1.setModified(a6);
-        testRes1.update();
-        testRes2.get(a6).add(testRes2);
-        testRes2.setModified(a6);
-        testRes2.update();
+        firstRes.get(a6).add(firstRes);
+        firstRes.setModified(a6);
+        firstRes.update();
+        secondRes.get(a6).add(secondRes);
+        secondRes.setModified(a6);
+        secondRes.update();
 
-        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
-        row(expected, 0, 0, testRes1.getId());
-        row(expected, 1, 0, testRes2.getId());
-        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
-            "SELECT * FROM coral_attribute_resource_list");
-        assertEquals(expected, actual);
-        databaseConnection.close();
+        expTable("coral_attribute_resource_list", resourceListCols);
+        expRow(0, 0, firstRes.getId());
+        expRow(1, 0, secondRes.getId());
+        assertExpTable();
 
-        schema.deleteAttribute(testResourceClass, a6);
+        schema.deleteAttribute(firstClass, a6);
 
-        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
-        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
-            "SELECT * FROM coral_attribute_resource_list");
-        assertEquals(expected, actual);
-        databaseConnection.close();
+        expTable("coral_attribute_resource_list", resourceListCols);
+        assertExpTable();
     }
 
     public void testDeleteMultiLevelResourceClass()
@@ -596,102 +523,72 @@ public class PersistentResourcesTest
     {
         testCreateMultiLevelResources();
 
-        a6 = schema.createAttribute("a6", resourceListAttrClass, null, AttributeFlags.REQUIRED);
-        final ResourceList<Resource> defValue = resourceListAttrClass.getHandler()
-            .toAttributeValue(new ArrayList<Resource>());
-        schema.addAttribute(testResourceClass, a6, defValue);
+        a6 = schema.createAttribute("a6", resourceListAttr, null, AttributeFlags.REQUIRED);
+        schema.addAttribute(firstClass, a6, new ResourceList<Resource>(coralSessionFactory));
 
-        testRes1.get(a6).add(testRes1);
-        testRes1.setModified(a6);
-        testRes1.update();
-        testRes2.get(a6).add(testRes2);
-        testRes2.setModified(a6);
-        testRes2.update();
+        firstRes.get(a6).add(firstRes);
+        firstRes.setModified(a6);
+        firstRes.update();
+        secondRes.get(a6).add(secondRes);
+        secondRes.setModified(a6);
+        secondRes.update();
 
-        DefaultTable expected = new DefaultTable("coral_attribute_resource_list",
-            resourceListTableCols);
-        row(expected, 0, 0, testRes1.getId());
-        row(expected, 1, 0, testRes2.getId());
-        ITable actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
-            "SELECT * FROM coral_attribute_resource_list");
-        assertEquals(expected, actual);
-        databaseConnection.close();
+        expTable("coral_attribute_resource_list", resourceListCols);
+        expRow(0, 0, firstRes.getId());
+        expRow(1, 0, secondRes.getId());
+        assertExpTable();
 
-        schema.deleteParentClass(secondResourceClass, testResourceClass);
+        schema.deleteParentClass(seconClass, firstClass);
 
-        Column[] expTestTableCols = new Column[testTableCols.length + 1];
-        System.arraycopy(testTableCols, 0, expTestTableCols, 0, testTableCols.length);
-        expTestTableCols[testTableCols.length] = new Column("A6", DataType.BIGINT, Column.NO_NULLS);
+        expTable("first", firstCols[0], firstCols[1], firstCols[2], firstCols[3],
+            nnCol("A6", DataType.BIGINT));
+        expRow(firstRes.getIdObject(), "foo", 7, null, 0);
+        assertExpTable();
 
-        expected = new DefaultTable("test", expTestTableCols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), "foo", Integer.valueOf(7), null,
-                        Integer.valueOf(0) });
-        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        assertEquals(expected, actual);
-
-        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
-        row(expected, 0, 0, testRes1.getId());
-        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
-            "SELECT * FROM coral_attribute_resource_list");
-        assertEquals(expected, actual);
-        databaseConnection.close();
+        expTable("coral_attribute_resource_list", resourceListCols);
+        expRow(0, 0, firstRes.getId());
+        assertExpTable();
     }
 
     public void testCustomAttributeOps()
         throws Exception
     {
-        testResourceClass = schema.createResourceClass("test", PersistentResource.class.getName(),
-            PersistentResourceHandler.class.getName(), "test", 0);
-        a6 = schema.createAttribute("a6", resourceListAttrClass, null, 0);
-        schema.addAttribute(testResourceClass, a6, null);
-        Map<AttributeDefinition<?>, Object> attributes = new HashMap<AttributeDefinition<?>, Object>();
-        testRes1 = store.createResource("test1", root, testResourceClass, attributes);
+        firstClass = schema.createResourceClass("first", PersistentResource.class.getName(),
+            PersistentResourceHandler.class.getName(), "first", 0);
+        a6 = schema.createAttribute("a6", resourceListAttr, null, 0);
+        schema.addAttribute(firstClass, a6, null);
+        firstRes = store.createResource("test1", rootRes, firstClass, attributes);
 
-        Column[] t1a6Cols = new Column[] {
-                        new Column("RESOURCE_ID", DataType.BIGINT, Column.NO_NULLS),
-                        new Column("A6", DataType.BIGINT, Column.NULLABLE) };
+        expTable("first", nnCol("RESOURCE_ID", DataType.BIGINT), col("A6", DataType.BIGINT));
+        expRow(firstRes.getIdObject(), null);
+        assertExpTable();
 
-        DefaultTable expected = new DefaultTable("test", t1a6Cols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), null });
-        ITable actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        assertEquals(expected, actual);
-
-        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
-        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
-            "SELECT * FROM coral_attribute_resource_list");
-        assertEquals(expected, actual);
+        expTable("coral_attribute_resource_list", resourceListCols);
+        assertExpTable();
 
         databaseConnection.close();
 
-        testRes1.set(a6, new ResourceList<Resource>(coralSessionFactory));
-        testRes1.update();
+        firstRes.set(a6, new ResourceList<Resource>(coralSessionFactory));
+        firstRes.update();
 
-        expected = new DefaultTable("test", t1a6Cols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), Integer.valueOf(0) });
-        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        assertEquals(expected, actual);
+        expTable("first", nnCol("RESOURCE_ID", DataType.BIGINT), col("A6", DataType.BIGINT));
+        expRow(firstRes.getIdObject(), 0);
+        assertExpTable();
 
-        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
-        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
-            "SELECT * FROM coral_attribute_resource_list");
-        assertEquals(expected, actual);
+        expTable("coral_attribute_resource_list", resourceListCols);
+        assertExpTable();
 
         databaseConnection.close();
 
-        testRes1.unset(a6);
-        testRes1.update();
+        firstRes.unset(a6);
+        firstRes.update();
 
-        expected = new DefaultTable("test", t1a6Cols);
-        expected.addRow(new Object[] { testRes1.getIdObject(), null });
-        actual = databaseConnection.createQueryTable("test", "SELECT * FROM test");
-        assertEquals(expected, actual);
+        expTable("first", nnCol("RESOURCE_ID", DataType.BIGINT), col("A6", DataType.BIGINT));
+        expRow(firstRes.getIdObject(), null);
+        assertExpTable();
 
-        expected = new DefaultTable("coral_attribute_resource_list", resourceListTableCols);
-        actual = databaseConnection.createQueryTable("coral_attribute_resource_list",
-            "SELECT * FROM coral_attribute_resource_list");
-        assertEquals(expected, actual);
-
-        databaseConnection.close();
+        expTable("coral_attribute_resource_list", resourceListCols);
+        assertExpTable();
     }
 
     public void testRetrieval()
@@ -699,8 +596,8 @@ public class PersistentResourcesTest
     {
         testCreateResource();
 
-        Resource r = store.getResource(testRes1.getId());
-        assertEquals(testRes1, r);
+        Resource r = store.getResource(firstRes.getId());
+        assertEquals(firstRes, r);
 
         coral.close();
         container.killContainer();
@@ -720,14 +617,8 @@ public class PersistentResourcesTest
         coral = coralSessionFactory.getRootSession();
         store = coral.getStore();
 
-        r = store.getResource(testRes1.getId());
+        r = store.getResource(firstRes.getId());
         assertEquals("foo", r.get(a1));
         assertEquals(Integer.valueOf(7), r.get(a2));
-    }
-
-    private static void row(DefaultTable table, Object... columns)
-        throws DataSetException
-    {
-        table.addRow(columns);
     }
 }
