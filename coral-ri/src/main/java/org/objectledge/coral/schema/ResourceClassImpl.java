@@ -640,7 +640,7 @@ public class ResourceClassImpl<T extends Resource>
                                                boolean added)
     {
         ResourceClass<?> rc = attribute.getDeclaringClass();
-        if(rc.equals(this) || parentClasses.contains(rc))
+        if(rc.equals(this) || buildParentClassSet().contains(rc))
         {
             if(rc.equals(this))
             {
@@ -655,10 +655,10 @@ public class ResourceClassImpl<T extends Resource>
             }
             if(added)
             {
-                attributeMap = attributeMap.put(attribute.getName(), attribute);
+                attributeMap = buildAttributeMap().put(attribute.getName(), attribute);
                 expandAttributeIndexTable(attribute);
             }
-            else
+            else if(attributeMap != null)
             {
                 attributeMap = attributeMap.remove(attribute.getName());
             }
