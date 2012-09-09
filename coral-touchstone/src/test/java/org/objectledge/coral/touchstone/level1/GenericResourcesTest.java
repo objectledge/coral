@@ -26,6 +26,7 @@ import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
+import org.objectledge.coral.touchstone.dbunit.BooleanDataType;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.IdGenerator;
 import org.objectledge.database.ThreadDataSource;
@@ -86,8 +87,21 @@ public class GenericResourcesTest
     private Column[] parametersCols = { nnCol("PARAMETERS_ID", DataType.BIGINT),
                     nnCol("NAME", DataType.VARCHAR), nnCol("VALUE", DataType.VARCHAR) };
 
-    private Column[] resourceListCols = { nnCol("DATA_KEY", DataType.BIGINT),
-                    nnCol("POS", DataType.INTEGER), nnCol("REF", DataType.BIGINT) };
+    private static final Column DATA_KEY = nnCol("DATA_KEY", DataType.BIGINT);
+
+    private Column[] resourceListCols = { DATA_KEY, nnCol("POS", DataType.INTEGER),
+                    nnCol("REF", DataType.BIGINT) };
+
+    private Column[] stringAttrCols = { DATA_KEY, nnCol("DATA", DataType.VARCHAR) };
+
+    private Column[] intAttrCols = { DATA_KEY, nnCol("DATA", DataType.INTEGER) };
+
+    private Column[] booleanAttrCols = { DATA_KEY, nnCol("DATA", new BooleanDataType()) };
+
+    private Column[] resourceAttrCols = { DATA_KEY, nnCol("REF", DataType.BIGINT) };
+
+    private Column[] genericResCols = { nnCol("RESOURCE_ID", DataType.BIGINT),
+                    nnCol("ATTRIBUTE_DEFINITION_ID", DataType.BIGINT), DATA_KEY };
 
     private Resource rootRes;
 
@@ -133,8 +147,6 @@ public class GenericResourcesTest
         schema.addAttribute(firstClass, a2, 0);
         a3 = schema.createAttribute("a3", resourceAttr, "first", 0);
         schema.addAttribute(firstClass, a3, null);
-
-        // TODO
     }
 
     public void testCreateResource()
@@ -151,7 +163,27 @@ public class GenericResourcesTest
         attributes.put(a3, firstRes);
         secondRes = store.createResource("test2", rootRes, firstClass, attributes);
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(firstRes.getId(), a2.getId(), 0);
+        expRow(secondRes.getId(), a1.getId(), 1);
+        expRow(secondRes.getId(), a2.getId(), 1);
+        expRow(secondRes.getId(), a3.getId(), 0);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "foo");
+        expRow(1, "bar");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 7);
+        expRow(1, 9);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        expRow(0, firstRes.getId());
+        assertExpTable();
     }
 
     public void testUpdateResource()
@@ -165,7 +197,25 @@ public class GenericResourcesTest
         secondRes.unset(a3);
         secondRes.update();
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(firstRes.getId(), a2.getId(), 0);
+        expRow(secondRes.getId(), a1.getId(), 1);
+        expRow(secondRes.getId(), a2.getId(), 1);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "baz");
+        expRow(1, "bar");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 7);
+        expRow(1, 11);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
     }
 
     public void testRevertResource()
@@ -192,7 +242,17 @@ public class GenericResourcesTest
         store.deleteResource(secondRes);
         store.deleteResource(firstRes);
 
-        // TODO
+        expGenResTable();
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
     }
 
     public void testDeleteAttributes()
@@ -202,17 +262,51 @@ public class GenericResourcesTest
 
         schema.deleteAttribute(firstClass, a3);
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(firstRes.getId(), a2.getId(), 0);
+        expRow(secondRes.getId(), a1.getId(), 1);
+        expRow(secondRes.getId(), a2.getId(), 1);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "foo");
+        expRow(1, "bar");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 7);
+        expRow(1, 9);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
 
         schema.deleteAttribute(firstClass, a2);
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(secondRes.getId(), a1.getId(), 1);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "foo");
+        expRow(1, "bar");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        assertExpTable();
 
         schema.deleteAttribute(firstClass, a1);
-        assertFalse(DatabaseUtils.hasTable(dataSource, "first"));
 
         assertEquals(0, firstClass.getDeclaredAttributes().length);
         assertEquals(1, store.getResource("test1").length);
+
+        expGenResTable();
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
     }
 
     public void testDeleteResourceClass()
@@ -239,18 +333,32 @@ public class GenericResourcesTest
         a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
         schema.addAttribute(seconClass, a5, new DefaultParameters());
 
-        // TODO
-
         thirdClass = schema.createResourceClass("third", GenericResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         attributes.put(a5, new DefaultParameters());
         a7 = schema.createAttribute("a7", subjectAttr, null, 0);
         schema.addAttribute(thirdClass, a7, null);
 
-        // TODO
-
         schema.addParentClass(thirdClass, seconClass, attributes);
         schema.addParentClass(seconClass, firstClass, attributes);
+
+        expGenResTable();
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        assertExpTable();
+
+        expTable("ledge_parameters", parametersCols);
+        assertExpTable();
     }
 
     public void testCreateMultiLevelClasses2()
@@ -274,10 +382,46 @@ public class GenericResourcesTest
         attributes.put(a5, new DefaultParameters());
         secondRes = store.createResource("test2", rootRes, seconClass, attributes);
 
+        expGenResTable();
+        expRow(secondRes.getId(), a5.getId(), 0);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        assertExpTable();
+
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        assertExpTable();
+
         a2 = schema.createAttribute("a2", intAttr, null, AttributeFlags.REQUIRED);
         schema.addAttribute(firstClass, a2, 0);
 
-        // TODO
+        expGenResTable();
+        expRow(secondRes.getId(), a5.getId(), 0);
+        expRow(secondRes.getId(), a2.getId(), 0);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 0);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        assertExpTable();
 
         expTable("ledge_parameters", parametersCols);
         expRow(0L, "", "");
@@ -303,9 +447,33 @@ public class GenericResourcesTest
         attributes.put(a5, p);
         secondRes = store.createResource("test2", rootRes, seconClass, attributes);
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(firstRes.getId(), a2.getId(), 0);
+        expRow(secondRes.getId(), a1.getId(), 1);
+        expRow(secondRes.getId(), a2.getId(), 1);
+        expRow(secondRes.getId(), a3.getId(), 0);
+        expRow(secondRes.getId(), a4.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        assertGenResTable();
 
-        // TODO
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "foo");
+        expRow(1, "bar");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 7);
+        expRow(1, 9);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        expRow(0, firstRes.getId());
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        expRow(0, true);
+        assertExpTable();
 
         expTable("ledge_parameters", parametersCols);
         expRow(0L, "", "");
@@ -330,9 +498,33 @@ public class GenericResourcesTest
         firstRes.update();
         secondRes.update();
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(firstRes.getId(), a2.getId(), 0);
+        expRow(firstRes.getId(), a3.getId(), 1);
+        expRow(secondRes.getId(), a1.getId(), 1);
+        expRow(secondRes.getId(), a2.getId(), 1);
+        expRow(secondRes.getId(), a4.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        assertGenResTable();
 
-        // TODO
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "foo_1");
+        expRow(1, "bar_1");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 7);
+        expRow(1, 9);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        expRow(1, secondRes.getId());
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        expRow(0, false);
+        assertExpTable();
 
         expTable("ledge_parameters", parametersCols);
         expRow(0L, "", "");
@@ -349,9 +541,20 @@ public class GenericResourcesTest
         store.deleteResource(secondRes);
         store.deleteResource(firstRes);
 
-        // TODO
+        expGenResTable();
+        assertGenResTable();
 
-        // TODO
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        assertExpTable();
 
         expTable("ledge_parameters", parametersCols);
         assertExpTable();
@@ -377,12 +580,26 @@ public class GenericResourcesTest
 
         schema.addParentClass(seconClass, firstClass, attributes);
 
-        // TODO
+        expGenResTable();
+        expRow(secondRes.getId(), a2.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        assertGenResTable();
 
-        // TODO
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 9);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        assertExpTable();
 
         expTable("ledge_parameters", parametersCols);
-        expRow(0L, "", "");
+        expRow(0, "", "");
         assertExpTable();
 
         assertTrue(Arrays.asList(seconClass.getParentClasses()).contains(firstClass));
@@ -415,15 +632,93 @@ public class GenericResourcesTest
 
         schema.deleteAttribute(firstClass, a3);
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(firstRes.getId(), a2.getId(), 0);
+        expRow(secondRes.getId(), a1.getId(), 1);
+        expRow(secondRes.getId(), a2.getId(), 1);
+        expRow(secondRes.getId(), a4.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "foo");
+        expRow(1, "bar");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 7);
+        expRow(1, 9);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        expRow(0, true);
+        assertExpTable();
+
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        expRow(0L, "ok", "true");
+        expRow(0L, "number", "11");
+        assertExpTable();
 
         schema.deleteAttribute(firstClass, a2);
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(secondRes.getId(), a1.getId(), 1);
+        expRow(secondRes.getId(), a4.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "foo");
+        expRow(1, "bar");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        expRow(0, true);
+        assertExpTable();
+
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        expRow(0L, "ok", "true");
+        expRow(0L, "number", "11");
+        assertExpTable();
 
         schema.deleteAttribute(firstClass, a1);
 
-        assertFalse(DatabaseUtils.hasTable(dataSource, "first"));
+        expGenResTable();
+        expRow(secondRes.getId(), a4.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        expRow(0, true);
+        assertExpTable();
+
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        expRow(0L, "ok", "true");
+        expRow(0L, "number", "11");
+        assertExpTable();
 
         assertEquals(0, firstClass.getDeclaredAttributes().length);
         assertEquals(1, store.getResource("test1").length);
@@ -452,12 +747,62 @@ public class GenericResourcesTest
         secondRes.setModified(a6);
         secondRes.update();
 
+        expGenResTable();
+        expRow(firstRes.getId(), a6.getId(), 0);
+        expRow(secondRes.getId(), a4.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        expRow(secondRes.getId(), a6.getId(), 1);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        expRow(0, true);
+        assertExpTable();
+
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        expRow(0L, "ok", "true");
+        expRow(0L, "number", "11");
+        assertExpTable();
+
         expTable("coral_attribute_resource_list", resourceListCols);
         expRow(0, 0, firstRes.getId());
         expRow(1, 0, secondRes.getId());
         assertExpTable();
 
         schema.deleteAttribute(firstClass, a6);
+
+        expGenResTable();
+        expRow(secondRes.getId(), a4.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        expRow(0, true);
+        assertExpTable();
+
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        expRow(0L, "ok", "true");
+        expRow(0L, "number", "11");
+        assertExpTable();
 
         expTable("coral_attribute_resource_list", resourceListCols);
         assertExpTable();
@@ -478,6 +823,42 @@ public class GenericResourcesTest
         secondRes.setModified(a6);
         secondRes.update();
 
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(firstRes.getId(), a2.getId(), 0);
+        expRow(firstRes.getId(), a6.getId(), 0);
+        expRow(secondRes.getId(), a1.getId(), 1);
+        expRow(secondRes.getId(), a2.getId(), 1);
+        expRow(secondRes.getId(), a3.getId(), 0);
+        expRow(secondRes.getId(), a4.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        expRow(secondRes.getId(), a6.getId(), 1);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "foo");
+        expRow(1, "bar");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 7);
+        expRow(1, 9);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        expRow(0, firstRes.getId());
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        expRow(0, true);
+        assertExpTable();
+
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        expRow(0L, "ok", "true");
+        expRow(0L, "number", "11");
+        assertExpTable();
+
         expTable("coral_attribute_resource_list", resourceListCols);
         expRow(0, 0, firstRes.getId());
         expRow(1, 0, secondRes.getId());
@@ -485,7 +866,34 @@ public class GenericResourcesTest
 
         schema.deleteParentClass(seconClass, firstClass);
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a1.getId(), 0);
+        expRow(firstRes.getId(), a2.getId(), 0);
+        expRow(firstRes.getId(), a6.getId(), 0);
+        expRow(secondRes.getId(), a4.getId(), 0);
+        expRow(secondRes.getId(), a5.getId(), 0);
+        assertGenResTable();
+
+        expTable("coral_attribute_string", stringAttrCols);
+        expRow(0, "foo");
+        assertExpTable();
+
+        expTable("coral_attribute_integer", intAttrCols);
+        expRow(0, 7);
+        assertExpTable();
+
+        expTable("coral_attribute_resource", resourceAttrCols);
+        assertExpTable();
+
+        expTable("coral_attribute_boolean", booleanAttrCols);
+        expRow(0, true);
+        assertExpTable();
+
+        expTable("ledge_parameters", parametersCols);
+        expRow(0L, "", "");
+        expRow(0L, "ok", "true");
+        expRow(0L, "number", "11");
+        assertExpTable();
 
         expTable("coral_attribute_resource_list", resourceListCols);
         expRow(0, 0, firstRes.getId());
@@ -501,23 +909,28 @@ public class GenericResourcesTest
         schema.addAttribute(firstClass, a6, null);
         firstRes = store.createResource("test1", rootRes, firstClass, attributes);
 
-        // TODO
+        expGenResTable();
+        assertGenResTable();
 
         expTable("coral_attribute_resource_list", resourceListCols);
         assertExpTable();
 
-        databaseConnection.close();
-
         firstRes.set(a6, new ResourceList<Resource>(coralSessionFactory));
         firstRes.update();
 
-        // TODO
+        expGenResTable();
+        expRow(firstRes.getId(), a6.getId(), 0);
+        assertGenResTable();
 
         expTable("coral_attribute_resource_list", resourceListCols);
         assertExpTable();
 
         firstRes.get(a6).add(firstRes);
         firstRes.update();
+
+        expGenResTable();
+        expRow(firstRes.getId(), a6.getId(), 0);
+        assertGenResTable();
 
         expTable("coral_attribute_resource_list", resourceListCols);
         expRow(0L, 0, firstRes.getIdObject());
@@ -526,6 +939,10 @@ public class GenericResourcesTest
         firstRes.get(a6).add(firstRes);
         firstRes.get(a6).add(firstRes);
         firstRes.update();
+
+        expGenResTable();
+        expRow(firstRes.getId(), a6.getId(), 0);
+        assertGenResTable();
 
         expTable("coral_attribute_resource_list", resourceListCols);
         expRow(0L, 0, firstRes.getIdObject());
@@ -536,7 +953,8 @@ public class GenericResourcesTest
         firstRes.unset(a6);
         firstRes.update();
 
-        // TODO
+        expGenResTable();
+        assertGenResTable();
 
         expTable("coral_attribute_resource_list", resourceListCols);
         assertExpTable();
@@ -571,5 +989,25 @@ public class GenericResourcesTest
         r = store.getResource(firstRes.getId());
         assertEquals("foo", r.get(a1));
         assertEquals(Integer.valueOf(7), r.get(a2));
+    }
+
+    private void expGenResTable()
+    {
+        expTable("coral_generic_resource", genericResCols);
+    }
+
+    private void assertGenResTable()
+        throws Exception
+    {
+        actual = databaseConnection.createQueryTable("coral_generic_resource",
+            "SELECT * FROM coral_generic_resource ORDER BY resource_id, attribute_definition_id");
+        try
+        {
+            assertEquals(expected, actual);
+        }
+        finally
+        {
+            databaseConnection.close();
+        }
     }
 }
