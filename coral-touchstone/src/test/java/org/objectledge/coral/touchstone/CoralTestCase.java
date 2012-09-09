@@ -72,9 +72,9 @@ public abstract class CoralTestCase extends TestCase
     
     protected IDatabaseConnection databaseConnection;
 
-    private DefaultTable expected;
+    protected DefaultTable expected;
 
-    private ITable actual;
+    protected ITable actual;
     
     protected Logger log;
 
