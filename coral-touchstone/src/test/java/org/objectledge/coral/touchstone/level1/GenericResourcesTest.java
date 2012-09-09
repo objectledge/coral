@@ -66,7 +66,7 @@ public class GenericResourcesTest
 
     private ResourceClass<?> firstClass;
 
-    private ResourceClass<?> seconClass;
+    private ResourceClass<?> secondClass;
 
     private ResourceClass<?> thirdClass;
 
@@ -325,13 +325,13 @@ public class GenericResourcesTest
     {
         testCreateClass();
 
-        seconClass = schema.createResourceClass("second", GenericResource.class.getName(),
+        secondClass = schema.createResourceClass("second", GenericResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         attributes.put(a2, 0);
         a4 = schema.createAttribute("a4", booleanAttr, null, 0);
-        schema.addAttribute(seconClass, a4, null);
+        schema.addAttribute(secondClass, a4, null);
         a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(seconClass, a5, new DefaultParameters());
+        schema.addAttribute(secondClass, a5, new DefaultParameters());
 
         thirdClass = schema.createResourceClass("third", GenericResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
@@ -339,8 +339,8 @@ public class GenericResourcesTest
         a7 = schema.createAttribute("a7", subjectAttr, null, 0);
         schema.addAttribute(thirdClass, a7, null);
 
-        schema.addParentClass(thirdClass, seconClass, attributes);
-        schema.addParentClass(seconClass, firstClass, attributes);
+        schema.addParentClass(thirdClass, secondClass, attributes);
+        schema.addParentClass(secondClass, firstClass, attributes);
 
         expGenResTable();
         assertGenResTable();
@@ -371,16 +371,16 @@ public class GenericResourcesTest
         a3 = schema.createAttribute("a3", resourceAttr, "first", 0);
         schema.addAttribute(firstClass, a3, null);
 
-        seconClass = schema.createResourceClass("second", GenericResource.class.getName(),
+        secondClass = schema.createResourceClass("second", GenericResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
-        schema.addParentClass(seconClass, firstClass, attributes);
+        schema.addParentClass(secondClass, firstClass, attributes);
         a4 = schema.createAttribute("a4", booleanAttr, null, 0);
-        schema.addAttribute(seconClass, a4, null);
+        schema.addAttribute(secondClass, a4, null);
         a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(seconClass, a5, new DefaultParameters());
+        schema.addAttribute(secondClass, a5, new DefaultParameters());
 
         attributes.put(a5, new DefaultParameters());
-        secondRes = store.createResource("test2", rootRes, seconClass, attributes);
+        secondRes = store.createResource("test2", rootRes, secondClass, attributes);
 
         expGenResTable();
         expRow(secondRes.getId(), a5.getId(), 0);
@@ -445,7 +445,7 @@ public class GenericResourcesTest
         p.set("ok", true);
         p.set("number", 11);
         attributes.put(a5, p);
-        secondRes = store.createResource("test2", rootRes, seconClass, attributes);
+        secondRes = store.createResource("test2", rootRes, secondClass, attributes);
 
         expGenResTable();
         expRow(firstRes.getId(), a1.getId(), 0);
@@ -565,20 +565,20 @@ public class GenericResourcesTest
     {
         testCreateClass();
 
-        seconClass = schema.createResourceClass("second", GenericResource.class.getName(),
+        secondClass = schema.createResourceClass("second", GenericResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         a4 = schema.createAttribute("a4", booleanAttr, null, 0);
-        schema.addAttribute(seconClass, a4, null);
+        schema.addAttribute(secondClass, a4, null);
         a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
-        schema.addAttribute(seconClass, a5, null);
+        schema.addAttribute(secondClass, a5, null);
 
         attributes.put(a5, new DefaultParameters());
-        secondRes = store.createResource("test2", rootRes, seconClass, attributes);
+        secondRes = store.createResource("test2", rootRes, secondClass, attributes);
 
         attributes.clear();
         attributes.put(a2, 9);
 
-        schema.addParentClass(seconClass, firstClass, attributes);
+        schema.addParentClass(secondClass, firstClass, attributes);
 
         expGenResTable();
         expRow(secondRes.getId(), a2.getId(), 0);
@@ -602,8 +602,8 @@ public class GenericResourcesTest
         expRow(0, "", "");
         assertExpTable();
 
-        assertTrue(Arrays.asList(seconClass.getParentClasses()).contains(firstClass));
-        assertTrue(Arrays.asList(seconClass.getAllAttributes()).contains(a2));
+        assertTrue(Arrays.asList(secondClass.getParentClasses()).contains(firstClass));
+        assertTrue(Arrays.asList(secondClass.getAllAttributes()).contains(a2));
         assertEquals(Integer.valueOf(9), secondRes.get(a2));
     }
 
@@ -731,9 +731,9 @@ public class GenericResourcesTest
                     return (int)(e1.getId() - e2.getId());
                 }
             };
-        final AttributeDefinition<?>[] ad1 = seconClass.getDeclaredAttributes();
+        final AttributeDefinition<?>[] ad1 = secondClass.getDeclaredAttributes();
         Arrays.sort(ad1, byId);
-        final AttributeDefinition<?>[] ad2 = seconClass.getAllAttributes();
+        final AttributeDefinition<?>[] ad2 = secondClass.getAllAttributes();
         Arrays.sort(ad2, byId);
         assertTrue(Arrays.equals(ad1, ad2));
 
@@ -864,7 +864,7 @@ public class GenericResourcesTest
         expRow(1, 0, secondRes.getId());
         assertExpTable();
 
-        schema.deleteParentClass(seconClass, firstClass);
+        schema.deleteParentClass(secondClass, firstClass);
 
         expGenResTable();
         expRow(firstRes.getId(), a1.getId(), 0);
