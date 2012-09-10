@@ -17,11 +17,9 @@ import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 
 /**
- * Represents the results of a query as tuples of Resources.
- *
- * This is an implemenation of QueryResults over an java.sql.ResultSet
- * containg tuples of resource identifiers.
- *
+ * Represents the results of a query as tuples of Resources. This is an implementation of
+ * QueryResults over an java.sql.ResultSet containing tuples of resource identifiers.
+ * 
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
  * @version $Id: SQLQueryResultsImpl.java,v 1.3 2005-05-05 08:27:04 rafal Exp $
  */
@@ -39,8 +37,10 @@ public class SQLQueryResultsImpl
     /** The SELECT list */
     private String[] select;
 
-    /** A list of long[] arrays containg identifiers of resources in
-     *  conseutive tuples of the result. */
+    /**
+     * A list of long[] arrays containing identifiers of resources in consecutive tuples of the
+     * result.
+     */
     private ArrayList<long[]> resultList = null;
 
     /** A mapping of column names into indices */
@@ -396,7 +396,7 @@ public class SQLQueryResultsImpl
     // Row implementation ////////////////////////////////////////////////////
     
     /**
-     * Represens a single query result.
+     * Represents a single query result.
      */
     public class RowImpl
         implements QueryResults.Row

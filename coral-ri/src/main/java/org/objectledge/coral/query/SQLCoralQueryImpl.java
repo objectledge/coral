@@ -60,7 +60,7 @@ public class SQLCoralQueryImpl
     
     private Logger logger;
 
-    // initailzation /////////////////////////////////////////////////////////
+    // initialization ////////////////////////////////////////////////////////
 
     /** 
      * Constructs an SQLQueryService implementation instance.
@@ -79,12 +79,11 @@ public class SQLCoralQueryImpl
     // QueryService interface ////////////////////////////////////////////////
 
     /**
-     * Executes a preparsed query.
-     *
+     * Executes a pre-parsed query.
+     * 
      * @param statement the AST node representing a FIND RESOURCE statement.
-     * @return query resuls.
-     * @throws MalformedQueryException if the query has semantic errors and
-     * thus cannot be executed. 
+     * @return query results.
+     * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
     public QueryResults executeQuery(ASTfindResourceStatement statement)
         throws MalformedQueryException
@@ -267,12 +266,11 @@ public class SQLCoralQueryImpl
     }
 
     /**
-     * Prepares a preparsed query.
-     *
+     * Prepares a pre-parsed query.
+     * 
      * @param statement the AST node representing a FIND RESOURCE statement.
-     * @return query resuls.
-     * @throws MalformedQueryException if the query has semantic errors and
-     * thus cannot be executed. 
+     * @return query results.
+     * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
     protected PreparedQuery prepareQuery(ASTfindResourceStatement statement)
         throws MalformedQueryException
@@ -284,11 +282,10 @@ public class SQLCoralQueryImpl
 
     /**
      * Appends an attribute reference to the query.
-     *
+     * 
      * @param attribute the attribute to append
-     * @param columnMap the map containting ResultColum objectcs keyed by 
-     *        alias.
-     * @param out the buffer to write expresion to.
+     * @param columnMap the map containing ResultColum objects keyed by alias.
+     * @param out the buffer to write expression to.
      */
     void appendAttribute(String attribute, final Map<String, ResultColumn<?>> columnMap,
         final StringBuilder out)
@@ -326,11 +323,10 @@ public class SQLCoralQueryImpl
 
     /**
      * Generates a conditional expression based on the query WHERE clause.
-     *
+     * 
      * @param expr the WHERE clause.
-     * @param columnMap the map containting ResultColum objectcs keyed by 
-     *        alias.
-     * @param out the buffer to write expresion to.
+     * @param columnMap the map containing ResultColum objects keyed by alias.
+     * @param out the buffer to write expression to.
      */
     private void appendCondition(ASTconditionalExpression expr,
         final Map<String, ResultColumn<?>> columnMap, final StringBuilder out)

@@ -37,8 +37,8 @@ import org.objectledge.coral.store.Resource;
 
 
 /**
- * A common base class for {@link CoralQuery} implemnetations.
- *
+ * A common base class for {@link CoralQuery} implementations.
+ * 
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
  * @version $Id: AbstractCoralQueryImpl.java,v 1.14 2006-03-03 11:41:12 rafal Exp $
  */
@@ -53,7 +53,7 @@ public abstract class AbstractCoralQueryImpl
     /** The entity resolver. */
     private RMLEntityResolver entities;
 
-    // initailzation /////////////////////////////////////////////////////////
+    // initialization ////////////////////////////////////////////////////////
 
     /** 
      * Constructs an QueryService implementation instance.
@@ -71,11 +71,11 @@ public abstract class AbstractCoralQueryImpl
 
     /**
      * Executes a query.
-     *
+     * 
      * @param query the query.
-     * @return query resuls.
-     * @throws MalformedQueryException if the query has syntactic or semantic
-     *         errors and thus cannot be executed.
+     * @return query results.
+     * @throws MalformedQueryException if the query has syntactic or semantic errors and thus cannot
+     *         be executed.
      */
     public QueryResults executeQuery(String query)
         throws MalformedQueryException
@@ -94,21 +94,20 @@ public abstract class AbstractCoralQueryImpl
         throw new MalformedQueryException("Queries must start with FIND RESOURCE");
     }
     
-    /** 
+    /**
      * Prepares a query.
-     *
-     * <p>Query may contain a number of <em>positional parameters</em>. The
-     * parameters have form of $&lt;NUMBER&gt;, with no intervening
-     * whitespace. The nuber must be greater or equal to 1. The positional
-     * parameters can only be used on the right hand side of binary operators.
-     * When the query is executed, all positional parameters must be set to
-     * non-null values. To test a resource's property for being defined
-     * (i.e. not null), use the DEFINED operator.</p>
-     *
+     * <p>
+     * Query may contain a number of <em>positional parameters</em>. The parameters have form of
+     * $&lt;NUMBER&gt;, with no intervening whitespace. The number must be greater or equal to 1.
+     * The positional parameters can only be used on the right hand side of binary operators. When
+     * the query is executed, all positional parameters must be set to non-null values. To test a
+     * resource's property for being defined (i.e. not null), use the DEFINED operator.
+     * </p>
+     * 
      * @param query the query.
      * @return prepared query object.
-     * @throws MalformedQueryException if the query has syntactic or semantic
-     *         errors and thus cannot be executed.
+     * @throws MalformedQueryException if the query has syntactic or semantic errors and thus cannot
+     *         be executed.
      */
     public PreparedQuery prepareQuery(String query)
         throws MalformedQueryException
@@ -117,7 +116,7 @@ public abstract class AbstractCoralQueryImpl
         return prepareQuery(statement);
     }
 
-    // methods to override in implemenation //////////////////////////////////
+    // methods to override in implementation /////////////////////////////////
 
     /**
      * Executes a preparsed query.
@@ -131,12 +130,11 @@ public abstract class AbstractCoralQueryImpl
         throws MalformedQueryException;
 
     /**
-     * Prepares a preparsed query.
-     *
+     * Prepares a pre-parsed query.
+     * 
      * @param statement the AST node representing a FIND RESOURCE statement.
-     * @return query resuls.
-     * @throws MalformedQueryException if the query has semantic errors and
-     * thus cannot be executed. 
+     * @return query results.
+     * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
     protected abstract PreparedQuery prepareQuery(ASTfindResourceStatement statement)
         throws MalformedQueryException;
@@ -145,23 +143,21 @@ public abstract class AbstractCoralQueryImpl
 
     /**
      * Parses an conditional expression operand.
-     *
-     * <p>If the lhs is <code>true</code> the operand must be an attribute
-     * reference. Otherwise it may be also a resource class reference (using
-     * query results column alias) or a literal value.</p>
-     *
-     * <p>If the operand is an attribute, AttributeDefinition will be
-     * returned. If it is a colmn alias, ResultColumn will be returned.
-     * Finally if it is a literal constans a String containing it's value will
-     * be returned.</p> 
-     *
+     * <p>
+     * If the lhs is <code>true</code> the operand must be an attribute reference. Otherwise it may
+     * be also a resource class reference (using query results column alias) or a literal value.
+     * </p>
+     * <p>
+     * If the operand is an attribute, AttributeDefinition will be returned. If it is a column
+     * alias, ResultColumn will be returned. Finally if it is a literal constants a String
+     * containing it's value will be returned.
+     * </p>
+     * 
      * @param operand the operand.
-     * @param lhs <code>true</code> if the operand is on the left hand side of
-     * the operator. 
-     * @param columnMap map containg ResultColumn objects keyed by alias.
+     * @param lhs <code>true</code> if the operand is on the left hand side of the operator.
+     * @param columnMap map containing ResultColumn objects keyed by alias.
      * @return AttributeDefinition, ResultColumn, or String literal value.
-     * @throws MalformedQueryException if the query has semantic errors and
-     * thus cannot be executed. 
+     * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
     protected Object parseOperand(String operand, boolean lhs,
         Map<String, ResultColumn<?>> columnMap)
@@ -445,13 +441,13 @@ public abstract class AbstractCoralQueryImpl
     }
 
     /**
-     * Gathers information about resource attributes used in a WHERE clause of
-     * a query.
-     *
-     * <p>Warning. Seriously wacky stuff ahead.</p>
-     *
+     * Gathers information about resource attributes used in a WHERE clause of a query.
+     * <p>
+     * Warning. Seriously wacky stuff ahead.
+     * </p>
+     * 
      * @param expr the WHERE clause.
-     * @param columnMap map containg ResultColumn objects keyed by alias.
+     * @param columnMap map containing ResultColumn objects keyed by alias.
      */
     private void gatherAttributes(ASTconditionalExpression expr,
         final Map<String, ResultColumn<?>> columnMap)
