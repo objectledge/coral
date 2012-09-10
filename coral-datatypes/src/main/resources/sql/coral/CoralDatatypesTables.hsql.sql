@@ -45,7 +45,7 @@ CREATE TABLE coral_generic_resource (
 
 CREATE TABLE coral_attribute_boolean (
         data_key BIGINT NOT NULL,
-        data INTEGER,
+        data BOOLEAN,
         PRIMARY KEY (data_key)
 );
 

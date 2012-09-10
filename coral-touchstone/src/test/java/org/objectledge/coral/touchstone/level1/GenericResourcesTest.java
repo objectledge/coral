@@ -26,7 +26,6 @@ import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
-import org.objectledge.coral.touchstone.dbunit.BooleanDataType;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.IdGenerator;
 import org.objectledge.database.ThreadDataSource;
@@ -96,7 +95,7 @@ public class GenericResourcesTest
 
     private Column[] intAttrCols = { DATA_KEY, nnCol("DATA", DataType.INTEGER) };
 
-    private Column[] booleanAttrCols = { DATA_KEY, nnCol("DATA", new BooleanDataType()) };
+    private Column[] booleanAttrCols = { DATA_KEY, nnCol("DATA", DataType.BOOLEAN) };
 
     private Column[] resourceAttrCols = { DATA_KEY, nnCol("REF", DataType.BIGINT) };
 
