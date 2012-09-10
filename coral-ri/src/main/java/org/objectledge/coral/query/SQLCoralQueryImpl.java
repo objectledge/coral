@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.Entity;
@@ -62,8 +61,6 @@ public class SQLCoralQueryImpl
     
     /** The database service */
     private Database database;
-    
-    private Logger logger;
 
     // initialization ////////////////////////////////////////////////////////
 
@@ -74,11 +71,10 @@ public class SQLCoralQueryImpl
      * @param coral the coral core.
      * @param logger the logger.
      */
-    public SQLCoralQueryImpl(Database database, CoralCore coral, Logger logger)
+    public SQLCoralQueryImpl(Database database, CoralCore coral)
     {
         super(coral);
         this.database = database;
-        this.logger = logger;
     }
 
     // QueryService interface ////////////////////////////////////////////////
