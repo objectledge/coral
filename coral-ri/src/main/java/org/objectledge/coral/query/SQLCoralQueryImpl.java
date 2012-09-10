@@ -473,9 +473,12 @@ public class SQLCoralQueryImpl
                     {
                         AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
                             node.getLHS(), true, columnMap)).getAttribute();
-                        if(node.isCaseSensitive()){
+                        if(node.isCaseSensitive())
+                        {
                             appendAttribute(node.getLHS(), columnMap, out);
-                        }else{
+                        }
+                        else
+                        {
                             out.append(" LOWER(");
                             appendAttribute(node.getLHS(), columnMap, out);
                             out.append(")");
