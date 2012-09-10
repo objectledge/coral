@@ -326,6 +326,14 @@ public class SQLCoralQueryImpl
         }
     }
 
+    <A> void appendLiteral(AttributeDefinition<A> lhs, String rhs,
+        final StringBuilder out)
+    {
+        AttributeHandler<A> h = lhs.getAttributeClass().getHandler();
+        A value = h.toAttributeValue(rhs);
+        out.append(h.toExternalString(value));
+    }
+
     /**
      * Generates a conditional expression based on the query WHERE clause.
      * 
@@ -422,14 +430,11 @@ public class SQLCoralQueryImpl
                         if(rhs instanceof ResultColumn)
                         {
                             out.append("r").append(((ResultColumn<?>)rhs).getIndex())
-                                .
-                                append(".resource_id");
+                                .append(".resource_id");
                         }
                         if(rhs instanceof String)
                         {
-                            AttributeHandler h = lhs.getAttributeClass().getHandler();
-                            Object value = h.toAttributeValue(rhs);
-                            out.append(h.toExternalString(value));
+                            appendLiteral(lhs, (String)rhs, out);
                         }                        
                         return data;
                     }
@@ -455,9 +460,7 @@ public class SQLCoralQueryImpl
                         }
                         if(rhs instanceof String)
                         {
-                            AttributeHandler h = lhs.getAttributeClass().getHandler();
-                            Object value = h.toAttributeValue(rhs);
-                            out.append(h.toExternalString(value));
+                            appendLiteral(lhs, (String)rhs, out);
                         }                        
                         return data;
                     }
@@ -500,16 +503,9 @@ public class SQLCoralQueryImpl
                         }
                         if(rhs instanceof String)
                         {
-                            AttributeHandler h = lhs.getAttributeClass().getHandler();
-                            Object value = h.toAttributeValue(rhs);
-                            if(node.isCaseSensitive())
-                            {
-                                out.append(h.toExternalString(value));
-                            }
-                            else
-                            {
-                                out.append(h.toExternalString(value).toLowerCase());
-                            }
+                            String literal = node.isCaseSensitive() ? (String)rhs : ((String)rhs)
+                                .toLowerCase();
+                            appendLiteral(lhs, literal, out);
                         }						 
                         return data;
                     }
