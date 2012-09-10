@@ -48,10 +48,15 @@ public class SQLCoralQueryImpl
     static
     {
         attributesMap.put("id", "resource_id");
+        attributesMap.put("name", "name");
+        attributesMap.put("parent", "parent");
+        attributesMap.put("resource_class", "resource_class_id");
         attributesMap.put("owner", "owned_by");
-        //TODO http://objectledge.org/jira/browse/CORAL-72 add other attribute name mapping
+        attributesMap.put("created_by", "created_by");
+        attributesMap.put("modified_by", "modified_by");
+        attributesMap.put("creation_time", "creation_time");
+        attributesMap.put("modification_time", "modification_time");
     }
-    
     
     // instance variables ////////////////////////////////////////////////////
     
