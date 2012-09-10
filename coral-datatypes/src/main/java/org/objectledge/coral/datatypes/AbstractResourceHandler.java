@@ -45,7 +45,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     protected Instantiator instantiator;
 
     /** resource sets, keyed by resource class. Resources are kept through weak references. */
-    protected Map<ResourceClass<?>, WeakHashMap<AbstractResource, Object>> cache = new HashMap<ResourceClass<?>, WeakHashMap<AbstractResource, Object>>();
+    protected Map<ResourceClass<?>, WeakHashMap<Resource, Object>> cache = new HashMap<ResourceClass<?>, WeakHashMap<Resource, Object>>();
 
     /** the database. */
     private Database database;
@@ -83,10 +83,10 @@ public abstract class AbstractResourceHandler<T extends Resource>
         throws ValueRequiredException, SQLException
     {
         checkDelegate(delegate);
-        AbstractResource res = (AbstractResource)instantiate(resourceClass);
-        res.create(delegate, resourceClass, attributes, conn);
-        addToCache(res);
-        return (T)res;
+        T resource = instantiate();
+        ((AbstractResource)resource).create(delegate, resourceClass, attributes, conn);
+        addToCache(resource);
+        return resource;
     }
 
     /**
@@ -106,11 +106,11 @@ public abstract class AbstractResourceHandler<T extends Resource>
         throws SQLException
     {
         checkDelegate(delegate);
-        AbstractResource res = (AbstractResource)instantiate(resourceClass);
+        T resource = instantiate();
         data = getData(delegate, conn, data);
-        res.retrieve(delegate, resourceClass, conn, data);
-        addToCache(res);
-        return (T)res;
+        ((AbstractResource)resource).retrieve(delegate, resourceClass, conn, data);
+        addToCache(resource);
+        return resource;
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     public Resource[] getResourceReferences(Resource resource, boolean clearable)
     {
         List<Resource> temp = new ArrayList<Resource>();
-        for (AttributeDefinition attr : resourceClass.getAllAttributes())
+        for(AttributeDefinition<?> attr : resourceClass.getAllAttributes())
         {
             AttributeHandler<?> handler = attr.getAttributeClass().getHandler();
             if(handler.containsResourceReferences()
@@ -152,14 +152,19 @@ public abstract class AbstractResourceHandler<T extends Resource>
                 && (clearable || (!handler.isComposite() && (attr.getFlags() & (AttributeFlags.READONLY | AttributeFlags.REQUIRED)) != 0))
                 && ((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0))
             {
-                Resource[] refs = attr.getAttributeClass().getHandler().getResourceReferences(
-                    resource.get(attr));
+                Resource[] refs = getResourceReferences(resource, attr);
                 temp.addAll(Arrays.asList(refs));
             }
         }
         Resource[] result = new Resource[temp.size()];
         temp.toArray(result);
         return result;
+    }
+
+    private <A> Resource[] getResourceReferences(Resource resource, AttributeDefinition<A> attr)
+    {
+        AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
+        return handler.getResourceReferences(resource.get(attr));
     }
 
     /**
@@ -169,7 +174,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     {
         for (AttributeDefinition<?> attr : resourceClass.getAllAttributes())
         {
-            AttributeHandler handler = attr.getAttributeClass().getHandler();
+            AttributeHandler<?> handler = attr.getAttributeClass().getHandler();
             if(handler.containsResourceReferences()
                 && resource.isDefined(attr)
                 && (handler.isComposite() || (attr.getFlags() & (AttributeFlags.READONLY
@@ -177,7 +182,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
             {
                 if(handler.isComposite())
                 {
-                    handler.clearResourceReferences(resource.get(attr));
+                    clearResourceReferences(resource, attr);
                 }
                 else
                 {
@@ -195,6 +200,12 @@ public abstract class AbstractResourceHandler<T extends Resource>
         resource.update();
     }
 
+    private <A> void clearResourceReferences(Resource resource, AttributeDefinition<A> attr)
+    {
+        AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
+        handler.clearResourceReferences(resource.get(attr));
+    }
+
     /**
      * Instantiate an implementation object.
      * 
@@ -202,13 +213,12 @@ public abstract class AbstractResourceHandler<T extends Resource>
      * @return implementation object.
      * @throws BackendException if failed to instantiate.
      */
-    protected <U extends Resource> U instantiate(ResourceClass<U> rClass)
+    protected T instantiate()
         throws BackendException
     {
-        U res;
         try
         {
-            res = instantiator.newInstance(rClass.getJavaClass());
+            return instantiator.newInstance(resourceClass.getJavaClass());
         }
         catch(VirtualMachineError e)
         {
@@ -220,9 +230,8 @@ public abstract class AbstractResourceHandler<T extends Resource>
         }
         catch(Throwable e)
         {
-            throw new BackendException("failed to instantiate " + rClass.getName(), e);
+            throw new BackendException("failed to instantiate " + resourceClass.getName(), e);
         }
-        return res;
     }
 
     /**
@@ -263,7 +272,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
      * 
      * @param res the resource to add to the cache.
      */
-    private void addToCache(AbstractResource res)
+    private void addToCache(Resource res)
     {
         addToCache0(res.getResourceClass(), res);
         for(ResourceClass<?> parent : res.getResourceClass().getParentClasses())
@@ -278,15 +287,15 @@ public abstract class AbstractResourceHandler<T extends Resource>
      * @param rc a ResourceClass to use for cache key.
      * @param res a Resource.
      */
-    private void addToCache0(ResourceClass<?> rc, AbstractResource res)
+    private void addToCache0(ResourceClass<?> rc, Resource res)
     {
-        WeakHashMap<AbstractResource,Object> rset;
+        WeakHashMap<Resource, Object> rset;
         synchronized(cache)
         {
             rset = cache.get(rc);
             if(rset == null)
             {
-                rset = new WeakHashMap<AbstractResource,Object>();
+                rset = new WeakHashMap<Resource, Object>();
                 cacheFactory.registerForPeriodicExpunge(rset);
                 cache.put(rc, rset);
             }
@@ -324,7 +333,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     private void revert0(ResourceClass<?> rc, Connection conn)
         throws SQLException
     {
-        WeakHashMap<AbstractResource,Object> rset;
+        WeakHashMap<Resource, Object> rset;
         synchronized(cache)
         {
             rset = cache.get(rc);
@@ -334,10 +343,10 @@ public abstract class AbstractResourceHandler<T extends Resource>
             synchronized(rset)
             {
                 Object data = getData(rc, conn);
-                Set<AbstractResource> orig = new HashSet<AbstractResource>(rset.keySet());
-                for(AbstractResource r : orig)
+                Set<Resource> orig = new HashSet<Resource>(rset.keySet());
+                for(Resource r : orig)
                 {
-                    r.revert(rc, conn, data);
+                    ((AbstractResource)r).revert(rc, conn, data);
                 }
             }
         }

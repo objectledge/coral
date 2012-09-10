@@ -648,7 +648,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
     protected Object getData(ResourceClass<?> rc, Connection conn)
         throws SQLException
     {
-        WeakHashMap<AbstractResource, Object> rset;
+        WeakHashMap<Resource, Object> rset;
         synchronized(cache)
         {
             rset = cache.get(rc);
@@ -658,8 +658,8 @@ public class PersistentResourceHandler<T extends PersistentResource>
         {
             synchronized(rset)
             {
-                Set<AbstractResource> orig = new HashSet<AbstractResource>(rset.keySet());
-                for(AbstractResource r : orig)
+                Set<Resource> orig = new HashSet<Resource>(rset.keySet());
+                for(Resource r : orig)
                 {
                     data.put(r.getIdObject(), getInputRecords(r));
                 }

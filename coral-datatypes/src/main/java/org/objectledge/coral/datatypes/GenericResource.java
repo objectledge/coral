@@ -90,12 +90,12 @@ public class GenericResource
             {
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
-                    AttributeHandler handler = attr.getAttributeClass().getHandler();
+                    AttributeHandler<?> handler = attr.getAttributeClass().getHandler();
                     Object value = attributes.get(attr);
                     if(value != null)
                     {
                         value = handler.toAttributeValue(value);
-                        long newId = handler.create(value, conn);
+                        long newId = createAttrValue(attr, value, conn);
                         setValueId(attr, newId);
                         stmt.execute(
                             "INSERT INTO coral_generic_resource "+
@@ -146,14 +146,13 @@ public class GenericResource
                 {
                     if(isAttributeModified(attr))
                     {
-    	                AttributeHandler handler = attr.getAttributeClass().getHandler();
     	                Object value = getAttribute(attr);
     	                long id = getValueId(attr);
     	                if(value != null)
     	                {
     	                    if(id == -1L)
     	                    {
-    	                        long newId = handler.create(value, conn);
+                                long newId = createAttrValue(attr, conn);
     	                        stmt.execute(
     	                            "INSERT INTO coral_generic_resource "+
     	                            "(resource_id, attribute_definition_id, data_key) "+
@@ -166,7 +165,7 @@ public class GenericResource
     	                    {
     	                        try
     	                        {
-    	                            handler.update(id, value, conn);
+                                    updateAttrValue(attr, conn);
     	                        }
     	                        catch(EntityDoesNotExistException e)
     	                        {
@@ -180,7 +179,7 @@ public class GenericResource
     	                    {
     	                        try
     	                        {
-    	                            handler.delete(id, conn);
+                                    attr.getAttributeClass().getHandler().delete(id, conn);
     	                        }
     	                        catch(EntityDoesNotExistException e)
     	                        {
@@ -209,7 +208,7 @@ public class GenericResource
         throws SQLException
     {
         super.delete(conn);
-        AttributeDefinition[] declared = delegate.getResourceClass().getAllAttributes();
+        AttributeDefinition<?>[] declared = delegate.getResourceClass().getAllAttributes();
         for(AttributeDefinition<?> attr : declared)
         {
             if((attr.getFlags() & AttributeFlags.BUILTIN) == 0) 
@@ -238,5 +237,30 @@ public class GenericResource
         {
             DatabaseUtils.close(stmt);
         }
+    }
+
+    private <A> long createAttrValue(AttributeDefinition<A> attr, Object rawValue, Connection conn)
+        throws SQLException
+    {
+        AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
+        A value = handler.toAttributeValue(rawValue);
+        return handler.create(value, conn);
+    }
+
+    private <A> long createAttrValue(AttributeDefinition<A> attr, Connection conn)
+        throws SQLException
+    {
+        AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
+        A value = getAttribute(attr);
+        return handler.create(value, conn);
+    }
+
+    private <A> void updateAttrValue(AttributeDefinition<A> attr, Connection conn)
+        throws EntityDoesNotExistException, SQLException
+    {
+        AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
+        A value = getAttribute(attr);
+        long valueId = getValueId(attr);
+        handler.update(valueId, value, conn);
     }
 }
