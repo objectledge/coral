@@ -257,8 +257,8 @@ public class FilteredQueryResultsImpl
 
         /**
          * Constructs a Row filtering proxy.
-         *
-         * @param row the results row to constructa a proxy for.
+         * 
+         * @param row the results row to construct a proxy for.
          */
         public RowImpl(QueryResults.Row row)
         {
