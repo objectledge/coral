@@ -14,6 +14,7 @@ import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
+import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.store.ConstraintViolationException;
@@ -86,7 +87,7 @@ public class GenericResourceHandler<T extends Resource>
     public void addParentClass(ResourceClass<?> parent, Map<AttributeDefinition<?>, ?> values, Connection conn)
         throws ValueRequiredException, SQLException
     {
-        AttributeDefinition[] attrs = parent.getAllAttributes();
+        AttributeDefinition<?>[] attrs = parent.getAllAttributes();
         addAttribute0(resourceClass, attrs, values, conn);
         for(ResourceClass<?> child : resourceClass.getDirectChildClasses())
         {
@@ -101,7 +102,7 @@ public class GenericResourceHandler<T extends Resource>
     public void deleteParentClass(ResourceClass<?> parent, Connection conn)
         throws SQLException
     {
-        AttributeDefinition[] attrs = parent.getAllAttributes();
+        AttributeDefinition<?>[] attrs = parent.getAllAttributes();
         deleteAttribute0(resourceClass, attrs, conn);
         for(ResourceClass<?> child : resourceClass.getDirectChildClasses())
         {
@@ -188,7 +189,8 @@ public class GenericResourceHandler<T extends Resource>
      * AttributeDefinition object (<code>null</code> values permitted).
      * @param conn the JDBC connection to use.
      */
-    private void addAttribute0(ResourceClass<T> rc, AttributeDefinition[] attrs, Map values,
+    private void addAttribute0(ResourceClass<T> rc, AttributeDefinition<?>[] attrs,
+        Map<AttributeDefinition<?>, ?> values,
         Connection conn)
         throws ValueRequiredException, SQLException, ConstraintViolationException
     {
@@ -205,7 +207,7 @@ public class GenericResourceHandler<T extends Resource>
             // attributes are present 
             if(rs.isBeforeFirst())
             {
-                for(AttributeDefinition attr: attrs)
+                for(AttributeDefinition<?> attr : attrs)
                 {
                     if((attr.getFlags() & AttributeFlags.BUILTIN) != 0)
                     {
@@ -222,10 +224,7 @@ public class GenericResourceHandler<T extends Resource>
                     }
                     else
                     {
-                        value = attr.getAttributeClass().getHandler().toAttributeValue(value);
-                        attr.getAttributeClass().getHandler().
-                            checkDomain(attr.getDomain(), value);
-                        values.put(attr, value);
+                        checkDomain(attr, value);
                     }
                 }
             }
@@ -233,12 +232,12 @@ public class GenericResourceHandler<T extends Resource>
             while(rs.next())
             {
                 long resId = rs.getLong(1);
-                for(AttributeDefinition attr : attrs)
+                for(AttributeDefinition<?> attr : attrs)
                 {
                     Object value = values.get(attr);
                     if(value != null)
                     {
-                        long atId = attr.getAttributeClass().getHandler().create(value, conn);
+                        long atId = storeValue(attr, value, conn);
                         stmt2.execute(
                             "INSERT INTO coral_generic_resource "+
                             "(resource_id, attribute_definition_id, data_key) "+
@@ -254,6 +253,22 @@ public class GenericResourceHandler<T extends Resource>
             DatabaseUtils.close(rs);
             DatabaseUtils.close(stmt1);
         }
+    }
+
+    protected <A> A checkDomain(AttributeDefinition<A> attr, Object value)
+    {
+        final AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
+        A attrValue = handler.toAttributeValue(value);
+        handler.checkDomain(attr.getDomain(), attrValue);
+        return attrValue;
+    }
+
+    protected <A> long storeValue(AttributeDefinition<A> attr, Object value, Connection conn)
+        throws SQLException
+    {
+        final AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
+        A attrValue = handler.toAttributeValue(value);
+        return handler.create(attrValue, conn);
     }
 
     /**
@@ -312,7 +327,7 @@ public class GenericResourceHandler<T extends Resource>
      * @param attrs the attributes to remove.
      * @param conn the JDBC connection to use.
      */
-    private void deleteAttribute0(ResourceClass<T> rc, AttributeDefinition[] attrs,
+    private void deleteAttribute0(ResourceClass<T> rc, AttributeDefinition<?>[] attrs,
                                   Connection conn)
         throws SQLException
     {
@@ -331,10 +346,8 @@ public class GenericResourceHandler<T extends Resource>
                 "WHERE resource_class_id = "+rc.getIdString()+
                 " AND coral_resource.resource_id = coral_generic_resource.resource_id"
             );
-            int cnt = 0;
             while(rs.next())
             {
-                long resId = rs.getLong(1);
                 long atId = rs.getLong(2);
                 long dataId = rs.getLong(3);
                 AttributeDefinition<?> attr = atMap.get(new Long(atId));
@@ -375,9 +388,8 @@ public class GenericResourceHandler<T extends Resource>
     public Object getData(Resource delegate, Connection conn, Object prev)
         throws SQLException
     {       
-        Map<Long,Map<AttributeDefinition,Long>> keyMap = 
-            new HashMap<Long,Map<AttributeDefinition,Long>>();
-        Map<AttributeDefinition,Long> dataKeys = new HashMap<AttributeDefinition,Long>();
+        Map<Long, Map<AttributeDefinition<?>, Long>> keyMap = new HashMap<Long, Map<AttributeDefinition<?>, Long>>();
+        Map<AttributeDefinition<?>, Long> dataKeys = new HashMap<AttributeDefinition<?>, Long>();
         keyMap.put(delegate.getIdObject(), dataKeys);
         Statement stmt = conn.createStatement();
         ResultSet rs = null;
