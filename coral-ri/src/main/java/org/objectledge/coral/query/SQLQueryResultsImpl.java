@@ -41,13 +41,13 @@ public class SQLQueryResultsImpl
 
     /** A list of long[] arrays containg identifiers of resources in
      *  conseutive tuples of the result. */
-    private ArrayList resultList = null;
+    private ArrayList<long[]> resultList = null;
 
     /** A mapping of column names into indices */
-    private Map nameIndex = new HashMap();
+    private Map<String, Integer> nameIndex = new HashMap<String, Integer>();
 
     /** Types of resources in each column. */
-    private ResourceClass[] columnType;
+    private ResourceClass<?>[] columnType;
 
     /** The Coral store. */
     private CoralStore store;
@@ -129,9 +129,9 @@ public class SQLQueryResultsImpl
      *
      * @return an Iterator over a list of {@link QueryResults.Row} objects.
      */
-    public Iterator iterator()
+    public Iterator<QueryResults.Row> iterator()
     {
-        return new Iterator() 
+        return new Iterator<QueryResults.Row>()
             {
                 private int i=0;
                 
@@ -140,11 +140,11 @@ public class SQLQueryResultsImpl
                     return i < resultList.size();
                 }
                         
-                public Object next()
+                public QueryResults.Row next()
                 {
                     if(i<resultList.size())
                     {
-                        return new RowImpl((long[])resultList.get(i++));
+                        return new RowImpl(resultList.get(i++));
                     }
                     else
                     {
@@ -167,10 +167,10 @@ public class SQLQueryResultsImpl
      *
      * @return a list of {@link QueryResults.Row} objects.
      */
-    public List getList()
+    public List<QueryResults.Row> getList()
     {
-        ArrayList temp = new ArrayList();
-        Iterator i = iterator();
+        ArrayList<QueryResults.Row> temp = new ArrayList<QueryResults.Row>();
+        Iterator<QueryResults.Row> i = iterator();
         while(i.hasNext())
         {
             temp.add(i.next());
@@ -233,7 +233,7 @@ public class SQLQueryResultsImpl
      * @throws IllegalArgumentException if no column by the specified name is
      *         present in the results.
      */
-    public List getList(String name)
+    public List<Resource> getList(String name)
         throws IllegalArgumentException
     {
         return getList(getColumnIndex(name));
@@ -247,7 +247,7 @@ public class SQLQueryResultsImpl
      * @throws IndexOutOfBoundsException if the index if the index is out of
      *         1..columnCount range.
      */
-    public List getList(int index)
+    public List<Resource> getList(int index)
         throws IndexOutOfBoundsException
     {
         if(index < 1 || index > from.length)
@@ -255,12 +255,12 @@ public class SQLQueryResultsImpl
             throw new IndexOutOfBoundsException("index "+index+"requested "+
                                                 "range 1.."+from.length);
         }
-        List result = new ArrayList(resultList.size());
+        List<Resource> result = new ArrayList<Resource>(resultList.size());
         try
         {
             for(int i=0; i<resultList.size(); i++)
             {
-                result.add(store.getResource(((long[])resultList.get(i))[index-1]));
+                result.add(store.getResource((resultList.get(i))[index - 1]));
             }
             return result;
         }
@@ -334,7 +334,7 @@ public class SQLQueryResultsImpl
      * @throws IndexOutOfBoundsException if the index if the index is out of
      *         1..columnCount range.
      */
-    public ResourceClass getColumnType(int index)
+    public ResourceClass<?> getColumnType(int index)
         throws IndexOutOfBoundsException
     {
         if(index < 1 || index > from.length)
@@ -353,7 +353,7 @@ public class SQLQueryResultsImpl
      * @throws IllegalArgumentException if no column by the specified name is
      *         present in the results.
      */
-    public ResourceClass getColumnType(String name)
+    public ResourceClass<?> getColumnType(String name)
         throws IllegalArgumentException
     {
         Integer i = (Integer)nameIndex.get(name);
@@ -376,7 +376,7 @@ public class SQLQueryResultsImpl
     {
         try
         {
-            resultList = new ArrayList();
+            resultList = new ArrayList<long[]>();
             while(resultSet.next())
             {
                 long[] row = new long[from.length];

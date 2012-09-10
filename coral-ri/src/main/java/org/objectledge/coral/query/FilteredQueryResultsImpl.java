@@ -38,10 +38,10 @@ public class FilteredQueryResultsImpl
     private int[] columnIndex;
     
     /** AttributeDefinitions corresponding to each result column. */
-    private AttributeDefinition[] columnAttribute;
+    private AttributeDefinition<?>[] columnAttribute;
 
     /** Name to index map. (String->Integer) */
-    private Map nameIndex = new HashMap();
+    private Map<String, Integer> nameIndex = new HashMap<String, Integer>();
     
     // initialization ////////////////////////////////////////////////////////
 
@@ -58,10 +58,10 @@ public class FilteredQueryResultsImpl
         this.select = select;
         this.columnIndex = new int[select.length];
         this.columnAttribute = new AttributeDefinition[select.length];
-        ResourceClass builtins;
+        ResourceClass<?> builtins;
        	try 
 		{
-			builtins = coralSchema.getResourceClass("coral.Node");
+            builtins = coralSchema.getResourceClass("coral.Node");
 		} 
        	catch (EntityDoesNotExistException e) 
 		{
@@ -92,7 +92,7 @@ public class FilteredQueryResultsImpl
                 a = select[i].substring(p+1);
             }
             columnIndex[i] = ci;
-            ResourceClass rc = results.getColumnType(ci);
+            ResourceClass<?> rc = results.getColumnType(ci);
             try
             {
                 if(rc == null)
@@ -123,17 +123,17 @@ public class FilteredQueryResultsImpl
      *
      * @return an Iterator over a list of {@link FilteredQueryResults.Row} objects.
      */
-    public Iterator iterator()
+    public Iterator<FilteredQueryResults.Row> iterator()
     {
-        final Iterator ri = results.iterator();
-        return new Iterator()
+        final Iterator<QueryResults.Row> ri = results.iterator();
+        return new Iterator<FilteredQueryResults.Row>()
             {
                 public boolean hasNext()
                 {
                     return ri.hasNext();
                 }
                 
-                public Object next()
+                public FilteredQueryResults.Row next()
                 {
                     QueryResults.Row rr = (QueryResults.Row)ri.next();
                     return new RowImpl(rr);
@@ -154,10 +154,10 @@ public class FilteredQueryResultsImpl
      *
      * @return a list of {@link FilteredQueryResults.Row} objects.
      */
-    public List getList()
+    public List<FilteredQueryResults.Row> getList()
     {
-        ArrayList temp = new ArrayList();
-        Iterator i = iterator();
+        ArrayList<FilteredQueryResults.Row> temp = new ArrayList<FilteredQueryResults.Row>();
+        Iterator<FilteredQueryResults.Row> i = iterator();
         while(i.hasNext())
         {
             temp.add(i.next());
@@ -229,7 +229,7 @@ public class FilteredQueryResultsImpl
      * @throws IndexOutOfBoundsException if the index if the index is out of
      *         1..columnCount range.
      */
-    public AttributeClass getColumnType(int index)
+    public AttributeClass<?> getColumnType(int index)
         throws IndexOutOfBoundsException
     {
         if(index < 1 || index > select.length)
