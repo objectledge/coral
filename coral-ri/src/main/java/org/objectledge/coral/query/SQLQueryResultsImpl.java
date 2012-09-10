@@ -28,9 +28,6 @@ public class SQLQueryResultsImpl
 {
     // instance variables ////////////////////////////////////////////////////
 
-    /** The ResultSet. */
-    private ResultSet resultSet;
-
     /** The FROM list (type, alias) */
     private String[][] from;
     
@@ -72,7 +69,6 @@ public class SQLQueryResultsImpl
         this.store = store;
         this.schema = schema;
         
-        this.resultSet = resultSet;
         this.from = from;
         this.select = select;
         columnType = new ResourceClass[from.length];
