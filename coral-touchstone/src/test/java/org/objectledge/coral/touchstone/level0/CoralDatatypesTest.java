@@ -73,7 +73,7 @@ public class CoralDatatypesTest extends CoralTestCase
     private Column[] coralAttributeBooleanColumns = new Column[] 
     {
         new Column("data_key", DataType.BIGINT),
-        new Column("data", DataType.INTEGER)
+ new Column("data", DataType.BOOLEAN)
     };
 
     private Column[] coralAttributeIntegerColumns = new Column[] 
@@ -184,7 +184,7 @@ public class CoralDatatypesTest extends CoralTestCase
         
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(23, 3, 3,  NULL, 'boolean_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 23, 1)");
-        stmt.execute("INSERT INTO coral_attribute_boolean VALUES(1, '1')");
+        stmt.execute("INSERT INTO coral_attribute_boolean VALUES(1, true)");
         stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_boolean')");
         
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(24, 3, 4,  NULL, 'integer_attr', 0)");
@@ -338,7 +338,7 @@ public class CoralDatatypesTest extends CoralTestCase
         resource.update();
         DefaultTable expectedTable = new DefaultTable("coral_attribute_boolean",
             coralAttributeBooleanColumns);
-        expectedTable.addRow(new Object[] { new Long(1), new Integer(0) });
+        expectedTable.addRow(new Object[] { new Long(1), Boolean.FALSE });
         ITable actualTable = databaseConnection.createQueryTable("coral_attribute_boolean", "SELECT * FROM coral_attribute_boolean");            
         databaseConnection.close();
         assertEquals(expectedTable, actualTable);
