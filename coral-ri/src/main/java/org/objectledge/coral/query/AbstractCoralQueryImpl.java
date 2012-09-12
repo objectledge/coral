@@ -268,7 +268,7 @@ public abstract class AbstractCoralQueryImpl
             rcm.attributes.add(ad);
             rcm.nameIndex.put(ad.getName(), new Integer(rcm.attributes.size()-1));
         }
-        return new ResultColumnAttribute(rcm, ad);
+        return ResultColumnAttribute.newInstance(rcm, ad);
     }
 
     /**
@@ -367,7 +367,7 @@ public abstract class AbstractCoralQueryImpl
                 if(alias == null)
                 {
                     alias = rClass.getName();
-                    ResultColumn<?> rc = new ResultColumn(rClass, alias);
+                    ResultColumn<?> rc = ResultColumn.newInstance(rClass, alias);
                     if(columnMap.isEmpty())
                     {
                         columnMap.put(null, rc);
@@ -382,7 +382,7 @@ public abstract class AbstractCoralQueryImpl
                 }
                 else
                 {
-                    ResultColumn<?> rc = new ResultColumn(rClass, alias);
+                    ResultColumn<?> rc = ResultColumn.newInstance(rClass, alias);
                     columnMap.put(alias, rc);
                     columns.add(rc);
                     rc.index = columns.size();
@@ -415,7 +415,31 @@ public abstract class AbstractCoralQueryImpl
     }
 
     // implementation ////////////////////////////////////////////////////////
-    
+
+
+    protected static <A> void checkConstraint(AttributeDefinition<A> ad, String literal)
+        throws MalformedQueryException
+    {
+        AttributeHandler<A> h = ad.getAttributeClass().getHandler();
+        try
+        {
+            A value = h.toAttributeValue(literal);
+            if(ad.getDomain() != null && !ad.getDomain().equals(""))
+            {
+                h.checkDomain(ad.getDomain(), value);
+            }
+        }
+        catch(IllegalArgumentException e)
+        {
+            throw new MalformedQueryException("Illegal literal value '" + literal + "'", e);
+        }
+        catch(ConstraintViolationException e)
+        {
+            throw new MalformedQueryException("Literal value '" + literal + "' "
+                + " violates domain constraint " + ad.getDomain() + " on " + ad.getName());
+        }
+    }
+
     /**
      * Parses the query.
      *
@@ -558,27 +582,7 @@ public abstract class AbstractCoralQueryImpl
                         }
                         if(rhs instanceof String)
                         {
-                            AttributeHandler h = lhs.getAttributeClass().getHandler();
-                            try
-                            {
-                                Object value = h.toAttributeValue(rhs);
-                                if(lhs.getDomain() != null && !lhs.getDomain().equals(""))
-                                {
-                                    h.checkDomain(lhs.getDomain(), value);
-                                }
-                            }
-                            catch(IllegalArgumentException e)
-                            {
-                                throw new MalformedQueryException("Illegal literal value '"+
-                                                                 rhs+"'", e);
-                            }
-                            catch(ConstraintViolationException e)
-                            {
-                                throw new MalformedQueryException("Literal value '"+rhs+"' "+
-                                                                  " violates domain constraint "+
-                                                                  lhs.getDomain()+" on "+
-                                                                  lhs.getName());
-                            }
+                            checkConstraint(lhs, (String)rhs);
                         }   
                     }
                     catch(MalformedQueryException e)
@@ -647,27 +651,7 @@ public abstract class AbstractCoralQueryImpl
                         }
                         if(rhs instanceof String)
                         {
-                            AttributeHandler h = lhs.getAttributeClass().getHandler();
-                            try
-                            {
-                                Object value = h.toAttributeValue(rhs);
-                                if(lhs.getDomain() != null && !lhs.getDomain().equals(""))
-                                {
-                                    h.checkDomain(lhs.getDomain(), value);
-                                }
-                            }
-                            catch(IllegalArgumentException e)
-                            {
-                                throw new MalformedQueryException("Illegal literal value '"+
-                                                                 rhs+"'", e);
-                            }
-                            catch(ConstraintViolationException e)
-                            {
-                                throw new MalformedQueryException("Literal value '"+rhs+"' "+
-                                                                  " violates domain constraint "+
-                                                                  lhs.getDomain()+" on "+
-                                                                  lhs.getName());
-                            }
+                            checkConstraint(lhs, (String)rhs);
                         }   
                     }
                     catch(MalformedQueryException e)
@@ -676,7 +660,7 @@ public abstract class AbstractCoralQueryImpl
                     }
                     return data;
                 }
-                
+
                 public Object visit(ASTapproximationCondition node, Object data)
                 {
                     try
@@ -736,27 +720,7 @@ public abstract class AbstractCoralQueryImpl
                         }
                         if(rhs instanceof String)
                         {
-                            AttributeHandler h = lhs.getAttributeClass().getHandler();
-                            try
-                            {
-                                Object value = h.toAttributeValue(rhs);
-                                if(lhs.getDomain() != null && !lhs.getDomain().equals(""))
-                                {
-                                    h.checkDomain(lhs.getDomain(), value);
-                                }
-                            }
-                            catch(IllegalArgumentException e)
-                            {
-                                throw new MalformedQueryException("Illegal literal value '"+
-                                                                 rhs+"'", e);
-                            }
-                            catch(ConstraintViolationException e)
-                            {
-                                throw new MalformedQueryException("Literal value '"+rhs+"' "+
-                                                                  " violates domain constraint "+
-                                                                  lhs.getDomain()+" on "+
-                                                                  lhs.getName());
-                            }
+                            checkConstraint(lhs, (String)rhs);
                         }   
                     }
                     catch(MalformedQueryException e)
@@ -782,7 +746,7 @@ public abstract class AbstractCoralQueryImpl
     /**
      * Describes a column of the query results.
      */
-    protected class ResultColumn<R extends Resource>
+    protected static class ResultColumn<R extends Resource>
     {
         // instance variables ////////////////////////////////////////////////
 
@@ -864,7 +828,14 @@ public abstract class AbstractCoralQueryImpl
         {
             return rClass;
         }
+
+        public static <R extends Resource> ResultColumn<R> newInstance(ResourceClass<R> rc,
+            String alias)
+        {
+            return new ResultColumn<R>(rc, alias);
+        }
     }
+
 
     /**
      * Helper runtime exception class needed to bypass the exception contract
@@ -901,7 +872,7 @@ public abstract class AbstractCoralQueryImpl
     /**
      * Helper class binding attribute definition with a result column.
      */
-    protected class ResultColumnAttribute<R extends Resource, A>
+    protected static class ResultColumnAttribute<R extends Resource, A>
     {
         /**
          * Constructs a ResultColumnAttribute.
@@ -939,6 +910,12 @@ public abstract class AbstractCoralQueryImpl
         public ResultColumn<R> getColumn()
         {
             return column;
+        }
+
+        public static <R extends Resource, A> ResultColumnAttribute<R, A> newInstance(
+            ResultColumn<R> rcm, AttributeDefinition<A> ad)
+        {
+            return new ResultColumnAttribute<R, A>(rcm, ad);
         }
     }
 }
