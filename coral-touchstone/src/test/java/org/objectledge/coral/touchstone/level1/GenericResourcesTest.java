@@ -115,14 +115,14 @@ public class GenericResourcesTest
         super.setUp();
         coral = coralSessionFactory.getRootSession();
         schema = coral.getSchema();
-        stringAttr = (AttributeClass<String>)schema.getAttributeClass("string");
-        intAttr = (AttributeClass<Integer>)schema.getAttributeClass("integer");
-        resourceAttr = (AttributeClass<Resource>)schema.getAttributeClass("resource");
-        booleanAttr = (AttributeClass<Boolean>)schema.getAttributeClass("boolean");
-        parametersAttr = (AttributeClass<Parameters>)schema.getAttributeClass("parameters");
+        stringAttr = schema.getAttributeClass("string", String.class);
+        intAttr = schema.getAttributeClass("integer", Integer.class);
+        resourceAttr = schema.getAttributeClass("resource", Resource.class);
+        booleanAttr = schema.getAttributeClass("boolean", Boolean.class);
+        parametersAttr = schema.getAttributeClass("parameters", Parameters.class);
+        subjectAttr = schema.getAttributeClass("subject", Subject.class);
         resourceListAttr = (AttributeClass<ResourceList<Resource>>)schema
             .getAttributeClass("resource_list");
-        subjectAttr = (AttributeClass<Subject>)schema.getAttributeClass("subject");
         store = coral.getStore();
         rootRes = store.getResource(CoralStore.ROOT_RESOURCE);
     }
