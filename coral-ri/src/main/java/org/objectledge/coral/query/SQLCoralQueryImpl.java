@@ -400,7 +400,7 @@ public class SQLCoralQueryImpl
                     try
                     {
                         appendAttribute(node.getRHS(), columnMap, out);
-                        out.append(" NOTNULL");
+                        out.append(" IS NOT NULL");
                         return data;
                     }
                     catch(MalformedQueryException e)
