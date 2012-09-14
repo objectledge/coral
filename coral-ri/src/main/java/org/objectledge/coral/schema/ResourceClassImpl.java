@@ -62,7 +62,7 @@ public class ResourceClassImpl<T extends Resource>
     private String javaClassName;
 
     /** The Java class associated with this resource class */
-    private Class javaClass;
+    private Class<T> javaClass;
     
     /** The name of the handler class. */
     private String handlerClassName;
@@ -250,7 +250,7 @@ public class ResourceClassImpl<T extends Resource>
      *
      * @param resourceClass the resourceClass that changed.
      */
-    public void resourceClassChanged(ResourceClass resourceClass)
+    public void resourceClassChanged(ResourceClass<?> resourceClass)
     {
         if(this.equals(resourceClass))
         {
@@ -286,7 +286,7 @@ public class ResourceClassImpl<T extends Resource>
      * @return the Java class that is associated with this resource class.
      * type.
      */
-    public Class getJavaClass()
+    public Class<T> getJavaClass()
     {
         if(javaClass != null)
         {
@@ -305,7 +305,7 @@ public class ResourceClassImpl<T extends Resource>
      *
      * @return an <code>ResourceHandler</code> implementation.
      */
-    public ResourceHandler getHandler()
+    public ResourceHandler<T> getHandler()
     {
         return handler;
     }
@@ -339,10 +339,10 @@ public class ResourceClassImpl<T extends Resource>
      *
      * @return attributes declared by this resource class.
      */
-    public AttributeDefinition[] getDeclaredAttributes()
+    public AttributeDefinition<?>[] getDeclaredAttributes()
     {
         ImmutableSet<AttributeDefinition<?>> snapshot = buildDeclaredAttributeSet();
-        AttributeDefinition[] result = new AttributeDefinition[snapshot.size()];
+        AttributeDefinition<?>[] result = new AttributeDefinition[snapshot.size()];
         snapshot.toArray(result);
         return result;
     }
@@ -354,10 +354,10 @@ public class ResourceClassImpl<T extends Resource>
      * @return all attributes delcared by this resource class and it's parent
      * classes.  
      */
-    public AttributeDefinition[] getAllAttributes()
+    public AttributeDefinition<?>[] getAllAttributes()
     {
         ImmutableMap<String, AttributeDefinition<?>> snapshot = buildAttributeMap();
-        AttributeDefinition[] result = new AttributeDefinition[snapshot.size()];
+        AttributeDefinition<?>[] result = new AttributeDefinition[snapshot.size()];
         snapshot.values().toArray(result);
         return result;
     }
@@ -373,7 +373,7 @@ public class ResourceClassImpl<T extends Resource>
      * @throws UnknownAttributeException if the resource class does not have
      *         an attribute of the specififed class.
      */
-    public AttributeDefinition getAttribute(String name)
+    public AttributeDefinition<?> getAttribute(String name)
         throws UnknownAttributeException
     {
         ImmutableMap<String, AttributeDefinition<?>> snapshot = buildAttributeMap();
@@ -460,10 +460,10 @@ public class ResourceClassImpl<T extends Resource>
      *
      * @return the parent classes of this resource class.
      */
-    public ResourceClass[] getParentClasses()
+    public ResourceClass<?>[] getParentClasses()
     {
         ImmutableSet<ResourceClass<?>> snapshot = buildParentClassSet();
-        ResourceClass[] result = new ResourceClass[snapshot.size()];
+        ResourceClass<?>[] result = new ResourceClass[snapshot.size()];
         snapshot.toArray(result);
         return result;
     }    
@@ -485,7 +485,7 @@ public class ResourceClassImpl<T extends Resource>
      * @return <code>true</code> if the specifid class is a child class of
      * this class. 
      */
-    public boolean isParent(ResourceClass resourceClass)
+    public boolean isParent(ResourceClass<?> resourceClass)
     {
         ImmutableSet<ResourceClass<?>> snapshot = buildChildClassSet();
         return snapshot.contains(resourceClass);
@@ -498,10 +498,10 @@ public class ResourceClassImpl<T extends Resource>
      *
      * @return the child classes of this resource class.
      */
-    public ResourceClass[] getChildClasses()
+    public ResourceClass<?>[] getChildClasses()
     {
         ImmutableSet<ResourceClass<?>> snapshot = buildChildClassSet();
-        ResourceClass[] result = new ResourceClass[snapshot.size()];
+        ResourceClass<?>[] result = new ResourceClass[snapshot.size()];
         snapshot.toArray(result);
         return result;
     }
@@ -636,7 +636,7 @@ public class ResourceClassImpl<T extends Resource>
      * @param added <code>true</code> if the attribute was added,
      *        <code>false</code> if removed.
      */
-    public synchronized void attributesChanged(AttributeDefinition attribute, 
+    public synchronized void attributesChanged(AttributeDefinition<?> attribute,
                                                boolean added)
     {
         ResourceClass<?> rc = attribute.getDeclaringClass();
@@ -672,7 +672,7 @@ public class ResourceClassImpl<T extends Resource>
      *
      * @param attributeDefinition the attribute that changed.
      */
-    public synchronized void attributeDefinitionChanged(AttributeDefinition attributeDefinition)
+    public synchronized void attributeDefinitionChanged(AttributeDefinition<?> attributeDefinition)
     {
         if(attributeMap.containsValue(attributeDefinition))
         {
@@ -748,13 +748,13 @@ public class ResourceClassImpl<T extends Resource>
         javaClassName = className;
         try
         {
-            javaClass = instantiator.loadClass(className);
+            javaClass = (Class<T>)instantiator.loadClass(className);
         }
         catch(ClassNotFoundException e)
         {
             if(fallbackAllowed && this.handler != null)
             {
-                javaClass = handler.getFallbackResourceImplClass();
+                javaClass = (Class<T>)handler.getFallbackResourceImplClass();
                 coral.getLog().warn(
                     className + "is not available. Falling back to handler default: "
                         + javaClass.getName(), e);

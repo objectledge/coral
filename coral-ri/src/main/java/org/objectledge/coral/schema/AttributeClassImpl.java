@@ -20,9 +20,9 @@ import org.objectledge.database.persistence.Persistence;
  * @version $Id: AttributeClassImpl.java,v 1.11 2004-03-16 13:33:35 fil Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
-public class AttributeClassImpl
+public class AttributeClassImpl<A>
     extends AbstractEntity
-    implements AttributeClass,
+    implements AttributeClass<A>,
                AttributeClassChangeListener
 {
     // Instance variables ///////////////////////////////////////////////////////////////////////
@@ -37,13 +37,13 @@ public class AttributeClassImpl
     private String javaClassName;
     
     /** The associated Java class. */
-    private Class javaClass;
+    private Class<A> javaClass;
 
     /** name of the handler class. */
     private String handlerClassName;
     
     /** The associated {@link org.objectledge.coral.schema.AttributeHandler}. */
-    private AttributeHandler handler;
+    private AttributeHandler<A> handler;
 
     /** The associated database table. */
     private String dbTable;
@@ -172,7 +172,7 @@ public class AttributeClassImpl
      *
      * @param attributeClass the attributeClass that changed.
      */
-    public void attributeClassChanged(AttributeClass attributeClass)
+    public void attributeClassChanged(AttributeClass<?> attributeClass)
     {
         if(this.equals(attributeClass))
         {
@@ -196,7 +196,7 @@ public class AttributeClassImpl
      * @return the Java class that is associated with this resource attribute
      * type.
      */
-    public Class getJavaClass()
+    public Class<A> getJavaClass()
     {
         return javaClass;
     }
@@ -207,7 +207,7 @@ public class AttributeClassImpl
      *
      * @return an <code>AttributeHandler</code> implementation.
      */
-    public AttributeHandler getHandler()
+    public AttributeHandler<A> getHandler()
     {
         return handler;
     }
@@ -239,7 +239,7 @@ public class AttributeClassImpl
         javaClassName = className;
         try
         {
-            javaClass = instantiator.loadClass(className);
+            javaClass = (Class<A>)instantiator.loadClass(className);
         }
         catch(ClassNotFoundException e)
         {
@@ -260,10 +260,11 @@ public class AttributeClassImpl
         handlerClassName = className;
         try
         {
-            Class handlerClass = instantiator.loadClass(className);
-            Map additional = new HashMap();
+            Class<AttributeHandler<A>> handlerClass = (Class<AttributeHandler<A>>)instantiator
+                .loadClass(className);
+            Map<Object, Object> additional = new HashMap<Object, Object>();
             additional.put(AttributeClass.class, this);
-            handler = (AttributeHandler)instantiator.newInstance(handlerClass, additional);
+            handler = (AttributeHandler<A>)instantiator.newInstance(handlerClass, additional);
         }
         catch(ClassNotFoundException e)
         {

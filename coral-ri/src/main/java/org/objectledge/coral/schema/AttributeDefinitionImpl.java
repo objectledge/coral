@@ -155,7 +155,6 @@ public class AttributeDefinitionImpl<T>
         long attributeClassId = record.getLong("attribute_class_id");
         try
         {
-            @SuppressWarnings("unchecked")
             AttributeClass<T> attributeClass = (AttributeClass<T>)coral.getSchema()
                 .getAttributeClass(attributeClassId);
             this.attributeClass = attributeClass;
@@ -192,7 +191,7 @@ public class AttributeDefinitionImpl<T>
      *
      * @param attributeDefinition the attributeDefinition that changed.
      */
-    public void attributeDefinitionChanged(AttributeDefinition attributeDefinition)
+    public void attributeDefinitionChanged(AttributeDefinition<?> attributeDefinition)
     {
         if(this.equals(attributeDefinition))
         {

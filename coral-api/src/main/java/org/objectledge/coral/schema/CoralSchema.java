@@ -50,6 +50,17 @@ public interface CoralSchema
         throws EntityDoesNotExistException;
 
     /**
+     * Returns the attribute class with the specified name.
+     * 
+     * @param name the name.
+     * @return the <code>AttributeClass</code>s with the given name.
+     * @throws EntityDoesNotExistException if the <code>AttributeClass</code> with the specified
+     *         name does not exist.
+     */
+    public <A> AttributeClass<A> getAttributeClass(String name, Class<A> javaClass)
+        throws EntityDoesNotExistException;
+
+    /**
      * Creates an {@link AttributeClass}.
      *
      * @param name the name of the class
@@ -368,7 +379,7 @@ public interface CoralSchema
      *         map. 
      */
     public void addParentClass(ResourceClass<?> child, ResourceClass<?> parent, 
-                               Map<AttributeDefinition<?>, Object> attributes)
+        Map<AttributeDefinition<?>, ?> attributes)
         throws CircularDependencyException, SchemaIntegrityException, 
                ValueRequiredException;
 

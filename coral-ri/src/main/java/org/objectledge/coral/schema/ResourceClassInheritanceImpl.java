@@ -24,10 +24,10 @@ public class ResourceClassInheritanceImpl
     private CoralCore coral;
 
     /** The parent class. */
-    private ResourceClass parent;
+    private ResourceClass<?> parent;
     
     /** The child class. */
-    private ResourceClass child;
+    private ResourceClass<?> child;
     
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +51,8 @@ public class ResourceClassInheritanceImpl
      * @param child the child class.
      */
     public ResourceClassInheritanceImpl(CoralCore coral, 
-        ResourceClass parent, ResourceClass child)
+ ResourceClass<?> parent,
+        ResourceClass<?> child)
     {
         super();
         this.parent = parent;
@@ -169,7 +170,7 @@ public class ResourceClassInheritanceImpl
      *
      * @return the parent class in this relationship.
      */
-    public ResourceClass getParent()
+    public ResourceClass<?> getParent()
     {
         return parent;
     }
@@ -179,7 +180,7 @@ public class ResourceClassInheritanceImpl
      *
      * @return the child class in this relationship.
      */
-    public ResourceClass getChild()
+    public ResourceClass<?> getChild()
     {
         return child;
     }

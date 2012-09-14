@@ -95,6 +95,16 @@ public class SessionCoralSchema implements CoralSchema
         return coral.getSchema().getAttributeClass(name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public <A> AttributeClass<A> getAttributeClass(String name, Class<A> javaClass)
+        throws EntityDoesNotExistException
+    {
+        session.verify();
+        return coral.getSchema().getAttributeClass(name, javaClass);
+    }
+
     /** 
      * {@inheritDoc}
      */
@@ -348,7 +358,8 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public void addParentClass(ResourceClass<?> child, ResourceClass<?> parent, Map<AttributeDefinition<?>, Object> attributes)
+    public void addParentClass(ResourceClass<?> child, ResourceClass<?> parent,
+        Map<AttributeDefinition<?>, ?> attributes)
         throws CircularDependencyException, SchemaIntegrityException, ValueRequiredException
     {
         session.verify();
