@@ -19,6 +19,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.query.ResourceQueryHandler;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.CoralSchema;
@@ -43,11 +44,13 @@ import org.objectledge.database.persistence.Persistent;
 public class PersistentResourceHandler<T extends PersistentResource>
     extends AbstractResourceHandler<T>
 {
+    private static final ResourceQueryHandler queryHandler = new PersistentResourceQueryHandler();
 
     // instance variables ////////////////////////////////////////////////////
 
     /** The persistence. */
     private Persistence persistence;
+
 
     /**
      * Constructor.
@@ -691,5 +694,11 @@ public class PersistentResourceHandler<T extends PersistentResource>
     public Class<?> getFallbackResourceImplClass()
     {
         return PersistentResource.class;
+    }
+
+    @Override
+    public ResourceQueryHandler getQueryHandler()
+    {
+        return queryHandler;
     }
 }

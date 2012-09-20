@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.objectledge.coral.query.ResourceQueryHandler;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 
@@ -221,4 +222,11 @@ public interface ResourceHandler<T extends Resource>
      * @return an implementation of Resource class.
      */
     public Class<?> getFallbackResourceImplClass();
+
+    /**
+     * Returns Coral query to SQL translation helper object suitable for associated resource class.
+     * 
+     * @return Coral query to SQL translation helper object.
+     */
+    public ResourceQueryHandler getQueryHandler();
 }

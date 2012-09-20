@@ -10,6 +10,8 @@ import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.query.ResourceQueryHandler.ResultColumn;
+import org.objectledge.coral.query.ResourceQueryHandler.ResultColumnAttribute;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
@@ -35,7 +37,6 @@ import org.objectledge.coral.script.parser.RMLVisitor;
 import org.objectledge.coral.store.ConstraintViolationException;
 import org.objectledge.coral.store.Resource;
 
-
 /**
  * A common base class for {@link CoralQuery} implementations.
  * 
@@ -47,17 +48,17 @@ public abstract class AbstractCoralQueryImpl
 {
     // instance variables ////////////////////////////////////////////////////
 
-	/** The coral session. */
-	protected CoralCore coral;
-	
+    /** The coral session. */
+    protected CoralCore coral;
+
     /** The entity resolver. */
     private RMLEntityResolver entities;
 
     // initialization ////////////////////////////////////////////////////////
 
-    /** 
+    /**
      * Constructs an QueryService implementation instance.
-     *
+     * 
      * @param coral coral core instance.
      */
     public AbstractCoralQueryImpl(CoralCore coral)
@@ -65,8 +66,9 @@ public abstract class AbstractCoralQueryImpl
         this.coral = coral;
         entities = new RMLEntityResolver(coral.getSchema(), coral.getSecurity(), coral.getStore(),
             coral.getRelationManager());
+
     }
-    
+
     // public interface //////////////////////////////////////////////////////
 
     /**
@@ -86,14 +88,14 @@ public abstract class AbstractCoralQueryImpl
             i = query.indexOf("RESOURCE", i);
             if(i >= 0)
             {
-                query = query.substring(i+8);
+                query = query.substring(i + 8);
                 ASTfindResourceStatement statement = parseQuery(query);
                 return executeQuery(statement);
             }
         }
         throw new MalformedQueryException("Queries must start with FIND RESOURCE");
     }
-    
+
     /**
      * Prepares a query.
      * <p>
@@ -120,11 +122,10 @@ public abstract class AbstractCoralQueryImpl
 
     /**
      * Executes a preparsed query.
-     *
+     * 
      * @param statement the AST node representing a FIND RESOURCE statement.
      * @return query resuls.
-     * @throws MalformedQueryException if the query has semantic errors and
-     * thus cannot be executed. 
+     * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
     public abstract QueryResults executeQuery(ASTfindResourceStatement statement)
         throws MalformedQueryException;
@@ -162,18 +163,18 @@ public abstract class AbstractCoralQueryImpl
      * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
     protected Object parseOperand(String operand, boolean lhs, boolean outer,
-        Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap)
+        Map<String, ResultColumn<?>> columnMap)
         throws MalformedQueryException
     {
-        ResourceQueryHandler.ResultColumn<?> rcm = null;
+        ResultColumn<?> rcm = null;
         ResourceClass<?> rc;
         String an = null;
         if(columnMap.containsKey(operand))
         {
             if(lhs)
             {
-                throw new MalformedQueryException("resource reference "+operand+
-                                                  " is not allowed in this context");
+                throw new MalformedQueryException("resource reference " + operand
+                    + " is not allowed in this context");
             }
             else
             {
@@ -192,9 +193,8 @@ public abstract class AbstractCoralQueryImpl
             {
                 if(lhs)
                 {
-                    throw new MalformedQueryException("unqualified attribute "+operand+
-                                                      " is not allowed"+
-                                                      " in a multi column query");
+                    throw new MalformedQueryException("unqualified attribute " + operand
+                        + " is not allowed" + " in a multi column query");
                 }
                 else
                 {
@@ -204,20 +204,20 @@ public abstract class AbstractCoralQueryImpl
         }
         else
         {
-            String rca = operand.substring(0,p);
+            String rca = operand.substring(0, p);
             rcm = columnMap.get(rca);
             if(rcm == null)
             {
                 if(lhs)
                 {
-                    throw new MalformedQueryException("unknown resource class "+rca);
+                    throw new MalformedQueryException("unknown resource class " + rca);
                 }
                 else
                 {
                     return operand;
                 }
             }
-            an = operand.substring(p+1);
+            an = operand.substring(p + 1);
         }
         rc = rcm.getRClass();
         AttributeDefinition<?> ad;
@@ -239,8 +239,8 @@ public abstract class AbstractCoralQueryImpl
                 {
                     if(lhs)
                     {
-                        throw new MalformedQueryException(rc.getName()+" does not have "+an+
-                                                          " attribute");
+                        throw new MalformedQueryException(rc.getName() + " does not have " + an
+                            + " attribute");
                     }
                     else
                     {
@@ -266,7 +266,7 @@ public abstract class AbstractCoralQueryImpl
             }
         }
         rcm.addAttribute(ad, false);
-        return ResourceQueryHandler.ResultColumnAttribute.newInstance(rcm, ad);
+        return ResultColumnAttribute.newInstance(rcm, ad);
     }
 
     /**
@@ -279,13 +279,13 @@ public abstract class AbstractCoralQueryImpl
     {
         int count = list.jjtGetNumChildren();
         ASTclassAndAliasSpecifier[] result = new ASTclassAndAliasSpecifier[count];
-        for(int i=0; i<count; i++)
+        for(int i = 0; i < count; i++)
         {
             result[i] = (ASTclassAndAliasSpecifier)list.jjtGetChild(i);
         }
         return result;
     }
-    
+
     /**
      * Extract AST nodes from a list.
      * 
@@ -296,13 +296,13 @@ public abstract class AbstractCoralQueryImpl
     {
         int count = list.jjtGetNumChildren();
         ASTorderBySpecifier[] result = new ASTorderBySpecifier[count];
-        for(int i=0; i<count; i++)
+        for(int i = 0; i < count; i++)
         {
-        	result[i] = (ASTorderBySpecifier)list.jjtGetChild(i);
+            result[i] = (ASTorderBySpecifier)list.jjtGetChild(i);
         }
         return result;
     }
-    
+
     /**
      * Extract AST nodes from a list.
      * 
@@ -311,33 +311,35 @@ public abstract class AbstractCoralQueryImpl
      */
     protected String[] getItems(ASTselectList list)
     {
-    	int count = list.jjtGetNumChildren();
-    	String[] result = new String[count];
-    	for(int i=0; i<count; i++)
-    	{
-    		ASTselectSpecifier specifier = (ASTselectSpecifier)list.jjtGetChild(i);
-    		result[i] = specifier.getAttribute();
-    	}
-    	return result;
+        int count = list.jjtGetNumChildren();
+        String[] result = new String[count];
+        for(int i = 0; i < count; i++)
+        {
+            ASTselectSpecifier specifier = (ASTselectSpecifier)list.jjtGetChild(i);
+            result[i] = specifier.getAttribute();
+        }
+        return result;
     }
 
     /**
-     * Build a list of {@link ResourceQueryHandler.ResultColumn} objects from the query data.
-     *
+     * Build a list of {@link ResultColumn} objects from the query data.
+     * 
      * @param statement the AST node representing a FIND RESOURCE statement.
-     * @return a list of {@link ResourceQueryHandler.ResultColumn} objects.
-     * @throws MalformedQueryException if the query has syntactic or semantic
-     *         errors and thus cannot be executed.
+     * @param rootRClass TODO
+     * @return a list of {@link ResultColumn} objects.
+     * @throws MalformedQueryException if the query has syntactic or semantic errors and thus cannot
+     *         be executed.
      */
-    protected List<ResourceQueryHandler.ResultColumn<?>> getColumns(ASTfindResourceStatement statement)
+    protected List<ResultColumn<?>> getColumns(ASTfindResourceStatement statement,
+        ResourceClass<?> rootRClass)
         throws MalformedQueryException
     {
-        ArrayList<ResourceQueryHandler.ResultColumn<?>> columns = new ArrayList<ResourceQueryHandler.ResultColumn<?>>();
-        Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap = new HashMap<String, ResourceQueryHandler.ResultColumn<?>>();
+        ArrayList<ResultColumn<?>> columns = new ArrayList<ResultColumn<?>>();
+        Map<String, ResultColumn<?>> columnMap = new HashMap<String, ResultColumn<?>>();
         // process FROM
         if(statement.getFrom() == null)
         {
-            ResourceQueryHandler.ResultColumn<?> rc = new ResourceQueryHandler.ResultColumn<Resource>(null, null);
+            ResultColumn<?> rc = ResultColumn.newInstance(rootRClass, null);
             columnMap.put(null, rc);
             columns.add(rc);
             rc.setIndex(1);
@@ -345,7 +347,7 @@ public abstract class AbstractCoralQueryImpl
         else
         {
             ASTclassAndAliasSpecifier[] items = getItems(statement.getFrom());
-            for(int i=0; i<items.length; i++)
+            for(int i = 0; i < items.length; i++)
             {
                 ResourceClass<?> rClass;
                 try
@@ -358,14 +360,14 @@ public abstract class AbstractCoralQueryImpl
                 }
                 catch(AmbigousEntityNameException e)
                 {
-                    throw new BackendException("non-unique resource class name "+
-                                               items[i].getResourceClass(), e);
+                    throw new BackendException("non-unique resource class name "
+                        + items[i].getResourceClass(), e);
                 }
                 String alias = items[i].getAlias();
                 if(alias == null)
                 {
                     alias = rClass.getName();
-                    ResourceQueryHandler.ResultColumn<?> rc = ResourceQueryHandler.ResultColumn.newInstance(rClass, alias);
+                    ResultColumn<?> rc = ResultColumn.newInstance(rClass, alias);
                     if(columnMap.isEmpty())
                     {
                         columnMap.put(null, rc);
@@ -380,7 +382,7 @@ public abstract class AbstractCoralQueryImpl
                 }
                 else
                 {
-                    ResourceQueryHandler.ResultColumn<?> rc = ResourceQueryHandler.ResultColumn.newInstance(rClass, alias);
+                    ResultColumn<?> rc = ResultColumn.newInstance(rClass, alias);
                     columnMap.put(alias, rc);
                     columns.add(rc);
                     rc.setIndex(columns.size());
@@ -396,15 +398,14 @@ public abstract class AbstractCoralQueryImpl
         if(statement.getOrderBy() != null)
         {
             ASTorderBySpecifier[] items = getItems(statement.getOrderBy());
-            for(int i=0; i<items.length; i++)
+            for(int i = 0; i < items.length; i++)
             {
-                ResourceQueryHandler.ResultColumnAttribute<?, ?> rcm = (ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
+                ResultColumnAttribute<?, ?> rcm = (ResultColumnAttribute<?, ?>)parseOperand(
                     items[i].getAttribute(), true, false, columnMap);
                 if((rcm.getAttribute().getFlags() & AttributeFlags.SYNTHETIC) != 0)
                 {
-                    throw new MalformedQueryException("SYNTHETIC attribute "+
- rcm.getAttribute().getName() +
-                                                      "cannot be used in the ORDER BY clause");
+                    throw new MalformedQueryException("SYNTHETIC attribute "
+                        + rcm.getAttribute().getName() + "cannot be used in the ORDER BY clause");
                 }
             }
         }
@@ -413,7 +414,6 @@ public abstract class AbstractCoralQueryImpl
     }
 
     // implementation ////////////////////////////////////////////////////////
-
 
     protected static <A> void checkConstraint(AttributeDefinition<A> ad, String literal)
         throws MalformedQueryException
@@ -440,7 +440,7 @@ public abstract class AbstractCoralQueryImpl
 
     /**
      * Parses the query.
-     *
+     * 
      * @param query the query
      * @return a parsed FIND RESOURCE statement.
      */
@@ -457,9 +457,9 @@ public abstract class AbstractCoralQueryImpl
             throw new MalformedQueryException("Syntax error", e);
         }
         finally
-		{
-            coral.getRMLParserFactory().recycle(parser);        	
-		}
+        {
+            coral.getRMLParserFactory().recycle(parser);
+        }
     }
 
     /**
@@ -472,7 +472,7 @@ public abstract class AbstractCoralQueryImpl
      * @param columnMap map containing ResultColumn objects keyed by alias.
      */
     private void gatherAttributes(ASTconditionalExpression expr,
-        final Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap)
+        final Map<String, ResultColumn<?>> columnMap)
         throws MalformedQueryException
     {
         RMLVisitor visitor = new DefaultRMLVisitor()
@@ -481,13 +481,12 @@ public abstract class AbstractCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition<?> rhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
+                        AttributeDefinition<?> rhs = ((ResultColumnAttribute<?, ?>)parseOperand(
                             node.getRHS(), true, true, columnMap)).getAttribute();
                         if((rhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
-                            throw new MalformedQueryException("SYNTHETIC attribute "+
-                                                              rhs.getName()+
-                                                              "cannot be used in WHERE clause");
+                            throw new MalformedQueryException("SYNTHETIC attribute "
+                                + rhs.getName() + "cannot be used in WHERE clause");
                         }
                     }
                     catch(MalformedQueryException e)
@@ -496,26 +495,23 @@ public abstract class AbstractCoralQueryImpl
                     }
                     return data;
                 }
-                
+
                 public Object visit(ASTequalityCondition node, Object data)
                 {
                     try
                     {
-                        AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
+                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
                             node.getLHS(), true, false, columnMap)).getAttribute();
                         if((lhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
-                            throw new MalformedQueryException("SYNTHETIC attribute "+
-                                                              lhs.getName()+
-                                                              "cannot be used in WHERE clause");
+                            throw new MalformedQueryException("SYNTHETIC attribute "
+                                + lhs.getName() + "cannot be used in WHERE clause");
                         }
-                        if((lhs.getAttributeClass().getHandler().getSupportedConditions() & 
-                            AttributeHandler.CONDITION_EQUALITY) == 0)
+                        if((lhs.getAttributeClass().getHandler().getSupportedConditions() & AttributeHandler.CONDITION_EQUALITY) == 0)
                         {
-                            throw new MalformedQueryException("attribute type "+
-                                                              lhs.getAttributeClass().getName()+
-                                                              " does not support"+
-                                                              " equality conditions");
+                            throw new MalformedQueryException("attribute type "
+                                + lhs.getAttributeClass().getName() + " does not support"
+                                + " equality conditions");
                         }
                         Object rhs;
                         if(node.isRHSLiteral())
@@ -526,36 +522,33 @@ public abstract class AbstractCoralQueryImpl
                         {
                             rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         }
-                        if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
+                        if(rhs instanceof ResultColumnAttribute)
                         {
-                            AttributeDefinition<?> rhsa = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)rhs)
+                            AttributeDefinition<?> rhsa = ((ResultColumnAttribute<?, ?>)rhs)
                                 .getAttribute();
 
                             if((rhsa.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                             {
-                                throw new MalformedQueryException("SYNTHETIC attribute "+
-                                                                  rhsa.getName()+
-                                                                  "cannot be used "+
-                                                                  "in WHERE clause");
+                                throw new MalformedQueryException("SYNTHETIC attribute "
+                                    + rhsa.getName() + "cannot be used " + "in WHERE clause");
                             }
 
-                            if(!lhs.getAttributeClass().getJavaClass().
-                               isAssignableFrom(rhsa.getAttributeClass().getJavaClass()))
+                            if(!lhs.getAttributeClass().getJavaClass()
+                                .isAssignableFrom(rhsa.getAttributeClass().getJavaClass()))
                             {
-                                throw new MalformedQueryException(lhs.getAttributeClass().
-                                                                  getJavaClass().getName()+
-                                                                  " cannot be compared with "+
-                                                                  rhsa.getAttributeClass()
-                                                                  .getJavaClass().getName());
-                            }                                     
+                                throw new MalformedQueryException(lhs.getAttributeClass()
+                                    .getJavaClass().getName()
+                                    + " cannot be compared with "
+                                    + rhsa.getAttributeClass().getJavaClass().getName());
+                            }
                         }
-                        if(rhs instanceof ResourceQueryHandler.ResultColumn)
+                        if(rhs instanceof ResultColumn)
                         {
-                            if(!(Resource.class.
-                                 isAssignableFrom(lhs.getAttributeClass().getJavaClass())))
+                            if(!(Resource.class.isAssignableFrom(lhs.getAttributeClass()
+                                .getJavaClass())))
                             {
-                                throw new MalformedQueryException(lhs.getName()+
-                                                                  " is not a Resource reference");
+                                throw new MalformedQueryException(lhs.getName()
+                                    + " is not a Resource reference");
                             }
                             if(lhs.getDomain() != null && !lhs.getDomain().equals(""))
                             {
@@ -563,22 +556,20 @@ public abstract class AbstractCoralQueryImpl
                                 {
                                     ResourceClass<?> req = coral.getSchema().getResourceClass(
                                         lhs.getDomain());
-                                    if(!req.equals(((ResourceQueryHandler.ResultColumn<?>)rhs)
-                                        .getRClass())
-                                        && !req
-                                            .isParent(((ResourceQueryHandler.ResultColumn<?>)rhs)
-                                                .getRClass()))
+                                    if(!req.equals(((ResultColumn<?>)rhs).getRClass())
+                                        && !req.isParent(((ResultColumn<?>)rhs).getRClass()))
                                     {
-                                        throw new MalformedQueryException(
-                                            ((ResourceQueryHandler.ResultColumn<?>)rhs).getRClass()
-                                                .getName()
-                                                + " is not a subclass" + " of " + req.getName());
+                                        throw new MalformedQueryException(((ResultColumn<?>)rhs)
+                                            .getRClass().getName()
+                                            + " is not a subclass"
+                                            + " of "
+                                            + req.getName());
                                     }
                                 }
                                 catch(EntityDoesNotExistException e)
                                 {
-                                    throw new BackendException("invalid constraint on "+
-                                        "a Resource reference attribute #" + lhs.getIdString()
+                                    throw new BackendException("invalid constraint on "
+                                        + "a Resource reference attribute #" + lhs.getIdString()
                                         + ": " + lhs.getDomain(), e);
                                 }
                             }
@@ -586,7 +577,7 @@ public abstract class AbstractCoralQueryImpl
                         if(rhs instanceof String)
                         {
                             checkConstraint(lhs, (String)rhs);
-                        }   
+                        }
                     }
                     catch(MalformedQueryException e)
                     {
@@ -594,26 +585,23 @@ public abstract class AbstractCoralQueryImpl
                     }
                     return data;
                 }
-                
+
                 public Object visit(ASTcomparisonCondition node, Object data)
                 {
                     try
                     {
-                        AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
+                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
                             node.getLHS(), true, false, columnMap)).getAttribute();
                         if((lhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
-                            throw new MalformedQueryException("SYNTHETIC attribute "+
-                                                              lhs.getName()+
-                                                              "cannot be used in WHERE clause");
+                            throw new MalformedQueryException("SYNTHETIC attribute "
+                                + lhs.getName() + "cannot be used in WHERE clause");
                         }
-                        if((lhs.getAttributeClass().getHandler().getSupportedConditions() & 
-                            AttributeHandler.CONDITION_COMPARISON) == 0)
+                        if((lhs.getAttributeClass().getHandler().getSupportedConditions() & AttributeHandler.CONDITION_COMPARISON) == 0)
                         {
-                            throw new MalformedQueryException("attribute type "+
-                                                              lhs.getAttributeClass().getName()+
-                                                              " does not suport"+
-                                                              " comparison conditions");
+                            throw new MalformedQueryException("attribute type "
+                                + lhs.getAttributeClass().getName() + " does not suport"
+                                + " comparison conditions");
                         }
                         Object rhs;
                         if(node.isRHSLiteral())
@@ -624,39 +612,35 @@ public abstract class AbstractCoralQueryImpl
                         {
                             rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         }
-                        if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
+                        if(rhs instanceof ResultColumnAttribute)
                         {
-                            AttributeDefinition<?> rhsa = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)rhs)
+                            AttributeDefinition<?> rhsa = ((ResultColumnAttribute<?, ?>)rhs)
                                 .getAttribute();
 
                             if((rhsa.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                             {
-                                throw new MalformedQueryException("SYNTHETIC attribute "+
-                                                                  rhsa.getName()+
-                                                                  "cannot be used "+
-                                                                  "in WHERE clause");
+                                throw new MalformedQueryException("SYNTHETIC attribute "
+                                    + rhsa.getName() + "cannot be used " + "in WHERE clause");
                             }
 
-                            if(!lhs.getAttributeClass().getJavaClass().
-                               isAssignableFrom(rhsa.getAttributeClass().getJavaClass()))
+                            if(!lhs.getAttributeClass().getJavaClass()
+                                .isAssignableFrom(rhsa.getAttributeClass().getJavaClass()))
                             {
-                                throw new MalformedQueryException(lhs.getAttributeClass().
-                                                                  getJavaClass().getName()+
-                                                                  " cannot be compared with "+
-                                                                  rhsa.getAttributeClass()
-                                                                  .getJavaClass().getName());
-                            }                                     
+                                throw new MalformedQueryException(lhs.getAttributeClass()
+                                    .getJavaClass().getName()
+                                    + " cannot be compared with "
+                                    + rhsa.getAttributeClass().getJavaClass().getName());
+                            }
                         }
-                        if(rhs instanceof ResourceQueryHandler.ResultColumn)
+                        if(rhs instanceof ResultColumn)
                         {
-                            throw new MalformedQueryException("resource class reference "+
-                                                              node.getRHS()+
-                                                              " is not allowed in this context");
+                            throw new MalformedQueryException("resource class reference "
+                                + node.getRHS() + " is not allowed in this context");
                         }
                         if(rhs instanceof String)
                         {
                             checkConstraint(lhs, (String)rhs);
-                        }   
+                        }
                     }
                     catch(MalformedQueryException e)
                     {
@@ -669,21 +653,18 @@ public abstract class AbstractCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
+                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
                             node.getLHS(), true, false, columnMap)).getAttribute();
                         if((lhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
-                            throw new MalformedQueryException("SYNTHETIC attribute "+
-                                                              lhs.getName()+
-                                                              "cannot be used in WHERE clause");
+                            throw new MalformedQueryException("SYNTHETIC attribute "
+                                + lhs.getName() + "cannot be used in WHERE clause");
                         }
-                        if((lhs.getAttributeClass().getHandler().getSupportedConditions() & 
-                            AttributeHandler.CONDITION_APPROXIMATION) == 0)
+                        if((lhs.getAttributeClass().getHandler().getSupportedConditions() & AttributeHandler.CONDITION_APPROXIMATION) == 0)
                         {
-                            throw new MalformedQueryException("attribute type "+
-                                                              lhs.getAttributeClass().getName()+
-                                                              " does not suport"+
-                                                              " approximation conditions");
+                            throw new MalformedQueryException("attribute type "
+                                + lhs.getAttributeClass().getName() + " does not suport"
+                                + " approximation conditions");
                         }
                         Object rhs;
                         if(node.isRHSLiteral())
@@ -694,39 +675,35 @@ public abstract class AbstractCoralQueryImpl
                         {
                             rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         }
-                        if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
+                        if(rhs instanceof ResultColumnAttribute)
                         {
-                            AttributeDefinition<?> rhsa = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)rhs)
+                            AttributeDefinition<?> rhsa = ((ResultColumnAttribute<?, ?>)rhs)
                                 .getAttribute();
 
                             if((rhsa.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                             {
-                                throw new MalformedQueryException("SYNTHETIC attribute "+
-                                                                  rhsa.getName()+
-                                                                  "cannot be used "+
-                                                                  "in WHERE clause");
+                                throw new MalformedQueryException("SYNTHETIC attribute "
+                                    + rhsa.getName() + "cannot be used " + "in WHERE clause");
                             }
 
-                            if(!lhs.getAttributeClass().getJavaClass().
-                               isAssignableFrom(rhsa.getAttributeClass().getJavaClass()))
+                            if(!lhs.getAttributeClass().getJavaClass()
+                                .isAssignableFrom(rhsa.getAttributeClass().getJavaClass()))
                             {
-                                throw new MalformedQueryException(lhs.getAttributeClass().
-                                                                  getJavaClass().getName()+
-                                                                  " cannot be compared with "+
-                                                                  rhsa.getAttributeClass()
-                                                                  .getJavaClass().getName());
-                            }                                     
+                                throw new MalformedQueryException(lhs.getAttributeClass()
+                                    .getJavaClass().getName()
+                                    + " cannot be compared with "
+                                    + rhsa.getAttributeClass().getJavaClass().getName());
+                            }
                         }
-                        if(rhs instanceof ResourceQueryHandler.ResultColumn)
+                        if(rhs instanceof ResultColumn)
                         {
-                            throw new MalformedQueryException("resource class reference "+
-                                                              node.getRHS()+
-                                                              " is not allowed in this context");
+                            throw new MalformedQueryException("resource class reference "
+                                + node.getRHS() + " is not allowed in this context");
                         }
                         if(rhs instanceof String)
                         {
                             checkConstraint(lhs, (String)rhs);
-                        }   
+                        }
                     }
                     catch(MalformedQueryException e)
                     {
@@ -735,7 +712,7 @@ public abstract class AbstractCoralQueryImpl
                     return data;
                 }
             };
-       
+
         try
         {
             visitor.visit(expr, null);
@@ -747,16 +724,15 @@ public abstract class AbstractCoralQueryImpl
     }
 
     // inner classes /////////////////////////////////////////////////////////
-    
+
     /**
-     * Helper runtime exception class needed to bypass the exception contract
-     * of the AST visitor.
+     * Helper runtime exception class needed to bypass the exception contract of the AST visitor.
      */
     protected class WrappedMalformedQueryException
         extends RuntimeException
     {
-		public static final long serialVersionUID = 0L;
-		
+        public static final long serialVersionUID = 0L;
+
         private MalformedQueryException e;
 
         /**
@@ -768,7 +744,7 @@ public abstract class AbstractCoralQueryImpl
         {
             this.e = e;
         }
-        
+
         /**
          * Returns the wrapped exception.
          * 

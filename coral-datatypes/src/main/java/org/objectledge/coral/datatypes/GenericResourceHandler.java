@@ -12,6 +12,7 @@ import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.query.ResourceQueryHandler;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
@@ -32,6 +33,8 @@ import org.objectledge.database.DatabaseUtils;
 public class GenericResourceHandler<T extends Resource>
     extends AbstractResourceHandler<T>
 {
+    private static final ResourceQueryHandler queryHandler = new GenericResourceQueryHandler();
+
     // Member objects ////////////////////////////////////////////////////////
 
     /**
@@ -511,5 +514,11 @@ public class GenericResourceHandler<T extends Resource>
     public Class<?> getFallbackResourceImplClass()
     {
         return GenericResource.class;
+    }
+
+    @Override
+    public ResourceQueryHandler getQueryHandler()
+    {
+        return queryHandler;
     }
 }
