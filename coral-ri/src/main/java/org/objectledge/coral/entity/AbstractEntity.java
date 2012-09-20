@@ -101,31 +101,24 @@ public abstract class AbstractEntity
 
     /**
      * Returns a String representation of this object.
-     *
-     * <p> This method is overriden to augument debugging. The format of the representation is as 
-     * following: 
-     * <blockquote>
-     *   <code>javaClass name #id @identity</code>
-     * </blockquote>
-     * Where:
+     * <p>
+     * This method is overriden to augument debugging. The format of the representation is as
+     * following: <blockquote> <code>name #id @identity</code> </blockquote> Where:
      * <ul>
-     *   <li><code>javaClass</code> is the actual implementation class of the object</li>
-     *   <li><code>name</code> is the name of the entity as returned by the {@link #getName()} 
-     *     method.</li>
-     *   <li><code>id</code> is the identifier of the entity as returned by the {@link #getId()}
-     *     method.</li> 
-     *   <li><code>idenity</code> is the obeject instance's identity hashcode as retured by the
-     *     <code>System.getIdentityHashCode(Object)</code> function.</li>
-     *  </ul>
-     *  </p>
+     * <li><code>name</code> is the name of the entity as returned by the {@link #getName()} method.
+     * </li>
+     * <li><code>id</code> is the identifier of the entity as returned by the {@link #getId()}
+     * method.</li>
+     * <li><code>idenity</code> is the obeject instance's identity hashcode as retured by the
+     * <code>System.getIdentityHashCode(Object)</code> function.</li>
+     * </ul>
+     * </p>
      * 
      * @return a String representation of this object.
      */
     public String toString()
     {
         StringBuilder buff = new StringBuilder();
-        buff.append(getClass().getName());
-        buff.append(' ');
         buff.append(getName());
         buff.append(" #");
         buff.append(getIdString());
