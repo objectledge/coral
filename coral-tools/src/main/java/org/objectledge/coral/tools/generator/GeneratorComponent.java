@@ -802,7 +802,6 @@ public class GeneratorComponent
             for(String referncedFile : referencedFiles)
             {
                 if(buildContext.hasDelta(new File(referncedFile)))
-                    ;
                 {
                     return true;
                 }
