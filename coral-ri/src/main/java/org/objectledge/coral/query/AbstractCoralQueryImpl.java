@@ -3,6 +3,7 @@ package org.objectledge.coral.query;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -834,6 +835,22 @@ public abstract class AbstractCoralQueryImpl
         {
             return new ResultColumn<R>(rc, alias);
         }
+
+        @Override
+        public String toString()
+        {
+            StringBuilder attrNames = new StringBuilder();
+            Iterator<AttributeDefinition<?>> i = attributes.iterator();
+            while(i.hasNext())
+            {
+                attrNames.append(i.next().getName());
+                if(i.hasNext())
+                {
+                    attrNames.append(", ");
+                }
+            }
+            return alias + "=" + rClass.getName() + "[" + attrNames.toString() + "]";
+        }
     }
 
 
@@ -916,6 +933,13 @@ public abstract class AbstractCoralQueryImpl
             ResultColumn<R> rcm, AttributeDefinition<A> ad)
         {
             return new ResultColumnAttribute<R, A>(rcm, ad);
+        }
+
+        @Override
+        public String toString()
+        {
+            return column.getAlias() + " = " + column.getRClass().getName() + "["
+                + attribute.getName() + "]";
         }
     }
 }
