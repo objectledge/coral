@@ -103,7 +103,8 @@ public class CoralQueryTests
         AttributeDefinition<Resource> a3;
 
         firstClass = schema.createResourceClass("first", firstImpl.getResClass().getName(),
-            firstImpl.getHandlerClass().getName(), null, 0);
+            firstImpl.getHandlerClass().getName(), firstImpl == Implementation.TABULAR ? "first"
+                : null, 0);
         a1 = schema.createAttribute("a1", stringAttr, null, 0);
         schema.addAttribute(firstClass, a1, null);
         a2 = schema.createAttribute("a2", intAttr, null, 0);
@@ -120,7 +121,8 @@ public class CoralQueryTests
         first2 = store.createResource("first2", rootRes, firstClass, attributes);
 
         ResourceClass<?> secondClass = schema.createResourceClass("second", secondImpl
-            .getResClass().getName(), secondImpl.getHandlerClass().getName(), null, 0);
+            .getResClass().getName(), secondImpl.getHandlerClass().getName(),
+            secondImpl == Implementation.TABULAR ? "second" : null, 0);
         a1 = schema.createAttribute("a1", stringAttr, null, 0);
         schema.addAttribute(secondClass, a1, null);
         a2 = schema.createAttribute("a2", intAttr, null, 0);
@@ -143,7 +145,8 @@ public class CoralQueryTests
         second2 = store.createResource("second2", rootRes, secondClass, attributes);
 
         ResourceClass<?> thirdClass = schema.createResourceClass("third", thirdImpl.getResClass()
-            .getName(), thirdImpl.getHandlerClass().getName(), null, 0);
+            .getName(), thirdImpl.getHandlerClass().getName(),
+            thirdImpl == Implementation.TABULAR ? "third" : null, 0);
         a3 = schema.createAttribute("a3", resourceAttr, "first", 0);
         schema.addAttribute(thirdClass, a3, null);
         attributes.clear();
@@ -438,9 +441,9 @@ public class CoralQueryTests
         throws Exception
     {
         malformed();
-    
+
         queryBuiltin();
-    
+
         queryByStringEquals();
         queryByStringNotEquals();
         queryByStringLike();
@@ -450,15 +453,15 @@ public class CoralQueryTests
         queryByConjunction();
         queryByAlternative();
         queryByCompoundBoolean();
-    
+
         queryUsingInnerJoin();
         queryUsingCartesianJoin();
-    
+
         queryUsingOrderClause();
-    
+
         queryUsingBuiltinAttribute();
         queryUsingReferenceAttribute();
-    
+
         filtered();
     }
 
@@ -466,6 +469,27 @@ public class CoralQueryTests
         throws Exception
     {
         fixture(Implementation.GENERIC, Implementation.GENERIC, Implementation.GENERIC);
+        runTests();
+    }
+
+    public void testTabular()
+        throws Exception
+    {
+        fixture(Implementation.TABULAR, Implementation.TABULAR, Implementation.TABULAR);
+        runTests();
+    }
+
+    public void testMixed1()
+        throws Exception
+    {
+        fixture(Implementation.GENERIC, Implementation.TABULAR, Implementation.GENERIC);
+        runTests();
+    }
+
+    public void testMixed2()
+        throws Exception
+    {
+        fixture(Implementation.TABULAR, Implementation.GENERIC, Implementation.TABULAR);
         runTests();
     }
 
