@@ -89,12 +89,12 @@ public class SQLCoralQueryImpl
     public QueryResults executeQuery(ASTfindResourceStatement statement)
         throws MalformedQueryException
     {
-        List<ResultColumn<?>> columns = getColumns(statement);
-        Map<String, ResultColumn<?>> columnMap = new HashMap<String, ResultColumn<?>>();
-        Iterator<ResultColumn<?>> it = columns.iterator();
+        List<ResourceQueryHandler.ResultColumn<?>> columns = getColumns(statement);
+        Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap = new HashMap<String, ResourceQueryHandler.ResultColumn<?>>();
+        Iterator<ResourceQueryHandler.ResultColumn<?>> it = columns.iterator();
         while(it.hasNext())
         {
-            ResultColumn<?> rcm = it.next();
+            ResourceQueryHandler.ResultColumn<?> rcm = it.next();
             columnMap.put(rcm.getAlias(), rcm);
         }
         if(columns.size() == 1)
@@ -118,7 +118,7 @@ public class SQLCoralQueryImpl
         {
             query.append(i==0 ? "\nFROM " : "\n  , ");
             query.append("coral_resource r").append(i+1);
-            ResultColumn<?> rcm = columns.get(i);
+            ResourceQueryHandler.ResultColumn<?> rcm = columns.get(i);
             for(int j=0; j<rcm.getAttributes().size(); j++)
             {
                 AttributeDefinition<?> ad = rcm.getAttributes().get(j);
@@ -137,7 +137,7 @@ public class SQLCoralQueryImpl
         // WHERE - resource classes
         for(int i=0; i<columns.size(); i++)
         {
-            ResultColumn<?> rcm = columns.get(i);
+            ResourceQueryHandler.ResultColumn<?> rcm = columns.get(i);
             if(rcm.getRClass() != null)
             {
                 if(whereStarted)
@@ -171,7 +171,7 @@ public class SQLCoralQueryImpl
         // WHERE - attribute glue
         for(int i=0; i<columns.size(); i++)
         {
-            ResultColumn<?> rcm = columns.get(i);
+            ResourceQueryHandler.ResultColumn<?> rcm = columns.get(i);
             for(int j=0; j<rcm.getAttributes().size(); j++)
             {
                 AttributeDefinition<?> ad = rcm.getAttributes().get(j);
@@ -243,7 +243,7 @@ public class SQLCoralQueryImpl
             String[][] from = new String[columns.size()][];
             for(int i=0; i<columns.size(); i++)
             {
-                ResultColumn<?> rcm = columns.get(i);
+                ResourceQueryHandler.ResultColumn<?> rcm = columns.get(i);
                 from[i] = new String[2];
                 from[i][0] = rcm.getRClass() != null ? rcm.getRClass().getName() : null;
                 from[i][1] = rcm.getAlias();
@@ -288,11 +288,11 @@ public class SQLCoralQueryImpl
      * @param columnMap the map containing ResultColum objects keyed by alias.
      * @param out the buffer to write expression to.
      */
-    void appendAttribute(String attribute, final Map<String, ResultColumn<?>> columnMap,
+    void appendAttribute(String attribute, final Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap,
         final StringBuilder out)
         throws MalformedQueryException
     {
-        ResultColumnAttribute<?, ?> rca = (ResultColumnAttribute<?, ?>)
+        ResourceQueryHandler.ResultColumnAttribute<?, ?> rca = (ResourceQueryHandler.ResultColumnAttribute<?, ?>)
             parseOperand(attribute, true, columnMap);
         if((rca.getAttribute().getFlags() & AttributeFlags.BUILTIN) == 0)
         {
@@ -338,7 +338,7 @@ public class SQLCoralQueryImpl
      * @param out the buffer to write expression to.
      */
     private void appendCondition(ASTconditionalExpression expr,
-        final Map<String, ResultColumn<?>> columnMap, final StringBuilder out)
+        final Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap, final StringBuilder out)
         throws MalformedQueryException
     {
         RMLVisitor visitor = new DefaultRMLVisitor()
@@ -413,19 +413,19 @@ public class SQLCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
+                        AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
                             node.getLHS(), true, columnMap)).getAttribute();
                         appendAttribute(node.getLHS(), columnMap, out);
                         String[] ops = { " <> ", " = " };
                         out.append(ops[node.getOperator()]);
                         Object rhs = parseOperand(node.getRHS(), false, columnMap);
-                        if(rhs instanceof ResultColumnAttribute)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
                             appendAttribute(node.getRHS(), columnMap, out);
                         }
-                        if(rhs instanceof ResultColumn)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumn)
                         {
-                            out.append("r").append(((ResultColumn<?>)rhs).getIndex())
+                            out.append("r").append(((ResourceQueryHandler.ResultColumn<?>)rhs).getIndex())
                                 .append(".resource_id");
                         }
                         if(rhs instanceof String)
@@ -444,13 +444,13 @@ public class SQLCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
+                        AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
                             node.getLHS(), true, columnMap)).getAttribute();
                         appendAttribute(node.getLHS(), columnMap, out);
                         String[] ops = { " < ", " <= ", " >= ", " > " };
                         out.append(ops[node.getOperator()]);
                         Object rhs = parseOperand(node.getRHS(), false, columnMap);
-                        if(rhs instanceof ResultColumnAttribute)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
                             appendAttribute(node.getRHS(), columnMap, out);
                         }
@@ -470,7 +470,7 @@ public class SQLCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
+                        AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
                             node.getLHS(), true, columnMap)).getAttribute();
                         if(node.isCaseSensitive())
                         {
@@ -484,7 +484,7 @@ public class SQLCoralQueryImpl
                         }
                         out.append(" LIKE ");
                         Object rhs = parseOperand(node.getRHS(), false, columnMap);
-                        if(rhs instanceof ResultColumnAttribute)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
                             if(node.isCaseSensitive())
                             {

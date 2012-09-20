@@ -3,7 +3,6 @@ package org.objectledge.coral.query;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -161,10 +160,10 @@ public abstract class AbstractCoralQueryImpl
      * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
     protected Object parseOperand(String operand, boolean lhs,
-        Map<String, ResultColumn<?>> columnMap)
+        Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap)
         throws MalformedQueryException
     {
-        ResultColumn<?> rcm = null;
+        ResourceQueryHandler.ResultColumn<?> rcm = null;
         ResourceClass<?> rc;
         String an = null;
         if(columnMap.containsKey(operand))
@@ -218,11 +217,11 @@ public abstract class AbstractCoralQueryImpl
             }
             an = operand.substring(p+1);
         }
-        rc = rcm.rClass;
+        rc = rcm.getRClass();
         AttributeDefinition<?> ad;
         try
         {
-            if(rcm.rClass == null)
+            if(rc == null)
             {
                 throw new UnknownAttributeException("BUILTIN attributes only");
             }
@@ -264,12 +263,11 @@ public abstract class AbstractCoralQueryImpl
                 }
             }
         }
-        if(!rcm.attributes.contains(ad))
+        if(!rcm.getAttributes().contains(ad))
         {
-            rcm.attributes.add(ad);
-            rcm.nameIndex.put(ad.getName(), new Integer(rcm.attributes.size()-1));
+            rcm.addAttribute(ad);
         }
-        return ResultColumnAttribute.newInstance(rcm, ad);
+        return ResourceQueryHandler.ResultColumnAttribute.newInstance(rcm, ad);
     }
 
     /**
@@ -325,25 +323,25 @@ public abstract class AbstractCoralQueryImpl
     }
 
     /**
-     * Build a list of {@link ResultColumn} objects from the query data.
+     * Build a list of {@link ResourceQueryHandler.ResultColumn} objects from the query data.
      *
      * @param statement the AST node representing a FIND RESOURCE statement.
-     * @return a list of {@link ResultColumn} objects.
+     * @return a list of {@link ResourceQueryHandler.ResultColumn} objects.
      * @throws MalformedQueryException if the query has syntactic or semantic
      *         errors and thus cannot be executed.
      */
-    protected List<ResultColumn<?>> getColumns(ASTfindResourceStatement statement)
+    protected List<ResourceQueryHandler.ResultColumn<?>> getColumns(ASTfindResourceStatement statement)
         throws MalformedQueryException
     {
-        ArrayList<ResultColumn<?>> columns = new ArrayList<ResultColumn<?>>();
-        Map<String, ResultColumn<?>> columnMap = new HashMap<String, ResultColumn<?>>();
+        ArrayList<ResourceQueryHandler.ResultColumn<?>> columns = new ArrayList<ResourceQueryHandler.ResultColumn<?>>();
+        Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap = new HashMap<String, ResourceQueryHandler.ResultColumn<?>>();
         // process FROM
         if(statement.getFrom() == null)
         {
-            ResultColumn<?> rc = new ResultColumn<Resource>(null, null);
+            ResourceQueryHandler.ResultColumn<?> rc = new ResourceQueryHandler.ResultColumn<Resource>(null, null);
             columnMap.put(null, rc);
             columns.add(rc);
-            rc.index = 1;
+            rc.setIndex(1);
         }
         else
         {
@@ -368,7 +366,7 @@ public abstract class AbstractCoralQueryImpl
                 if(alias == null)
                 {
                     alias = rClass.getName();
-                    ResultColumn<?> rc = ResultColumn.newInstance(rClass, alias);
+                    ResourceQueryHandler.ResultColumn<?> rc = ResourceQueryHandler.ResultColumn.newInstance(rClass, alias);
                     if(columnMap.isEmpty())
                     {
                         columnMap.put(null, rc);
@@ -379,14 +377,14 @@ public abstract class AbstractCoralQueryImpl
                     }
                     columnMap.put(alias, rc);
                     columns.add(rc);
-                    rc.index = columns.size();
+                    rc.setIndex(columns.size());
                 }
                 else
                 {
-                    ResultColumn<?> rc = ResultColumn.newInstance(rClass, alias);
+                    ResourceQueryHandler.ResultColumn<?> rc = ResourceQueryHandler.ResultColumn.newInstance(rClass, alias);
                     columnMap.put(alias, rc);
                     columns.add(rc);
-                    rc.index = columns.size();
+                    rc.setIndex(columns.size());
                 }
             }
         }
@@ -401,12 +399,12 @@ public abstract class AbstractCoralQueryImpl
             ASTorderBySpecifier[] items = getItems(statement.getOrderBy());
             for(int i=0; i<items.length; i++)
             {
-                ResultColumnAttribute<?, ?> rcm = (ResultColumnAttribute<?, ?>)parseOperand(
+                ResourceQueryHandler.ResultColumnAttribute<?, ?> rcm = (ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
                     items[i].getAttribute(), true, columnMap);
-                if((rcm.attribute.getFlags() & AttributeFlags.SYNTHETIC) != 0)
+                if((rcm.getAttribute().getFlags() & AttributeFlags.SYNTHETIC) != 0)
                 {
                     throw new MalformedQueryException("SYNTHETIC attribute "+
-                                                      rcm.attribute.getName()+
+ rcm.getAttribute().getName() +
                                                       "cannot be used in the ORDER BY clause");
                 }
             }
@@ -475,7 +473,7 @@ public abstract class AbstractCoralQueryImpl
      * @param columnMap map containing ResultColumn objects keyed by alias.
      */
     private void gatherAttributes(ASTconditionalExpression expr,
-        final Map<String, ResultColumn<?>> columnMap)
+        final Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap)
         throws MalformedQueryException
     {
         RMLVisitor visitor = new DefaultRMLVisitor()
@@ -484,8 +482,8 @@ public abstract class AbstractCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition<?> rhs = ((ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getRHS(), true, columnMap)).attribute;
+                        AttributeDefinition<?> rhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
+                            node.getRHS(), true, columnMap)).getAttribute();
                         if((rhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
                             throw new MalformedQueryException("SYNTHETIC attribute "+
@@ -504,8 +502,8 @@ public abstract class AbstractCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getLHS(), true, columnMap)).attribute;
+                        AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
+                            node.getLHS(), true, columnMap)).getAttribute();
                         if((lhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
                             throw new MalformedQueryException("SYNTHETIC attribute "+
@@ -529,9 +527,10 @@ public abstract class AbstractCoralQueryImpl
                         {
                             rhs = parseOperand(node.getRHS(), false, columnMap);
                         }
-                        if(rhs instanceof ResultColumnAttribute)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
-                            AttributeDefinition<?> rhsa = ((ResultColumnAttribute<?, ?>)rhs).attribute;
+                            AttributeDefinition<?> rhsa = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)rhs)
+                                .getAttribute();
 
                             if((rhsa.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                             {
@@ -551,7 +550,7 @@ public abstract class AbstractCoralQueryImpl
                                                                   .getJavaClass().getName());
                             }                                     
                         }
-                        if(rhs instanceof ResultColumn)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumn)
                         {
                             if(!(Resource.class.
                                  isAssignableFrom(lhs.getAttributeClass().getJavaClass())))
@@ -565,11 +564,15 @@ public abstract class AbstractCoralQueryImpl
                                 {
                                     ResourceClass<?> req = coral.getSchema().getResourceClass(
                                         lhs.getDomain());
-                                    if(!req.equals(((ResultColumn<?>)rhs).rClass)
-                                        && !req.isParent(((ResultColumn<?>)rhs).rClass))
+                                    if(!req.equals(((ResourceQueryHandler.ResultColumn<?>)rhs)
+                                        .getRClass())
+                                        && !req
+                                            .isParent(((ResourceQueryHandler.ResultColumn<?>)rhs)
+                                                .getRClass()))
                                     {
                                         throw new MalformedQueryException(
-                                            ((ResultColumn<?>)rhs).rClass.getName()
+                                            ((ResourceQueryHandler.ResultColumn<?>)rhs).getRClass()
+                                                .getName()
                                                 + " is not a subclass" + " of " + req.getName());
                                     }
                                 }
@@ -597,8 +600,8 @@ public abstract class AbstractCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getLHS(), true, columnMap)).attribute;
+                        AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
+                            node.getLHS(), true, columnMap)).getAttribute();
                         if((lhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
                             throw new MalformedQueryException("SYNTHETIC attribute "+
@@ -622,9 +625,10 @@ public abstract class AbstractCoralQueryImpl
                         {
                             rhs = parseOperand(node.getRHS(), false, columnMap);
                         }
-                        if(rhs instanceof ResultColumnAttribute)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
-                            AttributeDefinition<?> rhsa = ((ResultColumnAttribute<?, ?>)rhs).attribute;
+                            AttributeDefinition<?> rhsa = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)rhs)
+                                .getAttribute();
 
                             if((rhsa.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                             {
@@ -644,7 +648,7 @@ public abstract class AbstractCoralQueryImpl
                                                                   .getJavaClass().getName());
                             }                                     
                         }
-                        if(rhs instanceof ResultColumn)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumn)
                         {
                             throw new MalformedQueryException("resource class reference "+
                                                               node.getRHS()+
@@ -666,8 +670,8 @@ public abstract class AbstractCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getLHS(), true, columnMap)).attribute;
+                        AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
+                            node.getLHS(), true, columnMap)).getAttribute();
                         if((lhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
                             throw new MalformedQueryException("SYNTHETIC attribute "+
@@ -691,9 +695,10 @@ public abstract class AbstractCoralQueryImpl
                         {
                             rhs = parseOperand(node.getRHS(), false, columnMap);
                         }
-                        if(rhs instanceof ResultColumnAttribute)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
-                            AttributeDefinition<?> rhsa = ((ResultColumnAttribute<?, ?>)rhs).attribute;
+                            AttributeDefinition<?> rhsa = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)rhs)
+                                .getAttribute();
 
                             if((rhsa.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                             {
@@ -713,7 +718,7 @@ public abstract class AbstractCoralQueryImpl
                                                                   .getJavaClass().getName());
                             }                                     
                         }
-                        if(rhs instanceof ResultColumn)
+                        if(rhs instanceof ResourceQueryHandler.ResultColumn)
                         {
                             throw new MalformedQueryException("resource class reference "+
                                                               node.getRHS()+
@@ -745,116 +750,6 @@ public abstract class AbstractCoralQueryImpl
     // inner classes /////////////////////////////////////////////////////////
     
     /**
-     * Describes a column of the query results.
-     */
-    protected static class ResultColumn<R extends Resource>
-    {
-        // instance variables ////////////////////////////////////////////////
-
-        /** The resource class, or <code>null</code> for any. */
-        private ResourceClass<R> rClass;
-
-        /** The 1-based index of the column. */
-        private int index;
-        
-        /** The alias or <code>null</code> for none. */
-        private String alias;
-        
-        /** The attributes used in WHERE and ORDER BY clauses. */
-        private List<AttributeDefinition<?>> attributes = new ArrayList<AttributeDefinition<?>>();
-        
-        /** Mapping of attribute names to indices. */
-        private Map<String, Integer> nameIndex = new HashMap<String, Integer>();
-
-        // initialization ////////////////////////////////////////////////////
-        
-        /**
-         * Constructs a ResultColumn object.
-         *
-         * @param rClass the resource class or null for any.
-         * @param alias the alias or null for none.
-         */
-        public ResultColumn(ResourceClass<R> rClass, String alias)
-        {
-            this.rClass = rClass;
-            this.alias = alias;
-        }
-        
-        /**
-         * Returns the alias.
-         *
-         * @return the alias.
-         */
-        public String getAlias()
-        {
-            return alias;
-        }
-        
-        /**
-         * Returns the attributes.
-         *
-         * @return the attributes.
-         */
-        public List<AttributeDefinition<?>> getAttributes()
-        {
-            return attributes;
-        }
-        
-        /**
-         * Returns the index.
-         *
-         * @return the index.
-         */
-        public int getIndex()
-        {
-            return index;
-        }
-        
-        /**
-         * Returns the nameIndex.
-         *
-         * @return the nameIndex.
-         */
-        public Map<String, Integer> getNameIndex()
-        {
-            return nameIndex;
-        }
-        
-        /**
-         * Returns the rClass.
-         *
-         * @return the rClass.
-         */
-        public ResourceClass<R> getRClass()
-        {
-            return rClass;
-        }
-
-        public static <R extends Resource> ResultColumn<R> newInstance(ResourceClass<R> rc,
-            String alias)
-        {
-            return new ResultColumn<R>(rc, alias);
-        }
-
-        @Override
-        public String toString()
-        {
-            StringBuilder attrNames = new StringBuilder();
-            Iterator<AttributeDefinition<?>> i = attributes.iterator();
-            while(i.hasNext())
-            {
-                attrNames.append(i.next().getName());
-                if(i.hasNext())
-                {
-                    attrNames.append(", ");
-                }
-            }
-            return alias + "=" + rClass.getName() + "[" + attrNames.toString() + "]";
-        }
-    }
-
-
-    /**
      * Helper runtime exception class needed to bypass the exception contract
      * of the AST visitor.
      */
@@ -883,63 +778,6 @@ public abstract class AbstractCoralQueryImpl
         public MalformedQueryException getException()
         {
             return e;
-        }
-    }
-
-    /**
-     * Helper class binding attribute definition with a result column.
-     */
-    protected static class ResultColumnAttribute<R extends Resource, A>
-    {
-        /**
-         * Constructs a ResultColumnAttribute.
-         *
-         * @param column the column.
-         * @param attribute the attribute.
-         */
-        public ResultColumnAttribute(ResultColumn<R> column, AttributeDefinition<A> attribute)
-        {
-            this.column = column;
-            this.attribute = attribute;
-        }
-
-        /** The column. */
-        private ResultColumn<R> column;
-        
-        /** The attribute. */
-        private AttributeDefinition<A> attribute;
-        
-        /**
-         * Returns the attribute.
-         *
-         * @return the attribute.
-         */
-        public AttributeDefinition<A> getAttribute()
-        {
-            return attribute;
-        }
-        
-        /**
-         * Returns the column.
-         *
-         * @return the column.
-         */
-        public ResultColumn<R> getColumn()
-        {
-            return column;
-        }
-
-        public static <R extends Resource, A> ResultColumnAttribute<R, A> newInstance(
-            ResultColumn<R> rcm, AttributeDefinition<A> ad)
-        {
-            return new ResultColumnAttribute<R, A>(rcm, ad);
-        }
-
-        @Override
-        public String toString()
-        {
-            return column.getAlias() + " = " + column.getRClass().getName() + "["
-                + attribute.getName() + "]";
         }
     }
 }
