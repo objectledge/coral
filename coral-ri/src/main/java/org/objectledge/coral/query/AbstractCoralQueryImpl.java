@@ -155,11 +155,13 @@ public abstract class AbstractCoralQueryImpl
      * 
      * @param operand the operand.
      * @param lhs <code>true</code> if the operand is on the left hand side of the operator.
+     * @param outer indicates that NULL value of the attribute needs to be accounted for, which
+     *        means the resource class needs to be outer joined into the query
      * @param columnMap map containing ResultColumn objects keyed by alias.
      * @return AttributeDefinition, ResultColumn, or String literal value.
      * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
-    protected Object parseOperand(String operand, boolean lhs,
+    protected Object parseOperand(String operand, boolean lhs, boolean outer,
         Map<String, ResourceQueryHandler.ResultColumn<?>> columnMap)
         throws MalformedQueryException
     {
@@ -263,10 +265,7 @@ public abstract class AbstractCoralQueryImpl
                 }
             }
         }
-        if(!rcm.getAttributes().contains(ad))
-        {
-            rcm.addAttribute(ad);
-        }
+        rcm.addAttribute(ad, false);
         return ResourceQueryHandler.ResultColumnAttribute.newInstance(rcm, ad);
     }
 
@@ -400,7 +399,7 @@ public abstract class AbstractCoralQueryImpl
             for(int i=0; i<items.length; i++)
             {
                 ResourceQueryHandler.ResultColumnAttribute<?, ?> rcm = (ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
-                    items[i].getAttribute(), true, columnMap);
+                    items[i].getAttribute(), true, false, columnMap);
                 if((rcm.getAttribute().getFlags() & AttributeFlags.SYNTHETIC) != 0)
                 {
                     throw new MalformedQueryException("SYNTHETIC attribute "+
@@ -483,7 +482,7 @@ public abstract class AbstractCoralQueryImpl
                     try
                     {
                         AttributeDefinition<?> rhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getRHS(), true, columnMap)).getAttribute();
+                            node.getRHS(), true, true, columnMap)).getAttribute();
                         if((rhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
                             throw new MalformedQueryException("SYNTHETIC attribute "+
@@ -503,7 +502,7 @@ public abstract class AbstractCoralQueryImpl
                     try
                     {
                         AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getLHS(), true, columnMap)).getAttribute();
+                            node.getLHS(), true, false, columnMap)).getAttribute();
                         if((lhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
                             throw new MalformedQueryException("SYNTHETIC attribute "+
@@ -525,7 +524,7 @@ public abstract class AbstractCoralQueryImpl
                         }
                         else
                         {
-                            rhs = parseOperand(node.getRHS(), false, columnMap);
+                            rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         }
                         if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
@@ -601,7 +600,7 @@ public abstract class AbstractCoralQueryImpl
                     try
                     {
                         AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getLHS(), true, columnMap)).getAttribute();
+                            node.getLHS(), true, false, columnMap)).getAttribute();
                         if((lhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
                             throw new MalformedQueryException("SYNTHETIC attribute "+
@@ -623,7 +622,7 @@ public abstract class AbstractCoralQueryImpl
                         }
                         else
                         {
-                            rhs = parseOperand(node.getRHS(), false, columnMap);
+                            rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         }
                         if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
@@ -671,7 +670,7 @@ public abstract class AbstractCoralQueryImpl
                     try
                     {
                         AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getLHS(), true, columnMap)).getAttribute();
+                            node.getLHS(), true, false, columnMap)).getAttribute();
                         if((lhs.getFlags() & AttributeFlags.SYNTHETIC) != 0)
                         {
                             throw new MalformedQueryException("SYNTHETIC attribute "+
@@ -693,7 +692,7 @@ public abstract class AbstractCoralQueryImpl
                         }
                         else
                         {
-                            rhs = parseOperand(node.getRHS(), false, columnMap);
+                            rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         }
                         if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {

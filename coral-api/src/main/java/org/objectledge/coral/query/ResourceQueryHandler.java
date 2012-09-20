@@ -31,6 +31,9 @@ public interface ResourceQueryHandler
         /** The 1-based index of the column. */
         private int index;
         
+        /** Should the resource class data be outer joined into the query */
+        private boolean outer;
+
         /** The alias or <code>null</code> for none. */
         private final String alias;
         
@@ -64,10 +67,20 @@ public interface ResourceQueryHandler
             return alias;
         }
         
-        public void addAttribute(AttributeDefinition<?> ad)
+        /**
+         * Adds an attribute.
+         * 
+         * @param ad attribute definition
+         * @param outer should NULL values of the attribute be accounted for.
+         */
+        public void addAttribute(AttributeDefinition<?> ad, boolean outer)
         {
-            attributes.add(ad);
-            nameIndex.put(ad.getName(), attributes.size() - 1);
+            this.outer = this.outer || outer;
+            if(!attributes.contains(ad))
+            {
+                attributes.add(ad);
+                nameIndex.put(ad.getName(), attributes.size() - 1);
+            }
         }
 
         /**
@@ -90,9 +103,22 @@ public interface ResourceQueryHandler
             return index;
         }
         
+        /**
+         * Sets the index of the column.
+         * 
+         * @param index
+         */
         public void setIndex(int index)
         {
             this.index = index;
+        }
+
+        /**
+         * Should the resource class data be outer joined into the query.
+         */
+        public boolean isOuter()
+        {
+            return outer;
         }
 
         /**

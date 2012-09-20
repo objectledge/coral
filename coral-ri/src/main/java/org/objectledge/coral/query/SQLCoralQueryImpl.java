@@ -293,7 +293,7 @@ public class SQLCoralQueryImpl
         throws MalformedQueryException
     {
         ResourceQueryHandler.ResultColumnAttribute<?, ?> rca = (ResourceQueryHandler.ResultColumnAttribute<?, ?>)
-            parseOperand(attribute, true, columnMap);
+            parseOperand(attribute, true, false, columnMap);
         if((rca.getAttribute().getFlags() & AttributeFlags.BUILTIN) == 0)
         {
             out.append("r").append(rca.getColumn().getIndex()).
@@ -414,11 +414,11 @@ public class SQLCoralQueryImpl
                     try
                     {
                         AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getLHS(), true, columnMap)).getAttribute();
+                            node.getLHS(), true, false, columnMap)).getAttribute();
                         appendAttribute(node.getLHS(), columnMap, out);
                         String[] ops = { " <> ", " = " };
                         out.append(ops[node.getOperator()]);
-                        Object rhs = parseOperand(node.getRHS(), false, columnMap);
+                        Object rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
                             appendAttribute(node.getRHS(), columnMap, out);
@@ -445,11 +445,11 @@ public class SQLCoralQueryImpl
                     try
                     {
                         AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getLHS(), true, columnMap)).getAttribute();
+                            node.getLHS(), true, false, columnMap)).getAttribute();
                         appendAttribute(node.getLHS(), columnMap, out);
                         String[] ops = { " < ", " <= ", " >= ", " > " };
                         out.append(ops[node.getOperator()]);
-                        Object rhs = parseOperand(node.getRHS(), false, columnMap);
+                        Object rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
                             appendAttribute(node.getRHS(), columnMap, out);
@@ -471,7 +471,7 @@ public class SQLCoralQueryImpl
                     try
                     {
                         AttributeDefinition<?> lhs = ((ResourceQueryHandler.ResultColumnAttribute<?, ?>)parseOperand(
-                            node.getLHS(), true, columnMap)).getAttribute();
+                            node.getLHS(), true, false, columnMap)).getAttribute();
                         if(node.isCaseSensitive())
                         {
                             appendAttribute(node.getLHS(), columnMap, out);
@@ -483,7 +483,7 @@ public class SQLCoralQueryImpl
                             out.append(")");
                         }
                         out.append(" LIKE ");
-                        Object rhs = parseOperand(node.getRHS(), false, columnMap);
+                        Object rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         if(rhs instanceof ResourceQueryHandler.ResultColumnAttribute)
                         {
                             if(node.isCaseSensitive())
