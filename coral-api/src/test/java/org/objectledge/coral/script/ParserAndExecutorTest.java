@@ -76,13 +76,17 @@ public class ParserAndExecutorTest extends LedgeTestCase
     private Mock mockAttributeClass;
     private AttributeClass<?> attributeClass;
     private Mock mockResourceClass;
-    private ResourceClass resourceClass;
+
+    private ResourceClass<?> resourceClass;
     private Mock mockParentResourceClass;
-    private ResourceClass parentResourceClass;
+
+    private ResourceClass<?> parentResourceClass;
     private Mock mockAttributeDefinition1;
-    private AttributeDefinition attributeDefinition1;
+
+    private AttributeDefinition<?> attributeDefinition1;
     private Mock mockAttributeDefinition2;
-    private AttributeDefinition attributeDefinition2;
+
+    private AttributeDefinition<?> attributeDefinition2;
     private Mock mockPermission;
     private Permission permission;
     
@@ -115,13 +119,13 @@ public class ParserAndExecutorTest extends LedgeTestCase
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass<?>)mockAttributeClass.proxy();
         mockResourceClass = mock(ResourceClass.class);
-        resourceClass = (ResourceClass)mockResourceClass.proxy();
+        resourceClass = (ResourceClass<?>)mockResourceClass.proxy();
         mockParentResourceClass = mock(ResourceClass.class, "mockParentResourceClass");
-        parentResourceClass = (ResourceClass)mockParentResourceClass.proxy();
+        parentResourceClass = (ResourceClass<?>)mockParentResourceClass.proxy();
         mockAttributeDefinition1 = mock(AttributeDefinition.class, "mockAttributeDefinition1");
-        attributeDefinition1 = (AttributeDefinition)mockAttributeDefinition1.proxy();
+        attributeDefinition1 = (AttributeDefinition<?>)mockAttributeDefinition1.proxy();
         mockAttributeDefinition2 = mock(AttributeDefinition.class, "mockAttributeDefinition2");
-        attributeDefinition2 = (AttributeDefinition)mockAttributeDefinition2.proxy();
+        attributeDefinition2 = (AttributeDefinition<?>)mockAttributeDefinition2.proxy();
         mockPermission = mock(Permission.class);
         permission = (Permission)mockPermission.proxy();
     }

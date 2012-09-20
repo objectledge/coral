@@ -318,9 +318,9 @@ public class RMLExecutor
         try
         {
             int classFlags = parseFlags(node.getFlags());
-            ResourceClass rc = coralSession.getSchema().createResourceClass(node.getName(),
+            ResourceClass<?> rc = coralSession.getSchema().createResourceClass(node.getName(),
                 node.getJavaClass(), node.getHandlerClass(), node.getDbTable(), classFlags);
-            ResourceClass[] parents = entities.resolve(node.getParents());
+            ResourceClass<?>[] parents = entities.resolve(node.getParents());
             for(int i=0; i<parents.length; i++)
             {
                 coralSession.getSchema().addParentClass(rc, parents[i], new HashMap<AttributeDefinition<?>, Object>());
@@ -359,7 +359,7 @@ public class RMLExecutor
             {
                 try
                 {
-                    ResourceClass rc;
+                    ResourceClass<?> rc;
                     if(node.getId() != -1)
                     {
                         rc = coralSession.getSchema().getResourceClass(node.getId());
@@ -380,7 +380,7 @@ public class RMLExecutor
                     result[1][3] = rc.getHandler().getClass().getName();
                     result[1][4] = ResourceClassFlags.toString(rc.getFlags());
                     table(result);
-                    ResourceClass[] parents = rc.getParentClasses();
+                    ResourceClass<?>[] parents = rc.getParentClasses();
                     List<PermissionAssociation> permissions = new ArrayList<PermissionAssociation>();
                     if(parents != null && parents.length > 0)
                     {
@@ -454,7 +454,7 @@ public class RMLExecutor
             else
             {
                 ImmutableSet<ResourceClass<?>> allResourceClasses = coralSession.getSchema().getAllResourceClasses();
-                ResourceClass[] items = new ResourceClass[allResourceClasses.size()];
+                ResourceClass<?>[] items = new ResourceClass<?>[allResourceClasses.size()];
                 allResourceClasses.toArray(items);                
                 sortEntities(items);
                 result = new String[items.length+1][];
@@ -483,7 +483,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             coralSession.getSchema().deleteResourceClass(rc);
         }
         catch(Exception e)
@@ -500,7 +500,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             coralSession.getSchema().setName(rc, node.getNewName());
         }
         catch(Exception e)
@@ -517,7 +517,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             coralSession.getSchema().setFlags(rc, parseFlags(node.getFlags()));
         }
         catch(Exception e)
@@ -534,7 +534,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             coralSession.getSchema().setJavaClass(rc, node.getJavaClass());
         }
         catch(Exception e)
@@ -551,7 +551,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             coralSession.getSchema().setHandlerClass(rc, node.getHandlerClass());
         }
         catch(Exception e)
@@ -568,7 +568,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             coralSession.getSchema().setDbTable(rc, node.getDbTable());
         }
         catch(Exception e)
@@ -586,7 +586,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().setName(attr, node.getNewName());
         }
@@ -604,7 +604,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().setFlags(attr, parseFlags(node.getFlags()));
         }
@@ -622,7 +622,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().setDomain(attr, node.getDomain());
         }
@@ -641,7 +641,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             ASTattributeDefinition attr = node.getAttributeDefinition();
             AttributeClass<?> ac = entities.resolve(attr.getAttributeClass());
             int flags = parseFlags(attr.getFlags());
@@ -663,7 +663,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().deleteAttribute(rc, attr);
         }
@@ -681,8 +681,8 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
-            ResourceClass sup = entities.resolve(node.getParentClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> sup = entities.resolve(node.getParentClass());
             HashMap<AttributeDefinition<?>, Object> values = new HashMap<AttributeDefinition<?>, Object>();
             if(node.getValues() != null)
             {
@@ -709,8 +709,8 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass ac = entities.resolve(node.getResourceClass());
-            ResourceClass sup = entities.resolve(node.getParentClass());
+            ResourceClass<?> ac = entities.resolve(node.getResourceClass());
+            ResourceClass<?> sup = entities.resolve(node.getParentClass());
             coralSession.getSchema().deleteParentClass(ac, sup);
         }
         catch(Exception e)
@@ -1166,7 +1166,7 @@ public class RMLExecutor
         try
         {
             String name = node.getName();
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             Resource parent = node.getParent() != null ?
                 entities.resolve(node.getParent()) : null;
             HashMap<AttributeDefinition<?>, Object> attrs = new HashMap<AttributeDefinition<?>, Object>();
@@ -1396,7 +1396,6 @@ public class RMLExecutor
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public Object visit(ASTalterResourceSetAttributeStatement node, Object data)
     {
         try
@@ -1443,7 +1442,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             Permission[] perms = entities.resolve(node.getPermissions());
             for(int i=0; i<perms.length; i++)
             {
@@ -1464,7 +1463,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             Permission[] perms = entities.resolve(node.getPermissions());
             for(int i=0; i<perms.length; i++)
             {
@@ -1485,7 +1484,7 @@ public class RMLExecutor
     {
         try
         {
-            ResourceClass rc = entities.resolve(node.getResourceClass());
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             Permission[] items = rc.getPermissions();
             String[][] result = new String[items.length+1][];
             result[0] = new String[] { "Id", "Name" };
