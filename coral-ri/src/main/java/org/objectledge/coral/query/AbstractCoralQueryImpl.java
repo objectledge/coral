@@ -256,8 +256,8 @@ public abstract class AbstractCoralQueryImpl
             {
                 if(lhs)
                 {
-                    throw new MalformedQueryException(rc.getName()+" does not have "+an+
-                                                      " attribute");
+                    throw new MalformedQueryException("'coral.Node' does not have " + an
+                        + " attribute");
                 }
                 else
                 {
