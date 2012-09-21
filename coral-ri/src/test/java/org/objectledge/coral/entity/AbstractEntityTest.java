@@ -101,7 +101,7 @@ public class AbstractEntityTest extends LedgeTestCase
         ((AbstractEntity)blue1).setId(1);
         String s = blue1.toString();
         assertTrue(s.indexOf("#1") > 0);
-        assertTrue(s.indexOf("<blue 1>") > 0);
+        assertTrue(s.indexOf("<blue 1>") >= 0);
     }
     
     public void testSetters()
