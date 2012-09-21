@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.dbunit.dataset.datatype.DataType;
 import org.objectledge.coral.datatypes.GenericResource;
 import org.objectledge.coral.datatypes.GenericResourceHandler;
 import org.objectledge.coral.datatypes.PersistentResource;
@@ -158,6 +159,86 @@ public class CoralQueryTests
         attributes.put(a2, 11);
         attributes.put(a3, first1);
         third1 = store.createResource("third1", rootRes, thirdClass, attributes);
+
+        validateFixture(firstImpl, secondImpl, thirdImpl);
+    }
+
+    private void validateFixture(Implementation firstImpl, Implementation secondImpl,
+        Implementation thirdImpl)
+        throws Exception
+    {
+        expAttTable("string", "data", DataType.VARCHAR);
+        if(firstImpl == Implementation.GENERIC)
+        {
+            expRow(first1.getId(), "a1", "foo");
+            expRow(first2.getId(), "a1", "abab");
+        }
+        if(secondImpl == Implementation.GENERIC)
+        {
+            expRow(second1.getId(), "a1", "foo");
+            expRow(second1.getId(), "a4", "f%");
+            expRow(second2.getId(), "a1", "bam");
+        }
+        if(firstImpl == Implementation.GENERIC)
+        {
+            expRow(third1.getId(), "a1", "quux");
+        }
+        assertExpTable();
+
+        expAttTable("integer", "data", DataType.INTEGER);
+        if(firstImpl == Implementation.GENERIC)
+        {
+            expRow(first1.getId(), "a2", 7);
+            expRow(first2.getId(), "a2", 9);
+        }
+        if(secondImpl == Implementation.GENERIC)
+        {
+            expRow(second1.getId(), "a2", 7);
+            expRow(second2.getId(), "a2", 7);
+        }
+        if(firstImpl == Implementation.GENERIC)
+        {
+            expRow(third1.getId(), "a2", 11);
+        }
+        assertExpTable();
+
+        expAttTable("resource", "ref", DataType.BIGINT);
+        if(secondImpl == Implementation.GENERIC)
+        {
+            expRow(second1.getId(), "a3", first1.getId());
+        }
+        if(thirdImpl == Implementation.GENERIC)
+        {
+            expRow(third1.getId(), "a3", first1.getId());
+        }
+        assertExpTable();
+
+        if(firstImpl == Implementation.TABULAR)
+        {
+            expTable("first", nnCol("resource_id", DataType.BIGINT), col("a1_", DataType.VARCHAR),
+                col("a2", DataType.INTEGER));
+            expRow(first1.getId(), "foo", 7);
+            expRow(first2.getId(), "abab", 9);
+            expRow(third1.getId(), "quux", 11);
+            assertExpTable();
+        }
+
+        if(secondImpl == Implementation.TABULAR)
+        {
+            expTable("second", nnCol("resource_id", DataType.BIGINT), col("a1", DataType.VARCHAR),
+                col("a2", DataType.INTEGER), col("a3", DataType.BIGINT),
+                col("a4", DataType.VARCHAR));
+            expRow(second1.getId(), "foo", 7, first1.getId(), "f%");
+            expRow(second2.getId(), "bam", 7, null, null);
+            assertExpTable();
+        }
+
+        if(thirdImpl == Implementation.TABULAR)
+        {
+            expTable("third", nnCol("resource_id", DataType.BIGINT), col("a3", DataType.BIGINT));
+            expRow(third1.getId(), first1.getId());
+            assertExpTable();
+        }
     }
 
     @Override

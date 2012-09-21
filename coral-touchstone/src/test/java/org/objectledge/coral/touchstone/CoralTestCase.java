@@ -72,6 +72,8 @@ public abstract class CoralTestCase extends TestCase
     
     protected IDatabaseConnection databaseConnection;
 
+    protected String query;
+
     protected DefaultTable expected;
 
     protected ITable actual;
@@ -112,6 +114,53 @@ public abstract class CoralTestCase extends TestCase
     protected void expTable(String table, Column... columns)
     {
         expected = new DefaultTable(table, columns);
+        query = "SELECT * FROM " + table;
+    }
+
+    protected void expQuery(String query, Column... columns)
+    {
+        expected = new DefaultTable("<query>", columns);
+        this.query = query;
+    }
+
+    protected void expAttTable(String typeName, String dataColumn, DataType sqlType)
+    {
+        Column[] columns = new Column[] { col("resource_id", DataType.BIGINT),
+                        col("name", DataType.VARCHAR), col(dataColumn, sqlType) };
+
+        // note! only 1 level of resource class inheritance is supported here!
+
+        // @formatter:off
+        String query = 
+            "SELECT g.resource_id, d.name, a." + dataColumn 
+            + "\nFROM coral_attribute_" + typeName + " AS a," 
+            + "\ncoral_attribute_definition d,"
+            + "\ncoral_attribute_class c," 
+            + "\ncoral_generic_resource g," 
+            + "\ncoral_resource r"
+            + "\nWHERE g.attribute_definition_id = d.attribute_definition_id"
+            + "\nAND d.attribute_class_id = c.attribute_class_id" 
+            + "\nAND c.name = '" + typeName + "'" 
+            + "\nAND d.resource_class_id = r.resource_class_id"
+            + "\nAND r.resource_id = g.resource_id" 
+            + "\nAND a.data_key = g.data_key"
+            + "\nUNION ALL" + "\nSELECT g.resource_id, d.name, " + dataColumn
+            + "\nFROM coral_attribute_" + typeName + " AS a," 
+            + "\ncoral_attribute_definition d,"
+            + "\ncoral_attribute_class c," 
+            + "\ncoral_generic_resource g," 
+            + "\ncoral_resource r,"
+            + "\ncoral_resource_class_inheritance i"
+            + "\nWHERE g.attribute_definition_id = d.attribute_definition_id"
+            + "\nAND d.attribute_class_id = c.attribute_class_id" 
+            + "\nAND c.name = '" + typeName + "'" 
+            + "\nAND r.resource_id = g.resource_id" 
+            + "\nAND a.data_key = g.data_key"
+            + "\nAND i.child = r.resource_class_id" 
+            + "\nAND d.resource_class_id = i.parent"
+            + "\nORDER BY 1, 2";
+        // @formatter:on
+        expQuery(query, columns);
     }
 
     public void assertEquals(IDataSet expected, IDataSet actual)
@@ -136,7 +185,7 @@ public abstract class CoralTestCase extends TestCase
         throws Exception
     {
         String table = expected.getTableMetaData().getTableName();
-        actual = databaseConnection.createQueryTable(table, "SELECT * FROM " + table);
+        actual = databaseConnection.createQueryTable(table, query);
         try
         {
             assertEquals(expected, actual);
