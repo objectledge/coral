@@ -56,6 +56,7 @@ public class GenericToTabular
         updateHandlers();
         updateParentClasses();
         updateDbTables();
+        updateDbColumns();
         updateRootResource();
         transferCustomAttributes();
         setupMetadataConstraints();
@@ -81,16 +82,27 @@ public class GenericToTabular
 
     // a full list of reserved SQL keywords needs to be used
 
-    public static String transformColumnName(String name)
+    public String transformColumnName(String name)
     {
-        if(name.equals("limit") || name.equals("offset") || name.equals("default")
-            || name.equals("primary") || name.equals("from") || name.equals("to"))
+        return transformColumnName(name, targetConn);
+    }
+
+    public static String transformColumnName(String name, Connection conn)
+    {
+        try
         {
-            return "_" + name;
+            if(DatabaseUtils.reservedWords(conn).contains(name.toUpperCase()))
+            {
+                return name + "_";
+            }
+            else
+            {
+                return name;
+            }
         }
-        else
+        catch(SQLException e)
         {
-            return name;
+            throw new RuntimeException(e);
         }
     }
 
@@ -151,7 +163,10 @@ public class GenericToTabular
                 while(rs.next())
                 {
                     gen.generate(rs, buff);
-                    out.add(buff.toString());
+                    if(buff.length() > 0)
+                    {
+                        out.add(buff.toString());
+                    }
                     buff.setLength(0);
                 }
             }
@@ -260,7 +275,28 @@ public class GenericToTabular
                         buff.append("WHERE name = '").append(table).append("'");
                     }
                 });
+    }
 
+    private void updateDbColumns()
+        throws SQLException
+    {
+        runGeneratedStatements("updating resource class db_tables", attributes,
+            new StatementGenerator()
+                {
+                    public void generate(ResultSet rs, StringBuilder buff)
+                        throws SQLException
+                    {
+                        final long attributeDefId = rs.getLong(3);
+                        final String attributeName = rs.getString(4);
+                        final String columnName = transformColumnName(attributeName);
+                        if(!attributeName.equals(columnName))
+                        {
+                            buff.append("UPDATE coral_attribute_definition\nSET db_column = '"
+                                + columnName + "'\nWHERE attribute_definition_id = "
+                                + attributeDefId);
+                        }
+                    }
+                });
     }
 
     private void updateParentClasses()
@@ -513,7 +549,7 @@ public class GenericToTabular
         log.info("transferred " + cnt + " ledge_id_table entries");
     }
 
-    private static class ResourceClassInfo
+    private class ResourceClassInfo
     {
         private final long resourceClassId;
 

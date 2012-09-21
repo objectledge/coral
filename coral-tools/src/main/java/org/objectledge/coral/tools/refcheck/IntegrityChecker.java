@@ -319,12 +319,13 @@ public class IntegrityChecker
                     {
                         buff.append("     resource_id,\n");
                     }
-                    buff.append("     ").append(GenericToTabular.transformColumnName(column))
+                    buff.append("     ").append(GenericToTabular.transformColumnName(column, conn))
                         .append(",\n");
                     buff.append("     ").append(attrDefId).append(" attribute_definition_id\n");
                     buff.append("   from ").append(GenericToTabular.transformTableName(table))
                         .append("\n");
-                    buff.append("   where ").append(GenericToTabular.transformColumnName(column))
+                    buff.append("   where ")
+                        .append(GenericToTabular.transformColumnName(column, conn))
                         .append(" is not null\n");
                 }
                 return buff.toString();
@@ -571,7 +572,8 @@ public class IntegrityChecker
                             {
                                 query = format(resourceDomainsTabularCheck, attributeId,
                                     GenericToTabular.transformTableName(classNames.get(classId)),
-                                    GenericToTabular.transformColumnName(attrName), domClasses);
+                                    GenericToTabular.transformColumnName(attrName, conn),
+                                    domClasses);
                                 // System.out.println(query);
 
                                 rset2 = stmt2.executeQuery(query);
