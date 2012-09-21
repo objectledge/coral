@@ -28,7 +28,6 @@ import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
-import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.DefaultOutputRecord;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -50,7 +49,6 @@ public class PersistentResourceHandler<T extends PersistentResource>
 
     /** The persistence. */
     private Persistence persistence;
-
 
     /**
      * Constructor.
@@ -114,12 +112,12 @@ public class PersistentResourceHandler<T extends PersistentResource>
                 buff.append("CREATE TABLE ");
                 buff.append(attribute.getDeclaringClass().getDbTable());
                 buff.append(" (\n resource_id BIGINT,\n ");
-                columnSpec(attribute, value, repr, buff, conn);
+                columnSpec(attribute, value, repr, buff);
                 buff.append(",\n PRIMARY KEY (resource_id)");
                 if(repr.isFk())
                 {
                     buff.append(",\n ");
-                    constraintSpec(attribute, repr, buff, conn);
+                    constraintSpec(attribute, repr, buff);
                 }
                 buff.append("\n)");
                 stmt.execute(buff.toString());
@@ -129,7 +127,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
                 buff.append("ALTER TABLE ");
                 buff.append(attribute.getDeclaringClass().getDbTable());
                 buff.append("\n ADD COLUMN ");
-                columnSpec(attribute, value, repr, buff, conn);
+                columnSpec(attribute, value, repr, buff);
                 stmt.execute(buff.toString());
                 if(repr.isFk())
                 {
@@ -137,7 +135,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
                     buff.append("ALTER TABLE ");
                     buff.append(attribute.getDeclaringClass().getDbTable());
                     buff.append("\n ADD ");
-                    constraintSpec(attribute, repr, buff, conn);
+                    constraintSpec(attribute, repr, buff);
                     stmt.execute(buff.toString());
                 }
             }
@@ -153,25 +151,18 @@ public class PersistentResourceHandler<T extends PersistentResource>
         }
     }
 
-    static String columnName(AttributeDefinition<?> attr, Connection conn)
+    static String columnName(AttributeDefinition<?> attr)
         throws SQLException
     {
-        final String name = attr.getName();
-        if(DatabaseUtils.reservedWords(conn).contains(name.toUpperCase()))
-        {
-            return name + "_";
-        }
-        else
-        {
-            return name;
-        }
+        String name = attr.getDbColumn();
+        return name != null ? name : attr.getName();
     }
 
     private <A> void columnSpec(AttributeDefinition<A> attribute, A value,
-        CoralAttributeMapping repr, StringBuilder buff, Connection conn)
+        CoralAttributeMapping repr, StringBuilder buff)
         throws SQLException
     {
-        buff.append(columnName(attribute, conn)).append(" ");
+        buff.append(columnName(attribute)).append(" ");
         buff.append(repr.getSqlType());
         if(value != null && !repr.isCustom())
         {
@@ -185,10 +176,10 @@ public class PersistentResourceHandler<T extends PersistentResource>
     }
 
     private <A> void constraintSpec(AttributeDefinition<A> attribute, CoralAttributeMapping repr,
-        StringBuilder buff, Connection conn)
+        StringBuilder buff)
         throws SQLException
     {
-        final String columnName = columnName(attribute, conn);
+        final String columnName = columnName(attribute);
         buff.append("CONSTRAINT fk_").append(attribute.getDeclaringClass().getDbTable())
             .append("_").append(columnName);
         buff.append(" FOREIGN KEY (").append(columnName).append(") ");
@@ -202,16 +193,16 @@ public class PersistentResourceHandler<T extends PersistentResource>
     {
         String sql;
         PreparedStatement outStmt;
-        final String columnName = columnName(attribute, conn);
+        final String columnName = columnName(attribute);
         if(tableShouldExist)
         {
-            sql = "UPDATE " + attribute.getDeclaringClass().getDbTable() + " SET "
-                + columnName + " = ? WHERE resource_id = ?";
+            sql = "UPDATE " + attribute.getDeclaringClass().getDbTable() + " SET " + columnName
+                + " = ? WHERE resource_id = ?";
         }
         else
         {
-            sql = "INSERT INTO " + attribute.getDeclaringClass().getDbTable() + " ("
-                + columnName + ", resource_id) VALUES (?, ?)";
+            sql = "INSERT INTO " + attribute.getDeclaringClass().getDbTable() + " (" + columnName
+                + ", resource_id) VALUES (?, ?)";
         }
         outStmt = conn.prepareStatement(sql);
         try
@@ -222,8 +213,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
             {
                 List<ResourceClass<?>> rClasses = new ArrayList<ResourceClass<?>>();
                 rClasses.add(attribute.getDeclaringClass());
-                rClasses.addAll(Arrays.asList(attribute.getDeclaringClass()
-                    .getChildClasses()));
+                rClasses.addAll(Arrays.asList(attribute.getDeclaringClass().getChildClasses()));
                 for(ResourceClass<?> rClass : rClasses)
                 {
                     inStmt.setLong(1, rClass.getId());
@@ -235,8 +225,8 @@ public class PersistentResourceHandler<T extends PersistentResource>
                         {
                             if(repr.isCustom())
                             {
-                                outStmt.setLong(1, attribute.getAttributeClass()
-                                    .getHandler().create(value, conn));
+                                outStmt.setLong(1, attribute.getAttributeClass().getHandler()
+                                    .create(value, conn));
                             }
                             else
                             {
@@ -310,7 +300,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
             }
             else
             {
-                final String columnName = columnName(attribute, conn);
+                final String columnName = columnName(attribute);
                 if(repr.isFk())
                 {
                     buff.append("ALTER TABLE ").append(attribute.getDeclaringClass().getDbTable());
@@ -335,7 +325,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
     private <A> void deleteAttributeValues(AttributeDefinition<A> attribute, Connection conn)
         throws SQLException
     {
-        String columnName = columnName(attribute, conn);
+        String columnName = columnName(attribute);
         StringBuilder buff = new StringBuilder();
         buff.append("SELECT ").append(columnName);
         buff.append("\nFROM ").append(attribute.getDeclaringClass().getDbTable());
@@ -497,7 +487,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
             Iterator<AttributeDefinition<?>> i = customAttrs.iterator();
             while(i.hasNext())
             {
-                buff.append("d.").append(columnName(i.next(), conn));
+                buff.append("d.").append(columnName(i.next()));
                 if(i.hasNext())
                 {
                     buff.append(", ");

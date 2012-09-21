@@ -36,7 +36,11 @@ public class PersistentResourceQueryHandler
     @Override
     public void appendAttributeTerm(StringBuilder query, ResultColumnAttribute<?, ?> rca)
     {
-        query.append("p").append(rca.getColumn().getIndex()).append(".")
-            .append(rca.getAttribute().getName()); // TODO getAttribute().getDbColumn()
+        String name = rca.getAttribute().getDbColumn();
+        if(name == null)
+        {
+            name = rca.getAttribute().getName();
+        }
+        query.append("p").append(rca.getColumn().getIndex()).append(".").append(name);
     }
 }

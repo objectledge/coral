@@ -105,7 +105,7 @@ public class CoralQueryTests
         firstClass = schema.createResourceClass("first", firstImpl.getResClass().getName(),
             firstImpl.getHandlerClass().getName(), firstImpl == Implementation.TABULAR ? "first"
                 : null, 0);
-        a1 = schema.createAttribute("a1", stringAttr, null, null, 0);
+        a1 = schema.createAttribute("a1", stringAttr, "a1_", null, 0);
         schema.addAttribute(firstClass, a1, null);
         a2 = schema.createAttribute("a2", intAttr, null, null, 0);
         schema.addAttribute(firstClass, a2, 0);

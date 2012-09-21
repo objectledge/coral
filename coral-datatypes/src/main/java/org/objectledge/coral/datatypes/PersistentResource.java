@@ -235,7 +235,7 @@ public class PersistentResource
                 {
                     if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                     {
-                        setAttribute(attr, record, this, conn);
+                        setAttribute(attr, record, this);
                     }
                 }
             }
@@ -243,10 +243,10 @@ public class PersistentResource
     }
 
     private static <T> void setAttribute(AttributeDefinition<T> attr, InputRecord data,
-        AbstractResource instance, Connection conn)
+        AbstractResource instance)
         throws SQLException
     {
-        final String name = columnName(attr, conn);
+        final String name = columnName(attr);
         if(attr.getAttributeClass().getHandler().supportsExternalString())
         {
             Object value = null;
@@ -381,7 +381,7 @@ public class PersistentResource
             throws SQLException, SQLException
         {
             T value = (T)attrValues.get(attr);
-            String name = columnName(attr, conn);
+            String name = columnName(attr);
             AttributeHandler<T> handler = attr.getAttributeClass().getHandler();
             if(value != null)
             {
@@ -488,7 +488,7 @@ public class PersistentResource
         private <A> void getAttribute(AttributeDefinition<A> attr, OutputRecord record)
             throws SQLException, SQLException
         {
-            String name = columnName(attr, conn);
+            String name = columnName(attr);
             A value = instance.getAttribute(attr);
 
             if(attr.getAttributeClass().getHandler().supportsExternalString())
