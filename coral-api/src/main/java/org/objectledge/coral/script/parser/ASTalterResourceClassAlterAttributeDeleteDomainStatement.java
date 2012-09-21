@@ -2,12 +2,12 @@
 
 package org.objectledge.coral.script.parser;
 
-public class ASTalterResourceClassAlterAttributeSetDomainStatement extends ASTalterResourceClassAlterAttributeStatement {
-  public ASTalterResourceClassAlterAttributeSetDomainStatement(int id) {
+public class ASTalterResourceClassAlterAttributeDeleteDomainStatement extends ASTalterResourceClassAlterAttributeStatement {
+  public ASTalterResourceClassAlterAttributeDeleteDomainStatement(int id) {
     super(id);
   }
 
-  public ASTalterResourceClassAlterAttributeSetDomainStatement(RML p, int id) {
+  public ASTalterResourceClassAlterAttributeDeleteDomainStatement(RML p, int id) {
     super(p, id);
   }
 
@@ -19,8 +19,4 @@ public class ASTalterResourceClassAlterAttributeSetDomainStatement extends ASTal
   
   ////////////////////////////////////////////////////////////////////////////////////////////////
   
-    public String getDomain()
-    {
-        return domain;
-    }
 }

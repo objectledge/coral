@@ -169,14 +169,11 @@ public class SessionCoralSchema implements CoralSchema
     /** 
      * {@inheritDoc}
      */
-    public <T> AttributeDefinition<T> createAttribute(
-        String name,
-        AttributeClass<T> attributeClass,
-        String domain,
-        int flags)
+    public <T> AttributeDefinition<T> createAttribute(String name,
+        AttributeClass<T> attributeClass, String dbColumn, String domain, int flags)
     {
         session.verify();
-        return coral.getSchema().createAttribute(name, attributeClass, domain, flags);
+        return coral.getSchema().createAttribute(name, attributeClass, dbColumn, domain, flags);
     }
 
     /** 
@@ -214,6 +211,19 @@ public class SessionCoralSchema implements CoralSchema
     {
         session.verify();
         coral.getSchema().setName(attribute, name);
+    }
+
+    /**
+     * Changes the database column name of the attribute.
+     * 
+     * @param attribute the attribute to modify.
+     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     *        {@code name} is used as column name.
+     */
+    public void setDbColumn(AttributeDefinition<?> attribute, String dbColumn)
+    {
+        session.verify();
+        coral.getSchema().setDbColumn(attribute, dbColumn);
     }
 
     /** 

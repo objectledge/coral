@@ -57,6 +57,13 @@ public class AddAttribute extends BaseBrowserAction
             {
                 domain = parameters.get("domain", "");
             }
+            boolean setDbColumn = parameters.getBoolean("set_db_column", false);
+            String dbColumn = null;
+            if(setDbColumn)
+            {
+                dbColumn = parameters.get("db_column", null);
+            }
+
             boolean setValue = parameters.getBoolean("set_value", false);
             String value = parameters.get("value", "");
             String[] keys = parameters.getParameterNames();
@@ -70,7 +77,8 @@ public class AddAttribute extends BaseBrowserAction
                 }
             }
             AttributeClass attrClass = coralSession.getSchema().getAttributeClass(attrClassId);
-            AttributeDefinition attrDefinition = coralSession.getSchema().createAttribute(attrName, attrClass, domain, flags);
+            AttributeDefinition attrDefinition = coralSession.getSchema().createAttribute(attrName,
+                attrClass, dbColumn, domain, flags);
             ResourceClass resourceClass = coralSession.getSchema().getResourceClass(resClassId);
             Object defaultValue = null;
             if (setValue)

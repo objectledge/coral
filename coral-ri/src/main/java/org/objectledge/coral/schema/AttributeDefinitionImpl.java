@@ -37,6 +37,9 @@ public class AttributeDefinitionImpl<T>
     /** The resource class that declares this attribute. */
     private ResourceClass<?> declaringClass;
 
+    /** Database column name */
+    private String dbColumn;
+
     /** The value domain constraint. */
     private String domain;
     
@@ -62,25 +65,27 @@ public class AttributeDefinitionImpl<T>
 
     /**
      * Constructs a {@link AttributeDefinitionImpl}.
-     *
+     * 
      * @param persistence the Peristence subsystem.
      * @param coralEventHub the CoralEventHub.
      * @param coral the component hub,
-     * 
      * @param name the name of this attribute.
      * @param attributeClass the class of this attribute.
+     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     *        {@code name} is used as column name.
      * @param domain the value domain constraint.
      * @param flags the flags of this attribute.
      */
     public AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub,
-        CoralCore coral, 
-        String name, AttributeClass<T> attributeClass, String domain, int flags)
+        CoralCore coral, String name, AttributeClass<T> attributeClass, String dbColumn,
+        String domain, int flags)
     {
         super(persistence, name);
         this.coralEventHub = coralEventHub;
         this.coral = coral;
         this.attributeClass = attributeClass;
         this.declaringClass = null;
+        this.dbColumn = dbColumn;
         this.domain = domain;
         this.flags = flags;
         coralEventHub.getInbound().addAttributeDefinitionChangeListener(this, this);
@@ -135,6 +140,14 @@ public class AttributeDefinitionImpl<T>
         {
             record.setNull("domain");
         }
+        if(dbColumn != null)
+        {
+            record.setString("db_column", dbColumn);
+        }
+        else
+        {
+            record.setNull("db_column");
+        }
         record.setInteger("flags", flags);
     }
 
@@ -171,6 +184,14 @@ public class AttributeDefinitionImpl<T>
         catch(EntityDoesNotExistException e)
         {
             throw new SQLException("Failed to load AttributeDefinition #" + id, e);
+        }
+        if(record.isNull("db_column"))
+        {
+            dbColumn = null;
+        }
+        else
+        {
+            dbColumn = record.getString("db_column");
         }
         if(record.isNull("domain"))
         {
@@ -229,6 +250,16 @@ public class AttributeDefinitionImpl<T>
     }
 
     /**
+     * Returns the database column name of the attribute.
+     * 
+     * @return database column name of the attribute.
+     */
+    public String getDbColumn()
+    {
+        return dbColumn;
+    }
+
+    /**
      * Returns the value domain constraint for the attribute.
      *
      * @return the value domain constraint for the attribute.
@@ -282,6 +313,11 @@ public class AttributeDefinitionImpl<T>
         this.name = name;    
     }
     
+    void setDbColumn(String dbColumn)
+    {
+        this.dbColumn = dbColumn;
+    }
+
     /**
      * Sets the domain of this attribute.
      *

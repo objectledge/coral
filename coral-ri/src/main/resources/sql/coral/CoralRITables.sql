@@ -63,6 +63,7 @@ CREATE TABLE coral_attribute_definition (
         attribute_definition_id BIGINT NOT NULL,
         resource_class_id BIGINT NOT NULL,
         attribute_class_id BIGINT NOT NULL,
+        db_column VARCHAR(255),
         domain VARCHAR(255),
         name VARCHAR(32) NOT NULL,
         flags INTEGER DEFAULT 0 NOT NULL,

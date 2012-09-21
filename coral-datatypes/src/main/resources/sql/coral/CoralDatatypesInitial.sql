@@ -181,6 +181,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		1,
 		5,
 		NULL,
+		NULL,
 		'id',
 		1+8);
 
@@ -188,6 +189,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		2,
 		1,
 		1,
+		NULL,
 		NULL,
 		'name',
 		1+8);
@@ -197,6 +199,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		1,
 		1,
 		NULL,
+		NULL,
 		'path',
 		1+8+128);
 
@@ -205,6 +208,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		1,
 		9,
 		NULL,
+		NULL,
 		'parent',
 		8);
 
@@ -212,6 +216,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		5,
 		1,
 		8,
+		NULL,
 		NULL,
 		'resource_class',
 		1+8);
@@ -221,6 +226,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		1,
 		10,
 		NULL,
+		NULL,
 		'owner',
 		1+8);
 
@@ -228,6 +234,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		7,
 		1,
 		10,
+		NULL,
 		NULL,
 		'created_by',
 		1+8);
@@ -237,6 +244,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		1,
 		10,
 		NULL,
+		NULL,
 		'modified_by',
 		8);
 
@@ -245,6 +253,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		1,
 		7,
 		NULL,
+		NULL,
 		'creation_time',
 		1+8);
 
@@ -252,6 +261,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		10,
 		1,
 		7,
+		NULL,
 		NULL,
 		'modification_time',
 		8);
@@ -261,6 +271,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		2,
 		5,
 		NULL,
+		NULL,
 		'id',
 		1+8);
 
@@ -268,6 +279,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		12,
 		2,
 		1,
+		NULL,
 		NULL,
 		'name',
 		1+8);
@@ -277,6 +289,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		2,
 		1,
 		NULL,
+		NULL,
 		'path',
 		1+8+128);
 
@@ -284,6 +297,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		14,
 		2,
 		9,
+		NULL,
 		NULL,
 		'parent',
 		8);
@@ -293,6 +307,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		2,
 		8,
 		NULL,
+		NULL,
 		'resource_class',
 		1+8);
 
@@ -300,6 +315,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		16,
 		2,
 		10,
+		NULL,
 		NULL,
 		'owner',
 		1+8);
@@ -309,6 +325,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		2,
 		10,
 		NULL,
+		NULL,
 		'created_by',
 		1+8);
 
@@ -316,6 +333,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		18,
 		2,
 		10,
+		NULL,
 		NULL,
 		'modified_by',
 		8);
@@ -325,6 +343,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		2,
 		7,
 		NULL,
+		NULL,
 		'creation_time',
 		1+8);
 
@@ -332,6 +351,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		20,
 		2,
 		7,
+		NULL,
 		NULL,
 		'modification_time',
 		8);

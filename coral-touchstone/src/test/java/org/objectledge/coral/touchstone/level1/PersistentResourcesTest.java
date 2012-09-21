@@ -137,11 +137,11 @@ public class PersistentResourcesTest
     {
         firstClass = schema.createResourceClass("first", PersistentResource.class.getName(),
             PersistentResourceHandler.class.getName(), "first", 0);
-        a1 = schema.createAttribute("select", stringAttr, null, 0);
+        a1 = schema.createAttribute("select", stringAttr, "select_", null, 0);
         schema.addAttribute(firstClass, a1, null);
-        a2 = schema.createAttribute("a2", intAttr, null, AttributeFlags.REQUIRED);
+        a2 = schema.createAttribute("a2", intAttr, null, null, AttributeFlags.REQUIRED);
         schema.addAttribute(firstClass, a2, 0);
-        a3 = schema.createAttribute("a3", resourceAttr, "first", 0);
+        a3 = schema.createAttribute("a3", resourceAttr, null, "first", 0);
         schema.addAttribute(firstClass, a3, null);
 
         expTable("first", firstCols);
@@ -259,9 +259,9 @@ public class PersistentResourcesTest
             PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
             "second", 0);
         attributes.put(a2, 0);
-        a4 = schema.createAttribute("a4", booleanAttr, null, 0);
+        a4 = schema.createAttribute("a4", booleanAttr, null, null, 0);
         schema.addAttribute(secondClass, a4, null);
-        a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
+        a5 = schema.createAttribute("a5", parametersAttr, null, null, AttributeFlags.REQUIRED);
         schema.addAttribute(secondClass, a5, new DefaultParameters());
 
         expTable("second", secondCols);
@@ -271,7 +271,7 @@ public class PersistentResourcesTest
             PersistentResource.class.getName(), PersistentResourceHandler.class.getName(), "third",
             0);
         attributes.put(a5, new DefaultParameters());
-        a7 = schema.createAttribute("a7", subjectAttr, null, 0);
+        a7 = schema.createAttribute("a7", subjectAttr, null, null, 0);
         schema.addAttribute(thirdClass, a7, null);
 
         expTable("third", thirdCols);
@@ -286,24 +286,24 @@ public class PersistentResourcesTest
     {
         firstClass = schema.createResourceClass("first", PersistentResource.class.getName(),
             PersistentResourceHandler.class.getName(), "first", 0);
-        a1 = schema.createAttribute("select", stringAttr, null, 0);
+        a1 = schema.createAttribute("select", stringAttr, "select_", null, 0);
         schema.addAttribute(firstClass, a1, null);
-        a3 = schema.createAttribute("a3", resourceAttr, "first", 0);
+        a3 = schema.createAttribute("a3", resourceAttr, null, "first", 0);
         schema.addAttribute(firstClass, a3, null);
 
         secondClass = schema.createResourceClass("second",
             PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
             "second", 0);
         schema.addParentClass(secondClass, firstClass, attributes);
-        a4 = schema.createAttribute("a4", booleanAttr, null, 0);
+        a4 = schema.createAttribute("a4", booleanAttr, null, null, 0);
         schema.addAttribute(secondClass, a4, null);
-        a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
+        a5 = schema.createAttribute("a5", parametersAttr, null, null, AttributeFlags.REQUIRED);
         schema.addAttribute(secondClass, a5, new DefaultParameters());
 
         attributes.put(a5, new DefaultParameters());
         secondRes = store.createResource("test2", rootRes, secondClass, attributes);
 
-        a2 = schema.createAttribute("a2", intAttr, null, AttributeFlags.REQUIRED);
+        a2 = schema.createAttribute("a2", intAttr, null, null, AttributeFlags.REQUIRED);
         schema.addAttribute(firstClass, a2, 0);
 
         expTable("second", secondCols);
@@ -408,9 +408,9 @@ public class PersistentResourcesTest
         secondClass = schema.createResourceClass("second",
             PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
             "second", 0);
-        a4 = schema.createAttribute("a4", booleanAttr, null, 0);
+        a4 = schema.createAttribute("a4", booleanAttr, null, null, 0);
         schema.addAttribute(secondClass, a4, null);
-        a5 = schema.createAttribute("a5", parametersAttr, null, AttributeFlags.REQUIRED);
+        a5 = schema.createAttribute("a5", parametersAttr, null, null, AttributeFlags.REQUIRED);
         schema.addAttribute(secondClass, a5, null);
 
         attributes.put(a5, new DefaultParameters());
@@ -497,7 +497,7 @@ public class PersistentResourcesTest
         Arrays.sort(ad2, byId);
         assertTrue(Arrays.equals(ad1, ad2));
 
-        a6 = schema.createAttribute("a6", resourceListAttr, null, AttributeFlags.REQUIRED);
+        a6 = schema.createAttribute("a6", resourceListAttr, null, null, AttributeFlags.REQUIRED);
         schema.addAttribute(firstClass, a6, new ResourceList<Resource>(coralSessionFactory));
 
         firstRes.get(a6).add(firstRes);
@@ -523,7 +523,7 @@ public class PersistentResourcesTest
     {
         testCreateMultiLevelResources();
 
-        a6 = schema.createAttribute("a6", resourceListAttr, null, AttributeFlags.REQUIRED);
+        a6 = schema.createAttribute("a6", resourceListAttr, null, null, AttributeFlags.REQUIRED);
         schema.addAttribute(firstClass, a6, new ResourceList<Resource>(coralSessionFactory));
 
         firstRes.get(a6).add(firstRes);
@@ -555,7 +555,7 @@ public class PersistentResourcesTest
     {
         firstClass = schema.createResourceClass("first", PersistentResource.class.getName(),
             PersistentResourceHandler.class.getName(), "first", 0);
-        a6 = schema.createAttribute("a6", resourceListAttr, null, 0);
+        a6 = schema.createAttribute("a6", resourceListAttr, null, null, 0);
         schema.addAttribute(firstClass, a6, null);
         firstRes = store.createResource("test1", rootRes, firstClass, attributes);
 

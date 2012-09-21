@@ -37,6 +37,9 @@ import org.objectledge.coral.script.parser.ASTalterRelationStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAddAttributeStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAddPermissionsStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAddSuperclassStatement;
+import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeDeleteDbColumnStatement;
+import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeDeleteDomainStatement;
+import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeSetDbColumnStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeSetDomainStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeSetFlagsStatement;
 import org.objectledge.coral.script.parser.ASTalterResourceClassAlterAttributeSetNameStatement;
@@ -330,8 +333,8 @@ public class RMLExecutor
             {
                 AttributeClass<?> ac = entities.resolve(attrs[i].getAttributeClass());
                 int flags = parseFlags(attrs[i].getFlags());
-                AttributeDefinition<?> atdef = coralSession.getSchema().
-                    createAttribute(attrs[i].getName(), ac, attrs[i].getDomain(), flags);
+                AttributeDefinition<?> atdef = coralSession.getSchema().createAttribute(
+                    attrs[i].getName(), ac, attrs[i].getDbColumn(), attrs[i].getDomain(), flags);
                 coralSession.getSchema().addAttribute(rc, atdef, null);
             }
             Permission[] perms = entities.resolve(node.getPermissions());
@@ -618,6 +621,24 @@ public class RMLExecutor
     /**
      * {@inheritDoc}
      */
+    public Object visit(ASTalterResourceClassAlterAttributeSetDbColumnStatement node, Object data)
+    {
+        try
+        {
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
+            AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
+            coralSession.getSchema().setDbColumn(attr, node.getDbColumn());
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Object visit(ASTalterResourceClassAlterAttributeSetDomainStatement node, Object data)
     {
         try
@@ -625,6 +646,42 @@ public class RMLExecutor
             ResourceClass<?> rc = entities.resolve(node.getResourceClass());
             AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
             coralSession.getSchema().setDomain(attr, node.getDomain());
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterResourceClassAlterAttributeDeleteDbColumnStatement node, Object data)
+    {
+        try
+        {
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
+            AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
+            coralSession.getSchema().setDbColumn(attr, null);
+        }
+        catch(Exception e)
+        {
+            wrap(e);
+        }
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterResourceClassAlterAttributeDeleteDomainStatement node, Object data)
+    {
+        try
+        {
+            ResourceClass<?> rc = entities.resolve(node.getResourceClass());
+            AttributeDefinition<?> attr = rc.getAttribute(node.getAttributeName());
+            coralSession.getSchema().setDomain(attr, null);
         }
         catch(Exception e)
         {
@@ -645,9 +702,10 @@ public class RMLExecutor
             ASTattributeDefinition attr = node.getAttributeDefinition();
             AttributeClass<?> ac = entities.resolve(attr.getAttributeClass());
             int flags = parseFlags(attr.getFlags());
-            AttributeDefinition<?> atdef = coralSession.getSchema().
-                createAttribute(attr.getName(), ac, attr.getDomain(), flags);
-            coralSession.getSchema().addAttribute(rc, ((AttributeDefinition<Object>)atdef), node.getValue());
+            AttributeDefinition<?> atdef = coralSession.getSchema().createAttribute(attr.getName(),
+                ac, attr.getDbColumn(), attr.getDomain(), flags);
+            coralSession.getSchema().addAttribute(rc, ((AttributeDefinition<Object>)atdef),
+                node.getValue());
         }
         catch(Exception e)
         {

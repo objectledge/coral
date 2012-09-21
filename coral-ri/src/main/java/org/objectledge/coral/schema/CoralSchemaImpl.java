@@ -278,21 +278,22 @@ public class CoralSchemaImpl
 
     /**
      * Creates an attribute instance.
-     *
+     * 
      * @param name the name of the new Attribute.
      * @param attributeClass the class of the new attribute.
+     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     *        {@code name} is used as column name.
      * @param domain the value domain constraint.
      * @param flags the flags of the new Attribute.
      * @return a new attribute instance.
      */
     public <A> AttributeDefinition<A> createAttribute(String name,
-        AttributeClass<A> attributeClass,
-                                               String domain, int flags)
+        AttributeClass<A> attributeClass, String dbColumn, String domain, int flags)
     {
         // check domain specified for well-formedness
         attributeClass.getHandler().checkDomain(domain);
-        return new AttributeDefinitionImpl<A>(persistence, coralEventHub, coral,
-            name, attributeClass, domain, flags);
+        return new AttributeDefinitionImpl<A>(persistence, coralEventHub, coral, name,
+            attributeClass, dbColumn, domain, flags);
     }
 
     /**
@@ -321,6 +322,27 @@ public class CoralSchemaImpl
             ((AttributeDefinitionImpl<?>)attribute).setAttributeName(oldName);
             throw new BackendException("failed to update attribute's persitent image", e);
         }
+    }
+
+    /**
+     * Changes the database column name of the attribute.
+     * 
+     * @param attribute the attribute to modify.
+     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     *        {@code name} is used as column name.
+     */
+    public void setDbColumn(AttributeDefinition<?> attribute, String dbColumn)
+    {
+        ((AttributeDefinitionImpl<?>)attribute).setDbColumn(dbColumn);
+        try
+        {
+            persistence.save((Persistent)attribute);
+        }
+        catch(SQLException e)
+        {
+            throw new BackendException("Failed to update Attribute", e);
+        }
+        coralEventHub.getGlobal().fireAttributeDefinitionChangeEvent(attribute);
     }
 
     /**

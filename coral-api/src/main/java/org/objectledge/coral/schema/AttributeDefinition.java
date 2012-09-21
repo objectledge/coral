@@ -26,6 +26,13 @@ public interface AttributeDefinition<T>
     public ResourceClass<?> getDeclaringClass();
     
     /**
+     * Returns the database column name of the attribute.
+     * 
+     * @return database column name of the attribute.
+     */
+    public String getDbColumn();
+
+    /**
      * Returns the value domain constraint for the attribute.
      *
      * @return the value domain constraint for the attribute.

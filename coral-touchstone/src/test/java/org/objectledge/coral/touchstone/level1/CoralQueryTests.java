@@ -105,9 +105,9 @@ public class CoralQueryTests
         firstClass = schema.createResourceClass("first", firstImpl.getResClass().getName(),
             firstImpl.getHandlerClass().getName(), firstImpl == Implementation.TABULAR ? "first"
                 : null, 0);
-        a1 = schema.createAttribute("a1", stringAttr, null, 0);
+        a1 = schema.createAttribute("a1", stringAttr, null, null, 0);
         schema.addAttribute(firstClass, a1, null);
-        a2 = schema.createAttribute("a2", intAttr, null, 0);
+        a2 = schema.createAttribute("a2", intAttr, null, null, 0);
         schema.addAttribute(firstClass, a2, 0);
 
         attributes.clear();
@@ -123,13 +123,13 @@ public class CoralQueryTests
         ResourceClass<?> secondClass = schema.createResourceClass("second", secondImpl
             .getResClass().getName(), secondImpl.getHandlerClass().getName(),
             secondImpl == Implementation.TABULAR ? "second" : null, 0);
-        a1 = schema.createAttribute("a1", stringAttr, null, 0);
+        a1 = schema.createAttribute("a1", stringAttr, null, null, 0);
         schema.addAttribute(secondClass, a1, null);
-        a2 = schema.createAttribute("a2", intAttr, null, 0);
+        a2 = schema.createAttribute("a2", intAttr, null, null, 0);
         schema.addAttribute(secondClass, a2, 0);
-        a3 = schema.createAttribute("a3", resourceAttr, "first", 0);
+        a3 = schema.createAttribute("a3", resourceAttr, null, "first", 0);
         schema.addAttribute(secondClass, a3, null);
-        AttributeDefinition<String> a4 = schema.createAttribute("a4", stringAttr, null, 0);
+        AttributeDefinition<String> a4 = schema.createAttribute("a4", stringAttr, null, null, 0);
         schema.addAttribute(secondClass, a4, null);
 
         attributes.clear();
@@ -147,7 +147,7 @@ public class CoralQueryTests
         ResourceClass<?> thirdClass = schema.createResourceClass("third", thirdImpl.getResClass()
             .getName(), thirdImpl.getHandlerClass().getName(),
             thirdImpl == Implementation.TABULAR ? "third" : null, 0);
-        a3 = schema.createAttribute("a3", resourceAttr, "first", 0);
+        a3 = schema.createAttribute("a3", resourceAttr, null, "first", 0);
         schema.addAttribute(thirdClass, a3, null);
         attributes.clear();
         schema.addParentClass(thirdClass, firstClass, attributes);

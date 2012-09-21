@@ -27,6 +27,11 @@ public class ASTattributeDefinition extends SimpleNode {
       return attributeClass;
   }
   
+    public String getDbColumn()
+    {
+        return dbColumn;
+    }
+
   public String getDomain()
   {
       return domain;
