@@ -119,13 +119,13 @@ public class SQLCoralQueryImpl
         for(int i = 0; i < columns.size(); i++)
         {
             query.append(i == 0 ? "SELECT " : ", ");
-            columns.get(i).getQHandler().appendResourceIdTerm(query, columns.get(i));
+            appendResourceIdTerm(query, columns.get(i));
         }
         // FROM
         for(int i = 0; i < columns.size(); i++)
         {
             query.append(i == 0 ? "\nFROM " : "\n  , ");
-            columns.get(i).getQHandler().appendFromClause(query, columns.get(i), builtinAttrNames);
+            columns.get(i).getQHandler().appendFromClause(query, columns.get(i), builtinAttrNames, false);
         }
         boolean whereStarted = false;
         // WHERE - resource classes
@@ -286,6 +286,11 @@ public class SQLCoralQueryImpl
         AttributeHandler<A> h = lhs.getAttributeClass().getHandler();
         A value = h.toAttributeValue(rhs);
         out.append(h.toExternalString(value));
+    }
+
+    void appendResourceIdTerm(StringBuilder query, ResultColumn<?> rcm)
+    {
+        query.append("r").append(rcm.getIndex()).append(".resource_id");
     }
 
     /**

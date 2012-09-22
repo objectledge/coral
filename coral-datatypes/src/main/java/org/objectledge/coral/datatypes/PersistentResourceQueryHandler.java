@@ -7,7 +7,7 @@ public class PersistentResourceQueryHandler
 {
     @Override
     public void appendFromClause(StringBuilder query, ResultColumn<?> rcm,
-        Map<String, String> bulitinAttrNames)
+        Map<String, String> bulitinAttrNames, boolean restrictClasses)
     {
         query.append("coral_resource r").append(rcm.getIndex());
         final String dbTable = rcm.getRClass().getDbTable();

@@ -2,7 +2,6 @@ package org.objectledge.coral.datatypes;
 
 import java.util.Map;
 
-import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 
@@ -10,37 +9,11 @@ public class GenericResourceQueryHandler
     extends BaseResourceQueryHandler
 {
     public void appendFromClause(StringBuilder query, ResultColumn<?> rcm,
-        Map<String, String> bulitinAttrNames)
+        Map<String, String> bulitinAttrNames, boolean restrictClasses)
     {
-        query.append("(SELECT r.resource_id, r.resource_class_id, ");
-        for(int j = 0; j < rcm.getAttributes().size(); j++)
-        {
-            AttributeDefinition<?> ad = rcm.getAttributes().get(j);
-            if((ad.getFlags() & AttributeFlags.BUILTIN) != 0 && !ad.getName().equals("id")
-                && !ad.getName().equals("resource_class"))
-            {
-                query.append("r.").append(bulitinAttrNames.get(ad.getName())).append(", ");
-            }
-        }
-        for(int j = 0; j < rcm.getAttributes().size(); j++)
-        {
-            AttributeDefinition<?> ad = rcm.getAttributes().get(j);
-            if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
-            {
-                query.append("a").append(rcm.getNameIndex(ad));
-                if(Entity.class.isAssignableFrom(ad.getAttributeClass().getJavaClass()))
-                {
-                    query.append(".ref ");
-                }
-                else
-                {
-                    query.append(".data ");
-                }
-                query.append("a").append(rcm.getNameIndex(ad));
-                query.append(", ");
-            }
-        }
-        query.setLength(query.length() - 2);
+        query.append("(SELECT ");
+        appendBuiltinAttributes(query, rcm, bulitinAttrNames);
+
         query.append("\nFROM coral_resource r");
         for(int j = 0; j < rcm.getAttributes().size(); j++)
         {
@@ -78,6 +51,11 @@ public class GenericResourceQueryHandler
             }
         }
         query.append("\nWHERE ");
+        if(restrictClasses)
+        {
+            appendResourceClassWhereClause(query, rcm);
+            query.append(" AND ");
+        }
         for(int j = 0; j < rcm.getAttributes().size(); j++)
         {
             AttributeDefinition<?> ad = rcm.getAttributes().get(j);

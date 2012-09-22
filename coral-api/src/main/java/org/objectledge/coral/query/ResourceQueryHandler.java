@@ -19,10 +19,8 @@ import org.objectledge.coral.store.Resource;
  */
 public interface ResourceQueryHandler
 {
-    void appendResourceIdTerm(StringBuilder query, ResultColumn<?> rcm);
-
     void appendFromClause(StringBuilder query, ResultColumn<?> rcm,
-        Map<String, String> bulitinAttrNames);
+        Map<String, String> bulitinAttrNames, boolean restrictClasses);
 
     boolean appendWhereClause(StringBuilder query, boolean whereStarted, ResultColumn<?> rcm);
 
