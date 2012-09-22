@@ -1,20 +1,32 @@
 package org.objectledge.coral.datatypes;
 
-import java.util.Map;
-
+import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 
 public class GenericResourceQueryHandler
     extends BaseResourceQueryHandler
 {
-    public void appendFromClause(StringBuilder query, ResultColumn<?> rcm,
-        Map<String, String> bulitinAttrNames, boolean restrictClasses)
-    {
-        query.append("(SELECT ");
-        appendBuiltinAttributes(query, rcm, bulitinAttrNames);
 
-        query.append("\nFROM coral_resource r");
+    protected boolean appendDataWhereClause(StringBuilder query, ResultColumn<?> rcm,
+        boolean whereStarted)
+    {
+        for(int j = 0; j < rcm.getAttributes().size(); j++)
+        {
+            AttributeDefinition<?> ad = rcm.getAttributes().get(j);
+            if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
+            {
+                whereStarted = appendWhere(query, whereStarted);
+                query.append(rcm.isOuter(ad) ? "d" : "g");
+                query.append(j + 1).append(".attribute_definition_id").append(" = ")
+                    .append(ad.getId());
+            }
+        }
+        return whereStarted;
+    }
+
+    protected void appendDataFromClause(StringBuilder query, ResultColumn<?> rcm)
+    {
         for(int j = 0; j < rcm.getAttributes().size(); j++)
         {
             AttributeDefinition<?> ad = rcm.getAttributes().get(j);
@@ -50,43 +62,26 @@ public class GenericResourceQueryHandler
                     .append(".data_key)");
             }
         }
-        query.append("\nWHERE ");
-        if(restrictClasses)
-        {
-            appendResourceClassWhereClause(query, rcm);
-            query.append(" AND ");
-        }
+    }
+
+    protected void appendAttributes(StringBuilder query, ResultColumn<?> rcm)
+    {
         for(int j = 0; j < rcm.getAttributes().size(); j++)
         {
             AttributeDefinition<?> ad = rcm.getAttributes().get(j);
             if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
-                query.append(rcm.isOuter(ad) ? "d" : "g");
-                query.append(j + 1).append(".attribute_definition_id").append(" = ")
-                    .append(ad.getId());
-                query.append(" AND ");
+                query.append(", a").append(rcm.getNameIndex(ad));
+                if(Entity.class.isAssignableFrom(ad.getAttributeClass().getJavaClass()))
+                {
+                    query.append(".ref ");
+                }
+                else
+                {
+                    query.append(".data ");
+                }
+                query.append("a").append(rcm.getNameIndex(ad));
             }
         }
-        if(query.toString().endsWith(" AND "))
-        {
-            query.setLength(query.length() - 5); // roll back lack " AND "
-        }
-        else
-        {
-            query.setLength(query.length() - 7); // roll back "\nWHERE "
-        }
-        query.append(") r").append(rcm.getIndex());
-    }
-
-    @Override
-    public boolean appendWhereClause(StringBuilder query, boolean whereStarted, ResultColumn<?> rcm)
-    {
-        return whereStarted;
-    }
-
-    public void appendAttributeTerm(StringBuilder query, ResultColumnAttribute<?, ?> rca)
-    {
-        query.append("r").append(rca.getColumn().getIndex()).append(".a")
-            .append(rca.getColumn().getNameIndex(rca.getAttribute()));
     }
 }

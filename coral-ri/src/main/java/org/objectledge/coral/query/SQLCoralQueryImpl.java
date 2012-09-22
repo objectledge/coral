@@ -119,70 +119,23 @@ public class SQLCoralQueryImpl
         for(int i = 0; i < columns.size(); i++)
         {
             query.append(i == 0 ? "SELECT " : ", ");
-            appendResourceIdTerm(query, columns.get(i));
+            query.append("r").append(columns.get(i).getIndex()).append(".resource_id");
         }
         // FROM
         for(int i = 0; i < columns.size(); i++)
         {
             query.append(i == 0 ? "\nFROM " : "\n  , ");
-            columns.get(i).getQHandler().appendFromClause(query, columns.get(i), builtinAttrNames, false);
+            columns
+                .get(i)
+                .getQHandler()
+                .appendFromClause(query, columns.get(i), builtinAttrNames,
+                    statement.getFrom() != null);
         }
-        boolean whereStarted = false;
-        // WHERE - resource classes
-        for(int i = 0; i < columns.size(); i++)
-        {
-            ResultColumn<?> rcm = columns.get(i);
-            if(statement.getFrom() != null)
-            {
-                if(whereStarted)
-                {
-                    query.append("\n  AND ");
-                }
-                else
-                {
-                    query.append("\nWHERE ");
-                    whereStarted = true;
-                }
-                ResourceClass<?>[] children = rcm.getRClass().getChildClasses();
-                query.append("r").append(i + 1).append(".resource_class_id");
-                if(children.length > 0)
-                {
-                    query.append(" IN (");
-                    for(int j = 0; j < children.length; j++)
-                    {
-                        query.append(children[j].getIdString());
-                        query.append(", ");
-                    }
-                    query.append(rcm.getRClass().getIdString()).append(")");
-                }
-                else
-                {
-                    query.append(" = ");
-                    query.append(rcm.getRClass().getIdString());
-                }
-            }
-        }
-        // WHERE - attribute glue
-        for(int i = 0; i < columns.size(); i++)
-        {
-            ResultColumn<?> rcm = columns.get(i);
-            whereStarted = rcm.getQHandler().appendWhereClause(query, whereStarted, rcm)
-                || whereStarted;
-        }
-        // WHERE - condition
+        // WHERE
         if(statement.getWhere() != null)
         {
-            if(whereStarted)
-            {
-                query.append("\n  AND ");
-            }
-            else
-            {
-                query.append("\nWHERE ");
-            }
-            query.append("(");
+            query.append("\nWHERE ");
             appendCondition(statement.getWhere(), columnMap, query);
-            query.append(")");
         }
         // ORDER BY
         if(statement.getOrderBy() != null)
@@ -267,7 +220,8 @@ public class SQLCoralQueryImpl
             true, false, columnMap);
         if((rca.getAttribute().getFlags() & AttributeFlags.BUILTIN) == 0)
         {
-            rca.getColumn().getQHandler().appendAttributeTerm(out, rca);
+            out.append("r").append(rca.getColumn().getIndex()).append(".a")
+                .append(rca.getColumn().getNameIndex(rca.getAttribute()));
         }
         else
         {
@@ -286,11 +240,6 @@ public class SQLCoralQueryImpl
         AttributeHandler<A> h = lhs.getAttributeClass().getHandler();
         A value = h.toAttributeValue(rhs);
         out.append(h.toExternalString(value));
-    }
-
-    void appendResourceIdTerm(StringBuilder query, ResultColumn<?> rcm)
-    {
-        query.append("r").append(rcm.getIndex()).append(".resource_id");
     }
 
     /**

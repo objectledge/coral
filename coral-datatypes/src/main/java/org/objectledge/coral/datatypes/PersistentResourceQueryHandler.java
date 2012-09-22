@@ -1,47 +1,38 @@
 package org.objectledge.coral.datatypes;
 
-import java.util.Map;
+import org.objectledge.coral.schema.AttributeDefinition;
+import org.objectledge.coral.schema.AttributeFlags;
 
 public class PersistentResourceQueryHandler
     extends BaseResourceQueryHandler
 {
-    @Override
-    public void appendFromClause(StringBuilder query, ResultColumn<?> rcm,
-        Map<String, String> bulitinAttrNames, boolean restrictClasses)
+
+    protected void appendDataFromClause(StringBuilder query, ResultColumn<?> rcm)
     {
-        query.append("coral_resource r").append(rcm.getIndex());
         final String dbTable = rcm.getRClass().getDbTable();
         if(dbTable != null)
         {
-            query.append(",\n").append(dbTable).append(" p").append(rcm.getIndex());
+            query.append("\nJOIN ").append(dbTable).append(" p ON (r.resource_id = p.resource_id)");
         }
     }
 
-    @Override
-    public boolean appendWhereClause(StringBuilder query, boolean whereStarted, ResultColumn<?> rcm)
+    protected boolean appendDataWhereClause(StringBuilder query, ResultColumn<?> rcm,
+        boolean whereStarted)
     {
-        if(whereStarted)
-        {
-            query.append("\n  AND ");
-        }
-        else
-        {
-            query.append("\nWHERE ");
-            whereStarted = true;
-        }
-        query.append("r").append(rcm.getIndex()).append(".resource_id = p").append(rcm.getIndex())
-            .append(".resource_id");
         return whereStarted;
     }
 
-    @Override
-    public void appendAttributeTerm(StringBuilder query, ResultColumnAttribute<?, ?> rca)
+    protected void appendAttributes(StringBuilder query, ResultColumn<?> rcm)
     {
-        String name = rca.getAttribute().getDbColumn();
-        if(name == null)
+        for(int j = 0; j < rcm.getAttributes().size(); j++)
         {
-            name = rca.getAttribute().getName();
+            AttributeDefinition<?> ad = rcm.getAttributes().get(j);
+            if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
+            {
+                final String dbColumn = ad.getDbColumn();
+                query.append(", p.").append(dbColumn != null ? dbColumn : ad.getName())
+                    .append(" a").append(j + 1);
+            }
         }
-        query.append("p").append(rca.getColumn().getIndex()).append(".").append(name);
     }
 }
