@@ -479,6 +479,14 @@ public class CoralQueryTests
         assertExpectedResults();
     }
 
+    private void queryAcrossHierarchy()
+        throws Exception
+    {
+        run("FIND RESOURCE FROM first AS f, third AS t WHERE t.a1 = 'quux' AND t.a3 = f");
+        expectRow(first1, third1);
+        assertExpectedResults();
+    }
+
     private void malformed()
     {
         expectMalformed("SELECT f,s FROM first AS f, second AS s WHERE s.a3 = f");
@@ -536,6 +544,7 @@ public class CoralQueryTests
 
         queryUsingInnerJoin();
         queryUsingCartesianJoin();
+        queryAcrossHierarchy();
 
         queryUsingOrderClause();
 
