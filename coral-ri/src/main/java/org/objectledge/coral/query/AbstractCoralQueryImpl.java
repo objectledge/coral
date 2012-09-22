@@ -265,7 +265,7 @@ public abstract class AbstractCoralQueryImpl
                 }
             }
         }
-        rcm.addAttribute(ad, false);
+        rcm.addAttribute(ad, outer);
         return ResultColumnAttribute.newInstance(rcm, ad);
     }
 

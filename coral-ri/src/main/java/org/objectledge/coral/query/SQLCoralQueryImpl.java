@@ -44,19 +44,19 @@ public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
 {
     /** the parser syntax */
-    private static Map<String, String> attributesMap = new HashMap<String, String>();
+    private static Map<String, String> builtinAttrNames = new HashMap<String, String>();
 
     static
     {
-        attributesMap.put("id", "resource_id");
-        attributesMap.put("name", "name");
-        attributesMap.put("parent", "parent");
-        attributesMap.put("resource_class", "resource_class_id");
-        attributesMap.put("owner", "owned_by");
-        attributesMap.put("created_by", "created_by");
-        attributesMap.put("modified_by", "modified_by");
-        attributesMap.put("creation_time", "creation_time");
-        attributesMap.put("modification_time", "modification_time");
+        builtinAttrNames.put("id", "resource_id");
+        builtinAttrNames.put("name", "name");
+        builtinAttrNames.put("parent", "parent");
+        builtinAttrNames.put("resource_class", "resource_class_id");
+        builtinAttrNames.put("owner", "owned_by");
+        builtinAttrNames.put("created_by", "created_by");
+        builtinAttrNames.put("modified_by", "modified_by");
+        builtinAttrNames.put("creation_time", "creation_time");
+        builtinAttrNames.put("modification_time", "modification_time");
     }
 
     // instance variables ////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ public class SQLCoralQueryImpl
         for(int i = 0; i < columns.size(); i++)
         {
             query.append(i == 0 ? "\nFROM " : "\n  , ");
-            columns.get(i).getQHandler().appendFromClause(query, columns.get(i));
+            columns.get(i).getQHandler().appendFromClause(query, columns.get(i), builtinAttrNames);
         }
         boolean whereStarted = false;
         // WHERE - resource classes
@@ -272,7 +272,7 @@ public class SQLCoralQueryImpl
         else
         {
             out.append("r").append(rca.getColumn().getIndex()).append(".");
-            String columnName = (String)attributesMap.get(rca.getAttribute().getName());
+            String columnName = (String)builtinAttrNames.get(rca.getAttribute().getName());
             if(columnName == null)
             {
                 columnName = rca.getAttribute().getName();
@@ -303,7 +303,10 @@ public class SQLCoralQueryImpl
             {
                 public Object visit(ASTnotExpression node, Object data)
                 {
-                    out.append("NOT ");
+                    if(!(node.jjtGetChild(0) instanceof ASTdefinedCondition))
+                    {
+                        out.append("NOT ");
+                    }
                     return visit((SimpleNode)node, data);
                 }
 
@@ -358,7 +361,14 @@ public class SQLCoralQueryImpl
                     try
                     {
                         appendAttribute(node.getRHS(), columnMap, out);
-                        out.append(" IS NOT NULL");
+                        if(node.jjtGetParent() instanceof ASTnotExpression)
+                        {
+                            out.append(" IS NULL");
+                        }
+                        else
+                        {
+                            out.append(" IS NOT NULL");
+                        }
                         return data;
                     }
                     catch(MalformedQueryException e)

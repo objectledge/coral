@@ -1,5 +1,7 @@
 package org.objectledge.coral.datatypes;
 
+import java.util.Map;
+
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
@@ -7,73 +9,106 @@ import org.objectledge.coral.schema.AttributeFlags;
 public class GenericResourceQueryHandler
     extends BaseResourceQueryHandler
 {
-    public void appendFromClause(StringBuilder query, ResultColumn<?> rcm)
+    public void appendFromClause(StringBuilder query, ResultColumn<?> rcm,
+        Map<String, String> bulitinAttrNames)
     {
-        query.append("coral_resource r").append(rcm.getIndex());
+        query.append("(SELECT r.resource_id, r.resource_class_id, ");
+        for(int j = 0; j < rcm.getAttributes().size(); j++)
+        {
+            AttributeDefinition<?> ad = rcm.getAttributes().get(j);
+            if((ad.getFlags() & AttributeFlags.BUILTIN) != 0 && !ad.getName().equals("id")
+                && !ad.getName().equals("resource_class"))
+            {
+                query.append("r.").append(bulitinAttrNames.get(ad.getName())).append(", ");
+            }
+        }
         for(int j = 0; j < rcm.getAttributes().size(); j++)
         {
             AttributeDefinition<?> ad = rcm.getAttributes().get(j);
             if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
             {
-                query.append(", coral_generic_resource ");
-                query.append("r").append(rcm.getIndex()).append("g").append(j + 1);
+                query.append("a").append(rcm.getNameIndex(ad));
+                if(Entity.class.isAssignableFrom(ad.getAttributeClass().getJavaClass()))
+                {
+                    query.append(".ref ");
+                }
+                else
+                {
+                    query.append(".data ");
+                }
+                query.append("a").append(rcm.getNameIndex(ad));
                 query.append(", ");
-                query.append(ad.getAttributeClass().getDbTable());
-                query.append(" ");
-                query.append("r").append(rcm.getIndex()).append("a").append(j + 1);
             }
         }
+        query.setLength(query.length() - 2);
+        query.append("\nFROM coral_resource r");
+        for(int j = 0; j < rcm.getAttributes().size(); j++)
+        {
+            AttributeDefinition<?> ad = rcm.getAttributes().get(j);
+            if((ad.getFlags() & AttributeFlags.BUILTIN) == 0 && !rcm.isOuter(ad))
+            {
+                query.append("\nJOIN coral_generic_resource ");
+                query.append("g").append(j + 1);
+                query.append(" ON (r.resource_id = g").append(j + 1).append(".resource_id)");
+                query.append("\nJOIN ");
+                query.append(ad.getAttributeClass().getDbTable()).append(" ").append("a")
+                    .append(j + 1);
+                query.append(" ON (g").append(j + 1).append(".data_key = a").append(j + 1)
+                    .append(".data_key)");
+            }
+        }
+        for(int j = 0; j < rcm.getAttributes().size(); j++)
+        {
+            AttributeDefinition<?> ad = rcm.getAttributes().get(j);
+            if((ad.getFlags() & AttributeFlags.BUILTIN) == 0 && rcm.isOuter(ad))
+            {
+                query.append("\nJOIN coral_attribute_definition d").append(j + 1);
+                query.append(" ON (r.resource_class_id = d").append(j + 1)
+                    .append(".resource_class_id)");
+                query.append("\nLEFT OUTER JOIN coral_generic_resource ");
+                query.append("g").append(j + 1);
+                query.append(" ON (r.resource_id = g").append(j + 1).append(".resource_id");
+                query.append(" AND d").append(j + 1).append(".attribute_definition_id = g")
+                    .append(j + 1).append(".attribute_definition_id)");
+                query.append("\nLEFT OUTER JOIN ");
+                query.append(ad.getAttributeClass().getDbTable()).append(" ").append("a")
+                    .append(j + 1);
+                query.append(" ON (g").append(j + 1).append(".data_key = a").append(j + 1)
+                    .append(".data_key)");
+            }
+        }
+        query.append("\nWHERE ");
+        for(int j = 0; j < rcm.getAttributes().size(); j++)
+        {
+            AttributeDefinition<?> ad = rcm.getAttributes().get(j);
+            if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
+            {
+                query.append(rcm.isOuter(ad) ? "d" : "g");
+                query.append(j + 1).append(".attribute_definition_id").append(" = ")
+                    .append(ad.getId());
+                query.append(" AND ");
+            }
+        }
+        if(query.toString().endsWith(" AND "))
+        {
+            query.setLength(query.length() - 5); // roll back lack " AND "
+        }
+        else
+        {
+            query.setLength(query.length() - 7); // roll back "\nWHERE "
+        }
+        query.append(") r").append(rcm.getIndex());
     }
 
     @Override
     public boolean appendWhereClause(StringBuilder query, boolean whereStarted, ResultColumn<?> rcm)
     {
-        for(int j = 0; j < rcm.getAttributes().size(); j++)
-        {
-            AttributeDefinition<?> ad = rcm.getAttributes().get(j);
-            if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
-            {
-                if(whereStarted)
-                {
-                    query.append("\n  AND ");
-                }
-                else
-                {
-                    query.append("\nWHERE ");
-                    whereStarted = true;
-                }
-                query.append("r").append(rcm.getIndex()).append("g").append(j + 1);
-                query.append(".resource_id = r").append(rcm.getIndex()).append(".resource_id");
-                query.append(" AND ");
-                query.append("r").append(rcm.getIndex()).append("g").append(j + 1);
-                query.append(".attribute_definition_id = ");
-                query.append(ad.getIdString());
-                query.append(" AND ");
-                query.append("r").append(rcm.getIndex()).append("a").append(j + 1)
-                    .append(".data_key = ");
-                query.append("r").append(rcm.getIndex()).append("g").append(j + 1)
-                    .append(".data_key");
-            }
-        }
         return whereStarted;
     }
 
     public void appendAttributeTerm(StringBuilder query, ResultColumnAttribute<?, ?> rca)
     {
-        query
-            .append("r")
-            .append(rca.getColumn().getIndex())
-            .append("a")
-            .append(
-                ((Integer)rca.getColumn().getNameIndex().get(rca.getAttribute().getName()))
-                    .intValue() + 1);
-        if(Entity.class.isAssignableFrom(rca.getAttribute().getAttributeClass().getJavaClass()))
-        {
-            query.append(".ref");
-        }
-        else
-        {
-            query.append(".data");
-        }
+        query.append("r").append(rca.getColumn().getIndex()).append(".a")
+            .append(rca.getColumn().getNameIndex(rca.getAttribute()));
     }
 }

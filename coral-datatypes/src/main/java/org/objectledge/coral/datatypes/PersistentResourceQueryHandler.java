@@ -1,12 +1,13 @@
 package org.objectledge.coral.datatypes;
 
-
+import java.util.Map;
 
 public class PersistentResourceQueryHandler
     extends BaseResourceQueryHandler
 {
     @Override
-    public void appendFromClause(StringBuilder query, ResultColumn<?> rcm)
+    public void appendFromClause(StringBuilder query, ResultColumn<?> rcm,
+        Map<String, String> bulitinAttrNames)
     {
         query.append("coral_resource r").append(rcm.getIndex());
         final String dbTable = rcm.getRClass().getDbTable();

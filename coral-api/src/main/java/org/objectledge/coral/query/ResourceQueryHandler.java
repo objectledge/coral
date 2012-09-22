@@ -2,9 +2,11 @@ package org.objectledge.coral.query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.ResourceClass;
@@ -19,7 +21,8 @@ public interface ResourceQueryHandler
 {
     void appendResourceIdTerm(StringBuilder query, ResultColumn<?> rcm);
 
-    void appendFromClause(StringBuilder query, ResultColumn<?> rcm);
+    void appendFromClause(StringBuilder query, ResultColumn<?> rcm,
+        Map<String, String> bulitinAttrNames);
 
     boolean appendWhereClause(StringBuilder query, boolean whereStarted, ResultColumn<?> rcm);
 
@@ -40,9 +43,6 @@ public interface ResourceQueryHandler
         /** The 1-based index of the column. */
         private int index;
 
-        /** Should the resource class data be outer joined into the query */
-        private boolean outer;
-
         /** The alias or <code>null</code> for none. */
         private final String alias;
 
@@ -50,7 +50,9 @@ public interface ResourceQueryHandler
         private final List<AttributeDefinition<?>> attributes = new ArrayList<AttributeDefinition<?>>();
 
         /** Mapping of attribute names to indices. */
-        private final Map<String, Integer> nameIndex = new HashMap<String, Integer>();
+        private final Map<AttributeDefinition<?>, Integer> nameIndex = new HashMap<AttributeDefinition<?>, Integer>();
+
+        private final Set<AttributeDefinition<?>> outerAttrs = new HashSet<AttributeDefinition<?>>();
 
         // initialization ////////////////////////////////////////////////////
 
@@ -85,11 +87,14 @@ public interface ResourceQueryHandler
          */
         public void addAttribute(AttributeDefinition<?> ad, boolean outer)
         {
-            this.outer = this.outer || outer;
+            if(outer)
+            {
+                outerAttrs.add(ad);
+            }
             if(!attributes.contains(ad))
             {
                 attributes.add(ad);
-                nameIndex.put(ad.getName(), attributes.size() - 1);
+                nameIndex.put(ad, attributes.size());
             }
         }
 
@@ -124,21 +129,19 @@ public interface ResourceQueryHandler
         }
 
         /**
-         * Should the resource class data be outer joined into the query.
+         * Should null value of this attribute be accounted for.
+         * 
+         * @param ad
+         * @return
          */
-        public boolean isOuter()
+        public boolean isOuter(AttributeDefinition<?> ad)
         {
-            return outer;
+            return outerAttrs.contains(ad);
         }
 
-        /**
-         * Returns the nameIndex.
-         * 
-         * @return the nameIndex.
-         */
-        public Map<String, Integer> getNameIndex()
+        public int getNameIndex(AttributeDefinition<?> ad)
         {
-            return nameIndex;
+            return nameIndex.get(ad);
         }
 
         /**

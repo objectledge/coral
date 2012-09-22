@@ -365,8 +365,7 @@ public class CoralQueryTests
 
         run("FIND RESOURCE FROM second WHERE NOT DEFINED a4");
         expectRow(second2);
-        // TODO DEFINED for Generic attributes requires outer join
-        // assertExpectedResults();
+        assertExpectedResults();
 
     }
 
