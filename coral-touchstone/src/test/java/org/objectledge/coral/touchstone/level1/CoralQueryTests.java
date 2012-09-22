@@ -271,12 +271,12 @@ public class CoralQueryTests
     private void queryByStringNotEquals()
         throws Exception
     {
-        run("FIND RESOURCE FROM first WHERE a1 != 'foo'");
+        run("FIND RESOURCE FROM first WHERE a1 != 'foo' ORDER BY id");
         expectRow(first2);
         expectRow(third1);
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first WHERE a1 != 'bar'");
+        run("FIND RESOURCE FROM first WHERE a1 != 'bar' ORDER BY id");
         expectRow(first1);
         expectRow(first2);
         expectRow(third1);
@@ -290,12 +290,12 @@ public class CoralQueryTests
         expectRow(first1);
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first WHERE NOT a1 LIKE 'f%'");
+        run("FIND RESOURCE FROM first WHERE NOT a1 LIKE 'f%' ORDER BY id");
         expectRow(first2);
         expectRow(third1);
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first WHERE NOT a1 LIKE 'ba%'");
+        run("FIND RESOURCE FROM first WHERE NOT a1 LIKE 'ba%' ORDER BY id");
         expectRow(first1);
         expectRow(first2);
         expectRow(third1);
@@ -318,12 +318,12 @@ public class CoralQueryTests
         expectRow(first1);
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first WHERE NOT a1 LIKE_NC 'F%'");
+        run("FIND RESOURCE FROM first WHERE NOT a1 LIKE_NC 'F%' ORDER BY id");
         expectRow(first2);
         expectRow(third1);
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first WHERE NOT a1 LIKE_NC 'Ba%'");
+        run("FIND RESOURCE FROM first WHERE NOT a1 LIKE_NC 'Ba%' ORDER BY id");
         expectRow(first1);
         expectRow(first2);
         expectRow(third1);
@@ -333,7 +333,7 @@ public class CoralQueryTests
     private void queryByStringCompare()
         throws Exception
     {
-        run("FIND RESOURCE FROM first WHERE a1 > 'e'");
+        run("FIND RESOURCE FROM first WHERE a1 > 'e' ORDER BY id");
         expectRow(first1);
         expectRow(third1);
         assertExpectedResults();
@@ -342,7 +342,7 @@ public class CoralQueryTests
         expectRow(first2);
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first WHERE a1 <= 'g'");
+        run("FIND RESOURCE FROM first WHERE a1 <= 'g' ORDER BY id ORDER BY id");
         expectRow(first1);
         expectRow(first2);
         assertExpectedResults();
@@ -380,7 +380,7 @@ public class CoralQueryTests
         run("FIND RESOURCE FROM first WHERE a1 = 'foo' AND a2 = 9");
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first WHERE NOT (a1 = 'foo' AND a2 = 9)");
+        run("FIND RESOURCE FROM first WHERE NOT (a1 = 'foo' AND a2 = 9) ORDER BY id");
         expectRow(first1);
         expectRow(first2);
         expectRow(third1);
@@ -390,12 +390,12 @@ public class CoralQueryTests
     private void queryByAlternative()
         throws Exception
     {
-        run("FIND RESOURCE FROM first WHERE a1 = 'foo' OR a2 = 9");
+        run("FIND RESOURCE FROM first WHERE a1 = 'foo' OR a2 = 9 ORDER BY id");
         expectRow(first1);
         expectRow(first2);
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first WHERE NOT a1 = 'foo' OR a2 != 7");
+        run("FIND RESOURCE FROM first WHERE NOT a1 = 'foo' OR a2 != 7 ORDER BY id");
         expectRow(first2);
         expectRow(third1);
         assertExpectedResults();
@@ -404,7 +404,7 @@ public class CoralQueryTests
     private void queryByCompoundBoolean()
         throws Exception
     {
-        run("FIND RESOURCE FROM first WHERE a1 > 'a' AND (a2 = 7 OR a2 = 9)");
+        run("FIND RESOURCE FROM first WHERE a1 > 'a' AND (a2 = 7 OR a2 = 9) ORDER BY id");
         expectRow(first1);
         expectRow(first2);
         assertExpectedResults();
@@ -424,7 +424,7 @@ public class CoralQueryTests
     private void queryUsingCartesianJoin()
         throws Exception
     {
-        run("FIND RESOURCE FROM first AS f, second AS s");
+        run("FIND RESOURCE FROM first AS f, second AS s ORDER BY f.id, s.id");
         expectRow(first1, second1);
         expectRow(first1, second2);
         expectRow(first2, second1);
@@ -437,7 +437,7 @@ public class CoralQueryTests
     private void queryUsingOrderClause()
         throws Exception
     {
-        run("FIND RESOURCE FROM first ORDER BY a1");
+        run("FIND RESOURCE FROM first ORDER BY a1 ORDER BY id");
         expectRow(first2);
         expectRow(first1);
         expectRow(third1);
@@ -474,7 +474,7 @@ public class CoralQueryTests
         expectRow(first1, second1);
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first AS f, second AS s WHERE s.a3 != f");
+        run("FIND RESOURCE FROM first AS f, second AS s WHERE s.a3 != f ORDER BY f.id, s.id");
         expectRow(first2, second1);
         expectRow(third1, second1);
         assertExpectedResults();
