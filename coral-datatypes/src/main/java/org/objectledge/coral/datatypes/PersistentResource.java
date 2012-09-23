@@ -235,7 +235,7 @@ public class PersistentResource
             {
                 value = data.getObject(name);
             }
-            instance.setAttribute(attr, value);
+            instance.setValue(attr, value);
         }
         else
         {
@@ -400,7 +400,7 @@ public class PersistentResource
                 }
                 instance.setValueId(attr, valueId);
             }
-            instance.setAttribute(attr, value);
+            instance.setValue(attr, value);
         }
 
         @Override
@@ -449,7 +449,7 @@ public class PersistentResource
             {
                 if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
                 {
-                    if(instance.isAttributeModified(attr))
+                    if(instance.isModifiedInternal(attr))
                     {
                         getAttribute(attr, record);
                     }
@@ -461,7 +461,7 @@ public class PersistentResource
             throws SQLException, SQLException
         {
             String name = columnName(attr);
-            A value = instance.getAttribute(attr);
+            A value = instance.getValue(attr);
 
             if(attr.getAttributeClass().getHandler().supportsExternalString())
             {

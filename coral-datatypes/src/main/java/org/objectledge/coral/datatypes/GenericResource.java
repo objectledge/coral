@@ -107,7 +107,7 @@ public class GenericResource
                         {
                             try
                             {
-                                setAttribute(attr, handler.retrieve(newId, conn));
+                                setValue(attr, handler.retrieve(newId, conn));
                             }
                             catch(EntityDoesNotExistException e)
                             {
@@ -116,7 +116,7 @@ public class GenericResource
                         }
                         else
                         {
-                            setAttribute(attr, value);
+                            setValue(attr, value);
                         }
                     }
                 }
@@ -144,9 +144,9 @@ public class GenericResource
             {
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
-                    if(isAttributeModified(attr))
+                    if(isModifiedInternal(attr))
                     {
-    	                Object value = getAttribute(attr);
+    	                Object value = getValue(attr);
     	                long id = getValueId(attr);
     	                if(value != null)
     	                {
@@ -251,7 +251,7 @@ public class GenericResource
         throws SQLException
     {
         AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
-        A value = getAttribute(attr);
+        A value = getValue(attr);
         return handler.create(value, conn);
     }
 
@@ -259,7 +259,7 @@ public class GenericResource
         throws EntityDoesNotExistException, SQLException
     {
         AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
-        A value = getAttribute(attr);
+        A value = getValue(attr);
         long valueId = getValueId(attr);
         handler.update(valueId, value, conn);
     }
