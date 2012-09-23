@@ -97,6 +97,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
     {
         checkResource(resource);
         ((AbstractResource)resource).delete(resource.getResourceClass(), conn);
+        dropFromCache(resource);
     }
 
     /**
@@ -274,10 +275,10 @@ public abstract class AbstractResourceHandler<T extends Resource>
      */
     private void addToCache(Resource res)
     {
-        addToCache0(res.getResourceClass(), res);
+        addToCache(res.getResourceClass(), res);
         for(ResourceClass<?> parent : res.getResourceClass().getParentClasses())
         {
-            addToCache0(parent, res);
+            addToCache(parent, res);
         }
     }
 
@@ -287,7 +288,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
      * @param rc a ResourceClass to use for cache key.
      * @param res a Resource.
      */
-    private void addToCache0(ResourceClass<?> rc, Resource res)
+    private void addToCache(ResourceClass<?> rc, Resource res)
     {
         WeakHashMap<Resource, Object> rset;
         synchronized(cache)
@@ -303,6 +304,31 @@ public abstract class AbstractResourceHandler<T extends Resource>
         synchronized(rset)
         {
             rset.put(res, null);
+        }
+    }
+
+    private void dropFromCache(Resource res)
+    {
+        dropFromCache(res.getResourceClass(), res);
+        for(ResourceClass<?> parent : res.getResourceClass().getParentClasses())
+        {
+            dropFromCache(parent, res);
+        }
+    }
+
+    private void dropFromCache(ResourceClass<?> rc, Resource res)
+    {
+        WeakHashMap<Resource, Object> rset;
+        synchronized(cache)
+        {
+            rset = cache.get(rc);
+        }
+        if(rset != null)
+        {
+            synchronized(rset)
+            {
+                rset.remove(res);
+            }
         }
     }
 
