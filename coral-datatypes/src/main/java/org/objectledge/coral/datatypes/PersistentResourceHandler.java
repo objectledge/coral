@@ -665,15 +665,6 @@ public class PersistentResourceHandler<T extends PersistentResource>
     /**
      * {@inheritDoc}
      */
-    public Object getData(Connection conn)
-        throws SQLException
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public Class<?> getFallbackResourceImplClass()
     {
         return PersistentResource.class;

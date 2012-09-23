@@ -463,50 +463,6 @@ public class GenericResourceHandler<T extends Resource>
             DatabaseUtils.close(stmt);
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getData(Connection conn)
-        throws SQLException
-    {
-        Map<Long, Map<AttributeDefinition<?>, Long>> keyMap = new HashMap<Long, Map<AttributeDefinition<?>, Long>>();
-        Map<AttributeDefinition<?>, Long> dataKeys = null;
-        Long resId = null;
-        Statement stmt = conn.createStatement();
-        ResultSet rs = null;
-        try
-        {
-            rs = stmt.executeQuery(
-                "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
-                "ORDER BY resource_id"
-            );
-            try
-            {
-                while(rs.next())
-                {
-                    if(dataKeys == null || resId == null || resId.longValue() != rs.getLong(1))
-                    {
-                        resId = new Long(rs.getLong(1));
-                        dataKeys = new HashMap<AttributeDefinition<?>, Long>();
-                        keyMap.put(resId, dataKeys);
-                    }
-                    dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
-                        new Long(rs.getLong(3)));
-                }
-                return keyMap;        
-            }
-            catch(EntityDoesNotExistException e)
-            {
-                throw new BackendException("corrupted data", e);
-            }
-        }
-        finally
-        {
-            DatabaseUtils.close(rs);
-            DatabaseUtils.close(stmt);
-        }
-    }
     
     /**
      * {@inheritDoc}
