@@ -582,6 +582,34 @@ public class CoralQueryTests
         runTests();
     }
 
+    public void testMixed3()
+        throws Exception
+    {
+        fixture(Implementation.TABULAR, Implementation.TABULAR, Implementation.GENERIC);
+        runTests();
+    }
+
+    public void testMixed4()
+        throws Exception
+    {
+        fixture(Implementation.GENERIC, Implementation.TABULAR, Implementation.TABULAR);
+        runTests();
+    }
+
+    public void testMixed5()
+        throws Exception
+    {
+        fixture(Implementation.TABULAR, Implementation.GENERIC, Implementation.GENERIC);
+        runTests();
+    }
+
+    public void testMixed6()
+        throws Exception
+    {
+        fixture(Implementation.GENERIC, Implementation.GENERIC, Implementation.TABULAR);
+        runTests();
+    }
+
     private void run(String queryText)
         throws Exception
     {

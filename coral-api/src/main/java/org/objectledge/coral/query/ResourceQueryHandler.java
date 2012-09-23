@@ -22,6 +22,15 @@ public interface ResourceQueryHandler
     void appendFromClause(StringBuilder query, ResultColumn<?> rcm,
         Map<String, String> bulitinAttrNames, boolean restrictClasses);
 
+    boolean appendDataWhereClause(StringBuilder query, ResultColumn<?> rcm,
+        List<AttributeDefinition<?>> attrs, List<ResourceClass<?>> hostClasses, boolean whereStarted);
+
+    void appendDataFromClause(StringBuilder query, ResultColumn<?> rcm,
+        List<AttributeDefinition<?>> attrs, List<ResourceClass<?>> hostClasses, boolean outer);
+
+    void appendAttributes(StringBuilder query, ResultColumn<?> rcm,
+        List<AttributeDefinition<?>> attrs, List<ResourceClass<?>> hostClasses);
+
     /**
      * Describes a column of the query results.
      */

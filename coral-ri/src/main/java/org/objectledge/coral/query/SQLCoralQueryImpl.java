@@ -124,7 +124,7 @@ public class SQLCoralQueryImpl
         // FROM
         for(int i = 0; i < columns.size(); i++)
         {
-            query.append(i == 0 ? "\nFROM " : "\n  , ");
+            query.append(i == 0 ? " FROM\n" : ",\n");
             columns
                 .get(i)
                 .getQHandler()
