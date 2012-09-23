@@ -1,7 +1,5 @@
 package org.objectledge.coral.datatypes;
 
-import static org.objectledge.coral.datatypes.PersistentResourceHandler.columnName;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -67,6 +65,12 @@ public class PersistentResource
         {
             return null;
         }
+    }
+
+    private static String getColumnName(AttributeDefinition<?> attr)
+    {
+        String dbColumn = attr.getDbColumn();
+        return dbColumn != null ? dbColumn : attr.getName();
     }
 
     synchronized void retrieve(Resource delegate, ResourceClass<?> rClass, Connection conn,
@@ -227,7 +231,7 @@ public class PersistentResource
         AbstractResource instance)
         throws SQLException
     {
-        final String name = columnName(attr);
+        final String name = getColumnName(attr);
         if(attr.getAttributeClass().getHandler().supportsExternalString())
         {
             Object value = null;
@@ -353,7 +357,7 @@ public class PersistentResource
             throws SQLException, SQLException
         {
             T value = (T)attrValues.get(attr);
-            String name = columnName(attr);
+            String name = getColumnName(attr);
             AttributeHandler<T> handler = attr.getAttributeClass().getHandler();
             if(value != null)
             {
@@ -460,7 +464,7 @@ public class PersistentResource
         private <A> void getAttribute(AttributeDefinition<A> attr, OutputRecord record)
             throws SQLException, SQLException
         {
-            String name = columnName(attr);
+            String name = getColumnName(attr);
             A value = instance.getValue(attr);
 
             if(attr.getAttributeClass().getHandler().supportsExternalString())
