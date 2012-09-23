@@ -43,6 +43,8 @@ public class PersistentResource
     /** the unique id of the resource in it's db table. */
     protected boolean saved = false;
 
+    private Persistence persistence;
+
     /**
      * Constructor.
      */
@@ -109,26 +111,16 @@ public class PersistentResource
             }
             if(hasConcreteAttributes)
             {
-                getPersistence().save(new CreateView(this, rClass, attributes, conn, true));
+                persistence.save(new CreateView(this, rClass, attributes, conn, true));
                 this.saved = true;
             }
         }
     }
 
-    synchronized void update(Connection conn)
+    synchronized void update(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
-        super.update(conn);
-        update(delegate.getResourceClass(), conn);
-        for(ResourceClass<?> rClass : delegate.getResourceClass().getParentClasses())
-        {
-            update(rClass, conn);
-        }
-    }
-
-    private void update(ResourceClass<?> rClass, Connection conn)
-        throws SQLException
-    {
+        super.update(rClass, conn);
         if(rClass.getDbTable() != null)
         {
             boolean hasConcreteAttributes = false;
@@ -147,17 +139,17 @@ public class PersistentResource
             }
             if(hasConcreteAttributes && hasChangedAttributes)
             {
-                getPersistence().save(new UpdateView(this, rClass, conn));
+                persistence.save(new UpdateView(this, rClass, conn));
             }
         }
     }
 
-    synchronized void delete(Connection conn)
+    synchronized void delete(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
-        super.delete(conn);
+        super.delete(rClass, conn);
 
-        for(AttributeDefinition<?> attr : delegate.getResourceClass().getAllAttributes())
+        for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
         {
             if(!attr.getAttributeClass().getHandler().supportsExternalString()
                 && !Entity.class.isAssignableFrom(attr.getAttributeClass().getJavaClass()))
@@ -176,17 +168,6 @@ public class PersistentResource
                 }
             }
         }
-
-        delete(delegate.getResourceClass(), conn);
-        for(ResourceClass<?> rClass : delegate.getResourceClass().getParentClasses())
-        {
-            delete(rClass, conn);
-        }
-    }
-
-    private void delete(ResourceClass<?> rClass, Connection conn)
-        throws SQLException
-    {
         if(rClass.getDbTable() != null)
         {
             boolean hasConcreteAttributes = false;
@@ -200,7 +181,7 @@ public class PersistentResource
             }
             if(hasConcreteAttributes)
             {
-                getPersistence().delete(new DeleteView(delegate, rClass));
+                persistence.delete(new DeleteView(delegate, rClass));
             }
         }
     }
@@ -267,15 +248,6 @@ public class PersistentResource
                 instance.setValueId(attr, data.getLong(name));
             }
         }
-    }
-
-    /**
-     * @return Returns the persistence.
-     */
-    private Persistence getPersistence()
-    {
-        return ((PersistentResourceHandler<?>)delegate.getResourceClass().getHandler())
-            .getPersistence();
     }
 
     static Persistent getRetrieveView(ResourceClass<?> rClass)
@@ -757,5 +729,10 @@ public class PersistentResource
         {
             throw new UnsupportedOperationException();
         }
+    }
+
+    public void setPersistence(Persistence persistence)
+    {
+        this.persistence = persistence;
     }
 }

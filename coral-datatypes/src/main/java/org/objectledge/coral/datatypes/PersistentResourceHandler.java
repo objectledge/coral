@@ -17,6 +17,7 @@ import java.util.WeakHashMap;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
+import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.query.ResourceQueryHandler;
@@ -671,14 +672,6 @@ public class PersistentResourceHandler<T extends PersistentResource>
     }
 
     /**
-     * @return Returns the persistence.
-     */
-    Persistence getPersistence()
-    {
-        return persistence;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public Class<?> getFallbackResourceImplClass()
@@ -690,5 +683,14 @@ public class PersistentResourceHandler<T extends PersistentResource>
     public ResourceQueryHandler getQueryHandler()
     {
         return queryHandler;
+    }
+
+    @Override
+    protected T instantiate()
+        throws BackendException
+    {
+        T res = super.instantiate();
+        ((PersistentResource)res).setPersistence(persistence);
+        return res;
     }
 }

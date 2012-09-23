@@ -96,7 +96,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
         throws SQLException
     {
         checkResource(resource);
-        ((AbstractResource)resource).delete(conn);
+        ((AbstractResource)resource).delete(resource.getResourceClass(), conn);
     }
 
     /**
@@ -135,7 +135,7 @@ public abstract class AbstractResourceHandler<T extends Resource>
         throws SQLException
     {
         checkResource(resource);
-        ((AbstractResource)resource).update(conn);
+        ((AbstractResource)resource).update(resource.getResourceClass(), conn);
     }
 
     /**

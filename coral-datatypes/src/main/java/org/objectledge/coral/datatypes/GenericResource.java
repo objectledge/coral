@@ -133,14 +133,14 @@ public class GenericResource
      *
      * @param conn the JDBC connection to use.
      */
-    synchronized void update(Connection conn)
+    synchronized void update(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
-        super.update(conn);
+        super.update(rClass, conn);
         Statement stmt = conn.createStatement();
         try
         {
-            for(AttributeDefinition<?> attr : delegate.getResourceClass().getAllAttributes())
+            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
@@ -204,11 +204,11 @@ public class GenericResource
         }
     }
 
-    synchronized void delete(Connection conn)
+    synchronized void delete(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
-        super.delete(conn);
-        AttributeDefinition<?>[] declared = delegate.getResourceClass().getAllAttributes();
+        super.delete(rClass, conn);
+        AttributeDefinition<?>[] declared = rClass.getDeclaredAttributes();
         for(AttributeDefinition<?> attr : declared)
         {
             if((attr.getFlags() & AttributeFlags.BUILTIN) == 0) 

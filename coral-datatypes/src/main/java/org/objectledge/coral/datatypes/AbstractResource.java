@@ -192,7 +192,7 @@ public abstract class AbstractResource implements Resource
         setDelegate(delegate);
         for (ResourceClass<?> parent : rClass.getDirectParentClasses())
         {
-            create(delegate, parent, attributes, conn);
+            parent.getHandler().create(delegate, attributes, conn);
         }
         for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
         {
@@ -225,14 +225,22 @@ public abstract class AbstractResource implements Resource
 	    }
 	}
 
-    synchronized void update(Connection conn)
+    synchronized void update(ResourceClass<?> rClass, Connection conn)
 	    throws SQLException
 	{
+        for(ResourceClass<?> parent : rClass.getDirectParentClasses())
+        {
+            update(parent, conn);
+        }
 	}
     
-	synchronized void delete(Connection conn)
+	synchronized void delete(ResourceClass<?> rClass, Connection conn)
 	    throws SQLException
 	{
+	    for(ResourceClass<?> parent : rClass.getDirectParentClasses())
+        {
+            delete(parent, conn);
+        }
 	}
     
     /**
@@ -533,7 +541,7 @@ public abstract class AbstractResource implements Resource
         {
             controler = getDatabase().beginTransaction();
             conn = getDatabase().getConnection();
-            update(conn);
+            update(delegate.getResourceClass(), conn);
             delegate.update();    
             getDatabase().commitTransaction(controler);
         }
