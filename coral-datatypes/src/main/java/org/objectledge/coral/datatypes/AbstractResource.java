@@ -134,6 +134,7 @@ public abstract class AbstractResource
             update(delegate.getResourceClass(), conn);
             delegate.update();    
             getDatabase().commitTransaction(controler);
+            clearModified();
         }
         catch(Exception e)
         {
