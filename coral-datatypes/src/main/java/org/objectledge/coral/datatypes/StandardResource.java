@@ -47,7 +47,6 @@ import org.objectledge.database.DatabaseUtils;
  * </p>
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResource.java,v 1.40 2007-11-18 21:20:30 rafal Exp $
  */
 public class StandardResource
     extends ResourceAPISupport

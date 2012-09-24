@@ -31,7 +31,6 @@ import org.objectledge.database.DatabaseUtils;
  * The base class for resource handlers.
  * 
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
- * @version $Id: AbstractResourceHandler.java,v 1.14 2008-01-01 22:36:16 rafal Exp $
  */
 public abstract class StandardResourceHandler<T extends Resource>
     implements ResourceHandler<T>
@@ -392,7 +391,7 @@ public abstract class StandardResourceHandler<T extends Resource>
     {
         if(!(resource instanceof StandardResource))
         {
-            throw new ClassCastException("AbstractResourceHanler won't operate on "
+            throw new ClassCastException("StandardResourceHanler won't operate on "
                 + resource.getClass().getName());
         }
     }
@@ -411,7 +410,7 @@ public abstract class StandardResourceHandler<T extends Resource>
         }
         if(!StandardResource.class.isAssignableFrom(delegate.getResourceClass().getJavaClass()))
         {
-            throw new ClassCastException("AbstractResourceHandler won't operate on "
+            throw new ClassCastException("StandardResourceHandler won't operate on "
                 + delegate.getResourceClass().getName());
         }
     }
