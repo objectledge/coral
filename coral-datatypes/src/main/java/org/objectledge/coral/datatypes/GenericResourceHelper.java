@@ -37,7 +37,7 @@ public class GenericResourceHelper
 
     // Package private ///////////////////////////////////////////////////////
 
-    synchronized void retrieve(ResourceClass<?> rClass, Object data, Connection conn)
+    public synchronized void retrieve(ResourceClass<?> rClass, Object data, Connection conn)
         throws SQLException
     {
         Map<AttributeDefinition<?>, Long> dataKeys = getDataKeys(data);
@@ -54,7 +54,7 @@ public class GenericResourceHelper
         }
     }
 
-    synchronized void revert(ResourceClass<?> rClass, Object data, Connection conn)
+    public synchronized void revert(ResourceClass<?> rClass, Object data, Connection conn)
         throws SQLException
     {
         Map<AttributeDefinition<?>, Long> dataKeys = getDataKeys(data);
@@ -71,8 +71,8 @@ public class GenericResourceHelper
         }
     }
 
-    synchronized void create(ResourceClass<?> rClass, Map<AttributeDefinition<?>, ?> attributes,
-        Connection conn)
+    public synchronized void create(ResourceClass<?> rClass,
+        Map<AttributeDefinition<?>, ?> attributes, Connection conn)
         throws SQLException
     {
         Statement stmt = conn.createStatement();
@@ -131,7 +131,7 @@ public class GenericResourceHelper
      * 
      * @param conn the JDBC connection to use.
      */
-    synchronized void update(ResourceClass<?> rClass, Connection conn)
+    public synchronized void update(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
         Statement stmt = conn.createStatement();
@@ -196,7 +196,7 @@ public class GenericResourceHelper
         }
     }
 
-    synchronized void delete(ResourceClass<?> rClass, Connection conn)
+    public synchronized void delete(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
         AttributeDefinition<?>[] declared = rClass.getDeclaredAttributes();

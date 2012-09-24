@@ -48,7 +48,7 @@ public class PersistentResourceHelper
 
     // interface to PersistentResourceHandler ////////////////////////////////
 
-    synchronized void retrieve(ResourceClass<?> rClass, Object data, Connection conn)
+    public synchronized void retrieve(ResourceClass<?> rClass, Object data, Connection conn)
         throws SQLException
     {
         Map<ResourceClass<?>, InputRecord> in = getInputRecords(data);
@@ -58,7 +58,7 @@ public class PersistentResourceHelper
         }
     }
 
-    synchronized void revert(ResourceClass<?> rClass, Object data, Connection conn)
+    public synchronized void revert(ResourceClass<?> rClass, Object data, Connection conn)
         throws SQLException
     {
         Map<ResourceClass<?>, InputRecord> in = getInputRecords(data);
@@ -68,7 +68,8 @@ public class PersistentResourceHelper
         }
     }
 
-    synchronized void create(ResourceClass<?> rClass, Map<AttributeDefinition<?>, ?> attributes,
+    public synchronized void create(ResourceClass<?> rClass,
+        Map<AttributeDefinition<?>, ?> attributes,
         Connection conn)
         throws SQLException
     {
@@ -90,7 +91,7 @@ public class PersistentResourceHelper
         }
     }
 
-    synchronized void update(ResourceClass<?> rClass, Connection conn)
+    public synchronized void update(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
         if(rClass.getDbTable() != null)
@@ -116,7 +117,7 @@ public class PersistentResourceHelper
         }
     }
 
-    synchronized void delete(ResourceClass<?> rClass, Connection conn)
+    public synchronized void delete(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
         for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
