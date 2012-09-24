@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Set;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -37,82 +38,91 @@ public class GenericResourceHelper
 
     // Package private ///////////////////////////////////////////////////////
 
-    public synchronized void retrieve(ResourceClass<?> rClass, Object data, Connection conn)
+    public synchronized void retrieve(Set<ResourceClass<?>> classes, Object data, Connection conn)
         throws SQLException
     {
         Map<AttributeDefinition<?>, Long> dataKeys = getDataKeys(data);
         if(dataKeys != null)
         {
-            for(AttributeDefinition<?> declared : rClass.getDeclaredAttributes())
+            for(ResourceClass<?> rClass : classes)
             {
-                Long id = dataKeys.get(declared);
-                if(id != null)
+                for(AttributeDefinition<?> declared : rClass.getDeclaredAttributes())
                 {
-                    instance.setValueId(declared, id);
+                    Long id = dataKeys.get(declared);
+                    if(id != null)
+                    {
+                        instance.setValueId(declared, id);
+                    }
                 }
             }
         }
     }
 
-    public synchronized void revert(ResourceClass<?> rClass, Object data, Connection conn)
+    public synchronized void revert(Set<ResourceClass<?>> classes, Object data, Connection conn)
         throws SQLException
     {
         Map<AttributeDefinition<?>, Long> dataKeys = getDataKeys(data);
         if(dataKeys != null)
         {
-            for(AttributeDefinition<?> declared : rClass.getDeclaredAttributes())
+            for(ResourceClass<?> rClass : classes)
             {
-                Long id = dataKeys.get(declared);
-                if(id != null)
+                for(AttributeDefinition<?> declared : rClass.getDeclaredAttributes())
                 {
-                    instance.setValueId(declared, id);
+                    Long id = dataKeys.get(declared);
+                    if(id != null)
+                    {
+                        instance.setValueId(declared, id);
+                    }
                 }
             }
         }
     }
 
-    public synchronized void create(ResourceClass<?> rClass,
+    public synchronized void create(Set<ResourceClass<?>> classes,
         Map<AttributeDefinition<?>, ?> attributes, Connection conn)
         throws SQLException
     {
         PreparedStatement stmt = null;
         try
         {
-            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+            for(ResourceClass<?> rClass : classes)
             {
-                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
                 {
-                    AttributeHandler<?> handler = attr.getAttributeClass().getHandler();
-                    Object value = attributes.get(attr);
-                    if(value != null)
+                    if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                     {
-                        value = handler.toAttributeValue(value);
-                        long newId = createAttrValue(attr, value, conn);
-                        instance.setValueId(attr, newId);
-                        if(stmt == null)
+                        AttributeHandler<?> handler = attr.getAttributeClass().getHandler();
+                        Object value = attributes.get(attr);
+                        if(value != null)
                         {
-                            stmt = conn
-                                .prepareStatement("INSERT INTO coral_generic_resource "
-                                    + "(resource_id, attribute_definition_id, data_key) VALUES (?, ?, ?)");
-                            stmt.setLong(1, delegate.getId());
-                        }
-                        stmt.setLong(2, attr.getId());
-                        stmt.setLong(3, newId);
-                        stmt.addBatch();
-                        if(handler.shouldRetrieveAfterCreate())
-                        {
-                            try
+                            value = handler.toAttributeValue(value);
+                            long newId = createAttrValue(attr, value, conn);
+                            instance.setValueId(attr, newId);
+                            if(stmt == null)
                             {
-                                setValue(attr, instance, handler.retrieve(newId, conn));
+                                stmt = conn
+                                    .prepareStatement("INSERT INTO coral_generic_resource "
+                                        + "(resource_id, attribute_definition_id, data_key) VALUES (?, ?, ?)");
+                                stmt.setLong(1, delegate.getId());
                             }
-                            catch(EntityDoesNotExistException e)
+                            stmt.setLong(2, attr.getId());
+                            stmt.setLong(3, newId);
+                            stmt.addBatch();
+                            if(handler.shouldRetrieveAfterCreate())
                             {
-                                throw new BackendException("data integrity error", e);
+                                try
+                                {
+                                    setValue(attr, instance, handler.retrieve(newId, conn));
+                                }
+                                catch(EntityDoesNotExistException e)
+                                {
+                                    throw new BackendException("data integrity error", e);
+                                }
                             }
-                        }
-                        else
-                        {
-                            setValue(attr, instance, value);
+                            else
+                            {
+                                setValue(attr, instance, value);
+                            }
                         }
                     }
                 }
@@ -140,72 +150,75 @@ public class GenericResourceHelper
      * 
      * @param conn the JDBC connection to use.
      */
-    public synchronized void update(ResourceClass<?> rClass, Connection conn)
+    public synchronized void update(Set<ResourceClass<?>> classes, Connection conn)
         throws SQLException
     {
         PreparedStatement createStmt = null;
         PreparedStatement deleteStmt = null;
         try
         {
-            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+            for(ResourceClass<?> rClass : classes)
             {
-                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
                 {
-                    if(instance.isValueModified(attr))
+                    if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                     {
-                        Object value = instance.getValue(attr);
-                        long id = instance.getValueId(attr);
-                        if(value != null)
+                        if(instance.isValueModified(attr))
                         {
-                            if(id == -1L)
+                            Object value = instance.getValue(attr);
+                            long id = instance.getValueId(attr);
+                            if(value != null)
                             {
-                                long newId = createAttrValue(attr, conn);
-                                if(createStmt == null)
+                                if(id == -1L)
                                 {
-                                    createStmt = conn
-                                        .prepareStatement("INSERT INTO coral_generic_resource "
-                                            + "(resource_id, attribute_definition_id, data_key) VALUES (?, ?, ?)");
-                                    createStmt.setLong(1, delegate.getId());
+                                    long newId = createAttrValue(attr, conn);
+                                    if(createStmt == null)
+                                    {
+                                        createStmt = conn
+                                            .prepareStatement("INSERT INTO coral_generic_resource "
+                                                + "(resource_id, attribute_definition_id, data_key) VALUES (?, ?, ?)");
+                                        createStmt.setLong(1, delegate.getId());
+                                    }
+                                    createStmt.setLong(2, attr.getId());
+                                    createStmt.setLong(3, newId);
+                                    createStmt.addBatch();
+                                    instance.setValueId(attr, newId);
                                 }
-                                createStmt.setLong(2, attr.getId());
-                                createStmt.setLong(3, newId);
-                                createStmt.addBatch();
-                                instance.setValueId(attr, newId);
+                                else
+                                {
+                                    try
+                                    {
+                                        updateAttrValue(attr, conn);
+                                    }
+                                    catch(EntityDoesNotExistException e)
+                                    {
+                                        throw new BackendException("Internal error", e);
+                                    }
+                                }
                             }
                             else
                             {
-                                try
+                                if(id != -1L)
                                 {
-                                    updateAttrValue(attr, conn);
+                                    try
+                                    {
+                                        attr.getAttributeClass().getHandler().delete(id, conn);
+                                    }
+                                    catch(EntityDoesNotExistException e)
+                                    {
+                                        throw new BackendException("Internal error", e);
+                                    }
+                                    if(deleteStmt == null)
+                                    {
+                                        deleteStmt = conn
+                                            .prepareStatement("DELETE FROM coral_generic_resource WHERE resource_id = ? "
+                                                + "AND attribute_definition_id = ?");
+                                        deleteStmt.setLong(1, delegate.getId());
+                                    }
+                                    deleteStmt.setLong(2, attr.getId());
+                                    deleteStmt.addBatch();
+                                    instance.setValueId(attr, -1L);
                                 }
-                                catch(EntityDoesNotExistException e)
-                                {
-                                    throw new BackendException("Internal error", e);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if(id != -1L)
-                            {
-                                try
-                                {
-                                    attr.getAttributeClass().getHandler().delete(id, conn);
-                                }
-                                catch(EntityDoesNotExistException e)
-                                {
-                                    throw new BackendException("Internal error", e);
-                                }
-                                if(deleteStmt == null)
-                                {
-                                    deleteStmt = conn
-                                        .prepareStatement("DELETE FROM coral_generic_resource WHERE resource_id = ? "
-                                            + "AND attribute_definition_id = ?");
-                                    deleteStmt.setLong(1, delegate.getId());
-                                }
-                                deleteStmt.setLong(2, attr.getId());
-                                deleteStmt.addBatch();
-                                instance.setValueId(attr, -1L);
                             }
                         }
                     }
@@ -227,34 +240,45 @@ public class GenericResourceHelper
         }
     }
 
-    public synchronized void delete(ResourceClass<?> rClass, Connection conn)
+    public synchronized void delete(Set<ResourceClass<?>> classes, Connection conn)
         throws SQLException
     {
-        AttributeDefinition<?>[] declared = rClass.getDeclaredAttributes();
-        for(AttributeDefinition<?> attr : declared)
-        {
-            if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
-            {
-                long atId = instance.getValueId(attr);
-                if(atId != -1L)
-                {
-                    try
-                    {
-                        attr.getAttributeClass().getHandler().delete(atId, conn);
-                    }
-                    catch(EntityDoesNotExistException e)
-                    {
-                        throw new BackendException("internal error", e);
-                    }
-                }
-            }
-        }
-        PreparedStatement stmt = conn
-            .prepareStatement("DELETE FROM coral_generic_resource WHERE resource_id = ?");
+        PreparedStatement stmt = null;
         try
         {
-            stmt.setLong(1, delegate.getId());
-            stmt.execute();
+            for(ResourceClass<?> rClass : classes)
+            {
+                AttributeDefinition<?>[] declared = rClass.getDeclaredAttributes();
+                for(AttributeDefinition<?> attr : declared)
+                {
+                    if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                    {
+                        long atId = instance.getValueId(attr);
+                        if(atId != -1L)
+                        {
+                            try
+                            {
+                                attr.getAttributeClass().getHandler().delete(atId, conn);
+                            }
+                            catch(EntityDoesNotExistException e)
+                            {
+                                throw new BackendException("internal error", e);
+                            }
+                        }
+                    }
+                }
+                if(stmt == null)
+                {
+                    stmt = conn
+                        .prepareStatement("DELETE FROM coral_generic_resource WHERE resource_id = ?");
+                }
+                stmt.setLong(1, delegate.getId());
+                stmt.addBatch();
+            }
+            if(stmt != null)
+            {
+                stmt.executeBatch();
+            }
         }
         finally
         {

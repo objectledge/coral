@@ -181,10 +181,7 @@ public class GenericResourceHandler<T extends Resource>
         throws SQLException
     {
         GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
-        for(ResourceClass<?> rClass : classes)
-        {
-            helper.create(rClass, attributes, conn);
-        }
+        helper.create(classes, attributes, conn);
     }
 
     @Override
@@ -193,10 +190,7 @@ public class GenericResourceHandler<T extends Resource>
         throws SQLException
     {
         GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
-        for(ResourceClass<?> rClass : classes)
-        {
-            helper.retrieve(rClass, data, conn);
-        }
+        helper.retrieve(classes, data, conn);
     }
 
     @Override
@@ -206,10 +200,7 @@ public class GenericResourceHandler<T extends Resource>
 
     {
         GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
-        for(ResourceClass<?> rClass : classes)
-        {
-            helper.update(rClass, conn);
-        }
+        helper.update(classes, conn);
     }
 
     @Override
@@ -218,10 +209,7 @@ public class GenericResourceHandler<T extends Resource>
         throws SQLException
     {
         GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
-        for(ResourceClass<?> rClass : classes)
-        {
-            helper.revert(rClass, data, conn);
-        }
+        helper.revert(classes, data, conn);
     }
 
     @Override
@@ -230,9 +218,6 @@ public class GenericResourceHandler<T extends Resource>
         throws SQLException
     {
         GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
-        for(ResourceClass<?> rClass : classes)
-        {
-            helper.delete(rClass, conn);
-        }
+        helper.delete(classes, conn);
     }
 }
