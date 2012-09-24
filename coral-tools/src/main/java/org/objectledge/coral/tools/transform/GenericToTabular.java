@@ -54,10 +54,8 @@ public class GenericToTabular
         dropMetadataConstraints();
         transferMetadata();
         updateHandlers();
-        updateParentClasses();
         updateDbTables();
         updateDbColumns();
-        updateRootResource();
         transferCustomAttributes();
         setupMetadataConstraints();
 
@@ -254,8 +252,7 @@ public class GenericToTabular
         int cnt = runStatement(
             targetConn,
             "UPDATE coral_resource_class\n"
-                + "SET handler_class_name = 'org.objectledge.coral.datatypes.PersistentResourceHandler'\n"
-                + "WHERE resource_class_id > 2");
+                + "SET handler_class_name = 'org.objectledge.coral.datatypes.PersistentResourceHandler'\n");
         log.info("switched " + cnt + " classes to use PersistentResourceHandler");
     }
 
@@ -297,22 +294,6 @@ public class GenericToTabular
                         }
                     }
                 });
-    }
-
-    private void updateParentClasses()
-        throws SQLException
-    {
-        int count = runStatement(targetConn,
-            "UPDATE coral_resource_class_inheritance SET parent = 2 where parent = 1");
-        log.info("switched " + count + " classes to inherit from coral.PersistentNode");
-    }
-
-    private void updateRootResource()
-        throws SQLException
-    {
-        runStatement(targetConn,
-            "update coral_resource set resource_class_id = 2 where resource_id = 1");
-        log.info("switched root resource class to PersitentNode");
     }
 
     private void transferCustomAttributes()

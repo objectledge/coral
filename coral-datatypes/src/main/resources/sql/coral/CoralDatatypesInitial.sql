@@ -163,16 +163,8 @@ INSERT INTO coral_resource_class VALUES(
         'org.objectledge.coral.datatypes.GenericResourceHandler',
         NULL,
         4);
-
-INSERT INTO coral_resource_class VALUES(
-		2, 
-		'coral.PersistentNode', 
-        'org.objectledge.coral.datatypes.PersistentNodeImpl', 
-        'org.objectledge.coral.datatypes.PersistentResourceHandler',
-        NULL,
-        4);
         
-INSERT INTO ledge_id_table VALUES (3, 'coral_resource_class');
+INSERT INTO ledge_id_table VALUES (2, 'coral_resource_class');
 
 -- -- builtin attributes -----------------------------------------------------
 
@@ -266,98 +258,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		'modification_time',
 		8);
 
-INSERT INTO coral_attribute_definition VALUES(
-		11,
-		2,
-		5,
-		NULL,
-		NULL,
-		'id',
-		1+8);
-
-INSERT INTO coral_attribute_definition VALUES(
-		12,
-		2,
-		1,
-		NULL,
-		NULL,
-		'name',
-		1+8);
-
-INSERT INTO coral_attribute_definition VALUES(
-		13,
-		2,
-		1,
-		NULL,
-		NULL,
-		'path',
-		1+8+128);
-
-INSERT INTO coral_attribute_definition VALUES(
-		14,
-		2,
-		9,
-		NULL,
-		NULL,
-		'parent',
-		8);
-
-INSERT INTO coral_attribute_definition VALUES(
-		15,
-		2,
-		8,
-		NULL,
-		NULL,
-		'resource_class',
-		1+8);
-
-INSERT INTO coral_attribute_definition VALUES(
-		16,
-		2,
-		10,
-		NULL,
-		NULL,
-		'owner',
-		1+8);
-
-INSERT INTO coral_attribute_definition VALUES(
-		17,
-		2,
-		10,
-		NULL,
-		NULL,
-		'created_by',
-		1+8);
-
-INSERT INTO coral_attribute_definition VALUES(
-		18,
-		2,
-		10,
-		NULL,
-		NULL,
-		'modified_by',
-		8);
-
-INSERT INTO coral_attribute_definition VALUES(
-		19,
-		2,
-		7,
-		NULL,
-		NULL,
-		'creation_time',
-		1+8);
-
-INSERT INTO coral_attribute_definition VALUES(
-		20,
-		2,
-		7,
-		NULL,
-		NULL,
-		'modification_time',
-		8);
-
-
-INSERT INTO ledge_id_table VALUES (21, 'coral_attribute_definition');
+INSERT INTO ledge_id_table VALUES (11, 'coral_attribute_definition');
 
 -- attribute to SQL mapping for tabular model -------------------------------
 
