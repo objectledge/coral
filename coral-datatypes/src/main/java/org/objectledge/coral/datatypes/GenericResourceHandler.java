@@ -1,9 +1,9 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -105,14 +105,13 @@ public class GenericResourceHandler<T extends Resource>
         Map<Long, Map<AttributeDefinition<?>, Long>> keyMap = new HashMap<Long, Map<AttributeDefinition<?>, Long>>();
         Map<AttributeDefinition<?>, Long> dataKeys = new HashMap<AttributeDefinition<?>, Long>();
         keyMap.put(delegate.getIdObject(), dataKeys);
-        Statement stmt = conn.createStatement();
+        PreparedStatement stmt = conn
+            .prepareStatement("SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE resource_id = ?");
         ResultSet rs = null;
         try
         {
-            rs = stmt
-                .executeQuery("SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE "
-                    + "resource_id = " + delegate.getIdString());
-
+            stmt.setLong(1, delegate.getId());
+            rs = stmt.executeQuery();
             while(rs.next())
             {
                 dataKeys.put(coralSchema.getAttribute(rs.getLong(1)), new Long(rs.getLong(2)));
@@ -137,15 +136,14 @@ public class GenericResourceHandler<T extends Resource>
         throws SQLException
     {
         Map<Long, Map<AttributeDefinition<?>, Long>> keyMap = new HashMap<Long, Map<AttributeDefinition<?>, Long>>();
-        Statement stmt = conn.createStatement();
+        PreparedStatement stmt = conn
+            .prepareStatement("SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "
+                + "JOIN coral_resource USING(resource_id) WHERE resource_class_id = ?");
         ResultSet rs = null;
         try
         {
-            rs = stmt
-                .executeQuery("SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "
-                    + "NATURAL JOIN coral_resource "
-                    + "WHERE resource_class_id = "
-                    + rc.getIdString() + " " + "ORDER BY resource_id");
+            stmt.setLong(1, rc.getId());
+            rs = stmt.executeQuery();
             Map<AttributeDefinition<?>, Long> dataKeys = null;
             Long resId = null;
             while(rs.next())

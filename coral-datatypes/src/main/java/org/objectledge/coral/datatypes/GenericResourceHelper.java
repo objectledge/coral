@@ -1,8 +1,8 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Map;
 
 import org.objectledge.coral.BackendException;
@@ -75,10 +75,9 @@ public class GenericResourceHelper
         Map<AttributeDefinition<?>, ?> attributes, Connection conn)
         throws SQLException
     {
-        Statement stmt = conn.createStatement();
+        PreparedStatement stmt = null;
         try
         {
-
             for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
                 if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
@@ -90,10 +89,16 @@ public class GenericResourceHelper
                         value = handler.toAttributeValue(value);
                         long newId = createAttrValue(attr, value, conn);
                         instance.setValueId(attr, newId);
-                        stmt.execute("INSERT INTO coral_generic_resource "
-                            + "(resource_id, attribute_definition_id, data_key) " + "VALUES ("
-                            + delegate.getIdString() + ", " + attr.getIdString() + ", " + newId
-                            + ")");
+                        if(stmt == null)
+                        {
+                            stmt = conn
+                                .prepareStatement("INSERT INTO coral_generic_resource "
+                                    + "(resource_id, attribute_definition_id, data_key) VALUES (?, ?, ?)");
+                            stmt.setLong(1, delegate.getId());
+                        }
+                        stmt.setLong(2, attr.getId());
+                        stmt.setLong(3, newId);
+                        stmt.addBatch();
                         if(handler.shouldRetrieveAfterCreate())
                         {
                             try
@@ -111,6 +116,10 @@ public class GenericResourceHelper
                         }
                     }
                 }
+            }
+            if(stmt != null)
+            {
+                stmt.executeBatch();
             }
         }
         finally
@@ -134,7 +143,8 @@ public class GenericResourceHelper
     public synchronized void update(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
-        Statement stmt = conn.createStatement();
+        PreparedStatement createStmt = null;
+        PreparedStatement deleteStmt = null;
         try
         {
             for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
@@ -150,10 +160,16 @@ public class GenericResourceHelper
                             if(id == -1L)
                             {
                                 long newId = createAttrValue(attr, conn);
-                                stmt.execute("INSERT INTO coral_generic_resource "
-                                    + "(resource_id, attribute_definition_id, data_key) "
-                                    + "VALUES (" + delegate.getIdString() + ", "
-                                    + attr.getIdString() + ", " + newId + ")");
+                                if(createStmt == null)
+                                {
+                                    createStmt = conn
+                                        .prepareStatement("INSERT INTO coral_generic_resource "
+                                            + "(resource_id, attribute_definition_id, data_key) VALUES (?, ?, ?)");
+                                    createStmt.setLong(1, delegate.getId());
+                                }
+                                createStmt.setLong(2, attr.getId());
+                                createStmt.setLong(3, newId);
+                                createStmt.addBatch();
                                 instance.setValueId(attr, newId);
                             }
                             else
@@ -180,19 +196,34 @@ public class GenericResourceHelper
                                 {
                                     throw new BackendException("Internal error", e);
                                 }
-                                stmt.execute("DELETE FROM coral_generic_resource "
-                                    + "WHERE resource_id = " + delegate.getIdString()
-                                    + " AND attribute_definition_id = " + attr.getIdString());
+                                if(deleteStmt == null)
+                                {
+                                    deleteStmt = conn
+                                        .prepareStatement("DELETE FROM coral_generic_resource WHERE resource_id = ? "
+                                            + "AND attribute_definition_id = ?");
+                                    deleteStmt.setLong(1, delegate.getId());
+                                }
+                                deleteStmt.setLong(2, attr.getId());
+                                deleteStmt.addBatch();
                                 instance.setValueId(attr, -1L);
                             }
                         }
                     }
                 }
             }
+            if(createStmt != null)
+            {
+                createStmt.executeBatch();
+            }
+            if(deleteStmt != null)
+            {
+                deleteStmt.executeBatch();
+            }
         }
         finally
         {
-            DatabaseUtils.close(stmt);
+            DatabaseUtils.close(createStmt);
+            DatabaseUtils.close(deleteStmt);
         }
     }
 
@@ -218,11 +249,12 @@ public class GenericResourceHelper
                 }
             }
         }
-        Statement stmt = conn.createStatement();
+        PreparedStatement stmt = conn
+            .prepareStatement("DELETE FROM coral_generic_resource WHERE resource_id = ?");
         try
         {
-            stmt.execute("DELETE FROM coral_generic_resource WHERE " + " resource_id = "
-                + delegate.getIdString());
+            stmt.setLong(1, delegate.getId());
+            stmt.execute();
         }
         finally
         {
