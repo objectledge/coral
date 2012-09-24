@@ -11,11 +11,12 @@ import java.util.WeakHashMap;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
-import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
+import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.query.ResourceQueryHandler;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
+import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.security.CoralSecurity;
@@ -24,7 +25,6 @@ import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.Persistent;
 
 /**
  * An implementation of {@ResourceHandler} interface using the
@@ -33,8 +33,8 @@ import org.objectledge.database.persistence.Persistent;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: PersistentResourceHandler.java,v 1.19 2008-01-01 22:36:16 rafal Exp $
  */
-public class PersistentResourceHandler<T extends PersistentResource>
-    extends AbstractResourceHandler<T>
+public class PersistentResourceHandler<T extends Resource>
+    extends StandardResourceHandler<T>
 {
     private static final ResourceQueryHandler queryHandler = new PersistentResourceQueryHandler();
 
@@ -164,21 +164,20 @@ public class PersistentResourceHandler<T extends PersistentResource>
         revert(resourceClass, conn);
     }
 
-    // implementation ////////////////////////////////////////////////////////
-
-    /**
-     * Checks if the passed resource is really a {@link Persistent}. implemenation
-     * 
-     * @param resource the resource to check.
-     */
-    protected void checkResource(Resource resource)
+    public <A> A loadValue(AttributeDefinition<A> attribute, long aId)
     {
-        if(!(resource instanceof PersistentResource))
+        if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
         {
-            throw new ClassCastException("PersistenceResourceHanler won't operate on "
-                + resource.getClass().getName());
+            AttributeHandler<A> handler = attribute.getAttributeClass().getHandler();
+            return handler.toAttributeValue(Long.toString(aId));
+        }
+        else
+        {
+            return super.loadValue(attribute, aId);
         }
     }
+
+    // implementation ////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc}
@@ -240,7 +239,8 @@ public class PersistentResourceHandler<T extends PersistentResource>
         throws SQLException
     {
         List<InputRecord> irs = persistence.loadInputRecords(
-            PersistentResource.getRetrieveView(rClass), "resource_id = ?", delegate.getId());
+            PersistentResourceHelper.getRetrieveView(rClass),
+            "resource_id = ?", delegate.getId());
         if(irs.isEmpty())
         {
             for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
@@ -263,7 +263,7 @@ public class PersistentResourceHandler<T extends PersistentResource>
     protected Object getData(ResourceClass<?> rc, Connection conn)
         throws SQLException
     {
-        WeakHashMap<Resource, Object> rset;
+        WeakHashMap<ResourceAttributesSupport, Object> rset;
         synchronized(cache)
         {
             rset = cache.get(rc);
@@ -273,22 +273,15 @@ public class PersistentResourceHandler<T extends PersistentResource>
         {
             synchronized(rset)
             {
-                Set<Resource> orig = new HashSet<Resource>(rset.keySet());
-                for(Resource r : orig)
+                Set<ResourceAttributesSupport> orig = new HashSet<ResourceAttributesSupport>(
+                    rset.keySet());
+                for(ResourceAttributesSupport r : orig)
                 {
-                    data.put(r.getIdObject(), getInputRecords(r));
+                    data.put(r.getDelegate().getIdObject(), getInputRecords(r.getDelegate()));
                 }
             }
         }
         return data;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Class<?> getFallbackResourceImplClass()
-    {
-        return PersistentResource.class;
     }
 
     @Override
@@ -298,11 +291,68 @@ public class PersistentResourceHandler<T extends PersistentResource>
     }
 
     @Override
-    protected T instantiate()
-        throws BackendException
+    protected void create(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Map<AttributeDefinition<?>, ?> attributes, Connection conn)
+        throws SQLException
     {
-        T res = super.instantiate();
-        ((PersistentResource)res).setPersistence(persistence);
-        return res;
+        PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
+            persistence);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.create(rClass, attributes, conn);
+        }
+    }
+
+    @Override
+    protected void retrieve(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Object data, Connection conn)
+        throws SQLException
+    {
+        PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
+            persistence);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.retrieve(rClass, data, conn);
+        }
+    }
+
+    @Override
+    protected void update(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Connection conn)
+        throws SQLException
+
+    {
+        PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
+            persistence);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.update(rClass, conn);
+        }
+    }
+
+    @Override
+    protected void revert(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Object data, Connection conn)
+        throws SQLException
+    {
+        PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
+            persistence);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.revert(rClass, data, conn);
+        }
+    }
+
+    @Override
+    protected void delete(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Connection conn)
+        throws SQLException
+    {
+        PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
+            persistence);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.delete(rClass, conn);
+        }
     }
 }

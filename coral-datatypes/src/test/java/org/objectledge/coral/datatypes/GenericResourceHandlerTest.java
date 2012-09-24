@@ -177,6 +177,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockResource.stubs().method("getIdObject").will(returnValue(new Long(1L)));
         mockResource.stubs().method("getIdString").will(returnValue("1"));
         mockResource.stubs().method("getId").will(returnValue(1L));
+        mockResource.stubs().method("update").isVoid();
         resource = (Resource)mockResource.proxy();
 
         mockResultSet = mock(ResultSet.class);
@@ -194,6 +195,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         
         handler = new GenericResourceHandler<Node>(coralSchema, resourceClass, database,
             instantiator, cacheFactory, logger);
+        mockResourceClass.stubs().method("getHandler").will(returnValue(handler));
                                              
     }
     

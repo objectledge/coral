@@ -17,6 +17,7 @@ import org.objectledge.coral.store.Resource;
  * @author rafal.krzewski@caltha.pl
  */
 public abstract class ResourceAttributesSupport
+    implements ResourceAttributes
 {
     /** the attribute values. */
     private Object[] attributes;
@@ -47,6 +48,11 @@ public abstract class ResourceAttributesSupport
         initDefinitions(delegate.getResourceClass());
     }
 
+    public Resource getDelegate()
+    {
+        return delegate;
+    }
+
     /**
      * Reset attribute storage.
      * <p>
@@ -62,17 +68,6 @@ public abstract class ResourceAttributesSupport
         modified = new BitSet(arraySize);
     }
 
-    // Lazy loading implemented by in the upper layer ////////////////////////
-
-    /**
-     * Lazy-load attribute value.
-     * 
-     * @param attribute the attribute definition.
-     * @param aId attribute value id.
-     * @return attribute value.
-     */
-    protected abstract <A> A loadAttribute(AttributeDefinition<A> attribute, long aId);
-
     // Interface for resource storage helper objects /////////////////////////////////////////////
 
     /**
@@ -81,7 +76,7 @@ public abstract class ResourceAttributesSupport
      * @param attr the attribute.
      * @param value the value.
      */
-    protected void setValue(AttributeDefinition<?> attr, Object value)
+    public <A> void setValue(AttributeDefinition<A> attr, A value)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
         attributes[index] = value;
@@ -94,7 +89,7 @@ public abstract class ResourceAttributesSupport
      * @return the value.
      */
     @SuppressWarnings("unchecked")
-    protected <T> T getValue(AttributeDefinition<T> attr)
+    public <T> T getValue(AttributeDefinition<T> attr)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
         return (T)attributes[index];
@@ -106,7 +101,7 @@ public abstract class ResourceAttributesSupport
      * @param attr the attribute.
      * @param id the identifier.
      */
-    protected void setValueId(AttributeDefinition<?> attr, long id)
+    public void setValueId(AttributeDefinition<?> attr, long id)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
         ids[index] = id + 1;
@@ -118,10 +113,23 @@ public abstract class ResourceAttributesSupport
      * @param attr the attribute.
      * @return the identifier.
      */
-    protected long getValueId(AttributeDefinition<?> attr)
+    public long getValueId(AttributeDefinition<?> attr)
     {
         int index = delegate.getResourceClass().getAttributeIndex(attr);
         return ids[index] - 1;
+    }
+
+    /**
+     * Checks if an attribute value was modified since loading.
+     * 
+     * @param attr the attribute.
+     * @return <code>true</code> if the attribute was modified.
+     */
+    public boolean isValueModified(AttributeDefinition<?> attr)
+    {
+        int index = delegate.getResourceClass().getAttributeIndex(attr);
+        return modified.get(index) || ids[index] != -1L && attributes[index] != null
+            && attr.getAttributeClass().getHandler().isModified(attributes[index]);
     }
 
     /**
@@ -164,7 +172,7 @@ public abstract class ResourceAttributesSupport
                 }
                 else
                 {
-                    value = loadAttribute(attribute, id);
+                    value = delegate.getResourceClass().getHandler().loadValue(attribute, id);
                     attributes[index] = value;
                     return value;
                 }
@@ -201,7 +209,7 @@ public abstract class ResourceAttributesSupport
             }
             else
             {
-                value = loadAttribute(attribute, id);
+                value = delegate.getResourceClass().getHandler().loadValue(attribute, id);
                 attributes[index] = value;
                 return value;
             }
@@ -272,19 +280,6 @@ public abstract class ResourceAttributesSupport
         {
             return attributes[index] != null || ids[index] > 0;
         }
-    }
-
-    /**
-     * Checks if an attribute value was modified since loading.
-     * 
-     * @param attr the attribute.
-     * @return <code>true</code> if the attribute was modified.
-     */
-    protected boolean isModifiedInternal(AttributeDefinition<?> attr)
-    {
-        int index = delegate.getResourceClass().getAttributeIndex(attr);
-        return modified.get(index) || ids[index] != -1L && attributes[index] != null
-            && attr.getAttributeClass().getHandler().isModified(attributes[index]);
     }
 
     /**

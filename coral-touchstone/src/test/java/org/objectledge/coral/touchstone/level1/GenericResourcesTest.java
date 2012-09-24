@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.datatype.DataType;
 import org.objectledge.container.LedgeContainer;
-import org.objectledge.coral.datatypes.GenericResource;
+import org.objectledge.coral.datatypes.StandardResource;
 import org.objectledge.coral.datatypes.GenericResourceHandler;
 import org.objectledge.coral.datatypes.ResourceList;
 import org.objectledge.coral.entity.Entity;
@@ -138,7 +138,7 @@ public class GenericResourcesTest
     public void testCreateClass()
         throws Exception
     {
-        firstClass = schema.createResourceClass("first", GenericResource.class.getName(),
+        firstClass = schema.createResourceClass("first", StandardResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         a1 = schema.createAttribute("select", stringAttr, null, null, 0);
         schema.addAttribute(firstClass, a1, null);
@@ -324,7 +324,7 @@ public class GenericResourcesTest
     {
         testCreateClass();
 
-        secondClass = schema.createResourceClass("second", GenericResource.class.getName(),
+        secondClass = schema.createResourceClass("second", StandardResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         attributes.put(a2, 0);
         a4 = schema.createAttribute("a4", booleanAttr, null, null, 0);
@@ -332,7 +332,7 @@ public class GenericResourcesTest
         a5 = schema.createAttribute("a5", parametersAttr, null, null, AttributeFlags.REQUIRED);
         schema.addAttribute(secondClass, a5, new DefaultParameters());
 
-        thirdClass = schema.createResourceClass("third", GenericResource.class.getName(),
+        thirdClass = schema.createResourceClass("third", StandardResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         attributes.put(a5, new DefaultParameters());
         a7 = schema.createAttribute("a7", subjectAttr, null, null, 0);
@@ -363,14 +363,14 @@ public class GenericResourcesTest
     public void testCreateMultiLevelClasses2()
         throws Exception
     {
-        firstClass = schema.createResourceClass("first", GenericResource.class.getName(),
+        firstClass = schema.createResourceClass("first", StandardResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         a1 = schema.createAttribute("select", stringAttr, null, null, 0);
         schema.addAttribute(firstClass, a1, null);
         a3 = schema.createAttribute("a3", resourceAttr, null, "first", 0);
         schema.addAttribute(firstClass, a3, null);
 
-        secondClass = schema.createResourceClass("second", GenericResource.class.getName(),
+        secondClass = schema.createResourceClass("second", StandardResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         schema.addParentClass(secondClass, firstClass, attributes);
         a4 = schema.createAttribute("a4", booleanAttr, null, null, 0);
@@ -564,7 +564,7 @@ public class GenericResourcesTest
     {
         testCreateClass();
 
-        secondClass = schema.createResourceClass("second", GenericResource.class.getName(),
+        secondClass = schema.createResourceClass("second", StandardResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         a4 = schema.createAttribute("a4", booleanAttr, null, null, 0);
         schema.addAttribute(secondClass, a4, null);
@@ -902,7 +902,7 @@ public class GenericResourcesTest
     public void testCustomAttributeOps()
         throws Exception
     {
-        firstClass = schema.createResourceClass("first", GenericResource.class.getName(),
+        firstClass = schema.createResourceClass("first", StandardResource.class.getName(),
             GenericResourceHandler.class.getName(), null, 0);
         a6 = schema.createAttribute("a6", resourceListAttr, null, null, 0);
         schema.addAttribute(firstClass, a6, null);

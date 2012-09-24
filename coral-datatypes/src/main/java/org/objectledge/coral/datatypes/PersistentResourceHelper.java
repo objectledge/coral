@@ -2,7 +2,6 @@ package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.Map;
 
 import org.objectledge.coral.BackendException;
@@ -12,14 +11,7 @@ import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.schema.UnknownAttributeException;
-import org.objectledge.coral.security.PermissionAssignment;
-import org.objectledge.coral.security.Role;
-import org.objectledge.coral.security.Subject;
-import org.objectledge.coral.store.ConstraintViolationException;
-import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
-import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
@@ -31,77 +23,55 @@ import org.objectledge.database.persistence.Persistent;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: PersistentResource.java,v 1.28 2005-06-22 11:35:33 rafal Exp $
  */
-public class PersistentResource
-    extends AbstractResource
+public class PersistentResourceHelper
 {
     // instance variables ////////////////////////////////////////////////////
 
     public static final String[] KEY_COLUMNS = new String[] { "resource_id" };
 
-    /** the unique id of the resource in it's db table. */
-    protected boolean saved = false;
+    private final Persistence persistence;
 
-    private Persistence persistence;
+    private final Resource delegate;
+
+    private final ResourceAttributes instance;
 
     /**
      * Constructor.
      */
-    public PersistentResource()
+    public PersistentResourceHelper(Resource delegate, ResourceAttributes instance,
+        Persistence persistence)
     {
+        this.delegate = delegate;
+        this.instance = instance;
+        this.persistence = persistence;
     }
 
     // interface to PersistentResourceHandler ////////////////////////////////
 
-    private Map<ResourceClass<?>, InputRecord> getData(Resource deletage, Object data)
-    {
-        @SuppressWarnings("unchecked")
-        Map<Long, Map<ResourceClass<?>, InputRecord>> rMap = (Map<Long, Map<ResourceClass<?>, InputRecord>>)data;
-        Map<ResourceClass<?>, InputRecord> rcMap = rMap.get(deletage.getIdObject());
-        if(rcMap != null)
-        {
-            return rcMap;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    private static String getColumnName(AttributeDefinition<?> attr)
-    {
-        String dbColumn = attr.getDbColumn();
-        return dbColumn != null ? dbColumn : attr.getName();
-    }
-
-    synchronized void retrieve(Resource delegate, ResourceClass<?> rClass, Connection conn,
-        Object data)
+    synchronized void retrieve(ResourceClass<?> rClass, Object data, Connection conn)
         throws SQLException
     {
-        super.retrieve(delegate, rClass, conn, data);
-        Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
+        Map<ResourceClass<?>, InputRecord> in = getInputRecords(data);
         if(in != null)
         {
             setData(in, conn);
         }
     }
 
-    synchronized void revert(ResourceClass<?> rClass, Connection conn, Object data)
+    synchronized void revert(ResourceClass<?> rClass, Object data, Connection conn)
         throws SQLException
     {
-        super.revert(rClass, conn, data);
-        Map<ResourceClass<?>, InputRecord> in = getData(delegate, data);
+        Map<ResourceClass<?>, InputRecord> in = getInputRecords(data);
         if(in != null)
         {
             setData(in, conn);
         }
     }
 
-    synchronized void create(Resource delegate, ResourceClass<?> rClass,
-        Map<AttributeDefinition<?>, ?> attributes, Connection conn)
-        throws SQLException, ValueRequiredException, ConstraintViolationException
+    synchronized void create(ResourceClass<?> rClass, Map<AttributeDefinition<?>, ?> attributes,
+        Connection conn)
+        throws SQLException
     {
-        super.create(delegate, rClass, attributes, conn);
-
         if(rClass.getDbTable() != null)
         {
             boolean hasConcreteAttributes = false;
@@ -115,8 +85,7 @@ public class PersistentResource
             }
             if(hasConcreteAttributes)
             {
-                persistence.save(new CreateView(this, rClass, attributes, conn, true));
-                this.saved = true;
+                persistence.save(new CreateView(instance, rClass, attributes, conn, true));
             }
         }
     }
@@ -124,7 +93,6 @@ public class PersistentResource
     synchronized void update(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
-        super.update(rClass, conn);
         if(rClass.getDbTable() != null)
         {
             boolean hasConcreteAttributes = false;
@@ -134,7 +102,7 @@ public class PersistentResource
                 if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
                 {
                     hasConcreteAttributes = true;
-                    if(isModified(attr))
+                    if(instance.isValueModified(attr))
                     {
                         hasChangedAttributes = true;
                         break;
@@ -143,7 +111,7 @@ public class PersistentResource
             }
             if(hasConcreteAttributes && hasChangedAttributes)
             {
-                persistence.save(new UpdateView(this, rClass, conn));
+                persistence.save(new UpdateView(instance, rClass, conn));
             }
         }
     }
@@ -151,14 +119,12 @@ public class PersistentResource
     synchronized void delete(ResourceClass<?> rClass, Connection conn)
         throws SQLException
     {
-        super.delete(rClass, conn);
-
         for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
         {
             if(!attr.getAttributeClass().getHandler().supportsExternalString()
                 && !Entity.class.isAssignableFrom(attr.getAttributeClass().getJavaClass()))
             {
-                long valueId = getValueId(attr);
+                long valueId = instance.getValueId(attr);
                 if(valueId != -1L)
                 {
                     try
@@ -202,11 +168,34 @@ public class PersistentResource
         }
         else
         {
-            return super.loadAttribute(attribute, aId);
+            return delegate.getResourceClass().getHandler().loadValue(attribute, aId);
         }
     }
 
     // Persistent interface //////////////////////////////////////////////////
+
+    // interface to PersistentResourceHandler ////////////////////////////////
+
+    private static String getColumnName(AttributeDefinition<?> attr)
+    {
+        String dbColumn = attr.getDbColumn();
+        return dbColumn != null ? dbColumn : attr.getName();
+    }
+
+    private Map<ResourceClass<?>, InputRecord> getInputRecords(Object data)
+    {
+        @SuppressWarnings("unchecked")
+        Map<Long, Map<ResourceClass<?>, InputRecord>> rMap = (Map<Long, Map<ResourceClass<?>, InputRecord>>)data;
+        Map<ResourceClass<?>, InputRecord> rcMap = rMap.get(delegate.getIdObject());
+        if(rcMap != null)
+        {
+            return rcMap;
+        }
+        else
+        {
+            return null;
+        }
+    }
 
     private void setData(Map<ResourceClass<?>, InputRecord> records, Connection conn)
         throws SQLException
@@ -220,26 +209,27 @@ public class PersistentResource
                 {
                     if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                     {
-                        setAttribute(attr, record, this);
+                        setAttribute(attr, record);
                     }
                 }
             }
         }
     }
 
-    private static <T> void setAttribute(AttributeDefinition<T> attr, InputRecord data,
-        AbstractResource instance)
+    private <T> void setAttribute(AttributeDefinition<T> attr, InputRecord data)
         throws SQLException
     {
         final String name = getColumnName(attr);
         if(attr.getAttributeClass().getHandler().supportsExternalString())
         {
-            Object value = null;
             if(!data.isNull(name))
             {
-                value = data.getObject(name);
+                setValue(attr, instance, data.getObject(name));
             }
-            instance.setValue(attr, value);
+            else
+            {
+                instance.setValue(attr, null);
+            }
         }
         else
         {
@@ -254,16 +244,22 @@ public class PersistentResource
         }
     }
 
+    private static <A> void setValue(AttributeDefinition<A> attr, ResourceAttributes instance,
+        Object rawValue)
+    {
+        A value = attr.getAttributeClass().getHandler().toAttributeValue(rawValue);
+        instance.setValue(attr, value);
+    }
+
     static Persistent getRetrieveView(ResourceClass<?> rClass)
     {
         return new RetrieveView(rClass);
     }
 
-    static Persistent getCreateView(final ResourceClass<?> rClass,
-        final Map<AttributeDefinition<?>, ?> attrValues, final Connection conn)
+    static Persistent getCreateView(ResourceAttributes instance,
+        final ResourceClass<?> rClass, final Map<AttributeDefinition<?>, ?> attrValues,
+        final Connection conn)
     {
-        PersistentResource instance = new PersistentResource();
-        instance.setDelegate(new SyntheticDelegate(rClass));
         return new CreateView(instance, rClass, attrValues, conn, false);
     }
 
@@ -319,7 +315,7 @@ public class PersistentResource
     private static class CreateView
         extends PersistentView
     {
-        private final PersistentResource instance;
+        private final ResourceAttributes instance;
 
         private final Map<AttributeDefinition<?>, ?> attrValues;
 
@@ -327,7 +323,7 @@ public class PersistentResource
 
         private boolean insertCustomAttrs;
 
-        public CreateView(final PersistentResource instance, final ResourceClass<?> rClass,
+        public CreateView(final ResourceAttributes instance, final ResourceClass<?> rClass,
             final Map<AttributeDefinition<?>, ?> attrValues, final Connection conn,
             final boolean immediateCustomAttrs)
         {
@@ -342,7 +338,7 @@ public class PersistentResource
         public void getData(OutputRecord record)
             throws SQLException
         {
-            record.setLong("resource_id", instance.delegate.getId());
+            record.setLong("resource_id", instance.getDelegate().getId());
             for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
                 if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
@@ -432,11 +428,11 @@ public class PersistentResource
     private static class UpdateView
         extends PersistentView
     {
-        private final PersistentResource instance;
+        private final ResourceAttributes instance;
 
         private final Connection conn;
 
-        public UpdateView(final PersistentResource instance, final ResourceClass<?> rClass,
+        public UpdateView(final ResourceAttributes instance, final ResourceClass<?> rClass,
             final Connection conn)
         {
             super(rClass);
@@ -448,12 +444,12 @@ public class PersistentResource
         public void getData(OutputRecord record)
             throws SQLException
         {
-            record.setLong("resource_id", instance.delegate.getId());
+            record.setLong("resource_id", instance.getDelegate().getId());
             for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
             {
                 if((attr.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0)
                 {
-                    if(instance.isModifiedInternal(attr))
+                    if(instance.isValueModified(attr))
                     {
                         getAttribute(attr, record);
                     }
@@ -557,186 +553,5 @@ public class PersistentResource
         {
             record.setLong("resource_id", delegate.getId());
         }
-    }
-
-    private static class SyntheticDelegate
-        implements Resource
-    {
-        private final ResourceClass<?> rClass;
-
-        public SyntheticDelegate(ResourceClass<?> rClass)
-        {
-            this.rClass = rClass;
-        }
-
-        @Override
-        public long getId()
-        {
-            return -1l;
-        }
-
-        @Override
-        public Long getIdObject()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getIdString()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getName()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getPath()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public ResourceClass<?> getResourceClass()
-        {
-            return rClass;
-        }
-
-        @Override
-        public Subject getCreatedBy()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Date getCreationTime()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Subject getModifiedBy()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Date getModificationTime()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Subject getOwner()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public PermissionAssignment[] getPermissionAssignments()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public PermissionAssignment[] getPermissionAssignments(Role role)
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Resource getParent()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public long getParentId()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Resource[] getChildren()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isDefined(AttributeDefinition<?> attribute)
-            throws UnknownAttributeException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <T> T get(AttributeDefinition<T> attribute)
-            throws UnknownAttributeException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <T> T get(AttributeDefinition<T> attribute, T defaultValue)
-            throws UnknownAttributeException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <T> void set(AttributeDefinition<T> attribute, T value)
-            throws UnknownAttributeException, ModificationNotPermitedException,
-            ValueRequiredException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void unset(AttributeDefinition<?> attribute)
-            throws ValueRequiredException, UnknownAttributeException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setModified(AttributeDefinition<?> attribute)
-            throws UnknownAttributeException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isModified(AttributeDefinition<?> attribute)
-            throws UnknownAttributeException
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void update()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void revert()
-        {
-            throw new UnsupportedOperationException();
-
-        }
-
-        @Override
-        public Resource getDelegate()
-        {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    public void setPersistence(Persistence persistence)
-    {
-        this.persistence = persistence;
     }
 }

@@ -8,9 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.dbunit.dataset.datatype.DataType;
-import org.objectledge.coral.datatypes.GenericResource;
+import org.objectledge.coral.datatypes.StandardResource;
 import org.objectledge.coral.datatypes.GenericResourceHandler;
-import org.objectledge.coral.datatypes.PersistentResource;
 import org.objectledge.coral.datatypes.PersistentResourceHandler;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.query.FilteredQueryResults;
@@ -59,8 +58,10 @@ public class CoralQueryTests
     @SuppressWarnings("rawtypes")
     private enum Implementation
     {
-        GENERIC(GenericResource.class, GenericResourceHandler.class), TABULAR(
-                        PersistentResource.class, PersistentResourceHandler.class);
+        // @formatter:off
+        GENERIC(StandardResource.class, GenericResourceHandler.class), 
+        TABULAR(StandardResource.class, PersistentResourceHandler.class);
+        // @formatter:on
 
         private final Class<? extends Resource> resClass;
 

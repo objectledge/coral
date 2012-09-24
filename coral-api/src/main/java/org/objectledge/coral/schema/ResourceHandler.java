@@ -214,4 +214,13 @@ public interface ResourceHandler<T extends Resource>
      * @return Coral query to SQL translation helper object.
      */
     public ResourceQueryHandler getQueryHandler();
+
+    /**
+     * Lazily loads an attribute value.
+     * 
+     * @param attribute
+     * @param aId
+     * @return
+     */
+    public <A> A loadValue(AttributeDefinition<A> attribute, long aId);
 }

@@ -1,5 +1,8 @@
 package org.objectledge.coral.datatypes;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -309,7 +312,6 @@ public class PersistentSchemaHandler<T extends Resource>
         }
     }
 
-
     /**
      * Called when a parent class is added to a sturctured resource class.
      * <p>
@@ -363,7 +365,8 @@ public class PersistentSchemaHandler<T extends Resource>
         {
             stmt.setLong(1, child.getId());
 
-            Persistent view = PersistentResource.getCreateView(parent, attributes, conn);
+            Persistent view = PersistentResourceHelper.getCreateView(
+                DummyResourceAttributes.INSTANCE, parent, attributes, conn);
             PreparedStatement out = DefaultOutputRecord.getInsertStatement(view, conn);
             try
             {
@@ -515,6 +518,30 @@ public class PersistentSchemaHandler<T extends Resource>
         finally
         {
             stmt.close();
+        }
+    }
+
+    private static class DummyResourceAttributes
+        implements InvocationHandler
+    {
+        public static final ResourceAttributes INSTANCE = (ResourceAttributes)Proxy
+            .newProxyInstance(DummyResourceAttributes.class.getClassLoader(),
+                new Class[] { ResourceAttributes.class }, new DummyResourceAttributes());
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args)
+            throws Throwable
+        {
+            if(method.getName().equals("getDelegate"))
+            {
+                return Proxy.newProxyInstance(getClass().getClassLoader(),
+                    new Class[] { Resource.class }, this);
+            }
+            if(method.getName().equals("getId"))
+            {
+                return Long.valueOf("-1");
+            }
+            return null;
         }
     }
 }

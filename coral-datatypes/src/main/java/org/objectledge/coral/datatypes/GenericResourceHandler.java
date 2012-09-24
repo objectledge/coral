@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
@@ -28,7 +29,7 @@ import org.objectledge.database.DatabaseUtils;
  * @version $Id: GenericResourceHandler.java,v 1.23 2008-01-01 22:36:16 rafal Exp $
  */
 public class GenericResourceHandler<T extends Resource>
-    extends AbstractResourceHandler<T>
+    extends StandardResourceHandler<T>
 {
     private static final ResourceQueryHandler queryHandler = new GenericResourceQueryHandler();
 
@@ -97,10 +98,10 @@ public class GenericResourceHandler<T extends Resource>
      * @param conn the connection.
      * @return the map of data keys.
      * @throws SQLException if happens.
-     */    
+     */
     public Object getData(Resource delegate, Connection conn, Object prev)
         throws SQLException
-    {       
+    {
         Map<Long, Map<AttributeDefinition<?>, Long>> keyMap = new HashMap<Long, Map<AttributeDefinition<?>, Long>>();
         Map<AttributeDefinition<?>, Long> dataKeys = new HashMap<AttributeDefinition<?>, Long>();
         keyMap.put(delegate.getIdObject(), dataKeys);
@@ -108,15 +109,13 @@ public class GenericResourceHandler<T extends Resource>
         ResultSet rs = null;
         try
         {
-            rs = stmt.executeQuery(
-                "SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE "+
-                "resource_id = "+delegate.getIdString()
-            );
+            rs = stmt
+                .executeQuery("SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE "
+                    + "resource_id = " + delegate.getIdString());
 
             while(rs.next())
             {
-                dataKeys.put(coralSchema.getAttribute(rs.getLong(1)), 
-                    new Long(rs.getLong(2)));
+                dataKeys.put(coralSchema.getAttribute(rs.getLong(1)), new Long(rs.getLong(2)));
             }
             return keyMap;
         }
@@ -142,12 +141,11 @@ public class GenericResourceHandler<T extends Resource>
         ResultSet rs = null;
         try
         {
-            rs = stmt.executeQuery(
-                "SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "+
-                "NATURAL JOIN coral_resource "+
-                "WHERE resource_class_id = " + rc.getIdString() + " " +
-                "ORDER BY resource_id"
-            );
+            rs = stmt
+                .executeQuery("SELECT resource_id, attribute_definition_id, data_key FROM coral_generic_resource "
+                    + "NATURAL JOIN coral_resource "
+                    + "WHERE resource_class_id = "
+                    + rc.getIdString() + " " + "ORDER BY resource_id");
             Map<AttributeDefinition<?>, Long> dataKeys = null;
             Long resId = null;
             while(rs.next())
@@ -158,10 +156,9 @@ public class GenericResourceHandler<T extends Resource>
                     dataKeys = new HashMap<AttributeDefinition<?>, Long>();
                     keyMap.put(resId, dataKeys);
                 }
-                dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), 
-                    new Long(rs.getLong(3)));
+                dataKeys.put(coralSchema.getAttribute(rs.getLong(2)), new Long(rs.getLong(3)));
             }
-            return keyMap;        
+            return keyMap;
         }
         catch(EntityDoesNotExistException e)
         {
@@ -173,18 +170,71 @@ public class GenericResourceHandler<T extends Resource>
             DatabaseUtils.close(stmt);
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public Class<?> getFallbackResourceImplClass()
-    {
-        return GenericResource.class;
-    }
 
     @Override
     public ResourceQueryHandler getQueryHandler()
     {
         return queryHandler;
+    }
+
+    @Override
+    protected void create(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Map<AttributeDefinition<?>, ?> attributes, Connection conn)
+        throws SQLException
+    {
+        GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.create(rClass, attributes, conn);
+        }
+    }
+
+    @Override
+    protected void retrieve(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Object data, Connection conn)
+        throws SQLException
+    {
+        GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.retrieve(rClass, data, conn);
+        }
+    }
+
+    @Override
+    protected void update(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Connection conn)
+        throws SQLException
+
+    {
+        GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.update(rClass, conn);
+        }
+    }
+
+    @Override
+    protected void revert(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Object data, Connection conn)
+        throws SQLException
+    {
+        GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.revert(rClass, data, conn);
+        }
+    }
+
+    @Override
+    protected void delete(Resource delegate, ResourceAttributesSupport instance,
+        Set<ResourceClass<?>> classes, Connection conn)
+        throws SQLException
+    {
+        GenericResourceHelper helper = new GenericResourceHelper(delegate, instance);
+        for(ResourceClass<?> rClass : classes)
+        {
+            helper.delete(rClass, conn);
+        }
     }
 }

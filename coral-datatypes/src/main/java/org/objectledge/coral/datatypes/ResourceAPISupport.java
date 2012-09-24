@@ -344,7 +344,7 @@ public abstract class ResourceAPISupport
         {
             return delegate.isModified(attribute);
         }
-        return isModifiedInternal(attribute);
+        return isValueModified(attribute);
     }
 
     /**

@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.datatype.DataType;
 import org.objectledge.container.LedgeContainer;
-import org.objectledge.coral.datatypes.PersistentResource;
+import org.objectledge.coral.datatypes.StandardResource;
 import org.objectledge.coral.datatypes.PersistentResourceHandler;
 import org.objectledge.coral.datatypes.ResourceList;
 import org.objectledge.coral.entity.Entity;
@@ -135,7 +135,7 @@ public class PersistentResourcesTest
     public void testCreateClass()
         throws Exception
     {
-        firstClass = schema.createResourceClass("first", PersistentResource.class.getName(),
+        firstClass = schema.createResourceClass("first", StandardResource.class.getName(),
             PersistentResourceHandler.class.getName(), "first", 0);
         a1 = schema.createAttribute("select", stringAttr, "select_", null, 0);
         schema.addAttribute(firstClass, a1, null);
@@ -255,9 +255,8 @@ public class PersistentResourcesTest
     {
         testCreateClass();
 
-        secondClass = schema.createResourceClass("second",
-            PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
-            "second", 0);
+        secondClass = schema.createResourceClass("second", StandardResource.class.getName(),
+            PersistentResourceHandler.class.getName(), "second", 0);
         attributes.put(a2, 0);
         a4 = schema.createAttribute("a4", booleanAttr, null, null, 0);
         schema.addAttribute(secondClass, a4, null);
@@ -267,9 +266,8 @@ public class PersistentResourcesTest
         expTable("second", secondCols);
         assertExpTable();
 
-        thirdClass = schema.createResourceClass("third",
-            PersistentResource.class.getName(), PersistentResourceHandler.class.getName(), "third",
-            0);
+        thirdClass = schema.createResourceClass("third", StandardResource.class.getName(),
+            PersistentResourceHandler.class.getName(), "third", 0);
         attributes.put(a5, new DefaultParameters());
         a7 = schema.createAttribute("a7", subjectAttr, null, null, 0);
         schema.addAttribute(thirdClass, a7, null);
@@ -284,16 +282,15 @@ public class PersistentResourcesTest
     public void testCreateMultiLevelClasses2()
         throws Exception
     {
-        firstClass = schema.createResourceClass("first", PersistentResource.class.getName(),
+        firstClass = schema.createResourceClass("first", StandardResource.class.getName(),
             PersistentResourceHandler.class.getName(), "first", 0);
         a1 = schema.createAttribute("select", stringAttr, "select_", null, 0);
         schema.addAttribute(firstClass, a1, null);
         a3 = schema.createAttribute("a3", resourceAttr, null, "first", 0);
         schema.addAttribute(firstClass, a3, null);
 
-        secondClass = schema.createResourceClass("second",
-            PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
-            "second", 0);
+        secondClass = schema.createResourceClass("second", StandardResource.class.getName(),
+            PersistentResourceHandler.class.getName(), "second", 0);
         schema.addParentClass(secondClass, firstClass, attributes);
         a4 = schema.createAttribute("a4", booleanAttr, null, null, 0);
         schema.addAttribute(secondClass, a4, null);
@@ -405,9 +402,8 @@ public class PersistentResourcesTest
     {
         testCreateClass();
 
-        secondClass = schema.createResourceClass("second",
-            PersistentResource.class.getName(), PersistentResourceHandler.class.getName(),
-            "second", 0);
+        secondClass = schema.createResourceClass("second", StandardResource.class.getName(),
+            PersistentResourceHandler.class.getName(), "second", 0);
         a4 = schema.createAttribute("a4", booleanAttr, null, null, 0);
         schema.addAttribute(secondClass, a4, null);
         a5 = schema.createAttribute("a5", parametersAttr, null, null, AttributeFlags.REQUIRED);
@@ -433,8 +429,7 @@ public class PersistentResourcesTest
         expRow(0L, "", "");
         assertExpTable();
 
-        assertTrue(Arrays.asList(secondClass.getParentClasses())
-            .contains(firstClass));
+        assertTrue(Arrays.asList(secondClass.getParentClasses()).contains(firstClass));
         assertTrue(Arrays.asList(secondClass.getAllAttributes()).contains(a2));
         assertEquals(Integer.valueOf(9), secondRes.get(a2));
     }
@@ -553,7 +548,7 @@ public class PersistentResourcesTest
     public void testCustomAttributeOps()
         throws Exception
     {
-        firstClass = schema.createResourceClass("first", PersistentResource.class.getName(),
+        firstClass = schema.createResourceClass("first", StandardResource.class.getName(),
             PersistentResourceHandler.class.getName(), "first", 0);
         a6 = schema.createAttribute("a6", resourceListAttr, null, null, 0);
         schema.addAttribute(firstClass, a6, null);

@@ -45,7 +45,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * @author Coral Maven plugin
  */
 public class PersistentNodeImpl
-    extends PersistentResource
+    extends StandardResource
     implements PersistentNode
 {
     // class variables /////////////////////////////////////////////////////////
