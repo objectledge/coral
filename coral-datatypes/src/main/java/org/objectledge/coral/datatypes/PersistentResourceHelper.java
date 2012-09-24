@@ -48,7 +48,7 @@ public class PersistentResourceHelper
 
     // interface to PersistentResourceHandler ////////////////////////////////
 
-    public synchronized void retrieve(ResourceClass<?> rClass, Object data, Connection conn)
+    public synchronized void retrieve(Object data, Connection conn)
         throws SQLException
     {
         Map<ResourceClass<?>, InputRecord> in = getInputRecords(data);
@@ -58,7 +58,7 @@ public class PersistentResourceHelper
         }
     }
 
-    public synchronized void revert(ResourceClass<?> rClass, Object data, Connection conn)
+    public synchronized void revert(Object data, Connection conn)
         throws SQLException
     {
         Map<ResourceClass<?>, InputRecord> in = getInputRecords(data);

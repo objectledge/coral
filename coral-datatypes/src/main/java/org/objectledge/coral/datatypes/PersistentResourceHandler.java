@@ -239,8 +239,7 @@ public class PersistentResourceHandler<T extends Resource>
         throws SQLException
     {
         List<InputRecord> irs = persistence.loadInputRecords(
-            PersistentResourceHelper.getRetrieveView(rClass),
-            "resource_id = ?", delegate.getId());
+            PersistentResourceHelper.getRetrieveView(rClass), "resource_id = ?", delegate.getId());
         if(irs.isEmpty())
         {
             for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
@@ -310,10 +309,7 @@ public class PersistentResourceHandler<T extends Resource>
     {
         PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
             persistence);
-        for(ResourceClass<?> rClass : classes)
-        {
-            helper.retrieve(rClass, data, conn);
-        }
+        helper.retrieve(data, conn);
     }
 
     @Override
@@ -337,10 +333,7 @@ public class PersistentResourceHandler<T extends Resource>
     {
         PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
             persistence);
-        for(ResourceClass<?> rClass : classes)
-        {
-            helper.revert(rClass, data, conn);
-        }
+        helper.revert(data, conn);
     }
 
     @Override
