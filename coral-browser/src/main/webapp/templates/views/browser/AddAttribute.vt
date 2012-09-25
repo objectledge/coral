@@ -28,6 +28,13 @@ function fSub(action)
         #end
       </select></td>
     </tr>
+	<tr>
+      <td align="right"><b>Db Column:</b></td>
+      <td width="95%">
+        <input type="checkbox" name="set_db_column" value="true">
+        <input type="text" name="db_column" value="" maxlength="40">
+      </td>
+    </tr>
     <tr>
       <td align="right"><b>Domain:</b></td>
       <td width="95%">

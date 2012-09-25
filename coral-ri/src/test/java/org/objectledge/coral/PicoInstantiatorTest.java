@@ -27,12 +27,13 @@
 // 
 package org.objectledge.coral;
 
+import java.sql.SQLException;
+
 import junit.framework.TestCase;
 
 import org.jcontainer.dna.Logger;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
 import org.objectledge.logging.LoggerFactory;
@@ -121,7 +122,7 @@ public class PicoInstantiatorTest
         /** 
          * {@inheritDoc}
          */
-        public void getData(OutputRecord record) throws PersistenceException
+        public void getData(OutputRecord record) throws SQLException
         {
         }
 
@@ -152,7 +153,7 @@ public class PicoInstantiatorTest
         /** 
          * {@inheritDoc}
          */
-        public void setData(InputRecord record) throws PersistenceException
+        public void setData(InputRecord record) throws SQLException
         {
         }
 

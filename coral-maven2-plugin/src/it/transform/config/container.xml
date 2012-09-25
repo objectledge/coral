@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<container xmlns="http://objectledge.org/container/1.0">
+
+  <component class="org.objectledge.context.Context" />
+
+  <component class="org.objectledge.database.IdGenerator" />
+  <component class-key="org.objectledge.database.Transaction"
+             class="org.objectledge.database.JotmTransaction"/>  
+  <component class-key="org.objectledge.database.Database" 
+             class="org.objectledge.database.DefaultDatabase" />
+  <component class-key="org.objectledge.database.persistence.Persistence" 
+             class="org.objectledge.database.persistence.DefaultPersistence" />
+  <component class-key="org.objectledge.parameters.db.DBParametersManager"
+             class="org.objectledge.parameters.db.DefaultDBParametersManager"/>
+
+  <component key="thread-context-cleanup" class="org.objectledge.pipeline.SimplePipeline">
+    <sequence/>
+  </component>
+  <component class="org.objectledge.threads.ThreadPool">
+    <parameter key="thread-context-cleanup"/>
+    <parameter/>
+    <parameter/>
+    <parameter/>
+  </component>
+
+  <component class-key="org.objectledge.cache.CacheFactory" 
+             class="org.objectledge.cache.DefaultCacheFactory"/>
+  <component class="org.objectledge.notification.Notification"/>             
+  <component class="org.objectledge.event.EventWhiteboardFactory"/>
+  
+  <container key="coralContainer"/>
+  <component class-key="org.objectledge.coral.Instantiator"
+             class="org.objectledge.coral.PicoInstantiator">
+    <parameter key="coralContainer"/>
+  </component>
+  <component class-key="org.objectledge.coral.CoralCore" 
+             class="org.objectledge.coral.CoralCoreImpl">
+    <parameter key="coralContainer"/>
+    <parameter/>
+    <parameter/>
+    <parameter/>
+    <parameter/>
+    <parameter/>
+  </component>           
+  <component class-key="org.objectledge.coral.session.CoralSessionFactory" 
+             class="org.objectledge.coral.session.CoralSessionFactoryImpl"/>                          
+</container>

@@ -41,43 +41,35 @@ CREATE TABLE coral_generic_resource (
         PRIMARY KEY (resource_id, attribute_definition_id)
 );
 
-ALTER TABLE coral_generic_resource 
-        ADD FOREIGN KEY (attribute_definition_id)
-        REFERENCES coral_attribute_definition (attribute_definition_id);
-
-ALTER TABLE coral_generic_resource
-        ADD FOREIGN KEY (resource_id)
-        REFERENCES coral_resource (resource_id);
-
 -- Basic attributes ----------------------------------------------------------
 
 CREATE TABLE coral_attribute_boolean (
         data_key BIGINT NOT NULL,
-        data INTEGER,
+        data BOOLEAN NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_integer (
         data_key BIGINT NOT NULL,
-        data INTEGER,
+        data INTEGER NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_long (
         data_key BIGINT NOT NULL,
-        data BIGINT,
+        data BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_number (
         data_key BIGINT NOT NULL,
-        data DECIMAL,
+        data DECIMAL NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_string (
         data_key BIGINT NOT NULL,
-        data VARCHAR(255),
+        data VARCHAR(255) NOT NULL,
         PRIMARY KEY (data_key)
 );
 
@@ -86,13 +78,13 @@ CREATE TABLE coral_attribute_string (
 
 CREATE TABLE coral_attribute_text (
         data_key BIGINT NOT NULL,
-        data VARCHAR,
+        data VARCHAR NOT NULL,
         PRIMARY KEY (data_key)
 );
 
 CREATE TABLE coral_attribute_date (
         data_key BIGINT NOT NULL,
-        data TIMESTAMP,
+        data TIMESTAMP NOT NULL,
         PRIMARY KEY (data_key)
 );
 
@@ -105,68 +97,56 @@ CREATE TABLE coral_attribute_date_range (
 
 CREATE TABLE coral_attribute_resource_class (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
-
-ALTER TABLE coral_attribute_resource_class 
-        ADD FOREIGN KEY (ref)
-        REFERENCES coral_resource_class (resource_class_id);
 
 CREATE TABLE coral_attribute_resource (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
-
-ALTER TABLE coral_attribute_resource 
-        ADD FOREIGN KEY (ref)
-        REFERENCES coral_resource (resource_id);
 
 CREATE TABLE coral_attribute_subject (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
-        
-ALTER TABLE coral_attribute_subject 
-        ADD FOREIGN KEY (ref)
-        REFERENCES coral_subject (subject_id);
 
 CREATE TABLE coral_attribute_role (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
-        
-ALTER TABLE coral_attribute_role 
-        ADD FOREIGN KEY (ref)
-        REFERENCES coral_role (role_id);
 
 CREATE TABLE coral_attribute_permission (
         data_key BIGINT NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key)
 );
-        
-ALTER TABLE coral_attribute_permission 
-        ADD FOREIGN KEY (ref)
-        REFERENCES coral_permission (permission_id);
 
 CREATE TABLE coral_attribute_resource_list (
         data_key BIGINT NOT NULL,
         pos INTEGER NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key, pos)
 );
-
-ALTER TABLE coral_attribute_resource_list
-        ADD FOREIGN KEY (ref)
-        REFERENCES coral_resource (resource_id);
         
 CREATE TABLE coral_attribute_weak_resource_list (
         data_key BIGINT NOT NULL,
         pos INTEGER NOT NULL,
-        ref BIGINT,
+        ref BIGINT NOT NULL,
         PRIMARY KEY (data_key, pos)
 );
+
+-- attribute to SQL mapping for tabular model -------------------------------
+
+CREATE TABLE coral_attribute_mapping (
+  attribute_class_id BIGINT NOT NULL,
+  is_fk boolean NOT NULL,
+  sql_type VARCHAR(32) NOT NULL,
+  fk_table VARCHAR(64),
+  fk_key_column VARCHAR(64),
+  is_custom boolean
+);
+

@@ -1,11 +1,12 @@
 package org.objectledge.coral.schema;
 
+import java.sql.SQLException;
+
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssociation;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Represents resource class inheritance relationship.
@@ -23,10 +24,10 @@ public class ResourceClassInheritanceImpl
     private CoralCore coral;
 
     /** The parent class. */
-    private ResourceClass parent;
+    private ResourceClass<?> parent;
     
     /** The child class. */
-    private ResourceClass child;
+    private ResourceClass<?> child;
     
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -50,7 +51,8 @@ public class ResourceClassInheritanceImpl
      * @param child the child class.
      */
     public ResourceClassInheritanceImpl(CoralCore coral, 
-        ResourceClass parent, ResourceClass child)
+ ResourceClass<?> parent,
+        ResourceClass<?> child)
     {
         super();
         this.parent = parent;
@@ -113,15 +115,16 @@ public class ResourceClassInheritanceImpl
     
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         record.setLong("parent", parent.getId());
         record.setLong("child", child.getId());
@@ -129,15 +132,16 @@ public class ResourceClassInheritanceImpl
 
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         long parentId = record.getLong("parent");
         try
@@ -146,7 +150,7 @@ public class ResourceClassInheritanceImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load ResourceClassInheritance", e);
+            throw new SQLException("Failed to load ResourceClassInheritance", e);
         }
         long childId = record.getLong("child");
         try
@@ -155,7 +159,7 @@ public class ResourceClassInheritanceImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load ResourceClassInheritance", e);
+            throw new SQLException("Failed to load ResourceClassInheritance", e);
         }
     }
 
@@ -166,7 +170,7 @@ public class ResourceClassInheritanceImpl
      *
      * @return the parent class in this relationship.
      */
-    public ResourceClass getParent()
+    public ResourceClass<?> getParent()
     {
         return parent;
     }
@@ -176,7 +180,7 @@ public class ResourceClassInheritanceImpl
      *
      * @return the child class in this relationship.
      */
-    public ResourceClass getChild()
+    public ResourceClass<?> getChild()
     {
         return child;
     }

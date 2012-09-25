@@ -47,6 +47,7 @@ DELETE FROM coral_attribute_number;
 DELETE FROM coral_attribute_long;
 DELETE FROM coral_attribute_integer;
 DELETE FROM coral_attribute_boolean;
+DELETE FROM coral_attribute_mapping;
 
 DELETE FROM coral_generic_resource;
 

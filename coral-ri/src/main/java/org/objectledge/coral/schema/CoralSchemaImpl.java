@@ -21,7 +21,6 @@ import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 
 /**
@@ -86,7 +85,7 @@ public class CoralSchemaImpl
      * @throws EntityDoesNotExistException if the <code>AttributeClass</code>
      *         with the specified identifier does not exist.
      */
-    public AttributeClass getAttributeClass(long id)
+    public AttributeClass<?> getAttributeClass(long id)
         throws EntityDoesNotExistException
     {
         return coral.getRegistry().getAttributeClass(id);
@@ -100,10 +99,27 @@ public class CoralSchemaImpl
      * @throws EntityDoesNotExistException if the <code>AttributeClass</code>
      *         with the specified name does not exist.
      */
-    public AttributeClass getAttributeClass(String name)
+    public AttributeClass<?> getAttributeClass(String name)
         throws EntityDoesNotExistException
     {
         return coral.getRegistry().getAttributeClass(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public <A> AttributeClass<A> getAttributeClass(String name, Class<A> javaClass)
+        throws EntityDoesNotExistException
+    {
+        final AttributeClass<?> aClass = (AttributeClass<A>)coral.getRegistry().getAttributeClass(
+            name);
+        if(!javaClass.isAssignableFrom(aClass.getJavaClass()))
+        {
+            throw new IllegalArgumentException("attribute class " + name
+                + " is not compatible with type " + javaClass.getName());
+        }
+        return (AttributeClass<A>)aClass;
     }
 
     /**
@@ -123,11 +139,12 @@ public class CoralSchemaImpl
      *         <code>handlerClass</code> attributes don't specify valid Java
      *         classes.
      */
-    public AttributeClass createAttributeClass(String name, String javaClass, 
+    public AttributeClass<?> createAttributeClass(String name, String javaClass,
                                                String handlerClass, String dbTable)
         throws EntityExistsException, JavaClassException
     {
-        AttributeClass attributeClass = new AttributeClassImpl(persistence, instantiator, 
+        @SuppressWarnings("rawtypes")
+        AttributeClass<?> attributeClass = new AttributeClassImpl(persistence, instantiator,
             coralEventHub, 
             name, javaClass, handlerClass, dbTable);
         coral.getRegistry().addAttributeClass(attributeClass);
@@ -141,7 +158,7 @@ public class CoralSchemaImpl
      * @throws EntityInUseException if there is a {@link ResourceClass} that
      *         uses the specified <code>AttributeClass</code>.
      */
-    public void deleteAttributeClass(AttributeClass attributeClass)
+    public void deleteAttributeClass(AttributeClass<?> attributeClass)
         throws EntityInUseException
     {
         coral.getRegistry().deleteAttributeClass(attributeClass);
@@ -154,7 +171,7 @@ public class CoralSchemaImpl
      * @param name the new name.
      * @throws EntityExistsException if another attribute class with that name exists.
      */
-    public void setName(AttributeClass attributeClass, String name)
+    public void setName(AttributeClass<?> attributeClass, String name)
         throws EntityExistsException
     {
         coral.getRegistry().renameAttributeClass(attributeClass, name);
@@ -170,15 +187,15 @@ public class CoralSchemaImpl
      * @throws JavaClassException if the <code>javaClass</code> does not specify
      *         a valid JavaClass.
      */
-    public void setJavaClass(AttributeClass attributeClass, String javaClass)
+    public void setJavaClass(AttributeClass<?> attributeClass, String javaClass)
         throws JavaClassException
     {
-        ((AttributeClassImpl)attributeClass).setJavaClass(javaClass);
+        ((AttributeClassImpl<?>)attributeClass).setJavaClass(javaClass);
         try
         {
             persistence.save((Persistent)attributeClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update AttributeClass", e);
         }
@@ -195,16 +212,16 @@ public class CoralSchemaImpl
      * @throws JavaClassException if the <code>handlerClass</code> does not
      *         specify a valid JavaClass.
      */
-    public void setHandlerClass(AttributeClass attributeClass, 
+    public void setHandlerClass(AttributeClass<?> attributeClass,
                                 String handlerClass)
         throws JavaClassException
     {
-        ((AttributeClassImpl)attributeClass).setHandlerClass(handlerClass);
+        ((AttributeClassImpl<?>)attributeClass).setHandlerClass(handlerClass);
         try
         {
             persistence.save((Persistent)attributeClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update AttributeClass", e);
         }
@@ -220,14 +237,14 @@ public class CoralSchemaImpl
      *        attributes of that class (allows sharing handler classes betweeen
      *        attribute types).
      */
-    public void setDbTable(AttributeClass attributeClass, String dbTable)
+    public void setDbTable(AttributeClass<?> attributeClass, String dbTable)
     {
-        ((AttributeClassImpl)attributeClass).setDbTable(dbTable);
+        ((AttributeClassImpl<?>)attributeClass).setDbTable(dbTable);
         try
         {
             persistence.save((Persistent)attributeClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update AttributeClass", e);
         }
@@ -253,7 +270,7 @@ public class CoralSchemaImpl
      * @return the attribute definition.
      * @throws EntityDoesNotExistException if no such attribute definition exists.
      */
-    public AttributeDefinition getAttribute(long id)
+    public AttributeDefinition<?> getAttribute(long id)
         throws EntityDoesNotExistException
     {
         return coral.getRegistry().getAttributeDefinition(id);
@@ -261,20 +278,22 @@ public class CoralSchemaImpl
 
     /**
      * Creates an attribute instance.
-     *
+     * 
      * @param name the name of the new Attribute.
      * @param attributeClass the class of the new attribute.
+     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     *        {@code name} is used as column name.
      * @param domain the value domain constraint.
      * @param flags the flags of the new Attribute.
      * @return a new attribute instance.
      */
-    public AttributeDefinition createAttribute(String name, AttributeClass attributeClass,
-                                               String domain, int flags)
+    public <A> AttributeDefinition<A> createAttribute(String name,
+        AttributeClass<A> attributeClass, String dbColumn, String domain, int flags)
     {
         // check domain specified for well-formedness
         attributeClass.getHandler().checkDomain(domain);
-        return new AttributeDefinitionImpl(persistence, coralEventHub, coral, 
-            name, attributeClass, domain, flags);
+        return new AttributeDefinitionImpl<A>(persistence, coralEventHub, coral, name,
+            attributeClass, dbColumn, domain, flags);
     }
 
     /**
@@ -285,7 +304,7 @@ public class CoralSchemaImpl
      * @throws SchemaIntegrityException if the <code>ResourceClass</code> already
      *         has an attribute with the specified name.
      */
-    public void setName(AttributeDefinition attribute, String name)
+    public void setName(AttributeDefinition<?> attribute, String name)
         throws SchemaIntegrityException
     {
         if(attribute.getDeclaringClass() != null)
@@ -300,9 +319,30 @@ public class CoralSchemaImpl
         }
         catch(Exception e)
         {
-            ((AttributeDefinitionImpl)attribute).setAttributeName(oldName);
+            ((AttributeDefinitionImpl<?>)attribute).setAttributeName(oldName);
             throw new BackendException("failed to update attribute's persitent image", e);
         }
+    }
+
+    /**
+     * Changes the database column name of the attribute.
+     * 
+     * @param attribute the attribute to modify.
+     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     *        {@code name} is used as column name.
+     */
+    public void setDbColumn(AttributeDefinition<?> attribute, String dbColumn)
+    {
+        ((AttributeDefinitionImpl<?>)attribute).setDbColumn(dbColumn);
+        try
+        {
+            persistence.save((Persistent)attribute);
+        }
+        catch(SQLException e)
+        {
+            throw new BackendException("Failed to update Attribute", e);
+        }
+        coralEventHub.getGlobal().fireAttributeDefinitionChangeEvent(attribute);
     }
 
     /**
@@ -313,16 +353,16 @@ public class CoralSchemaImpl
      * @param attribute the attribute to modify.
      * @param domain the new domain of the attirbute.
      */
-    public void setDomain(AttributeDefinition attribute, String domain)
+    public void setDomain(AttributeDefinition<?> attribute, String domain)
     {
         // check domain specified for well-formedness
         attribute.getAttributeClass().getHandler().checkDomain(domain);
-        ((AttributeDefinitionImpl)attribute).setDomain(domain);
+        ((AttributeDefinitionImpl<?>)attribute).setDomain(domain);
         try
         {
             persistence.save((Persistent)attribute);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update Attribute", e);
         }
@@ -335,14 +375,14 @@ public class CoralSchemaImpl
      * @param attribute the attribute to modify.
      * @param flags the new value of flags.
      */
-    public void setFlags(AttributeDefinition attribute, int flags)
+    public void setFlags(AttributeDefinition<?> attribute, int flags)
     {
-        ((AttributeDefinitionImpl)attribute).setFlags(flags);
+        ((AttributeDefinitionImpl<?>)attribute).setFlags(flags);
         try
         {
             persistence.save((Persistent)attribute);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update Attribute", e);
         }
@@ -369,7 +409,7 @@ public class CoralSchemaImpl
      * @throws EntityDoesNotExistException if the <code>ResourceClass</code>
      *         with the specified identifier does not exist.
      */
-    public ResourceClass getResourceClass(long id)
+    public ResourceClass<?> getResourceClass(long id)
         throws EntityDoesNotExistException
     {
         return coral.getRegistry().getResourceClass(id);
@@ -383,7 +423,7 @@ public class CoralSchemaImpl
      * @throws EntityDoesNotExistException if the <code>ResourceClass</code>
      *         with the specified name does not exist.
      */
-    public ResourceClass getResourceClass(String name)
+    public ResourceClass<?> getResourceClass(String name)
         throws EntityDoesNotExistException
     {
         return coral.getRegistry().getResourceClass(name);
@@ -397,6 +437,7 @@ public class CoralSchemaImpl
      * @throws EntityDoesNotExistException if the <code>ResourceClass</code>
      *         with the specified name does not exist.
      */
+    @SuppressWarnings("unchecked")
     public <T extends Resource> ResourceClass<T> getResourceClass(String name, Class<T> rClass)
         throws EntityDoesNotExistException
     {
@@ -429,14 +470,14 @@ public class CoralSchemaImpl
      *         <code>handlerClass</code> attributes don't specify valid Java
      *         classes.
      */
-    public ResourceClass createResourceClass(String name, String javaClass,
+    public ResourceClass<?> createResourceClass(String name, String javaClass,
                                              String handlerClass, String dbTable, 
                                              int flags)
         throws EntityExistsException, JavaClassException
     {
-        ResourceClass resourceClass = new ResourceClassImpl(persistence, instantiator, 
-            coralEventHub, coral, 
-            name, javaClass, handlerClass, dbTable, flags);
+        @SuppressWarnings("rawtypes")
+        ResourceClass<?> resourceClass = new ResourceClassImpl(persistence, instantiator,
+            coralEventHub, coral, name, javaClass, handlerClass, dbTable, flags);
         coral.getRegistry().addResourceClass(resourceClass);
         return resourceClass;
     }
@@ -448,7 +489,7 @@ public class CoralSchemaImpl
      * @throws EntityInUseException if there are any instances of this
      *         <code>ResourceClass</code> in the system.
      */
-    public void deleteResourceClass(ResourceClass resourceClass)
+    public void deleteResourceClass(ResourceClass<?> resourceClass)
         throws EntityInUseException
     {
         coral.getRegistry().deleteResourceClass(resourceClass);
@@ -461,7 +502,7 @@ public class CoralSchemaImpl
      * @param name the new name.
      * @throws EntityExistsException if another resource class with this name exists.
      */
-    public void setName(ResourceClass resourceClass, String name)
+    public void setName(ResourceClass<?> resourceClass, String name)
         throws EntityExistsException
     {
         coral.getRegistry().renameResourceClass(resourceClass, name);
@@ -477,15 +518,15 @@ public class CoralSchemaImpl
      * @throws JavaClassException if the <code>javaClass</code> does not specify
      *         a valid JavaClass.
      */
-    public void setJavaClass(ResourceClass resourceClass, String javaClass)
+    public void setJavaClass(ResourceClass<?> resourceClass, String javaClass)
         throws JavaClassException
     {
-        ((ResourceClassImpl)resourceClass).setJavaClass(javaClass, false);
+        ((ResourceClassImpl<?>)resourceClass).setJavaClass(javaClass, false);
         try
         {
             persistence.save((Persistent)resourceClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to save ResourceClass", e);
         }
@@ -502,16 +543,16 @@ public class CoralSchemaImpl
      * @throws JavaClassException if the <code>handlerClass</code> does not
      *         specify a valid JavaClass.
      */
-    public void setHandlerClass(ResourceClass resourceClass, 
+    public void setHandlerClass(ResourceClass<?> resourceClass,
                                 String handlerClass)
         throws JavaClassException
     {
-        ((ResourceClassImpl)resourceClass).setHandlerClass(handlerClass);
+        ((ResourceClassImpl<?>)resourceClass).setHandlerClass(handlerClass);
         try
         {
             persistence.save((Persistent)resourceClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to save ResourceClass", e);
         }
@@ -527,14 +568,14 @@ public class CoralSchemaImpl
      *        resoureces of that class (allows sharing handler classes betweeen
      *        resourece types).
      */
-    public void setDbTable(ResourceClass resoureceClass, String dbTable)
+    public void setDbTable(ResourceClass<?> resoureceClass, String dbTable)
     {
-        ((ResourceClassImpl)resoureceClass).setDbTable(dbTable);
+        ((ResourceClassImpl<?>)resoureceClass).setDbTable(dbTable);
         try
         {
             persistence.save((Persistent)resoureceClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update ResourceClass", e);
         }
@@ -547,14 +588,14 @@ public class CoralSchemaImpl
      * @param resourceClass the resource class to modify.
      * @param flags the new value of flags.
      */
-    public void setFlags(ResourceClass resourceClass, int flags)
+    public void setFlags(ResourceClass<?> resourceClass, int flags)
     {
-        ((ResourceClassImpl)resourceClass).setFlags(flags);
+        ((ResourceClassImpl<?>)resourceClass).setFlags(flags);
         try
         {
             persistence.save((Persistent)resourceClass);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to update resource class", e);
         }
@@ -572,8 +613,8 @@ public class CoralSchemaImpl
      * @throws ValueRequiredException if the attribute has REQUIRED flag set, but no initial value
      *         was given.
      */
-    public void addAttribute(ResourceClass resourceClass, 
-                             AttributeDefinition attribute, Object value)
+    public <A> void addAttribute(ResourceClass<?> resourceClass, AttributeDefinition<A> attribute,
+        A value)
         throws SchemaIntegrityException, ValueRequiredException
     {
         checkName(resourceClass, attribute.getName());
@@ -583,7 +624,7 @@ public class CoralSchemaImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             conn = persistence.getDatabase().getConnection();
-            ((AttributeDefinitionImpl)attribute).setDeclaringClass(resourceClass);
+            ((AttributeDefinitionImpl<A>)attribute).setDeclaringClass(resourceClass);
             coral.getRegistry().addAttributeDefinition(attribute);
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, true);
             resourceClass.getHandler().addAttribute(attribute, value, conn);
@@ -593,7 +634,7 @@ public class CoralSchemaImpl
         catch(SQLException e)
         {
             coralEventHub.getLocal().fireResourceClassAttributesChangeEvent(attribute, false);
-            ((AttributeDefinitionImpl)attribute).setDeclaringClass(null);
+            ((AttributeDefinitionImpl<A>)attribute).setDeclaringClass(null);
             try
             {
                 persistence.getDatabase().rollbackTransaction(shouldCommit);
@@ -621,7 +662,7 @@ public class CoralSchemaImpl
      * @throws IllegalArgumentException if the attribute is not declared
      *        by the resourceClass.
      */
-    public void deleteAttribute(ResourceClass resourceClass, AttributeDefinition attribute)
+    public void deleteAttribute(ResourceClass<?> resourceClass, AttributeDefinition<?> attribute)
         throws IllegalArgumentException
     {
         if(!resourceClass.equals(attribute.getDeclaringClass()))
@@ -691,7 +732,8 @@ public class CoralSchemaImpl
      * @throws ValueRequiredException if <code>null</code> value was provided
      *         for a REQUIRED attribute.
      */
-    public void addParentClass(ResourceClass child, ResourceClass parent, Map attributes)
+    public void addParentClass(ResourceClass<?> child, ResourceClass<?> parent,
+        Map<AttributeDefinition<?>, ?> attributes)
         throws CircularDependencyException, SchemaIntegrityException, ValueRequiredException
     {
         if(parent.isParent(child))
@@ -708,12 +750,12 @@ public class CoralSchemaImpl
         {
             throw new IllegalArgumentException("cannot extend FINAL class "+parent.getName());
         }
-        AttributeDefinition[] attrs = parent.getAllAttributes();
+        AttributeDefinition<?>[] attrs = parent.getAllAttributes();
         for(int i=0; i<attrs.length; i++)
         {
             String name = attrs[i].getName();
             checkName(child, name);
-            ResourceClass[] ra = child.getParentClasses();
+            ResourceClass<?>[] ra = child.getParentClasses();
             for(int j=0; j<ra.length; j++)
             {
                 checkName(ra[j], name);
@@ -781,7 +823,7 @@ public class CoralSchemaImpl
      * @throws IllegalArgumentException if <code>parent</code> is not really a
      *         parent of the <code>child</code>.
      */
-    public void deleteParentClass(ResourceClass child, ResourceClass parent)
+    public void deleteParentClass(ResourceClass<?> child, ResourceClass<?> parent)
         throws IllegalArgumentException
     {
         if(!parent.isParent(child))
@@ -841,10 +883,10 @@ public class CoralSchemaImpl
 
     // private ///////////////////////////////////////////////////////////////
 
-    private void checkName(ResourceClass rClass, String name)
+    private void checkName(ResourceClass<?> rClass, String name)
         throws SchemaIntegrityException
     {
-        AttributeDefinition attr;
+        AttributeDefinition<?> attr;
         if(rClass.hasAttribute(name))
         {
             attr = rClass.getAttribute(name);
@@ -862,10 +904,10 @@ public class CoralSchemaImpl
                                                 attr.getDeclaringClass().getName());
             }
         }
-        ResourceClass[] children = rClass.getChildClasses();
+        ResourceClass<?>[] children = rClass.getChildClasses();
         for(int i=0; i<children.length; i++)
         {
-            ResourceClass child = children[i];
+            ResourceClass<?> child = children[i];
             if(rClass.hasAttribute(name))
             {
                 attr = rClass.getAttribute(name);

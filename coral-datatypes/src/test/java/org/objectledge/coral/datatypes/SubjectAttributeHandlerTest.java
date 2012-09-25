@@ -57,7 +57,8 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<Subject> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -92,7 +93,7 @@ public class SubjectAttributeHandlerTest extends LedgeTestCase
         mockCoralSecurity.stubs().method("getSubject").with(not(or(eq(1L),eq("foo")))).will(throwException(new EntityDoesNotExistException("foo")));
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<Subject>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Subject.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("subject"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_subject"));

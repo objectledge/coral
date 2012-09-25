@@ -38,7 +38,7 @@ public class WeakResourceList<T extends Resource>
      * @param coralSessionFactory the Coral session factory. 
 	 * @param elements the collection of resources or identifiers.
 	 */
-	public WeakResourceList(CoralSessionFactory coralSessionFactory, Collection elements)
+    public WeakResourceList(CoralSessionFactory coralSessionFactory, Collection<?> elements)
 	{
 		super(coralSessionFactory, elements);
 	}

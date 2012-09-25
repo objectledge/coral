@@ -32,8 +32,7 @@ public class LongAttributeHandler
      * @param attributeClass the attribute class.
      */
     public LongAttributeHandler(Database database, CoralStore coralStore,
-                                   CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                   AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<Long> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

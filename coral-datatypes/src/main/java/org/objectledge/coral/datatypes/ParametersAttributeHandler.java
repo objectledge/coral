@@ -44,9 +44,8 @@ public class ParametersAttributeHandler
      * @param dbParametersManager the parameters manager.
      */
     public ParametersAttributeHandler(Database database, CoralStore coralStore,
-                                   CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                   AttributeClass attributeClass, 
-                                   DBParametersManager dbParametersManager)
+        CoralSecurity coralSecurity, CoralSchema coralSchema,
+        AttributeClass<Parameters> attributeClass, DBParametersManager dbParametersManager)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
         this.dbParametersManager = dbParametersManager;

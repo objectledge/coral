@@ -27,6 +27,7 @@
 // 
 package org.objectledge.coral.entity;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.objectledge.coral.CoralCore;
@@ -34,7 +35,6 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * 
@@ -121,7 +121,7 @@ public class RedBlueAssignment
     /** 
      * {@inheritDoc}
      */
-    public void getData(OutputRecord record) throws PersistenceException
+    public void getData(OutputRecord record) throws SQLException
     {
         super.getData(record);
         record.setLong("red_id", red.getId());
@@ -131,7 +131,7 @@ public class RedBlueAssignment
     /** 
      * {@inheritDoc}
      */
-    public void setData(InputRecord record) throws PersistenceException
+    public void setData(InputRecord record) throws SQLException
     {
         super.setData(record);
         setRed(redBlueEntityFactory.getRed(record.getLong("red_id")));

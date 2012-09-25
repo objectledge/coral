@@ -8,17 +8,17 @@ import org.objectledge.coral.store.Resource;
 
 /**
  * Represents the results of a query as tuples of Resources.
- *
- * <p>This interface allows you to view the results of the query as a
- * sequential list of tuples of Resources that match the query. It completly
- * ignores the SELECT clause of the query, and allows you to retrieve the
- * desired properties of the objects yourself.</p>
- *
- * <p>To view the results of the query as a list of tuples of Resource
- * properties extracted using the SELECT clause, call the {@link
- * #getFiltered()} method and use the returned {@link FilteredQueryResults}
- * object instead.</p>
- *
+ * <p>
+ * This interface allows you to view the results of the query as a sequential list of tuples of
+ * Resources that match the query. It completely ignores the SELECT clause of the query, and allows
+ * you to retrieve the desired properties of the objects yourself.
+ * </p>
+ * <p>
+ * To view the results of the query as a list of tuples of Resource properties extracted using the
+ * SELECT clause, call the {@link #getFiltered()} method and use the returned
+ * {@link FilteredQueryResults} object instead.
+ * </p>
+ * 
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  * @version $Id: QueryResults.java,v 1.4 2006-04-26 11:10:07 rafal Exp $
  */

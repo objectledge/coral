@@ -70,20 +70,33 @@ public class ResourceClassTest extends LedgeTestCase
         parentResourceClass = (ResourceClass)mockParentResourceClass.proxy();
         mockGrandParentResourceClass = mock(ResourceClass.class, "mockGrandParentResourceClass");
         mockGrandParentResourceClass.stubs().method("getName").will(returnValue("GrandParentRC"));
-        mockGrandParentResourceClass.stubs().method("compareTo").with(eq(parentResourceClass)).will(returnValue(-1));
         grandParentResourceClass = (ResourceClass)mockGrandParentResourceClass.proxy();
+
+        mockParentResourceClass.stubs().method("compareTo").with(eq(grandParentResourceClass)).will(returnValue(1));
+        mockParentResourceClass.stubs().method("compareTo").with(eq(parentResourceClass)).will(returnValue(0));
+
+        mockGrandParentResourceClass.stubs().method("compareTo").with(eq(grandParentResourceClass)).will(returnValue(0));
+        mockGrandParentResourceClass.stubs().method("compareTo").with(eq(parentResourceClass)).will(returnValue(-1));
+
         mockAttribute1 = mock(Attribute.class, "mockAttribute1");
         mockAttribute1.stubs().method("getName").will(returnValue("attribute1"));
         attribute1 = (Attribute)mockAttribute1.proxy();
         mockAttribute2 = mock(Attribute.class, "mockAttribute2");
         mockAttribute2.stubs().method("getName").will(returnValue("attribute2"));
-        mockAttribute2.stubs().method("compareTo").with(same(attribute1)).will(returnValue(1));
         attribute2 = (Attribute)mockAttribute2.proxy();
         mockAttribute3 = mock(Attribute.class, "mockAttribute3");
         mockAttribute3.stubs().method("getName").will(returnValue("attribute3"));
+        attribute3 = (Attribute)mockAttribute3.proxy();
+
+        mockAttribute1.stubs().method("compareTo").with(same(attribute1)).will(returnValue(0));
+        mockAttribute1.stubs().method("compareTo").with(same(attribute2)).will(returnValue(-1));
+        mockAttribute1.stubs().method("compareTo").with(same(attribute3)).will(returnValue(-1));
+        mockAttribute2.stubs().method("compareTo").with(same(attribute1)).will(returnValue(1));
+        mockAttribute2.stubs().method("compareTo").with(same(attribute2)).will(returnValue(0));
+        mockAttribute2.stubs().method("compareTo").with(same(attribute3)).will(returnValue(-1));
         mockAttribute3.stubs().method("compareTo").with(same(attribute1)).will(returnValue(1));
         mockAttribute3.stubs().method("compareTo").with(same(attribute2)).will(returnValue(1));
-        attribute3 = (Attribute)mockAttribute3.proxy();
+        mockAttribute3.stubs().method("compareTo").with(same(attribute3)).will(returnValue(0));
     }
     
     public void testGetPackageName()

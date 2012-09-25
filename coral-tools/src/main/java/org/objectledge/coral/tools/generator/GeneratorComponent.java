@@ -798,12 +798,10 @@ public class GeneratorComponent
         if(buildContext.isIncremental())
         {
             String savedStateId = BUILD_STATE_ID + sourceFiles;
-            @SuppressWarnings("unchecked")
             Set<String> referencedFiles = (Set<String>)buildContext.getValue(savedStateId);
             for(String referncedFile : referencedFiles)
             {
                 if(buildContext.hasDelta(new File(referncedFile)))
-                    ;
                 {
                     return true;
                 }

@@ -9,10 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
-import org.objectledge.coral.entity.Entity;
+import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.query.ResourceQueryHandler.ResultColumn;
+import org.objectledge.coral.query.ResourceQueryHandler.ResultColumnAttribute;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
@@ -35,7 +36,7 @@ import org.objectledge.database.DatabaseUtils;
 
 /**
  * A QueryService implementation that uses the underlying relational database.
- *
+ * 
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
  * @version $Id: SQLCoralQueryImpl.java,v 1.11 2008-06-05 17:17:03 rafal Exp $
  */
@@ -43,58 +44,69 @@ public class SQLCoralQueryImpl
     extends AbstractCoralQueryImpl
 {
     /** the parser syntax */
-    private static Map attributesMap = new HashMap();
+    private static Map<String, String> builtinAttrNames = new HashMap<String, String>();
 
     static
     {
-        attributesMap.put("id", "resource_id");
-        attributesMap.put("owner", "owned_by");
-        //TODO http://objectledge.org/jira/browse/CORAL-72 add other attribute name mapping
+        builtinAttrNames.put("id", "resource_id");
+        builtinAttrNames.put("name", "name");
+        builtinAttrNames.put("parent", "parent");
+        builtinAttrNames.put("resource_class", "resource_class_id");
+        builtinAttrNames.put("owner", "owned_by");
+        builtinAttrNames.put("created_by", "created_by");
+        builtinAttrNames.put("modified_by", "modified_by");
+        builtinAttrNames.put("creation_time", "creation_time");
+        builtinAttrNames.put("modification_time", "modification_time");
     }
-    
-    
+
     // instance variables ////////////////////////////////////////////////////
-    
+
     /** The database service */
     private Database database;
-    
-    private Logger logger;
 
-    // initailzation /////////////////////////////////////////////////////////
+    // initialization ////////////////////////////////////////////////////////
 
-    /** 
+    /**
      * Constructs an SQLQueryService implementation instance.
-     *
+     * 
      * @param database the database to use.
      * @param coral the coral core.
      * @param logger the logger.
      */
-    public SQLCoralQueryImpl(Database database, CoralCore coral, Logger logger)
+    public SQLCoralQueryImpl(Database database, CoralCore coral)
     {
         super(coral);
         this.database = database;
-        this.logger = logger;
     }
 
     // QueryService interface ////////////////////////////////////////////////
 
     /**
-     * Executes a preparsed query.
-     *
+     * Executes a pre-parsed query.
+     * 
      * @param statement the AST node representing a FIND RESOURCE statement.
-     * @return query resuls.
-     * @throws MalformedQueryException if the query has semantic errors and
-     * thus cannot be executed. 
+     * @return query results.
+     * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
     public QueryResults executeQuery(ASTfindResourceStatement statement)
         throws MalformedQueryException
     {
-        List columns = getColumns(statement);
-        Map columnMap = new HashMap();
-        Iterator it = columns.iterator();
+        ResourceClass<?> rootRClass;
+        try
+        {
+            rootRClass = coral.getSchema().getResourceClass(1);
+        }
+        catch(EntityDoesNotExistException e)
+        {
+            throw new BackendException("resource class #1 not available", e);
+        }
+
+        List<ResultColumn<?>> columns = getColumns(statement, rootRClass);
+        Map<String, ResultColumn<?>> columnMap = new HashMap<String, ResultColumn<?>>();
+        Iterator<ResultColumn<?>> it = columns.iterator();
         while(it.hasNext())
         {
-            ResultColumn rcm = (ResultColumn)it.next();
+            ResultColumn<?> rcm = it.next();
             columnMap.put(rcm.getAlias(), rcm);
         }
         if(columns.size() == 1)
@@ -104,128 +116,40 @@ public class SQLCoralQueryImpl
 
         StringBuilder query = new StringBuilder();
         // SELECT
-        query.append("SELECT ");
-        for(int i=0; i<columns.size(); i++)
+        for(int i = 0; i < columns.size(); i++)
         {
-            query.append("r").append(i+1).append(".resource_id");
-            if(i<columns.size()-1)
-            {
-                query.append(", ");
-            }
+            query.append(i == 0 ? "SELECT " : ", ");
+            query.append("r").append(columns.get(i).getIndex()).append(".resource_id");
         }
         // FROM
-        for(int i=0; i<columns.size(); i++)
+        for(int i = 0; i < columns.size(); i++)
         {
-            query.append(i==0 ? "\nFROM " : "\n  , ");
-            query.append("coral_resource r").append(i+1);
-            ResultColumn rcm = (ResultColumn)columns.get(i);
-            for(int j=0; j<rcm.getAttributes().size(); j++)
-            {
-                AttributeDefinition ad = (AttributeDefinition)rcm.getAttributes().get(j);
-                if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
-                {
-                    query.append(", coral_generic_resource ");
-                    query.append("r").append(i+1).append("g").append(j+1);
-                    query.append(", ");
-                    query.append(ad.getAttributeClass().getDbTable());
-                    query.append(" ");
-                    query.append("r").append(i+1).append("a").append(j+1);
-                } 
-            }
+            query.append(i == 0 ? " FROM\n" : ",\n");
+            columns
+                .get(i)
+                .getQHandler()
+                .appendFromClause(query, columns.get(i), builtinAttrNames,
+                    statement.getFrom() != null);
         }
-        boolean whereStarted = false;
-        // WHERE - resource classes
-        for(int i=0; i<columns.size(); i++)
-        {
-            ResultColumn rcm = (ResultColumn)columns.get(i);
-            if(rcm.getRClass() != null)
-            {
-                if(whereStarted)
-                {
-                    query.append("\n  AND ");
-                }
-                else
-                {
-                    query.append("\nWHERE ");
-                    whereStarted = true;
-                }
-                ResourceClass[] children = rcm.getRClass().getChildClasses();
-                query.append("r").append(i+1).append(".resource_class_id");
-                if(children.length > 0)
-                {
-                    query.append(" IN (");
-                    for(int j=0; j<children.length; j++)
-                    {
-                        query.append(children[j].getIdString());
-                        query.append(", ");
-                    }
-                    query.append(rcm.getRClass().getIdString()).append(")");
-                }
-                else
-                {
-                    query.append(" = ");
-                    query.append(rcm.getRClass().getIdString());
-                }
-            }
-        }
-        // WHERE - attribute glue
-        for(int i=0; i<columns.size(); i++)
-        {
-            ResultColumn rcm = (ResultColumn)columns.get(i);
-            for(int j=0; j<rcm.getAttributes().size(); j++)
-            {
-                AttributeDefinition ad = (AttributeDefinition)rcm.getAttributes().get(j);
-                if((ad.getFlags() & AttributeFlags.BUILTIN) == 0)
-                {
-                    if(whereStarted)
-                    {
-                        query.append("\n  AND ");
-                    }
-                    else
-                    {
-                        query.append("\nWHERE ");
-                        whereStarted = true;
-                    }
-                    query.append("r").append(i+1).append("g").append(j+1);
-                    query.append(".resource_id = r").append(i+1).append(".resource_id");
-                    query.append(" AND ");
-                    query.append("r").append(i+1).append("g").append(j+1);
-                    query.append(".attribute_definition_id = ");
-                    query.append(ad.getIdString());
-                    query.append(" AND ");
-                    query.append("r").append(i+1).append("a").append(j+1).append(".data_key = ");
-                    query.append("r").append(i+1).append("g").append(j+1).append(".data_key");
-                }
-            }
-        }
-        // WHERE - condition
+        // WHERE
         if(statement.getWhere() != null)
         {
-            if(whereStarted)
-            {
-                query.append("\n  AND ");
-            }
-            else
-            {
-                query.append("\nWHERE ");
-            }
-            query.append("(");
+            query.append("\nWHERE ");
             appendCondition(statement.getWhere(), columnMap, query);
-            query.append(")");
         }
         // ORDER BY
         if(statement.getOrderBy() != null)
         {
             ASTorderBySpecifier[] items = getItems(statement.getOrderBy());
             query.append("\nORDER BY ");
-            for(int i=0; i<items.length; i++)
+            for(int i = 0; i < items.length; i++)
             {
                 appendAttribute(items[i].getAttribute(), columnMap, query);
                 if(!items[i].getDirection())
                 {
                     query.append(" DESC");
                 }
-                if(i<items.length-1)
+                if(i < items.length - 1)
                 {
                     query.append(", ");
                 }
@@ -241,17 +165,17 @@ public class SQLCoralQueryImpl
             stmt = conn.createStatement();
             results = stmt.executeQuery(query.toString());
             String[][] from = new String[columns.size()][];
-            for(int i=0; i<columns.size(); i++)
+            for(int i = 0; i < columns.size(); i++)
             {
-                ResultColumn rcm = (ResultColumn)columns.get(i);
+                ResultColumn<?> rcm = columns.get(i);
                 from[i] = new String[2];
                 from[i][0] = rcm.getRClass() != null ? rcm.getRClass().getName() : null;
                 from[i][1] = rcm.getAlias();
             }
-            String[] select = statement.getSelect() != null ? 
-            		getItems(statement.getSelect()) : null;
-            QueryResults queryResults = new SQLQueryResultsImpl(coral.getSchema(), 
-                coral.getStore(), results, from, select );
+            String[] select = statement.getSelect() != null ? getItems(statement.getSelect())
+                : null;
+            QueryResults queryResults = new SQLQueryResultsImpl(coral.getSchema(),
+                coral.getStore(), results, from, select);
             return queryResults;
         }
         catch(SQLException e)
@@ -267,12 +191,11 @@ public class SQLCoralQueryImpl
     }
 
     /**
-     * Prepares a preparsed query.
-     *
+     * Prepares a pre-parsed query.
+     * 
      * @param statement the AST node representing a FIND RESOURCE statement.
-     * @return query resuls.
-     * @throws MalformedQueryException if the query has semantic errors and
-     * thus cannot be executed. 
+     * @return query results.
+     * @throws MalformedQueryException if the query has semantic errors and thus cannot be executed.
      */
     protected PreparedQuery prepareQuery(ASTfindResourceStatement statement)
         throws MalformedQueryException
@@ -284,39 +207,26 @@ public class SQLCoralQueryImpl
 
     /**
      * Appends an attribute reference to the query.
-     *
+     * 
      * @param attribute the attribute to append
-     * @param columnMap the map containting ResultColum objectcs keyed by 
-     *        alias.
-     * @param out the buffer to write expresion to.
+     * @param columnMap the map containing ResultColum objects keyed by alias.
+     * @param out the buffer to write expression to.
      */
-    void appendAttribute(String attribute, 
-                                 final Map columnMap,
-                                 final StringBuilder out)
+    void appendAttribute(String attribute, final Map<String, ResultColumn<?>> columnMap,
+        final StringBuilder out)
         throws MalformedQueryException
     {
-        ResultColumnAttribute rca = (ResultColumnAttribute)
-            parseOperand(attribute, true, columnMap);
+        ResultColumnAttribute<?, ?> rca = (ResultColumnAttribute<?, ?>)parseOperand(attribute,
+            true, false, columnMap);
         if((rca.getAttribute().getFlags() & AttributeFlags.BUILTIN) == 0)
         {
-            out.append("r").append(rca.getColumn().getIndex()).
-                append("a").append(((Integer)rca.getColumn().getNameIndex().
-                                    get(rca.getAttribute().getName())).intValue()+1);
-            if(Entity.class.isAssignableFrom(rca.getAttribute().
-                                             getAttributeClass().getJavaClass()))
-            {
-                out.append(".ref");
-            }
-            else
-            {
-                out.append(".data");
-            }
+            out.append("r").append(rca.getColumn().getIndex()).append(".a")
+                .append(rca.getColumn().getNameIndex(rca.getAttribute()));
         }
         else
         {
-            out.append("r").append(rca.getColumn().getIndex()).
-                append(".");
-            String columnName = (String)attributesMap.get(rca.getAttribute().getName());
+            out.append("r").append(rca.getColumn().getIndex()).append(".");
+            String columnName = (String)builtinAttrNames.get(rca.getAttribute().getName());
             if(columnName == null)
             {
                 columnName = rca.getAttribute().getName();
@@ -325,39 +235,47 @@ public class SQLCoralQueryImpl
         }
     }
 
+    <A> void appendLiteral(AttributeDefinition<A> lhs, String rhs, final StringBuilder out)
+    {
+        AttributeHandler<A> h = lhs.getAttributeClass().getHandler();
+        A value = h.toAttributeValue(rhs);
+        out.append(h.toExternalString(value));
+    }
+
     /**
      * Generates a conditional expression based on the query WHERE clause.
-     *
+     * 
      * @param expr the WHERE clause.
-     * @param columnMap the map containting ResultColum objectcs keyed by 
-     *        alias.
-     * @param out the buffer to write expresion to.
+     * @param columnMap the map containing ResultColum objects keyed by alias.
+     * @param out the buffer to write expression to.
      */
-    private void appendCondition(ASTconditionalExpression expr, 
-                                 final Map columnMap,
-                                 final StringBuilder out)
+    private void appendCondition(ASTconditionalExpression expr,
+        final Map<String, ResultColumn<?>> columnMap, final StringBuilder out)
         throws MalformedQueryException
     {
         RMLVisitor visitor = new DefaultRMLVisitor()
             {
                 public Object visit(ASTnotExpression node, Object data)
                 {
-                    out.append("NOT ");
+                    if(!(node.jjtGetChild(0) instanceof ASTdefinedCondition))
+                    {
+                        out.append("NOT ");
+                    }
                     return visit((SimpleNode)node, data);
                 }
 
                 public Object visit(ASTandExpression node, Object data)
                 {
                     boolean parens = node.jjtGetParent() instanceof ASTnotExpression;
-                    
+
                     if(parens)
                     {
                         out.append("(");
                     }
-                    for(int i=0; i<node.jjtGetNumChildren(); i++)
+                    for(int i = 0; i < node.jjtGetNumChildren(); i++)
                     {
                         node.jjtGetChild(i).jjtAccept(this, data);
-                        if(i < node.jjtGetNumChildren()-1)
+                        if(i < node.jjtGetNumChildren() - 1)
                         {
                             out.append(" AND ");
                         }
@@ -367,20 +285,20 @@ public class SQLCoralQueryImpl
                         out.append(")");
                     }
                     return data;
-                }                
-                
+                }
+
                 public Object visit(ASTorExpression node, Object data)
                 {
-                    boolean parens = (node.jjtGetParent() instanceof ASTnotExpression) ||
-                        (node.jjtGetParent() instanceof ASTandExpression) ;
+                    boolean parens = (node.jjtGetParent() instanceof ASTnotExpression)
+                        || (node.jjtGetParent() instanceof ASTandExpression);
                     if(parens)
                     {
                         out.append("(");
                     }
-                    for(int i=0; i<node.jjtGetNumChildren(); i++)
+                    for(int i = 0; i < node.jjtGetNumChildren(); i++)
                     {
                         node.jjtGetChild(i).jjtAccept(this, data);
-                        if(i < node.jjtGetNumChildren()-1)
+                        if(i < node.jjtGetNumChildren() - 1)
                         {
                             out.append(" OR ");
                         }
@@ -397,7 +315,14 @@ public class SQLCoralQueryImpl
                     try
                     {
                         appendAttribute(node.getRHS(), columnMap, out);
-                        out.append(" NOTNULL");
+                        if(node.jjtGetParent() instanceof ASTnotExpression)
+                        {
+                            out.append(" IS NULL");
+                        }
+                        else
+                        {
+                            out.append(" IS NOT NULL");
+                        }
                         return data;
                     }
                     catch(MalformedQueryException e)
@@ -410,28 +335,25 @@ public class SQLCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition lhs = 
-                            ((ResultColumnAttribute)parseOperand(node.getLHS(), true, columnMap)).
-                             getAttribute();
+                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
+                            node.getLHS(), true, false, columnMap)).getAttribute();
                         appendAttribute(node.getLHS(), columnMap, out);
                         String[] ops = { " <> ", " = " };
                         out.append(ops[node.getOperator()]);
-                        Object rhs = parseOperand(node.getRHS(), false, columnMap);
+                        Object rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         if(rhs instanceof ResultColumnAttribute)
                         {
                             appendAttribute(node.getRHS(), columnMap, out);
                         }
                         if(rhs instanceof ResultColumn)
                         {
-                            out.append("r").append(((ResultColumn)rhs).getIndex()).
-                                append(".resource_id");
+                            out.append("r").append(((ResultColumn<?>)rhs).getIndex())
+                                .append(".resource_id");
                         }
                         if(rhs instanceof String)
                         {
-                            AttributeHandler h = lhs.getAttributeClass().getHandler();
-                            Object value = h.toAttributeValue(rhs);
-                            out.append(h.toExternalString(value));
-                        }                        
+                            appendLiteral(lhs, (String)rhs, out);
+                        }
                         return data;
                     }
                     catch(MalformedQueryException e)
@@ -444,23 +366,20 @@ public class SQLCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition lhs = 
-                            ((ResultColumnAttribute)parseOperand(node.getLHS(), true, columnMap)).
-                             getAttribute();
+                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
+                            node.getLHS(), true, false, columnMap)).getAttribute();
                         appendAttribute(node.getLHS(), columnMap, out);
                         String[] ops = { " < ", " <= ", " >= ", " > " };
                         out.append(ops[node.getOperator()]);
-                        Object rhs = parseOperand(node.getRHS(), false, columnMap);
+                        Object rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         if(rhs instanceof ResultColumnAttribute)
                         {
                             appendAttribute(node.getRHS(), columnMap, out);
                         }
                         if(rhs instanceof String)
                         {
-                            AttributeHandler h = lhs.getAttributeClass().getHandler();
-                            Object value = h.toAttributeValue(rhs);
-                            out.append(h.toExternalString(value));
-                        }                        
+                            appendLiteral(lhs, (String)rhs, out);
+                        }
                         return data;
                     }
                     catch(MalformedQueryException e)
@@ -473,23 +392,28 @@ public class SQLCoralQueryImpl
                 {
                     try
                     {
-                        AttributeDefinition lhs = 
-                        	((ResultColumnAttribute)parseOperand(node.getLHS(), true, columnMap)).
-                        	 getAttribute();
-                        if(node.isCaseSensitive()){
+                        AttributeDefinition<?> lhs = ((ResultColumnAttribute<?, ?>)parseOperand(
+                            node.getLHS(), true, false, columnMap)).getAttribute();
+                        if(node.isCaseSensitive())
+                        {
                             appendAttribute(node.getLHS(), columnMap, out);
-                        }else{
+                        }
+                        else
+                        {
                             out.append(" LOWER(");
                             appendAttribute(node.getLHS(), columnMap, out);
                             out.append(")");
                         }
                         out.append(" LIKE ");
-                        Object rhs = parseOperand(node.getRHS(), false, columnMap);
+                        Object rhs = parseOperand(node.getRHS(), false, false, columnMap);
                         if(rhs instanceof ResultColumnAttribute)
                         {
-                            if(node.isCaseSensitive()){
+                            if(node.isCaseSensitive())
+                            {
                                 appendAttribute(node.getRHS(), columnMap, out);
-                            }else{
+                            }
+                            else
+                            {
                                 out.append(" LOWER(");
                                 appendAttribute(node.getRHS(), columnMap, out);
                                 out.append(")");
@@ -497,14 +421,10 @@ public class SQLCoralQueryImpl
                         }
                         if(rhs instanceof String)
                         {
-                            AttributeHandler h = lhs.getAttributeClass().getHandler();
-                            Object value = h.toAttributeValue(rhs);
-                            if(node.isCaseSensitive()){
-                                out.append(h.toExternalString(value));
-                            }else{
-                                out.append(h.toExternalString(value).toLowerCase());
-                            }
-                        }						 
+                            String literal = node.isCaseSensitive() ? (String)rhs : ((String)rhs)
+                                .toLowerCase();
+                            appendLiteral(lhs, literal, out);
+                        }
                         return data;
                     }
                     catch(MalformedQueryException e)

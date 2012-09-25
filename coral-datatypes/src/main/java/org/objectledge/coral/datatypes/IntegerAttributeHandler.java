@@ -39,8 +39,7 @@ public class IntegerAttributeHandler
      * @param attributeClass the attribute class.
      */
     public IntegerAttributeHandler(Database database, CoralStore coralStore,
-                                   CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                   AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<Integer> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

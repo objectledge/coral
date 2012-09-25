@@ -39,8 +39,7 @@ public class BooleanAttributeHandler
      * @param attributeClass the attribute class.
      */
     public BooleanAttributeHandler(Database database, CoralStore coralStore,
-                                   CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                   AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<Boolean> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }
@@ -202,11 +201,13 @@ public class BooleanAttributeHandler
      */
     protected Boolean fromString(String string)
     {
-        if(string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true") || string.equals("1"))
+        if(string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true") || string.equals("1")
+            || string.equalsIgnoreCase("t"))
         {
             return Boolean.TRUE;
         }
-        if(string.equalsIgnoreCase("false") || string.equalsIgnoreCase("no") || string.equals("0"))
+        if(string.equalsIgnoreCase("false") || string.equalsIgnoreCase("no") || string.equals("0")
+            || string.equalsIgnoreCase("f"))
         {
             return Boolean.FALSE;
         }

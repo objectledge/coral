@@ -45,7 +45,7 @@ import org.objectledge.coral.store.ValueRequiredException;
  * @author Coral Maven plugin
  */
 public class NodeImpl
-    extends GenericResource
+    extends StandardResource
     implements Node
 {
     // class variables /////////////////////////////////////////////////////////

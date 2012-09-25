@@ -91,6 +91,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <versions.ledge>1.0.14-SNAPSHOT</versions.ledge>
+    <versions.hsqldb>2.2.8</versions.hsqldb>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -176,9 +177,9 @@
         <version>3.8.1</version>
       </dependency>
       <dependency>
-        <groupId>hsqldb</groupId>
+        <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
-        <version>1.7.2.2</version>
+        <version>${versions.hsqldb}</version>
       </dependency>
       <dependency>
         <groupId>dbunit</groupId>
@@ -199,6 +200,11 @@
       	<groupId>com.google.guava</groupId>
       	<artifactId>guava</artifactId>
       	<version>12.0</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.4</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

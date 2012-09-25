@@ -50,6 +50,17 @@ public interface CoralSchema
         throws EntityDoesNotExistException;
 
     /**
+     * Returns the attribute class with the specified name.
+     * 
+     * @param name the name.
+     * @return the <code>AttributeClass</code>s with the given name.
+     * @throws EntityDoesNotExistException if the <code>AttributeClass</code> with the specified
+     *         name does not exist.
+     */
+    public <A> AttributeClass<A> getAttributeClass(String name, Class<A> javaClass)
+        throws EntityDoesNotExistException;
+
+    /**
      * Creates an {@link AttributeClass}.
      *
      * @param name the name of the class
@@ -132,15 +143,17 @@ public interface CoralSchema
 
     /**
      * Creates an attribute instance.
-     *
+     * 
      * @param name the name of the new Attribute.
      * @param attributeClass the class of the new attribute.
+     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     *        {@code name} is used as column name.
      * @param domain the value domain constraint.
      * @param flags the flags of the new Attribute.
      * @return a newly created attribute instance.
      */
-    public <T> AttributeDefinition<T> createAttribute(String name, AttributeClass<T> attributeClass,
-                                               String domain, int flags);
+    public <T> AttributeDefinition<T> createAttribute(String name,
+        AttributeClass<T> attributeClass, String dbColumn, String domain, int flags);
 
     /**
      * Returns all attributes defined by classes in the system.
@@ -185,10 +198,19 @@ public interface CoralSchema
         throws SchemaIntegrityException;
 
     /**
-     * Changes the domain of the attribute.
-     *
+     * Changes the database column name of the attribute.
+     * 
      * @param attribute the attribute to modify.
-     * @param domain the new domain of the attirbute.
+     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     *        {@code name} is used as column name.
+     */
+    public void setDbColumn(AttributeDefinition<?> attribute, String dbColumn);
+
+    /**
+     * Changes the domain of the attribute.
+     * 
+     * @param attribute the attribute to modify.
+     * @param domain the new domain of the attribute.
      */
     public void setDomain(AttributeDefinition<?> attribute, String domain);
 
@@ -368,7 +390,7 @@ public interface CoralSchema
      *         map. 
      */
     public void addParentClass(ResourceClass<?> child, ResourceClass<?> parent, 
-                               Map<AttributeDefinition<?>, Object> attributes)
+        Map<AttributeDefinition<?>, ?> attributes)
         throws CircularDependencyException, SchemaIntegrityException, 
                ValueRequiredException;
 

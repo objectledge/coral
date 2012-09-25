@@ -80,10 +80,10 @@ public interface FilteredQueryResults
     public AttributeClass<?> getColumnType(int index)
         throws IndexOutOfBoundsException;    
 
-    // nested inteface ///////////////////////////////////////////////////////
+    // nested interface //////////////////////////////////////////////////////
     
     /**
-     * Represens a single query result.
+     * Represents a single query result.
      */
     public interface Row
     {

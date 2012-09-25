@@ -256,14 +256,14 @@ public class RMLEntityResolver
      * @throws AmbigousEntityNameException if multiple ResourceClasss match a child node's 
      * description.
      */
-    public ResourceClass[] resolve(ASTresourceClassList node)
+    public ResourceClass<?>[] resolve(ASTresourceClassList node)
         throws EntityDoesNotExistException, AmbigousEntityNameException
     {
         if(node == null)
         {
-            return new ResourceClass[0];
+            return new ResourceClass<?>[0];
         }
-        ResourceClass[] result = new ResourceClass[node.jjtGetNumChildren()];
+        ResourceClass<?>[] result = new ResourceClass[node.jjtGetNumChildren()];
         for(int i=0; i<result.length; i++)
         {
             result[i] = resolve((ASTresourceClass)node.jjtGetChild(i));

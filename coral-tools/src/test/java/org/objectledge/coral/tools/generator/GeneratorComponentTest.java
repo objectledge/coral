@@ -86,7 +86,6 @@ public class GeneratorComponentTest
     private Mock mockReferencedFiles;
     private Set<String> referencedFiles;
 
-    @SuppressWarnings("unchecked")
     @Override
     public void setUp()
         throws Exception

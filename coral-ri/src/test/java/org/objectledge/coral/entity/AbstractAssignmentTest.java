@@ -27,6 +27,7 @@
 // 
 package org.objectledge.coral.entity;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.jmock.Mock;
@@ -36,7 +37,6 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.test.LedgeTestCase;
 
 /**
@@ -192,7 +192,7 @@ public class AbstractAssignmentTest extends LedgeTestCase
         }
         catch(Exception e)
         {
-            assertEquals(PersistenceException.class, e.getClass());
+            assertEquals(SQLException.class, e.getClass());
             assertEquals("Failed to load RedBlueAssignment", e.getMessage());
             assertEquals(EntityDoesNotExistException.class, e.getCause().getClass());
             assertEquals("subject not found", e.getCause().getMessage());

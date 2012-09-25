@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -27,8 +28,8 @@ import org.objectledge.database.DatabaseUtils;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: ResourceListAttributeHandler.java,v 1.10 2005-02-21 11:52:20 rafal Exp $
  */
-public class ResourceListAttributeHandler<T extends Resource>
-    extends AttributeHandlerBase<ResourceList<T>>
+public class ResourceListAttributeHandler<T extends Resource, L extends ResourceList<T>>
+    extends AttributeHandlerBase<L>
 {
     /** preloading cache. */
     protected ResourceList<T>[] cache; 
@@ -47,9 +48,8 @@ public class ResourceListAttributeHandler<T extends Resource>
      * @param attributeClass the attribute class.
      */
     public ResourceListAttributeHandler(Database database, CoralStore coralStore,
-                                         CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                         CoralSessionFactory coralSessionFactory,
-                                         AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema,
+        CoralSessionFactory coralSessionFactory, AttributeClass<L> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
         this.coralSessionFactory = coralSessionFactory;
@@ -104,7 +104,7 @@ public class ResourceListAttributeHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public long create(ResourceList<T> value, Connection conn)
+    public long create(L value, Connection conn)
         throws SQLException
     {
         long id = getNextId();
@@ -113,22 +113,24 @@ public class ResourceListAttributeHandler<T extends Resource>
         );
         try
         {
+            boolean batchReady = false;
             if(value instanceof ResourceList)
             {
-                long[] ids = ((ResourceList)value).getIds();
-                int size = ((ResourceList)value).size();
+                long[] ids = value.getIds();
+                int size = value.size();
                 for(int i=0; i<size; i++)
                 {
                     pstmt.setLong(1, id);
                     pstmt.setInt(2, i);
                     pstmt.setLong(3, ids[i]);
                     pstmt.addBatch();
+                    batchReady = true;
                 }
-                ((ResourceList)value).clearModified();
+                value.clearModified();
             }
             else
             {
-                Iterator i = ((List)value).iterator();
+                Iterator<T> i = ((List<T>)value).iterator();
                 int position = 0;
                 while(i.hasNext())
                 {
@@ -138,12 +140,14 @@ public class ResourceListAttributeHandler<T extends Resource>
                         pstmt.setInt(1, position++);
                         pstmt.setLong(2, ((Resource)v).getId());
                         pstmt.addBatch();
+                        batchReady = true;
                     } 
                     else if(v instanceof Long)
                     {
                         pstmt.setInt(1, position++);
                         pstmt.setLong(2, ((Long)v).longValue());
                         pstmt.addBatch();
+                        batchReady = true;
                     }
                     else
                     {
@@ -151,7 +155,10 @@ public class ResourceListAttributeHandler<T extends Resource>
                     }
                 }
             }
-            pstmt.executeBatch();
+            if(batchReady)
+            {
+                pstmt.executeBatch();
+            }
             return id;
         }
         finally
@@ -163,12 +170,12 @@ public class ResourceListAttributeHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public ResourceList<T> retrieve(long id, Connection conn)
+    public L retrieve(long id, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length)
         {
-            ResourceList<T> value = cache[(int)id];
+            L value = (L)cache[(int)id];
             if(value != null)
             {
                 return value;
@@ -187,7 +194,7 @@ public class ResourceListAttributeHandler<T extends Resource>
             {
                 temp.add(new Long(rs.getLong(1)));
             }
-            ResourceList<T> value =  instantiate(temp);
+            L value = instantiate(temp);
             if(cache != null && id < cache.length)
             {
                 cache[(int)id] = value;
@@ -205,7 +212,7 @@ public class ResourceListAttributeHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public void update(long id, ResourceList<T> value, Connection conn)
+    public void update(long id, L value, Connection conn)
         throws EntityDoesNotExistException, SQLException
     {
         if(cache != null && id < cache.length)
@@ -223,12 +230,14 @@ public class ResourceListAttributeHandler<T extends Resource>
         PreparedStatement pstmt = conn.prepareStatement(
             "INSERT INTO "+getTable()+"(data_key, pos, ref) VALUES (?, ?, ?)"
         );
+        boolean doInsert = false;
         try
         {
             if(value instanceof ResourceList)
             {
-                long[] ids = ((ResourceList)value).getIds();
-                int size = ((ResourceList)value).size();
+                long[] ids = value.getIds();
+                int size = value.size();
+                doInsert = size > 0;
                 for(int i=0; i<size; i++)
                 {
                     pstmt.setLong(1, id);
@@ -236,11 +245,12 @@ public class ResourceListAttributeHandler<T extends Resource>
                     pstmt.setLong(3, ids[i]);
                     pstmt.addBatch();
                 }
-                ((ResourceList)value).clearModified();
+                value.clearModified();
             }
             else
             {
-                Iterator i = ((List)value).iterator();
+                Iterator<T> i = ((List<T>)value).iterator();
+                doInsert = i.hasNext();
                 int position = 0;
                 while(i.hasNext())
                 {
@@ -267,7 +277,10 @@ public class ResourceListAttributeHandler<T extends Resource>
                 "DELETE FROM "+getTable()+
                 " WHERE data_key = "+id
             );
-            pstmt.executeBatch();
+            if(doInsert)
+            {
+                pstmt.executeBatch();
+            }
         }
         finally
         {
@@ -303,9 +316,11 @@ public class ResourceListAttributeHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */    
-    public boolean isModified(ResourceList<T> value)
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean isModified(Object value)
     {
-        return value.isModified();
+        return ((L)value).isModified();
     }
 
     // integrity constraints ////////////////////////////////////////////////    
@@ -329,7 +344,7 @@ public class ResourceListAttributeHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public Resource[] getResourceReferences(ResourceList<T> value)
+    public Resource[] getResourceReferences(L value)
     {
         List<T> list = value;
         Resource[] result = new Resource[list.size()];
@@ -343,7 +358,7 @@ public class ResourceListAttributeHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public boolean clearResourceReferences(ResourceList<T> value)
+    public boolean clearResourceReferences(L value)
     {
         value.removeRange(0, value.size());
         return false;
@@ -354,7 +369,7 @@ public class ResourceListAttributeHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    protected ResourceList<T> fromString(String string)
+    protected L fromString(String string)
     {
         if(string == null || string.length() == 0)
         {
@@ -364,7 +379,7 @@ public class ResourceListAttributeHandler<T extends Resource>
         {
             return instantiate(Collections.EMPTY_LIST);
         }
-        List<Resource> list = new ArrayList<Resource>();
+        List<T> list = new ArrayList<T>();
         StringTokenizer st = new StringTokenizer(string);
         while(st.hasMoreTokens())
         {
@@ -374,7 +389,7 @@ public class ResourceListAttributeHandler<T extends Resource>
                 long id = Long.parseLong(token);
                 try
                 {
-                    list.add(coralStore.getResource(id));
+                    list.add((T)coralStore.getResource(id));
                     continue;
                 }
                 catch(EntityDoesNotExistException e)
@@ -393,11 +408,26 @@ public class ResourceListAttributeHandler<T extends Resource>
                 {
                     throw new IllegalArgumentException("resource name '"+token+"' is ambigous");
                 }
-                list.add(res[0]);
+                list.add((T)res[0]);
                 continue;
             }        
         }
         return instantiate(list);
+    }
+
+    @Override
+    protected L fromObject(Object object)
+    {
+        if(object instanceof List)
+        {
+            return instantiate((List<?>)object);
+        }
+        if(object.getClass().isArray()
+            && Resource.class.isAssignableFrom(object.getClass().getComponentType()))
+        {
+            return instantiate(Arrays.asList(object));
+        }
+        return null;
     }
 
     /**
@@ -406,8 +436,8 @@ public class ResourceListAttributeHandler<T extends Resource>
      * @param list list items.
      * @return a ResourceList instance.
      */
-    protected ResourceList<T> instantiate(List list)
+    protected L instantiate(List<?> list)
     {
-        return new ResourceList(coralSessionFactory, list);
+        return (L)new ResourceList<T>(coralSessionFactory, list);
     }
 }

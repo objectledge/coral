@@ -14,8 +14,8 @@ import org.objectledge.database.Database;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: ResourceClassAttributeHandler.java,v 1.6 2005-02-08 20:33:42 rafal Exp $
  */
-public class ResourceClassAttributeHandler
-    extends EntityAttributeHandler<ResourceClass>
+public class ResourceClassAttributeHandler<T extends ResourceClass<?>>
+    extends EntityAttributeHandler<T>
 {
     /**
      * The constructor.
@@ -27,8 +27,7 @@ public class ResourceClassAttributeHandler
      * @param attributeClass the attribute class.
      */
     public ResourceClassAttributeHandler(Database database, CoralStore coralStore,
-                                          CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                          AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<T> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }
@@ -36,24 +35,25 @@ public class ResourceClassAttributeHandler
     /**
      * {@inheritDoc} 
      */
-    protected ResourceClass instantiate(long id)
+    protected T instantiate(long id)
         throws EntityDoesNotExistException
     {
-        return coralSchema.getResourceClass(id);
+        return (T)coralSchema.getResourceClass(id);
     }
     
     /**
      * {@inheritDoc} 
      */
-    protected ResourceClass[] instantiate(String name)
+    @SuppressWarnings("unchecked")
+    protected T[] instantiate(String name)
     {
         try
         {
-            return new ResourceClass[] { coralSchema.getResourceClass(name) };
+            return (T[])new ResourceClass[] { coralSchema.getResourceClass(name) };
         }
         catch(EntityDoesNotExistException e)
         {
-            return new ResourceClass[0];
+            return (T[])new ResourceClass[0];
         }
     }
 }

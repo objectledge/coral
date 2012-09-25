@@ -8,13 +8,12 @@ import javax.sql.DataSource;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.jcontainer.dna.Logger;
-import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.authentication.DefaultPrincipal;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.tools.BatchLoader;
 import org.objectledge.coral.tools.LedgeContainerFactory;
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.utils.StackTrace;
 import org.picocontainer.MutablePicoContainer;
@@ -95,10 +94,8 @@ public class RmlRunnerMojo
             throw new MojoExecutionException("failed to intitialize Coral session", e);
         }
 
-        final Logger logger = new Log4JLogger(
-            org.apache.log4j.Logger.getLogger(RmlRunnerMojo.class));
         final CoralSession session = coralSession;
-        BatchLoader loader = new BatchLoader(fileSystem, logger, fileEncoding)
+        BatchLoader loader = new BatchLoader(fileSystem, new MavenDNALogger(getLog()), fileEncoding)
             {
                 public void load(Reader in)
                     throws Exception
@@ -106,13 +103,16 @@ public class RmlRunnerMojo
                     String result = session.getScript().runScript(in);
                     if(result != null && result.length() > 0)
                     {
-                        logger.info(result);
+                        getLog().info(result);
                     }
                 }
             };
         try
         {
             loader.loadBatch(sourcesList);
+
+            getLog().info("disconnecting from the db");
+            DatabaseUtils.shutdown(dataSource);
         }
         catch(Exception e)
         {
