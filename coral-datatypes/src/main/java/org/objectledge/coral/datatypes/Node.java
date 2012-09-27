@@ -76,7 +76,7 @@ public interface Node
      *
      * @return the class this resource belongs to.
      */
-    public ResourceClass getResourceClass();
+    public ResourceClass<?> getResourceClass();
 
     /**
      * Returns the owner of the resource.
