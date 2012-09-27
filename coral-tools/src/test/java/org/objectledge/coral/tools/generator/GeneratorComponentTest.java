@@ -53,6 +53,7 @@ import org.objectledge.test.LedgeTestCase;
 public class GeneratorComponentTest
     extends LedgeTestCase
 {
+    private static final String STANDARD_RESOURCE_IMPL = "org.objectledge.coral.datatypes.StandardResource";
     private Mock mockFileSystem;
     private FileSystem fileSystem;
     private Mock mockLocalFileSystemProvider;
@@ -130,7 +131,7 @@ public class GeneratorComponentTest
         mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/SQL")).will(returnValue(sqlTemplate));
         generatorComponent = new GeneratorComponent("UTF-8", "src/main/rml/files.lst",
             "src/main/java", "java.,javax.,org.objectledge.", "*", "", "LICENSE.txt", null, null,
-            null, null, fileSystem, templating, rmlModelLoader, logger);
+            null, null, STANDARD_RESOURCE_IMPL, fileSystem, templating, rmlModelLoader, logger);
             
         testFileSystem = FileSystem.getStandardFileSystem("src/test/resources/generator");
     }
@@ -291,10 +292,8 @@ public class GeneratorComponentTest
     
     public void testResolvePrimaryParentClass()
     {
-        mockResourceClass.expects(once()).method("getHandlerClassName").will(returnValue("org.objectledge.datatypes.GenericResourceHandler"));
-        assertEquals("org.objectledge.datatypes.GenericResource", generatorComponent.resolvePrimaryParentClass(resourceClass));
-        mockResourceClass.expects(once()).method("getHandlerClassName").will(returnValue("org.objectledge.datatypes.PersistentResourceHandler"));
-        assertEquals("org.objectledge.datatypes.PersistentResource", generatorComponent.resolvePrimaryParentClass(resourceClass));
+        assertEquals(STANDARD_RESOURCE_IMPL,
+            generatorComponent.resolvePrimaryParentClass(resourceClass));
     }
 
     // implementation ///////////////////////////////////////////////////////////////////////////

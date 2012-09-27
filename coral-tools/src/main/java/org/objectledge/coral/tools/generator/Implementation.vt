@@ -78,6 +78,7 @@ public class ${class.implClassName}
     // class variables /////////////////////////////////////////////////////////
 
     /** Class variables initialization status. */
+	@SuppressWarnings("unused")
     private static boolean definitionsInitialized;
 	
 #if($attributes.size() > 0)

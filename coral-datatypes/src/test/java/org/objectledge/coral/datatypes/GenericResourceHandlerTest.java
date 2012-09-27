@@ -29,6 +29,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Collections;
@@ -100,6 +101,10 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     private Connection connection;
     private Mock mockStatement;
     private Statement statement;
+
+    private Mock mockPreparedStatement;
+
+    private PreparedStatement preparedStatement;
     private Mock mockResultSet;
     private ResultSet resultSet;
     
@@ -138,6 +143,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockAttributeDefinition.stubs().method("getName").will(returnValue("description"));
         mockAttributeDefinition.stubs().method("getAttributeClass").will(returnValue(attributeClass));
         mockAttributeDefinition.stubs().method("getDomain").will(returnValue(""));
+        mockAttributeDefinition.stubs().method("getId").will(returnValue(1L));
         mockAttributeDefinition.stubs().method("getIdObject").will(returnValue(new Long(1L)));
         mockAttributeDefinition.stubs().method("getIdString").will(returnValue("1"));
         attributeDefinition = (AttributeDefinition<?>)mockAttributeDefinition.proxy();
@@ -188,8 +194,19 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockStatement.stubs().method("close");
         mockStatement.stubs().method("execute").will(returnValue(true));
         statement = (Statement)mockStatement.proxy();
+
+        mockPreparedStatement = mock(PreparedStatement.class);
+        mockPreparedStatement.stubs().method("close");
+        mockPreparedStatement.stubs().method("execute").will(returnValue(true));
+        mockPreparedStatement.stubs().method("addBatch").isVoid();
+        mockPreparedStatement.stubs().method("executeBatch").will(returnValue(new int[0]));
+        mockPreparedStatement.stubs().method("executeQuery").will(returnValue(resultSet));
+        mockPreparedStatement.stubs().method("setLong").isVoid();
+        preparedStatement = (PreparedStatement)mockPreparedStatement.proxy();
+
         mockConnection = mock(Connection.class);
         mockConnection.stubs().method("createStatement").will(returnValue(statement));
+        mockConnection.stubs().method("prepareStatement").will(returnValue(preparedStatement));
         connection = (Connection)mockConnection.proxy();              
                 
         
@@ -208,12 +225,12 @@ public class GenericResourceHandlerTest extends LedgeTestCase
     public void testCreateAndDelete()
         throws Exception
     {
-        String stmt = "INSERT INTO coral_generic_resource (resource_id, attribute_definition_id, data_key) VALUES (1, 1, 1)";
+        String stmt = "INSERT INTO coral_generic_resource (resource_id, attribute_definition_id, data_key) VALUES (?, ?, ?)";
         Map<AttributeDefinition<?>, String> attributes = new HashMap<AttributeDefinition<?>, String>();
         attributes.put(attributeDefinition, "foo");
         mockAttributeHandler.expects(once()).method("create").with(eq("foo"),ANYTHING).will(returnValue(1L));
         mockAttributeHandler.expects(atLeastOnce()).method("isModified").with(eq("foo")).will(returnValue(false));
-        mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        // mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         Node newResource = (Node)handler.create(resource, attributes, connection);
         //assertEquals(newResource.getDescription(),"foo");
         handler.update(newResource, connection);
@@ -222,8 +239,17 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         handler.update(newResource, connection);
         mockAttributeHandler.expects(once()).method("delete").with(eq(newResource.getId()),ANYTHING).isVoid();
         stmt = "DELETE FROM coral_generic_resource WHERE  resource_id = 1";
-        mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
-        
+        // mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
+        /*
+         * mockConnection.expects(once()).method("prepareStatement").with(eq(stmt))
+         * .will(returnValue(true));
+         * mockPreparedStatement.expects(once()).method("setLong").with(eq(1), eq(1L));
+         * mockPreparedStatement.expects(once()).method("setLong").with(eq(2), eq(1L));
+         * mockPreparedStatement.expects(once()).method("setLong").with(eq(3), eq(1L));
+         * mockPreparedStatement.expects(once()).method("addBatch").isVoid();
+         * mockPreparedStatement.expects(once()).method("executeBatch").will(returnValue(new
+         * int[0]));
+         */
         
         
         
@@ -252,7 +278,7 @@ public class GenericResourceHandlerTest extends LedgeTestCase
         mockResultSet.expects(once()).method("next").will(returnValue(false));
         //mockCoralSchema.expects(once()).method("getAttribute").will(returnValue(attributeClass));
         
-        mockStatement.expects(once()).method("executeQuery").with(eq(stmt)).will(returnValue(resultSet));
+        // mockStatement.expects(once()).method("executeQuery").with(eq(stmt)).will(returnValue(resultSet));
                 
         handler.retrieve(resource, connection, null);
     }
