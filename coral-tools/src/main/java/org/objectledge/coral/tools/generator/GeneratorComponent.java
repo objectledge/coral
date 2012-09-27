@@ -166,11 +166,13 @@ public class GeneratorComponent
     /** custom fields defined by resource class. */
     private Map<ResourceClass, List<Map<String, String>>> fieldMap = new HashMap<ResourceClass, List<Map<String, String>>>();
 
+    /** Java class to be used as the root of resource inheritance hierarchy. */
+    private final String standardResourceImpl;
+
     /**
      * Creates new GeneratorComponent instance.
      * 
      * @param fileSystem the file system to operate on.
-     * @param logger TODO
      * @param fileEncoding the character encoding to use for reading and writing files.
      * @param sourceFiles the path of source file list.
      * @param targetDir the target directory.
@@ -182,20 +184,22 @@ public class GeneratorComponent
      * @param sqlTargetDir directory to write the SQL files to.
      * @param sqlTargetPrefix path prefix of the SQL files in the Ledge FS (for list file).
      * @param sqlListPath path of file listing all the generated SQL files.
+     * @param standardResourceImpl the class to be used as the root of inheritance hierarchy.
+     * @param logger TODO
      * @param out the PrintStream to write informational messages to.
      * @throws Exception if the component could not be initialized.
      */
     public GeneratorComponent(FileSystem fileSystem, Logger log, String fileEncoding,
         String sourceFiles, String targetDir, String importGroups, String packageIncludes,
         String packageExcludes, String headerFile, String sqlAttributeInfoFile,
-        String sqlTargetDir, String sqlTargetPrefix, String sqlListPath)
+        String sqlTargetDir, String sqlTargetPrefix, String sqlListPath, String standardResourceImpl)
         throws Exception
     {
         this(fileEncoding, sourceFiles, targetDir, importGroups, packageIncludes, packageExcludes,
                         headerFile, sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix,
-                        sqlListPath, fileSystem,
-                        GeneratorComponent.initTemplating(fileSystem, log), new RMLModelLoader(
-                            new Schema()), log);
+                        sqlListPath, standardResourceImpl, fileSystem, GeneratorComponent
+                            .initTemplating(fileSystem, log), new RMLModelLoader(new Schema()), log);
+
     }
 
     /**
@@ -212,18 +216,19 @@ public class GeneratorComponent
      * @param sqlTargetDir directory to write the SQL files to.
      * @param sqlTargetPrefix path prefix of the SQL files in the Ledge FS (for list file).
      * @param sqlListPath path of file listing all the generated SQL files.
+     * @param standardResourceImpl the class to be used as the root of inheritance hierarchy.
      * @param fileSystem the file system to operate on.
      * @param templating the templating component.
-     * @param schema the schema.
      * @param rmlLoader the loader.
+     * @param schema the schema.
      * @param out the PrintStream to write informational messages to.
      * @throws Exception if the component could not be initialized.
      */
     GeneratorComponent(String fileEncoding, String sourceFiles, String targetDir,
         String importGroups, String packageIncludes, String packageExcludes, String headerFile,
         String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix,
-        String sqlListPath, FileSystem fileSystem, Templating templating,
-        final RMLModelLoader rmlLoader, Logger log)
+        String sqlListPath, String standardResourceImpl, FileSystem fileSystem,
+        Templating templating, final RMLModelLoader rmlLoader, Logger log)
         throws Exception
     {
         this.fileSystem = fileSystem;
@@ -240,6 +245,7 @@ public class GeneratorComponent
         this.sqlTargetPrefix = sqlTargetPrefix;
         this.sqlListPath = sqlListPath;
         this.log = log;
+        this.standardResourceImpl = standardResourceImpl;
 
         if(fileSystem.exists(headerFile))
         {
@@ -612,9 +618,7 @@ public class GeneratorComponent
 
     String resolvePrimaryParentClass(ResourceClass rc)
     {
-        String handler = rc.getHandlerClassName();
-        int pos = handler.indexOf("Handler");
-        return handler.substring(0, pos);
+        return standardResourceImpl;
     }
 
     /**
