@@ -1,12 +1,13 @@
 package org.objectledge.coral.security;
 
+import java.sql.SQLException;
+
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractAssociation;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Represents an association between a {@link org.objectledge.coral.security.Permission} and a 
@@ -113,15 +114,16 @@ public class PermissionAssociationImpl
     
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         record.setLong("resource_class_id", resourceClass.getId());
         record.setLong("permission_id", permission.getId());
@@ -129,15 +131,16 @@ public class PermissionAssociationImpl
 
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         long resourceClassId = record.getLong("resource_class_id");
         try
@@ -146,7 +149,7 @@ public class PermissionAssociationImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load PermissionAssociation", e);
+            throw new SQLException("Failed to load PermissionAssociation", e);
         }
         long permissionId = record.getLong("permission_id");
         try
@@ -155,7 +158,7 @@ public class PermissionAssociationImpl
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load PermissionAssociation", e);
+            throw new SQLException("Failed to load PermissionAssociation", e);
         }
     }
 

@@ -14,9 +14,7 @@ import org.jcontainer.dna.Logger;
 import org.objectledge.cache.CacheFactory;
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.Instantiator;
-import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
 
@@ -155,10 +153,10 @@ public class EntityRegistry<E extends Persistent & Entity>
                 all.put(ALL_KEY, es);
                 try
                 {
-                    List<E> items = persistence.load(null, factory);
+                    List<E> items = persistence.load(factory);
                     resolve(items, es);
                 }
-                catch(PersistenceException ex)
+                catch(SQLException ex)
                 {
                     throw new BackendException("failed to load " + kindPlural, ex);
                 }
@@ -189,9 +187,9 @@ public class EntityRegistry<E extends Persistent & Entity>
             {
                 try
                 {
-                    e = persistence.load(id, factory);
+                    e = persistence.load(factory, id);
                 }
-                catch(PersistenceException ex)
+                catch(SQLException ex)
                 {
                     throw new BackendException("failed to load " + kind + " #" + id, ex);
                 }
@@ -222,11 +220,10 @@ public class EntityRegistry<E extends Persistent & Entity>
                 byName.put(name, es);
                 try
                 {
-                    List<E> items = persistence.load(
-                        "name = '" + DatabaseUtils.escapeSqlString(name) + "'", factory);
+                    List<E> items = persistence.load(factory, "name = ?", name);
                     resolve(items, es);
                 }
-                catch(PersistenceException ex)
+                catch(SQLException ex)
                 {
                     throw new BackendException("failed to load " + kindPlural, ex);
                 }
@@ -269,7 +266,7 @@ public class EntityRegistry<E extends Persistent & Entity>
         {
             persistence.save(entity);
         }
-        catch(PersistenceException ex)
+        catch(SQLException ex)
         {
             throw new BackendException("failed to save " + type + " to storage", ex);
         }
@@ -356,7 +353,7 @@ public class EntityRegistry<E extends Persistent & Entity>
             add(entity);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
-        catch(PersistenceException ex)
+        catch(SQLException ex)
         {
             try
             {
@@ -409,7 +406,7 @@ public class EntityRegistry<E extends Persistent & Entity>
         {
             persistence.delete(entity);
         }
-        catch(PersistenceException ex)
+        catch(SQLException ex)
         {
             throw new BackendException("failed to delete " + kind + " #" + entity.getIdString(), ex);
         }
@@ -470,7 +467,7 @@ public class EntityRegistry<E extends Persistent & Entity>
                     }
                 }
             }
-            catch(PersistenceException exx)
+            catch(SQLException exx)
             {
                 throw new BackendException("failed to save " + kind, exx);
             }
@@ -507,7 +504,7 @@ public class EntityRegistry<E extends Persistent & Entity>
         {
             throw ex;
         }
-        catch(PersistenceException ex)
+        catch(SQLException ex)
         {
             try
             {

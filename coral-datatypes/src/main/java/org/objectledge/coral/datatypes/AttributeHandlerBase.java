@@ -46,7 +46,7 @@ public abstract class AttributeHandlerBase<T>
     protected CoralSecurity coralSecurity = null;
 
     /** The attribute class. */
-    protected AttributeClass attributeClass = null;
+    protected AttributeClass<T> attributeClass = null;
     
     /** The attribute object type. */
     protected Class<T> attributeType = null;
@@ -80,11 +80,10 @@ public abstract class AttributeHandlerBase<T>
      * @param attributeClass the attribute class.
      */
     public AttributeHandlerBase(Database database, CoralStore coralStore,
-                                 CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                 AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<T> attributeClass)
     {
         this.attributeClass = attributeClass;
-        this.attributeType = (Class<T>)attributeClass.getJavaClass();
+        this.attributeType = attributeClass.getJavaClass();
         this.database = database; 
         this.coralStore = coralStore;
         this.coralSecurity = coralSecurity;
@@ -491,28 +490,18 @@ public abstract class AttributeHandlerBase<T>
     {
         if(Comparable.class.isAssignableFrom(attributeType))
         {
-            return COMPARABLE_COMPARATOR;
+            return new Comparator<T>()
+                {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public int compare(T o1, T o2)
+                    {
+                        return ((Comparable<T>)o1).compareTo(o2);
+                    }
+                };
         }
         return null;
     }
-
-    /**
-     * A comparator for objects that support Comparable interface.
-     * 
-     * <p>
-     * Silly, but useful.
-     * </p>
-     */
-    private static final Comparator COMPARABLE_COMPARATOR = new Comparator()
-        {
-            /**
-             * {@inheritDoc}
-             */
-            public int compare(Object o1, Object o2)
-            {
-                return ((Comparable)o1).compareTo(o2);
-            }
-        };
 
     // attribute id management //////////////////////////////////////////////////////////////////
     

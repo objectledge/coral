@@ -20,7 +20,7 @@ public interface Permission
      * @return all <code>ResourceClass</code>es that this
      * <code>Permission</code> is associated with.
      */
-    public ResourceClass[] getResourceClasses();
+    public ResourceClass<?>[] getResourceClasses();
 
     /**
      * Returns <code>true</code> if this permission is associated with the

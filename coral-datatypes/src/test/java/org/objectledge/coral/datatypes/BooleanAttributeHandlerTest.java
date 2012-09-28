@@ -56,7 +56,8 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<Boolean> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -81,7 +82,7 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
         mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<Boolean>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Boolean.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("boolean"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_boolean"));

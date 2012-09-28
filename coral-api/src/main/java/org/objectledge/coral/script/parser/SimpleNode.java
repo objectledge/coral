@@ -19,6 +19,8 @@ public class SimpleNode implements Node {
 
   ASTattributeClass attributeClass;
   ASTresourceClass resourceClass;  
+
+    String dbColumn;
   String domain;
   ASTattributeFlagList attributeFlags;
   ASTresourceClassFlagList resourceClassFlags;

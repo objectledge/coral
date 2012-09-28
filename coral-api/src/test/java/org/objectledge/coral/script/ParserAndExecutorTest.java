@@ -76,13 +76,17 @@ public class ParserAndExecutorTest extends LedgeTestCase
     private Mock mockAttributeClass;
     private AttributeClass<?> attributeClass;
     private Mock mockResourceClass;
-    private ResourceClass resourceClass;
+
+    private ResourceClass<?> resourceClass;
     private Mock mockParentResourceClass;
-    private ResourceClass parentResourceClass;
+
+    private ResourceClass<?> parentResourceClass;
     private Mock mockAttributeDefinition1;
-    private AttributeDefinition attributeDefinition1;
+
+    private AttributeDefinition<?> attributeDefinition1;
     private Mock mockAttributeDefinition2;
-    private AttributeDefinition attributeDefinition2;
+
+    private AttributeDefinition<?> attributeDefinition2;
     private Mock mockPermission;
     private Permission permission;
     
@@ -115,13 +119,13 @@ public class ParserAndExecutorTest extends LedgeTestCase
         mockAttributeClass = mock(AttributeClass.class);
         attributeClass = (AttributeClass<?>)mockAttributeClass.proxy();
         mockResourceClass = mock(ResourceClass.class);
-        resourceClass = (ResourceClass)mockResourceClass.proxy();
+        resourceClass = (ResourceClass<?>)mockResourceClass.proxy();
         mockParentResourceClass = mock(ResourceClass.class, "mockParentResourceClass");
-        parentResourceClass = (ResourceClass)mockParentResourceClass.proxy();
+        parentResourceClass = (ResourceClass<?>)mockParentResourceClass.proxy();
         mockAttributeDefinition1 = mock(AttributeDefinition.class, "mockAttributeDefinition1");
-        attributeDefinition1 = (AttributeDefinition)mockAttributeDefinition1.proxy();
+        attributeDefinition1 = (AttributeDefinition<?>)mockAttributeDefinition1.proxy();
         mockAttributeDefinition2 = mock(AttributeDefinition.class, "mockAttributeDefinition2");
-        attributeDefinition2 = (AttributeDefinition)mockAttributeDefinition2.proxy();
+        attributeDefinition2 = (AttributeDefinition<?>)mockAttributeDefinition2.proxy();
         mockPermission = mock(Permission.class);
         permission = (Permission)mockPermission.proxy();
     }
@@ -258,10 +262,12 @@ public class ParserAndExecutorTest extends LedgeTestCase
             will(returnValue(resourceClass));
         mockCoralSchema.expects(atLeastOnce()).method("getAttributeClass").with(eq("string")).
             will(returnValue(attributeClass));
-        mockCoralSchema.expects(once()).method("createAttribute").with(eq("attribute1"), 
-            same(attributeClass), NULL, eq(0)).will(returnValue(attributeDefinition1));
-        mockCoralSchema.expects(once()).method("createAttribute").with(eq("attribute2"), 
-            same(attributeClass), NULL, eq(0)).will(returnValue(attributeDefinition2));
+        mockCoralSchema.expects(once()).method("createAttribute")
+            .with(new Constraint[] { eq("attribute1"), same(attributeClass), NULL, NULL, eq(0) })
+            .will(returnValue(attributeDefinition1));
+        mockCoralSchema.expects(once()).method("createAttribute")
+            .with(new Constraint[] { eq("attribute2"), same(attributeClass), NULL, NULL, eq(0) })
+            .will(returnValue(attributeDefinition2));
         mockCoralSchema.expects(once()).method("addAttribute").with(same(resourceClass), 
             same(attributeDefinition1), NULL).isVoid();           
         mockCoralSchema.expects(once()).method("addAttribute").with(same(resourceClass), 
@@ -274,9 +280,13 @@ public class ParserAndExecutorTest extends LedgeTestCase
             will(returnValue(resourceClass));
         mockCoralSchema.expects(once()).method("getAttributeClass").with(eq("string")).
             will(returnValue(attributeClass));
-        mockCoralSchema.expects(once()).method("createAttribute").with(eq("attribute1"), 
-            same(attributeClass), NULL, eq(AttributeFlags.REQUIRED + AttributeFlags.DESCRIPTIVE)).
-            will(returnValue(attributeDefinition1));
+        mockCoralSchema
+            .expects(once())
+            .method("createAttribute")
+            .with(
+                new Constraint[] { eq("attribute1"), same(attributeClass), NULL, NULL,
+                                eq(AttributeFlags.REQUIRED + AttributeFlags.DESCRIPTIVE) })
+            .will(returnValue(attributeDefinition1));
         mockCoralSchema.expects(once()).method("addAttribute").with(same(resourceClass), 
             same(attributeDefinition1), NULL).isVoid();           
         execute("CREATE RESOURCE CLASS rclass JAVA CLASS jclass HANDLER CLASS hclass "+
@@ -287,13 +297,34 @@ public class ParserAndExecutorTest extends LedgeTestCase
             will(returnValue(resourceClass));
         mockCoralSchema.expects(once()).method("getAttributeClass").with(eq("string")).
             will(returnValue(attributeClass));
-        mockCoralSchema.expects(once()).method("createAttribute").with(eq("attribute1"), 
-            same(attributeClass), eq("domain"), eq(0)).
+        mockCoralSchema
+            .expects(once())
+            .method("createAttribute")
+            .with(
+                new Constraint[] { eq("attribute1"), same(attributeClass), NULL, eq("domain"),
+                                eq(0) }).
             will(returnValue(attributeDefinition1));
         mockCoralSchema.expects(once()).method("addAttribute").with(same(resourceClass), 
             same(attributeDefinition1), NULL).isVoid();           
-        execute("CREATE RESOURCE CLASS rclass JAVA CLASS jclass HANDLER CLASS hclass "+
-            "ATTRIBUTES ( string(domain) attribute1 );");  
+        execute("CREATE RESOURCE CLASS rclass JAVA CLASS jclass HANDLER CLASS hclass "
+            + "ATTRIBUTES ( string(domain) attribute1 );");
+        // attribute with db column
+        mockCoralSchema.expects(once()).method("createResourceClass")
+            .with(new Constraint[] { eq("rclass"), eq("jclass"), eq("hclass"), NULL, eq(0) })
+            .will(returnValue(resourceClass));
+        mockCoralSchema.expects(once()).method("getAttributeClass").with(eq("string"))
+            .will(returnValue(attributeClass));
+        mockCoralSchema
+            .expects(once())
+            .method("createAttribute")
+            .with(
+                new Constraint[] { eq("select"), same(attributeClass), eq("\"select\""), NULL,
+                                eq(0) }).will(returnValue(attributeDefinition1));
+        mockCoralSchema.expects(once()).method("addAttribute")
+            .with(same(resourceClass), same(attributeDefinition1), NULL).isVoid();
+        execute("CREATE RESOURCE CLASS rclass JAVA CLASS jclass HANDLER CLASS hclass "
+            + "ATTRIBUTES ( string select DB COLUMN '\"select\"' );");
+
         // permission
         mockCoralSchema.expects(once()).method("createResourceClass").with(new Constraint[] { 
             eq("rclass"), eq("jclass"), eq("hclass"), NULL, eq(0) }).
@@ -399,6 +430,18 @@ public class ParserAndExecutorTest extends LedgeTestCase
         execute("ALTER RESOURCE CLASS 1 ALTER ATTRIBUTE attribute1 SET NAME new_name;");
     }
 
+    public void testAlterResourceClassAlterAttributeSetDbColumn()
+        throws Exception
+    {
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(1L))
+            .will(returnValue(resourceClass));
+        mockResourceClass.expects(once()).method("getAttribute").with(eq("attribute1"))
+            .will(returnValue(attributeDefinition1));
+        mockCoralSchema.expects(once()).method("setDbColumn")
+            .with(same(attributeDefinition1), eq("new")).isVoid();
+        execute("ALTER RESOURCE CLASS 1 ALTER ATTRIBUTE attribute1 SET DB COLUMN new;");
+    }
+
     public void testAlterResourceClassAlterAttributeSetDomain()
         throws Exception
     {
@@ -409,6 +452,30 @@ public class ParserAndExecutorTest extends LedgeTestCase
         mockCoralSchema.expects(once()).method("setDomain").with(same(attributeDefinition1), 
             eq("new")).isVoid();
         execute("ALTER RESOURCE CLASS 1 ALTER ATTRIBUTE attribute1 SET DOMAIN new;");
+    }
+
+    public void testAlterResourceClassAlterAttributeDeleteDbColumn()
+        throws Exception
+    {
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(1L))
+            .will(returnValue(resourceClass));
+        mockResourceClass.expects(once()).method("getAttribute").with(eq("attribute1"))
+            .will(returnValue(attributeDefinition1));
+        mockCoralSchema.expects(once()).method("setDbColumn")
+            .with(same(attributeDefinition1), NULL).isVoid();
+        execute("ALTER RESOURCE CLASS 1 ALTER ATTRIBUTE attribute1 DELETE DB COLUMN;");
+    }
+
+    public void testAlterResourceClassAlterAttributeDeleteDomain()
+        throws Exception
+    {
+        mockCoralSchema.expects(once()).method("getResourceClass").with(eq(1L))
+            .will(returnValue(resourceClass));
+        mockResourceClass.expects(once()).method("getAttribute").with(eq("attribute1"))
+            .will(returnValue(attributeDefinition1));
+        mockCoralSchema.expects(once()).method("setDomain").with(same(attributeDefinition1), NULL)
+            .isVoid();
+        execute("ALTER RESOURCE CLASS 1 ALTER ATTRIBUTE attribute1 DELETE DOMAIN;");
     }
 
     public void testAlterResourceClassAlterAttributeSetFlags()
@@ -430,9 +497,13 @@ public class ParserAndExecutorTest extends LedgeTestCase
             will(returnValue(resourceClass));
         mockCoralSchema.expects(atLeastOnce()).method("getAttributeClass").with(eq("string")).
             will(returnValue(attributeClass));
-        mockCoralSchema.expects(once()).method("createAttribute").with(eq("capitalized"), 
-            same(attributeClass), eq("[A-Z]*"), eq(AttributeFlags.REQUIRED)).
-            will(returnValue(attributeDefinition1));
+        mockCoralSchema
+            .expects(once())
+            .method("createAttribute")
+            .with(
+                new Constraint[] { eq("capitalized"), same(attributeClass), NULL, eq("[A-Z]*"),
+                                eq(AttributeFlags.REQUIRED) })
+            .will(returnValue(attributeDefinition1));
         mockCoralSchema.expects(once()).method("addAttribute").with(same(resourceClass), 
             same(attributeDefinition1), NULL).isVoid();
         execute("ALTER RESOURCE CLASS 1 ADD ATTRIBUTE REQUIRED string('[A-Z]*') capitalized;");
@@ -441,9 +512,13 @@ public class ParserAndExecutorTest extends LedgeTestCase
             will(returnValue(resourceClass));
         mockCoralSchema.expects(atLeastOnce()).method("getAttributeClass").with(eq("string")).
             will(returnValue(attributeClass));
-        mockCoralSchema.expects(once()).method("createAttribute").with(eq("capitalized"), 
-            same(attributeClass), eq("[A-Z]*"), eq(AttributeFlags.REQUIRED)).
-            will(returnValue(attributeDefinition1));
+        mockCoralSchema
+            .expects(once())
+            .method("createAttribute")
+            .with(
+                new Constraint[] { eq("capitalized"), same(attributeClass), NULL, eq("[A-Z]*"),
+                                eq(AttributeFlags.REQUIRED) })
+            .will(returnValue(attributeDefinition1));
         mockCoralSchema.expects(once()).method("addAttribute").with(same(resourceClass), 
             same(attributeDefinition1), eq("FOO")).isVoid();
         execute("ALTER RESOURCE CLASS 1 ADD ATTRIBUTE REQUIRED string('[A-Z]*') capitalized " +

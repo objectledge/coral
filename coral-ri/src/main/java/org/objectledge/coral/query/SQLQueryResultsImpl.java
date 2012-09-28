@@ -17,11 +17,9 @@ import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 
 /**
- * Represents the results of a query as tuples of Resources.
- *
- * This is an implemenation of QueryResults over an java.sql.ResultSet
- * containg tuples of resource identifiers.
- *
+ * Represents the results of a query as tuples of Resources. This is an implementation of
+ * QueryResults over an java.sql.ResultSet containing tuples of resource identifiers.
+ * 
  * @author <a href="rkrzewsk@ngo.pl">Rafal Krzewski</a>
  * @version $Id: SQLQueryResultsImpl.java,v 1.3 2005-05-05 08:27:04 rafal Exp $
  */
@@ -30,24 +28,23 @@ public class SQLQueryResultsImpl
 {
     // instance variables ////////////////////////////////////////////////////
 
-    /** The ResultSet. */
-    private ResultSet resultSet;
-
     /** The FROM list (type, alias) */
     private String[][] from;
     
     /** The SELECT list */
     private String[] select;
 
-    /** A list of long[] arrays containg identifiers of resources in
-     *  conseutive tuples of the result. */
-    private ArrayList resultList = null;
+    /**
+     * A list of long[] arrays containing identifiers of resources in consecutive tuples of the
+     * result.
+     */
+    private ArrayList<long[]> resultList = null;
 
     /** A mapping of column names into indices */
-    private Map nameIndex = new HashMap();
+    private Map<String, Integer> nameIndex = new HashMap<String, Integer>();
 
     /** Types of resources in each column. */
-    private ResourceClass[] columnType;
+    private ResourceClass<?>[] columnType;
 
     /** The Coral store. */
     private CoralStore store;
@@ -72,7 +69,6 @@ public class SQLQueryResultsImpl
         this.store = store;
         this.schema = schema;
         
-        this.resultSet = resultSet;
         this.from = from;
         this.select = select;
         columnType = new ResourceClass[from.length];
@@ -129,9 +125,9 @@ public class SQLQueryResultsImpl
      *
      * @return an Iterator over a list of {@link QueryResults.Row} objects.
      */
-    public Iterator iterator()
+    public Iterator<QueryResults.Row> iterator()
     {
-        return new Iterator() 
+        return new Iterator<QueryResults.Row>()
             {
                 private int i=0;
                 
@@ -140,11 +136,11 @@ public class SQLQueryResultsImpl
                     return i < resultList.size();
                 }
                         
-                public Object next()
+                public QueryResults.Row next()
                 {
                     if(i<resultList.size())
                     {
-                        return new RowImpl((long[])resultList.get(i++));
+                        return new RowImpl(resultList.get(i++));
                     }
                     else
                     {
@@ -167,10 +163,10 @@ public class SQLQueryResultsImpl
      *
      * @return a list of {@link QueryResults.Row} objects.
      */
-    public List getList()
+    public List<QueryResults.Row> getList()
     {
-        ArrayList temp = new ArrayList();
-        Iterator i = iterator();
+        ArrayList<QueryResults.Row> temp = new ArrayList<QueryResults.Row>();
+        Iterator<QueryResults.Row> i = iterator();
         while(i.hasNext())
         {
             temp.add(i.next());
@@ -233,7 +229,7 @@ public class SQLQueryResultsImpl
      * @throws IllegalArgumentException if no column by the specified name is
      *         present in the results.
      */
-    public List getList(String name)
+    public List<Resource> getList(String name)
         throws IllegalArgumentException
     {
         return getList(getColumnIndex(name));
@@ -247,7 +243,7 @@ public class SQLQueryResultsImpl
      * @throws IndexOutOfBoundsException if the index if the index is out of
      *         1..columnCount range.
      */
-    public List getList(int index)
+    public List<Resource> getList(int index)
         throws IndexOutOfBoundsException
     {
         if(index < 1 || index > from.length)
@@ -255,12 +251,12 @@ public class SQLQueryResultsImpl
             throw new IndexOutOfBoundsException("index "+index+"requested "+
                                                 "range 1.."+from.length);
         }
-        List result = new ArrayList(resultList.size());
+        List<Resource> result = new ArrayList<Resource>(resultList.size());
         try
         {
             for(int i=0; i<resultList.size(); i++)
             {
-                result.add(store.getResource(((long[])resultList.get(i))[index-1]));
+                result.add(store.getResource((resultList.get(i))[index - 1]));
             }
             return result;
         }
@@ -334,7 +330,7 @@ public class SQLQueryResultsImpl
      * @throws IndexOutOfBoundsException if the index if the index is out of
      *         1..columnCount range.
      */
-    public ResourceClass getColumnType(int index)
+    public ResourceClass<?> getColumnType(int index)
         throws IndexOutOfBoundsException
     {
         if(index < 1 || index > from.length)
@@ -353,7 +349,7 @@ public class SQLQueryResultsImpl
      * @throws IllegalArgumentException if no column by the specified name is
      *         present in the results.
      */
-    public ResourceClass getColumnType(String name)
+    public ResourceClass<?> getColumnType(String name)
         throws IllegalArgumentException
     {
         Integer i = (Integer)nameIndex.get(name);
@@ -376,7 +372,7 @@ public class SQLQueryResultsImpl
     {
         try
         {
-            resultList = new ArrayList();
+            resultList = new ArrayList<long[]>();
             while(resultSet.next())
             {
                 long[] row = new long[from.length];
@@ -396,7 +392,7 @@ public class SQLQueryResultsImpl
     // Row implementation ////////////////////////////////////////////////////
     
     /**
-     * Represens a single query result.
+     * Represents a single query result.
      */
     public class RowImpl
         implements QueryResults.Row

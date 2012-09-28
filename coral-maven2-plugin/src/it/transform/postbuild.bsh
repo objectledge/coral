@@ -1,0 +1,16 @@
+dbURL = "jdbc:hsqldb:file:"+basedir+"/target/transform-target";
+driver = new org.hsqldb.jdbcDriver();
+dbProps = new Properties();
+dbProps.setProperty("user", "sa");
+conn = driver.connect(dbURL, dbProps); 
+
+stmt = conn.createStatement();
+rset = stmt.executeQuery("SELECT s FROM test WHERE i = 1");
+if(!rset.next())
+{
+	throw new Exception("empty result set");
+}
+if(!rset.getString("s").equals("a"))
+{
+	throw new Exception("unexpected result");
+}

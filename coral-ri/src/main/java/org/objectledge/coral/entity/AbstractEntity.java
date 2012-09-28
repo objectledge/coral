@@ -1,9 +1,10 @@
 package org.objectledge.coral.entity;
 
+import java.sql.SQLException;
+
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.PersistentObject;
 
 /**
@@ -100,31 +101,24 @@ public abstract class AbstractEntity
 
     /**
      * Returns a String representation of this object.
-     *
-     * <p> This method is overriden to augument debugging. The format of the representation is as 
-     * following: 
-     * <blockquote>
-     *   <code>javaClass name #id @identity</code>
-     * </blockquote>
-     * Where:
+     * <p>
+     * This method is overriden to augument debugging. The format of the representation is as
+     * following: <blockquote> <code>name #id @identity</code> </blockquote> Where:
      * <ul>
-     *   <li><code>javaClass</code> is the actual implementation class of the object</li>
-     *   <li><code>name</code> is the name of the entity as returned by the {@link #getName()} 
-     *     method.</li>
-     *   <li><code>id</code> is the identifier of the entity as returned by the {@link #getId()}
-     *     method.</li> 
-     *   <li><code>idenity</code> is the obeject instance's identity hashcode as retured by the
-     *     <code>System.getIdentityHashCode(Object)</code> function.</li>
-     *  </ul>
-     *  </p>
+     * <li><code>name</code> is the name of the entity as returned by the {@link #getName()} method.
+     * </li>
+     * <li><code>id</code> is the identifier of the entity as returned by the {@link #getId()}
+     * method.</li>
+     * <li><code>idenity</code> is the obeject instance's identity hashcode as retured by the
+     * <code>System.getIdentityHashCode(Object)</code> function.</li>
+     * </ul>
+     * </p>
      * 
      * @return a String representation of this object.
      */
     public String toString()
     {
         StringBuilder buff = new StringBuilder();
-        buff.append(getClass().getName());
-        buff.append(' ');
         buff.append(getName());
         buff.append(" #");
         buff.append(getIdString());
@@ -144,32 +138,37 @@ public abstract class AbstractEntity
 
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
-        record.setLong(getKeyColumns()[0], id);
+        if(id != -1L)
+        {
+            record.setLong(getKeyColumns()[0], id);
+        }
         record.setString("name", name);
     }
     
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         id = record.getLong(getKeyColumns()[0]);
         name = record.getString("name");

@@ -56,7 +56,8 @@ public class StringAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<String> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -83,7 +84,7 @@ public class StringAttributeHandlerTest extends LedgeTestCase
         mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<String>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(String.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("string"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_string"));

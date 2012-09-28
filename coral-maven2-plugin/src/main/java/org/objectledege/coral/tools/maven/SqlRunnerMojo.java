@@ -60,11 +60,12 @@ public class SqlRunnerMojo
             log.info("dbUser " + dbUser);
             log.info("sqlSourcesList " + sqlSourcesList);
             loader.loadBatch(sqlSourcesList);
+            log.info("disconnecting from the db");
+            DatabaseUtils.shutdown(dataSource);
         }
         catch(Exception e)
         {
             throw new MojoExecutionException("SQL scripts execution failed", e);
         }
-
     }
 }

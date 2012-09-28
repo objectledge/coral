@@ -3,6 +3,7 @@ package org.objectledege.coral.tools.maven;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.objectledge.coral.tools.init.InitComponent;
+import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
 
 /**
@@ -27,10 +28,14 @@ public class InitMojo
     {
         FileSystem fileSystem = FileSystem.getClasspathFileSystem();
         initDataSource();
-        InitComponent init = new InitComponent(dataSource, fileSystem, force);
         try 
         {
+            InitComponent init = new InitComponent(dataSource, fileSystem, force,
+                new MavenDNALogger(getLog()));
             init.run();
+
+            getLog().info("disconnecting from the db");
+            DatabaseUtils.shutdown(dataSource);
         }
         catch(Exception e)
         {

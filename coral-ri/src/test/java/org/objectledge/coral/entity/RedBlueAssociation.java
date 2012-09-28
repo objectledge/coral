@@ -27,10 +27,11 @@
 // 
 package org.objectledge.coral.entity;
 
+import java.sql.SQLException;
+
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 
 
 class RedBlueAssociation
@@ -103,7 +104,7 @@ class RedBlueAssociation
     /** 
      * {@inheritDoc}
      */
-    public void getData(OutputRecord record) throws PersistenceException
+    public void getData(OutputRecord record) throws SQLException
     {
         record.setLong("red_id", red.getId());
         record.setLong("blue_id", blue.getId());
@@ -112,7 +113,7 @@ class RedBlueAssociation
     /** 
      * {@inheritDoc}
      */
-    public void setData(InputRecord record) throws PersistenceException
+    public void setData(InputRecord record) throws SQLException
     {
         setRed(redBlueEntityFactory.getRed(record.getLong("red_id")));
         setBlue(redBlueEntityFactory.getBlue(record.getLong("blue_id")));

@@ -19,8 +19,8 @@ public class ASTalterResourceClassAlterAttributeSetDomainStatement extends ASTal
   
   ////////////////////////////////////////////////////////////////////////////////////////////////
   
-  public String getDomain()
-  {
-      return domain;
-  }
+    public String getDomain()
+    {
+        return domain;
+    }
 }

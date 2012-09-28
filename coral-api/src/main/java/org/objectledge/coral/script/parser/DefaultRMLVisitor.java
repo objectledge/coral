@@ -221,7 +221,31 @@ public class DefaultRMLVisitor
     /**
      * {@inheritDoc}
      */
+    public Object visit(ASTalterResourceClassAlterAttributeSetDbColumnStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Object visit(ASTalterResourceClassAlterAttributeSetDomainStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterResourceClassAlterAttributeDeleteDbColumnStatement node, Object data)
+    {
+        return visit((SimpleNode)node, data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object visit(ASTalterResourceClassAlterAttributeDeleteDomainStatement node, Object data)
     {
         return visit((SimpleNode)node, data);
     }

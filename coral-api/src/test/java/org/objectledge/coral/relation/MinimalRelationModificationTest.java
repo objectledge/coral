@@ -27,12 +27,8 @@
 //
 package org.objectledge.coral.relation;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.jmock.Mock;
 import org.objectledge.coral.store.Resource;

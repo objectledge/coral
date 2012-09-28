@@ -239,14 +239,11 @@ public class RelationModificationTest  extends LedgeTestCase
 
 	private class Visitor3 implements RelationModification.ModificationOperationVisitor
 	{
-		private int count = 0; 
-		
 		/**
 		 * {@inheritDoc}
 		 */
 		public void visit(ClearOperation oper)
 		{
-			count++;
 			fail("should not be called");
 		}
 
@@ -255,7 +252,6 @@ public class RelationModificationTest  extends LedgeTestCase
 		 */
 		public void visit(AddOperation oper)
 		{
-			count++;
 			fail("should not be called");
 		}
 
@@ -264,7 +260,6 @@ public class RelationModificationTest  extends LedgeTestCase
 		 */
 		public void visit(RemoveOperation oper)
 		{
-			count++;
 			fail("should not be called");
 		}
 	}

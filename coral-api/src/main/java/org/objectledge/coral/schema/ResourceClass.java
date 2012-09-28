@@ -90,14 +90,27 @@ public interface ResourceClass<T extends Resource>
         throws UnknownAttributeException;
 
     /**
-     * Checks it the class has an attribute with the specified name.
-     *
-     * <p>Note that the attribute may belong to a parent class of this
-     * resource class.</p>
-     *
+     * Returns an attribute with a specified name.
+     * <p>
+     * Note that the attribute may belong to a parent class of this resource class.
+     * </p>
+     * 
      * @param name the name of the attribute.
-     * @return <code>true</code> if the class has an attribute with the
-     *         specified name.
+     * @return the attribute definition object.
+     * @throws UnknownAttributeException if the resource class does not have an attribute of the
+     *         specififed class.
+     */
+    public <A> AttributeDefinition<A> getAttribute(String name, Class<A> javaClass)
+        throws UnknownAttributeException;
+
+    /**
+     * Checks it the class has an attribute with the specified name.
+     * <p>
+     * Note that the attribute may belong to a parent class of this resource class.
+     * </p>
+     * 
+     * @param name the name of the attribute.
+     * @return <code>true</code> if the class has an attribute with the specified name.
      */
     public boolean hasAttribute(String name);
     

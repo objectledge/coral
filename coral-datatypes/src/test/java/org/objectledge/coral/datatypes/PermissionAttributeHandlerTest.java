@@ -57,7 +57,8 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<Permission> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -96,7 +97,7 @@ public class PermissionAttributeHandlerTest extends LedgeTestCase
         mockCoralSecurity.stubs().method("getPermission").with(eq("foo2")).will(returnValue(new Permission[0]));
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<Permission>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Permission.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("permission"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_permission"));

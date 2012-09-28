@@ -27,8 +27,7 @@ public class RoleAttributeHandler
      * @param attributeClass the attribute class.
      */
     public RoleAttributeHandler(Database database, CoralStore coralStore,
-                                CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<Role> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

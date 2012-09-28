@@ -27,6 +27,7 @@
 //
 package org.objectledge.coral.relation;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,6 @@ import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.util.PrimitiveCollections;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 
 import bak.pcj.LongIterator;
 import bak.pcj.map.LongKeyMap;
@@ -219,7 +219,8 @@ implements Relation
 	/**
 	 * {@inheritDoc}
 	 */
-	public synchronized void setData(InputRecord record) throws PersistenceException
+    public synchronized void setData(InputRecord record)
+        throws SQLException
 	{
 		super.setData(record);
 		long[] def = coralRelationManager.getRelationDefinition(this);

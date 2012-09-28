@@ -64,7 +64,8 @@ public class ParametersAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<Parameters> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -117,7 +118,7 @@ public class ParametersAttributeHandlerTest extends LedgeTestCase
         mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<Parameters>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Parameters.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("parameters"));
         handler = new ParametersAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass, parametersManager);

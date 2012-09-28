@@ -307,9 +307,11 @@ public class CoralSchemaImplTest extends LedgeTestCase
     {
         mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<domain>"));
         mockInboundEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
-        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
+        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>",
+            attributeClass, "<db column>", "<domain>", 303);
         assertEquals("<attribute>", realAttributeDefinition.getName());
         assertEquals(attributeClass, realAttributeDefinition.getAttributeClass());
+        assertEquals("<db column>", realAttributeDefinition.getDbColumn());
         assertEquals("<domain>", realAttributeDefinition.getDomain());
         assertEquals(303, realAttributeDefinition.getFlags());
     }
@@ -330,7 +332,8 @@ public class CoralSchemaImplTest extends LedgeTestCase
     {
         mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<domain>"));
         mockInboundEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
-        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
+        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>",
+            attributeClass, null, "<domain>", 303);
         assertEquals(303, realAttributeDefinition.getFlags());
         
         mockPersistence.expects(once()).method("save").with(same(realAttributeDefinition));
@@ -345,7 +348,8 @@ public class CoralSchemaImplTest extends LedgeTestCase
     {
         mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<domain>"));
         mockInboundEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
-        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
+        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>",
+            attributeClass, null, "<domain>", 303);
         assertEquals("<domain>", realAttributeDefinition.getDomain());
         
         mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<new domain>"));
@@ -356,6 +360,25 @@ public class CoralSchemaImplTest extends LedgeTestCase
         assertEquals("<new domain>", realAttributeDefinition.getDomain());
     }
     
+    public void testAttributeDefinitionSetDbColumn()
+        throws Exception
+    {
+        mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<domain>"));
+        mockInboundEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener")
+            .with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
+        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>",
+            attributeClass, null, "<domain>", 303);
+        assertEquals("<domain>", realAttributeDefinition.getDomain());
+
+        mockPersistence.expects(once()).method("save").with(same(realAttributeDefinition));
+        mockOutboundEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent")
+            .with(same(realAttributeDefinition));
+        mockLocalEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent")
+            .with(same(realAttributeDefinition));
+        coralSchema.setDbColumn(realAttributeDefinition, "<db column>");
+        assertEquals("<db column>", realAttributeDefinition.getDbColumn());
+    }
+
     // resource classess ////////////////////////////////////////////////////////////////////////
     
     public void testGetResourceClass()
@@ -469,7 +492,8 @@ public class CoralSchemaImplTest extends LedgeTestCase
     {
         mockAttributeHandler.expects(once()).method("checkDomain").with(eq("<domain>"));
         mockInboundEventWhiteboard.expects(once()).method("addAttributeDefinitionChangeListener").with(isA(AttributeDefinitionChangeListener.class), isA(AttributeDefinition.class));
-        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>", attributeClass, "<domain>", 303);
+        AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>",
+            attributeClass, null, "<domain>", 303);
 
         Object value = new Object();
         mockResourceClass.stubs().method("getHandler").will(returnValue(resourceHandler));

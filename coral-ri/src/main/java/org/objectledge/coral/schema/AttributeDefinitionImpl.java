@@ -1,5 +1,7 @@
 package org.objectledge.coral.schema;
 
+import java.sql.SQLException;
+
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.AbstractEntity;
@@ -9,7 +11,6 @@ import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Represents a concrete attribute of an resource class.
@@ -36,6 +37,9 @@ public class AttributeDefinitionImpl<T>
     /** The resource class that declares this attribute. */
     private ResourceClass<?> declaringClass;
 
+    /** Database column name */
+    private String dbColumn;
+
     /** The value domain constraint. */
     private String domain;
     
@@ -61,25 +65,27 @@ public class AttributeDefinitionImpl<T>
 
     /**
      * Constructs a {@link AttributeDefinitionImpl}.
-     *
+     * 
      * @param persistence the Peristence subsystem.
      * @param coralEventHub the CoralEventHub.
      * @param coral the component hub,
-     * 
      * @param name the name of this attribute.
      * @param attributeClass the class of this attribute.
+     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     *        {@code name} is used as column name.
      * @param domain the value domain constraint.
      * @param flags the flags of this attribute.
      */
     public AttributeDefinitionImpl(Persistence persistence, CoralEventHub coralEventHub,
-        CoralCore coral, 
-        String name, AttributeClass<T> attributeClass, String domain, int flags)
+        CoralCore coral, String name, AttributeClass<T> attributeClass, String dbColumn,
+        String domain, int flags)
     {
         super(persistence, name);
         this.coralEventHub = coralEventHub;
         this.coral = coral;
         this.attributeClass = attributeClass;
         this.declaringClass = null;
+        this.dbColumn = dbColumn;
         this.domain = domain;
         this.flags = flags;
         coralEventHub.getInbound().addAttributeDefinitionChangeListener(this, this);
@@ -112,15 +118,16 @@ public class AttributeDefinitionImpl<T>
 
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.getData(record);
         record.setLong("attribute_class_id", attributeClass.getId());
@@ -133,33 +140,41 @@ public class AttributeDefinitionImpl<T>
         {
             record.setNull("domain");
         }
+        if(dbColumn != null)
+        {
+            record.setString("db_column", dbColumn);
+        }
+        else
+        {
+            record.setNull("db_column");
+        }
         record.setInteger("flags", flags);
     }
 
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.setData(record);
         long attributeClassId = record.getLong("attribute_class_id");
         try
         {
-            @SuppressWarnings("unchecked")
             AttributeClass<T> attributeClass = (AttributeClass<T>)coral.getSchema()
                 .getAttributeClass(attributeClassId);
             this.attributeClass = attributeClass;
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load AttributeDefinition #"+id, e);
+            throw new SQLException("Failed to load AttributeDefinition #" + id, e);
         }
         long declaringClassId = record.getLong("resource_class_id");
         try
@@ -168,7 +183,15 @@ public class AttributeDefinitionImpl<T>
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new PersistenceException("Failed to load AttributeDefinition #"+id, e);
+            throw new SQLException("Failed to load AttributeDefinition #" + id, e);
+        }
+        if(record.isNull("db_column"))
+        {
+            dbColumn = null;
+        }
+        else
+        {
+            dbColumn = record.getString("db_column");
         }
         if(record.isNull("domain"))
         {
@@ -189,7 +212,7 @@ public class AttributeDefinitionImpl<T>
      *
      * @param attributeDefinition the attributeDefinition that changed.
      */
-    public void attributeDefinitionChanged(AttributeDefinition attributeDefinition)
+    public void attributeDefinitionChanged(AttributeDefinition<?> attributeDefinition)
     {
         if(this.equals(attributeDefinition))
         {
@@ -197,7 +220,7 @@ public class AttributeDefinitionImpl<T>
             {
                 persistence.revert(this);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("failed to revert entity state", e);
             }
@@ -224,6 +247,16 @@ public class AttributeDefinitionImpl<T>
     public ResourceClass<?> getDeclaringClass()
     {
         return declaringClass;
+    }
+
+    /**
+     * Returns the database column name of the attribute.
+     * 
+     * @return database column name of the attribute.
+     */
+    public String getDbColumn()
+    {
+        return dbColumn;
     }
 
     /**
@@ -280,6 +313,11 @@ public class AttributeDefinitionImpl<T>
         this.name = name;    
     }
     
+    void setDbColumn(String dbColumn)
+    {
+        this.dbColumn = dbColumn;
+    }
+
     /**
      * Sets the domain of this attribute.
      *

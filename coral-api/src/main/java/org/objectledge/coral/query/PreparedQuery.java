@@ -40,11 +40,10 @@ public interface PreparedQuery
 
     /**
      * Assigns a value to the positional parameter.
-     *
+     * 
      * @param index the parameter index.
      * @param value the parameter value.
-     * @throws IndexOutOfBoundsException if there is parameter by the
-     *         specified indedx in the query
+     * @throws IndexOutOfBoundsException if there is parameter by the specified index in the query
      * @throws IllegalArgumentException if a <code>null</code> value is used.
      */
     public void setParameter(int index, Entity value)
@@ -52,16 +51,15 @@ public interface PreparedQuery
 
     /**
      * Assigns a value to the positional parameter.
-     *
-     * <p>The AttributeClass of the value must be known, because it's the
-     * HandlerClass that provides the external representation of the value
-     * that may be used in the query.</p>
-     *
+     * <p>
+     * The AttributeClass of the value must be known, because it's the HandlerClass that provides
+     * the external representation of the value that may be used in the query.
+     * </p>
+     * 
      * @param index the parameter index.
      * @param type the AttributeClass the value belongs to.
      * @param value the parameter value.
-     * @throws IndexOutOfBoundsException if there is parameter by the
-     *         specified indedx in the query
+     * @throws IndexOutOfBoundsException if there is parameter by the specified index in the query
      * @throws IllegalArgumentException if a <code>null</code> value is used.
      */
     public <T> void setParameter(int index, AttributeClass<T> type, T value)
@@ -71,44 +69,40 @@ public interface PreparedQuery
     
     /**
      * Assigns a value to the positional parameter.
-     *
+     * 
      * @param index the parameter index.
      * @param value the parameter value.
-     * @throws IndexOutOfBoundsException if there is parameter by the
-     *         specified indedx in the query
+     * @throws IndexOutOfBoundsException if there is parameter by the specified index in the query
      */
     public void setParameter(int index, boolean value)
         throws IndexOutOfBoundsException;
         
     /**
      * Assigns a value to the positional parameter.
-     *
+     * 
      * @param index the parameter index.
      * @param value the parameter value.
-     * @throws IndexOutOfBoundsException if there is parameter by the
-     *         specified indedx in the query
+     * @throws IndexOutOfBoundsException if there is parameter by the specified index in the query
      */
     public void setParameter(int index, int value)
         throws IndexOutOfBoundsException;    
 
     /**
      * Assigns a value to the positional parameter.
-     *
+     * 
      * @param index the parameter index.
      * @param value the parameter value.
-     * @throws IndexOutOfBoundsException if there is parameter by the
-     *         specified indedx in the query
+     * @throws IndexOutOfBoundsException if there is parameter by the specified index in the query
      */
     public void setParameter(int index, long value)
         throws IndexOutOfBoundsException;
 
     /**
      * Assigns a value to the positional parameter.
-     *
+     * 
      * @param index the parameter index.
      * @param value the parameter value.
-     * @throws IndexOutOfBoundsException if there is parameter by the
-     *         specified indedx in the query
+     * @throws IndexOutOfBoundsException if there is parameter by the specified index in the query
      */
     public void setParameter(int index, String value)
         throws IndexOutOfBoundsException;

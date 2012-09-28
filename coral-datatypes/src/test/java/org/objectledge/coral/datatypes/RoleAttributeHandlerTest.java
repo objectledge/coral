@@ -57,7 +57,8 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<Role> attributeClass;
 
     private Mock mockConnection;
     private Connection connection;
@@ -96,7 +97,7 @@ public class RoleAttributeHandlerTest extends LedgeTestCase
         mockCoralSecurity.stubs().method("getRole").with(eq("foo2")).will(returnValue(new Role[2]));
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<Role>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Role.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("role"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_role"));

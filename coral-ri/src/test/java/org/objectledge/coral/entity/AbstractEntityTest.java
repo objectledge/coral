@@ -27,11 +27,12 @@
 // 
 package org.objectledge.coral.entity;
 
+import java.sql.SQLException;
+
 import org.jmock.Mock;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.test.LedgeTestCase;
 
 /**
@@ -100,7 +101,7 @@ public class AbstractEntityTest extends LedgeTestCase
         ((AbstractEntity)blue1).setId(1);
         String s = blue1.toString();
         assertTrue(s.indexOf("#1") > 0);
-        assertTrue(s.indexOf("<blue 1>") > 0);
+        assertTrue(s.indexOf("<blue 1>") >= 0);
     }
     
     public void testSetters()
@@ -117,17 +118,16 @@ public class AbstractEntityTest extends LedgeTestCase
         assertEquals(2L, blue.getId());
     }
     
-    public void testStoring() throws PersistenceException
+    public void testStoring() throws SQLException
     {
         BlueEntity blue = new BlueEntity((Persistence)mockPersistence.proxy(), "<blue 1>");
-        mockOutputRecord.expects(once()).method("setLong").with(eq("blue_entity_id"), eq(-1L));
         mockOutputRecord.expects(once()).method("setString").with(eq("name"), eq("<blue 1>"));
         blue.getData((OutputRecord)mockOutputRecord.proxy());
         blue.getKeyColumns();
         blue.getTable();
     }
     
-    public void testLoading() throws PersistenceException
+    public void testLoading() throws SQLException
     {
         BlueEntity blue = new BlueEntity((Persistence)mockPersistence.proxy());
         mockInputRecord.expects(once()).method("getLong").

@@ -51,7 +51,6 @@ import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.security.SubjectImpl;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
 
@@ -375,7 +374,7 @@ public class CoralRegistryImpl
             
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             try
             {
@@ -510,7 +509,7 @@ public class CoralRegistryImpl
             resourceClassRegistry.delete((ResourceClassImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             try
             {
@@ -574,10 +573,10 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("resource_class_id = "+owner.getIdString(),
-                                            attributeDefinitionFactory);
+                    list = persistence.load(attributeDefinitionFactory, "resource_class_id = ?",
+                        owner.getId());
                 }
-                catch(PersistenceException e)
+                catch(SQLException e)
                 {
                     throw new BackendException("Failed to load AttributeDefinitions for " + owner, e);
                 }
@@ -681,11 +680,10 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("parent = "+owner.getIdString()+" OR "+
-                                            "child = "+owner.getIdString(),
-                                            resourceClassInheritanceFactory);
+                    list = persistence.load(resourceClassInheritanceFactory,
+                        "parent = ? OR child = ?", owner.getId(), owner.getId());
                 }
-                catch(PersistenceException e)
+                catch(SQLException e)
                 {
                     throw new BackendException("Failed to load ResourceClassInheritance for " + owner, e);
                 }
@@ -711,7 +709,7 @@ public class CoralRegistryImpl
             {
                 persistence.save((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
@@ -745,7 +743,7 @@ public class CoralRegistryImpl
             {
                 persistence.delete((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to delete " + item, e);
             }
@@ -865,7 +863,7 @@ public class CoralRegistryImpl
             subjectRegistry.delete((SubjectImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             try
             {
@@ -1011,7 +1009,7 @@ public class CoralRegistryImpl
             roleRegistry.delete((RoleImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             try
             {
@@ -1148,7 +1146,7 @@ public class CoralRegistryImpl
             permissionRegistry.delete((PermissionImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             try
             {
@@ -1211,11 +1209,10 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("super_role = "+owner.getIdString()+" OR "+
-                                            "sub_role = "+owner.getIdString(),
-                                            roleImplicationFactory);
+                    list = persistence.load(roleImplicationFactory,
+                        "super_role = ? OR sub_role = ?", owner.getId(), owner.getId());
                 }
-                catch(PersistenceException e)
+                catch(SQLException e)
                 {
                     throw new BackendException("Failed to load RoleImplications for " + owner, e);
                 }
@@ -1241,7 +1238,7 @@ public class CoralRegistryImpl
             {
                 persistence.save((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
@@ -1276,7 +1273,7 @@ public class CoralRegistryImpl
             {
                 persistence.delete((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to delete " + item, e);
             }
@@ -1313,10 +1310,9 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("subject_id = "+owner.getIdString(),
-                                            roleAssignmentFactory);
+                    list = persistence.load(roleAssignmentFactory, "subject_id = ?", owner.getId());
                 }
-                catch(PersistenceException e)
+                catch(SQLException e)
                 {
                     throw new BackendException("Failed to load RoleAssignments for " + owner, e);
                 }
@@ -1346,10 +1342,9 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("role_id = "+owner.getIdString(),
-                                            roleAssignmentFactory);
+                    list = persistence.load(roleAssignmentFactory, "role_id = ?", owner.getId());
                 }
-                catch(PersistenceException e)
+                catch(SQLException e)
                 {
                     throw new BackendException("Failed to load RoleAssignments for " + owner, e);
                 }
@@ -1375,7 +1370,7 @@ public class CoralRegistryImpl
             {
                 persistence.save((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
@@ -1404,7 +1399,7 @@ public class CoralRegistryImpl
             {
                 persistence.delete((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to delete " + item, e);
             }
@@ -1439,10 +1434,10 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("resource_class_id = "+owner.getIdString(),
-                                            permissionAssociationFactory);
+                    list = persistence.load(permissionAssociationFactory, "resource_class_id = ?",
+                        owner.getId());
                 }
-                catch(PersistenceException e)
+                catch(SQLException e)
                 {
                     throw new BackendException("Failed to load PermissionAssociations for " + owner, e);
                 }
@@ -1472,10 +1467,10 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("permission_id = "+owner.getIdString(),
-                                            permissionAssociationFactory);
+                    list = persistence.load(permissionAssociationFactory, "permission_id = ?",
+                        owner.getId());
                 }
-                catch(PersistenceException e)
+                catch(SQLException e)
                 {
                     throw new BackendException("Failed to load PermissionAssociations for " + owner, e);
                 }
@@ -1501,7 +1496,7 @@ public class CoralRegistryImpl
             {
                 persistence.save((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
@@ -1532,7 +1527,7 @@ public class CoralRegistryImpl
             {
                 persistence.delete((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to delete " + item, e);
             }
@@ -1569,10 +1564,10 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("resource_id = "+owner.getIdString(),
-                                            permissionAssignmentFactory);
+                    list = persistence.load(permissionAssignmentFactory, "resource_id = ?",
+                        owner.getId());
                 }
-                catch(PersistenceException e)
+                catch(SQLException e)
                 {
                     throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
                 }
@@ -1602,10 +1597,10 @@ public class CoralRegistryImpl
                 List list;
                 try
                 {
-                    list = persistence.load("role_id = "+owner.getIdString(),
-                                            permissionAssignmentFactory);
+                    list = persistence.load(permissionAssignmentFactory, "role_id = ?",
+                        owner.getId());
                 }
-                catch(PersistenceException e)
+                catch(SQLException e)
                 {
                     throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
                 }
@@ -1626,10 +1621,10 @@ public class CoralRegistryImpl
         List<PermissionAssignmentImpl> list;
         try
         {
-            list = persistence.load("permission_id = "+owner.getIdString(),
-                                    permissionAssignmentFactory);
+            list = persistence
+                .load(permissionAssignmentFactory, "permission_id = ?", owner.getId());
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
         }
@@ -1647,7 +1642,7 @@ public class CoralRegistryImpl
             {
                 persistence.save((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
@@ -1678,7 +1673,7 @@ public class CoralRegistryImpl
             {
                 persistence.delete((Persistent)item);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to delete " + item, e);
             }
@@ -1942,13 +1937,12 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load("grantor = "+subject.getIdString(),
-                                             roleAssignmentFactory);
+            List list = persistence.load(roleAssignmentFactory, "grantor = ?", subject.getId());
             RoleAssignment[] result = new RoleAssignment[list.size()];
             list.toArray(result);
             return result;
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to load RoleAssignments for " + subject, e);
         }
@@ -1961,13 +1955,13 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load("grantor = "+subject.getIdString(),
-                                             permissionAssignmentFactory);
+            List list = persistence.load(permissionAssignmentFactory, "grantor = ?",
+                subject.getId());
             PermissionAssignment[] result = new PermissionAssignment[list.size()];
             list.toArray(result);
             return result;
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to load PermissionAssignments for " + subject, e);
         }
@@ -1980,8 +1974,7 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load("created_by = "+subject.getIdString(),
-                                             roleAssignmentFactory);
+            List list = persistence.load(roleAssignmentFactory, "created_by = ?", subject.getId());
             Resource[] result = new Resource[list.size()];
             for(int i=0; i<list.size(); i++)
             {
@@ -1989,7 +1982,7 @@ public class CoralRegistryImpl
             }
             return result;
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to load RoleAssignments for " + subject, e);
         }
@@ -2006,8 +1999,7 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load("owned_by = "+subject.getIdString(),
-                                             roleAssignmentFactory);
+            List list = persistence.load(roleAssignmentFactory, "owned_by = ?", subject.getId());
             ArrayList temp = new ArrayList();
             ArrayList stack = new ArrayList();
             for(int i=0; i<list.size(); i++)
@@ -2028,7 +2020,7 @@ public class CoralRegistryImpl
             temp.toArray(result);
             return result;
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             throw new BackendException("Failed to load RoleAssignments " + subject, e);
         }
@@ -2115,9 +2107,9 @@ public class CoralRegistryImpl
             List list;
             try
             {
-                list = persistence.load(null, resourceClassInheritanceFactory);
+                list = persistence.load(resourceClassInheritanceFactory);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to load ResuourceClassInheritance", e);
             }
@@ -2189,9 +2181,9 @@ public class CoralRegistryImpl
             List list;
             try
             {
-                list = persistence.load(null, roleImplicationFactory);
+                list = persistence.load(roleImplicationFactory);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to load RoleImplications", e);
             }
@@ -2233,9 +2225,9 @@ public class CoralRegistryImpl
             List list;
             try
             {
-                list = persistence.load(null, roleAssignmentFactory);
+                list = persistence.load(roleAssignmentFactory);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to load RoleAssignments", e);
             }
@@ -2286,9 +2278,9 @@ public class CoralRegistryImpl
             List list;
             try
             {
-                list = persistence.load(null, permissionAssociationFactory);
+                list = persistence.load(permissionAssociationFactory);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to load PermissionAssociations", e);
             }
@@ -2340,9 +2332,9 @@ public class CoralRegistryImpl
             List list;
             try
             {
-                list = persistence.load(null, permissionAssignmentFactory);
+                list = persistence.load(permissionAssignmentFactory);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("Failed to load PermissionAssignments", e);
             }

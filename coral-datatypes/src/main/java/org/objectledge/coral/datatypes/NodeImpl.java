@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.InvalidResourceNameException;
@@ -45,12 +46,13 @@ import org.objectledge.coral.store.ValueRequiredException;
  * @author Coral Maven plugin
  */
 public class NodeImpl
-    extends GenericResource
+    extends StandardResource
     implements Node
 {
     // class variables /////////////////////////////////////////////////////////
 
     /** Class variables initialization status. */
+    @SuppressWarnings("unused")
     private static boolean definitionsInitialized;
     
     // initialization /////////////////////////////////////////////////////////
@@ -106,8 +108,8 @@ public class NodeImpl
     {
         try
         {
-            ResourceClass rc = session.getSchema().getResourceClass("coral.Node");
-            Map attrs = new HashMap();
+            ResourceClass<Node> rc = session.getSchema().getResourceClass("coral.Node", Node.class);
+            Map<AttributeDefinition<?>, Object> attrs = new HashMap<AttributeDefinition<?>, Object>();
             Resource res = session.getStore().createResource(name, parent, rc, attrs);
             if(!(res instanceof Node))
             {

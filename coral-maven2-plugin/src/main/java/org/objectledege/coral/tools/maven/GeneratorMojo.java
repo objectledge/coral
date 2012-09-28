@@ -96,6 +96,11 @@ public class GeneratorMojo
      */
     private String sqlListPath;
 
+    /**
+     * @parameter default-value="org.objectledge.coral.datatypes.StandardResource"
+     */
+    private String standardResourceImpl;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -105,7 +110,8 @@ public class GeneratorMojo
             MavenDNALogger log = new MavenDNALogger(getLog());
             GeneratorComponent generator = new GeneratorComponent(fileSystem, log, fileEncoding,
                 sourcesList, targetDir, importGroups, packageIncludes, packageExcludes, headerFile,
-                sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath);
+                sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath,
+                standardResourceImpl);
             generator.execute();
         }
         catch(Exception e)

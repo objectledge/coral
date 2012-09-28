@@ -27,8 +27,8 @@ public class PermissionAttributeHandler
      * @param attributeClass the attribute class.
      */
     public PermissionAttributeHandler(Database database, CoralStore coralStore,
-                                      CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                      AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema,
+        AttributeClass<Permission> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

@@ -18,7 +18,7 @@ import org.objectledge.database.Database;
  * @version $Id: WeakResourceListAttributeHandler.java,v 1.4 2005-02-21 11:52:20 rafal Exp $
  */
 public class WeakResourceListAttributeHandler<T extends Resource>
-    extends ResourceListAttributeHandler<T>
+    extends ResourceListAttributeHandler<T, WeakResourceList<T>>
 {
     /**
      * The constructor.
@@ -33,7 +33,7 @@ public class WeakResourceListAttributeHandler<T extends Resource>
     public WeakResourceListAttributeHandler(Database database, CoralStore coralStore,
                                 CoralSecurity coralSecurity, CoralSchema coralSchema,
                                 CoralSessionFactory coralSessionFactory,
-                                AttributeClass attributeClass)
+ AttributeClass<WeakResourceList<T>> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, coralSessionFactory, 
             attributeClass);
@@ -52,7 +52,7 @@ public class WeakResourceListAttributeHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    public Resource[] getResourceReferences(ResourceList<T> value)
+    public Resource[] getResourceReferences(WeakResourceList<T> value)
     {
         return new Resource[0];
     }
@@ -63,7 +63,7 @@ public class WeakResourceListAttributeHandler<T extends Resource>
      * @param list list items.
      * @return a ResourceList instance.
      */
-    protected ResourceList<T> instantiate(List list)
+    protected WeakResourceList<T> instantiate(List<?> list)
     {
         return new WeakResourceList<T>(coralSessionFactory, list);
     }

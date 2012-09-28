@@ -82,6 +82,7 @@ TOKEN:
     <BY : "BY"> |
     <CLASS : "CLASS"> |
     <CLASS_UNIQUE : "CLASS_UNIQUE"> |
+    <COLUMN : "COLUMN"> |
     <COPY : "COPY"> |
     <CREATE : "CREATE"> |
     <DB : "DB" > |
@@ -366,6 +367,7 @@ ASTattributeDefinition attributeDefinition() :
         ( jjtThis.domain = name() ) 
     <RPAREN> ]
     ( jjtThis.attributeName = name() )
+    [ <DB> <COLUMN> jjtThis.dbColumn = name() ] 
     {
         return jjtThis;
     }       
@@ -646,11 +648,20 @@ void alterResourceClassStatement() #void :
             ( "SUPERCLASS" alterResourceClassDeleteSuperclassStatement(rc) ) |
             ( "PERMISSIONS" alterResourceClassDeletePermissionsStatement(rc) )
         ) |
-        "ALTER" "ATTRIBUTE" attr=name() "SET" 
+        "ALTER" "ATTRIBUTE" attr=name() 
         (
-            ( "NAME" alterResourceClassAlterAttributeSetNameStatement(rc, attr) ) |
-            ( "FLAGS" alterResourceClassAlterAttributeSetFlagsStatement(rc, attr) ) |
-            ( "DOMAIN" alterResourceClassAlterAttributeSetDomainStatement(rc, attr) )
+        	"SET"
+	        (
+	            ( "NAME" alterResourceClassAlterAttributeSetNameStatement(rc, attr) ) |
+	            ( "FLAGS" alterResourceClassAlterAttributeSetFlagsStatement(rc, attr) ) |
+	            ( "DB" "COLUMN" alterResourceClassAlterAttributeSetDbColumnStatement(rc, attr) ) |
+	            ( "DOMAIN" alterResourceClassAlterAttributeSetDomainStatement(rc, attr) )
+	        ) |
+	        "DELETE"
+	        (
+	        	alterResourceClassAlterAttributeDeleteDbColumnStatement(rc, attr) |
+	        	alterResourceClassAlterAttributeDeleteDomainStatement(rc, attr)
+	        )
         )
     ) 
 }
@@ -930,6 +941,15 @@ void alterResourceClassAlterAttributeSetFlagsStatement(ASTresourceClass resource
     ( jjtThis.attributeFlags = attributeFlagList() )
 }
 
+void alterResourceClassAlterAttributeSetDbColumnStatement(ASTresourceClass resourceClass, String attr) :
+{
+    jjtThis.resourceClass = resourceClass;
+    jjtThis.attributeName = attr;
+}
+{
+    ( jjtThis.dbColumn = name() )
+}
+
 void alterResourceClassAlterAttributeSetDomainStatement(ASTresourceClass resourceClass, String attr) :
 {
     jjtThis.resourceClass = resourceClass;
@@ -937,6 +957,24 @@ void alterResourceClassAlterAttributeSetDomainStatement(ASTresourceClass resourc
 }
 {
     ( jjtThis.domain = name() )
+}
+
+void alterResourceClassAlterAttributeDeleteDbColumnStatement(ASTresourceClass resourceClass, String attr) :
+{
+    jjtThis.resourceClass = resourceClass;
+    jjtThis.attributeName = attr;
+}
+{
+	"DB" "COLUMN"
+}
+
+void alterResourceClassAlterAttributeDeleteDomainStatement(ASTresourceClass resourceClass, String attr) :
+{
+    jjtThis.resourceClass = resourceClass;
+    jjtThis.attributeName = attr;
+}
+{
+	"DOMAIN"
 }
 
 void alterResourceClassAddAttributeStatement(ASTresourceClass resourceClass) :

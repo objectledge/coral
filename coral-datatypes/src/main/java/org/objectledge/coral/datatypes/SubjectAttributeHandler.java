@@ -27,8 +27,7 @@ public class SubjectAttributeHandler
      * @param attributeClass the attribute class.
      */
     public SubjectAttributeHandler(Database database, CoralStore coralStore,
-                                    CoralSecurity coralSecurity, CoralSchema coralSchema,
-                                    AttributeClass attributeClass)
+        CoralSecurity coralSecurity, CoralSchema coralSchema, AttributeClass<Subject> attributeClass)
     {
         super(database, coralStore, coralSecurity, coralSchema, attributeClass);
     }

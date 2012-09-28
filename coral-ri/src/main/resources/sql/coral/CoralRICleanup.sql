@@ -47,11 +47,12 @@ DELETE FROM coral_resource_class_inheritance;
 -- MySQL: instead of DROP/ADD CONSTRAINT use
 -- SET FOREIGN_KEY_CHECKS=0/1
 
-ALTER TABLE coral_resource DROP CONSTRAINT resource_parent_fk;
+
+ALTER TABLE coral_resource DROP CONSTRAINT coral_resource_parent_fkey;
 
 DELETE FROM coral_resource;
 
-ALTER TABLE coral_resource ADD CONSTRAINT resource_parent_fk 
+ALTER TABLE coral_resource ADD CONSTRAINT coral_resource_parent_fkey 
   FOREIGN KEY (parent) REFERENCES coral_resource (resource_id);
 
 DELETE FROM coral_role;

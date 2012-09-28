@@ -1,5 +1,6 @@
 package org.objectledge.coral.security;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -14,7 +15,6 @@ import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.OutputRecord;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 
 /**
  * Each {@link ResourceClass} has an associated set of <code>Permission</code>s
@@ -106,30 +106,32 @@ public class PermissionImpl
 
     /**
      * Stores the fields of the object into the specified record.
-     *
-     * <p>You need to call <code>getData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
-     *
+     * <p>
+     * You need to call <code>getData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
+     * 
      * @param record the record to store state into.
-     * @throws PersistenceException if there is a problem storing field values.
+     * @throws SQLException if there is a problem storing field values.
      */
     public void getData(OutputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.getData(record);
     }
 
     /**
      * Loads the fields of the object from the specified record.
-     *
-     * <p>You need to call <code>setData</code> of your superclasses if they
-     * are <code>Persistent</code>.</p>
+     * <p>
+     * You need to call <code>setData</code> of your superclasses if they are
+     * <code>Persistent</code>.
+     * </p>
      * 
      * @param record the record to read state from.
-     * @throws PersistenceException if there is a problem loading field values.
+     * @throws SQLException if there is a problem loading field values.
      */
     public void setData(InputRecord record)
-        throws PersistenceException
+        throws SQLException
     {
         super.setData(record);
         coralEventHub.getInbound().addPermissionChangeListener(this, this);
@@ -150,7 +152,7 @@ public class PermissionImpl
             {
                 persistence.revert(this);
             }
-            catch(PersistenceException e)
+            catch(SQLException e)
             {
                 throw new BackendException("failed to revert entity state", e);
             }

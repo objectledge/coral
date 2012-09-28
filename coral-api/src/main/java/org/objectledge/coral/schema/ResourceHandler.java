@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.objectledge.coral.query.ResourceQueryHandler;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 
@@ -31,7 +32,7 @@ public interface ResourceHandler<T extends Resource>
      * @throws SQLException in case of database problems. The caller metod
      *         should consider rolling back the whole transaction.
      */
-    public T create(Resource delegate, Map<AttributeDefinition<?>, Object> attributes, Connection conn)
+    public T create(Resource delegate, Map<AttributeDefinition<?>, ?> attributes, Connection conn)
         throws ValueRequiredException, SQLException;
 
     /**
@@ -150,7 +151,8 @@ public interface ResourceHandler<T extends Resource>
      *         REQUIRED attributes are missing from <code>attributes</code>
      *         map. 
      */
-    public void addParentClass(ResourceClass<?> parent, Map<AttributeDefinition<?>, Object> attributes, Connection conn)
+    public void addParentClass(ResourceClass<?> parent, Map<AttributeDefinition<?>, ?> attributes,
+        Connection conn)
         throws ValueRequiredException, SQLException;
     
     /**
@@ -198,21 +200,6 @@ public interface ResourceHandler<T extends Resource>
      */
     public void clearResourceReferences(Resource resource);
     
-    // data preloading //////////////////////////////////////////////////////
-    
-    /**
-     * Retruns implementation dependent data that can speed up retrieving of all resources in the
-     * system.
-     * 
-     * @param conn database connection.
-     * @return implementation specific data.
-     * @throws SQLException if database operation fails.
-     */
-    public Object getData(Connection conn)
-        throws SQLException;
-    
-    // fallback resource implementation
-    
     /**
      * Returns an implementation of Resource interface that can be used when requested Java 
      * wrappers are not available.
@@ -220,4 +207,20 @@ public interface ResourceHandler<T extends Resource>
      * @return an implementation of Resource class.
      */
     public Class<?> getFallbackResourceImplClass();
+
+    /**
+     * Returns Coral query to SQL translation helper object suitable for associated resource class.
+     * 
+     * @return Coral query to SQL translation helper object.
+     */
+    public ResourceQueryHandler getQueryHandler();
+
+    /**
+     * Lazily loads an attribute value.
+     * 
+     * @param attribute
+     * @param aId
+     * @return
+     */
+    public <A> A loadValue(AttributeDefinition<A> attribute, long aId);
 }

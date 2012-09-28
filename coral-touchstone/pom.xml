@@ -6,7 +6,7 @@
     <groupId>org.objectledge.coral</groupId>
     <artifactId>coral-common</artifactId>
     <relativePath>../coral-common/pom.xml</relativePath>
-    <version>1.0.13.1</version>
+    <version>1.0.14</version>
   </parent>
   <artifactId>coral-touchstone</artifactId>
   <packaging>jar</packaging>
@@ -23,6 +23,10 @@
     <dependency>
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-datatypes</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.objectledge.coral</groupId>
+      <artifactId>coral-tools</artifactId>
     </dependency>
     <dependency>
       <groupId>org.objectledge</groupId>
@@ -57,7 +61,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>hsqldb</groupId>
+      <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <type>jar</type>
       <scope>test</scope>

@@ -41,7 +41,6 @@ import org.objectledge.coral.security.PermissionAssignment;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.persistence.Persistence;
-import org.objectledge.database.persistence.PersistenceException;
 import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
 
@@ -170,8 +169,7 @@ public class CoralStoreImpl
             try
             {
                 conn = persistence.getDatabase().getConnection();
-                List<ResourceImpl> list = persistence.load(" 1 = 1 ORDER BY resource_id",
-                    resourceFactory);
+                List<ResourceImpl> list = persistence.load(resourceFactory);
                 rs = instantiate(list, conn);
             }
             catch(Exception e)
@@ -228,13 +226,11 @@ public class CoralStoreImpl
                 List<ResourceImpl> list;
                 if(parent != null)
                 {
-                    list = persistence.load("parent = "+parent.getIdString(),
-                        resourceFactory);
+                    list = persistence.load(resourceFactory, "parent = ?", parent.getId());
                 }
                 else
                 {
-                    list = persistence.load("parent IS NULL",
-                        resourceFactory);
+                    list = persistence.load(resourceFactory, "parent IS NULL");
                 }
                 rs = instantiate(list, conn);
                 rrs = ref(rs);
@@ -284,7 +280,7 @@ public class CoralStoreImpl
             try
             {
                 conn = persistence.getDatabase().getConnection();
-                res = (Resource)persistence.load(id,resourceFactory);
+                res = (Resource)persistence.load(resourceFactory, id);
                 if(res != null)
                 {
                     res = res.getResourceClass().getHandler().retrieve(res, conn, null);
@@ -344,9 +340,7 @@ public class CoralStoreImpl
             try
             {
                 conn = persistence.getDatabase().getConnection();
-                List<ResourceImpl> list = persistence
-                    .load("name = '" + DatabaseUtils.escapeSqlString(name) + "'",
-                    resourceFactory);
+                List<ResourceImpl> list = persistence.load(resourceFactory, "name = ?", name);
                 rs = instantiate(list, conn);
             }
             catch(Exception e)
@@ -429,9 +423,8 @@ public class CoralStoreImpl
             try
             {
                 conn = persistence.getDatabase().getConnection();
-                List<ResourceImpl> list = persistence.load(
-                    "parent = " + parent.getIdString() +
-                    " AND name = '"+DatabaseUtils.escapeSqlString(name)+"'", resourceFactory);
+                List<ResourceImpl> list = persistence.load(resourceFactory,
+                    "parent = ? AND name = ?", parent.getId(), name);
                 rs = instantiate(list, conn);
                 rrs = ref(rs);
             }
@@ -730,18 +723,6 @@ public class CoralStoreImpl
             throw ex;
         }
         catch(SQLException e)
-        {
-            try
-            {
-                persistence.getDatabase().rollbackTransaction(shouldCommit);
-            }
-            catch(SQLException ee)
-            {
-                log.error("rollback failed", ee);
-            }
-            throw new BackendException("failed to create resource", e);
-        }
-        catch(PersistenceException e)
         {
             try
             {
@@ -1144,7 +1125,7 @@ public class CoralStoreImpl
             
             coralEventHub.getOutbound().fireResourceChangeEvent(resource, null);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             delegate.setResourceName(oldName);
             throw new BackendException("failed to update the resource object", e);
@@ -1226,7 +1207,7 @@ public class CoralStoreImpl
             coralEventHub.getGlobal().fireResourceTreeChangeEvent(
                 new ResourceInheritanceImpl(parent, child), true);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             delegate.setParent(oldParent);
             throw new BackendException("failed to update the resource object", e);
@@ -1271,7 +1252,7 @@ public class CoralStoreImpl
             coralEventHub.getGlobal().fireResourceTreeChangeEvent(
                 new ResourceInheritanceImpl(oldParent, child), false);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             delegate.setParent(oldParent);
             throw new BackendException("failed to update the resource object", e);
@@ -1297,7 +1278,7 @@ public class CoralStoreImpl
             coralEventHub.getGlobal().fireResourceOwnershipChangeEvent(
                 new ResourceOwnershipImpl(owner, resource), true);
         }
-        catch(PersistenceException e)
+        catch(SQLException e)
         {
             delegate.setOwner(oldOwner);
             throw new BackendException("failed to update the resource object", e);
@@ -1605,7 +1586,7 @@ public class CoralStoreImpl
     
     // startup //////////////////////////////////////////////////////////////////////////////////
     
-    private static final int[] STARTUP_PHASES = { 2 };
+    private static final int[] STARTUP_PHASES = {};
     
     /**
      * {@inheritDoc}
@@ -1621,180 +1602,8 @@ public class CoralStoreImpl
     public void preloadData(int phase)
         throws Exception
     {
-        if(phase == 2)
-        {
-            preloadResources();
-        }
     }
     
-    private void preloadResources()
-        throws SQLException, PersistenceException
-    {
-        long time = System.currentTimeMillis();
-        log.info("preloading resource store");
-        Connection conn = null;
-        try
-        {
-            synchronized(lock)
-            {
-                long delegateTime = System.currentTimeMillis();
-                log.info("preloading resource store: preloading delegates");
-                conn = persistence.getDatabase().getConnection();
-                List<ResourceImpl> list = persistence.load(" true ORDER BY resource_id",
-                    resourceFactory);
-                log.info("preloading resource store: done preloading delegates in "
-                    + (System.currentTimeMillis() - delegateTime) + "ms");
-                Map<Class<?>, Object> handlerData = new HashMap<Class<?>, Object>();
-                Set<Resource> allResources = new HashSet<Resource>();
-                resourceSet.put("all", allResources);
-                // A list to protect temp parent keys from GC - they will be keys
-                // in WeakHashMaps.
-                List<Object> parentKeys = new ArrayList<Object>(list.size() / 20);
-                // tracking
-                int tAll = list.size();
-                int tMark = 0;
-                int tCnt = 0;
-                for(Resource res : list)
-                {
-                    if(tCnt >= tMark && tCnt > 1)
-                    {
-                        log.info("preloading resource store " + tCnt + " of " + tAll + " (" + tCnt
-                            * 100 / tAll + "%) complete");
-                        tMark += tAll / 10;
-                    }
-                    tCnt++;
-                    ResourceHandler<?> handler = res.getResourceClass().getHandler();
-                    Object data = handlerData.get(handler.getClass());
-                    if(data == null)
-                    {
-                        long handlerDataTime = System.currentTimeMillis();
-                        log.info("preloading resource store: preloading handler " + "data for "
-                            + handler.getClass().getName());
-                        data = handler.getData(conn);
-                        handlerData.put(handler.getClass(), data);
-                        log.info("preloading resource store: done "
-                            + "preloading handler data for " + handler.getClass().getName()
-                            + " in " + (System.currentTimeMillis() - handlerDataTime) + "ms");
-                    }
-                    res = handler.retrieve(res, conn, data);
-
-                    allResources.add(res);
-
-                    resourceById.put(res.getIdObject(), res);
-
-                    Set<Resource> rs = resourceByName.get(res.getName());
-                    if(rs == null)
-                    {
-                        rs = new HashSet<Resource>();
-                        resourceByName.put(res.getName(), rs);
-                    }
-                    rs.add(res);
-
-                    Object parentKey;
-                    if(res.getParentId() < res.getId())
-                    {
-                        parentKey = res.getParent();
-                    }
-                    else
-                    {
-                        parentKey = Long.valueOf(res.getParentId());
-                        parentKeys.add(parentKey);
-                    }
-                    Set<ResourceRef> rrs = resourceByParent.get(parentKey);
-                    if(rrs == null)
-                    {
-                        rrs = new HashSet<ResourceRef>();
-                        resourceByParent.put(parentKey, rrs);
-                    }
-                    rrs.add(new ResourceRef(res, coral));
-
-                    Map<String, Set<ResourceRef>> nameMap = resourceByParentAndName.get(parentKey);
-                    if(nameMap == null)
-                    {
-                        nameMap = new HashMap<String, Set<ResourceRef>>();
-                        resourceByParentAndName.put(parentKey, nameMap);
-                    }
-                    rrs = nameMap.get(res.getName());
-                    if(rrs == null)
-                    {
-                        rrs = new HashSet<ResourceRef>();
-                        nameMap.put(res.getName(), rrs);
-                    }
-                    rrs.add(new ResourceRef(res, coral));
-
-                    // prevent unnecessary queries for leaf nodes' children
-                    rrs = resourceByParent.get(res);
-                    if(rrs == null)
-                    {
-                        rrs = new HashSet<ResourceRef>();
-                        resourceByParent.put(res, rrs);
-                    }
-                }
-                for(Resource res : allResources)
-                {
-                    if(!resourceByParent.containsKey(res))
-                    {
-                        resourceByParent.put(res, new HashSet<ResourceRef>());
-                        resourceByParentAndName.put(res, new HashMap<String, Set<ResourceRef>>());
-                    }
-                }
-                // resolve numeric keys into resource keys
-                // use helper map to avoid ConcurrentModificationException
-                Map<Object, Set<ResourceRef>> setAdditions = new HashMap<Object, Set<ResourceRef>>();
-                Set<Object> removals = new HashSet<Object>();
-                for(Map.Entry<?, Set<ResourceRef>> entry : resourceByParent.entrySet())
-                {
-                    if(entry.getKey() instanceof Long)
-                    {
-                        removals.add(entry.getKey());
-                        Object newKey = resourceById.get(entry.getKey());
-                        Set<ResourceRef> rrs = resourceByParent.get(newKey);
-                        if(rrs != null)
-                        {
-                            rrs.addAll(entry.getValue());
-                        }
-                        else
-                        {
-                            setAdditions.put(newKey, entry.getValue());
-                        }
-                    }
-                }
-                resourceByParent.putAll(setAdditions);
-                resourceByParent.keySet().removeAll(removals);
-                Map<Object, Map<String, Set<ResourceRef>>> mapAdditions = new HashMap<Object, Map<String, Set<ResourceRef>>>();
-                removals.clear();
-                for(Map.Entry<?, Map<String, Set<ResourceRef>>> entry : resourceByParentAndName
-                    .entrySet())
-                {
-                    if(entry.getKey() instanceof Long)
-                    {
-                        removals.add(entry.getKey());
-                        Object newKey = resourceById.get(entry.getKey());
-                        Map<String, Set<ResourceRef>> nm = resourceByParentAndName.get(newKey);
-                        if(nm != null)
-                        {
-                            nm.putAll(entry.getValue());
-                        }
-                        else
-                        {
-                            mapAdditions.put(newKey, entry.getValue());
-                        }
-                    }
-                }
-                resourceByParentAndName.putAll(mapAdditions);
-                resourceByParentAndName.keySet().removeAll(removals);
-                setAdditions.clear();
-                parentKeys.clear();
-            }
-        }
-        finally
-        {
-            DatabaseUtils.close(conn);
-        }
-        time = System.currentTimeMillis() - time;
-        log.info("finished preloading resource store in "+time+"ms");
-    }
-
     @Override
     public EntityFactory<Resource> getResourceFactory()
     {

@@ -122,7 +122,7 @@ public abstract class BatchLoader
             }
             try
             {
-                logger.debug("loading "+line);
+                logger.info("loading " + line);
                 referencedFiles.add(line);
                 load(fileSystem.getReader(line, fileEncoding));
             }

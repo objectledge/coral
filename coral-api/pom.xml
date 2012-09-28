@@ -6,7 +6,7 @@
     <groupId>org.objectledge.coral</groupId>
     <artifactId>coral-common</artifactId>
     <relativePath>../coral-common/pom.xml</relativePath>
-    <version>1.0.13.1</version>
+    <version>1.0.14</version>
   </parent>
   <artifactId>coral-api</artifactId>
   <packaging>jar</packaging>
@@ -33,6 +33,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
+        <version>2.6</version>
         <executions>
           <execution>
             <id>jjtree-javacc</id>

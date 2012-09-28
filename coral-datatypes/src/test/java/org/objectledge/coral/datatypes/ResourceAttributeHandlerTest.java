@@ -62,11 +62,14 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
     private Mock mockCoralSchema;
     private CoralSchema coralSchema;
     private Mock mockAttributeClass;
-    private AttributeClass attributeClass;
+
+    private AttributeClass<Resource> attributeClass;
     private Mock mockResourceClass;
-    private ResourceClass resourceClass;
+
+    private ResourceClass<Node> resourceClass;
     private Mock mockAttributeDefinition;
-    private AttributeDefinition attributeDefinition;
+
+    private AttributeDefinition<Resource> attributeDefinition;
     private Mock mockConnection;
     private Connection connection;
     private Mock mockStatement;
@@ -77,7 +80,7 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
     private Mock mockResource;
     private Resource resource;
 
-    private ResourceAttributeHandler handler;
+    private ResourceAttributeHandler<Resource> handler;
     
     private NodeImpl node;
 
@@ -98,14 +101,14 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
         resource = (Resource)mockResource.proxy();
         
         mockAttributeDefinition = mock(AttributeDefinition.class);
-        attributeDefinition = (AttributeDefinition)mockAttributeDefinition.proxy();
+        attributeDefinition = (AttributeDefinition<Resource>)mockAttributeDefinition.proxy();
         
         mockResourceClass = mock(ResourceClass.class);
         mockResourceClass.stubs().method("getJavaClass").will(returnValue(NodeImpl.class));
         mockResourceClass.stubs().method("getName").will(returnValue("coral.Node"));
         mockResourceClass.stubs().method("getAttribute").will(returnValue(attributeDefinition));
                
-        resourceClass = (ResourceClass)mockResourceClass.proxy();
+        resourceClass = (ResourceClass<Node>)mockResourceClass.proxy();
         mockCoralStore = mock(CoralStore.class);
         mockCoralStore.stubs().method("getResourceByPath").with(eq("/foo")).will(returnValue(new Resource[]{resource}));
         mockCoralStore.stubs().method("getResource").with(eq(2L)).will(throwException(new EntityDoesNotExistException("")));
@@ -126,11 +129,12 @@ public class ResourceAttributeHandlerTest extends LedgeTestCase
         mockCoralSecurity = mock(CoralSecurity.class);
         coralSecurity = (CoralSecurity)mockCoralSecurity.proxy();
         mockAttributeClass = mock(AttributeClass.class);
-        attributeClass = (AttributeClass)mockAttributeClass.proxy();
+        attributeClass = (AttributeClass<Resource>)mockAttributeClass.proxy();
         mockAttributeClass.stubs().method("getJavaClass").will(returnValue(Resource.class));
         mockAttributeClass.stubs().method("getName").will(returnValue("resource"));
         mockAttributeClass.stubs().method("getDbTable").will(returnValue("coral_attribute_resource"));
-        handler = new ResourceAttributeHandler(database, coralStore, coralSecurity, coralSchema, attributeClass);
+        handler = new ResourceAttributeHandler<Resource>(database, coralStore, coralSecurity,
+            coralSchema, attributeClass);
         mockStatement = mock(Statement.class);
         statement = (Statement)mockStatement.proxy();
         mockConnection = mock(Connection.class);

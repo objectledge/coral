@@ -5,7 +5,7 @@
   <parent>
     <artifactId>coral-common</artifactId>
     <groupId>org.objectledge.coral</groupId>
-    <version>1.0.13.1</version>
+    <version>1.0.14</version>
     <relativePath>../coral-common/pom.xml</relativePath>
   </parent>
   <artifactId>coral-tools</artifactId>
@@ -24,6 +24,14 @@
       <artifactId>ledge-container</artifactId>
     </dependency>
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.objectledge.coral</groupId>
       <artifactId>coral-datatypes</artifactId>
       <classifier>install</classifier>
@@ -35,7 +43,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>hsqldb</groupId>
+      <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <scope>test</scope>
     </dependency>
@@ -71,6 +79,7 @@
         <directory>src/main/java</directory>
         <includes>
           <include>**/*.vt</include>
+          <include>**/*.sql</include>
         </includes>
       </resource>
     </resources>

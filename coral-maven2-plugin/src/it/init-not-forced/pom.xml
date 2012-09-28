@@ -4,7 +4,7 @@
   <parent>
     <artifactId>coral-common</artifactId>
     <groupId>org.objectledge.coral</groupId>
-    <version>1.0.13.1</version>
+    <version>1.0.14</version>
     <relativePath>../../../../coral-common</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -20,9 +20,9 @@
         <version>${project.version}</version>
         <dependencies>
           <dependency>
-            <groupId>hsqldb</groupId>
+            <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>1.7.2.2</version>
+            <version>${versions.hsqldb}</version>
           </dependency>
         </dependencies>
         <configuration>
