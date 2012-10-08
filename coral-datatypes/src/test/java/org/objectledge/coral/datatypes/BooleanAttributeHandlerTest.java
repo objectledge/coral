@@ -115,10 +115,11 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
 
     public void testCreate() throws Exception
     {
-        String stmt = "INSERT INTO " + "coral_attribute_boolean" + "(data_key, data) VALUES (" + 1 + ", " + 1 + ")";
+        String stmt = "INSERT INTO " + "coral_attribute_boolean"
+            + "(data_key, data) VALUES (1, true)";
         mockStatement.expects(once()).method("execute").with(eq(stmt)).will(returnValue(true));
         booleanHandler.create(new Boolean(true), connection);
-        String stmt2 = "INSERT INTO coral_attribute_boolean(data_key, data) VALUES (1, 0)";
+        String stmt2 = "INSERT INTO coral_attribute_boolean(data_key, data) VALUES (1, false)";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         booleanHandler.create(new Boolean(false), connection);
     }
@@ -126,11 +127,11 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
     public void testUpdate() throws Exception
     {
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        String stmt2 = "UPDATE coral_attribute_boolean SET data = 1 WHERE data_key = 1";
+        String stmt2 = "UPDATE coral_attribute_boolean SET data = true WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         booleanHandler.update(1,Boolean.TRUE,connection);
         mockResultSet.expects(once()).method("next").will(returnValue(true));
-        stmt2 = "UPDATE coral_attribute_boolean SET data = 0 WHERE data_key = 1";
+        stmt2 = "UPDATE coral_attribute_boolean SET data = false WHERE data_key = 1";
         mockStatement.expects(once()).method("execute").with(eq(stmt2)).will(returnValue(true));
         booleanHandler.update(1,Boolean.FALSE,connection);
         mockResultSet.expects(once()).method("next").will(returnValue(false));

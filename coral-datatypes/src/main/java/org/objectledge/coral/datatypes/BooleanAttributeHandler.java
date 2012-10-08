@@ -86,7 +86,8 @@ public class BooleanAttributeHandler
         {
             stmt.execute(
                 "INSERT INTO "+getTable()+"(data_key, data) VALUES ("+
-                id+", "+((value).booleanValue() ? "1" : "0")+")"
+ id + ", "
+                + ((value).booleanValue() ? "true" : "false") + ")"
             );
             return id;
         }
@@ -153,7 +154,7 @@ public class BooleanAttributeHandler
             checkExists(id, stmt);
             stmt.execute(
                 "UPDATE "+getTable()+" SET data = "+
-                ((value).booleanValue() ? "1" : "0")+
+ ((value).booleanValue() ? "true" : "false") +
                 " WHERE data_key = "+id
             );
         }
