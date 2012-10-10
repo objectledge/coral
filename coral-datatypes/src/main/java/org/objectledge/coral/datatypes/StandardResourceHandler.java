@@ -447,7 +447,7 @@ public abstract class StandardResourceHandler<T extends Resource>
     private <A> void checkConstraint(AttributeDefinition<A> attr, Object rawValue)
     {
         final String domain = attr.getDomain();
-        if(domain != null)
+        if(domain != null && rawValue != null)
         {
             AttributeHandler<A> handler = attr.getAttributeClass().getHandler();
             A value = handler.toAttributeValue(rawValue);
