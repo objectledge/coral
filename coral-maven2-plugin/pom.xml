@@ -3,7 +3,7 @@
   <parent>
     <artifactId>coral-common</artifactId>
     <groupId>org.objectledge.coral</groupId>
-    <version>1.0.14.1</version>
+    <version>1.0.14.2</version>
     <relativePath>../coral-common</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>

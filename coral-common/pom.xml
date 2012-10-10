@@ -5,7 +5,7 @@
   <groupId>org.objectledge.coral</groupId>
   <artifactId>coral-common</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.14.1</version>
+  <version>1.0.14.2</version>
   <name>ObjectLedge Coral object oriented database</name>
   <inceptionYear>2003</inceptionYear>
   <description>
@@ -126,7 +126,7 @@
         <groupId>org.objectledge</groupId>
         <artifactId>ledge-web</artifactId>
         <classifier>classes</classifier>
-        <version>${project.version}</version>
+        <version>${versions.ledge}</version>
       </dependency>
       <dependency>
         <groupId>org.objectledge.coral</groupId>
