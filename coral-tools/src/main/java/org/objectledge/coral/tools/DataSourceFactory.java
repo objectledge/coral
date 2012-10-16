@@ -42,7 +42,7 @@ public class DataSourceFactory
             Context context = new Context();
             Logger jotmLogger = new Log4JLogger(org.apache.log4j.Logger
                 .getLogger(JotmTransaction.class));
-            Transaction transaction = new JotmTransaction(0, 0, context, jotmLogger, null);
+            Transaction transaction = new JotmTransaction(0, 0, context, jotmLogger);
 
             DefaultConfiguration conf = new DefaultConfiguration("config", "", "");
             DefaultConfiguration connConf = new DefaultConfiguration("connection", "", "config");
