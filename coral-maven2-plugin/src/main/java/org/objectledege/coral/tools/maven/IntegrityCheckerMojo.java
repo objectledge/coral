@@ -42,5 +42,9 @@ public class IntegrityCheckerMojo
         {
             throw new MojoExecutionException("internal error", e);
         }
+        finally
+        {
+            shutdownDataSource();
+        }
     }
 }
