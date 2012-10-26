@@ -30,10 +30,6 @@
     </dependency>
     <dependency>
       <groupId>org.objectledge</groupId>
-      <artifactId>ledge-lgpl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.objectledge</groupId>
       <artifactId>ledge-components</artifactId>
       <classifier>install</classifier>
       <scope>test</scope>
@@ -64,11 +60,6 @@
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <type>jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.resource</groupId>
-      <artifactId>connector-api</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
