@@ -22,9 +22,11 @@
           </dependency>
         </dependencies>
         <configuration>
-          <dbDriver>org.hsqldb.jdbcDriver</dbDriver>
-          <dbURL>jdbc:hsqldb:file:target/testdb</dbURL>
-          <dbUser>sa</dbUser>
+          <dataSourceClass>org.hsqldb.jdbc.pool.JDBCXADataSource</dataSourceClass>
+          <dataSourceProperties>
+            <url>jdbc:hsqldb:file:target/testdb</url>
+            <user>sa</user>
+          </dataSourceProperties>
           <sourcesList>script/sources.list</sourcesList>
         </configuration>
       </plugin>

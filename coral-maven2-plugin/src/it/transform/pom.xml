@@ -25,14 +25,20 @@
           </dependency>
         </dependencies>
         <configuration>
-          <dbDriver>org.hsqldb.jdbcDriver</dbDriver>
-          <dbUser>sa</dbUser>
-          <sourceURL>jdbc:hsqldb:file:target/transform-source</sourceURL>
-          <sourceUser>sa</sourceUser>
-          <targetURL>jdbc:hsqldb:file:target/transform-target</targetURL>
-          <targetUser>sa</targetUser>
-          <sourcesList>script/sources.list</sourcesList>
-          <force>true</force>
+          <source>
+            <dataSourceClass>org.hsqldb.jdbc.JDBCDataSource</dataSourceClass>
+            <dataSourceProperties>
+              <url>jdbc:hsqldb:file:target/transform-source</url>
+              <user>sa</user>
+            </dataSourceProperties>
+          </source>
+          <target>
+            <dataSourceClass>org.hsqldb.jdbc.JDBCDataSource</dataSourceClass>
+            <dataSourceProperties>
+              <url>jdbc:hsqldb:file:target/transform-target</url>
+              <user>sa</user>
+            </dataSourceProperties>
+          </target>
         </configuration>
       </plugin>
     </plugins>
@@ -47,7 +53,13 @@
             <artifactId>coral-maven2-plugin</artifactId>
             <version>${project.version}</version>
             <configuration>
-              <dbURL>jdbc:hsqldb:file:target/transform-source</dbURL>
+              <dataSourceClass>org.hsqldb.jdbc.pool.JDBCXADataSource</dataSourceClass>
+              <dataSourceProperties>
+                <url>jdbc:hsqldb:file:target/transform-source</url>
+                <user>sa</user>
+              </dataSourceProperties>
+              <force>true</force>
+              <sourcesList>script/sources.list</sourcesList>
             </configuration>
           </plugin>
         </plugins>
@@ -62,7 +74,13 @@
             <artifactId>coral-maven2-plugin</artifactId>
             <version>${project.version}</version>
             <configuration>
-              <dbURL>jdbc:hsqldb:file:target/transform-target</dbURL>
+              <dataSourceClass>org.hsqldb.jdbc.pool.JDBCXADataSource</dataSourceClass>
+              <dataSourceProperties>
+                <url>jdbc:hsqldb:file:target/transform-target</url>
+                <user>sa</user>
+              </dataSourceProperties>
+              <sourcesList>script/sources.list</sourcesList>
+              <force>true</force>
             </configuration>
           </plugin>
         </plugins>
@@ -77,11 +95,14 @@
             <artifactId>coral-maven2-plugin</artifactId>
             <version>${project.version}</version>
             <configuration>
-              <dbDriver>org.postgresql.Driver</dbDriver>
-              <driverClasspath>/usr/share/java/postgresql-jdbc3.jar</driverClasspath>
-              <dbUser>cyklotron</dbUser>
-              <dbPassword>12345</dbPassword>
-              <dbURL>jdbc:postgresql://localhost/lcmst</dbURL>
+              <driverClasspath>/usr/share/java/postgresql-jdbc4.jar</driverClasspath>
+              <dataSourceClass>org.postgresql.xa.PGXADataSource</dataSourceClass>
+              <dataSourceProperties>
+                <databaseName>lcmst</databaseName>
+                <user>cyklotron</user>
+                <password>coraltest</password>
+              </dataSourceProperties>
+              <sourcesList>script/sources.list</sourcesList>
               <force>true</force>
             </configuration>
           </plugin>
@@ -97,15 +118,23 @@
             <artifactId>coral-maven2-plugin</artifactId>
             <version>${project.version}</version>
             <configuration>
-              <dbDriver>org.postgresql.Driver</dbDriver>
-              <driverClasspath>/usr/share/java/postgresql-jdbc3.jar</driverClasspath>
-              <sourceURL>jdbc:postgresql://localhost/portal</sourceURL>
-              <sourceUser>cyklotron</sourceUser>
-              <sourcePassword>12345</sourcePassword>
-              <targetURL>jdbc:postgresql://localhost/lcmst</targetURL>
-              <targetUser>cyklotron</targetUser>
-              <targetPassword>12345</targetPassword>
-              <sourcesList>script/sources.list</sourcesList>
+              <driverClasspath>/usr/share/java/postgresql-jdbc4.jar</driverClasspath>
+              <source>
+                <dataSourceClass>org.postgresql.ds.PGSimpleDataSource</dataSourceClass>
+                <dataSourceProperties>
+                  <databaseName>portal</databaseName>
+                  <user>cyklotron</user>
+                  <password>coraltest</password>
+                </dataSourceProperties>
+              </source>
+              <target>
+                <dataSourceClass>org.postgresql.ds.PGSimpleDataSource</dataSourceClass>
+                <dataSourceProperties>
+                  <databaseName>lcmst</databaseName>
+                  <user>cyklotron</user>
+                  <password>coraltest</password>
+                </dataSourceProperties>
+              </target>
             </configuration>
           </plugin>
         </plugins>
