@@ -91,7 +91,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <versions.ledge>1.0.15-SNAPSHOT</versions.ledge>
-    <versions.hsqldb>2.2.8</versions.hsqldb>
+    <versions.hsqldb>2.2.9</versions.hsqldb>
   </properties>
   <dependencyManagement>
     <dependencies>
