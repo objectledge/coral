@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config xmlns="http://objectledge.org/btm/1.0">
+  <tm>
+    <serverId>node0</serverId>
+    <disableJmx>true</disableJmx>
+    <journal>
+      <disk>
+        <logPart1Filename>target/btm/btm1.tlog</logPart1Filename>
+        <logPart2Filename>target/btm/btm2.tlog</logPart2Filename>
+      </disk>
+    </journal>
+    <timer>
+      <defaultTransactionTimeout>500</defaultTransactionTimeout>
+    </timer>
+  </tm>
+  <tracing>
+    <disabled />
+  </tracing>
+  <jdbc>
+    <connectionPool uniqueName="raw">
+      <className>org.hsqldb.jdbc.pool.JDBCXADataSource</className>
+      <maxPoolSize>5</maxPoolSize>
+      <isolationLevel>READ_COMMITTED</isolationLevel>
+      <localAutoCommit>false</localAutoCommit>
+      <allowLocalTransactions>true</allowLocalTransactions>
+      <driverProperties>
+        <property name="url">jdbc:hsqldb:file:target/testdb</property>
+        <property name="user">sa</property>
+      </driverProperties>
+    </connectionPool>
+  </jdbc>
+</config>

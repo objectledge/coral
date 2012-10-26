@@ -75,6 +75,7 @@ public class RmlRunnerMojo
         {
             Map<Object, Object> componentInstances = new HashMap<Object, Object>();
             componentInstances.put(DataSource.class, dataSource);
+            componentInstances.put(Transaction.class, tm);
             MutablePicoContainer container = LedgeContainerFactory.newLedgeContainer(baseDir,
                 configDir, componentInstances);
             fileSystem = (FileSystem)container.getComponentInstance(FileSystem.class);

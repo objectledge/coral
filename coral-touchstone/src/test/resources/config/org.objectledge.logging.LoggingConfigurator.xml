@@ -14,10 +14,7 @@
     </layout>
   </appender>
   <!-- loggers -->
-  <logger name="org.objectweb.jotm">
-    <level value="WARN"/>
-  </logger>
-  <logger name="org.enhydra.jdbc.xapool">
+  <logger name="bitronix.tm">
     <level value="WARN"/>  
   </logger>
   <logger name="org.objectledge.threads">
