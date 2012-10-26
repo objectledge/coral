@@ -27,16 +27,25 @@
 -- 
 
 DROP TABLE coral_relation_data;
+DROP SEQUENCE coral_relation_seq;
 DROP TABLE coral_relation;
 DROP TABLE coral_permission_association;
 DROP TABLE coral_permission_assignment;
+DROP SEQUENCE coral_resource_seq;
 DROP TABLE coral_resource;
+DROP SEQUENCE coral_permission_seq;
 DROP TABLE coral_permission;
 DROP TABLE coral_role_assignment;
 DROP TABLE coral_role_implication;
+DROP SEQUENCE coral_role_seq;
 DROP TABLE coral_role;
+DROP SEQUENCE coral_subject_seq;
 DROP TABLE coral_subject;
+DROP SEQUENCE coral_attribute_definition_seq;
 DROP TABLE coral_attribute_definition;
 DROP TABLE coral_resource_class_inheritance;
+DROP SEQUENCE coral_resource_class_seq;
 DROP TABLE coral_resource_class;
+DROP SEQUENCE coral_attribute_class_seq;
 DROP TABLE coral_attribute_class;
+

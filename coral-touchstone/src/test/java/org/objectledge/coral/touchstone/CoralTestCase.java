@@ -45,7 +45,6 @@ import org.jcontainer.dna.impl.Log4JLogger;
 import org.objectledge.container.LedgeContainer;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.tools.init.InitComponent;
-import org.objectledge.database.IdGenerator;
 import org.objectledge.database.ThreadDataSource;
 import org.objectledge.filesystem.FileSystem;
 
@@ -97,9 +96,6 @@ public abstract class CoralTestCase extends TestCase
         InitComponent init = new InitComponent(dataSource, fs, true, new Log4JLogger(log));
         init.run();
 
-        IdGenerator idGenerator = (IdGenerator)container.getContainer().
-            getComponentInstanceOfType(IdGenerator.class);
-        idGenerator.getNextId("global_transaction_hack");
         databaseConnection = new DatabaseDataSourceConnection(dataSource);
     }
     

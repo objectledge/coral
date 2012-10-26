@@ -49,11 +49,15 @@ CREATE TABLE coral_attribute_boolean (
         PRIMARY KEY (data_key)
 );
 
+CREATE SEQUENCE coral_attribute_boolean_seq;
+
 CREATE TABLE coral_attribute_integer (
         data_key BIGINT NOT NULL,
         data INTEGER,
         PRIMARY KEY (data_key)
 );
+
+CREATE SEQUENCE coral_attribute_integer_seq;
 
 CREATE TABLE coral_attribute_long (
         data_key BIGINT NOT NULL,
@@ -61,11 +65,15 @@ CREATE TABLE coral_attribute_long (
         PRIMARY KEY (data_key)
 );
 
+CREATE SEQUENCE coral_attribute_long_seq;
+
 CREATE TABLE coral_attribute_number (
         data_key BIGINT NOT NULL,
         data DECIMAL,
         PRIMARY KEY (data_key)
 );
+
+CREATE SEQUENCE coral_attribute_number_seq;
 
 CREATE TABLE coral_attribute_string (
         data_key BIGINT NOT NULL,
@@ -73,17 +81,23 @@ CREATE TABLE coral_attribute_string (
         PRIMARY KEY (data_key)
 );
 
+CREATE SEQUENCE coral_attribute_string_seq;
+
 CREATE TABLE coral_attribute_text (
         data_key BIGINT NOT NULL,
         data LONGVARCHAR,
         PRIMARY KEY (data_key)
 );
 
+CREATE SEQUENCE coral_attribute_text_seq;
+
 CREATE TABLE coral_attribute_date (
         data_key BIGINT NOT NULL,
         data TIMESTAMP,
         PRIMARY KEY (data_key)
 );
+
+CREATE SEQUENCE coral_attribute_date_seq;
 
 CREATE TABLE coral_attribute_date_range (
         data_key BIGINT NOT NULL,
@@ -92,11 +106,15 @@ CREATE TABLE coral_attribute_date_range (
         PRIMARY KEY (data_key)
 );
 
+CREATE SEQUENCE coral_attribute_date_range_seq;
+
 CREATE TABLE coral_attribute_resource_class (
         data_key BIGINT NOT NULL,
         ref BIGINT,
         PRIMARY KEY (data_key)
 );
+
+CREATE SEQUENCE coral_attribute_resource_class_seq;
 
 CREATE TABLE coral_attribute_resource (
         data_key BIGINT NOT NULL,
@@ -104,11 +122,15 @@ CREATE TABLE coral_attribute_resource (
         PRIMARY KEY (data_key)
 );
 
+CREATE SEQUENCE coral_attribute_resource_seq;
+
 CREATE TABLE coral_attribute_subject (
         data_key BIGINT NOT NULL,
         ref BIGINT,
         PRIMARY KEY (data_key)
 );
+
+CREATE SEQUENCE coral_attribute_subject_seq;
 
 CREATE TABLE coral_attribute_role (
         data_key BIGINT NOT NULL,
@@ -116,11 +138,15 @@ CREATE TABLE coral_attribute_role (
         PRIMARY KEY (data_key)
 );
 
+CREATE SEQUENCE coral_attribute_role_seq;
+
 CREATE TABLE coral_attribute_permission (
         data_key BIGINT NOT NULL,
         ref BIGINT,
         PRIMARY KEY (data_key)
 );
+
+CREATE SEQUENCE coral_attribute_permission_seq;
 
 CREATE TABLE coral_attribute_resource_list (
         data_key BIGINT NOT NULL,
@@ -129,12 +155,16 @@ CREATE TABLE coral_attribute_resource_list (
         PRIMARY KEY (data_key, pos)
 );
         
+CREATE SEQUENCE coral_attribute_resource_list_seq;
+
 CREATE TABLE coral_attribute_weak_resource_list (
         data_key BIGINT NOT NULL,
         pos INTEGER NOT NULL,
         ref BIGINT,
         PRIMARY KEY (data_key, pos)
 );
+
+CREATE SEQUENCE coral_attribute_weak_resource_list_seq;
 
 -- attribute to SQL mapping for tabular model -------------------------------
 

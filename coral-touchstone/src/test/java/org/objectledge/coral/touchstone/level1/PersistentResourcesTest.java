@@ -11,9 +11,9 @@ import org.apache.log4j.Logger;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.datatype.DataType;
 import org.objectledge.container.LedgeContainer;
-import org.objectledge.coral.datatypes.StandardResource;
 import org.objectledge.coral.datatypes.PersistentResourceHandler;
 import org.objectledge.coral.datatypes.ResourceList;
+import org.objectledge.coral.datatypes.StandardResource;
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -27,7 +27,6 @@ import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.touchstone.CoralTestCase;
 import org.objectledge.database.DatabaseUtils;
-import org.objectledge.database.IdGenerator;
 import org.objectledge.database.ThreadDataSource;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.parameters.DefaultParameters;
@@ -619,10 +618,6 @@ public class PersistentResourcesTest
         dataSource = (DataSource)container.getContainer().getComponentInstanceOfType(
             ThreadDataSource.class);
         log = Logger.getLogger(getClass());
-
-        IdGenerator idGenerator = (IdGenerator)container.getContainer().getComponentInstanceOfType(
-            IdGenerator.class);
-        idGenerator.getNextId("global_transaction_hack");
 
         coral = coralSessionFactory.getRootSession();
         store = coral.getStore();

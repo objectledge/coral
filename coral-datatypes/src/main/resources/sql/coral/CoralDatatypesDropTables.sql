@@ -27,19 +27,35 @@
 -- 
 
 DROP TABLE coral_attribute_weak_resource_list;
+DROP SEQUENCE coral_attribute_weak_resource_list_seq;
 DROP TABLE coral_attribute_resource_list;
+DROP SEQUENCE coral_attribute_resource_list_seq;
 DROP TABLE coral_attribute_permission;
+DROP SEQUENCE coral_attribute_permission_seq;
 DROP TABLE coral_attribute_role;
+DROP SEQUENCE coral_attribute_role_seq;
 DROP TABLE coral_attribute_subject;
+DROP SEQUENCE coral_attribute_subject_seq;
 DROP TABLE coral_attribute_resource;
+DROP SEQUENCE coral_attribute_resource_seq;
 DROP TABLE coral_attribute_resource_class;
+DROP SEQUENCE coral_attribute_resource_class_seq;
 DROP TABLE coral_attribute_date_range;
+DROP SEQUENCE coral_attribute_date_range_seq;
 DROP TABLE coral_attribute_date;
+DROP SEQUENCE coral_attribute_date_seq;
 DROP TABLE coral_attribute_text;
+DROP SEQUENCE coral_attribute_text_seq;
 DROP TABLE coral_attribute_string;
+DROP SEQUENCE coral_attribute_string_seq;
 DROP TABLE coral_attribute_number;
+DROP SEQUENCE coral_attribute_number_seq;
 DROP TABLE coral_attribute_long;
+DROP SEQUENCE coral_attribute_long_seq;
 DROP TABLE coral_attribute_integer;
+DROP SEQUENCE coral_attribute_integer_seq;
 DROP TABLE coral_attribute_boolean;
+DROP SEQUENCE coral_attribute_boolean_seq;
 DROP TABLE coral_attribute_mapping;
 DROP TABLE coral_generic_resource;
+

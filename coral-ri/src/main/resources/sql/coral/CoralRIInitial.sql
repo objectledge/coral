@@ -36,17 +36,19 @@
 
 INSERT INTO coral_role VALUES (1, 'root');
 INSERT INTO coral_role VALUES (2, 'nobody');
-INSERT INTO ledge_id_table VALUES (3, 'coral_role');
+
+ALTER SEQUENCE coral_role_seq RESTART WITH 3;
 
 -- subjects -----------------------------------------------------------------
 
 INSERT INTO coral_subject VALUES (1, 'root');
 INSERT INTO coral_subject VALUES (2, 'anonymous');
-INSERT INTO ledge_id_table VALUES (3, 'coral_subject');
+
+ALTER SEQUENCE coral_subject_seq RESTART WITH 3;
 
 INSERT INTO coral_role_assignment VALUES(1, 1, 1, NOW(), TRUE);
 
 -- relations ----------------------------------------------------------------
 
-INSERT INTO ledge_id_table VALUES (2, 'coral_relation');
+ALTER SEQUENCE coral_relation_seq START WITH 2;
 

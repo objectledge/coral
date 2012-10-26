@@ -43,6 +43,8 @@ CREATE TABLE coral_attribute_class (
         PRIMARY KEY(attribute_class_id)
 );
 
+CREATE SEQUENCE coral_attribute_class_seq;
+
 CREATE TABLE coral_resource_class (
         resource_class_id BIGINT NOT NULL,
         name VARCHAR(255) NOT NULL,
@@ -52,6 +54,8 @@ CREATE TABLE coral_resource_class (
         flags INTEGER DEFAULT 0 NOT NULL,
         PRIMARY KEY (resource_class_id)
 );
+
+CREATE SEQUENCE coral_resource_class_seq;
 
 CREATE TABLE coral_resource_class_inheritance (
         parent BIGINT NOT NULL,
@@ -70,6 +74,8 @@ CREATE TABLE coral_attribute_definition (
         PRIMARY KEY (attribute_definition_id)
 );
 
+CREATE SEQUENCE coral_attribute_definition_seq;
+
 -- CoralSecrity -------------------------------------------------------------
         
 CREATE TABLE coral_subject (
@@ -80,18 +86,21 @@ CREATE TABLE coral_subject (
 
 CREATE UNIQUE INDEX coral_subject_name ON coral_subject (name);
 
+CREATE SEQUENCE coral_subject_seq;
+
 CREATE TABLE coral_role (
         role_id BIGINT NOT NULL,
         name VARCHAR(255),
         PRIMARY KEY (role_id)
 );
 
+CREATE SEQUENCE coral_role_seq;
+
 CREATE TABLE coral_role_implication (
         super_role BIGINT NOT NULL,
         sub_role BIGINT NOT NULL,
         PRIMARY KEY (super_role, sub_role)
 );
-
 
 CREATE TABLE coral_role_assignment (
         subject_id BIGINT NOT NULL,
@@ -107,6 +116,8 @@ CREATE TABLE coral_permission (
         name VARCHAR(255),
         PRIMARY KEY (permission_id)
 );
+
+CREATE SEQUENCE coral_permission_seq;
 
 -- CoralStore ---------------------------------------------------------------
 
@@ -128,6 +139,8 @@ CREATE INDEX coral_resource_parent ON coral_resource (parent);
 CREATE INDEX coral_resource_name ON coral_resource (name);
 
 CREATE INDEX coral_resource_parent_name ON coral_resource (parent, name);
+
+CREATE SEQUENCE coral_resource_seq;
 
 CREATE TABLE coral_permission_assignment (
         resource_id BIGINT NOT NULL,
@@ -152,6 +165,8 @@ CREATE TABLE coral_relation (
         name VARCHAR(255),
         PRIMARY KEY (relation_id)
 );
+
+CREATE SEQUENCE coral_relation_seq;
 
 CREATE TABLE coral_relation_data (
         relation_id BIGINT NOT NULL,
