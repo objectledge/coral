@@ -83,9 +83,6 @@ CREATE TABLE coral_attribute_string (
 
 CREATE SEQUENCE coral_attribute_string_seq;
 
--- PostgreSQL, HSQLDB accept VARCHAR
--- PostgreSQL, MySQL accept TEXT
-
 CREATE TABLE coral_attribute_text (
         data_key BIGINT NOT NULL,
         data VARCHAR NOT NULL,
