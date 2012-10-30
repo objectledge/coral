@@ -124,92 +124,93 @@ public class CoralDatatypesTest
         stmt.execute("INSERT INTO coral_resource_class VALUES(3, "
             + "'test', 'org.objectledge.coral.datatypes.NodeImpl',"
             + "'org.objectledge.coral.datatypes.GenericResourceHandler', NULL, 0)");
+        stmt.execute("ALTER SEQUENCE coral_resource_class_seq RESTART WITH 4");
 
         stmt.execute("INSERT INTO coral_resource VALUES(2,3,1,'resource',1,NOW(),1,1,NOW())");
+        stmt.execute("ALTER SEQUENCE coral_resource_seq RESTART WITH 3");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(21, 3, 1,  NULL, NULL, 'string_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 21, 1)");
         stmt.execute("INSERT INTO coral_attribute_string VALUES(1, 'value')");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_string')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_string_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(22, 3, 2,  NULL, NULL, 'text_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 22, 1)");
         stmt.execute("INSERT INTO coral_attribute_text VALUES(1, 'value')");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_text')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_text_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(23, 3, 3,  NULL, NULL, 'boolean_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 23, 1)");
         stmt.execute("INSERT INTO coral_attribute_boolean VALUES(1, true)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_boolean')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_boolean_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(24, 3, 4,  NULL, NULL, 'integer_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 24, 1)");
         stmt.execute("INSERT INTO coral_attribute_integer VALUES(1, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_integer')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_integer_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(25, 3, 5,  NULL, NULL, 'long_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 25, 1)");
         stmt.execute("INSERT INTO coral_attribute_long VALUES(1, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_long')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_long_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(26, 3, 6,  NULL, NULL, 'number_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 26, 1)");
         stmt.execute("INSERT INTO coral_attribute_number VALUES(1, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_number')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_number_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(27, 3, 7,  NULL, NULL, 'date_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 27, 1)");
         stmt.execute("INSERT INTO coral_attribute_date VALUES(1, NOW())");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_date')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_date_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(28, 3, 8,  NULL, NULL, 'resource_class_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 28, 1)");
         stmt.execute("INSERT INTO coral_attribute_resource_class VALUES(1, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_resource_class')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_resource_class_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(29, 3, 9,  NULL, NULL, 'resource_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 29, 1)");
         stmt.execute("INSERT INTO coral_attribute_resource VALUES(1, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_resource')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_resource_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(30, 3, 10, NULL, NULL, 'subject_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 30, 1)");
         stmt.execute("INSERT INTO coral_attribute_subject VALUES(1, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_subject')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_subject_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(31, 3, 11, NULL, NULL, 'role_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 31, 1)");
         stmt.execute("INSERT INTO coral_attribute_role VALUES(1, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_role')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_role_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(32, 3, 12, NULL, NULL, 'permission_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 32, 1)");
         stmt.execute("INSERT INTO coral_permission VALUES(1,'permission')");
         stmt.execute("INSERT INTO coral_permission VALUES(2,'permission2')");
         stmt.execute("INSERT INTO coral_attribute_permission VALUES(1, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_permission')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_permission_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(33, 3, 13, NULL, NULL, 'date_range_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 33, 1)");
         stmt.execute("INSERT INTO coral_attribute_date_range VALUES(1, NOW(), NOW())");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_date_range')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_date_range_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(34, 3, 14, NULL, NULL, 'parameters_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 34, 1)");
         stmt.execute("DELETE FROM ledge_parameters");
         stmt.execute("INSERT INTO ledge_parameters VALUES(1, 'key', 'value')");
-        stmt.execute("DELETE FROM ledge_id_table WHERE table_name = 'ledge_parameters'");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'ledge_parameters')");
+        stmt.execute("ALTER SEQUENCE ledge_parameters_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(35, 3, 15, NULL, NULL, 'resource_list_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 35, 1)");
         stmt.execute("INSERT INTO coral_attribute_resource_list VALUES(1, 0, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_resource_list')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_resource_list_seq RESTART WITH 2");
 
         stmt.execute("INSERT INTO coral_attribute_definition VALUES(36, 3, 16, NULL, NULL, 'weak_resource_list_attr', 0)");
         stmt.execute("INSERT INTO coral_generic_resource VALUES(2, 36, 1)");
         stmt.execute("INSERT INTO coral_attribute_weak_resource_list VALUES(1, 0, 1)");
-        stmt.execute("INSERT INTO ledge_id_table VALUES(2, 'coral_attribute_weak_resource_list')");
+        stmt.execute("ALTER SEQUENCE coral_attribute_weak_resource_list_seq RESTART WITH 2");
 
         DatabaseUtils.close(stmt);
         databaseConnection.close();
@@ -493,7 +494,7 @@ public class CoralDatatypesTest
         resource.update();
         DefaultTable expectedTable = new DefaultTable("coral_attribute_long",
             coralAttributeResourceClassColumns);
-        expectedTable.addRow(new Object[] { new Long(1), new Long(2) });
+        expectedTable.addRow(new Object[] { new Long(1), new Long(4) });
         ITable actualTable = databaseConnection.createQueryTable("coral_attribute_resource_class",
             "SELECT * FROM coral_attribute_resource_class");
         databaseConnection.close();
@@ -512,7 +513,7 @@ public class CoralDatatypesTest
         resource.update();
         expectedTable = new DefaultTable("coral_attribute_resource_class",
             coralAttributeResourceClassColumns);
-        expectedTable.addRow(new Object[] { new Long(2), new Long(2) });
+        expectedTable.addRow(new Object[] { new Long(2), new Long(4) });
         actualTable = databaseConnection.createQueryTable("coral_attribute_long",
             "SELECT * FROM coral_attribute_resource_class");
         databaseConnection.close();

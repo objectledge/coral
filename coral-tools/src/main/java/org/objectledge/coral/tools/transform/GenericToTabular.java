@@ -37,6 +37,8 @@ public class GenericToTabular
 
     private String ukConstraints;
 
+    private String pkSequences;
+
     private Logger log;
 
     @Override
@@ -68,7 +70,7 @@ public class GenericToTabular
         setupUkConstraints();
 
         transferAuxiliaryTables();
-
+        transferSequences();
     }
 
     // these two methods need to go to PersitentResourceHandler
@@ -138,6 +140,39 @@ public class GenericToTabular
     {
         return DatabaseUtils.transferTable(sourceConn, targetConn, null, null, name, null, true,
             batchSize, false);
+    }
+
+    private void transferSequences()
+        throws SQLException
+    {
+        try(Statement s = sourceConn.createStatement())
+        {
+            try(ResultSet rs = s.executeQuery(pkSequences))
+            {
+                while(rs.next())
+                {
+                    transferSequence(rs.getString(1), rs.getString(2), rs.getString(3));
+                }
+            }
+        }
+        transferSequence("ledge_parameters", "parameters_id", "ledge_parameters_seq");
+    }
+
+    private void transferSequence(String table, String column, String sequence)
+        throws SQLException
+    {
+        try(Statement s1 = targetConn.createStatement();
+            Statement s2 = targetConn.createStatement())
+        {
+            final String q = String.format("SELECT max(%s) FROM %s", column, table);
+            try(ResultSet rs = s1.executeQuery(q))
+            {
+                rs.next();
+                final String a = String.format("ALTER SEQUENCE %s RESTART WITH %d", sequence,
+                    rs.getLong(1));
+                s2.execute(a);
+            }
+        }
     }
 
     private interface StatementGenerator
@@ -526,8 +561,6 @@ public class GenericToTabular
         log.info("transferred " + cnt + " naming attributes");
         runStatement(targetConn, "ALTER TABLE ledge_naming_attribute "
             + "ADD FOREIGN KEY (context_id) REFERENCES ledge_naming_context(context_id)");
-        cnt = transferTable("ledge_id_table", 10);
-        log.info("transferred " + cnt + " ledge_id_table entries");
     }
 
     private class ResourceClassInfo

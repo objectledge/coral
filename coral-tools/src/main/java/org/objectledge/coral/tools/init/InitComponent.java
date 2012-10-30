@@ -79,7 +79,6 @@ public class InitComponent
             }
         }
 
-        runScript("sql/database/IdGeneratorTables.sql");
         runScript("sql/parameters/DBParametersTables.sql");
         runScript("sql/scheduler/DBSchedulerTables.sql");
         runScript("sql/naming/DBNamingTables.sql");

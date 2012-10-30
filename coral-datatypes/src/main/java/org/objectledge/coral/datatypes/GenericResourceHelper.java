@@ -243,46 +243,33 @@ public class GenericResourceHelper
     public synchronized void delete(Set<ResourceClass<?>> classes, Connection conn)
         throws SQLException
     {
-        PreparedStatement stmt = null;
-        try
+        for(ResourceClass<?> rClass : classes)
         {
-            for(ResourceClass<?> rClass : classes)
+            AttributeDefinition<?>[] declared = rClass.getDeclaredAttributes();
+            for(AttributeDefinition<?> attr : declared)
             {
-                AttributeDefinition<?>[] declared = rClass.getDeclaredAttributes();
-                for(AttributeDefinition<?> attr : declared)
+                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
                 {
-                    if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                    long atId = instance.getValueId(attr);
+                    if(atId != -1L)
                     {
-                        long atId = instance.getValueId(attr);
-                        if(atId != -1L)
+                        try
                         {
-                            try
-                            {
-                                attr.getAttributeClass().getHandler().delete(atId, conn);
-                            }
-                            catch(EntityDoesNotExistException e)
-                            {
-                                throw new BackendException("internal error", e);
-                            }
+                            attr.getAttributeClass().getHandler().delete(atId, conn);
+                        }
+                        catch(EntityDoesNotExistException e)
+                        {
+                            throw new BackendException("internal error", e);
                         }
                     }
                 }
-                if(stmt == null)
-                {
-                    stmt = conn
-                        .prepareStatement("DELETE FROM coral_generic_resource WHERE resource_id = ?");
-                }
-                stmt.setLong(1, delegate.getId());
-                stmt.addBatch();
-            }
-            if(stmt != null)
-            {
-                stmt.executeBatch();
             }
         }
-        finally
+        try (PreparedStatement stmt = conn
+            .prepareStatement("DELETE FROM coral_generic_resource WHERE resource_id = ?"))
         {
-            DatabaseUtils.close(stmt);
+            stmt.setLong(1, delegate.getId());
+            stmt.execute();
         }
     }
 

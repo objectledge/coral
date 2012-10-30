@@ -85,7 +85,7 @@ CREATE SEQUENCE coral_attribute_string_seq;
 
 CREATE TABLE coral_attribute_text (
         data_key BIGINT NOT NULL,
-        data VARCHAR NOT NULL,
+        data LONG VARCHAR NOT NULL,
         PRIMARY KEY (data_key)
 );
 

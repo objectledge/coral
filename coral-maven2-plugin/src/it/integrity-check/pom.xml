@@ -25,9 +25,11 @@
           </dependency>
         </dependencies>
         <configuration>
-          <dbDriver>org.hsqldb.jdbcDriver</dbDriver>
-          <dbURL>jdbc:hsqldb:file:target/testdb</dbURL>
-          <dbUser>sa</dbUser>
+          <dataSourceClass>org.hsqldb.jdbc.pool.JDBCXADataSource</dataSourceClass>
+          <dataSourceProperties>
+            <url>jdbc:hsqldb:file:target/testdb</url>
+            <user>sa</user>
+          </dataSourceProperties>
         </configuration>
       </plugin>
     </plugins>
@@ -42,11 +44,13 @@
             <artifactId>coral-maven2-plugin</artifactId>
             <version>${project.version}</version>
             <configuration>
-              <dbDriver>org.postgresql.Driver</dbDriver>
-              <driverClasspath>/usr/share/java/postgresql-jdbc3.jar</driverClasspath>
-              <dbUser>cyklotron</dbUser>
-              <dbPassword>12345</dbPassword>
-              <dbURL>jdbc:postgresql://localhost/portal</dbURL>
+              <driverClasspath>/usr/share/java/postgresql-jdbc4.jar</driverClasspath>
+              <dataSourceClass>org.hsqldb.jdbc.pool.JDBCXADataSource</dataSourceClass>
+              <dataSourceProperties>
+                <databaseName>lcms</databaseName>
+                <user>cyklotron</user>
+                <password>coraltest</password>
+              </dataSourceProperties>
             </configuration>
           </plugin>
         </plugins>
@@ -61,11 +65,13 @@
             <artifactId>coral-maven2-plugin</artifactId>
             <version>${project.version}</version>
             <configuration>
-              <dbDriver>org.postgresql.Driver</dbDriver>
-              <driverClasspath>/usr/share/java/postgresql-jdbc3.jar</driverClasspath>
-              <dbUser>cyklotron</dbUser>
-              <dbPassword>12345</dbPassword>
-              <dbURL>jdbc:postgresql://localhost/lcmst</dbURL>
+              <driverClasspath>/usr/share/java/postgresql-jdbc4.jar</driverClasspath>
+              <dataSourceClass>org.hsqldb.jdbc.pool.JDBCXADataSource</dataSourceClass>
+              <dataSourceProperties>
+                <databaseName>lcmst</databaseName>
+                <user>cyklotron</user>
+                <password>coraltest</password>
+              </dataSourceProperties>
             </configuration>
           </plugin>
         </plugins>

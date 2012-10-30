@@ -30,10 +30,6 @@
     </dependency>
     <dependency>
       <groupId>org.objectledge</groupId>
-      <artifactId>ledge-lgpl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.objectledge</groupId>
       <artifactId>ledge-components</artifactId>
       <classifier>install</classifier>
       <scope>test</scope>
@@ -67,8 +63,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>javax.resource</groupId>
-      <artifactId>connector-api</artifactId>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

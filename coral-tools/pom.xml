@@ -53,13 +53,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>javax.resource</groupId>
-      <artifactId>connector-api</artifactId>
-      <scope>runtime</scope>
+      <groupId>javax.transaction</groupId>
+      <artifactId>transaction-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.objectledge</groupId>
-      <artifactId>ledge-lgpl</artifactId>
+      <groupId>org.codehaus.btm</groupId>
+      <artifactId>btm</artifactId>
     </dependency>
     <dependency>
       <groupId>org.sonatype.plexus</groupId>

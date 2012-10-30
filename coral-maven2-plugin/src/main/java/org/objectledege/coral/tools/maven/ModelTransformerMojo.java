@@ -4,16 +4,17 @@ import static org.objectledege.coral.tools.maven.ModelTransformerMojo.Transforma
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.objectledge.coral.tools.DataSourceFactory;
 import org.objectledge.coral.tools.transform.GenericToTabular;
 import org.objectledge.coral.tools.transform.TransformationComponent;
 import org.objectledge.database.DatabaseUtils;
+import org.objectledge.database.JDBCDataSource;
 import org.objectledge.filesystem.FileSystem;
 
 /**
@@ -33,76 +34,19 @@ public class ModelTransformerMojo
     /**
      * Additional classpath elements to be used for loading database the driver.
      * 
-     * @parameter expression="${driverClasspath}"
+     * @parameter
      */
-    protected String driverClasspath;
+    private String driverClasspath;
 
     /**
-     * Class name of the database driver.
-     * 
-     * @parameter expression="${dbDriver}"
+     * @parameter
      */
-    protected String dbDriver;
+    private DataSourceInfo source;
 
     /**
-     * User name for database connections.
-     * 
-     * @parameter expression="${dbUser}"
+     * @parameter
      */
-
-    protected String dbUser;
-
-    /**
-     * Password for database connections.
-     * 
-     * @parameter expression="${dbPassword}"
-     */
-    protected String dbPassword;
-
-    /**
-     * JDBC URL of the source database.
-     * 
-     * @parameter expression="${sourceURL}"
-     */
-    protected String sourceURL;
-
-    /**
-     * User name for source database connection, when not defined {@code dbUser} value will be used.
-     * 
-     * @parameter expression="${targetUser}"
-     */
-
-    protected String sourceUser;
-
-    /**
-     * Password for source database connection, when not defined {@code dbPassword} value will be
-     * used.
-     * 
-     * @parameter expression="${targetPassword}"
-     */
-    protected String sourcePassword;
-
-    /**
-     * JDBC URL of the target database.
-     * 
-     * @parameter expression="${targetURL}"
-     */
-    protected String targetURL;
-
-    /**
-     * User name for target database connection, when not defined {@code dbUser} value will be used.
-     * 
-     * @parameter expression="${targetUser}"
-     */
-    protected String targetUser;
-
-    /**
-     * Password for target database connection, when not defined {@code dbPassword} value will be
-     * used.
-     * 
-     * @parameter expression="${targetPassword}"
-     */
-    protected String targetPassword;
+    private DataSourceInfo target;
 
     /**
      * Requested transformation type. Supported types are: {@code genericToTabular}.
@@ -128,7 +72,7 @@ public class ModelTransformerMojo
 
         try
         {
-            ClassLoader cl = DataSourceFactory.getDriverClassLoader(driverClasspath);
+            ClassLoader cl = DatabaseUtils.getDriverClassLoader(driverClasspath);
             Thread.currentThread().setContextClassLoader(cl);
         }
         catch(Exception e)
@@ -137,16 +81,14 @@ public class ModelTransformerMojo
         }
         try
         {
-            DataSource source = DataSourceFactory.newDataSource(dbDriver, sourceURL,
-                sourceUser != null ? sourceUser : dbUser, sourcePassword != null ? sourcePassword
-                    : dbPassword);
-            Connection sourceConn = source.getConnection();
+            DataSource sourceDs = new JDBCDataSource(driverClasspath, source.getDataSourceClass(),
+                source.getDataSourceProperties());
+            Connection sourceConn = sourceDs.getConnection();
             try
             {
-                DataSource target = DataSourceFactory.newDataSource(dbDriver, targetURL,
-                    targetUser != null ? targetUser : dbUser,
-                    targetPassword != null ? targetPassword : dbPassword);
-                Connection targetConn = target.getConnection();
+                DataSource targetDs = new JDBCDataSource(driverClasspath,
+                    target.getDataSourceClass(), target.getDataSourceProperties());
+                Connection targetConn = targetDs.getConnection();
                 try
                 {
                     transformationComponent.run(sourceConn, targetConn,
@@ -159,7 +101,7 @@ public class ModelTransformerMojo
                 finally
                 {
                     targetConn.close();
-                    DatabaseUtils.shutdown(target);
+                    DatabaseUtils.shutdown(targetDs);
                 }
             }
             catch(SQLException e)
@@ -170,12 +112,45 @@ public class ModelTransformerMojo
             finally
             {
                 sourceConn.close();
-                DatabaseUtils.shutdown(source);
+                DatabaseUtils.shutdown(sourceDs);
             }
         }
         catch(SQLException e)
         {
             throw new MojoExecutionException("failed to initialize source database connection", e);
+        }
+    }
+
+    public static class DataSourceInfo
+    {
+        /**
+         * @parameter
+         */
+        private String dataSourceClass;
+
+        /**
+         * @parameter
+         */
+        private Properties dataSourceProperties;
+
+        public String getDataSourceClass()
+        {
+            return dataSourceClass;
+        }
+
+        public void setDataSourceClass(String dataSourceClass)
+        {
+            this.dataSourceClass = dataSourceClass;
+        }
+
+        public Properties getDataSourceProperties()
+        {
+            return dataSourceProperties;
+        }
+
+        public void setDataSourceProperties(Properties dataSourceProperties)
+        {
+            this.dataSourceProperties = dataSourceProperties;
         }
     }
 }

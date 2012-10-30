@@ -26,43 +26,26 @@
 -- POSSIBILITY OF SUCH DAMAGE. 
 -- 
 
---
--- Coral RI : cleanup
---
--- $Id$
---
-
--- cleanup ------------------------------------------------------------------
-
-DELETE FROM coral_relation_data;
-DELETE FROM coral_relation;
-
-DELETE FROM coral_permission_assignment;
-DELETE FROM coral_permission_association;
-DELETE FROM coral_role_assignment;
-DELETE FROM coral_role_implication;
-DELETE FROM coral_attribute_definition;
-DELETE FROM coral_resource_class_inheritance;
-
--- MySQL: instead of DROP/ADD CONSTRAINT use
--- SET FOREIGN_KEY_CHECKS=0/1
-
-
-ALTER TABLE coral_resource DROP CONSTRAINT coral_resource_parent_fkey;
-
-DELETE FROM coral_resource;
-
-ALTER TABLE coral_resource ADD CONSTRAINT coral_resource_parent_fkey 
-  FOREIGN KEY (parent) REFERENCES coral_resource (resource_id);
-
-DELETE FROM coral_role;
-DELETE FROM coral_subject;
-DELETE FROM coral_permission;
-DELETE FROM coral_attribute_class;
-DELETE FROM coral_resource_class;
-
-DELETE FROM ledge_id_table WHERE table_name = 'coral_relation';
-DELETE FROM ledge_id_table WHERE table_name = 'coral_role';
-DELETE FROM ledge_id_table WHERE table_name = 'coral_subject';
-DELETE FROM ledge_id_table WHERE table_name = 'coral_permission';
+DROP TABLE coral_relation_data;
+DROP SEQUENCE coral_relation_seq RESTRICT;
+DROP TABLE coral_relation;
+DROP TABLE coral_permission_association;
+DROP TABLE coral_permission_assignment;
+DROP SEQUENCE coral_resource_seq RESTRICT;
+DROP TABLE coral_resource;
+DROP SEQUENCE coral_permission_seq RESTRICT;
+DROP TABLE coral_permission;
+DROP TABLE coral_role_assignment;
+DROP TABLE coral_role_implication;
+DROP SEQUENCE coral_role_seq RESTRICT;
+DROP TABLE coral_role;
+DROP SEQUENCE coral_subject_seq RESTRICT;
+DROP TABLE coral_subject;
+DROP SEQUENCE coral_attribute_definition_seq RESTRICT;
+DROP TABLE coral_attribute_definition;
+DROP TABLE coral_resource_class_inheritance;
+DROP SEQUENCE coral_resource_class_seq RESTRICT;
+DROP TABLE coral_resource_class;
+DROP SEQUENCE coral_attribute_class_seq RESTRICT;
+DROP TABLE coral_attribute_class;
 

@@ -1,12 +1,21 @@
 package org.objectledege.coral.tools.maven;
 
-import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.objectledge.coral.tools.DataSourceFactory;
+import org.objectledge.btm.BitronixDataSource;
+import org.objectledge.btm.BitronixTransaction;
+import org.objectledge.btm.BitronixTransactionManager;
+import org.objectledge.context.Context;
+import org.objectledge.database.DatabaseUtils;
+import org.objectledge.database.Transaction;
 
 /**
  * Abstract base class for Mojos that access a database.
@@ -19,39 +28,34 @@ public abstract class AbstractDbMojo
     /**
      * Additional classpath elements to be used for loading database the driver.
      * 
-     * @parameter expression="${driverClasspath}"
+     * @parameter
      */
-    protected String driverClasspath;
+    private String driverClasspath;
 
     /**
-     * Class name of the database driver.
+     * Class name of the {@code javax.sql.DataSource} implementation.
      * 
-     * @parameter expression="${dbDriver}"
+     * @parameter
      */
-    protected String dbDriver;
+    private String dataSourceClass;
 
     /**
-     * JDBC URL of the target database.
+     * JavaBean properties of the {@code javax.sql.DataSource}.
      * 
-     * @parameter expression="${dbURL}"
+     * @parameter
      */
-    protected String dbURL;
+    private Properties dataSourceProperties;
 
     /**
-     * User name for database connection.
-     * 
-     * @parameter expression="${dbUser}"
+     * {@link BitronixTransactionManager} instance.
      */
+    private BitronixTransactionManager btm;
 
-    protected String dbUser;
+    protected Transaction tm;
 
     /**
-     * Password for database connection.
-     * 
-     * @parameter expression="${dbPassword}"
+     * {@link DataSource} instance.
      */
-    protected String dbPassword;
-
     protected DataSource dataSource;
 
     /**
@@ -64,20 +68,43 @@ public abstract class AbstractDbMojo
     {
         try
         {
-            ClassLoader cl = DataSourceFactory.getDriverClassLoader(driverClasspath);
+            ClassLoader cl = DatabaseUtils.getDriverClassLoader(driverClasspath);
             Thread.currentThread().setContextClassLoader(cl);
         }
         catch(Exception e)
         {
             throw new MojoExecutionException("failed to initialize database driver classloader", e);
         }
-        try
+        getLog().info("dataSourceClass: " + dataSourceClass);
+        if(dataSourceProperties != null)
         {
-            dataSource = DataSourceFactory.newDataSource(dbDriver, dbURL, dbUser, dbPassword);
+            Enumeration<String> pe = (Enumeration<String>)dataSourceProperties.propertyNames();
+            while(pe.hasMoreElements())
+            {
+                String p = pe.nextElement();
+                getLog().info(
+                    "dataSourceProperty: " + p + " = " + dataSourceProperties.getProperty(p));
+            }
         }
-        catch(SQLException e)
+        else
         {
-            throw new MojoExecutionException("failed to initialized datasource", e);
+            getLog().warn("null dataSourceProperties");
         }
+
+        BasicConfigurator.configure();
+        Logger.getLogger("bitronix.tm").setLevel(Level.INFO);
+
+        final MavenDNALogger logger = new MavenDNALogger(getLog());
+        btm = new BitronixTransactionManager("coral", dataSourceClass, dataSourceProperties, logger);
+        dataSource = new BitronixDataSource("coral", btm);
+        tm = new BitronixTransaction(btm, new Context(), logger, null);
+    }
+
+    /**
+     * Shuts down the datasource and transaction manager.
+     */
+    protected void shutdownDataSource()
+    {
+        btm.stop();
     }
 }

@@ -37,18 +37,21 @@
 INSERT INTO coral_role VALUES (1, 'root');
 INSERT INTO coral_role VALUES (2, 'nobody');
 
-ALTER SEQUENCE coral_role_seq RESTART WITH 3;
+DROP SEQUENCE coral_role_seq RESTRICT;
+CREATE SEQUENCE coral_role_seq START WITH 3;
 
 -- subjects -----------------------------------------------------------------
 
 INSERT INTO coral_subject VALUES (1, 'root');
 INSERT INTO coral_subject VALUES (2, 'anonymous');
 
-ALTER SEQUENCE coral_subject_seq RESTART WITH 3;
+DROP SEQUENCE coral_subject_seq RESTRICT;
+CREATE SEQUENCE coral_subject_seq START WITH 3;
 
-INSERT INTO coral_role_assignment VALUES(1, 1, 1, NOW(), TRUE);
+INSERT INTO coral_role_assignment VALUES(1, 1, 1, CURRENT TIMESTAMP, TRUE);
 
 -- relations ----------------------------------------------------------------
 
-ALTER SEQUENCE coral_relation_seq START WITH 2;
+DROP SEQUENCE coral_relation_seq RESTRICT;
+CREATE SEQUENCE coral_relation_seq START WITH 2;
 

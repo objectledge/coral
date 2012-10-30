@@ -13,7 +13,7 @@ import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.tools.BatchLoader;
 import org.objectledge.coral.tools.LedgeContainerFactory;
-import org.objectledge.database.DatabaseUtils;
+import org.objectledge.database.Transaction;
 import org.objectledge.filesystem.FileSystem;
 import org.objectledge.utils.StackTrace;
 import org.picocontainer.MutablePicoContainer;
@@ -75,6 +75,7 @@ public class RmlRunnerMojo
         {
             Map<Object, Object> componentInstances = new HashMap<Object, Object>();
             componentInstances.put(DataSource.class, dataSource);
+            componentInstances.put(Transaction.class, tm);
             MutablePicoContainer container = LedgeContainerFactory.newLedgeContainer(baseDir,
                 configDir, componentInstances);
             fileSystem = (FileSystem)container.getComponentInstance(FileSystem.class);
@@ -110,14 +111,15 @@ public class RmlRunnerMojo
         try
         {
             loader.loadBatch(sourcesList);
-
-            getLog().info("disconnecting from the db");
-            DatabaseUtils.shutdown(dataSource);
         }
         catch(Exception e)
         {
             throw new MojoFailureException(sourcesList, "script execution failed: "
                 + e.getMessage(), new StackTrace(e).toString());
+        }
+        finally
+        {
+            shutdownDataSource();
         }
     }
 }

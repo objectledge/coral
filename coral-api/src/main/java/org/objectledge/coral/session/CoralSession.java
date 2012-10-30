@@ -19,6 +19,7 @@ import org.objectledge.coral.store.CoralStore;
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public interface CoralSession
+    extends AutoCloseable
 {
     /**
      * Returns an instance of {@link CoralSchema}.

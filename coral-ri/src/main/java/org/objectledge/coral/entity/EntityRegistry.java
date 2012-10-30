@@ -379,6 +379,14 @@ public class EntityRegistry<E extends Persistent & Entity>
         }
         catch(EntityExistsException e)
         {
+            try
+            {
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
+            }
+            catch(SQLException ee)
+            {
+                log.error("rollback failed", ee);
+            }
             throw e;
         }
         catch(Exception ex)
@@ -502,6 +510,14 @@ public class EntityRegistry<E extends Persistent & Entity>
         }
         catch(EntityExistsException ex)
         {
+            try
+            {
+                persistence.getDatabase().rollbackTransaction(shouldCommit);
+            }
+            catch(SQLException ee)
+            {
+                log.error("rollback failed", ee);
+            }
             throw ex;
         }
         catch(SQLException ex)

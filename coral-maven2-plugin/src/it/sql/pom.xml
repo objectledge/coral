@@ -26,10 +26,12 @@
           </dependency>
         </dependencies>
         <configuration>
-          <dbDriver>org.hsqldb.jdbcDriver</dbDriver>
-          <dbURL>jdbc:hsqldb:file:target/testdb</dbURL>
-          <dbUser>sa</dbUser>
-          <sqlSourcesList>src/main/sqlSources.lst</sqlSourcesList>
+          <dataSourceClass>org.hsqldb.jdbc.pool.JDBCXADataSource</dataSourceClass>
+          <dataSourceProperties>
+            <url>jdbc:hsqldb:file:target/testdb</url>
+            <user>sa</user>
+          </dataSourceProperties>
+          <sqlSourcesList>src/main/sqlSources.lst</sqlSourcesList>          
         </configuration>
       </plugin>
     </plugins>

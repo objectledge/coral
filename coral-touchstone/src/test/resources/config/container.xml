@@ -7,21 +7,29 @@
 
   <!-- database -->
 
+  <component class="org.objectledge.btm.BitronixTransactionManager"/>
+  
   <component class-key="org.objectledge.database.Transaction"
-             class="org.objectledge.database.JotmTransaction"/>
-
-  <component class="org.objectledge.database.XaPoolDataSource"/>
+             class="org.objectledge.btm.BitronixTransaction"/>
+             
+  <component class="org.objectledge.btm.BitronixDataSource">
+    <parameter value="hsql"/>
+    <parameter/>
+  </component>  
+  
+  <component class="org.objectledge.database.ThreadDataSource$Statistics"/>
   
   <component class="org.objectledge.database.ThreadDataSource">
-    <parameter class-key="org.objectledge.database.XaPoolDataSource"/>
+    <parameter class-key="org.objectledge.btm.BitronixDataSource"/>
+    <parameter/>
     <parameter/>
     <parameter/>
     <parameter/>
     <parameter/>
   </component>
   
-  <component class="org.objectledge.database.IdGenerator">
-    <parameter class-key="org.objectledge.database.XaPoolDataSource"/>
+  <component class="org.objectledge.database.SequenceIdGenerator">
+    <parameter class-key="org.objectledge.database.ThreadDataSource"/>
   </component>
   
   <component class-key="org.objectledge.database.Database"

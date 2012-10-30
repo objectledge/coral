@@ -151,8 +151,9 @@ INSERT INTO coral_attribute_class VALUES(
 		'org.objectledge.coral.datatypes.WeakResourceList', 
 		'org.objectledge.coral.datatypes.WeakResourceListAttributeHandler',
 		'coral_attribute_weak_resource_list');
-		
-ALTER SEQUENCE coral_attribute_class_seq START WITH 17;
+
+DROP SEQUENCE coral_attribute_class_seq RESTRICT;		
+CREATE SEQUENCE coral_attribute_class_seq START WITH 17;
 
 -- resource classes ----------------------------------------------------------
 
@@ -164,7 +165,8 @@ INSERT INTO coral_resource_class VALUES(
         NULL,
         4);
         
-ALTER SEQUENCE coral_resource_class_seq START WITH 2;
+DROP SEQUENCE coral_resource_class_seq RESTRICT;
+CREATE SEQUENCE coral_resource_class_seq START WITH 2;
 
 -- -- builtin attributes -----------------------------------------------------
 
@@ -258,7 +260,8 @@ INSERT INTO coral_attribute_definition VALUES(
 		'modification_time',
 		8);
 
-ALTER SEQUENCE coral_attribute_definition_seq START WITH 11;
+DROP SEQUENCE coral_attribute_definition_seq RESTRICT;
+CREATE SEQUENCE coral_attribute_definition_seq START WITH 11;
 
 -- attribute to SQL mapping for tabular model -------------------------------
 
@@ -299,7 +302,8 @@ VALUES(16, false, 'BIGINT', 'coral_attribute_weak_resource_list', 'data_key', tr
 
 -- root resource -------------------------------------------------------------
 
-INSERT INTO coral_resource VALUES(1, 1, NULL, 'root' ,1 ,NOW(), 1, 1, NOW());
+INSERT INTO coral_resource VALUES(1, 1, NULL, 'root' ,1 ,CURRENT TIMESTAMP, 1, 1, CURRENT TIMESTAMP);
 
-ALTER SEQUENCE coral_resource_seq RESTART WITH 2;
+DROP SEQUENCE coral_resource_seq RESTRICT;
+CREATE SEQUENCE coral_resource_seq START WITH 2;
 
