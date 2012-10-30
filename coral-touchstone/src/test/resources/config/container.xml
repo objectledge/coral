@@ -13,7 +13,7 @@
              class="org.objectledge.btm.BitronixTransaction"/>
              
   <component class="org.objectledge.btm.BitronixDataSource">
-    <parameter value="raw"/>
+    <parameter value="hsql"/>
     <parameter/>
   </component>  
   

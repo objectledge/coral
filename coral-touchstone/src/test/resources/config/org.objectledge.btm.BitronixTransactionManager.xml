@@ -17,7 +17,7 @@
     <disabled />
   </tracing>
   <jdbc>
-    <connectionPool uniqueName="raw">
+    <connectionPool uniqueName="hsql">
       <className>org.hsqldb.jdbc.pool.JDBCXADataSource</className>
       <maxPoolSize>5</maxPoolSize>
       <isolationLevel>READ_COMMITTED</isolationLevel>
@@ -26,6 +26,19 @@
       <driverProperties>
         <property name="url">jdbc:hsqldb:file:target/testdb</property>
         <property name="user">sa</property>
+      </driverProperties>
+    </connectionPool>  
+    <connectionPool uniqueName="derby">
+      <className>org.apache.derby.jdbc.EmbeddedXADataSource40</className>
+      <useTmJoin>false</useTmJoin>
+      <maxPoolSize>5</maxPoolSize>
+      <isolationLevel>READ_COMMITTED</isolationLevel>
+      <cursorHoldability>CLOSE_CURSORS_AT_COMMIT</cursorHoldability>
+      <localAutoCommit>false</localAutoCommit>
+      <allowLocalTransactions>true</allowLocalTransactions>
+      <driverProperties>
+        <property name="databaseName">target/derby/coral</property>
+        <property name="createDatabase">create</property>
       </driverProperties>
     </connectionPool>
   </jdbc>

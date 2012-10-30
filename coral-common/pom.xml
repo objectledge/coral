@@ -92,6 +92,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <versions.ledge>1.0.15-SNAPSHOT</versions.ledge>
     <versions.hsqldb>2.2.9</versions.hsqldb>
+    <versions.derby>10.9.1.0</versions.derby>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -175,6 +176,11 @@
         <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
         <version>${versions.hsqldb}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>${versions.derby}</version>
       </dependency>
       <dependency>
         <groupId>dbunit</groupId>
