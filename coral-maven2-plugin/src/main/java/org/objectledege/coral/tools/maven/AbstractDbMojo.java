@@ -94,9 +94,10 @@ public abstract class AbstractDbMojo
         BasicConfigurator.configure();
         Logger.getLogger("bitronix.tm").setLevel(Level.INFO);
 
-        btm = new BitronixTransactionManager("coral", dataSourceClass, dataSourceProperties);
+        final MavenDNALogger logger = new MavenDNALogger(getLog());
+        btm = new BitronixTransactionManager("coral", dataSourceClass, dataSourceProperties, logger);
         dataSource = new BitronixDataSource("coral", btm);
-        tm = new BitronixTransaction(btm, new Context(), new MavenDNALogger(getLog()), null);
+        tm = new BitronixTransaction(btm, new Context(), logger, null);
     }
 
     /**
