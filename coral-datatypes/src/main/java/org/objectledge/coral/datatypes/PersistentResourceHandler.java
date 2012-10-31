@@ -19,6 +19,7 @@ import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.schema.SchemaIntegrityException;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -63,6 +64,11 @@ public class PersistentResourceHandler<T extends Resource>
         throws Exception
     {
         super(coralSchema, instantiator, resourceClass, database, cacheFactory, logger);
+        if(resourceClass.getDbTable() == null)
+        {
+            throw new SchemaIntegrityException("no database table defined for class "
+                + resourceClass.getName());
+        }
         this.persistence = persistence;
         this.schemaHandler = new PersistentSchemaHandler<T>(resourceClass, persistence);
     }
