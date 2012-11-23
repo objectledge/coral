@@ -152,7 +152,7 @@ public class PersistentResourceHelper
             }
             if(hasConcreteAttributes)
             {
-                persistence.delete(new DeleteView(delegate, rClass));
+                persistence.delete(new DeleteView(delegate, rClass), false);
             }
         }
     }
