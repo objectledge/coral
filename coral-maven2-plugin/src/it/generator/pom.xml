@@ -26,6 +26,7 @@
             <configuration>
               <packageIncludes>org.objectledge.coral.test</packageIncludes>
               <packageExcludes>org.objectledge.coral.test.excludes</packageExcludes>
+              <sqlGenerationEnabled>true</sqlGenerationEnabled>
             </configuration>           
           </execution>
         </executions>

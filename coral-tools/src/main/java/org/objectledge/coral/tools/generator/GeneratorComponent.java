@@ -169,6 +169,8 @@ public class GeneratorComponent
     /** Java class to be used as the root of resource inheritance hierarchy. */
     private final String standardResourceImpl;
 
+    private final boolean sqlGenerationEnabled;
+
     /**
      * Creates new GeneratorComponent instance.
      * 
@@ -181,6 +183,7 @@ public class GeneratorComponent
      * @param packageExcludes packages to exclude from generation
      * @param headerFile the path to the header file.
      * @param sqlAttributeInfoFile path of the SQL type information for attribute classes.
+     * @param sqlAttributeInfoFile path of the SQL type information for attribute classes.
      * @param sqlTargetDir directory to write the SQL files to.
      * @param sqlTargetPrefix path prefix of the SQL files in the Ledge FS (for list file).
      * @param sqlListPath path of file listing all the generated SQL files.
@@ -191,14 +194,16 @@ public class GeneratorComponent
      */
     public GeneratorComponent(FileSystem fileSystem, Logger log, String fileEncoding,
         String sourceFiles, String targetDir, String importGroups, String packageIncludes,
-        String packageExcludes, String headerFile, String sqlAttributeInfoFile,
-        String sqlTargetDir, String sqlTargetPrefix, String sqlListPath, String standardResourceImpl)
+        String packageExcludes, String headerFile, boolean sqlGenerationEnabled,
+        String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix,
+        String sqlListPath, String standardResourceImpl)
         throws Exception
     {
         this(fileEncoding, sourceFiles, targetDir, importGroups, packageIncludes, packageExcludes,
-                        headerFile, sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix,
-                        sqlListPath, standardResourceImpl, fileSystem, GeneratorComponent
-                            .initTemplating(fileSystem, log), new RMLModelLoader(new Schema()), log);
+                        headerFile, sqlGenerationEnabled, sqlAttributeInfoFile, sqlTargetDir,
+                        sqlTargetPrefix, sqlListPath, standardResourceImpl, fileSystem,
+                        GeneratorComponent.initTemplating(fileSystem, log), new RMLModelLoader(
+                            new Schema()), log);
 
     }
 
@@ -212,6 +217,7 @@ public class GeneratorComponent
      * @param packageIncludes packages to include in generation.
      * @param packageExcludes packages to exclude from generation
      * @param headerFile the path to the header file.
+     * @param sqlGenerationEnabled should SQL files be generated
      * @param sqlAttributeInfoFile path of the SQL type information for attribute classes.
      * @param sqlTargetDir directory to write the SQL files to.
      * @param sqlTargetPrefix path prefix of the SQL files in the Ledge FS (for list file).
@@ -226,9 +232,9 @@ public class GeneratorComponent
      */
     GeneratorComponent(String fileEncoding, String sourceFiles, String targetDir,
         String importGroups, String packageIncludes, String packageExcludes, String headerFile,
-        String sqlAttributeInfoFile, String sqlTargetDir, String sqlTargetPrefix,
-        String sqlListPath, String standardResourceImpl, FileSystem fileSystem,
-        Templating templating, final RMLModelLoader rmlLoader, Logger log)
+        boolean sqlGenerationEnabled, String sqlAttributeInfoFile, String sqlTargetDir,
+        String sqlTargetPrefix, String sqlListPath, String standardResourceImpl,
+        FileSystem fileSystem, Templating templating, final RMLModelLoader rmlLoader, Logger log)
         throws Exception
     {
         this.fileSystem = fileSystem;
@@ -240,6 +246,7 @@ public class GeneratorComponent
         this.importGroups = split(importGroups);
         this.packageIncludes = split(packageIncludes);
         this.packageExcludes = split(packageExcludes);
+        this.sqlGenerationEnabled = sqlGenerationEnabled;
         this.sqlAttributeInfoFile = sqlAttributeInfoFile;
         this.sqlTargetDir = sqlTargetDir;
         this.sqlTargetPrefix = sqlTargetPrefix;
@@ -315,7 +322,7 @@ public class GeneratorComponent
                 processClass(rc, referencedFiles);
             }
             String sqlList = generateSQLList();
-            if(sqlList.length() > 0)
+            if(sqlGenerationEnabled && sqlList.length() > 0)
             {
                 if(write(sqlListPath, sqlList, referencedFiles))
                 {
@@ -603,7 +610,7 @@ public class GeneratorComponent
             log.debug("skipping " + rc.getName() + " implementation (not modified)");
         }
 
-        if(rc.getDbTable() != null && rc.getDbTable().length() > 0)
+        if(sqlGenerationEnabled && rc.getDbTable() != null && rc.getDbTable().length() > 0)
         {
             if(generateSQL(rc, sqlPath(rc), sqlTemplate, referencedFiles))
             {
