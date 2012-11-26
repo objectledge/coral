@@ -316,8 +316,9 @@ public class RelationModification
         {
             if(o instanceof ModificationOperation)
             {
-                ModificationOperation lp = (ModificationOperation)o;
-                return (this.id1 == lp.id1) && (this.id2 == lp.id2);
+                ModificationOperation that = (ModificationOperation)o;
+                return (this.getClass().equals(that.getClass())) && (this.id1 == that.id1)
+                    && (this.id2 == that.id2);
             }
             return false;
         }
