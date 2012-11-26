@@ -239,6 +239,12 @@ public class RelationModification
         operations.add(new ClearOperation());
     }
 
+    @Override
+    public String toString()
+    {
+        return operations.toString();
+    }
+
     // implementation -----------------------------------------------------------------------------
 
     private void add(Long id1, Long id2)
@@ -422,6 +428,12 @@ public class RelationModification
         {
             visitor.visit(this);
         }
+
+        @Override
+        public String toString()
+        {
+            return "clear";
+        }
     }
 
     /**
@@ -444,6 +456,12 @@ public class RelationModification
         public void visit(ModificationOperationVisitor visitor)
         {
             visitor.visit(this);
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("add(%d, %d)", getId1(), getId2());
         }
     }
 
@@ -468,6 +486,12 @@ public class RelationModification
         public void visit(ModificationOperationVisitor visitor)
         {
             visitor.visit(this);
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("remove(%d, %d)", getId1(), getId2());
         }
     }
 }
