@@ -812,7 +812,8 @@ public class GeneratorComponent
             Set<String> referencedFiles = (Set<String>)buildContext.getValue(savedStateId);
             for(String referncedFile : referencedFiles)
             {
-                if(buildContext.hasDelta(new File(referncedFile)))
+                File file = new File(referncedFile);
+				if(file.exists() && buildContext.hasDelta(file))
                 {
                     return true;
                 }
