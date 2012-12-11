@@ -493,6 +493,19 @@ public class PersistentSchemaHandler<T extends Resource>
     private void deleteDataRows(ResourceClass<?> parent, ResourceClass<?> child, Connection conn)
         throws SQLException
     {
+        boolean tableShouldExist = false;
+        for(AttributeDefinition<?> attr : parent.getDeclaredAttributes())
+        {
+            if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+            {
+                tableShouldExist = true;
+            }
+        }
+        if(parent.getDbTable() == null || !tableShouldExist)
+        {
+            return;
+        }
+
         StringBuilder buff = new StringBuilder();
         buff.append(child.getIdString());
         for(ResourceClass<?> rc : child.getChildClasses())
