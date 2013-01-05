@@ -2,7 +2,9 @@ package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.objectledge.coral.BackendException;
 import org.objectledge.coral.entity.Entity;
@@ -48,20 +50,20 @@ public class PersistentResourceHelper
 
     // interface to PersistentResourceHandler ////////////////////////////////
 
-    public synchronized void retrieve(Object data, Connection conn)
+    public synchronized void retrieve(Object data, Connection conn, Set<ResourceClass<?>> classes)
         throws SQLException
     {
-        Map<ResourceClass<?>, InputRecord> in = getInputRecords(data);
+        Map<ResourceClass<?>, InputRecord> in = getInputRecords(data, classes);
         if(in != null)
         {
             setData(in, conn);
         }
     }
 
-    public synchronized void revert(Object data, Connection conn)
+    public synchronized void revert(Object data, Connection conn, Set<ResourceClass<?>> classes)
         throws SQLException
     {
-        Map<ResourceClass<?>, InputRecord> in = getInputRecords(data);
+        Map<ResourceClass<?>, InputRecord> in = getInputRecords(data, classes);
         if(in != null)
         {
             setData(in, conn);
@@ -183,14 +185,19 @@ public class PersistentResourceHelper
         return dbColumn != null ? dbColumn : attr.getName();
     }
 
-    private Map<ResourceClass<?>, InputRecord> getInputRecords(Object data)
+    private Map<ResourceClass<?>, InputRecord> getInputRecords(Object data, Set<ResourceClass<?>> classes)
     {
         @SuppressWarnings("unchecked")
         Map<Long, Map<ResourceClass<?>, InputRecord>> rMap = (Map<Long, Map<ResourceClass<?>, InputRecord>>)data;
         Map<ResourceClass<?>, InputRecord> rcMap = rMap.get(delegate.getIdObject());
         if(rcMap != null)
         {
-            return rcMap;
+            Map<ResourceClass<?>, InputRecord> records = new HashMap<>();
+            for(ResourceClass<?> rc : classes)
+            {
+                records.put(rc, rcMap.get(rc));
+            }
+            return records;
         }
         else
         {
