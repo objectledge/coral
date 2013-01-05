@@ -102,9 +102,25 @@ public class GenericResourceHandler<T extends Resource>
     public Object getData(Resource delegate, Connection conn, Object prev)
         throws SQLException
     {
-        Map<Long, Map<AttributeDefinition<?>, Long>> keyMap = new HashMap<Long, Map<AttributeDefinition<?>, Long>>();
+        Map<Long, Map<AttributeDefinition<?>, Long>> data;
+        if(prev == null)
+        {
+            data = new HashMap<Long, Map<AttributeDefinition<?>, Long>>();
+        }
+        else
+        {
+            @SuppressWarnings("unchecked")
+            final Map<Long, Map<AttributeDefinition<?>, Long>> cast = (Map<Long, Map<AttributeDefinition<?>, Long>>)prev;
+            data = cast;
+        }
+
         Map<AttributeDefinition<?>, Long> dataKeys = new HashMap<AttributeDefinition<?>, Long>();
-        keyMap.put(delegate.getIdObject(), dataKeys);
+        Map<AttributeDefinition<?>, Long> resData = data.get(delegate.getIdObject());
+        if(resData == null)
+        {
+            resData = new HashMap<>();
+            data.put(delegate.getIdObject(), resData);
+        }
         PreparedStatement stmt = conn
             .prepareStatement("SELECT attribute_definition_id, data_key FROM coral_generic_resource WHERE resource_id = ?");
         ResultSet rs = null;
@@ -116,7 +132,8 @@ public class GenericResourceHandler<T extends Resource>
             {
                 dataKeys.put(coralSchema.getAttribute(rs.getLong(1)), new Long(rs.getLong(2)));
             }
-            return keyMap;
+            resData.putAll(dataKeys);
+            return data;
         }
         catch(EntityDoesNotExistException e)
         {

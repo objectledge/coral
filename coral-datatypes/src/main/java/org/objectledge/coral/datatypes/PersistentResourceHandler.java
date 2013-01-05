@@ -204,7 +204,13 @@ public class PersistentResourceHandler<T extends Resource>
         }
         if(delegate.getResourceClass().getDbTable() != null)
         {
-            data.put(delegate.getIdObject(), getInputRecords(delegate));
+            Map<ResourceClass<?>, InputRecord> resData = data.get(delegate.getIdObject());
+            if(resData == null)
+            {
+                resData = new HashMap<>();
+                data.put(delegate.getIdObject(), resData);
+            }
+            resData.putAll(getInputRecords(delegate));
         }
         return data;
     }
@@ -315,7 +321,7 @@ public class PersistentResourceHandler<T extends Resource>
     {
         PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
             persistence);
-        helper.retrieve(data, conn);
+        helper.retrieve(data, conn, classes);
     }
 
     @Override
@@ -339,7 +345,7 @@ public class PersistentResourceHandler<T extends Resource>
     {
         PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
             persistence);
-        helper.revert(data, conn);
+        helper.revert(data, conn, classes);
     }
 
     @Override
