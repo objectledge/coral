@@ -328,14 +328,18 @@ public class CoralSchemaImpl
      * Changes the database column name of the attribute.
      * 
      * @param attribute the attribute to modify.
-     * @param dbColumn name of database column, may be {@code null} in which case, attribute
+     * @param newDbColumn name of database column, may be {@code null} in which case, attribute
      *        {@code name} is used as column name.
      */
-    public void setDbColumn(AttributeDefinition<?> attribute, String dbColumn)
+    public void setDbColumn(AttributeDefinition<?> attribute, String newDbColumn)
     {
-        ((AttributeDefinitionImpl<?>)attribute).setDbColumn(dbColumn);
         try
         {
+            String oldDbColumn = attribute.getDbColumn();
+            oldDbColumn = oldDbColumn != null ? oldDbColumn : attribute.getName();
+            attribute.getDeclaringClass().getHandler()
+                .setDbColumn(attribute, oldDbColumn, newDbColumn);
+            ((AttributeDefinitionImpl<?>)attribute).setDbColumn(newDbColumn);
             persistence.save((Persistent)attribute);
         }
         catch(SQLException e)
@@ -570,9 +574,10 @@ public class CoralSchemaImpl
      */
     public void setDbTable(ResourceClass<?> resoureceClass, String dbTable)
     {
-        ((ResourceClassImpl<?>)resoureceClass).setDbTable(dbTable);
         try
         {
+            resoureceClass.getHandler().setDbTable(resoureceClass.getDbTable(), dbTable);
+            ((ResourceClassImpl<?>)resoureceClass).setDbTable(dbTable);
             persistence.save((Persistent)resoureceClass);
         }
         catch(SQLException e)

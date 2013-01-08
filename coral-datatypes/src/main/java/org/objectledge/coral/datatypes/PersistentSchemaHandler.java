@@ -534,6 +534,46 @@ public class PersistentSchemaHandler<T extends Resource>
         }
     }
 
+    /**
+     * Called when database table for this resource class is changed.
+     * 
+     * @param oldTable name of the current table.
+     * @param newTable name of the requested table.
+     */
+    public void setDbTable(String oldTable, String newTable)
+        throws SQLException
+    {
+        try(Connection conn = persistence.getDatabase().getConnection();
+            Statement stmt = conn.createStatement())
+        {
+            stmt.execute(String.format("ALTER TABLE %s RENAME TO %s", oldTable, newTable));
+        }
+    }
+
+    /**
+     * Called when database column for one of the declared attributes is changed.
+     * 
+     * @param attr the attribute being modified.
+     * @param oldColumn current column name.
+     * @param newColumn requested column name.
+     */
+    public void setDbColumn(AttributeDefinition<?> attr, String oldColumn, String newColumn)
+        throws SQLException
+    {
+        if(!attr.getDeclaringClass().equals(resourceClass))
+        {
+            throw new IllegalArgumentException("attempting to delete attribute " + attr.getName()
+                + " of class " + attr.getDeclaringClass().getName() + " through hanlder of class "
+                + resourceClass.getName());
+        }
+        try(Connection conn = persistence.getDatabase().getConnection();
+            Statement stmt = conn.createStatement())
+        {
+            stmt.execute(String.format("ALTER TABLE %s RENAME COLUMN %s TO %s",
+                resourceClass.getDbTable(), oldColumn, newColumn));
+        }
+    }
+
     private static class DummyResourceAttributes
         implements InvocationHandler
     {

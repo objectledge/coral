@@ -170,6 +170,20 @@ public class PersistentResourceHandler<T extends Resource>
         revert(resourceClass, conn);
     }
 
+    @Override
+    public void setDbTable(String oldTable, String newTable)
+        throws SQLException
+    {
+        schemaHandler.setDbTable(oldTable, newTable);
+    }
+
+    @Override
+    public void setDbColumn(AttributeDefinition<?> attr, String oldColumn, String newColumn)
+        throws SQLException
+    {
+        schemaHandler.setDbColumn(attr, oldColumn, newColumn);
+    }
+
     public <A> A loadValue(AttributeDefinition<A> attribute, long aId)
     {
         if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))

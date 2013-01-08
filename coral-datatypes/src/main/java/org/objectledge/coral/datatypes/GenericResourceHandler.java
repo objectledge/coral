@@ -89,6 +89,18 @@ public class GenericResourceHandler<T extends Resource>
         revert(resourceClass, conn);
     }
 
+    @Override
+    public void setDbTable(String oldTable, String newTable)
+    {
+        // nothing to do
+    }
+
+    @Override
+    public void setDbColumn(AttributeDefinition<?> attr, String oldColumn, String newColumn)
+    {
+        // nothing to do
+    }
+
     // Resource handler interface ////////////////////////////////////////////
 
     /**
