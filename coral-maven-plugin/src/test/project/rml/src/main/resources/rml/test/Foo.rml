@@ -1,5 +1,0 @@
-CREATE RESOURCE CLASS coral.test.Foo
-	JAVA CLASS org.objectledge.coral.test.FooImpl
-	HANDLER CLASS org.objectledge.coral.datatypes.GenericResourceHandler
-	SUPERCLASSES ( coral.Node )
-	ATTRIBUTES ( string greeting );

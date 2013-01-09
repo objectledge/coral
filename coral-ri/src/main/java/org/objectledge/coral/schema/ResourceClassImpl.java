@@ -228,12 +228,12 @@ public class ResourceClassImpl<T extends Resource>
         super.setData(record);
         try
         {
-            setHandlerClass(record.getString("handler_class_name"));
-            setJavaClass(record.getString("java_class_name"), true);
             if(!record.isNull("db_table_name"))
             {
                 setDbTable(record.getString("db_table_name"));
             }
+            setHandlerClass(record.getString("handler_class_name"));
+            setJavaClass(record.getString("java_class_name"), true);
             setFlags(record.getInteger("flags"));
         }
         catch(JavaClassException e)

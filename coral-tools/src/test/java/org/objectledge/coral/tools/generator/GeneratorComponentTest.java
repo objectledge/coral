@@ -130,8 +130,9 @@ public class GeneratorComponentTest
         mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/Implementation")).will(returnValue(genericImplTemplate));
         mockTemplating.stubs().method("getTemplate").with(eq("org/objectledge/coral/tools/generator/SQL")).will(returnValue(sqlTemplate));
         generatorComponent = new GeneratorComponent("UTF-8", "src/main/rml/files.lst",
-            "src/main/java", "java.,javax.,org.objectledge.", "*", "", "LICENSE.txt", null, null,
-            null, null, STANDARD_RESOURCE_IMPL, fileSystem, templating, rmlModelLoader, logger);
+            "src/main/java", "java.,javax.,org.objectledge.", "*", "", "LICENSE.txt", false, null,
+            null, null, null, STANDARD_RESOURCE_IMPL, fileSystem, templating, rmlModelLoader,
+            logger);
             
         testFileSystem = FileSystem.getStandardFileSystem("src/test/resources/generator");
     }

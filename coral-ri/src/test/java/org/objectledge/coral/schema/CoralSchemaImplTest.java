@@ -369,12 +369,16 @@ public class CoralSchemaImplTest extends LedgeTestCase
         AttributeDefinition realAttributeDefinition = coralSchema.createAttribute("<attribute>",
             attributeClass, null, "<domain>", 303);
         assertEquals("<domain>", realAttributeDefinition.getDomain());
+        ((AttributeDefinitionImpl<?>)realAttributeDefinition).setDeclaringClass(resourceClass);
+        mockResourceClass.stubs().method("getHandler").will(returnValue(resourceHandler));
 
         mockPersistence.expects(once()).method("save").with(same(realAttributeDefinition));
         mockOutboundEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent")
             .with(same(realAttributeDefinition));
         mockLocalEventWhiteboard.expects(once()).method("fireAttributeDefinitionChangeEvent")
             .with(same(realAttributeDefinition));
+        mockResourceHandler.expects(once()).method("setDbColumn")
+            .with(same(realAttributeDefinition), eq("<attribute>"), eq("<db column>"));
         coralSchema.setDbColumn(realAttributeDefinition, "<db column>");
         assertEquals("<db column>", realAttributeDefinition.getDbColumn());
     }

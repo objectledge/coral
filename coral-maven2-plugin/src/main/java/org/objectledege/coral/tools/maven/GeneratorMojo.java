@@ -74,6 +74,11 @@ public class GeneratorMojo
     private String headerFile;
 
     /**
+     * @parameter
+     */
+    private boolean sqlGenerationEnabled = false;
+
+    /**
      * @parameter expression="${coral.generator.sql.attributeInfo}
      *            default-value="sql/coral/CoralDatatypesAttributes.properties"
      */
@@ -110,8 +115,8 @@ public class GeneratorMojo
             MavenDNALogger log = new MavenDNALogger(getLog());
             GeneratorComponent generator = new GeneratorComponent(fileSystem, log, fileEncoding,
                 sourcesList, targetDir, importGroups, packageIncludes, packageExcludes, headerFile,
-                sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix, sqlListPath,
-                standardResourceImpl);
+                sqlGenerationEnabled, sqlAttributeInfoFile, sqlTargetDir, sqlTargetPrefix,
+                sqlListPath, standardResourceImpl);
             generator.execute();
         }
         catch(Exception e)

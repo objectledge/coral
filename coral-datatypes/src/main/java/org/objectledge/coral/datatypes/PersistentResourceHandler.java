@@ -19,6 +19,7 @@ import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.schema.SchemaIntegrityException;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -63,6 +64,11 @@ public class PersistentResourceHandler<T extends Resource>
         throws Exception
     {
         super(coralSchema, instantiator, resourceClass, database, cacheFactory, logger);
+        if(resourceClass.getDbTable() == null)
+        {
+            throw new SchemaIntegrityException("no database table defined for class "
+                + resourceClass.getName());
+        }
         this.persistence = persistence;
         this.schemaHandler = new PersistentSchemaHandler<T>(resourceClass, persistence);
     }
@@ -164,6 +170,20 @@ public class PersistentResourceHandler<T extends Resource>
         revert(resourceClass, conn);
     }
 
+    @Override
+    public void setDbTable(String oldTable, String newTable)
+        throws SQLException
+    {
+        schemaHandler.setDbTable(oldTable, newTable);
+    }
+
+    @Override
+    public void setDbColumn(AttributeDefinition<?> attr, String oldColumn, String newColumn)
+        throws SQLException
+    {
+        schemaHandler.setDbColumn(attr, oldColumn, newColumn);
+    }
+
     public <A> A loadValue(AttributeDefinition<A> attribute, long aId)
     {
         if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
@@ -198,7 +218,13 @@ public class PersistentResourceHandler<T extends Resource>
         }
         if(delegate.getResourceClass().getDbTable() != null)
         {
-            data.put(delegate.getIdObject(), getInputRecords(delegate));
+            Map<ResourceClass<?>, InputRecord> resData = data.get(delegate.getIdObject());
+            if(resData == null)
+            {
+                resData = new HashMap<>();
+                data.put(delegate.getIdObject(), resData);
+            }
+            resData.putAll(getInputRecords(delegate));
         }
         return data;
     }
@@ -309,7 +335,7 @@ public class PersistentResourceHandler<T extends Resource>
     {
         PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
             persistence);
-        helper.retrieve(data, conn);
+        helper.retrieve(data, conn, classes);
     }
 
     @Override
@@ -333,7 +359,7 @@ public class PersistentResourceHandler<T extends Resource>
     {
         PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
             persistence);
-        helper.revert(data, conn);
+        helper.revert(data, conn, classes);
     }
 
     @Override

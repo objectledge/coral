@@ -169,6 +169,25 @@ public interface ResourceHandler<T extends Resource>
      */
     public void deleteParentClass(ResourceClass<?> parent, Connection conn)
         throws SQLException;
+
+    /**
+     * Called when database table for this resource class is changed.
+     * 
+     * @param oldTable name of the current table.
+     * @param newTable name of the requested table.
+     */
+    public void setDbTable(String oldTable, String newTable)
+        throws SQLException;
+
+    /**
+     * Called when database column for one of the declared attributes is changed.
+     * 
+     * @param attr the attribute being modified.
+     * @param oldColumn current column name.
+     * @param newColumn requested column name.
+     */
+    public void setDbColumn(AttributeDefinition<?> attr, String oldColumn, String newColumn)
+        throws SQLException;
         
      // integrity constraints ///////////////////////////////////////////////
      
