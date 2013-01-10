@@ -163,6 +163,13 @@ public interface QueryResults
     public ResourceClass<?> getColumnType(String name)
         throws IllegalArgumentException;
 
+    /**
+     * Returns number of result rows. This is a potentially expensive operation.
+     * 
+     * @return number of result rows.
+     */
+    public int rowCount();
+
     // nested inteface ///////////////////////////////////////////////////////
     
     /**
