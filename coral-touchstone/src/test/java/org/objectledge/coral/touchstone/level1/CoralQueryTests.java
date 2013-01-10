@@ -343,7 +343,7 @@ public class CoralQueryTests
         expectRow(first2);
         assertExpectedResults();
 
-        run("FIND RESOURCE FROM first WHERE a1 <= 'g' ORDER BY id ORDER BY id");
+        run("FIND RESOURCE FROM first WHERE a1 <= 'g' ORDER BY id");
         expectRow(first1);
         expectRow(first2);
         assertExpectedResults();
@@ -437,7 +437,7 @@ public class CoralQueryTests
     private void queryUsingOrderClause()
         throws Exception
     {
-        run("FIND RESOURCE FROM first ORDER BY a1 ORDER BY id");
+        run("FIND RESOURCE FROM first ORDER BY a1");
         expectRow(first2);
         expectRow(first1);
         expectRow(third1);

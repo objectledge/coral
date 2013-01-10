@@ -82,18 +82,8 @@ public abstract class AbstractCoralQueryImpl
     public QueryResults executeQuery(String query)
         throws MalformedQueryException
     {
-        int i = query.indexOf("FIND");
-        if(i >= 0)
-        {
-            i = query.indexOf("RESOURCE", i);
-            if(i >= 0)
-            {
-                query = query.substring(i + 8);
-                ASTfindResourceStatement statement = parseQuery(query);
-                return executeQuery(statement);
-            }
-        }
-        throw new MalformedQueryException("Queries must start with FIND RESOURCE");
+        ASTfindResourceStatement statement = parseQuery(query);
+        return executeQuery(statement);
     }
 
     /**
@@ -450,7 +440,7 @@ public abstract class AbstractCoralQueryImpl
         RMLParser parser = coral.getRMLParserFactory().getParser(new StringReader(query));
         try
         {
-            return parser.findResourceStatement();
+            return parser.standaloneFindResourceStatement();
         }
         catch(ParseException e)
         {

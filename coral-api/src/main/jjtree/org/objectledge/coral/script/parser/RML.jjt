@@ -1468,6 +1468,14 @@ ASTfindResourceStatement findResourceStatement() :
     }
 }
 
+ASTfindResourceStatement standaloneFindResourceStatement() #void :
+{
+  ASTfindResourceStatement stmt;}
+{
+  "FIND" "RESOURCE" ( stmt = findResourceStatement() ) < EOF >
+  {	return stmt;
+  }    }
+
 
 void copyResourceStatement() :
 {
