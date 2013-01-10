@@ -155,6 +155,14 @@ public class SQLCoralQueryImpl
                 }
             }
         }
+        if(statement.getLimit() > 0)
+        {
+            query.append(" LIMIT ").append(statement.getLimit());
+        }
+        if(statement.getOffset() > 0)
+        {
+            query.append(" OFFSET ").append(statement.getOffset());
+        }
 
         Connection conn = null;
         Statement stmt = null;

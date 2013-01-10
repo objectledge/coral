@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.dbunit.dataset.datatype.DataType;
-import org.objectledge.coral.datatypes.StandardResource;
 import org.objectledge.coral.datatypes.GenericResourceHandler;
 import org.objectledge.coral.datatypes.PersistentResourceHandler;
+import org.objectledge.coral.datatypes.StandardResource;
 import org.objectledge.coral.query.CoralQuery;
 import org.objectledge.coral.query.FilteredQueryResults;
 import org.objectledge.coral.query.MalformedQueryException;
@@ -456,6 +456,26 @@ public class CoralQueryTests
         assertExpectedResults();
     }
 
+    private void queryUsingLimitAndOffsetClauses()
+        throws Exception
+    {
+        run("FIND RESOURCE FROM first ORDER BY a1");
+        expectRow(first2);
+        expectRow(first1);
+        expectRow(third1);
+        assertExpectedResults();
+
+        run("FIND RESOURCE FROM first ORDER BY a1 LIMIT 2");
+        expectRow(first2);
+        expectRow(first1);
+        assertExpectedResults();
+
+        run("FIND RESOURCE FROM first ORDER BY a1 LIMIT 2 OFFSET 1");
+        expectRow(first1);
+        expectRow(third1);
+        assertExpectedResults();
+    }
+
     private void queryUsingBuiltinAttribute()
         throws Exception
     {
@@ -548,6 +568,7 @@ public class CoralQueryTests
         queryAcrossHierarchy();
 
         queryUsingOrderClause();
+        queryUsingLimitAndOffsetClauses();
 
         queryUsingBuiltinAttribute();
         queryUsingReferenceAttribute();
