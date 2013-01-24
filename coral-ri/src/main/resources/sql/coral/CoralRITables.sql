@@ -140,6 +140,8 @@ CREATE INDEX coral_resource_name ON coral_resource (name);
 
 CREATE INDEX coral_resource_parent_name ON coral_resource (parent, name);
 
+CREATE INDEX coral_resource_created_by ON coral_resource (created_by);
+
 CREATE SEQUENCE coral_resource_seq;
 
 CREATE TABLE coral_permission_assignment (

@@ -170,6 +170,20 @@ public class PersistentResourceHandler<T extends Resource>
         revert(resourceClass, conn);
     }
 
+    @Override
+    public void setDbTable(String oldTable, String newTable)
+        throws SQLException
+    {
+        schemaHandler.setDbTable(oldTable, newTable);
+    }
+
+    @Override
+    public void setDbColumn(AttributeDefinition<?> attr, String oldColumn, String newColumn)
+        throws SQLException
+    {
+        schemaHandler.setDbColumn(attr, oldColumn, newColumn);
+    }
+
     public <A> A loadValue(AttributeDefinition<A> attribute, long aId)
     {
         if(Entity.class.isAssignableFrom(attribute.getAttributeClass().getJavaClass()))
@@ -204,7 +218,13 @@ public class PersistentResourceHandler<T extends Resource>
         }
         if(delegate.getResourceClass().getDbTable() != null)
         {
-            data.put(delegate.getIdObject(), getInputRecords(delegate));
+            Map<ResourceClass<?>, InputRecord> resData = data.get(delegate.getIdObject());
+            if(resData == null)
+            {
+                resData = new HashMap<>();
+                data.put(delegate.getIdObject(), resData);
+            }
+            resData.putAll(getInputRecords(delegate));
         }
         return data;
     }
@@ -315,7 +335,7 @@ public class PersistentResourceHandler<T extends Resource>
     {
         PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
             persistence);
-        helper.retrieve(data, conn);
+        helper.retrieve(data, conn, classes);
     }
 
     @Override
@@ -339,7 +359,7 @@ public class PersistentResourceHandler<T extends Resource>
     {
         PersistentResourceHelper helper = new PersistentResourceHelper(delegate, instance,
             persistence);
-        helper.revert(data, conn);
+        helper.revert(data, conn, classes);
     }
 
     @Override

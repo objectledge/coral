@@ -108,10 +108,12 @@ TOKEN:
     <JAVA : "JAVA"> |
     <LIKE : "LIKE"> |
 	<LIKE_NC : "LIKE_NC"> |
+	<LIMIT : "LIMIT" > | 
     <NAME : "NAME"> |
     <NONE : "NONE"> |
     <NOT : "NOT"> |
     <OF : "OF"> |
+    <OFFSET : "OFFSET" > |
     <ON : "ON"> |
     <OR : "OR"> |
     <OPTION : "OPTION"> |
@@ -237,6 +239,8 @@ long id() #void :
         return value;
     }
 }           
+
+int intLiteral() #void :{  Token literal;}{  literal = < NUMBER >  {    return Integer.parseInt(literal.image);  }}
 
 // Entities //////////////////////////////////////////////////////////////////
 
@@ -1460,6 +1464,8 @@ ASTfindResourceStatement findResourceStatement() :
             [ "FROM" ( jjtThis.from = classAndAliasSpecifierList() ) ] 
             [ "WHERE" ( jjtThis.where = conditionalExpression() ) ]
             [ "ORDER" "BY" ( jjtThis.orderBy = orderByList() ) ]
+            [ "LIMIT" ( jjtThis.limit = intLiteral() ) ]
+            [ "OFFSET" ( jjtThis.offset = intLiteral() ) ]
             [ "SELECT" ( jjtThis.select = selectList() ) ]
         )
     )
@@ -1467,6 +1473,14 @@ ASTfindResourceStatement findResourceStatement() :
         return jjtThis;
     }
 }
+
+ASTfindResourceStatement standaloneFindResourceStatement() #void :
+{
+  ASTfindResourceStatement stmt;}
+{
+  "FIND" "RESOURCE" ( stmt = findResourceStatement() ) < EOF >
+  {	return stmt;
+  }    }
 
 
 void copyResourceStatement() :
