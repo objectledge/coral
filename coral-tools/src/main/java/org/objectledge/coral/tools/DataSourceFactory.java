@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.jcontainer.dna.Logger;
 import org.objectledge.btm.BitronixDataSource;
@@ -56,7 +55,6 @@ public class DataSourceFactory
             log.warn("null dataSourceProperties");
         }
 
-        BasicConfigurator.configure();
         org.apache.log4j.Logger.getLogger("bitronix.tm").setLevel(Level.INFO);
 
         btm = new BitronixTransactionManager("coral", dataSourceClass, dataSourceProperties, log);
