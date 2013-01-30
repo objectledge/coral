@@ -58,9 +58,9 @@ public class RmlRunnerMojo
         initDataSource();
         try
         {
-            RmlRunnerComponent runner = new RmlRunnerComponent(baseDir, configDir, subjectName,
-                sourcesList, fileEncoding, dataSource, transaction, new MavenDNALogger(getLog()));
-            runner.run();
+            RmlRunnerComponent runner = new RmlRunnerComponent(dataSource, transaction,
+                new MavenDNALogger(getLog()));
+            runner.run(baseDir, configDir, subjectName, sourcesList, fileEncoding);
         }
         catch(Exception e)
         {

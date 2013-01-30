@@ -19,73 +19,47 @@ import org.picocontainer.MutablePicoContainer;
 public class RmlRunnerComponent
 {
     /**
-     * Base directory for looking up sources lists and source files.
+     * DataSource.
      */
-    private String baseDir;
-
-    /**
-     * Configuration directory for looking up container composition file and component configuration
-     * files.
-     */
-    private String configDir;
-
-    /**
-     * Coral subject to execute scripts as. When not defined scripts will be executed as root
-     * subject.
-     */
-    private String subjectName;
-
-    /**
-     * Location of sources list file.
-     */
-    private String sourcesList;
-
-    /**
-     * Character encoding for loading the source files.
-     */
-    private String fileEncoding;
-
-    /**
-     * DataSource
-     */
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     /**
      * The logger.
      */
-    private Logger log;
+    private final Logger log;
 
+    /**
+     * Transaction manager facade.
+     */
     private final Transaction transaction;
 
     /**
      * Create RmlRunnerComponent
+     * 
+     * @param dataSource the DataSource for accessing the DB.
+     * @param transaction Transaction manager facade
+     * @param log the logger.
+     */
+    public RmlRunnerComponent(DataSource dataSource, Transaction transaction,
+        Logger log)
+    {
+        this.dataSource = dataSource;
+        this.transaction = transaction;
+        this.log = log;
+    }
+
+    /**
+     * Run RML scripts enumarated in sourcesList file.
      * 
      * @param baseDir base directory for loading container configuration from external filesystem.
      * @param configDir configuration directory relative to baseDir / classpath root.
      * @param subjectName name of the subject for creating Coral session.
      * @param sourcesList path of the sources list file.
      * @param fileEncoding encoding of the source files.
-     * @param dataSource the DataSource for accessing the DB.
-     * @param transaction Transaction manager facade
-     * @param log the logger.
+     * @throws Exception
      */
-    public RmlRunnerComponent(String baseDir, String configDir, String subjectName,
-        String sourcesList, String fileEncoding, DataSource dataSource, Transaction transaction,
-        Logger log)
-    {
-        this.baseDir = baseDir;
-        this.configDir = configDir;
-        this.subjectName = subjectName;
-        this.sourcesList = sourcesList;
-        this.fileEncoding = fileEncoding;
-
-        this.dataSource = dataSource;
-        this.transaction = transaction;
-        this.fileEncoding = fileEncoding;
-        this.log = log;
-    }
-
-    public void run()
+    public void run(String baseDir, String configDir, String subjectName, String sourcesList,
+        String fileEncoding)
         throws Exception
     {
         CoralSession coralSession;
