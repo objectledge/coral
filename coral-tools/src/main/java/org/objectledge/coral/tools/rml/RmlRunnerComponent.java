@@ -12,7 +12,6 @@ import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
 import org.objectledge.coral.tools.BatchLoader;
 import org.objectledge.coral.tools.LedgeContainerFactory;
-import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.Transaction;
 import org.objectledge.filesystem.FileSystem;
 import org.picocontainer.MutablePicoContainer;
@@ -52,11 +51,6 @@ public class RmlRunnerComponent
     private DataSource dataSource;
 
     /**
-     * The file system.
-     */
-    private FileSystem fileSystem;
-
-    /**
      * The logger.
      */
     private Logger log;
@@ -73,12 +67,11 @@ public class RmlRunnerComponent
      * @param fileEncoding encoding of the source files.
      * @param dataSource the DataSource for accessing the DB.
      * @param transaction Transaction manager facade
-     * @param fileSystem filesystem component.
      * @param log the logger.
      */
     public RmlRunnerComponent(String baseDir, String configDir, String subjectName,
         String sourcesList, String fileEncoding, DataSource dataSource, Transaction transaction,
-        FileSystem fileSystem, Logger log)
+        Logger log)
     {
         this.baseDir = baseDir;
         this.configDir = configDir;
@@ -88,7 +81,6 @@ public class RmlRunnerComponent
 
         this.dataSource = dataSource;
         this.transaction = transaction;
-        this.fileSystem = fileSystem;
         this.fileEncoding = fileEncoding;
         this.log = log;
     }
@@ -103,7 +95,7 @@ public class RmlRunnerComponent
         componentInstances.put(Transaction.class, transaction);
         MutablePicoContainer container = LedgeContainerFactory.newLedgeContainer(baseDir,
             configDir, componentInstances);
-        fileSystem = (FileSystem)container.getComponentInstance(FileSystem.class);
+        FileSystem fileSystem = (FileSystem)container.getComponentInstance(FileSystem.class);
         CoralSessionFactory factory = (CoralSessionFactory)container
             .getComponentInstance(CoralSessionFactory.class);
         if(subjectName != null)
