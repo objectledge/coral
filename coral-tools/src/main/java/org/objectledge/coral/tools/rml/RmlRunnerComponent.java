@@ -130,8 +130,5 @@ public class RmlRunnerComponent
             };
 
         loader.loadBatch(sourcesList);
-
-        log.info("disconnecting from the db");
-        DatabaseUtils.shutdown(dataSource);
     }
 }

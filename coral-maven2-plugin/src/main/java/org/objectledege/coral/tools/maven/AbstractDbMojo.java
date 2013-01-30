@@ -46,6 +46,9 @@ public abstract class AbstractDbMojo
      */
     protected DataSource dataSource;
 
+    /**
+     * The data source factory.
+     */
     private DataSourceFactory dataSourceFactory;
 
     /**
@@ -74,6 +77,7 @@ public abstract class AbstractDbMojo
      */
     protected void shutdownDataSource()
     {
+        getLog().info("disconnecting from the db");
         dataSourceFactory.close();
     }
 }
