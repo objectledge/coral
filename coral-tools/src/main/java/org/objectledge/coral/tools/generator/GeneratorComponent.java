@@ -42,7 +42,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.jcontainer.dna.Logger;
-import org.jcontainer.dna.impl.DefaultConfiguration;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.ResourceClassFlags;
 import org.objectledge.coral.tools.BatchLoader;
@@ -287,19 +286,8 @@ public class GeneratorComponent
     public static Templating initTemplating(FileSystem fileSystem, Logger logger)
         throws Exception
     {
-        DefaultConfiguration config = new DefaultConfiguration("config", "<generated>", "");
-        DefaultConfiguration configPaths = new DefaultConfiguration("paths", "<generated>",
-            "config");
-        DefaultConfiguration configPathsPath = new DefaultConfiguration("path", "<generated>",
-            "config/paths");
-        DefaultConfiguration configEncoding = new DefaultConfiguration("encoding", "<generated>",
-            "config");
-        configEncoding.setValue("UTF-8");
-        configPathsPath.setValue("/");
-        configPaths.addChild(configPathsPath);
-        config.addChild(configPaths);
-        config.addChild(configEncoding);
-        return new VelocityTemplating(config, logger, fileSystem);
+        return new VelocityTemplating(new VelocityTemplating.Config().withPath("/").withEncoding(
+            "UTF-8"), logger, fileSystem);
     }
 
     /**
