@@ -1,5 +1,7 @@
 package org.objectledege.coral.tools.maven;
 
+import java.util.Collections;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.objectledge.coral.tools.rml.RmlRunnerComponent;
@@ -60,7 +62,8 @@ public class RmlRunnerMojo
         {
             RmlRunnerComponent runner = new RmlRunnerComponent(dataSource, transaction,
                 new MavenDNALogger(getLog()));
-            runner.run(baseDir, configDir, subjectName, sourcesList, fileEncoding);
+            runner.run(baseDir, configDir, subjectName, sourcesList, fileEncoding,
+                Collections.<String, Object> emptyMap(), Collections.<String> emptyList());
         }
         catch(Exception e)
         {

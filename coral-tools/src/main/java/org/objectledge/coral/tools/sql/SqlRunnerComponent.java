@@ -1,19 +1,26 @@
 package org.objectledge.coral.tools.sql;
 
 import java.io.Reader;
+import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Level;
 import org.jcontainer.dna.Logger;
-import org.objectledge.coral.tools.BatchLoader;
+import org.jcontainer.dna.impl.Log4JLogger;
+import org.objectledge.coral.tools.TemplateProcessingBatchLoader;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.filesystem.FileSystem;
+import org.objectledge.templating.Templating;
+import org.objectledge.templating.TemplatingContext;
+import org.objectledge.templating.velocity.VelocityTemplating;
 
 public class SqlRunnerComponent
 {
     private final FileSystem fileSystem;
 
-    private final Logger logger;
+    private final Logger log;
 
     private final DataSource dataSource;
 
@@ -21,13 +28,23 @@ public class SqlRunnerComponent
     {
         this.fileSystem = fileSystem;
         this.dataSource = dataSource;
-        this.logger = logger;
+        this.log = logger;
     }
 
-    public void run(String sqlSourcesList, String fileEncoding)
+    public void run(String sqlSourcesList, String fileEncoding, Map<String, Object> templateVars,
+        List<String> templateMacroLibraries)
         throws Exception
     {
-        BatchLoader loader = new BatchLoader(fileSystem, logger, fileEncoding)
+        org.apache.log4j.Logger templatingLog = org.apache.log4j.Logger
+            .getLogger("org.apache.velocity");
+        templatingLog.setLevel(Level.ERROR);
+        Templating templating = new VelocityTemplating(new VelocityTemplating.Config()
+            .withEncoding(fileEncoding).withLibraries(templateMacroLibraries), new Log4JLogger(
+            templatingLog), fileSystem);
+        TemplatingContext context = templating.createContext(templateVars);
+
+        TemplateProcessingBatchLoader loader = new TemplateProcessingBatchLoader(fileSystem,
+                        templating, log, fileEncoding)
             {
                 public void load(Reader in)
                     throws Exception
@@ -35,6 +52,6 @@ public class SqlRunnerComponent
                     DatabaseUtils.runScript(dataSource, in);
                 }
             };
-        loader.loadBatch(sqlSourcesList);
+        loader.loadBatch(sqlSourcesList, context);
     }
 }
