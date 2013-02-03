@@ -553,14 +553,17 @@ public class GenericToTabular
     {
         int cnt;
         log.info("transferring additional tables");
-        runStatement(targetConn, "ALTER TABLE ledge_naming_attribute "
-            + "DROP CONSTRAINT ledge_naming_attribute_context_id_fkey");
-        cnt = transferTable("ledge_naming_context", 100);
-        log.info("transferred " + cnt + " naming contexts");
-        cnt = transferTable("ledge_naming_attribute", 1000);
-        log.info("transferred " + cnt + " naming attributes");
-        runStatement(targetConn, "ALTER TABLE ledge_naming_attribute "
-            + "ADD FOREIGN KEY (context_id) REFERENCES ledge_naming_context(context_id)");
+        if(DatabaseUtils.hasTable(sourceConn, "ledge_naming_context"))
+        {
+            runStatement(targetConn, "ALTER TABLE ledge_naming_attribute "
+                + "DROP CONSTRAINT ledge_naming_attribute_context_id_fkey");
+            cnt = transferTable("ledge_naming_context", 100);
+            log.info("transferred " + cnt + " naming contexts");
+            cnt = transferTable("ledge_naming_attribute", 1000);
+            log.info("transferred " + cnt + " naming attributes");
+            runStatement(targetConn, "ALTER TABLE ledge_naming_attribute "
+                + "ADD FOREIGN KEY (context_id) REFERENCES ledge_naming_context(context_id)");
+        }
     }
 
     private class ResourceClassInfo
