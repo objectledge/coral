@@ -80,8 +80,6 @@ public class InitComponent
         }
 
         runScript("sql/parameters/DBParametersTables.sql");
-        runScript("sql/scheduler/DBSchedulerTables.sql");
-        runScript("sql/naming/DBNamingTables.sql");
         runScript("sql/coral/CoralRITables.sql");
         runScript("sql/coral/CoralRIConstraints.sql");
         runScript("sql/coral/CoralDatatypesTables.sql");
