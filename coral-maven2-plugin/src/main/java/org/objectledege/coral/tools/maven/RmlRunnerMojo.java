@@ -1,22 +1,11 @@
 package org.objectledege.coral.tools.maven;
 
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sql.DataSource;
+import java.util.Collections;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.objectledge.authentication.DefaultPrincipal;
-import org.objectledge.coral.session.CoralSession;
-import org.objectledge.coral.session.CoralSessionFactory;
-import org.objectledge.coral.tools.BatchLoader;
-import org.objectledge.coral.tools.LedgeContainerFactory;
-import org.objectledge.database.Transaction;
-import org.objectledge.filesystem.FileSystem;
+import org.objectledge.coral.tools.rml.RmlRunnerComponent;
 import org.objectledge.utils.StackTrace;
-import org.picocontainer.MutablePicoContainer;
 
 /**
  * A Mojo that executes RML scripts.
@@ -69,48 +58,12 @@ public class RmlRunnerMojo
         throws MojoExecutionException, MojoFailureException
     {
         initDataSource();
-        FileSystem fileSystem;
-        CoralSession coralSession;
         try
         {
-            Map<Object, Object> componentInstances = new HashMap<Object, Object>();
-            componentInstances.put(DataSource.class, dataSource);
-            componentInstances.put(Transaction.class, tm);
-            MutablePicoContainer container = LedgeContainerFactory.newLedgeContainer(baseDir,
-                configDir, componentInstances);
-            fileSystem = (FileSystem)container.getComponentInstance(FileSystem.class);
-            CoralSessionFactory factory = (CoralSessionFactory)container
-                .getComponentInstance(CoralSessionFactory.class);
-            if(subjectName != null)
-            {
-                coralSession = factory.getSession(new DefaultPrincipal(subjectName));
-            }
-            else
-            {
-                coralSession = factory.getRootSession();
-            }
-        }
-        catch(Exception e)
-        {
-            throw new MojoExecutionException("failed to intitialize Coral session", e);
-        }
-
-        final CoralSession session = coralSession;
-        BatchLoader loader = new BatchLoader(fileSystem, new MavenDNALogger(getLog()), fileEncoding)
-            {
-                public void load(Reader in)
-                    throws Exception
-                {
-                    String result = session.getScript().runScript(in);
-                    if(result != null && result.length() > 0)
-                    {
-                        getLog().info(result);
-                    }
-                }
-            };
-        try
-        {
-            loader.loadBatch(sourcesList);
+            RmlRunnerComponent runner = new RmlRunnerComponent(dataSource, transaction,
+                new MavenDNALogger(getLog()));
+            runner.run(baseDir, configDir, subjectName, sourcesList, fileEncoding,
+                Collections.<String, Object> emptyMap(), Collections.<String> emptyList());
         }
         catch(Exception e)
         {

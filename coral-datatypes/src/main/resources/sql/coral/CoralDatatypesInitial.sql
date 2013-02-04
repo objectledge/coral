@@ -152,7 +152,7 @@ INSERT INTO coral_attribute_class VALUES(
 		'org.objectledge.coral.datatypes.WeakResourceListAttributeHandler',
 		'coral_attribute_weak_resource_list');
 		
-ALTER SEQUENCE coral_attribute_class_seq START WITH 17;
+ALTER SEQUENCE coral_attribute_class_seq RESTART WITH 17;
 
 -- resource classes ----------------------------------------------------------
 
@@ -164,7 +164,7 @@ INSERT INTO coral_resource_class VALUES(
         NULL,
         4);
         
-ALTER SEQUENCE coral_resource_class_seq START WITH 2;
+ALTER SEQUENCE coral_resource_class_seq RESTART WITH 2;
 
 -- -- builtin attributes -----------------------------------------------------
 
@@ -258,7 +258,7 @@ INSERT INTO coral_attribute_definition VALUES(
 		'modification_time',
 		8);
 
-ALTER SEQUENCE coral_attribute_definition_seq START WITH 11;
+ALTER SEQUENCE coral_attribute_definition_seq RESTART WITH 11;
 
 -- attribute to SQL mapping for tabular model -------------------------------
 

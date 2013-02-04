@@ -1,20 +1,13 @@
 package org.objectledege.coral.tools.maven;
 
-import java.util.Enumeration;
+import java.net.MalformedURLException;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.objectledge.btm.BitronixDataSource;
-import org.objectledge.btm.BitronixTransaction;
-import org.objectledge.btm.BitronixTransactionManager;
-import org.objectledge.context.Context;
-import org.objectledge.database.DatabaseUtils;
+import org.objectledge.coral.tools.DataSourceFactory;
 import org.objectledge.database.Transaction;
 
 /**
@@ -46,17 +39,17 @@ public abstract class AbstractDbMojo
      */
     private Properties dataSourceProperties;
 
-    /**
-     * {@link BitronixTransactionManager} instance.
-     */
-    private BitronixTransactionManager btm;
-
-    protected Transaction tm;
+    protected Transaction transaction;
 
     /**
      * {@link DataSource} instance.
      */
     protected DataSource dataSource;
+
+    /**
+     * The data source factory.
+     */
+    private DataSourceFactory dataSourceFactory;
 
     /**
      * Initializes the datasource according to configured parameters.
@@ -68,36 +61,15 @@ public abstract class AbstractDbMojo
     {
         try
         {
-            ClassLoader cl = DatabaseUtils.getDriverClassLoader(driverClasspath);
-            Thread.currentThread().setContextClassLoader(cl);
+            dataSourceFactory = new DataSourceFactory(driverClasspath, dataSourceClass, dataSourceProperties,
+                new MavenDNALogger(getLog()));
         }
-        catch(Exception e)
+        catch(MalformedURLException e)
         {
-            throw new MojoExecutionException("failed to initialize database driver classloader", e);
+            throw new MojoExecutionException("invalid driver classpath", e);
         }
-        getLog().info("dataSourceClass: " + dataSourceClass);
-        if(dataSourceProperties != null)
-        {
-            Enumeration<String> pe = (Enumeration<String>)dataSourceProperties.propertyNames();
-            while(pe.hasMoreElements())
-            {
-                String p = pe.nextElement();
-                getLog().info(
-                    "dataSourceProperty: " + p + " = " + dataSourceProperties.getProperty(p));
-            }
-        }
-        else
-        {
-            getLog().warn("null dataSourceProperties");
-        }
-
-        BasicConfigurator.configure();
-        Logger.getLogger("bitronix.tm").setLevel(Level.INFO);
-
-        final MavenDNALogger logger = new MavenDNALogger(getLog());
-        btm = new BitronixTransactionManager("coral", dataSourceClass, dataSourceProperties, logger);
-        dataSource = new BitronixDataSource("coral", btm);
-        tm = new BitronixTransaction(btm, new Context(), logger, null);
+        dataSource = dataSourceFactory.getDataSource();
+        transaction = dataSourceFactory.getTransaction();
     }
 
     /**
@@ -105,6 +77,7 @@ public abstract class AbstractDbMojo
      */
     protected void shutdownDataSource()
     {
-        btm.stop();
+        getLog().info("disconnecting from the db");
+        dataSourceFactory.close();
     }
 }

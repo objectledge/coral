@@ -50,5 +50,5 @@ INSERT INTO coral_role_assignment VALUES(1, 1, 1, NOW(), TRUE);
 
 -- relations ----------------------------------------------------------------
 
-ALTER SEQUENCE coral_relation_seq START WITH 2;
+ALTER SEQUENCE coral_relation_seq RESTART WITH 2;
 
