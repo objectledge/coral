@@ -14,6 +14,7 @@ import org.objectledge.btm.BitronixTransactionManager;
 import org.objectledge.context.Context;
 import org.objectledge.database.DatabaseUtils;
 import org.objectledge.database.Transaction;
+import org.objectledge.filesystem.FileSystem;
 
 public class DataSourceFactory
     implements AutoCloseable
@@ -34,7 +35,7 @@ public class DataSourceFactory
     private final DataSource dataSource;
 
     public DataSourceFactory(String driverClasspath, String dataSourceClass,
-        Properties dataSourceProperties, Logger log)
+        Properties dataSourceProperties, FileSystem fileSystem, Logger log)
         throws MalformedURLException
     {
         ClassLoader cl = DatabaseUtils.getDriverClassLoader(driverClasspath);
@@ -57,7 +58,8 @@ public class DataSourceFactory
 
         org.apache.log4j.Logger.getLogger("bitronix.tm").setLevel(Level.INFO);
 
-        btm = new BitronixTransactionManager("coral", dataSourceClass, dataSourceProperties, null, log);
+        btm = new BitronixTransactionManager("coral", dataSourceClass, dataSourceProperties,
+            fileSystem, log);
         dataSource = new BitronixDataSource("coral", btm);
         transaction = new BitronixTransaction(btm, new Context(), log, null);
     }

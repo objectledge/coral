@@ -17,13 +17,6 @@ public class RmlRunnerMojo
     extends AbstractDbMojo
 {
     /**
-     * Base directory for looking up sources lists and source files.
-     * 
-     * @parameter expression="${project.basedir.canonicalPath}"
-     */
-    private String baseDir;
-
-    /**
      * Configuration directory for looking up container composition file and component configuration
      * files.
      * 

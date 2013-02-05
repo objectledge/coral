@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.objectledge.coral.tools.refcheck.IntegrityChecker;
-import org.objectledge.filesystem.FileSystem;
 
 /**
  * Validates integrity constraints that are not enforced by the backed database.
@@ -23,9 +22,8 @@ public class IntegrityCheckerMojo
         try
         {
             initDataSource();
-            IntegrityChecker checker = new IntegrityChecker(dataSource.getConnection(),
-                FileSystem.getClasspathFileSystem(), new MavenDNALogger(getLog()));
-
+            IntegrityChecker checker = new IntegrityChecker(dataSource.getConnection(), fileSystem,
+                new MavenDNALogger(getLog()));
             checker.run();
         }
         catch(SQLException e)

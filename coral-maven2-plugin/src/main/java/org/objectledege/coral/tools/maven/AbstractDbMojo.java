@@ -9,6 +9,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.objectledge.coral.tools.DataSourceFactory;
 import org.objectledge.database.Transaction;
+import org.objectledge.filesystem.FileSystem;
 
 /**
  * Abstract base class for Mojos that access a database.
@@ -52,6 +53,15 @@ public abstract class AbstractDbMojo
     private DataSourceFactory dataSourceFactory;
 
     /**
+     * Base directory for looking up sources lists and source files.
+     * 
+     * @parameter default-value="${project.basedir.canonicalPath}"
+     */
+    protected String baseDir;
+
+    protected FileSystem fileSystem;
+
+    /**
      * Initializes the datasource according to configured parameters.
      * 
      * @throws MojoExecutionException when datasource initialization fails.
@@ -59,10 +69,11 @@ public abstract class AbstractDbMojo
     protected void initDataSource()
         throws MojoExecutionException
     {
+        fileSystem = FileSystem.getStandardFileSystem(baseDir);
         try
         {
-            dataSourceFactory = new DataSourceFactory(driverClasspath, dataSourceClass, dataSourceProperties,
-                new MavenDNALogger(getLog()));
+            dataSourceFactory = new DataSourceFactory(driverClasspath, dataSourceClass,
+                dataSourceProperties, fileSystem, new MavenDNALogger(getLog()));
         }
         catch(MalformedURLException e)
         {

@@ -5,7 +5,6 @@ import java.util.Collections;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.objectledge.coral.tools.sql.SqlRunnerComponent;
-import org.objectledge.filesystem.FileSystem;
 
 /**
  * Executes a set of SQL scripts on a specified database.
@@ -16,13 +15,6 @@ import org.objectledge.filesystem.FileSystem;
 public class SqlRunnerMojo
     extends AbstractDbMojo
 {
-    /**
-     * Base directory for looking up sources lists and source files.
-     * 
-     * @parameter default-value="${project.basedir.canonicalPath}"
-     */
-    private String baseDir;
-
     /**
      * Location of sources list file.
      * 
@@ -41,7 +33,6 @@ public class SqlRunnerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        FileSystem fileSystem = FileSystem.getStandardFileSystem(baseDir);
         initDataSource();
         try
         {
