@@ -57,7 +57,7 @@ public class DataSourceFactory
 
         org.apache.log4j.Logger.getLogger("bitronix.tm").setLevel(Level.INFO);
 
-        btm = new BitronixTransactionManager("coral", dataSourceClass, dataSourceProperties, log);
+        btm = new BitronixTransactionManager("coral", dataSourceClass, dataSourceProperties, null, log);
         dataSource = new BitronixDataSource("coral", btm);
         transaction = new BitronixTransaction(btm, new Context(), log, null);
     }
