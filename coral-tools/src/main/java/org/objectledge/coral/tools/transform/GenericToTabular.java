@@ -553,7 +553,8 @@ public class GenericToTabular
     {
         int cnt;
         log.info("transferring additional tables");
-        if(DatabaseUtils.hasTable(sourceConn, "ledge_naming_context"))
+        if(DatabaseUtils.hasTable(sourceConn, "ledge_naming_context")
+            && DatabaseUtils.hasTable(targetConn, "ledge_naming_context"))
         {
             runStatement(targetConn, "ALTER TABLE ledge_naming_attribute "
                 + "DROP CONSTRAINT ledge_naming_attribute_context_id_fkey");
