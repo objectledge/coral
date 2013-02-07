@@ -399,6 +399,16 @@ public class RelationImplTest extends LedgeTestCase
 			return resource;
 		}
 
+        /**
+         * {@inheritDoc}
+         */
+        public <T> T getResource(long id, Class<T> clazz)
+            throws EntityDoesNotExistException
+        {
+            final Resource resource = getResource(id);
+            return clazz.cast(resource);
+        }
+
 		// uimplemented methods -------------------------------------------------------------------
 
         /**
