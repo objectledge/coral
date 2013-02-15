@@ -28,4 +28,5 @@
 --> 
 
 <config>
+  <validationQuery>SELECT * FROM (VALUES(1))</validationQuery>
 </config>
