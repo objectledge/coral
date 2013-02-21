@@ -16,5 +16,5 @@ public @interface RequireCoralRole
     /**
      * Name of role that is required. This is REQUIRED parameter.
      */
-    public String role();
+    public String value();
 }

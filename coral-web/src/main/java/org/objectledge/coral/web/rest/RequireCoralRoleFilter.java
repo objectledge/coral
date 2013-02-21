@@ -15,7 +15,7 @@ import org.objectledge.coral.security.Role;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
 
-@RequireCoralRole(role = "thisIsJustRequiredValue")
+@RequireCoralRole("thisIsJustRequiredValue")
 public class RequireCoralRoleFilter
     implements ContainerRequestFilter
 {
@@ -36,7 +36,7 @@ public class RequireCoralRoleFilter
             if(annotation instanceof RequireCoralRole)
             {
                 RequireCoralRole requireCoralRole = (RequireCoralRole)annotation;
-                final String requiredRole = requireCoralRole.role();
+                final String requiredRole = requireCoralRole.value();
                 final CoralSession currentSession = coralSessionFactory.getCurrentSession();
                 Role coralRole = currentSession.getSecurity().getUniqueRole(requiredRole);
                 if(!currentSession.getUserSubject().hasRole(coralRole))
