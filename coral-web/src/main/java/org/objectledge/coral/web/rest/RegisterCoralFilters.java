@@ -11,6 +11,7 @@ public class RegisterCoralFilters
     public void configure(ResourceConfig config)
     {
         config.register(RequireCoralRoleFilter.class);
+        config.register(RequireCoralPermissionFilter.class);
     }
 
 }
