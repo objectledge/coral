@@ -50,8 +50,9 @@ public class RequireCoralPermissionFilter
         final Annotation[] annotations = resourceInfo.get().getResourceMethod().getAnnotations();
         Collection<RequireCoralPermission> requireCoralPermissions = findRequireCoralPermissions(annotations);
 
-        try(CoralSession session = coralSessionFactory.getCurrentSession())
+        try
         {
+            CoralSession session = coralSessionFactory.getCurrentSession();
             for(RequireCoralPermission requireCoralPermission : requireCoralPermissions)
             {
                 validate(requireCoralPermission);
