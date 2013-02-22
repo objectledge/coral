@@ -15,7 +15,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -36,10 +35,10 @@ public class RequireCoralPermissionFilter
     @Inject
     private CoralSessionFactory coralSessionFactory;
 
-    @Context
+    @Inject
     Provider<ResourceInfo> resourceInfo;
 
-    @Context
+    @Inject
     Provider<UriInfo> uriInfo;
 
 
