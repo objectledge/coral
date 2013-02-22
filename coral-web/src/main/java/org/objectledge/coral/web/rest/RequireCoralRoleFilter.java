@@ -9,7 +9,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.Context;
 
 import org.objectledge.coral.security.Role;
 import org.objectledge.coral.session.CoralSession;
@@ -23,7 +22,7 @@ public class RequireCoralRoleFilter
     @Inject
     private CoralSessionFactory coralSessionFactory;
 
-    @Context
+    @Inject
     Provider<ResourceInfo> resourceInfo;
 
     @Override
