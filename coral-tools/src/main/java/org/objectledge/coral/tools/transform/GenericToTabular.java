@@ -29,6 +29,8 @@ public class GenericToTabular
 
     private String dataColumns;
 
+    private String tabular;
+
     private String attributes;
 
     private String fkConstraints;
@@ -63,6 +65,7 @@ public class GenericToTabular
 
         createDataTables();
         fillDataTables();
+        transferTabularData();
 
         setupPkConstraints();
         setupFkConstraints();
@@ -417,6 +420,21 @@ public class GenericToTabular
         finally
         {
             stmt.close();
+        }
+    }
+
+    private void transferTabularData()
+        throws SQLException
+    {
+        log.info("copying tabular resource data");
+        try(Statement stmt = sourceConn.createStatement();
+            ResultSet rset = stmt.executeQuery(tabular))
+        {
+            while(rset.next())
+            {
+                log.info("  copying " + rset.getString(1));
+                transferTable(rset.getString(2), 1000);
+            }
         }
     }
 
