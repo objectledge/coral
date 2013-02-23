@@ -5,7 +5,7 @@
   <groupId>org.objectledge.coral</groupId>
   <artifactId>coral-common</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.16</version>
+  <version>1.0.16.1</version>
   <name>ObjectLedge Coral object oriented database</name>
   <inceptionYear>2003</inceptionYear>
   <description>
@@ -90,7 +90,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <versions.ledge>1.0.16</versions.ledge>
+    <versions.ledge>1.0.16.3</versions.ledge>
     <versions.hsqldb>2.2.9_ledge1</versions.hsqldb>
     <versions.derby>10.9.1.0</versions.derby>
   </properties>
