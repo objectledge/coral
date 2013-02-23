@@ -66,8 +66,19 @@ public class PersistentResourceHandler<T extends Resource>
         super(coralSchema, instantiator, resourceClass, database, cacheFactory, logger);
         if(resourceClass.getDbTable() == null)
         {
-            throw new SchemaIntegrityException("no database table defined for class "
-                + resourceClass.getName());
+            boolean tableShouldExist = false;
+            for(AttributeDefinition<?> attr : resourceClass.getDeclaredAttributes())
+            {
+                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
+                {
+                    tableShouldExist = true;
+                }
+            }
+            if(tableShouldExist)
+            {
+                throw new SchemaIntegrityException("no database table defined for class "
+                    + resourceClass.getName());
+            }
         }
         this.persistence = persistence;
         this.schemaHandler = new PersistentSchemaHandler<T>(resourceClass, persistence);
