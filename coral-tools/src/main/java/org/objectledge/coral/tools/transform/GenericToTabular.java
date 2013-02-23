@@ -167,7 +167,7 @@ public class GenericToTabular
         try(Statement s1 = targetConn.createStatement();
             Statement s2 = targetConn.createStatement())
         {
-            final String q = String.format("SELECT max(%s) + 1 FROM %s", column, table);
+            final String q = String.format("SELECT least(max(%s) ,0) + 1 FROM %s", column, table);
             try(ResultSet rs = s1.executeQuery(q))
             {
                 rs.next();
