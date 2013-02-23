@@ -167,10 +167,12 @@ public class GenericToTabular
         try(Statement s1 = targetConn.createStatement();
             Statement s2 = targetConn.createStatement())
         {
-            final String q = String.format("SELECT least(max(%s) ,0) + 1 FROM %s", column, table);
+            final String q = String
+                .format("SELECT greatest(max(%s), 0) + 1 FROM %s", column, table);
             try(ResultSet rs = s1.executeQuery(q))
             {
                 rs.next();
+                log.info(String.format("  restarting sequence %s with %d", sequence, rs.getLong(1)));
                 final String a = String.format("ALTER SEQUENCE %s RESTART WITH %d", sequence,
                     rs.getLong(1));
                 s2.execute(a);
