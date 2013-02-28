@@ -13,6 +13,7 @@ public class RegisterCoralFilters
         config.register(RequireCoralRoleFilter.class);
         config.register(RequireCoralPermissionFilter.class);
         config.register(RequireAtLeastOneFilter.class);
+        config.register(RequireAtLeastOneRoleFilter.class);
     }
 
 }
