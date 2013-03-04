@@ -1,4 +1,4 @@
-package org.objectledge.coral.web.rest;
+package org.objectledge.coral.web.rest.security;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -16,6 +16,7 @@ import org.objectledge.coral.security.Permission;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.coral.web.rest.RequireCoralPermission;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
