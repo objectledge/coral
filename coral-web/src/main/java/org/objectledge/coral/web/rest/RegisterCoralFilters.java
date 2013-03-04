@@ -1,6 +1,10 @@
 package org.objectledge.coral.web.rest;
 
 import org.glassfish.jersey.server.ResourceConfig;
+import org.objectledge.coral.web.rest.filters.RequireAllFilter;
+import org.objectledge.coral.web.rest.filters.RequireAnyFilter;
+import org.objectledge.coral.web.rest.filters.RequireCoralPermissionFilter;
+import org.objectledge.coral.web.rest.filters.RequireCoralRoleFilter;
 import org.objectledge.web.rest.JerseyConfigurationHook;
 
 public class RegisterCoralFilters
@@ -12,8 +16,8 @@ public class RegisterCoralFilters
     {
         config.register(RequireCoralRoleFilter.class);
         config.register(RequireCoralPermissionFilter.class);
-        config.register(RequireAtLeastOneFilter.class);
-        config.register(RequireAtLeastOneRoleFilter.class);
+        config.register(RequireAnyFilter.class);
+        config.register(RequireAllFilter.class);
     }
 
 }
