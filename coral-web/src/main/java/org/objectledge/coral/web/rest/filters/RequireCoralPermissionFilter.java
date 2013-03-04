@@ -1,4 +1,4 @@
-package org.objectledge.coral.web.rest;
+package org.objectledge.coral.web.rest.filters;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -10,12 +10,14 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.objectledge.coral.entity.EntityDoesNotExistException;
-import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
-
+import org.objectledge.coral.web.rest.RequireCoralPermission;
+import org.objectledge.coral.web.rest.security.CoralPermissionChecker;
+import org.objectledge.coral.web.rest.security.PermissionProcessor;
+import org.objectledge.coral.web.rest.security.SecurityViolationException;
 
 @RequireCoralPermission(permission = "*")
 public class RequireCoralPermissionFilter
@@ -34,28 +36,26 @@ public class RequireCoralPermissionFilter
     @Inject
     CoralPermissionChecker permissionChecker;
 
-
     @Override
     public void filter(ContainerRequestContext requestContext)
         throws IOException
     {
         final Annotation[] annotations = resourceInfo.get().getResourceMethod().getAnnotations();
-        Collection<RequireCoralPermission> requireCoralPermissions = permissionChecker.findRequireCoralPermissions(annotations);
-        try
+        Collection<RequireCoralPermission> requireCoralPermissions = permissionChecker
+            .findRequireCoralPermissions(annotations);
+        final PermissionProcessor permissionProcessor = new PermissionProcessor(
+            coralSessionFactory, permissionChecker, uriInfo.get(), resourceInfo.get());
+        for(RequireCoralPermission requireCoralPermission : requireCoralPermissions)
         {
-            CoralSession session = coralSessionFactory.getCurrentSession();
-            for(RequireCoralPermission requireCoralPermission : requireCoralPermissions)
+            try
             {
-                if(!permissionChecker.hasPermission(requireCoralPermission, uriInfo.get(),
-                    resourceInfo.get(), session))
-                {
-                    throw new WebApplicationException(401);
-                }
+                permissionProcessor.process(requireCoralPermission);
             }
-        }
-        catch(EntityDoesNotExistException e)
-        {
-            throw new WebApplicationException(404);
+            catch(SecurityViolationException e)
+            {
+                throw new WebApplicationException(Response.status(401).entity(e.getMessage())
+                    .build());
+            }
         }
     }
 }

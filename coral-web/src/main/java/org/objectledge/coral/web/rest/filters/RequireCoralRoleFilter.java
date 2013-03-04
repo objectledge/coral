@@ -1,4 +1,4 @@
-package org.objectledge.coral.web.rest;
+package org.objectledge.coral.web.rest.filters;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -10,9 +10,11 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
 
-import org.objectledge.coral.security.Role;
-import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.session.CoralSessionFactory;
+import org.objectledge.coral.web.rest.RequireCoralRole;
+import org.objectledge.coral.web.rest.security.RoleProcessor;
+import org.objectledge.coral.web.rest.security.SecurityConstraintProcessor;
+import org.objectledge.coral.web.rest.security.SecurityViolationException;
 
 @RequireCoralRole("thisIsJustRequiredValue")
 public class RequireCoralRoleFilter
@@ -34,11 +36,13 @@ public class RequireCoralRoleFilter
         {
             if(annotation instanceof RequireCoralRole)
             {
-                RequireCoralRole requireCoralRole = (RequireCoralRole)annotation;
-                final String requiredRole = requireCoralRole.value();
-                final CoralSession currentSession = coralSessionFactory.getCurrentSession();
-                Role coralRole = currentSession.getSecurity().getUniqueRole(requiredRole);
-                if(!currentSession.getUserSubject().hasRole(coralRole))
+                final SecurityConstraintProcessor<RequireCoralRole> processor = new RoleProcessor(
+                    coralSessionFactory);
+                try
+                {
+                    processor.process((RequireCoralRole)annotation);
+                }
+                catch(SecurityViolationException e)
                 {
                     throw new WebApplicationException(401);
                 }
