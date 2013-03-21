@@ -33,9 +33,12 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.naming.NamingException;
+
 import org.objectledge.authentication.AuthenticationException;
 import org.objectledge.authentication.UserManager;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.parameters.DefaultParameters;
 import org.objectledge.parameters.Parameters;
 import org.objectledge.parameters.directory.DirectoryParameters;
 import org.objectledge.table.comparator.BaseStringComparator;
@@ -50,7 +53,8 @@ public class PersonalDataComparator extends BaseStringComparator<Subject>
 {
     private final UserManager userManager;
     private final String property;
-    private final Map<Subject, Parameters> personalData = new HashMap<Subject, Parameters>();
+
+    private final Map<Subject, Parameters> personalData = new HashMap<>();
 
     /**
      * Creates a new PersonalDataComparator instance.
@@ -75,25 +79,34 @@ public class PersonalDataComparator extends BaseStringComparator<Subject>
         {
             Parameters d1 = getPersonalData(s1);
             Parameters d2 = getPersonalData(s2);
-            String v1 = d1.get(property);
-            String v2 = d2.get(property);
+            String v1 = firstVal(d1, property, "");
+            String v2 = firstVal(d2, property, "");
             return compareStrings(v1, v2);
         }
-        catch(AuthenticationException e)
+        catch(AuthenticationException | NamingException e)
         {
             throw new IllegalStateException("Unexpected exception", e);
         }
     }
 
+    private String firstVal(Parameters p, String property, String defVal)
+    {
+        String[] vals = p.getStrings(property);
+        return vals.length > 0 ? vals[0] : defVal;
+    }
+
     private Parameters getPersonalData(Subject s)
-        throws AuthenticationException
+        throws AuthenticationException, NamingException
     {
         Parameters pd;
         pd = personalData.get(s);
         if(pd == null)
         {
             Principal p = userManager.getUserByName(s.getName());
-            pd = new DirectoryParameters(userManager.getPersonalData(p));
+            try(DirectoryParameters d = new DirectoryParameters(userManager.getPersonalData(p)))
+            {
+                pd = new DefaultParameters(d);
+            }
             personalData.put(s, pd);
         }
         return pd;
