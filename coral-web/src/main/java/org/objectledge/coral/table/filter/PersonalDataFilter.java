@@ -30,12 +30,11 @@ package org.objectledge.coral.table.filter;
 
 import java.security.Principal;
 
-import javax.naming.directory.DirContext;
+import javax.naming.NamingException;
 
 import org.objectledge.authentication.AuthenticationException;
 import org.objectledge.authentication.UserManager;
 import org.objectledge.coral.security.Subject;
-import org.objectledge.parameters.Parameters;
 import org.objectledge.parameters.directory.DirectoryParameters;
 import org.objectledge.table.TableFilter;
 
@@ -75,20 +74,24 @@ public class PersonalDataFilter implements TableFilter<Subject>
     {
         try
         {
-           Principal p = userManager.getUserByName(s.getName());
-           DirContext c = userManager.getPersonalData(p);
-           Parameters d = new DirectoryParameters(c);
-           for(String property : properties)
-           {
-               String v = d.get(property, "");
-               if(v.contains(pattern))
-               {
-                   return true;
-               }
-           }    
-           return false;
+            Principal p = userManager.getUserByName(s.getName());
+            try(DirectoryParameters d = new DirectoryParameters(userManager.getPersonalData(p)))
+            {
+                for(String property : properties)
+                {
+                    String[] vs = d.getStrings(property);
+                    for(String v : vs)
+                    {
+                        if(v.contains(pattern))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
         }
-        catch(AuthenticationException e)
+        catch(AuthenticationException | NamingException e)
         {
             throw new IllegalStateException("Unexpected exception", e);
         }
