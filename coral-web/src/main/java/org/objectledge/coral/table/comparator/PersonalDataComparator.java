@@ -37,6 +37,7 @@ import javax.naming.NamingException;
 
 import org.objectledge.authentication.AuthenticationException;
 import org.objectledge.authentication.UserManager;
+import org.objectledge.authentication.UserUnknownException;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.parameters.DefaultParameters;
 import org.objectledge.parameters.Parameters;
@@ -98,14 +99,20 @@ public class PersonalDataComparator extends BaseStringComparator<Subject>
     private Parameters getPersonalData(Subject s)
         throws AuthenticationException, NamingException
     {
-        Parameters pd;
-        pd = personalData.get(s);
+        Parameters pd = personalData.get(s);
         if(pd == null)
         {
-            Principal p = userManager.getUserByName(s.getName());
-            try(DirectoryParameters d = new DirectoryParameters(userManager.getPersonalData(p)))
+            try
             {
-                pd = new DefaultParameters(d);
+                Principal p = userManager.getUserByName(s.getName());
+                try(DirectoryParameters d = new DirectoryParameters(userManager.getPersonalData(p)))
+                {
+                    pd = new DefaultParameters(d);
+                }
+            }
+            catch(UserUnknownException e)
+            {
+                pd = new DefaultParameters();
             }
             personalData.put(s, pd);
         }
