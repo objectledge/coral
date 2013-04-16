@@ -389,8 +389,14 @@ public class SQLQueryResultsImpl
         }
     }
     
+    @Override
+    public int rowCount()
+    {
+        return resultList.size();
+    }
+
     // Row implementation ////////////////////////////////////////////////////
-    
+
     /**
      * Represents a single query result.
      */

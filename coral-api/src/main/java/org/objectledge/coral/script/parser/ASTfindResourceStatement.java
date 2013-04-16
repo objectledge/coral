@@ -19,6 +19,10 @@ public class ASTfindResourceStatement extends SimpleNode {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
   
+    int limit = 0;
+
+    int offset = 0;
+
   public ASTresource getResource()
   {
       return resource;
@@ -43,4 +47,14 @@ public class ASTfindResourceStatement extends SimpleNode {
   {
       return select;
   }
+
+    public int getLimit()
+    {
+        return limit;
+    }
+
+    public int getOffset()
+    {
+        return offset;
+    }
 }

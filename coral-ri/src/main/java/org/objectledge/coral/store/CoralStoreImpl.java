@@ -1615,5 +1615,13 @@ public class CoralStoreImpl
                 return getResource(id);
             }
         };    
-     }    
+    }
+
+    @Override
+    public <T> T getResource(long id, Class<T> clazz)
+        throws EntityDoesNotExistException
+    {
+        final Resource resource = getResource(id);
+        return clazz.cast(resource);
+    }
 }

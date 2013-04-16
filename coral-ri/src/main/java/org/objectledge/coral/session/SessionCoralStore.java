@@ -93,6 +93,17 @@ public class SessionCoralStore implements CoralStore
         return coral.getStore().getResource(id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T getResource(long id, Class<T> clazz)
+        throws EntityDoesNotExistException
+    {
+        final Resource resource = getResource(id);
+        return clazz.cast(resource);
+    }
+
     /** 
      * {@inheritDoc}
      */

@@ -1,13 +1,10 @@
 package org.objectledege.coral.tools.maven;
 
-import java.io.Reader;
+import java.util.Collections;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
-import org.objectledge.coral.tools.BatchLoader;
-import org.objectledge.database.DatabaseUtils;
-import org.objectledge.filesystem.FileSystem;
+import org.objectledge.coral.tools.sql.SqlRunnerComponent;
 
 /**
  * Executes a set of SQL scripts on a specified database.
@@ -18,13 +15,6 @@ import org.objectledge.filesystem.FileSystem;
 public class SqlRunnerMojo
     extends AbstractDbMojo
 {
-    /**
-     * Base directory for looking up sources lists and source files.
-     * 
-     * @parameter default-value="${project.basedir.canonicalPath}"
-     */
-    private String baseDir;
-
     /**
      * Location of sources list file.
      * 
@@ -43,20 +33,13 @@ public class SqlRunnerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        Log log = getLog();
         initDataSource();
         try
         {
-            FileSystem fileSystem = FileSystem.getStandardFileSystem(baseDir);
-            BatchLoader loader = new BatchLoader(fileSystem, new MavenDNALogger(log), fileEncoding)
-                {
-                    public void load(Reader in)
-                        throws Exception
-                    {
-                        DatabaseUtils.runScript(dataSource, in);
-                    }
-                };
-            loader.loadBatch(sqlSourcesList);
+            SqlRunnerComponent runner = new SqlRunnerComponent(fileSystem, dataSource,
+                new MavenDNALogger(getLog()));
+            runner.run(sqlSourcesList, fileEncoding, Collections.<String, Object> emptyMap(),
+                Collections.<String> emptyList());
         }
         catch(Exception e)
         {

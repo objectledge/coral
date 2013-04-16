@@ -61,8 +61,20 @@ public interface CoralStore
         throws EntityDoesNotExistException;
     
     /**
+     * Retrieves the resource of the type passed in with the given identifier.
+     * 
+     * @param id the identifier.
+     * @param class resource class
+     * @return the <code>Resource</code>.
+     * @throws EntityDoesNotExistException if the <code>Resource</code> with the specified
+     *         identifier does not exist.
+     */
+    public <T> T getResource(long id, Class<T> clazz)
+        throws EntityDoesNotExistException;
+
+    /**
      * Returns all resourcees with the specified name.
-     *
+     * 
      * @param name the name.
      * @return all <code>Resource</code>es with the given name.
      */

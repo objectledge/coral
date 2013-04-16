@@ -18,6 +18,11 @@ public class ModificationTimeComparator<T extends Resource>
         // modification time is never null, so direction is irrelevant here
         super(TimeComparator.Direction.ASC);
     }
+    
+    public ModificationTimeComparator(Direction direction)
+    {
+        super(direction);
+    }
 
     protected Date getDate(Resource res)
     {
