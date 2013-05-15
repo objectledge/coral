@@ -1,6 +1,7 @@
 package org.objectledge.coral.store;
 
 import java.util.Date;
+import java.util.List;
 
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.schema.AttributeDefinition;
@@ -118,6 +119,14 @@ public interface Resource
      */
     public Resource[] getChildren();
     
+    /**
+     * Returns immediate children of the resource of the specific type.
+     * 
+     * @param type desired type
+     * @return the immediate children of the resource.
+     */
+    public <T extends Resource> List<T> getChildren(Class<T> type);
+
     /** 
      * Checks if the specified attribute of the resource is defined.
      *

@@ -2,10 +2,12 @@ package org.objectledge.coral.store;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -520,6 +522,27 @@ public class ResourceImpl
         }
     }
     
+    /**
+     * Returns immediate children of the resource of the specific type.
+     * 
+     * @param type desired type
+     * @return the immediate children of the resource.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Resource> List<T> getChildren(Class<T> type)
+    {
+        Resource[] allChildren = getChildren();
+        List<T> filteredChildren = new ArrayList<T>();
+        for(Resource child : allChildren)
+        {
+            if(type.isAssignableFrom(child.getClass()))
+            {
+                filteredChildren.add((T)child);
+            }
+        }
+        return filteredChildren;
+    }
+
     /** 
      * Checks if the specified attribute of the resource is defined.
      *

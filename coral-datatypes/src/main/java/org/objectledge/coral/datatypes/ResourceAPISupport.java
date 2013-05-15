@@ -1,6 +1,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.util.Date;
+import java.util.List;
 
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
@@ -291,6 +292,17 @@ public abstract class ResourceAPISupport
     public Resource[] getChildren()
     {
         return delegate.getChildren();
+    }
+
+    /**
+     * Returns immediate children of the resource of the specific type.
+     * 
+     * @param type desired type
+     * @return the immediate children of the resource.
+     */
+    public <T extends Resource> List<T> getChildren(Class<T> type)
+    {
+        return delegate.getChildren(type);
     }
 
     // Resource interface - attributes //////////////////////////////////////////////////////////
