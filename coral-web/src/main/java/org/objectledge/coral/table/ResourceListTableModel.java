@@ -1,11 +1,13 @@
 package org.objectledge.coral.table;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.table.comparator.CreationTimeComparator;
 import org.objectledge.coral.table.comparator.CreatorNameComparator;
@@ -22,15 +24,17 @@ import org.objectledge.table.generic.ListTableModel;
 
 /**
  * Implementation of Table Model for lists of ARL resources.
- *
+ * 
  * @author <a href="mailto:dgajda@caltha.pl">Damian Gajda</a>
  * @version $Id: ResourceListTableModel.java,v 1.12 2008-10-21 15:03:56 rafal Exp $
  */
-public class ResourceListTableModel<T extends Resource> 
-  extends ListTableModel<T>
+public class ResourceListTableModel<T extends Resource>
+    extends ListTableModel<T>
 {
     /** resources keyed by their id */
     private Map<String, T> resourcesById;
+
+    private Map<T, T[]> childrenByParentId;
 
     /**
      * Creates new ResourceListTableModel instance.
@@ -39,7 +43,7 @@ public class ResourceListTableModel<T extends Resource>
      * @param locale the locale to be used by comparators.
      * @throws TableException if there is a problem creating the model.
      */
-    public ResourceListTableModel (T[] array, Locale locale)
+    public ResourceListTableModel(T[] array, Locale locale)
         throws TableException
     {
         super(array, (TableColumn<T>[])null);
@@ -66,7 +70,7 @@ public class ResourceListTableModel<T extends Resource>
      * 
      * @param locale the locale to be used by comparators.
      * @return array of table columns.
-     * @throws TableException if there is a problem crating column objects. 
+     * @throws TableException if there is a problem crating column objects.
      */
     protected TableColumn<T>[] getColumns(Locale locale, List<T> list)
         throws TableException
@@ -91,7 +95,7 @@ public class ResourceListTableModel<T extends Resource>
 
         // Id comparator
         columns[7] = new TableColumn<T>("id", new IdComparator<T>());
-        
+
         // "Unsorted" comparator
         columns[8] = new TableColumn<T>("unsorted", new ListPositionComparator<T>(list));
         return columns;
@@ -99,7 +103,7 @@ public class ResourceListTableModel<T extends Resource>
 
     /**
      * Returns the model dependent object by its id.
-     *
+     * 
      * @param id the id of the object
      * @return model object
      */
@@ -116,12 +120,12 @@ public class ResourceListTableModel<T extends Resource>
         }
         return resourcesById.get(id);
     }
-    
+
     /**
      * Returns the id of the object.
+     * 
      * @param parent the id of the parent object.
      * @param child model object.
-     *
      * @return the id of the object.
      */
     public String getId(String parent, Resource child)
@@ -131,5 +135,50 @@ public class ResourceListTableModel<T extends Resource>
             return "-1";
         }
         return ((Resource)child).getIdString();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T[] getChildren(T parent)
+    {
+        if(childrenByParentId == null)
+        {
+            childrenByParentId = new HashMap<>();
+        }
+        T[] children = childrenByParentId.get(parent);
+        if(children == null)
+        {
+            children = (T[])findChildren(parent);
+            childrenByParentId.put(parent, children);
+        }
+        return children;
+    }
+
+    private Resource[] findChildren(Resource parent)
+    {
+        ArrayList<T> children = new ArrayList<>();
+        if(parent == null)
+        {
+            for(Map.Entry<String, T> entry : resourcesById.entrySet())
+            {
+                if(entry.getValue().getParent().getId() == CoralStore.ROOT_RESOURCE
+                    || getObject(entry.getValue().getParent().getIdString()) == null)
+                {
+                    children.add(entry.getValue());
+                }
+            }
+        }
+        else
+        {
+            for(Map.Entry<String, T> entry : resourcesById.entrySet())
+            {
+                if(entry.getValue().getParent() != null
+                    && entry.getValue().getParent().getId() == parent.getId())
+                {
+                    children.add(entry.getValue());
+                }
+            }
+        }
+        return children.toArray(new Resource[children.size()]);
     }
 }
