@@ -211,8 +211,8 @@ public class BooleanAttributeHandlerTest extends LedgeTestCase
 
     public void testToExternalString()
     {
-        assertEquals("1", booleanHandler.toExternalString(Boolean.TRUE));
-        assertEquals("0", booleanHandler.toExternalString(Boolean.FALSE));
+        assertEquals("true", booleanHandler.toExternalString(Boolean.TRUE));
+        assertEquals("false", booleanHandler.toExternalString(Boolean.FALSE));
     }
 
     public void testCheckDomainString()

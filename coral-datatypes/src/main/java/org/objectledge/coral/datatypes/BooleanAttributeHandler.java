@@ -239,11 +239,11 @@ public class BooleanAttributeHandler
         checkValue(value);
         if((value).booleanValue())
         {
-            return "1";
+            return "true";
         }
         else
         {
-            return "0";
+            return "false";
         }
     }
 }
