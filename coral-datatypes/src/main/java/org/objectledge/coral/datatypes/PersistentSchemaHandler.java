@@ -102,9 +102,18 @@ public class PersistentSchemaHandler<T extends Resource>
                     stmt.execute(buff.toString());
                 }
             }
-            if(value != null && (repr.isCustom() || tableShouldExist))
+            if(value != null && repr.isCustom())
             {
                 addAttributeValues(attribute, value, repr, conn, tableShouldExist);
+                if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
+                {
+                    buff.setLength(0);
+                    buff.append("ALTER TABLE ");
+                    buff.append(attribute.getDeclaringClass().getDbTable());
+                    buff.append("\n ALTER COLUMN ");
+                    buff.append(columnName(attribute));
+                    buff.append("\n NOT NULL");
+                }
             }
         }
         finally
