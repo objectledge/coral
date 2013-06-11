@@ -28,6 +28,8 @@
 package org.objectledge.coral.security;
 
 import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.objectledge.authentication.UserUnknownException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
@@ -59,7 +61,38 @@ public class CoralRoleChecking
     /**
      * {@inheritDoc}
      */
-    public String[] getRoles(Principal user)
+    public Set<String> getRoles(Principal user)
+        throws UserUnknownException
+    {
+        Subject subject = getSubject(user);
+        Role[] roles = subject.getRoles();
+        Set<String> result = new HashSet<>(roles.length);
+        for(Role r : roles)
+        {
+            result.add(r.getName());
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasRole(Principal user, String role)
+        throws UserUnknownException
+    {
+        Subject subject = getSubject(user);
+        Role[] roles = subject.getRoles();
+        for(Role r : roles)
+        {
+            if(r.getName().equals(role))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Subject getSubject(Principal user)
         throws UserUnknownException
     {
         CoralSession current = coralSessionFactory.getCurrentSession();
@@ -77,13 +110,6 @@ public class CoralRoleChecking
         {
             throw new UserUnknownException("unknown user "+user.getName());
         }
-        Role[] roles = subject.getRoles();
-        String[] result = new String[roles.length];
-        int i = 0;
-        for(Role r : roles)
-        {
-            result[i++] = r.getName();
-        }
-        return result;
+        return subject;
     }
 }
