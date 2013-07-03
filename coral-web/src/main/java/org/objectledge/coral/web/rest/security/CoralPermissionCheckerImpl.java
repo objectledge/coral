@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.UriInfo;
 
@@ -73,8 +72,7 @@ public class CoralPermissionCheckerImpl
             return Collections2.transform(ids, new Function<String, Long>()
                 {
                     @Override
-                    @Nullable
-                    public Long apply(@Nullable String resourceId)
+                    public Long apply(String resourceId)
                     {
                         return Long.valueOf(resourceId);
                     }
