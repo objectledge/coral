@@ -32,6 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jmock.Mock;
@@ -725,6 +726,14 @@ public class RelationImplTest extends LedgeTestCase
          * {@inheritDoc}
          */
         public Resource[] getChildren()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public <T extends Resource> List<T> getChildren(Class<T> type)
         {
             throw new UnsupportedOperationException();
         }

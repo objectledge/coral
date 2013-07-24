@@ -57,9 +57,7 @@ public class GenericResourceQueryHandler
                 int ni = rcm.getNameIndex(ad);
                 if((ad.getFlags() & AttributeFlags.BUILTIN) == 0 && rcm.isOuter(ad))
                 {
-                    query.append("\nJOIN coral_attribute_definition d").append(ni);
-                    query.append(" ON (r.resource_class_id = d").append(ni)
-                        .append(".resource_class_id)");
+                    query.append("\nCROSS JOIN coral_attribute_definition d").append(ni);
                     query.append("\nLEFT OUTER JOIN coral_generic_resource ");
                     query.append("g").append(ni);
                     query.append(" ON (r.resource_id = g").append(ni).append(".resource_id");

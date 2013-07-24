@@ -102,9 +102,18 @@ public class PersistentSchemaHandler<T extends Resource>
                     stmt.execute(buff.toString());
                 }
             }
-            if(value != null && (repr.isCustom() || tableShouldExist))
+            if(value != null && repr.isCustom())
             {
                 addAttributeValues(attribute, value, repr, conn, tableShouldExist);
+                if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0)
+                {
+                    buff.setLength(0);
+                    buff.append("ALTER TABLE ");
+                    buff.append(attribute.getDeclaringClass().getDbTable());
+                    buff.append("\n ALTER COLUMN ");
+                    buff.append(columnName(attribute));
+                    buff.append("\n NOT NULL");
+                }
             }
         }
         finally
@@ -129,6 +138,7 @@ public class PersistentSchemaHandler<T extends Resource>
         if(value != null && !repr.isCustom())
         {
             buff.append(" DEFAULT ");
+            value = attribute.getAttributeClass().getHandler().toAttributeValue(value);
             buff.append(attribute.getAttributeClass().getHandler().toExternalString(value));
         }
         if((attribute.getFlags() & AttributeFlags.REQUIRED) != 0 && !repr.isCustom())
@@ -156,6 +166,7 @@ public class PersistentSchemaHandler<T extends Resource>
         String sql;
         PreparedStatement outStmt;
         final String columnName = columnName(attribute);
+        value = attribute.getAttributeClass().getHandler().toAttributeValue(value);
         if(tableShouldExist)
         {
             sql = "UPDATE " + attribute.getDeclaringClass().getDbTable() + " SET " + columnName
