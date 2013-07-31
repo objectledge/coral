@@ -345,7 +345,7 @@ public abstract class StandardResourceHandler<T extends Resource>
         map.put(rClass.getHandler(), cs);
         for(ResourceClass<?> parent : rClass.getParentClasses())
         {
-            cs = map.get(parent.getHandler());
+            cs = findSameType(parent.getHandler(), map);
             if(cs == null)
             {
                 cs = new HashSet<ResourceClass<?>>();
@@ -354,6 +354,19 @@ public abstract class StandardResourceHandler<T extends Resource>
             cs.add(parent);
         }
         return map;
+    }
+
+    private Set<ResourceClass<?>> findSameType(ResourceHandler<?> handler,
+        Map<ResourceHandler<?>, Set<ResourceClass<?>>> map)
+    {
+        for(ResourceHandler<?> h : map.keySet())
+        {
+            if(h.getClass().equals(handler.getClass()))
+            {
+                return map.get(h);
+            }
+        }
+        return null;
     }
 
     /**
