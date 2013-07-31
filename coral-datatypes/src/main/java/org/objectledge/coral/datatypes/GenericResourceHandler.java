@@ -111,7 +111,8 @@ public class GenericResourceHandler<T extends Resource>
      * @return the map of data keys.
      * @throws SQLException if happens.
      */
-    public Object getData(Resource delegate, Connection conn, Object prev)
+    public Object getData(Resource delegate, Object prev, Set<ResourceClass<?>> classess,
+        Connection conn)
         throws SQLException
     {
         Map<Long, Map<AttributeDefinition<?>, Long>> data;
