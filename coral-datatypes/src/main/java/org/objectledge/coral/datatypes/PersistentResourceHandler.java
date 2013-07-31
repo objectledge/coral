@@ -213,7 +213,8 @@ public class PersistentResourceHandler<T extends Resource>
     /**
      * {@inheritDoc}
      */
-    protected Object getData(Resource delegate, Connection conn, Object prev)
+    protected Object getData(Resource delegate, Object prev, Set<ResourceClass<?>> classess,
+        Connection conn)
         throws SQLException
     {
         Map<Long, Map<ResourceClass<?>, InputRecord>> data;
