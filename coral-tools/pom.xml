@@ -5,7 +5,7 @@
   <parent>
     <artifactId>coral-common</artifactId>
     <groupId>org.objectledge.coral</groupId>
-    <version>1.0.16.6</version>
+    <version>1.0.16.7</version>
     <relativePath>../coral-common/pom.xml</relativePath>
   </parent>
   <artifactId>coral-tools</artifactId>
