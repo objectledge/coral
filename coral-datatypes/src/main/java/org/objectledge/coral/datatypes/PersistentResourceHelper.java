@@ -311,7 +311,7 @@ public class PersistentResourceHelper
         @Override
         public void setSaved(long id)
         {
-            throw new UnsupportedOperationException();
+            // ignore
         }
     }
 
