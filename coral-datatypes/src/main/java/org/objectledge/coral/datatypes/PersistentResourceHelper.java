@@ -259,11 +259,6 @@ public class PersistentResourceHelper
         instance.setValue(attr, value);
     }
 
-    static Persistent getRetrieveView(ResourceClass<?> rClass)
-    {
-        return new RetrieveView(rClass);
-    }
-
     static Persistent getCreateView(ResourceAttributes instance,
         final ResourceClass<?> rClass, final Map<AttributeDefinition<?>, ?> attrValues,
         final Connection conn)
@@ -316,7 +311,7 @@ public class PersistentResourceHelper
         @Override
         public void setSaved(long id)
         {
-            throw new UnsupportedOperationException();
+            // ignore
         }
     }
 
@@ -421,15 +416,6 @@ public class PersistentResourceHelper
         public void setSaved(long id)
         {
             // noop
-        }
-    }
-
-    private static class RetrieveView
-        extends PersistentView
-    {
-        public RetrieveView(ResourceClass<?> rClass)
-        {
-            super(rClass);
         }
     }
 

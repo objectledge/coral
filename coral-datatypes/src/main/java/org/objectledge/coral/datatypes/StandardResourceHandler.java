@@ -120,7 +120,7 @@ public abstract class StandardResourceHandler<T extends Resource>
             .getResourceClass());
         for(ResourceHandler<?> h : ch.keySet())
         {
-            data = ((StandardResourceHandler<?>)h).getData(delegate, conn, data);
+            data = ((StandardResourceHandler<?>)h).getData(delegate, data, ch.get(h), conn);
         }
         for(ResourceHandler<?> h : ch.keySet())
         {
@@ -163,7 +163,7 @@ public abstract class StandardResourceHandler<T extends Resource>
             .getResourceClass());
         for(ResourceHandler<?> h : ch.keySet())
         {
-            data = ((StandardResourceHandler<?>)h).getData(delegate, conn, data);
+            data = ((StandardResourceHandler<?>)h).getData(delegate, data, ch.get(h), conn);
         }
         for(ResourceHandler<?> h : ch.keySet())
         {
@@ -246,13 +246,15 @@ public abstract class StandardResourceHandler<T extends Resource>
      * Retrieve attribute information for a specific resource.
      * 
      * @param delegate the security delegate object.
-     * @param conn database connection.
      * @param prev data produced by previous handler, or {@code null} if the handler is first one in
      *        the chain.
+     * @param classess resource classes for which attribute data should be retrieved.
+     * @param conn database connection.
      * @return opaque data object.
      * @throws SQLException if information retrieval fails.
      */
-    protected abstract Object getData(Resource delegate, Connection conn, Object prev)
+    protected abstract Object getData(Resource delegate, Object prev,
+        Set<ResourceClass<?>> classess, Connection conn)
         throws SQLException;
 
     /**
@@ -343,7 +345,7 @@ public abstract class StandardResourceHandler<T extends Resource>
         map.put(rClass.getHandler(), cs);
         for(ResourceClass<?> parent : rClass.getParentClasses())
         {
-            cs = map.get(parent.getHandler());
+            cs = findSameType(parent.getHandler(), map);
             if(cs == null)
             {
                 cs = new HashSet<ResourceClass<?>>();
@@ -352,6 +354,19 @@ public abstract class StandardResourceHandler<T extends Resource>
             cs.add(parent);
         }
         return map;
+    }
+
+    private Set<ResourceClass<?>> findSameType(ResourceHandler<?> handler,
+        Map<ResourceHandler<?>, Set<ResourceClass<?>>> map)
+    {
+        for(ResourceHandler<?> h : map.keySet())
+        {
+            if(h.getClass().equals(handler.getClass()))
+            {
+                return map.get(h);
+            }
+        }
+        return null;
     }
 
     /**

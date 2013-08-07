@@ -1,10 +1,12 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -24,6 +26,7 @@ import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 import org.objectledge.database.Database;
+import org.objectledge.database.persistence.DefaultInputRecord;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 
@@ -210,55 +213,6 @@ public class PersistentResourceHandler<T extends Resource>
 
     // implementation ////////////////////////////////////////////////////////
 
-    /**
-     * {@inheritDoc}
-     */
-    protected Object getData(Resource delegate, Connection conn, Object prev)
-        throws SQLException
-    {
-        Map<Long, Map<ResourceClass<?>, InputRecord>> data;
-        if(prev == null)
-        {
-            data = new HashMap<Long, Map<ResourceClass<?>, InputRecord>>();
-        }
-        else
-        {
-            @SuppressWarnings("unchecked")
-            final Map<Long, Map<ResourceClass<?>, InputRecord>> cast = (Map<Long, Map<ResourceClass<?>, InputRecord>>)prev;
-            data = cast;
-        }
-        if(delegate.getResourceClass().getDbTable() != null)
-        {
-            Map<ResourceClass<?>, InputRecord> resData = data.get(delegate.getIdObject());
-            if(resData == null)
-            {
-                resData = new HashMap<>();
-                data.put(delegate.getIdObject(), resData);
-            }
-            resData.putAll(getInputRecords(delegate));
-        }
-        return data;
-    }
-
-    private Map<ResourceClass<?>, InputRecord> getInputRecords(Resource delegate)
-        throws SQLException
-    {
-        Map<ResourceClass<?>, InputRecord> map = new HashMap<ResourceClass<?>, InputRecord>();
-        if(tableShouldExist(delegate.getResourceClass()))
-        {
-            map.put(delegate.getResourceClass(),
-                getInputRecord(delegate, delegate.getResourceClass()));
-        }
-        for(ResourceClass<?> parentClass : delegate.getResourceClass().getParentClasses())
-        {
-            if(parentClass.getDbTable() != null && tableShouldExist(parentClass))
-            {
-                map.put(parentClass, getInputRecord(delegate, parentClass));
-            }
-        }
-        return map;
-    }
-
     private boolean tableShouldExist(ResourceClass<?> rClass)
     {
         boolean tableShouldExist = false;
@@ -272,25 +226,129 @@ public class PersistentResourceHandler<T extends Resource>
         return tableShouldExist;
     }
 
-    private InputRecord getInputRecord(Resource delegate, final ResourceClass<?> rClass)
+    private String getColumnName(AttributeDefinition<?> attr)
+    {
+        String dbColumn = attr.getDbColumn();
+        return dbColumn != null ? dbColumn : attr.getName();
+    }
+
+    private boolean isConcrete(AttributeDefinition<?> ad)
+    {
+        return (ad.getFlags() & (AttributeFlags.BUILTIN | AttributeFlags.SYNTHETIC)) == 0;
+    }
+
+    private String buildQuery(Set<ResourceClass<?>> classes)
+    {
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT r.resource_id, ");
+        int t = 1;
+        for(ResourceClass<?> rc : classes)
+        {
+            if(tableShouldExist(rc))
+            {
+                for(AttributeDefinition<?> ad : rc.getDeclaredAttributes())
+                {
+                    if(isConcrete(ad))
+                    {
+                        query.append('t').append(t).append('.');
+                        query.append(getColumnName(ad)).append(", ");
+                    }
+                }
+                t++;
+            }
+        }
+        query.setLength(query.length() - 2); // strip last comma
+        t = 1;
+        query.append("\nFROM coral_resource r");
+        for(ResourceClass<?> rc : classes)
+        {
+            if(tableShouldExist(rc))
+            {
+                query.append("\nLEFT OUTER JOIN ").append(rc.getDbTable()).append(" t").append(t);
+                query.append(" USING(resource_id)");
+                t++;
+            }
+        }
+        query.append("\nWHERE r.resource_id = ?");
+        return query.toString();
+    }
+
+    private Map<ResourceClass<?>, InputRecord> getInputRecords(Resource delegate,
+        Set<ResourceClass<?>> classes)
         throws SQLException
     {
-        List<InputRecord> irs = persistence.loadInputRecords(
-            PersistentResourceHelper.getRetrieveView(rClass), "resource_id = ?", delegate.getId());
-        if(irs.isEmpty())
+        try(Connection conn = persistence.getDatabase().getConnection())
         {
-            for(AttributeDefinition<?> attr : rClass.getDeclaredAttributes())
+            try(PreparedStatement stmt = conn.prepareStatement(buildQuery(classes)))
             {
-                if((attr.getFlags() & AttributeFlags.REQUIRED) != 0)
+                stmt.setLong(1, delegate.getId());
+                try(ResultSet rs = stmt.executeQuery())
                 {
-                    throw new SQLException("missing data for "
-                        + delegate.getResourceClass().getName() + " WHERE resource_id = "
-                        + delegate.getIdString());
+                    if(rs.next())
+                    {
+                        return splitInputRecords(rs, classes);
+                    }
+                    else
+                    {
+                        return Collections.emptyMap();
+                    }
                 }
             }
-            return null;
         }
-        return irs.get(0);
+    }
+
+    private Map<ResourceClass<?>, InputRecord> splitInputRecords(ResultSet rs,
+        Set<ResourceClass<?>> classes)
+        throws SQLException
+    {
+        Map<ResourceClass<?>, InputRecord> records = new HashMap<>(classes.size());
+        for(ResourceClass<?> rc : classes)
+        {
+            if(tableShouldExist(rc))
+            {
+                Map<String, Object> data = new HashMap<>();
+                for(AttributeDefinition<?> ad : rc.getDeclaredAttributes())
+                {
+                    if(isConcrete(ad))
+                    {
+                        String cn = getColumnName(ad);
+                        data.put(cn, rs.getObject(cn));
+                    }
+                }
+                records.put(rc, new DefaultInputRecord(data));
+            }
+        }
+        return records;
+    }
+
+    // StandardResourceHandler contract implementation //////////////////////
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected Object getData(Resource delegate, Object prev, Set<ResourceClass<?>> classes,
+        Connection conn)
+        throws SQLException
+    {
+        Map<Long, Map<ResourceClass<?>, InputRecord>> data;
+        if(prev == null)
+        {
+            data = new HashMap<Long, Map<ResourceClass<?>, InputRecord>>();
+        }
+        else
+        {
+            @SuppressWarnings("unchecked")
+            final Map<Long, Map<ResourceClass<?>, InputRecord>> cast = (Map<Long, Map<ResourceClass<?>, InputRecord>>)prev;
+            data = cast;
+        }
+        Map<ResourceClass<?>, InputRecord> resData = data.get(delegate.getIdObject());
+        if(resData == null)
+        {
+            resData = new HashMap<>();
+            data.put(delegate.getIdObject(), resData);
+        }
+        resData.putAll(getInputRecords(delegate, classes));
+        return data;
     }
 
     /**
@@ -307,13 +365,30 @@ public class PersistentResourceHandler<T extends Resource>
         Map<Long, Map<ResourceClass<?>, InputRecord>> data = new HashMap<Long, Map<ResourceClass<?>, InputRecord>>();
         if(rset != null)
         {
-            synchronized(rset)
+            final Set<ResourceClass<?>> persistentRCs = new HashSet<>();
+            persistentRCs.add(rc);
+            for(ResourceClass<?> parentRc : rc.getParentClasses())
             {
-                Set<ResourceAttributesSupport> orig = new HashSet<ResourceAttributesSupport>(
-                    rset.keySet());
-                for(ResourceAttributesSupport r : orig)
+                if(parentRc.getDbTable() != null)
                 {
-                    data.put(r.getDelegate().getIdObject(), getInputRecords(r.getDelegate()));
+                    persistentRCs.add(parentRc);
+                }
+            }
+            try(PreparedStatement stmt = conn.prepareStatement(buildQuery(persistentRCs)))
+            {
+                // note that lock on rset is held by StandardResourceHandler.revert0 which is the
+                // sole invoker of this method
+                for(ResourceAttributesSupport r : rset.keySet())
+                {
+                    stmt.setLong(1, r.getDelegate().getId());
+                    try(ResultSet rs = stmt.executeQuery())
+                    {
+                        while(rs.next())
+                        {
+                            data.put(rs.getLong("resource_id"),
+                                splitInputRecords(rs, persistentRCs));
+                        }
+                    }
                 }
             }
         }
