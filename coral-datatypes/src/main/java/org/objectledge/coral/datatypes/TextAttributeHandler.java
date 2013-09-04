@@ -1,6 +1,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -147,5 +148,11 @@ public class TextAttributeHandler
     {
         checkValue(value);
         return "'"+escape(value)+"'";
+    }
+
+    public void setParameter(PreparedStatement pstmt, int position, String value)
+        throws SQLException
+    {
+        pstmt.setString(position, value);
     }
 }

@@ -345,6 +345,20 @@ public abstract class AttributeHandlerBase<T>
     }
 
     /**
+     * Insert attribute value into a PreparedStatement parameter slot.
+     * 
+     * @param stmt a PreparedStatement
+     * @param position parameter position
+     * @param value parameter value
+     * @throws SQLException
+     */
+    protected void setParameter(PreparedStatement stmt, int position, T value)
+        throws SQLException
+    {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    /**
      * Converts a string into an attribute object.
      *
      * <p>The default attribute handler implementation does not support this

@@ -1,6 +1,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -253,5 +254,11 @@ public class BooleanAttributeHandler
         {
             return "false";
         }
+    }
+
+    public void setParameter(PreparedStatement pstmt, int position, Boolean value)
+        throws SQLException
+    {
+        pstmt.setBoolean(position, value.booleanValue());
     }
 }

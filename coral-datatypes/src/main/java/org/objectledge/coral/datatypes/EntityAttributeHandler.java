@@ -1,6 +1,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -319,6 +320,12 @@ public abstract class EntityAttributeHandler<T extends Entity>
         return ((Entity)value).getIdString();
     }
     
+    public void setParameter(PreparedStatement pstmt, int position, T value)
+        throws SQLException
+    {
+        pstmt.setLong(position, value.getId());
+    }
+
     /**
      * Return a new Comparator, or null if not supported.
      * 
