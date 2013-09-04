@@ -1,5 +1,7 @@
 package org.objectledge.coral.datatypes;
 
+import static org.objectledge.coral.datatypes.PersistentResourceHandler.columnName;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -120,13 +122,6 @@ public class PersistentSchemaHandler<T extends Resource>
         {
             stmt.close();
         }
-    }
-
-    static String columnName(AttributeDefinition<?> attr)
-        throws SQLException
-    {
-        String name = attr.getDbColumn();
-        return name != null ? name : attr.getName();
     }
 
     private <A> void columnSpec(AttributeDefinition<A> attribute, A value,
