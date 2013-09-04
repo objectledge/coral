@@ -334,6 +334,17 @@ public abstract class AttributeHandlerBase<T>
     }
 
     /**
+     * Return name of the data column in the attribute table, if applicable.
+     * 
+     * @return name of the data column in the attribute table, if applicable.
+     */
+    protected String getDataColumn()
+    {
+        throw new UnsupportedOperationException("no data column defined for attribute class "
+            + attributeClass.getName());
+    }
+
+    /**
      * Converts a string into an attribute object.
      *
      * <p>The default attribute handler implementation does not support this

@@ -210,6 +210,14 @@ public class StringAttributeHandler
     /**
      * {@inheritDoc}
      */
+    protected String getDataColumn()
+    {
+        return "data";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String toExternalString(String value)
     {
         checkValue(value);

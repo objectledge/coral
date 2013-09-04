@@ -207,6 +207,14 @@ public class DateAttributeHandler
     /**
      * {@inheritDoc}
      */
+    protected String getDataColumn()
+    {
+        return "data";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String toExternalString(Date value)
     {
         checkValue(value);

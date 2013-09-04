@@ -141,6 +141,14 @@ public class LongAttributeHandler
     /**
      * {@inheritDoc}
      */
+    protected String getDataColumn()
+    {
+        return "data";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String toExternalString(Long value)
     {
         checkValue(value);

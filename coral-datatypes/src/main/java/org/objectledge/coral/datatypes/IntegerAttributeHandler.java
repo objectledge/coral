@@ -205,6 +205,14 @@ public class IntegerAttributeHandler
     /**
      * {@inheritDoc}
      */
+    protected String getDataColumn()
+    {
+        return "data";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String toExternalString(Integer value)
     {
         checkValue(value);

@@ -218,6 +218,14 @@ public class BooleanAttributeHandler
     /**
      * {@inheritDoc}
      */
+    protected String getDataColumn()
+    {
+        return "data";
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public String toPrintableString(Boolean value)
     {
         checkValue(value);

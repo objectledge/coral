@@ -283,6 +283,14 @@ public abstract class EntityAttributeHandler<T extends Entity>
             return res[0];
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected String getDataColumn()
+    {
+        return "ref";
+    }
 
     /**
      * Converts an attribute value into a human readable string.
