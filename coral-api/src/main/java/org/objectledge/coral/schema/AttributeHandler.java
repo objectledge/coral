@@ -3,6 +3,7 @@ package org.objectledge.coral.schema;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.Map;
 
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.store.ConstraintViolationException;
@@ -258,4 +259,14 @@ public interface AttributeHandler<T>
      *         removed form the resource.
      */
     public boolean clearResourceReferences(T value);
+
+    /**
+     * Find resources that have attributes with a specific value. All attributes of the type this
+     * handler is associated with will be checked.
+     * 
+     * @param value value value to search for.
+     * @return resource identifiers, grouped by particular attributes where the value appears.
+     */
+    public Map<AttributeDefinition<T>, long[]> getResourcesByValue(T value)
+        throws SQLException;
 }
