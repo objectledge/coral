@@ -412,16 +412,72 @@ public class CoralStoreTest
             AttributeDefinition<Subject> ownerAttr = (AttributeDefinition<Subject>)rc
                 .getAttribute("owner");
 
-            // Map<AttributeDefinition<Subject>, long[]> s1ids =
-            // store.getResouceBySubjectMetadata(s1);
-            // checkResources(store, s1ids.get(createdByAttr), "r1");
-            // checkResources(store, s1ids.get(modifiedByAttr));
-            // checkResources(store, s1ids.get(ownerAttr));
+            Map<AttributeDefinition<Subject>, long[]> s1ids = store.getResouceBySubjectMetadata(s1);
+            checkResources(store, s1ids.get(createdByAttr), "r1");
+            checkResources(store, s1ids.get(modifiedByAttr));
+            checkResources(store, s1ids.get(ownerAttr));
 
             Map<AttributeDefinition<Subject>, long[]> s2ids = store.getResouceBySubjectMetadata(s2);
             checkResources(store, s2ids.get(createdByAttr), "r2");
             checkResources(store, s2ids.get(modifiedByAttr), "r1", "r2");
             checkResources(store, s2ids.get(ownerAttr), "r1", "r2");
+        }
+    }
+
+    public void testReplaceSubjectReferences()
+        throws Exception
+    {
+        try(CoralSession rootSession = coralSessionFactory.getRootSession())
+        {
+            Map<AttributeDefinition<?>, Object> attributes = new HashMap<>();
+            final CoralStore store = rootSession.getStore();
+            final CoralSchema schema = rootSession.getSchema();
+            Resource root = store.getResource(1l);
+
+            ResourceClass<?> rc = schema.createResourceClass("rc1",
+                StandardResource.class.getName(), GenericResourceHandler.class.getName(), null, 0);
+            AttributeClass<String> stringAttr = schema.getAttributeClass("string", String.class);
+            AttributeClass<Subject> subjectAttr = schema
+                .getAttributeClass("subject", Subject.class);
+            AttributeDefinition<String> a1 = schema
+                .createAttribute("a1", stringAttr, null, null, 0);
+            schema.addAttribute(rc, a1, null);
+            AttributeDefinition<Subject> a2 = schema.createAttribute("a2", subjectAttr, null, null,
+                0);
+            schema.addAttribute(rc, a2, null);
+            ResourceClass<Node> nodeRc = schema.getResourceClass("coral.Node", Node.class);
+            schema.addParentClass(rc, nodeRc, attributes);
+
+            Subject s1 = rootSession.getSecurity().createSubject("s1");
+            Subject s2 = rootSession.getSecurity().createSubject("s2");
+            Resource r1;
+            Resource r2;
+
+            try(CoralSession s1Session = coralSessionFactory.getSession(principal("s1")))
+            {
+                r1 = s1Session.getStore().createResource("r1", root, rc, attributes);
+            }
+
+            try(CoralSession s2Session = coralSessionFactory.getSession(principal("s2")))
+            {
+                r2 = s2Session.getStore().createResource("r2", root, rc, attributes);
+                r1.set(a1, "x");
+                r1.set(a2, s2);
+                r1.update();
+                s2Session.getStore().setOwner(r1, s2);
+            }
+
+            assertEquals(s2, r2.getCreatedBy());
+            assertEquals(s2, r1.getModifiedBy());
+            assertEquals(s2, r1.getOwner());
+            assertEquals(s2, r1.get(a2));
+
+            store.replaceSubjectReferences(s2, s1);
+
+            assertEquals(s1, r2.getCreatedBy());
+            assertEquals(s1, r1.getModifiedBy());
+            assertEquals(s1, r1.getOwner());
+            assertEquals(s1, r1.get(a2));
         }
     }
 

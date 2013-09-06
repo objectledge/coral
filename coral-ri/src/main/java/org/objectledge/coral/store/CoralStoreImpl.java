@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,8 +33,10 @@ import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
 import org.objectledge.coral.event.CoralEventHub;
+import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.AttributeFlags;
+import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.ResourceClassFlags;
@@ -1573,6 +1576,90 @@ public class CoralStoreImpl
             throw new InvalidResourceNameException("invalid characters " + characters
                 + " in resource name", characters);
         }
+    }
+
+    public void replaceSubjectReferences(Subject fromSubject, Subject toSubject)
+        throws ModificationNotPermitedException
+    {
+        try
+        {
+            Map<AttributeDefinition<Subject>, long[]> m1 = getResouceBySubjectMetadata(fromSubject);
+            for(AttributeClass<?> ac : coral.getSchema().getAllAttributeClasses())
+            {
+                if(Subject.class.isAssignableFrom(ac.getJavaClass()))
+                {
+                    AttributeHandler<Subject> h = (AttributeHandler<Subject>)ac.getHandler();
+                    m1.putAll(h.getResourcesByValue(fromSubject));
+                }
+            }
+            Map<Long, Set<AttributeDefinition<Subject>>> m2 = invert(m1);
+            for(Map.Entry<Long, Set<AttributeDefinition<Subject>>> entry : m2.entrySet())
+            {
+                long id = entry.getKey();
+                try
+                {
+                    final Resource r = getResource(id);
+                    final ResourceImpl delegate = (ResourceImpl)r.getDelegate();
+                    final Date modificationTime = r.getModificationTime();
+                    Subject modifiedBy = r.getModifiedBy();
+                    for(AttributeDefinition<Subject> ad : entry.getValue())
+                    {
+                        if(ad.getName().equals("created_by"))
+                        {
+                            delegate.setCreaedBy(toSubject);
+                        }
+                        else if(ad.getName().equals("modified_by"))
+                        {
+                            modifiedBy = toSubject;
+                        }
+                        else if(ad.getName().equals("owner"))
+                        {
+                            delegate.setOwner(toSubject);
+                        }
+                        else
+                        {
+                            r.set(ad, toSubject);
+                        }
+                    }
+                    r.update();
+                    delegate.setModified(modifiedBy, modificationTime);
+                    persistence.save(delegate);
+                }
+                catch(EntityDoesNotExistException e)
+                {
+                    // skip
+                }
+            }
+        }
+        catch(UnknownAttributeException | ValueRequiredException e)
+        {
+            throw new BackendException("concurrent schema change", e);
+        }
+        catch(SQLException e)
+        {
+            throw new BackendException("database operation failed", e);
+        }
+    }
+
+    private Map<Long, Set<AttributeDefinition<Subject>>> invert(
+        Map<AttributeDefinition<Subject>, long[]> in)
+    {
+        Map<Long, Set<AttributeDefinition<Subject>>> result = new HashMap<>();
+        for(Map.Entry<AttributeDefinition<Subject>, long[]> entry : in.entrySet())
+        {
+            AttributeDefinition<Subject> ad = entry.getKey();
+            for(long id : entry.getValue())
+            {
+                Set<AttributeDefinition<Subject>> ads = result.get(id);
+                if(ads == null)
+                {
+                    ads = new HashSet<>();
+                    result.put(id, ads);
+                }
+                ads.add(ad);
+            }
+        }
+        return result;
     }
 
     public Map<AttributeDefinition<Subject>, long[]> getResouceBySubjectMetadata(Subject subject)

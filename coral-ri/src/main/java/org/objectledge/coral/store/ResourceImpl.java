@@ -809,6 +809,27 @@ public class ResourceImpl
     }
 
     /**
+     * Changes the creator of the resource (used when deleting subjects).
+     * 
+     * @param creator updated creator reference.
+     */
+    void setCreaedBy(Subject creator)
+    {
+        this.creator = creator;
+    }
+
+    /**
+     * Changes the last modifier of the resource (used when deleting subjects).
+     * 
+     * @param modifier updated modifier reference.
+     */
+    void setModified(Subject modifier, Date modificationTime)
+    {
+        this.modifier = modifier;
+        this.modified = modificationTime;
+    }
+
+    /**
      * Sets the name of the resource.
 	 *
 	 * <p>Needed because AbstractEntityt.setName(String) is not visible in this package.</p>

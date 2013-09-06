@@ -338,4 +338,16 @@ public interface CoralStore
      *         reference appears.
      */
     public Map<AttributeDefinition<Subject>, long[]> getResouceBySubjectMetadata(Subject subject);
+
+    /**
+     * Replace all references to a subject with another one. Resource metadata and Subject typed
+     * attributes will be modified.
+     * 
+     * @param fromSubject subject reference to be replaced
+     * @param toSubject subject reference to be used instead
+     * @throws ModificationNotPermitedException when some user defined Subject typed attributes are
+     *         read only
+     */
+    public void replaceSubjectReferences(Subject fromSubject, Subject toSubject)
+        throws ModificationNotPermitedException;
 }
