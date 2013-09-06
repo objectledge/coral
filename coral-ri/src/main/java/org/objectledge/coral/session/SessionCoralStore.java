@@ -34,6 +34,7 @@ import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
+import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
@@ -309,4 +310,11 @@ public class SessionCoralStore implements CoralStore
         session.verify();
         return coral.getStore().getResourceFactory();
     }    
+
+    @Override
+    public Map<AttributeDefinition<Subject>, long[]> getResouceBySubjectMetadata(Subject subject)
+    {
+        session.verify();
+        return coral.getStore().getResouceBySubjectMetadata(subject);
+    }
 }

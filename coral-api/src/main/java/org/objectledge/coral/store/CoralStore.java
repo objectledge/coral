@@ -328,4 +328,14 @@ public interface CoralStore
      * @return  an EntityFactory for Resources.
      */
     public EntityFactory<Resource> getResourceFactory();
+
+    /**
+     * Find resources that are related to the specific subject. Builtin attributes "created_by",
+     * "modified_by", "owner" will be returned as map keys.
+     * 
+     * @param subject subject to search for.
+     * @return resource identifiers, grouped by particular builtin attributes where the subject
+     *         reference appears.
+     */
+    public Map<AttributeDefinition<Subject>, long[]> getResouceBySubjectMetadata(Subject subject);
 }

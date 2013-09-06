@@ -1,12 +1,24 @@
 package org.objectledge.coral.touchstone.level1;
 
+import java.security.Principal;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+import org.objectledge.coral.datatypes.GenericResourceHandler;
 import org.objectledge.coral.datatypes.Node;
+import org.objectledge.coral.datatypes.StandardResource;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
+import org.objectledge.coral.schema.AttributeClass;
 import org.objectledge.coral.schema.AttributeDefinition;
+import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
+import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSession;
+import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.InvalidResourceNameException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -357,4 +369,83 @@ public class CoralStoreTest
         }
     }
 
+    public void testGetResouceBySubjectMetadata()
+        throws Exception
+    {
+        try(CoralSession rootSession = coralSessionFactory.getRootSession())
+        {
+            Map<AttributeDefinition<?>, Object> attributes = new HashMap<>();
+            final CoralStore store = rootSession.getStore();
+            final CoralSchema schema = rootSession.getSchema();
+            Resource root = store.getResource(1l);
+
+            ResourceClass<?> rc = schema.createResourceClass("rc1",
+                StandardResource.class.getName(), GenericResourceHandler.class.getName(), null, 0);
+            AttributeClass<String> stringAttr = schema.getAttributeClass("string", String.class);
+            AttributeDefinition<String> a1 = schema
+                .createAttribute("a1", stringAttr, null, null, 0);
+            schema.addAttribute(rc, a1, null);
+            ResourceClass<Node> nodeRc = schema.getResourceClass("coral.Node", Node.class);
+            schema.addParentClass(rc, nodeRc, attributes);
+
+            Subject s1 = rootSession.getSecurity().createSubject("s1");
+            Subject s2 = rootSession.getSecurity().createSubject("s2");
+            Resource r1;
+
+            try(CoralSession s1Session = coralSessionFactory.getSession(principal("s1")))
+            {
+                r1 = s1Session.getStore().createResource("r1", root, rc, attributes);
+            }
+
+            try(CoralSession s2Session = coralSessionFactory.getSession(principal("s2")))
+            {
+                s2Session.getStore().createResource("r2", root, rc, attributes);
+                r1.set(a1, "x");
+                r1.update();
+                s2Session.getStore().setOwner(r1, s2);
+            }
+
+            AttributeDefinition<Subject> createdByAttr = (AttributeDefinition<Subject>)rc
+                .getAttribute("created_by");
+            AttributeDefinition<Subject> modifiedByAttr = (AttributeDefinition<Subject>)rc
+                .getAttribute("modified_by");
+            AttributeDefinition<Subject> ownerAttr = (AttributeDefinition<Subject>)rc
+                .getAttribute("owner");
+
+            // Map<AttributeDefinition<Subject>, long[]> s1ids =
+            // store.getResouceBySubjectMetadata(s1);
+            // checkResources(store, s1ids.get(createdByAttr), "r1");
+            // checkResources(store, s1ids.get(modifiedByAttr));
+            // checkResources(store, s1ids.get(ownerAttr));
+
+            Map<AttributeDefinition<Subject>, long[]> s2ids = store.getResouceBySubjectMetadata(s2);
+            checkResources(store, s2ids.get(createdByAttr), "r2");
+            checkResources(store, s2ids.get(modifiedByAttr), "r1", "r2");
+            checkResources(store, s2ids.get(ownerAttr), "r1", "r2");
+        }
+    }
+
+    private Principal principal(final String name)
+    {
+        return new Principal()
+            {
+                @Override
+                public String getName()
+                {
+                    return name;
+                }
+            };
+    }
+
+    private void checkResources(CoralStore store, long[] ids, String... names)
+        throws EntityDoesNotExistException
+    {
+        Set<String> s1 = new HashSet<>(Arrays.asList(names));
+        Set<String> s2 = new HashSet<>();
+        for(long id : ids)
+        {
+            s2.add(store.getResource(id).getName());
+        }
+        assertEquals(s1, s2);
+    }
 }

@@ -593,6 +593,12 @@ public class RelationImplTest extends LedgeTestCase
         {
             throw new UnsupportedOperationException();
         }
+
+        @Override
+        public Map<AttributeDefinition<Subject>, long[]> getResouceBySubjectMetadata(Subject subject)
+        {
+            throw new UnsupportedOperationException();
+        }
     }
     
     private class MockResource implements Resource
