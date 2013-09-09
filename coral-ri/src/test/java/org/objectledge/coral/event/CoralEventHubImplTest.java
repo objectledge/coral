@@ -37,7 +37,7 @@ import org.objectledge.coral.security.PermissionAssociation;
 import org.objectledge.event.DelegatingEventWhiteboard;
 import org.objectledge.event.EventWhiteboard;
 import org.objectledge.event.EventWhiteboardFactory;
-import org.objectledge.threads.ThreadPool;
+import org.objectledge.threads.DefaultThreadPool;
 
 /**
  * 
@@ -49,7 +49,7 @@ public class CoralEventHubImplTest
 {
     private CoralEventHub coralEventHub;
     
-    private ThreadPool threadPool;
+    private DefaultThreadPool threadPool;
     
     private EventWhiteboard inboundBridge;
     
@@ -72,7 +72,7 @@ public class CoralEventHubImplTest
         super.setUp();
         
         Logger log = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
-        threadPool = new ThreadPool(null, new Context(), null, log);
+        threadPool = new DefaultThreadPool(null, new Context(), null, log);
         
         EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, log,
              threadPool, cacheFactory);

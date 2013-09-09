@@ -15,7 +15,8 @@
   <component key="thread-context-cleanup" class="org.objectledge.pipeline.SimplePipeline">
     <sequence/>
   </component>
-  <component class="org.objectledge.threads.ThreadPool">
+  <component class-key="org.objectledge.threads.ThreadPool"
+             class="org.objectledge.threads.DefaultThreadPool">
     <parameter key="thread-context-cleanup"/>
     <parameter/>
     <parameter/>
