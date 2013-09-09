@@ -370,7 +370,7 @@ public abstract class AttributeHandlerBase<T>
         }
         if(subqueryCount > 1)
         {
-            query.append("ORDER BY g.attribute_definition_id");
+            query.append("ORDER BY attribute_definition_id");
         }
         try(Connection conn = database.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query.toString()))
