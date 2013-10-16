@@ -328,4 +328,26 @@ public interface CoralStore
      * @return  an EntityFactory for Resources.
      */
     public EntityFactory<Resource> getResourceFactory();
+
+    /**
+     * Find resources that are related to the specific subject. Builtin attributes "created_by",
+     * "modified_by", "owner" will be returned as map keys.
+     * 
+     * @param subject subject to search for.
+     * @return resource identifiers, grouped by particular builtin attributes where the subject
+     *         reference appears.
+     */
+    public Map<AttributeDefinition<Subject>, long[]> getResouceBySubjectMetadata(Subject subject);
+
+    /**
+     * Replace all references to a subject with another one. Resource metadata and Subject typed
+     * attributes will be modified.
+     * 
+     * @param fromSubject subject reference to be replaced
+     * @param toSubject subject reference to be used instead
+     * @throws ModificationNotPermitedException when some user defined Subject typed attributes are
+     *         read only
+     */
+    public void replaceSubjectReferences(Subject fromSubject, Subject toSubject)
+        throws ModificationNotPermitedException;
 }

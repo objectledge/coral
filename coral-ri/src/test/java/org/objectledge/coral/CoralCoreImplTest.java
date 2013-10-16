@@ -40,7 +40,7 @@ import org.objectledge.database.Database;
 import org.objectledge.database.persistence.Persistence;
 import org.objectledge.event.EventWhiteboardFactory;
 import org.objectledge.test.LedgeTestCase;
-import org.objectledge.threads.ThreadPool;
+import org.objectledge.threads.DefaultThreadPool;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
@@ -57,7 +57,7 @@ public class CoralCoreImplTest extends LedgeTestCase
     private Persistence persistence;
     private Mock mockCacheFactory;
     private CacheFactory cacheFactory;
-    private ThreadPool threadPool;
+    private DefaultThreadPool threadPool;
     private EventWhiteboardFactory eventWhiteboardFactory;
     private Logger logger;
     
@@ -80,7 +80,7 @@ public class CoralCoreImplTest extends LedgeTestCase
         mockCacheFactory.stubs().method("getInstance").will(returnValue(new HashMap()));
         mockCacheFactory.stubs().method("registerForPeriodicExpunge").isVoid();
         logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));        
-        threadPool = new ThreadPool(null, new Context(), null, logger);
+        threadPool = new DefaultThreadPool(null, new Context(), null, logger);
         eventWhiteboardFactory = new EventWhiteboardFactory(null, logger, threadPool, cacheFactory);
         PicoContainer emptyContainer = new DefaultPicoContainer();
         

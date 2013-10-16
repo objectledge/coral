@@ -207,9 +207,23 @@ public class DateAttributeHandler
     /**
      * {@inheritDoc}
      */
+    protected String getDataColumn()
+    {
+        return "data";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String toExternalString(Date value)
     {
         checkValue(value);
         return "'"+formatDateTime(value)+"'";
+    }
+
+    public void setParameter(PreparedStatement pstmt, int position, Date value)
+        throws SQLException
+    {
+        pstmt.setTimestamp(position, new java.sql.Timestamp(value.getTime()));
     }
 }

@@ -1,18 +1,25 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.objectledge.coral.entity.Entity;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.schema.AttributeClass;
+import org.objectledge.coral.schema.AttributeDefinition;
+import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.security.CoralSecurity;
@@ -47,7 +54,7 @@ public abstract class AttributeHandlerBase<T>
 
     /** The attribute class. */
     protected AttributeClass<T> attributeClass = null;
-    
+
     /** The attribute object type. */
     protected Class<T> attributeType = null;
 
@@ -59,17 +66,19 @@ public abstract class AttributeHandlerBase<T>
 
     /** SimpleDateFormat pattern used for parsing date strings. */
     public static final String DATE_FORMAT = "yyyy/MM/dd";
-    
+
     /** SimpleDateFormat pattern used for parsing date + time strings. */
     public static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
-    
-    /** If date specification contains this substring DATE_TIME_FORMAT will be used for parsing,
-     *  otherwise DATE_FORMAT will be used. */
+
+    /**
+     * If date specification contains this substring DATE_TIME_FORMAT will be used for parsing,
+     * otherwise DATE_FORMAT will be used.
+     */
     public static final String DATE_TIME_INDICATOR = ":";
-    
+
     /** call checkExists() on delete() */
     protected boolean deleteConsistencyCheck = false;
-    
+
     /**
      * The base constructor.
      * 
@@ -84,7 +93,7 @@ public abstract class AttributeHandlerBase<T>
     {
         this.attributeClass = attributeClass;
         this.attributeType = attributeClass.getJavaClass();
-        this.database = database; 
+        this.database = database;
         this.coralStore = coralStore;
         this.coralSecurity = coralSecurity;
         this.coralSchema = coralSchema;
@@ -112,7 +121,7 @@ public abstract class AttributeHandlerBase<T>
             DatabaseUtils.close(stmt);
         }
     }
-    
+
     /**
      * Preloads all values of the attribute from the database.
      * 
@@ -124,12 +133,13 @@ public abstract class AttributeHandlerBase<T>
     {
         // default implementation does noting
     }
-    
+
     /**
      * Checks if an attribute value object had it's state modified since retrieval or most recent
      * update.
-     * 
-     * <p>Most attribute objects are immutable, hence the base implementation always returns false.</p>
+     * <p>
+     * Most attribute objects are immutable, hence the base implementation always returns false.
+     * </p>
      * 
      * @see org.objectledge.coral.schema.AttributeHander#isModified(Object)
      */
@@ -210,11 +220,9 @@ public abstract class AttributeHandlerBase<T>
         }
         else
         {
-            throw new IllegalArgumentException(
-                "The attribute handler class "+getClass().getName()+
-                " was unable to provide an representation of "+
-                object.getClass().getName()+" as "+
-                attributeType.getName());
+            throw new IllegalArgumentException("The attribute handler class "
+                + getClass().getName() + " was unable to provide an representation of "
+                + object.getClass().getName() + " as " + attributeType.getName());
         }
     }
 
@@ -231,9 +239,9 @@ public abstract class AttributeHandlerBase<T>
         else
         {
             return value.toString();
-        }   
+        }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -246,11 +254,12 @@ public abstract class AttributeHandlerBase<T>
         }
         else
         {
-            throw new UnsupportedOperationException("unable to provide "+
-                                                    "an external representation of "+
-                                                    attributeType.getName());
-        }   
+            throw new UnsupportedOperationException("unable to provide "
+                + "an external representation of " + attributeType.getName());
+        }
     }
+
+    
 
     // value domain //////////////////////////////////////////////////////////
 
@@ -261,11 +270,11 @@ public abstract class AttributeHandlerBase<T>
     {
         if(domain != null)
         {
-            throw new IllegalArgumentException(attributeClass.getName()+" does not support"+
-                                               " domain constraints ");
+            throw new IllegalArgumentException(attributeClass.getName() + " does not support"
+                + " domain constraints ");
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -274,18 +283,17 @@ public abstract class AttributeHandlerBase<T>
     {
         if(domain != null)
         {
-            throw new IllegalArgumentException(attributeClass.getName()+" does not support "+
-                                               " domain constaraints ");
-        }        
+            throw new IllegalArgumentException(attributeClass.getName() + " does not support "
+                + " domain constaraints ");
+        }
         if(!attributeType.isInstance(value))
         {
-            throw new IllegalArgumentException("value is "+value.getClass().getName()+
-                                               ", "+attributeType.getName()+
-                                               " expected");
+            throw new IllegalArgumentException("value is " + value.getClass().getName() + ", "
+                + attributeType.getName() + " expected");
         }
     }
 
-    // integrity constraints ////////////////////////////////////////////////    
+    // integrity constraints ////////////////////////////////////////////////
 
     /**
      * {@inheritDoc}
@@ -302,23 +310,126 @@ public abstract class AttributeHandlerBase<T>
     {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Resource[] getResourceReferences(T value)
     {
-        throw new UnsupportedOperationException(attributeClass.getName()+
-            " is not a referential attribute type");
+        throw new UnsupportedOperationException(attributeClass.getName()
+            + " is not a referential attribute type");
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean clearResourceReferences(T value)
     {
-        throw new UnsupportedOperationException(attributeClass.getName()+
-            " is not a referential attribute type");
+        throw new UnsupportedOperationException(attributeClass.getName()
+            + " is not a referential attribute type");
+    }
+
+    /**
+     * Find resources that have attributes with a specific value. All attributes of the type this
+     * handler is associated with will be checked.
+     * 
+     * @param value value value to search for.
+     * @return resource identifiers, grouped by particular attributes where the value appears.
+     * @throws SQLException
+     */
+    public Map<AttributeDefinition<T>, long[]> getResourcesByValue(T value)
+        throws SQLException
+    {
+        StringBuilder query = new StringBuilder();
+        int subqueryCount = 0;
+        for(AttributeDefinition<?> attrDef : coralSchema.getAllAttributes())
+        {
+            if(attrDef.getAttributeClass().equals(attributeClass)
+                && (attrDef.getFlags() & AttributeFlags.BUILTIN) == 0)
+            {
+                if(query.length() > 0)
+                {
+                    query.append("UNION ALL ");
+                }
+                if(attrDef.getDeclaringClass().getDbTable() != null)
+                {
+                    query.append("SELECT " + attrDef.getIdString()
+                        + " attribute_definition_id, resource_id " + "FROM "
+                        + attrDef.getDeclaringClass().getDbTable() + " WHERE "
+                        + PersistentResourceHandler.columnName(attrDef) + " = ?\n");
+                }
+                else
+                {
+                    query.append("SELECT g.attribute_definition_id, g.resource_id "
+                        + "FROM coral_generic_resource g JOIN " + getTable()
+                        + " a USING (data_key) WHERE g.attribute_definition_id = "
+                        + attrDef.getIdString() + " AND a." + getDataColumn() + " = ?\n");
+                }
+                subqueryCount++;
+            }
+        }
+        if(subqueryCount > 1)
+        {
+            query.append("ORDER BY attribute_definition_id");
+        }
+        try(Connection conn = database.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query.toString()))
+        {
+            for(int i = 1; i <= stmt.getParameterMetaData().getParameterCount(); i++)
+            {
+                setParameter(stmt, i, value);
+            }
+            try(ResultSet rset = stmt.executeQuery())
+            {
+                long lastAttrDefId = -1;
+                AttributeDefinition<T> lastAttrDef = null;
+                Map<AttributeDefinition<T>, long[]> result = new HashMap<>();
+                List<Long> tmp = new ArrayList<Long>();
+                while(rset.next())
+                {
+                    long attrDefId = rset.getLong(1);
+                    if(attrDefId != lastAttrDefId)
+                    {
+                        if(lastAttrDef != null)
+                        {
+                            long[] batch = new long[tmp.size()];
+                            for(int i = 0; i < tmp.size(); i++)
+                            {
+                                batch[i] = tmp.get(i);
+                            }
+                            result.put(lastAttrDef, batch);
+                            tmp = new ArrayList<Long>();
+                        }
+                        lastAttrDefId = attrDefId;
+                        try
+                        {
+                            lastAttrDef = (AttributeDefinition<T>)coralSchema
+                                .getAttribute(attrDefId);
+                            if(!lastAttrDef.getAttributeClass().equals(attributeClass))
+                            {
+                                throw new SQLException("internal error - got attribute of type"
+                                    + lastAttrDef.getAttributeClass().getName());
+                            }
+                        }
+                        catch(EntityDoesNotExistException e)
+                        {
+                            throw new SQLException("inconsitent schema", e);
+                        }
+                    }
+                    tmp.add(rset.getLong(2));
+                }
+                if(lastAttrDef != null)
+                {
+                    long[] batch = new long[tmp.size()];
+                    for(int i = 0; i < tmp.size(); i++)
+                    {
+                        batch[i] = tmp.get(i);
+                    }
+                    result.put(lastAttrDef, batch);
+                }
+                return result;
+            }
+        }
     }
 
     // protected /////////////////////////////////////////////////////////////
@@ -334,29 +445,54 @@ public abstract class AttributeHandlerBase<T>
     }
 
     /**
+     * Return name of the data column in the attribute table, if applicable.
+     * 
+     * @return name of the data column in the attribute table, if applicable.
+     */
+    protected String getDataColumn()
+    {
+        throw new UnsupportedOperationException("no data column defined for attribute class "
+            + attributeClass.getName());
+    }
+
+    /**
+     * Insert attribute value into a PreparedStatement parameter slot.
+     * 
+     * @param stmt a PreparedStatement
+     * @param position parameter position
+     * @param value parameter value
+     * @throws SQLException
+     */
+    protected void setParameter(PreparedStatement stmt, int position, T value)
+        throws SQLException
+    {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    /**
      * Converts a string into an attribute object.
-     *
-     * <p>The default attribute handler implementation does not support this
-     * conversion (returns <code>null</code>).</p>
+     * <p>
+     * The default attribute handler implementation does not support this conversion (returns
+     * <code>null</code>).
+     * </p>
      * 
      * @param string the string to convert.
-     * @return the attribute object, or <code>null</code> if conversion not
-     *         supported. 
+     * @return the attribute object, or <code>null</code> if conversion not supported.
      */
     protected T fromString(String string)
     {
         return null;
     }
-    
+
     /**
      * Converts a Java object into an attribute object.
-     *
-     * <p>The default attribute handler implementation does not support this
-     * conversion (returns <code>null</code>).</p>
+     * <p>
+     * The default attribute handler implementation does not support this conversion (returns
+     * <code>null</code>).
+     * </p>
      * 
      * @param object the object to convert.
-     * @return the attribute object, or <code>null</code> if conversion not
-     *         supported. 
+     * @return the attribute object, or <code>null</code> if conversion not supported.
      */
     protected T fromObject(Object object)
     {
@@ -365,7 +501,7 @@ public abstract class AttributeHandlerBase<T>
 
     /**
      * Checks if the specified record exists in the table.
-     *
+     * 
      * @param id the record id.
      * @param stmt the sql statement.
      * @throws EntityDoesNotExistException if not exists.
@@ -377,8 +513,8 @@ public abstract class AttributeHandlerBase<T>
         ResultSet rs = null;
         try
         {
-            rs = stmt.executeQuery("SELECT data_key FROM " + getTable()
-                + " WHERE data_key = " + id);
+            rs = stmt
+                .executeQuery("SELECT data_key FROM " + getTable() + " WHERE data_key = " + id);
             if(!rs.next())
             {
                 throw new EntityDoesNotExistException("Item #" + id + " does not exist in table "
@@ -393,7 +529,7 @@ public abstract class AttributeHandlerBase<T>
 
     /**
      * Checks if a value is non-null and castable to the attributeType.
-     *
+     * 
      * @param value the value to check.
      */
     protected void checkValue(T value)
@@ -404,9 +540,8 @@ public abstract class AttributeHandlerBase<T>
         }
         if(!attributeType.isInstance(value))
         {
-            throw new IllegalArgumentException("value is "+value.getClass().getName()+
-                                               ", "+attributeType.getName()+
-                                               " expected");
+            throw new IllegalArgumentException("value is " + value.getClass().getName() + ", "
+                + attributeType.getName() + " expected");
         }
     }
 
@@ -421,16 +556,17 @@ public abstract class AttributeHandlerBase<T>
         return DatabaseUtils.escapeSqlString(string);
     }
 
-	/**
-	 * Unescape unicode escapes.
+    /**
+     * Unescape unicode escapes.
+     * 
      * @param string the input string.
      * @return the unescaped string.
-	 */
-	protected String unescape(String string)
-	{
-		return DatabaseUtils.unescapeSqlString(string);
-	}
-    
+     */
+    protected String unescape(String string)
+    {
+        return DatabaseUtils.unescapeSqlString(string);
+    }
+
     /**
      * Parse date/time string.
      * 
@@ -450,11 +586,11 @@ public abstract class AttributeHandlerBase<T>
         }
         catch(ParseException e)
         {
-            throw (IllegalArgumentException)new IllegalArgumentException(string+
-                " does not conform to "+pattern+" pattern").initCause(e);
+            throw (IllegalArgumentException)new IllegalArgumentException(string
+                + " does not conform to " + pattern + " pattern").initCause(e);
         }
     }
-    
+
     /**
      * Format a Date object into string (day resolution).
      * 
@@ -466,14 +602,14 @@ public abstract class AttributeHandlerBase<T>
         /** DateFormat is not thread-safe */
         DateFormat format = new SimpleDateFormat(DATE_FORMAT);
         return format.format(date);
-    }  
-    
+    }
+
     /**
      * Format a Date object into string (second resolution).
      * 
      * @param date date object to format.
      * @return String representation of the date and time.
-     */  
+     */
     protected String formatDateTime(Date date)
     {
         /** DateFormat is not thread-safe */
@@ -504,7 +640,7 @@ public abstract class AttributeHandlerBase<T>
     }
 
     // attribute id management //////////////////////////////////////////////////////////////////
-    
+
     /**
      * Returns next free attribute identifier.
      * 
@@ -519,8 +655,9 @@ public abstract class AttributeHandlerBase<T>
 
     /**
      * Releases an attribute identifier.
-     * 
-     * <p>The provided implementation does nothing - identifiers are never reused.</p>
+     * <p>
+     * The provided implementation does nothing - identifiers are never reused.
+     * </p>
      * 
      * @param id the identifier to release.
      * @throws SQLException if the identifier could not be released due to database error.

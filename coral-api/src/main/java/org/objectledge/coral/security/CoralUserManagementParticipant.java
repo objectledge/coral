@@ -99,7 +99,7 @@ public class CoralUserManagementParticipant
 		}
 		catch(EntityDoesNotExistException e)
 		{
-			throw new UserUnknownException("Failed to lookup coral subject", e);
+            // principal does not have an associated Coral subject - nothing to clean up here.
 		}
 		catch(EntityInUseException e)
 		{

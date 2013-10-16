@@ -33,7 +33,7 @@ import org.jmock.Mock;
 import org.objectledge.context.Context;
 import org.objectledge.event.EventWhiteboard;
 import org.objectledge.event.EventWhiteboardFactory;
-import org.objectledge.threads.ThreadPool;
+import org.objectledge.threads.DefaultThreadPool;
 
 /**
  * 
@@ -46,7 +46,7 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
     private EventWhiteboard eventWhiteboard;
     private CoralEventWhiteboard coralEventWhiteboard;
     private Object anchor = new Object();
-    private ThreadPool threadPool;
+    private DefaultThreadPool threadPool;
     private CoralEventWhiteboard realCoralEventWhiteboard;
     
     public void setUp()
@@ -59,7 +59,7 @@ public class CoralEventWhiteboardImplTest extends CoralEventTestCase
 
         Context context = new Context();
         Logger logger = new Log4JLogger(org.apache.log4j.Logger.getLogger(getClass()));
-        threadPool = new ThreadPool(null, context, null, logger);
+        threadPool = new DefaultThreadPool(null, context, null, logger);
         EventWhiteboardFactory eventWhiteboardFactory = new EventWhiteboardFactory(null, logger,
             threadPool, cacheFactory);
         EventWhiteboard realEventWhiteboard = eventWhiteboardFactory.newInstance();

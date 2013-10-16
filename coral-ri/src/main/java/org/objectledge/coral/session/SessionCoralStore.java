@@ -34,12 +34,14 @@ import org.objectledge.coral.entity.AmbigousEntityNameException;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityFactory;
 import org.objectledge.coral.entity.EntityInUseException;
+import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.schema.CircularDependencyException;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.store.CoralStore;
 import org.objectledge.coral.store.InvalidResourceNameException;
+import org.objectledge.coral.store.ModificationNotPermitedException;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
 
@@ -309,4 +311,19 @@ public class SessionCoralStore implements CoralStore
         session.verify();
         return coral.getStore().getResourceFactory();
     }    
+
+    @Override
+    public Map<AttributeDefinition<Subject>, long[]> getResouceBySubjectMetadata(Subject subject)
+    {
+        session.verify();
+        return coral.getStore().getResouceBySubjectMetadata(subject);
+    }
+
+    @Override
+    public void replaceSubjectReferences(Subject fromSubject, Subject toSubject)
+        throws ModificationNotPermitedException
+    {
+        session.verify();
+        coral.getStore().replaceSubjectReferences(fromSubject, toSubject);
+    }
 }

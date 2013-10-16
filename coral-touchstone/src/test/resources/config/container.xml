@@ -55,7 +55,8 @@
   
   <!-- utility components -->
   
-  <component class="org.objectledge.threads.ThreadPool">
+  <component class-key="org.objectledge.threads.ThreadPool"
+             class="org.objectledge.threads.DefaultThreadPool">
     <parameter key="database-cleanup"/>
     <parameter/>
     <parameter/>

@@ -1,6 +1,7 @@
 package org.objectledge.coral.datatypes;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -205,9 +206,23 @@ public class IntegerAttributeHandler
     /**
      * {@inheritDoc}
      */
+    protected String getDataColumn()
+    {
+        return "data";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String toExternalString(Integer value)
     {
         checkValue(value);
         return value.toString();
+    }
+
+    public void setParameter(PreparedStatement pstmt, int position, Integer value)
+        throws SQLException
+    {
+        pstmt.setInt(position, value.intValue());
     }
 }

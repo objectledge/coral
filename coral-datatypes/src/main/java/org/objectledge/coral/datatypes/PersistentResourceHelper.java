@@ -179,7 +179,7 @@ public class PersistentResourceHelper
 
     // interface to PersistentResourceHandler ////////////////////////////////
 
-    private static String getColumnName(AttributeDefinition<?> attr)
+    static String getColumnName(AttributeDefinition<?> attr)
     {
         String dbColumn = attr.getDbColumn();
         return dbColumn != null ? dbColumn : attr.getName();

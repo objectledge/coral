@@ -2,6 +2,7 @@ package org.objectledge.coral.datatypes;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -143,9 +144,55 @@ public class NumberAttributeHandler
     /**
      * {@inheritDoc}
      */
+    protected String getDataColumn()
+    {
+        return "data";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String toExternalString(Number value)
     {
         checkValue(value);
         return value.toString();
+    }
+
+    public void setParameter(PreparedStatement pstmt, int position, Number value)
+        throws SQLException
+    {
+        if(value instanceof Long)
+        {
+            pstmt.setLong(position, ((Long)value).longValue());
+        }
+        else if(value instanceof Integer)
+        {
+            pstmt.setInt(position, ((Integer)value).intValue());
+        }
+        else if(value instanceof Short)
+        {
+            pstmt.setShort(position, ((Short)value).shortValue());
+        }
+        else if(value instanceof Byte)
+        {
+            pstmt.setByte(position, ((Byte)value).byteValue());
+        }
+        else if(value instanceof Double)
+        {
+            pstmt.setDouble(position, ((Double)value).doubleValue());
+        }
+        else if(value instanceof Float)
+        {
+            pstmt.setFloat(position, ((Float)value).floatValue());
+        }
+        else if(value instanceof BigDecimal)
+        {
+            pstmt.setBigDecimal(position, (BigDecimal)value);
+        }
+        else
+        {
+            throw new IllegalArgumentException("unsupported Number format "
+                + value.getClass().getName());
+        }
     }
 }
