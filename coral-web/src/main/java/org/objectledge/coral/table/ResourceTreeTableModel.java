@@ -57,7 +57,7 @@ public class ResourceTreeTableModel<T extends Resource>
         {
             for(Map.Entry<String, T> entry : resourcesById.entrySet())
             {
-                if(entry.getValue().getParent().getId() == CoralStore.ROOT_RESOURCE
+                if(entry.getValue().getId() == CoralStore.ROOT_RESOURCE
                     || getObject(entry.getValue().getParent().getIdString()) == null)
                 {
                     children.add(entry.getValue());
