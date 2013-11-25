@@ -55,119 +55,128 @@ import org.objectledge.database.persistence.Persistent;
 import org.objectledge.database.persistence.PersistentFactory;
 
 /**
- * Manages persistence of {@link Entity}, {@link Assignment} and {@link
- * Association} objects.
+ * Manages persistence of {@link Entity}, {@link Assignment} and {@link Association} objects.
  * 
  * @version $Id: CoralRegistryImpl.java,v 1.14 2008-01-02 00:31:03 rafal Exp $
  * @author <a href="mailto:rkrzewsk@ngo.pl">Rafal Krzewski</a>
  */
 public class CoralRegistryImpl
-    implements CoralRegistry,
-               PermissionAssociationChangeListener,
-               PermissionAssignmentChangeListener,
-               RoleAssignmentChangeListener,
-               RoleImplicationChangeListener,
-               ResourceClassInheritanceChangeListener,
-               ResourceClassAttributesChangeListener,
-               PreloadingParticipant
+    implements CoralRegistry, PermissionAssociationChangeListener,
+    PermissionAssignmentChangeListener, RoleAssignmentChangeListener,
+    RoleImplicationChangeListener, ResourceClassInheritanceChangeListener,
+    ResourceClassAttributesChangeListener, PreloadingParticipant
 {
 
-    
     // Member objects ////////////////////////////////////////////////////////
 
     /** The {@link Persistence}. */
     private Persistence persistence;
-    
+
     /** The logger. */
     private Logger log;
-    
+
     /** The event hub. */
     private CoralEventHub coralEventHub;
-    
+
     /** The component hub. */
     private CoralCore coral;
-    
+
     // Factory classes
 
     /** The <code>PersistentFactory</code> for <code>ResourceClassInheritance</code> objects. */
-    private PersistentFactory<ResourceClassInheritanceImpl> resourceClassInheritanceFactory ; 
+    private PersistentFactory<ResourceClassInheritanceImpl> resourceClassInheritanceFactory;
 
     /** The <code>PersistentFactory</code> for <code>AttributeDefinition</code> objects. */
-    private PersistentFactory<AttributeDefinitionImpl> attributeDefinitionFactory; 
+    @SuppressWarnings("rawtypes")
+    private PersistentFactory<AttributeDefinitionImpl> attributeDefinitionFactory;
 
     /** The <code>PersistentFactory</code> for <code>RoleImplication</code> objects. */
-    private PersistentFactory<RoleImplicationImpl> roleImplicationFactory; 
+    private PersistentFactory<RoleImplicationImpl> roleImplicationFactory;
 
     /** The <code>PersistentFactory</code> for <code>RoleAssignment</code> objects. */
-    private PersistentFactory<RoleAssignmentImpl> roleAssignmentFactory;      
+    private PersistentFactory<RoleAssignmentImpl> roleAssignmentFactory;
 
     /** The <code>PersistentFactory</code> for <code>PermissionAssociation</code> objects. */
-    private PersistentFactory<PermissionAssociationImpl> permissionAssociationFactory;      
+    private PersistentFactory<PermissionAssociationImpl> permissionAssociationFactory;
 
     /** The <code>PersistentFactory</code> for <code>PermissionAssignment</code> objects. */
-    private PersistentFactory<PermissionAssignmentImpl> permissionAssignmentFactory;      
-
-    /** The <code>PersistentFactory</code> for <code>Subject</code> objects. */
-    private PersistentFactory<SubjectImpl> subjectFactory;      
+    private PersistentFactory<PermissionAssignmentImpl> permissionAssignmentFactory;
 
     // caches
 
-    /** lock object for resourceClassInheritanceByResourceClass and 
-     *  attributeDefinitionByResourceClass */
+    /**
+     * lock object for resourceClassInheritanceByResourceClass and
+     * attributeDefinitionByResourceClass
+     */
     private Object resourceClassLock = new Object();
 
     /** <code>ResourceClassInheritance</code> <code>Set</code> by <code>ResourceClass</code> */
-    private Map resourceClassInheritanceByResourceClass;
+    private Map<ResourceClass<?>, Set<ResourceClassInheritance>> resourceClassInheritanceByResourceClass;
 
-    /** Weak mapping of <code>ResourceClass</code> objects into sets of 
-     *  <code>AttributeDefinition</code> objects. */
-    private Map attributeDefinitionByResourceClass;
+    /**
+     * Weak mapping of <code>ResourceClass</code> objects into sets of
+     * <code>AttributeDefinition</code> objects.
+     */
+    private Map<ResourceClass<?>, Set<AttributeDefinition<?>>> attributeDefinitionByResourceClass;
 
     /** lock object for roleImplicationByRole and roleAssignmentByRole */
     private Object roleLock = new Object();
 
-    /** Weak mapping of <code>Role</code> objects into sets of <code>RoleImplication</code> 
-     *  objects. */
-    private Map roleImplicationByRole;
-
-    /** Weak mapplig of <code>Role</code> objects into sets of <code>RoleAssignment</code> objects.
+    /**
+     * Weak mapping of <code>Role</code> objects into sets of <code>RoleImplication</code> objects.
      */
-    private Map roleAssignmentByRole;
+    private Map<Role, Set<RoleImplication>> roleImplicationByRole;
 
-    /** Weak mapplig of <code>Subject</code> objects into sets of <code>RoleAssignment</code> 
-     * objects. */
-    private Map roleAssignmentBySubject;
+    /**
+     * Weak mapplig of <code>Role</code> objects into sets of <code>RoleAssignment</code> objects.
+     */
+    private Map<Role, Set<RoleAssignment>> roleAssignmentByRole;
 
-    /** lock object for permissionAssociationByResourceClass permissionAssociationByPermission 
-     *  permissionAssignmentByResource and permissionAssignmentByRole */
+    /**
+     * Weak mapplig of <code>Subject</code> objects into sets of <code>RoleAssignment</code>
+     * objects.
+     */
+    private Map<Subject, Set<RoleAssignment>> roleAssignmentBySubject;
+
+    /**
+     * lock object for permissionAssociationByResourceClass permissionAssociationByPermission
+     * permissionAssignmentByResource and permissionAssignmentByRole
+     */
     private Object permissionLock = new Object();
 
-    /** Weak mapping of <code>ResourceClass</code> objects into sets of
-     *  <code>PermissionAssociation</code> objects. */
-    private Map permissionAssociationByResourceClass;
-    
-    /** Weak mapping of <code>Permission</code> objects into sets of
-     *  <code>PermissionAssociation</code> objects. */
-    private Map permissionAssociationByPermission;
+    /**
+     * Weak mapping of <code>ResourceClass</code> objects into sets of
+     * <code>PermissionAssociation</code> objects.
+     */
+    private Map<ResourceClass<?>, Set<PermissionAssociation>> permissionAssociationByResourceClass;
 
-    /** Weak mapping of <code>Resource</code> objects into sets of
-     *  <code>PermissionAssignments</code> */
-    private Map permissionAssignmentByResource;
+    /**
+     * Weak mapping of <code>Permission</code> objects into sets of
+     * <code>PermissionAssociation</code> objects.
+     */
+    private Map<Permission, Set<PermissionAssociation>> permissionAssociationByPermission;
 
-    /** Weak mapping of <code>Role</code> objects into sets of
-     *  <code>PermissionAssignments</code> objects. */
-    private Map permissionAssignmentByRole;
+    /**
+     * Weak mapping of <code>Resource</code> objects into sets of <code>PermissionAssignments</code>
+     */
+    private Map<Resource, Set<PermissionAssignment>> permissionAssignmentByResource;
+
+    /**
+     * Weak mapping of <code>Role</code> objects into sets of <code>PermissionAssignments</code>
+     * objects.
+     */
+    private Map<Role, Set<PermissionAssignment>> permissionAssignmentByRole;
 
     // Registires
 
     /** <code>ResourceClass</code> registry. */
-    private EntityRegistry<ResourceClassImpl> resourceClassRegistry;
-    
+    private EntityRegistry<ResourceClassImpl<?>> resourceClassRegistry;
+
     /** <code>AttributeClass</code> registry. */
-    private EntityRegistry<AttributeClassImpl> attributeClassRegistry;
-    
+    private EntityRegistry<AttributeClassImpl<?>> attributeClassRegistry;
+
     /** <code>AttributeDefinition</code> registry. */
-    private EntityRegistry<AttributeDefinitionImpl> attributeDefinitionRegistry;
+    private EntityRegistry<AttributeDefinitionImpl<?>> attributeDefinitionRegistry;
 
     /** <code>Permission</code> registry. */
     private EntityRegistry<PermissionImpl> permissionRegistry;
@@ -191,16 +200,15 @@ public class CoralRegistryImpl
      * @param log the logger.
      * @throws ConfigurationException if the configuration is invalid.
      */
-    public CoralRegistryImpl(Persistence persistence, 
-        CacheFactory cacheFactory, CoralEventHub coralEventHub, CoralCore coral, 
-        Instantiator instantiator, Logger log)
+    public CoralRegistryImpl(Persistence persistence, CacheFactory cacheFactory,
+        CoralEventHub coralEventHub, CoralCore coral, Instantiator instantiator, Logger log)
         throws ConfigurationException
     {
         this.persistence = persistence;
         this.coralEventHub = coralEventHub;
         this.coral = coral;
         this.log = log;
-        
+
         setupCaches(cacheFactory);
         setupFactories(instantiator);
         setupRegistries(cacheFactory, instantiator);
@@ -212,74 +220,74 @@ public class CoralRegistryImpl
      */
     private void setupCaches(CacheFactory cacheFactory)
     {
-        attributeDefinitionByResourceClass = new WeakHashMap();
-        resourceClassInheritanceByResourceClass = new WeakHashMap();
+        attributeDefinitionByResourceClass = new WeakHashMap<>();
+        resourceClassInheritanceByResourceClass = new WeakHashMap<>();
 
-        roleImplicationByRole = new WeakHashMap();
+        roleImplicationByRole = new WeakHashMap<>();
 
-        roleAssignmentBySubject = new WeakHashMap();
-        roleAssignmentByRole = new WeakHashMap();
+        roleAssignmentBySubject = new WeakHashMap<>();
+        roleAssignmentByRole = new WeakHashMap<>();
 
-        permissionAssociationByResourceClass = new WeakHashMap();
-        permissionAssociationByPermission = new WeakHashMap();
+        permissionAssociationByResourceClass = new WeakHashMap<>();
+        permissionAssociationByPermission = new WeakHashMap<>();
 
-        permissionAssignmentByRole = new WeakHashMap();
-        permissionAssignmentByResource = new WeakHashMap();
-        
-        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)attributeDefinitionByResourceClass);
-        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)resourceClassInheritanceByResourceClass);
-        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)roleImplicationByRole);
-        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)roleAssignmentBySubject);
-        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)roleAssignmentByRole);
-        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)permissionAssociationByResourceClass);
-        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)permissionAssociationByPermission);
-        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)permissionAssignmentByRole);
-        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?,?>)permissionAssignmentByResource);
+        permissionAssignmentByRole = new WeakHashMap<>();
+        permissionAssignmentByResource = new WeakHashMap<>();
+
+        cacheFactory
+            .registerForPeriodicExpunge((WeakHashMap<?, ?>)attributeDefinitionByResourceClass);
+        cacheFactory
+            .registerForPeriodicExpunge((WeakHashMap<?, ?>)resourceClassInheritanceByResourceClass);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)roleImplicationByRole);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)roleAssignmentBySubject);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)roleAssignmentByRole);
+        cacheFactory
+            .registerForPeriodicExpunge((WeakHashMap<?, ?>)permissionAssociationByResourceClass);
+        cacheFactory
+            .registerForPeriodicExpunge((WeakHashMap<?, ?>)permissionAssociationByPermission);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)permissionAssignmentByRole);
+        cacheFactory.registerForPeriodicExpunge((WeakHashMap<?, ?>)permissionAssignmentByResource);
     }
 
     private void setupFactories(Instantiator instantiator)
     {
-        resourceClassInheritanceFactory = 
-            instantiator.getPersistentFactory(ResourceClassInheritanceImpl.class); 
+        resourceClassInheritanceFactory = instantiator
+            .getPersistentFactory(ResourceClassInheritanceImpl.class);
 
-        attributeDefinitionFactory =
-            instantiator.getPersistentFactory(AttributeDefinitionImpl.class); 
+        attributeDefinitionFactory = instantiator
+            .getPersistentFactory(AttributeDefinitionImpl.class);
 
-        roleImplicationFactory = 
-            instantiator.getPersistentFactory(RoleImplicationImpl.class); 
+        roleImplicationFactory = instantiator.getPersistentFactory(RoleImplicationImpl.class);
 
-        roleAssignmentFactory =
-            instantiator.getPersistentFactory(RoleAssignmentImpl.class);      
+        roleAssignmentFactory = instantiator.getPersistentFactory(RoleAssignmentImpl.class);
 
-        permissionAssociationFactory = 
-            instantiator.getPersistentFactory(PermissionAssociationImpl.class);      
+        permissionAssociationFactory = instantiator
+            .getPersistentFactory(PermissionAssociationImpl.class);
 
-        permissionAssignmentFactory = 
-            instantiator.getPersistentFactory(PermissionAssignmentImpl.class);      
-
-        subjectFactory = 
-            instantiator.getPersistentFactory(SubjectImpl.class);      
+        permissionAssignmentFactory = instantiator
+            .getPersistentFactory(PermissionAssignmentImpl.class);
     }
-    
+
     /**
      * Setup the entity registry.
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void setupRegistries(CacheFactory cacheFactory, Instantiator instantiator)
         throws ConfigurationException
     {
-        resourceClassRegistry = new EntityRegistry(persistence, cacheFactory, 
-            instantiator, log, "resource class", ResourceClassImpl.class);
-        attributeClassRegistry = new EntityRegistry(persistence, cacheFactory, 
-            instantiator, log, "attribute class", AttributeClassImpl.class);
-        attributeDefinitionRegistry = new EntityRegistry(persistence, cacheFactory, 
-            instantiator, log, "attribute definition", AttributeDefinitionImpl.class);
-        permissionRegistry = new EntityRegistry(persistence, cacheFactory, 
-            instantiator, log, "permission", PermissionImpl.class);
-        roleRegistry = new EntityRegistry(persistence, cacheFactory, 
-            instantiator, log, "role", RoleImpl.class);
-        subjectRegistry = new EntityRegistry(persistence, cacheFactory, 
-            instantiator, log,  "subject", SubjectImpl.class);
-    }   
+        resourceClassRegistry = new EntityRegistry(persistence, cacheFactory, instantiator, log,
+            "resource class", ResourceClassImpl.class);
+        attributeClassRegistry = new EntityRegistry(persistence, cacheFactory, instantiator, log,
+            "attribute class", AttributeClassImpl.class);
+        attributeDefinitionRegistry = new EntityRegistry(persistence, cacheFactory, instantiator,
+            log, "attribute definition", AttributeDefinitionImpl.class);
+        permissionRegistry = new EntityRegistry<>(persistence, cacheFactory, instantiator, log,
+            "permission", PermissionImpl.class);
+        roleRegistry = new EntityRegistry<>(persistence, cacheFactory, instantiator, log, "role",
+            RoleImpl.class);
+        subjectRegistry = new EntityRegistry<>(persistence, cacheFactory, instantiator, log,
+            "subject", SubjectImpl.class);
+    }
 
     /**
      * Registers as the listener for Coral events.
@@ -315,9 +323,9 @@ public class CoralRegistryImpl
     public AttributeClass<?> getAttributeClass(long id)
         throws EntityDoesNotExistException
     {
-        return (AttributeClass)attributeClassRegistry.get(id);
+        return (AttributeClass<?>)attributeClassRegistry.get(id);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -340,7 +348,7 @@ public class CoralRegistryImpl
     public void addAttributeClass(AttributeClass<?> item)
         throws EntityExistsException
     {
-        attributeClassRegistry.addUnique((AttributeClassImpl)item);
+        attributeClassRegistry.addUnique((AttributeClassImpl<?>)item);
     }
 
     /**
@@ -349,9 +357,9 @@ public class CoralRegistryImpl
     public void renameAttributeClass(AttributeClass<?> item, String name)
         throws EntityExistsException
     {
-        attributeClassRegistry.renameUnique((AttributeClassImpl)item, name);
+        attributeClassRegistry.renameUnique((AttributeClassImpl<?>)item, name);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -362,16 +370,16 @@ public class CoralRegistryImpl
         try
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
-            int attrs = persistence.count("coral_attribute_definition", 
-                "attribute_class_id = "+item.getIdString());
+            int attrs = persistence.count("coral_attribute_definition", "attribute_class_id = "
+                + item.getIdString());
             if(attrs > 0)
             {
-                throw new EntityInUseException("Attribute class "+item.getName()+" is used by "+
-                                                   attrs+" attributes");
+                throw new EntityInUseException("Attribute class " + item.getName() + " is used by "
+                    + attrs + " attributes");
             }
-            
-            attributeClassRegistry.delete((AttributeClassImpl)item);
-            
+
+            attributeClassRegistry.delete((AttributeClassImpl<?>)item);
+
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(SQLException e)
@@ -418,7 +426,7 @@ public class CoralRegistryImpl
      * {@inheritDoc}
      */
     public ImmutableSet<ResourceClass<?>> getAllResourceClasses()
-    {        
+    {
         Set<ResourceClass<?>> s = new HashSet<ResourceClass<?>>();
         for(ResourceClass<?> rc : resourceClassRegistry.get())
         {
@@ -435,7 +443,7 @@ public class CoralRegistryImpl
     {
         return (ResourceClass<?>)resourceClassRegistry.get(id);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -460,7 +468,7 @@ public class CoralRegistryImpl
     {
         resourceClassRegistry.addUnique((ResourceClassImpl<?>)item);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -472,29 +480,29 @@ public class CoralRegistryImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             // Check for resources
-            int resources = persistence.count("coral_resource", 
-                "resource_class_id = "+item.getIdString());
+            int resources = persistence.count("coral_resource",
+                "resource_class_id = " + item.getIdString());
             if(resources > 0)
             {
-                throw new EntityInUseException(resources+" resources of the class "+
-                                               item.getName()+" exist");
+                throw new EntityInUseException(resources + " resources of the class "
+                    + item.getName() + " exist");
             }
 
             int children = persistence.count("coral_resource_class_inheritance",
-                "parent = "+item.getIdString());
+                "parent = " + item.getIdString());
             if(children > 0)
             {
-                throw new EntityInUseException(children+" child classes of the class "+
-                                               item.getName()+" exist");
+                throw new EntityInUseException(children + " child classes of the class "
+                    + item.getName() + " exist");
             }
-            
-            AttributeDefinition[] attributes = item.getDeclaredAttributes();
-            for(int i=0; i<attributes.length; i++)
+
+            AttributeDefinition<?>[] attributes = item.getDeclaredAttributes();
+            for(int i = 0; i < attributes.length; i++)
             {
                 coral.getSchema().deleteAttribute(item, attributes[i]);
             }
             ResourceClassInheritance[] rci = item.getInheritance();
-            for(int i=0; i<rci.length; i++)
+            for(int i = 0; i < rci.length; i++)
             {
                 if(rci[i].getChild().equals(item))
                 {
@@ -502,11 +510,11 @@ public class CoralRegistryImpl
                 }
             }
             PermissionAssociation[] perms = item.getPermissionAssociations();
-            for(int i=0; i<perms.length; i++)
+            for(int i = 0; i < perms.length; i++)
             {
                 coral.getSecurity().deletePermission(item, perms[i].getPermission());
             }
-            resourceClassRegistry.delete((ResourceClassImpl)item);
+            resourceClassRegistry.delete((ResourceClassImpl<?>)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
         catch(SQLException e)
@@ -553,7 +561,7 @@ public class CoralRegistryImpl
     public void renameResourceClass(ResourceClass<?> item, String name)
         throws EntityExistsException
     {
-        resourceClassRegistry.renameUnique((ResourceClassImpl)item, name);
+        resourceClassRegistry.renameUnique((ResourceClassImpl<?>)item, name);
     }
 
     // Schema - AttributeDefinition //////////////////////////////////////////
@@ -561,7 +569,8 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public Set getDeclaredAttributes(ResourceClass<?> owner)
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public Set<AttributeDefinition<?>> getDeclaredAttributes(ResourceClass<?> owner)
     {
         synchronized(resourceClassLock)
         {
@@ -570,37 +579,38 @@ public class CoralRegistryImpl
             {
                 try
                 {
-                    List list = persistence.load(attributeDefinitionFactory, "resource_class_id = ?",
-                        owner.getId());
-                    items = new HashSet();
+                    List list = persistence.load(attributeDefinitionFactory,
+                        "resource_class_id = ?", owner.getId());
+                    items = new HashSet<AttributeDefinition<?>>();
                     attributeDefinitionRegistry.resolve(list, items);
                     attributeDefinitionByResourceClass.put(owner, items);
                 }
                 catch(SQLException e)
                 {
-                    throw new BackendException("Failed to load AttributeDefinitions for " + owner, e);
+                    throw new BackendException("Failed to load AttributeDefinitions for " + owner,
+                        e);
                 }
             }
-            return (Set)items.clone();
+            return (Set<AttributeDefinition<?>>)items.clone();
         }
     }
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public ImmutableSet<AttributeDefinition<?>> getAllAttributeDefinitions()
     {
         synchronized(resourceClassLock)
         {
-            Set defs = attributeDefinitionRegistry.get();
-            for(Iterator i = defs.iterator(); i.hasNext(); )
+            Set<? extends AttributeDefinition<?>> defs = attributeDefinitionRegistry.get();
+            for(Iterator<? extends AttributeDefinition<?>> i = defs.iterator(); i.hasNext();)
             {
-                AttributeDefinition<?> def = (AttributeDefinition<?>)i.next();
+                AttributeDefinition<?> def = i.next();
                 ResourceClass<?> owner = def.getDeclaringClass();
-                Set items = (Set)attributeDefinitionByResourceClass.get(owner);
+                Set<AttributeDefinition<?>> items = attributeDefinitionByResourceClass.get(owner);
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     attributeDefinitionByResourceClass.put(owner, items);
                 }
                 items.add(def);
@@ -627,10 +637,10 @@ public class CoralRegistryImpl
         {
             attributeDefinitionRegistry.add((AttributeDefinitionImpl<?>)item);
             ResourceClass<?> owner = item.getDeclaringClass();
-            Set items = (Set)attributeDefinitionByResourceClass.get(owner);
+            Set<AttributeDefinition<?>> items = attributeDefinitionByResourceClass.get(owner);
             if(items == null)
             {
-                items = new HashSet();
+                items = new HashSet<>();
                 attributeDefinitionByResourceClass.put(owner, items);
             }
             items.add(item);
@@ -654,39 +664,42 @@ public class CoralRegistryImpl
         {
             attributeDefinitionRegistry.delete((AttributeDefinitionImpl<?>)item);
             ResourceClass<?> owner = item.getDeclaringClass();
-            Set items = (Set)attributeDefinitionByResourceClass.get(owner);
+            Set<AttributeDefinition<?>> items = attributeDefinitionByResourceClass.get(owner);
             if(items != null)
             {
                 items.remove(item);
             }
         }
-    }       
+    }
 
     // Schema - ResourceClassInheritance /////////////////////////////////////
 
     /**
      * {@inheritDoc}
      */
-    public Set getResourceClassInheritance(ResourceClass<?> owner)
+    public Set<ResourceClassInheritance> getResourceClassInheritance(ResourceClass<?> owner)
     {
         synchronized(resourceClassLock)
         {
-            HashSet items = (HashSet)resourceClassInheritanceByResourceClass.get(owner);
+            HashSet<ResourceClassInheritance> items = (HashSet<ResourceClassInheritance>)resourceClassInheritanceByResourceClass
+                .get(owner);
             if(items == null)
             {
                 try
                 {
-                    List list = persistence.load(resourceClassInheritanceFactory,
-                        "parent = ? OR child = ?", owner.getId(), owner.getId());
-                    items = new HashSet(list);
+                    List<? extends ResourceClassInheritance> list = persistence.load(
+                        resourceClassInheritanceFactory, "parent = ? OR child = ?", owner.getId(),
+                        owner.getId());
+                    items = new HashSet<>(list);
                     resourceClassInheritanceByResourceClass.put(owner, items);
                 }
                 catch(SQLException e)
                 {
-                    throw new BackendException("Failed to load ResourceClassInheritance for " + owner, e);
+                    throw new BackendException("Failed to load ResourceClassInheritance for "
+                        + owner, e);
                 }
             }
-            return (Set)items.clone();
+            return (Set<ResourceClassInheritance>)items.clone();
         }
     }
 
@@ -706,18 +719,19 @@ public class CoralRegistryImpl
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
             ResourceClass<?> parent = item.getParent();
-            Set items = (Set)resourceClassInheritanceByResourceClass.get(parent);
+            Set<ResourceClassInheritance> items = resourceClassInheritanceByResourceClass
+                .get(parent);
             if(items == null)
             {
-                items = new HashSet();
+                items = new HashSet<>();
                 resourceClassInheritanceByResourceClass.put(parent, items);
             }
             items.add(item);
             ResourceClass<?> child = item.getChild();
-            items = (Set)resourceClassInheritanceByResourceClass.get(child);
+            items = resourceClassInheritanceByResourceClass.get(child);
             if(items == null)
             {
-                items = new HashSet();
+                items = new HashSet<>();
                 resourceClassInheritanceByResourceClass.put(child, items);
             }
             items.add(item);
@@ -740,20 +754,21 @@ public class CoralRegistryImpl
                 throw new BackendException("Failed to delete " + item, e);
             }
             ResourceClass<?> parent = item.getParent();
-            Set items = (Set)resourceClassInheritanceByResourceClass.get(parent);
+            Set<ResourceClassInheritance> items = resourceClassInheritanceByResourceClass
+                .get(parent);
             if(items != null)
             {
                 items.remove(item);
             }
             ResourceClass<?> child = item.getChild();
-            items = (Set)resourceClassInheritanceByResourceClass.get(child);
+            items = resourceClassInheritanceByResourceClass.get(child);
             if(items != null)
             {
                 items.remove(item);
             }
         }
-    }       
-    
+    }
+
     // Security - Subject ////////////////////////////////////////////////////
 
     /**
@@ -761,7 +776,7 @@ public class CoralRegistryImpl
      */
     public Subject[] getSubject()
     {
-        Set all = subjectRegistry.get();
+        Set<? extends Subject> all = subjectRegistry.get();
         Subject[] result = new Subject[all.size()];
         all.toArray(result);
         return result;
@@ -775,7 +790,7 @@ public class CoralRegistryImpl
     {
         return (Subject)subjectRegistry.get(id);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -800,7 +815,7 @@ public class CoralRegistryImpl
     {
         subjectRegistry.addUnique((SubjectImpl)item);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -812,46 +827,43 @@ public class CoralRegistryImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             // check for created resources
-            int created = persistence.count("coral_resource", 
-                "created_by = "+item.getIdString());
+            int created = persistence.count("coral_resource", "created_by = " + item.getIdString());
             if(created > 0)
             {
-                throw new EntityInUseException(item.getName()+
-                                               " has created "+created+" resources");
+                throw new EntityInUseException(item.getName() + " has created " + created
+                    + " resources");
             }
             // check for owned resources
-            int owned = persistence.count("coral_resource", 
-                "owned_by = "+item.getIdString());
+            int owned = persistence.count("coral_resource", "owned_by = " + item.getIdString());
             if(owned > 0)
             {
-                throw new EntityInUseException(item.getName()+
-                                               " owns "+owned+" resources");
+                throw new EntityInUseException(item.getName() + " owns " + owned + " resources");
             }
             // check for modified resources
             int modified = persistence.count("coral_resource",
-                "modified_by = "+item.getIdString());
+                "modified_by = " + item.getIdString());
             if(modified > 0)
             {
-                    throw new EntityInUseException(item.getName()+
-                                                   " has modified "+modified+" resources");
+                throw new EntityInUseException(item.getName() + " has modified " + modified
+                    + " resources");
             }
             // check for granted role assignments
-            int grantedRoles = persistence.count("coral_role_assignment", 
-                 "grantor = "+item.getIdString());
+            int grantedRoles = persistence.count("coral_role_assignment",
+                "grantor = " + item.getIdString());
             if(grantedRoles > 0)
             {
-                throw new EntityInUseException(item.getName()+
-                    " has made "+grantedRoles+" role grants");
+                throw new EntityInUseException(item.getName() + " has made " + grantedRoles
+                    + " role grants");
             }
             // check for granted permission assignments
-            int grantedPermissions = persistence.count("coral_permission_assignment", 
-                 "grantor = "+item.getIdString());
+            int grantedPermissions = persistence.count("coral_permission_assignment", "grantor = "
+                + item.getIdString());
             if(grantedPermissions > 0)
             {
-                throw new EntityInUseException(item.getName()+
-                    " has made "+grantedPermissions+" permission grants");
+                throw new EntityInUseException(item.getName() + " has made " + grantedPermissions
+                    + " permission grants");
             }
-                
+
             subjectRegistry.delete((SubjectImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
@@ -909,7 +921,7 @@ public class CoralRegistryImpl
      */
     public Role[] getRole()
     {
-        Set all = roleRegistry.get();
+        Set<RoleImpl> all = roleRegistry.get();
         Role[] result = new Role[all.size()];
         all.toArray(result);
         return result;
@@ -921,15 +933,15 @@ public class CoralRegistryImpl
     public Role getRole(long id)
         throws EntityDoesNotExistException
     {
-        return (Role)roleRegistry.get(id);        
+        return (Role)roleRegistry.get(id);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Role[] getRole(String name)
     {
-        Set all = roleRegistry.get(name);
+        Set<RoleImpl> all = roleRegistry.get(name);
         Role[] result = new Role[all.size()];
         all.toArray(result);
         return result;
@@ -947,11 +959,11 @@ public class CoralRegistryImpl
         }
         catch(AmbigousEntityNameException e)
         {
-            throw new IllegalStateException("role name "+name+" is not unique");
+            throw new IllegalStateException("role name " + name + " is not unique");
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new IllegalStateException("role "+name+" does not exist");
+            throw new IllegalStateException("role " + name + " does not exist");
         }
     }
 
@@ -962,7 +974,7 @@ public class CoralRegistryImpl
     {
         roleRegistry.add((RoleImpl)item);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -974,28 +986,28 @@ public class CoralRegistryImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             // check for sub roles
-            int subRoles = persistence.count("coral_role_implication", 
-                "super_role = "+item.getIdString());
+            int subRoles = persistence.count("coral_role_implication",
+                "super_role = " + item.getIdString());
             if(subRoles > 0)
             {
-                throw new EntityInUseException("Role "+item.getName()+" has "+subRoles+
-                    " subroles");
+                throw new EntityInUseException("Role " + item.getName() + " has " + subRoles
+                    + " subroles");
             }
             // check for role assignments
-            int subjects = persistence.count("coral_role_assignment", 
-                "role_id = "+item.getIdString());
+            int subjects = persistence.count("coral_role_assignment",
+                "role_id = " + item.getIdString());
             if(subjects > 0)
             {
-                throw new EntityInUseException("Role "+item.getName()+" has been assigned to "+
-                                               subjects+" subjects");
+                throw new EntityInUseException("Role " + item.getName() + " has been assigned to "
+                    + subjects + " subjects");
             }
             // check for permission assignemts
-            int assignments = persistence.count("coral_permission_assignment", 
-                                                    "role_id = "+item.getIdString());
+            int assignments = persistence.count("coral_permission_assignment",
+                "role_id = " + item.getIdString());
             if(assignments > 0)
             {
-                throw new EntityInUseException("Role "+item.getName()+" received "+
-                                               assignments+" permssion assignments");
+                throw new EntityInUseException("Role " + item.getName() + " received "
+                    + assignments + " permssion assignments");
             }
 
             roleRegistry.delete((RoleImpl)item);
@@ -1054,7 +1066,7 @@ public class CoralRegistryImpl
      */
     public Permission[] getPermission()
     {
-        Set all = permissionRegistry.get();
+        Set<PermissionImpl> all = permissionRegistry.get();
         Permission[] result = new Permission[all.size()];
         all.toArray(result);
         return result;
@@ -1068,13 +1080,13 @@ public class CoralRegistryImpl
     {
         return (Permission)permissionRegistry.get(id);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Permission[] getPermission(String name)
     {
-        Set all = permissionRegistry.get(name);
+        Set<PermissionImpl> all = permissionRegistry.get(name);
         Permission[] result = new Permission[all.size()];
         all.toArray(result);
         return result;
@@ -1088,15 +1100,15 @@ public class CoralRegistryImpl
     {
         try
         {
-           return (Permission)permissionRegistry.getUnique(name);
+            return (Permission)permissionRegistry.getUnique(name);
         }
         catch(AmbigousEntityNameException e)
         {
-            throw new IllegalStateException("permission name "+name+" is not unique");
+            throw new IllegalStateException("permission name " + name + " is not unique");
         }
         catch(EntityDoesNotExistException e)
         {
-            throw new IllegalStateException("permission "+name+" does not exist");
+            throw new IllegalStateException("permission " + name + " does not exist");
         }
     }
 
@@ -1107,7 +1119,7 @@ public class CoralRegistryImpl
     {
         permissionRegistry.add((PermissionImpl)item);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1119,22 +1131,22 @@ public class CoralRegistryImpl
         {
             shouldCommit = persistence.getDatabase().beginTransaction();
             // check for assignments
-            int assignments = persistence.count("coral_permission_assignment", 
-                                                    "permission_id = "+item.getIdString());
+            int assignments = persistence.count("coral_permission_assignment", "permission_id = "
+                + item.getIdString());
             if(assignments > 0)
             {
-                throw new EntityInUseException("Permission "+item.getName()+" has "+
-                                               assignments+" active assignments");
+                throw new EntityInUseException("Permission " + item.getName() + " has "
+                    + assignments + " active assignments");
             }
             // check for associations
-            int associations = persistence.count("coral_permission_association",
-                                                     "permission_id = "+item.getIdString());
+            int associations = persistence.count("coral_permission_association", "permission_id = "
+                + item.getIdString());
             if(assignments > 0)
             {
-                    throw new EntityInUseException("Permission "+item.getName()+" is associated "+
-                                                   "with "+associations+" resource classes");
+                throw new EntityInUseException("Permission " + item.getName() + " is associated "
+                    + "with " + associations + " resource classes");
             }
-            
+
             permissionRegistry.delete((PermissionImpl)item);
             persistence.getDatabase().commitTransaction(shouldCommit);
         }
@@ -1189,18 +1201,19 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public Set getRoleImplications(Role owner)
+    public Set<RoleImplication> getRoleImplications(Role owner)
     {
         synchronized(roleLock)
         {
-            HashSet items = (HashSet)roleImplicationByRole.get(owner);
+            HashSet<RoleImplication> items = (HashSet<RoleImplication>)roleImplicationByRole
+                .get(owner);
             if(items == null)
             {
                 try
                 {
-                    List list = persistence.load(roleImplicationFactory,
+                    List<? extends RoleImplication> list = persistence.load(roleImplicationFactory,
                         "super_role = ? OR sub_role = ?", owner.getId(), owner.getId());
-                    items = new HashSet(list);
+                    items = new HashSet<>(list);
                     roleImplicationByRole.put(owner, items);
                 }
                 catch(SQLException e)
@@ -1208,7 +1221,7 @@ public class CoralRegistryImpl
                     throw new BackendException("Failed to load RoleImplications for " + owner, e);
                 }
             }
-            return (Set)items.clone();
+            return (Set<RoleImplication>)items.clone();
         }
     }
 
@@ -1228,18 +1241,18 @@ public class CoralRegistryImpl
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
             Role superRole = item.getSuperRole();
-            Set items = (Set)roleImplicationByRole.get(superRole);
+            Set<RoleImplication> items = roleImplicationByRole.get(superRole);
             if(items == null)
             {
-                items = new HashSet();
+                items = new HashSet<>();
                 roleImplicationByRole.put(superRole, items);
             }
             items.add(item);
             Role subRole = item.getSubRole();
-            items = (Set)roleImplicationByRole.get(subRole);
+            items = roleImplicationByRole.get(subRole);
             if(items == null)
             {
-                items = new HashSet();
+                items = new HashSet<>();
                 roleImplicationByRole.put(subRole, items);
             }
             items.add(item);
@@ -1263,38 +1276,39 @@ public class CoralRegistryImpl
                 throw new BackendException("Failed to delete " + item, e);
             }
             Role superRole = item.getSuperRole();
-            Set items = (Set)roleImplicationByRole.get(superRole);
+            Set<RoleImplication> items = roleImplicationByRole.get(superRole);
             if(items != null)
             {
                 items.remove(item);
             }
             Role subRole = item.getSubRole();
-            items = (Set)roleImplicationByRole.get(subRole);
+            items = roleImplicationByRole.get(subRole);
             if(items != null)
             {
                 items.remove(item);
             }
         }
         coralEventHub.getGlobal().fireRoleImplicationChangeEvent(item, false);
-    }       
-    
+    }
+
     // Security - RoleAssignment /////////////////////////////////////////////
 
     /**
      * {@inheritDoc}
      */
-    public Set getRoleAssignments(Subject owner)
+    public Set<RoleAssignment> getRoleAssignments(Subject owner)
     {
         synchronized(roleLock)
         {
-            HashSet items = (HashSet)roleAssignmentBySubject.get(owner);
+            HashSet<RoleAssignment> items = (HashSet<RoleAssignment>)roleAssignmentBySubject
+                .get(owner);
             if(items == null)
             {
                 try
                 {
-                    List list = persistence.load(roleAssignmentFactory, "subject_id = ?",
-                        owner.getId());
-                    items = new HashSet(list);
+                    List<? extends RoleAssignment> list = persistence.load(roleAssignmentFactory,
+                        "subject_id = ?", owner.getId());
+                    items = new HashSet<>(list);
                     roleAssignmentBySubject.put(owner, items);
                 }
                 catch(SQLException e)
@@ -1302,25 +1316,26 @@ public class CoralRegistryImpl
                     throw new BackendException("Failed to load RoleAssignments for " + owner, e);
                 }
             }
-            return (Set)items.clone();
+            return (Set<RoleAssignment>)items.clone();
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public Set getRoleAssignments(Role owner)
+    public Set<RoleAssignment> getRoleAssignments(Role owner)
     {
         synchronized(roleLock)
         {
-            HashSet items = (HashSet)roleAssignmentByRole.get(owner);
+            HashSet<RoleAssignment> items = (HashSet<RoleAssignment>)roleAssignmentByRole
+                .get(owner);
             if(items == null)
             {
                 try
                 {
-                    List list = persistence.load(roleAssignmentFactory, "role_id = ?",
-                        owner.getId());
-                    items = new HashSet(list);
+                    List<? extends RoleAssignment> list = persistence.load(roleAssignmentFactory,
+                        "role_id = ?", owner.getId());
+                    items = new HashSet<>(list);
                     roleAssignmentByRole.put(owner, items);
                 }
                 catch(SQLException e)
@@ -1328,7 +1343,7 @@ public class CoralRegistryImpl
                     throw new BackendException("Failed to load RoleAssignments for " + owner, e);
                 }
             }
-            return (Set)items.clone();
+            return (Set<RoleAssignment>)items.clone();
         }
     }
 
@@ -1347,12 +1362,12 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
-            Set itemsBySubject = (Set)roleAssignmentBySubject.get(item.getSubject());
+            Set<RoleAssignment> itemsBySubject = roleAssignmentBySubject.get(item.getSubject());
             if(itemsBySubject != null)
             {
                 itemsBySubject.add(item);
             }
-            Set itemsByRole = (Set)roleAssignmentByRole.get(item.getRole());
+            Set<RoleAssignment> itemsByRole = roleAssignmentByRole.get(item.getRole());
             if(itemsByRole != null)
             {
                 itemsByRole.add(item);
@@ -1376,72 +1391,75 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to delete " + item, e);
             }
-            Set itemsBySubject = (Set)roleAssignmentBySubject.get(item.getSubject());
+            Set<RoleAssignment> itemsBySubject = roleAssignmentBySubject.get(item.getSubject());
             if(itemsBySubject != null)
             {
                 itemsBySubject.remove(item);
             }
-            Set itemsByRole = (Set)roleAssignmentByRole.get(item.getRole());
+            Set<RoleAssignment> itemsByRole = roleAssignmentByRole.get(item.getRole());
             if(itemsByRole != null)
             {
                 itemsByRole.remove(item);
             }
         }
         coralEventHub.getGlobal().fireRoleAssignmentChangeEvent(item, false);
-    }       
+    }
 
     // Security - PermissionAssociation //////////////////////////////////////
 
     /**
      * {@inheritDoc}
      */
-    public Set getPermissionAssociations(ResourceClass owner)
+    public Set<PermissionAssociation> getPermissionAssociations(ResourceClass<?> owner)
     {
         synchronized(permissionLock)
         {
-            HashSet items = (HashSet)permissionAssociationByResourceClass.get(owner);
+            HashSet<PermissionAssociation> items = (HashSet<PermissionAssociation>)permissionAssociationByResourceClass
+                .get(owner);
             if(items == null)
             {
                 try
                 {
-                    List list = persistence.load(permissionAssociationFactory,
-                        "resource_class_id = ?",
-                        owner.getId());
-                    items = new HashSet(list);
+                    List<? extends PermissionAssociation> list = persistence.load(
+                        permissionAssociationFactory, "resource_class_id = ?", owner.getId());
+                    items = new HashSet<>(list);
                     permissionAssociationByResourceClass.put(owner, items);
                 }
                 catch(SQLException e)
                 {
-                    throw new BackendException("Failed to load PermissionAssociations for " + owner, e);
+                    throw new BackendException(
+                        "Failed to load PermissionAssociations for " + owner, e);
                 }
             }
-            return (Set)items.clone();
+            return (Set<PermissionAssociation>)items.clone();
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public Set getPermissionAssociations(Permission owner)
+    public Set<PermissionAssociation> getPermissionAssociations(Permission owner)
     {
         synchronized(permissionLock)
         {
-            HashSet items = (HashSet)permissionAssociationByPermission.get(owner);
+            HashSet<PermissionAssociation> items = (HashSet<PermissionAssociation>)permissionAssociationByPermission
+                .get(owner);
             if(items == null)
             {
                 try
                 {
-                    List list = persistence.load(permissionAssociationFactory, "permission_id = ?",
-                        owner.getId());
-                    items = new HashSet(list);
+                    List<? extends PermissionAssociation> list = persistence.load(
+                        permissionAssociationFactory, "permission_id = ?", owner.getId());
+                    items = new HashSet<>(list);
                     permissionAssociationByPermission.put(owner, items);
                 }
                 catch(SQLException e)
                 {
-                    throw new BackendException("Failed to load PermissionAssociations for " + owner, e);
+                    throw new BackendException(
+                        "Failed to load PermissionAssociations for " + owner, e);
                 }
             }
-            return (Set)items.clone();
+            return (Set<PermissionAssociation>)items.clone();
         }
     }
 
@@ -1460,14 +1478,14 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
-            Set itemsByResourceClass = (Set)permissionAssociationByResourceClass.
-                get(item.getResourceClass());
+            Set<PermissionAssociation> itemsByResourceClass = permissionAssociationByResourceClass
+                .get(item.getResourceClass());
             if(itemsByResourceClass != null)
             {
                 itemsByResourceClass.add(item);
             }
-            Set itemsByPermission = (Set)permissionAssociationByPermission.
-                get(item.getPermission());
+            Set<PermissionAssociation> itemsByPermission = permissionAssociationByPermission
+                .get(item.getPermission());
             if(itemsByPermission != null)
             {
                 itemsByPermission.add(item);
@@ -1491,76 +1509,80 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to delete " + item, e);
             }
-            Set itemsByResourceClass = (Set)permissionAssociationByResourceClass.
-                get(item.getResourceClass());
+            Set<PermissionAssociation> itemsByResourceClass = permissionAssociationByResourceClass
+                .get(item.getResourceClass());
             if(itemsByResourceClass != null)
             {
                 itemsByResourceClass.remove(item);
             }
-            Set itemsByPermission = (Set)permissionAssociationByPermission.
-                get(item.getPermission());
+            Set<PermissionAssociation> itemsByPermission = permissionAssociationByPermission
+                .get(item.getPermission());
             if(itemsByPermission != null)
             {
                 itemsByPermission.remove(item);
             }
         }
         coralEventHub.getGlobal().firePermissionAssociationChangeEvent(item, false);
-    }       
+    }
 
     // Security - PermissionAssignment ///////////////////////////////////////
 
     /**
      * {@inheritDoc}
      */
-    public Set getPermissionAssignments(Resource owner)
+    public Set<PermissionAssignment> getPermissionAssignments(Resource owner)
     {
         synchronized(permissionLock)
         {
-            HashSet items = (HashSet)permissionAssignmentByResource.get(owner);
+            HashSet<PermissionAssignment> items = (HashSet<PermissionAssignment>)permissionAssignmentByResource
+                .get(owner);
             if(items == null)
             {
                 try
                 {
-                    List list = persistence.load(permissionAssignmentFactory, "resource_id = ?",
-                        owner.getId());
+                    List<? extends PermissionAssignment> list = persistence.load(
+                        permissionAssignmentFactory, "resource_id = ?", owner.getId());
                     items = new HashSet<>(list);
                     permissionAssignmentByResource.put(owner, items);
                 }
                 catch(SQLException e)
                 {
-                    throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
+                    throw new BackendException("Failed to load PermissionAssignments for " + owner,
+                        e);
                 }
             }
-            return (Set)items.clone();
+            return (Set<PermissionAssignment>)items.clone();
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public Set getPermissionAssignments(Role owner)
+    public Set<PermissionAssignment> getPermissionAssignments(Role owner)
     {
         synchronized(permissionLock)
         {
-            HashSet items = (HashSet)permissionAssignmentByRole.get(owner);
+            HashSet<PermissionAssignment> items = (HashSet<PermissionAssignment>)permissionAssignmentByRole
+                .get(owner);
             if(items == null)
             {
                 try
                 {
-                    List list = persistence.load(permissionAssignmentFactory, "role_id = ?",
-                        owner.getId());
+                    List<? extends PermissionAssignment> list = persistence.load(
+                        permissionAssignmentFactory, "role_id = ?", owner.getId());
                     items = new HashSet<>(list);
                     permissionAssignmentByRole.put(owner, items);
                 }
                 catch(SQLException e)
                 {
-                    throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
+                    throw new BackendException("Failed to load PermissionAssignments for " + owner,
+                        e);
                 }
             }
-            return (Set)items.clone();
+            return (Set<PermissionAssignment>)items.clone();
         }
     }
-    
+
     public Set<PermissionAssignment> getPermissionAssigments(Permission owner)
     {
         // this is rarely used - no caching
@@ -1593,13 +1615,13 @@ public class CoralRegistryImpl
                 throw new BackendException("Failed to save " + item.toString(), e);
             }
             Resource owner = item.getResource();
-            Set items = (Set)permissionAssignmentByResource.get(owner);
+            Set<PermissionAssignment> items = permissionAssignmentByResource.get(owner);
             if(items != null)
             {
                 items.add(item);
             }
             Role role = item.getRole();
-            items = (Set)permissionAssignmentByRole.get(role);
+            items = permissionAssignmentByRole.get(role);
             if(items != null)
             {
                 items.add(item);
@@ -1624,20 +1646,20 @@ public class CoralRegistryImpl
                 throw new BackendException("Failed to delete " + item, e);
             }
             Resource owner = item.getResource();
-            Set items = (Set)permissionAssignmentByResource.get(owner);
+            Set<PermissionAssignment> items = permissionAssignmentByResource.get(owner);
             if(items != null)
             {
                 items.remove(item);
             }
             Role role = item.getRole();
-            items = (Set)permissionAssignmentByRole.get(role);
+            items = permissionAssignmentByRole.get(role);
             if(items != null)
             {
                 items.remove(item);
             }
         }
         coralEventHub.getGlobal().firePermissionAssignmentChangeEvent(item, false);
-    }       
+    }
 
     // PermissionAssociationChangeListener interface /////////////////////////
 
@@ -1650,14 +1672,14 @@ public class CoralRegistryImpl
         {
             if(added)
             {
-                Set itemsByResourceClass = (Set)permissionAssociationByResourceClass.
-                    get(item.getResourceClass());
+                Set<PermissionAssociation> itemsByResourceClass = permissionAssociationByResourceClass
+                    .get(item.getResourceClass());
                 if(itemsByResourceClass != null)
                 {
                     itemsByResourceClass.add(item);
                 }
-                Set itemsByPermission = (Set)permissionAssociationByPermission.
-                    get(item.getPermission());
+                Set<PermissionAssociation> itemsByPermission = permissionAssociationByPermission
+                    .get(item.getPermission());
                 if(itemsByPermission != null)
                 {
                     itemsByPermission.add(item);
@@ -1665,14 +1687,14 @@ public class CoralRegistryImpl
             }
             else
             {
-                Set itemsByResourceClass = (Set)permissionAssociationByResourceClass.
-                    get(item.getResourceClass());
+                Set<PermissionAssociation> itemsByResourceClass = permissionAssociationByResourceClass
+                    .get(item.getResourceClass());
                 if(itemsByResourceClass != null)
                 {
                     itemsByResourceClass.remove(item);
                 }
-                Set itemsByPermission = (Set)permissionAssociationByPermission.
-                    get(item.getPermission());
+                Set<PermissionAssociation> itemsByPermission = permissionAssociationByPermission
+                    .get(item.getPermission());
                 if(itemsByPermission != null)
                 {
                     itemsByPermission.remove(item);
@@ -1680,7 +1702,7 @@ public class CoralRegistryImpl
             }
         }
     }
-    
+
     // PermissionAssignmentChangeListener interface //////////////////////////
 
     /**
@@ -1690,8 +1712,9 @@ public class CoralRegistryImpl
     {
         synchronized(permissionLock)
         {
-            Set itemsByResource = (Set)permissionAssignmentByResource.get(item.getResource());
-            Set itemsByRole = (Set)permissionAssignmentByRole.get(item.getRole());
+            Set<PermissionAssignment> itemsByResource = permissionAssignmentByResource.get(item
+                .getResource());
+            Set<PermissionAssignment> itemsByRole = permissionAssignmentByRole.get(item.getRole());
             if(added)
             {
                 if(itemsByResource != null)
@@ -1716,9 +1739,9 @@ public class CoralRegistryImpl
             }
         }
     }
-    
+
     // RoleAssignmentChangeListener inteface /////////////////////////////////
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1728,12 +1751,12 @@ public class CoralRegistryImpl
         {
             if(added)
             {
-                Set itemsBySubject = (Set)roleAssignmentBySubject.get(item.getSubject());
+                Set<RoleAssignment> itemsBySubject = roleAssignmentBySubject.get(item.getSubject());
                 if(itemsBySubject != null)
                 {
                     itemsBySubject.add(item);
                 }
-                Set itemsByRole = (Set)roleAssignmentByRole.get(item.getRole());
+                Set<RoleAssignment> itemsByRole = roleAssignmentByRole.get(item.getRole());
                 if(itemsByRole != null)
                 {
                     itemsByRole.add(item);
@@ -1741,12 +1764,12 @@ public class CoralRegistryImpl
             }
             else
             {
-                Set itemsBySubject = (Set)roleAssignmentBySubject.get(item.getSubject());
+                Set<RoleAssignment> itemsBySubject = roleAssignmentBySubject.get(item.getSubject());
                 if(itemsBySubject != null)
                 {
                     itemsBySubject.remove(item);
                 }
-                Set itemsByRole = (Set)roleAssignmentByRole.get(item.getRole());
+                Set<RoleAssignment> itemsByRole = roleAssignmentByRole.get(item.getRole());
                 if(itemsByRole != null)
                 {
                     itemsByRole.remove(item);
@@ -1756,7 +1779,7 @@ public class CoralRegistryImpl
     }
 
     // RoleImplicationChangeListener interface ///////////////////////////////
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1765,12 +1788,12 @@ public class CoralRegistryImpl
         synchronized(roleLock)
         {
             Role superRole = item.getSuperRole();
-            Set items = (Set)roleImplicationByRole.get(superRole);
+            Set<RoleImplication> items = roleImplicationByRole.get(superRole);
             if(added)
             {
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     roleImplicationByRole.put(superRole, items);
                 }
                 items.add(item);
@@ -1783,12 +1806,12 @@ public class CoralRegistryImpl
                 }
             }
             Role subRole = item.getSuperRole();
-            items = (Set)roleImplicationByRole.get(subRole);
+            items = roleImplicationByRole.get(subRole);
             if(added)
             {
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     roleImplicationByRole.put(subRole, items);
                 }
                 items.add(item);
@@ -1805,13 +1828,14 @@ public class CoralRegistryImpl
     {
         synchronized(resourceClassLock)
         {
-            ResourceClass parent = item.getParent();
-            Set items = (Set)resourceClassInheritanceByResourceClass.get(parent);
+            ResourceClass<?> parent = item.getParent();
+            Set<ResourceClassInheritance> items = resourceClassInheritanceByResourceClass
+                .get(parent);
             if(added)
             {
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     resourceClassInheritanceByResourceClass.put(parent, items);
                 }
                 items.add(item);
@@ -1823,13 +1847,13 @@ public class CoralRegistryImpl
                     items.remove(item);
                 }
             }
-            ResourceClass child = item.getChild();
-            items = (Set)resourceClassInheritanceByResourceClass.get(child);
+            ResourceClass<?> child = item.getChild();
+            items = resourceClassInheritanceByResourceClass.get(child);
             if(added)
             {
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     resourceClassInheritanceByResourceClass.put(child, items);
                 }
                 items.add(item);
@@ -1849,17 +1873,17 @@ public class CoralRegistryImpl
     /**
      * {@inheritDoc}
      */
-    public void attributesChanged(AttributeDefinition item, boolean added)
+    public void attributesChanged(AttributeDefinition<?> item, boolean added)
     {
         synchronized(resourceClassLock)
         {
-            ResourceClass owner = item.getDeclaringClass();
-            Set items = (Set)attributeDefinitionByResourceClass.get(owner);
+            ResourceClass<?> owner = item.getDeclaringClass();
+            Set<AttributeDefinition<?>> items = attributeDefinitionByResourceClass.get(owner);
             if(added)
             {
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     attributeDefinitionByResourceClass.put(owner, items);
                 }
                 items.add(item);
@@ -1872,7 +1896,7 @@ public class CoralRegistryImpl
                 }
             }
         }
-    }    
+    }
 
     // Non-cached cross-reference information ////////////////////////////////
 
@@ -1883,7 +1907,8 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load(roleAssignmentFactory, "grantor = ?", subject.getId());
+            List<? extends RoleAssignment> list = persistence.load(roleAssignmentFactory,
+                "grantor = ?", subject.getId());
             RoleAssignment[] result = new RoleAssignment[list.size()];
             list.toArray(result);
             return result;
@@ -1901,8 +1926,8 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load(permissionAssignmentFactory, "grantor = ?",
-                subject.getId());
+            List<? extends PermissionAssignment> list = persistence.load(
+                permissionAssignmentFactory, "grantor = ?", subject.getId());
             PermissionAssignment[] result = new PermissionAssignment[list.size()];
             list.toArray(result);
             return result;
@@ -1920,9 +1945,10 @@ public class CoralRegistryImpl
     {
         try
         {
-            List list = persistence.load(roleAssignmentFactory, "created_by = ?", subject.getId());
+            List<? extends RoleAssignment> list = persistence.load(roleAssignmentFactory,
+                "created_by = ?", subject.getId());
             Resource[] result = new Resource[list.size()];
-            for(int i=0; i<list.size(); i++)
+            for(int i = 0; i < list.size(); i++)
             {
                 result[i] = coral.getStore().getResource(((Resource)list.get(i)).getId());
             }
@@ -1937,7 +1963,7 @@ public class CoralRegistryImpl
             throw new BackendException("internal error", e);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1945,19 +1971,20 @@ public class CoralRegistryImpl
     {
         try
         {
+            // WHOOPS it appears that there is a long-standing bug here, but the code is not used
             List list = persistence.load(roleAssignmentFactory, "owned_by = ?", subject.getId());
-            ArrayList temp = new ArrayList();
-            ArrayList stack = new ArrayList();
-            for(int i=0; i<list.size(); i++)
+            List<Resource> temp = new ArrayList<>();
+            List<Resource> stack = new ArrayList<>();
+            for(int i = 0; i < list.size(); i++)
             {
                 stack.add(coral.getStore().getResource(((Resource)list.get(i)).getId()));
             }
             while(stack.size() > 0)
             {
-                Resource r = (Resource)stack.remove(stack.size()-1);
+                Resource r = stack.remove(stack.size() - 1);
                 temp.add(r);
                 Resource[] subs = coral.getStore().getResource(r);
-                for(int i=0; i<subs.length; i++)
+                for(int i = 0; i < subs.length; i++)
                 {
                     stack.add(subs[i]);
                 }
@@ -1975,11 +2002,11 @@ public class CoralRegistryImpl
             throw new BackendException("internal error", e);
         }
     }
-    
+
     // preloading ///////////////////////////////////////////////////////////////////////////////
 
-    private static final int[] STARTUP_PHASES = {1, 3};
-    
+    private static final int[] STARTUP_PHASES = { 1, 3 };
+
     /**
      * {@inheritDoc}
      */
@@ -1987,7 +2014,7 @@ public class CoralRegistryImpl
     {
         return STARTUP_PHASES;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -2003,10 +2030,10 @@ public class CoralRegistryImpl
         }
         else
         {
-            throw new IllegalArgumentException("unexpected phase "+phase);
+            throw new IllegalArgumentException("unexpected phase " + phase);
         }
     }
-    
+
     private void preloadRegistryPhase1()
     {
         long time = System.currentTimeMillis();
@@ -2033,7 +2060,7 @@ public class CoralRegistryImpl
         log.info("preloading permission associations");
         preloadPermissionAssociations();
         time = System.currentTimeMillis() - time;
-        log.info("finished preloading registry phase 1 in "+time+"ms");
+        log.info("finished preloading registry phase 1 in " + time + "ms");
     }
 
     private void preloadRegistryPhase2()
@@ -2043,14 +2070,14 @@ public class CoralRegistryImpl
         log.info("preloading permission assignments");
         preloadPermissionAssignments();
         time = System.currentTimeMillis() - time;
-        log.info("finished preloading registry phase 2 in "+time+"ms");
+        log.info("finished preloading registry phase 2 in " + time + "ms");
     }
 
     private void preloadResourceClassInheritance()
     {
         synchronized(resourceClassLock)
         {
-            List list;
+            List<? extends ResourceClassInheritance> list;
             try
             {
                 list = persistence.load(resourceClassInheritanceFactory);
@@ -2059,72 +2086,75 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to load ResuourceClassInheritance", e);
             }
-            Iterator i = list.iterator();
+            Iterator<? extends ResourceClassInheritance> i = list.iterator();
             while(i.hasNext())
             {
-                ResourceClassInheritance item = (ResourceClassInheritance)i.next();
-                HashSet items = (HashSet)resourceClassInheritanceByResourceClass.
-                    get(item.getParent());
+                ResourceClassInheritance item = i.next();
+                Set<ResourceClassInheritance> items = resourceClassInheritanceByResourceClass
+                    .get(item.getParent());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     resourceClassInheritanceByResourceClass.put(item.getParent(), items);
                 }
                 items.add(item);
-                items = (HashSet)resourceClassInheritanceByResourceClass.get(item.getChild());
+                items = resourceClassInheritanceByResourceClass.get(item.getChild());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     resourceClassInheritanceByResourceClass.put(item.getChild(), items);
                 }
                 items.add(item);
             }
-            i = resourceClassRegistry.get().iterator();
-            while(i.hasNext())
+            Iterator<? extends ResourceClass<?>> j = resourceClassRegistry.get().iterator();
+            while(j.hasNext())
             {
-                ResourceClass rc = (ResourceClass)i.next();
+                ResourceClass<?> rc = j.next();
                 if(!resourceClassInheritanceByResourceClass.containsKey(rc))
                 {
-                    resourceClassInheritanceByResourceClass.put(rc, new HashSet());
+                    resourceClassInheritanceByResourceClass.put(rc,
+                        new HashSet<ResourceClassInheritance>());
                 }
             }
         }
     }
-    
+
     private void preloadAttributeDefinitions()
     {
         synchronized(resourceClassLock)
         {
-            Iterator i = attributeDefinitionRegistry.get().iterator();
+            Iterator<? extends AttributeDefinition<?>> i = attributeDefinitionRegistry.get()
+                .iterator();
             while(i.hasNext())
             {
-                AttributeDefinition item = (AttributeDefinition)i.next();
-                ResourceClass owner = item.getDeclaringClass();
-                HashSet items = (HashSet)attributeDefinitionByResourceClass.get(owner);
+                AttributeDefinition<?> item = i.next();
+                ResourceClass<?> owner = item.getDeclaringClass();
+                Set<AttributeDefinition<?>> items = attributeDefinitionByResourceClass.get(owner);
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     attributeDefinitionByResourceClass.put(owner, items);
                 }
                 items.add(item);
             }
-            i = resourceClassRegistry.get().iterator();
-            while(i.hasNext())
+            Iterator<? extends ResourceClass<?>> j = resourceClassRegistry.get().iterator();
+            while(j.hasNext())
             {
-                ResourceClass rc = (ResourceClass)i.next();
+                ResourceClass<?> rc = j.next();
                 if(!attributeDefinitionByResourceClass.containsKey(rc))
                 {
-                    attributeDefinitionByResourceClass.put(rc, new HashSet());
+                    attributeDefinitionByResourceClass.put(rc,
+                        new HashSet<AttributeDefinition<?>>());
                 }
             }
         }
-    }    
+    }
 
     private void preloadRoleImplications()
     {
         synchronized(roleLock)
         {
-            List list;
+            List<? extends RoleImplication> list;
             try
             {
                 list = persistence.load(roleImplicationFactory);
@@ -2133,32 +2163,32 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to load RoleImplications", e);
             }
-            Iterator i = list.iterator();
+            Iterator<? extends RoleImplication> i = list.iterator();
             while(i.hasNext())
             {
-                RoleImplication item = (RoleImplication)i.next();
-                HashSet items = (HashSet)roleImplicationByRole.get(item.getSubRole());
+                RoleImplication item = i.next();
+                Set<RoleImplication> items = roleImplicationByRole.get(item.getSubRole());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     roleImplicationByRole.put(item.getSubRole(), items);
                 }
                 items.add(item);
-                items = (HashSet)roleImplicationByRole.get(item.getSuperRole());
+                items = roleImplicationByRole.get(item.getSuperRole());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     roleImplicationByRole.put(item.getSuperRole(), items);
                 }
                 items.add(item);
             }
-            i = roleRegistry.get().iterator();
-            while(i.hasNext())
+            Iterator<? extends Role> j = roleRegistry.get().iterator();
+            while(j.hasNext())
             {
-                Role r = (Role)i.next();
+                Role r = (Role)j.next();
                 if(!roleImplicationByRole.containsKey(r))
                 {
-                    roleImplicationByRole.put(r, new HashSet());
+                    roleImplicationByRole.put(r, new HashSet<RoleImplication>());
                 }
             }
         }
@@ -2168,7 +2198,7 @@ public class CoralRegistryImpl
     {
         synchronized(roleLock)
         {
-            List list;
+            List<? extends RoleAssignment> list;
             try
             {
                 list = persistence.load(roleAssignmentFactory);
@@ -2177,51 +2207,51 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to load RoleAssignments", e);
             }
-            Iterator i = list.iterator();
+            Iterator<? extends RoleAssignment> i = list.iterator();
             while(i.hasNext())
             {
-                RoleAssignment item = (RoleAssignment)i.next();
-                HashSet items = (HashSet)roleAssignmentBySubject.get(item.getSubject());
+                RoleAssignment item = i.next();
+                Set<RoleAssignment> items = roleAssignmentBySubject.get(item.getSubject());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     roleAssignmentBySubject.put(item.getSubject(), items);
                 }
                 items.add(item);
-                items = (HashSet)roleAssignmentByRole.get(item.getRole());
+                items = roleAssignmentByRole.get(item.getRole());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     roleAssignmentByRole.put(item.getRole(), items);
                 }
                 items.add(item);
             }
-            i = subjectRegistry.get().iterator();
-            while(i.hasNext())
+            Iterator<? extends Subject> j = subjectRegistry.get().iterator();
+            while(j.hasNext())
             {
-                Subject s = (Subject)i.next();
+                Subject s = j.next();
                 if(!roleAssignmentBySubject.containsKey(s))
                 {
-                    roleAssignmentBySubject.put(s, new HashSet());
+                    roleAssignmentBySubject.put(s, new HashSet<RoleAssignment>());
                 }
             }
-            i = roleRegistry.get().iterator();
-            while(i.hasNext())
+            Iterator<? extends Role> k = roleRegistry.get().iterator();
+            while(k.hasNext())
             {
-                Role r = (Role)i.next();
+                Role r = k.next();
                 if(!roleAssignmentByRole.containsKey(r))
                 {
-                    roleAssignmentByRole.put(r, new HashSet());
+                    roleAssignmentByRole.put(r, new HashSet<RoleAssignment>());
                 }
             }
         }
-    }    
+    }
 
     private void preloadPermissionAssociations()
     {
         synchronized(permissionLock)
         {
-            List list;
+            List<? extends PermissionAssociation> list;
             try
             {
                 list = persistence.load(permissionAssociationFactory);
@@ -2230,52 +2260,53 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to load PermissionAssociations", e);
             }
-            Iterator i = list.iterator();
+            Iterator<? extends PermissionAssociation> i = list.iterator();
             while(i.hasNext())
             {
-                PermissionAssociation item = (PermissionAssociation)i.next();
-                HashSet items = (HashSet)permissionAssociationByResourceClass.
-                    get(item.getResourceClass());
+                PermissionAssociation item = i.next();
+                Set<PermissionAssociation> items = permissionAssociationByResourceClass.get(item
+                    .getResourceClass());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     permissionAssociationByResourceClass.put(item.getResourceClass(), items);
                 }
                 items.add(item);
-                items = (HashSet)permissionAssociationByPermission.get(item.getPermission());
+                items = permissionAssociationByPermission.get(item.getPermission());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     permissionAssociationByPermission.put(item.getPermission(), items);
                 }
                 items.add(item);
             }
-            i = resourceClassRegistry.get().iterator();
-            while(i.hasNext())
+            Iterator<? extends ResourceClass<?>> j = resourceClassRegistry.get().iterator();
+            while(j.hasNext())
             {
-                ResourceClass rc = (ResourceClass)i.next();
+                ResourceClass<?> rc = j.next();
                 if(!permissionAssociationByResourceClass.containsKey(rc))
                 {
-                    permissionAssociationByResourceClass.put(rc, new HashSet());
+                    permissionAssociationByResourceClass.put(rc,
+                        new HashSet<PermissionAssociation>());
                 }
             }
-            i = permissionRegistry.get().iterator();
-            while(i.hasNext())
+            Iterator<? extends Permission> k = permissionRegistry.get().iterator();
+            while(k.hasNext())
             {
-                Permission p = (Permission)i.next();
+                Permission p = k.next();
                 if(!permissionAssociationByPermission.containsKey(p))
                 {
-                    permissionAssociationByPermission.put(p, new HashSet());
+                    permissionAssociationByPermission.put(p, new HashSet<PermissionAssociation>());
                 }
             }
         }
     }
-    
+
     private void preloadPermissionAssignments()
     {
         synchronized(permissionLock)
         {
-            List list;
+            List<? extends PermissionAssignment> list;
             try
             {
                 list = persistence.load(permissionAssignmentFactory);
@@ -2284,44 +2315,46 @@ public class CoralRegistryImpl
             {
                 throw new BackendException("Failed to load PermissionAssignments", e);
             }
-            Iterator i = list.iterator();
+            Iterator<? extends PermissionAssignment> i = list.iterator();
             while(i.hasNext())
             {
-                PermissionAssignment item = (PermissionAssignment)i.next();
-                HashSet items = (HashSet)permissionAssignmentByResource.get(item.getResource());
+                PermissionAssignment item = i.next();
+                Set<PermissionAssignment> items = permissionAssignmentByResource.get(item
+                    .getResource());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     permissionAssignmentByResource.put(item.getResource(), items);
                 }
                 items.add(item);
-                items = (HashSet)permissionAssignmentByRole.get(item.getRole());
+                items = permissionAssignmentByRole.get(item.getRole());
                 if(items == null)
                 {
-                    items = new HashSet();
+                    items = new HashSet<>();
                     permissionAssignmentByRole.put(item.getRole(), items);
                 }
                 items.add(item);
             }
-            i = Arrays.asList(coral.getStore().getResource()).iterator();
-            while(i.hasNext())
+            Iterator<? extends Resource> j = Arrays.asList(coral.getStore().getResource())
+                .iterator();
+            while(j.hasNext())
             {
-                Resource r = (Resource)i.next();
+                Resource r = j.next();
                 if(!permissionAssignmentByResource.containsKey(r))
                 {
-                    permissionAssignmentByResource.put(r, new HashSet());
+                    permissionAssignmentByResource.put(r, new HashSet<PermissionAssignment>());
                 }
             }
-            i = roleRegistry.get().iterator();
-            while(i.hasNext())
+            Iterator<? extends Role> k = roleRegistry.get().iterator();
+            while(k.hasNext())
             {
-                Role r = (Role)i.next();
+                Role r = k.next();
                 if(!permissionAssignmentByRole.containsKey(r))
                 {
-                    permissionAssignmentByRole.put(r, new HashSet());
+                    permissionAssignmentByRole.put(r, new HashSet<PermissionAssignment>());
                 }
             }
         }
     }
-    
+
 }
