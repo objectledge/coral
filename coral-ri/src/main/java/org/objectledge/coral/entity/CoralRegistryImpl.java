@@ -568,19 +568,18 @@ public class CoralRegistryImpl
             HashSet items = (HashSet)attributeDefinitionByResourceClass.get(owner);
             if(items == null)
             {
-                items = new HashSet();
-                attributeDefinitionByResourceClass.put(owner, items);
-                List list;
                 try
                 {
-                    list = persistence.load(attributeDefinitionFactory, "resource_class_id = ?",
+                    List list = persistence.load(attributeDefinitionFactory, "resource_class_id = ?",
                         owner.getId());
+                    items = new HashSet();
+                    attributeDefinitionRegistry.resolve(list, items);
+                    attributeDefinitionByResourceClass.put(owner, items);
                 }
                 catch(SQLException e)
                 {
                     throw new BackendException("Failed to load AttributeDefinitions for " + owner, e);
                 }
-                attributeDefinitionRegistry.resolve(list, items);
             }
             return (Set)items.clone();
         }
@@ -675,23 +674,16 @@ public class CoralRegistryImpl
             HashSet items = (HashSet)resourceClassInheritanceByResourceClass.get(owner);
             if(items == null)
             {
-                items = new HashSet();
-                resourceClassInheritanceByResourceClass.put(owner, items);
-                List list;
                 try
                 {
-                    list = persistence.load(resourceClassInheritanceFactory,
+                    List list = persistence.load(resourceClassInheritanceFactory,
                         "parent = ? OR child = ?", owner.getId(), owner.getId());
+                    items = new HashSet(list);
+                    resourceClassInheritanceByResourceClass.put(owner, items);
                 }
                 catch(SQLException e)
                 {
                     throw new BackendException("Failed to load ResourceClassInheritance for " + owner, e);
-                }
-                Iterator i = list.iterator();
-                while(i.hasNext())
-                {
-                    ResourceClassInheritance item = (ResourceClassInheritance)i.next();
-                    items.add(item);
                 }
             }
             return (Set)items.clone();
@@ -1204,23 +1196,16 @@ public class CoralRegistryImpl
             HashSet items = (HashSet)roleImplicationByRole.get(owner);
             if(items == null)
             {
-                items = new HashSet();
-                roleImplicationByRole.put(owner, items);
-                List list;
                 try
                 {
-                    list = persistence.load(roleImplicationFactory,
+                    List list = persistence.load(roleImplicationFactory,
                         "super_role = ? OR sub_role = ?", owner.getId(), owner.getId());
+                    items = new HashSet(list);
+                    roleImplicationByRole.put(owner, items);
                 }
                 catch(SQLException e)
                 {
                     throw new BackendException("Failed to load RoleImplications for " + owner, e);
-                }
-                Iterator i = list.iterator();
-                while(i.hasNext())
-                {
-                    RoleImplication item = (RoleImplication)i.next();
-                    items.add(item);
                 }
             }
             return (Set)items.clone();
@@ -1305,22 +1290,16 @@ public class CoralRegistryImpl
             HashSet items = (HashSet)roleAssignmentBySubject.get(owner);
             if(items == null)
             {
-                items = new HashSet();
-                roleAssignmentBySubject.put(owner, items);
-                List list;
                 try
                 {
-                    list = persistence.load(roleAssignmentFactory, "subject_id = ?", owner.getId());
+                    List list = persistence.load(roleAssignmentFactory, "subject_id = ?",
+                        owner.getId());
+                    items = new HashSet(list);
+                    roleAssignmentBySubject.put(owner, items);
                 }
                 catch(SQLException e)
                 {
                     throw new BackendException("Failed to load RoleAssignments for " + owner, e);
-                }
-                Iterator i = list.iterator();
-                while(i.hasNext())
-                {
-                    RoleAssignment item = (RoleAssignment)i.next();
-                    items.add(item);
                 }
             }
             return (Set)items.clone();
@@ -1337,22 +1316,16 @@ public class CoralRegistryImpl
             HashSet items = (HashSet)roleAssignmentByRole.get(owner);
             if(items == null)
             {
-                items = new HashSet();
-                roleAssignmentByRole.put(owner, items);
-                List list;
                 try
                 {
-                    list = persistence.load(roleAssignmentFactory, "role_id = ?", owner.getId());
+                    List list = persistence.load(roleAssignmentFactory, "role_id = ?",
+                        owner.getId());
+                    items = new HashSet(list);
+                    roleAssignmentByRole.put(owner, items);
                 }
                 catch(SQLException e)
                 {
                     throw new BackendException("Failed to load RoleAssignments for " + owner, e);
-                }
-                Iterator i = list.iterator();
-                while(i.hasNext())
-                {
-                    RoleAssignment item = (RoleAssignment)i.next();
-                    items.add(item);
                 }
             }
             return (Set)items.clone();
@@ -1429,23 +1402,17 @@ public class CoralRegistryImpl
             HashSet items = (HashSet)permissionAssociationByResourceClass.get(owner);
             if(items == null)
             {
-                items = new HashSet();
-                permissionAssociationByResourceClass.put(owner, items);
-                List list;
                 try
                 {
-                    list = persistence.load(permissionAssociationFactory, "resource_class_id = ?",
+                    List list = persistence.load(permissionAssociationFactory,
+                        "resource_class_id = ?",
                         owner.getId());
+                    items = new HashSet(list);
+                    permissionAssociationByResourceClass.put(owner, items);
                 }
                 catch(SQLException e)
                 {
                     throw new BackendException("Failed to load PermissionAssociations for " + owner, e);
-                }
-                Iterator i = list.iterator();
-                while(i.hasNext())
-                {
-                    PermissionAssociation item = (PermissionAssociation)i.next();
-                    items.add(item);
                 }
             }
             return (Set)items.clone();
@@ -1462,23 +1429,16 @@ public class CoralRegistryImpl
             HashSet items = (HashSet)permissionAssociationByPermission.get(owner);
             if(items == null)
             {
-                items = new HashSet();
-                permissionAssociationByPermission.put(owner, items);
-                List list;
                 try
                 {
-                    list = persistence.load(permissionAssociationFactory, "permission_id = ?",
+                    List list = persistence.load(permissionAssociationFactory, "permission_id = ?",
                         owner.getId());
+                    items = new HashSet(list);
+                    permissionAssociationByPermission.put(owner, items);
                 }
                 catch(SQLException e)
                 {
                     throw new BackendException("Failed to load PermissionAssociations for " + owner, e);
-                }
-                Iterator i = list.iterator();
-                while(i.hasNext())
-                {
-                    PermissionAssociation item = (PermissionAssociation)i.next();
-                    items.add(item);
                 }
             }
             return (Set)items.clone();
@@ -1559,23 +1519,16 @@ public class CoralRegistryImpl
             HashSet items = (HashSet)permissionAssignmentByResource.get(owner);
             if(items == null)
             {
-                items = new HashSet();
-                permissionAssignmentByResource.put(owner, items);
-                List list;
                 try
                 {
-                    list = persistence.load(permissionAssignmentFactory, "resource_id = ?",
+                    List list = persistence.load(permissionAssignmentFactory, "resource_id = ?",
                         owner.getId());
+                    items = new HashSet<>(list);
+                    permissionAssignmentByResource.put(owner, items);
                 }
                 catch(SQLException e)
                 {
                     throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
-                }
-                Iterator i = list.iterator();
-                while(i.hasNext())
-                {
-                    PermissionAssignment item = (PermissionAssignment)i.next();
-                    items.add(item);
                 }
             }
             return (Set)items.clone();
@@ -1592,23 +1545,16 @@ public class CoralRegistryImpl
             HashSet items = (HashSet)permissionAssignmentByRole.get(owner);
             if(items == null)
             {
-                items = new HashSet();
-                permissionAssignmentByRole.put(owner, items);
-                List list;
                 try
                 {
-                    list = persistence.load(permissionAssignmentFactory, "role_id = ?",
+                    List list = persistence.load(permissionAssignmentFactory, "role_id = ?",
                         owner.getId());
+                    items = new HashSet<>(list);
+                    permissionAssignmentByRole.put(owner, items);
                 }
                 catch(SQLException e)
                 {
                     throw new BackendException("Failed to load PermissionAssignments for " + owner, e);
-                }
-                Iterator i = list.iterator();
-                while(i.hasNext())
-                {
-                    PermissionAssignment item = (PermissionAssignment)i.next();
-                    items.add(item);
                 }
             }
             return (Set)items.clone();
