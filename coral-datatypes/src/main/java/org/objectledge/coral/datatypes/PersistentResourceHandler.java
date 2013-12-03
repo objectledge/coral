@@ -21,7 +21,6 @@ import org.objectledge.coral.schema.AttributeFlags;
 import org.objectledge.coral.schema.AttributeHandler;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.schema.ResourceClass;
-import org.objectledge.coral.schema.SchemaIntegrityException;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.store.Resource;
 import org.objectledge.coral.store.ValueRequiredException;
@@ -67,22 +66,6 @@ public class PersistentResourceHandler<T extends Resource>
         throws Exception
     {
         super(coralSchema, instantiator, resourceClass, database, cacheFactory, logger);
-        if(resourceClass.getDbTable() == null)
-        {
-            boolean tableShouldExist = false;
-            for(AttributeDefinition<?> attr : resourceClass.getDeclaredAttributes())
-            {
-                if((attr.getFlags() & AttributeFlags.BUILTIN) == 0)
-                {
-                    tableShouldExist = true;
-                }
-            }
-            if(tableShouldExist)
-            {
-                throw new SchemaIntegrityException("no database table defined for class "
-                    + resourceClass.getName());
-            }
-        }
         this.persistence = persistence;
         this.schemaHandler = new PersistentSchemaHandler<T>(resourceClass, persistence);
     }
@@ -238,6 +221,7 @@ public class PersistentResourceHandler<T extends Resource>
     }
 
     private String buildQuery(Set<ResourceClass<?>> classes)
+        throws SQLException
     {
         StringBuilder query = new StringBuilder();
         query.append("SELECT r.resource_id, ");
@@ -246,6 +230,10 @@ public class PersistentResourceHandler<T extends Resource>
         {
             if(tableShouldExist(rc))
             {
+                if(rc.getDbTable() == null)
+                {
+                    throw new SQLException("no database table defined for class " + rc.getName());
+                }
                 for(AttributeDefinition<?> ad : rc.getDeclaredAttributes())
                 {
                     if(isConcrete(ad))
@@ -322,7 +310,7 @@ public class PersistentResourceHandler<T extends Resource>
     }
 
     // StandardResourceHandler contract implementation //////////////////////
-    
+
     /**
      * {@inheritDoc}
      */

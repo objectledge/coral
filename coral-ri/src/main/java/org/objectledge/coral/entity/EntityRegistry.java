@@ -216,12 +216,12 @@ public class EntityRegistry<E extends Persistent & Entity>
             Set<E> es = byName.get(name);
             if(es == null)
             {
-                es = new HashSet<E>();
-                byName.put(name, es);
                 try
                 {
                     List<E> items = persistence.load(factory, "name = ?", name);
+                    es = new HashSet<E>();
                     resolve(items, es);
+                    byName.put(name, es);
                 }
                 catch(SQLException ex)
                 {
