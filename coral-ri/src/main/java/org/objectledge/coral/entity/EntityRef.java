@@ -1,6 +1,5 @@
 package org.objectledge.coral.entity;
 
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 import org.objectledge.coral.CoralCore;
@@ -29,7 +28,7 @@ public abstract class EntityRef<E extends Entity>
     private volatile WeakReference<E> ref;
 
     /** Queue that the reference should be associated with. */
-    private final ReferenceQueue<E> queue;
+    private final EntityReferenceQueue<E> queue;
     
     /**
      * Resolves identifier to a concrete Entity object using Coral core.
@@ -47,20 +46,14 @@ public abstract class EntityRef<E extends Entity>
      * @param coralCore The Coral Core.
      * @param queue reference queue, may be null.
      */
-    public EntityRef(Class<E> entityClass, E entity, CoralCore coralCore, ReferenceQueue<E> queue)
+    public EntityRef(Class<E> entityClass, E entity, CoralCore coralCore,
+        EntityReferenceQueue<E> queue)
     {
         this.coralCore = coralCore;
         this.entityClass = entityClass;
         this.queue = queue;
-        ref = new WeakReference<E>(entity, queue);
-        if(entity != null)
-        {
-            id = entity.getId();
-        }
-        else
-        {
-            id = -1L;
-        }
+        ref = new WeakEntityReference<>(entity, queue);
+        id = entity != null ? entity.getId() : -1L;
         this.hashCode = entityClass.hashCode() ^ (int)(id * 0x11111111);
     }
     
@@ -70,7 +63,8 @@ public abstract class EntityRef<E extends Entity>
      * @param coralCore The Coral Core.
      * @param queue reference queue, may be null.
      */
-    public EntityRef(Class<E> entityClass, long id, CoralCore coralCore, ReferenceQueue<E> queue)
+    public EntityRef(Class<E> entityClass, long id, CoralCore coralCore,
+        EntityReferenceQueue<E> queue)
     {
         this.coralCore = coralCore;
         this.queue = queue;
@@ -97,7 +91,7 @@ public abstract class EntityRef<E extends Entity>
         if(entity == null && id != -1L)
         {
             entity = resolve(id);
-            ref = new WeakReference<E>(entity, queue);
+            ref = new WeakEntityReference<>(entity, queue);
         }
         return entity;
     }

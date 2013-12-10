@@ -1,7 +1,5 @@
 package org.objectledge.coral.security;
 
-import java.lang.ref.Reference;
-import java.lang.ref.ReferenceQueue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.objectledge.coral.CoralCore;
+import org.objectledge.coral.entity.EntityReferenceQueue;
+import org.objectledge.coral.entity.WeakEntityReference;
 import org.objectledge.coral.event.CoralEventHub;
 import org.objectledge.coral.event.PermissionAssignmentChangeListener;
 import org.objectledge.coral.event.ResourceTreeChangeListener;
@@ -49,7 +49,7 @@ public class PermissionContainer
     /** Cache of permission information */
     private ConcurrentMap<ResourceRef, PermissionsInfo> piCache = new ConcurrentHashMap<ResourceRef, PermissionsInfo>();
 
-    private final ReferenceQueue<Resource> queue = new ReferenceQueue<Resource>();
+    private final EntityReferenceQueue<Resource> queue = new EntityReferenceQueue<>();
 
     private static final int DRAIN_LIMIT = 16;
 
@@ -226,14 +226,10 @@ public class PermissionContainer
     private void drainQueue()
     {
         int drainCount = DRAIN_LIMIT;
-        Reference<Resource> ref;
-        while(drainCount-- > 0 && (ref = (Reference<Resource>)queue.poll()) != null)
+        WeakEntityReference<Resource> r;
+        while(drainCount-- > 0 && (r = queue.poll()) != null)
         {
-            Resource r = ref.get();
-            if(r != null)
-            {
-                piCache.remove(new ResourceRef(r.getId(), coral));
-            }
+            piCache.remove(new ResourceRef(r.getId(), coral));
         }
     }
 
