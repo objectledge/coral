@@ -28,11 +28,11 @@ public class MultiAttributeComparator<T extends Resource>
      * @throws UnknownAttributeException when an illegal attribute name is provided in attrNames
      * @throws IllegalArgumentException when one of the requested attributes has an unsupported
      *         type, see
-     *         {@link AttributeComparator#getInstance(org.objectledge.coral.schema.AttributeDefinition, Locale, org.objectledge.coral.table.comparator.AttributeComparator.Direction)}
+     *         {@link AttributeComparator#getInstance(org.objectledge.coral.schema.AttributeDefinition, org.objectledge.coral.table.comparator.AttributeComparator.Direction, Locale)}
      */
     @SuppressWarnings("unchecked")
     public MultiAttributeComparator(ResourceClass<T> rClass, Locale locale,
-        AttributeComparator.Direction direction, String... attrNames)
+        Direction direction, String... attrNames)
     {
         comp = new Comparator[attrNames.length];
         for(int i = 0; i < attrNames.length; i++)
