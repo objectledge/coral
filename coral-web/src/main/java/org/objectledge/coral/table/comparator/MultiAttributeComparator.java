@@ -6,6 +6,8 @@ import java.util.Locale;
 import org.objectledge.coral.schema.ResourceClass;
 import org.objectledge.coral.schema.UnknownAttributeException;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.table.comparator.CompositeComparator;
+import org.objectledge.table.comparator.Direction;
 
 /**
  * Compare resources using multiple attributes.

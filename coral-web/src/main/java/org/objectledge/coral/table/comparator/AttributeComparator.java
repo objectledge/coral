@@ -5,6 +5,8 @@ import java.util.Locale;
 
 import org.objectledge.coral.schema.AttributeDefinition;
 import org.objectledge.coral.store.Resource;
+import org.objectledge.table.comparator.Direction;
+import org.objectledge.table.comparator.PropertyBasedComparator;
 
 /**
  * Compares attributes using a given attribute, taking into consideration that the attributes may be
