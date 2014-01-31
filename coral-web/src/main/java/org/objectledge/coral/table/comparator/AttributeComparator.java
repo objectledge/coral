@@ -26,11 +26,6 @@ import org.objectledge.coral.store.Resource;
 public abstract class AttributeComparator<T extends Resource, V>
     implements Comparator<T>
 {
-    public enum Direction
-    {
-        ASC, DESC
-    }
-
     private final Direction direction;
 
     private final AttributeDefinition<V> attrDef;
