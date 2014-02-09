@@ -4,7 +4,7 @@
   <parent>
     <artifactId>coral-common</artifactId>
     <groupId>org.objectledge.coral</groupId>
-    <version>1.0.18.4</version>
+    <version>1.0.19</version>
     <relativePath>../../../../coral-common</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
