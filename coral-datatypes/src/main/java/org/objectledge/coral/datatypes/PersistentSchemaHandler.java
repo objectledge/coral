@@ -549,10 +549,13 @@ public class PersistentSchemaHandler<T extends Resource>
     public void setDbTable(String oldTable, String newTable)
         throws SQLException
     {
-        try(Connection conn = persistence.getDatabase().getConnection();
-            Statement stmt = conn.createStatement())
+        if(oldTable != null)
         {
-            stmt.execute(String.format("ALTER TABLE %s RENAME TO %s", oldTable, newTable));
+            try(Connection conn = persistence.getDatabase().getConnection();
+                Statement stmt = conn.createStatement())
+            {
+                stmt.execute(String.format("ALTER TABLE %s RENAME TO %s", oldTable, newTable));
+            }
         }
     }
 

@@ -1,10 +1,9 @@
 package org.objectledge.coral.store;
 
-import java.lang.ref.ReferenceQueue;
-
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.entity.EntityRef;
+import org.objectledge.coral.entity.EntityReferenceQueue;
 
 /**
  * GC friendly Resource reference.
@@ -20,7 +19,7 @@ public class ResourceRef
      * @param coralCore the Coral core.
      * @param queue reference queue, may be null.
      */
-    public ResourceRef(Resource resource, CoralCore coralCore, ReferenceQueue<Resource> queue)
+    public ResourceRef(Resource resource, CoralCore coralCore, EntityReferenceQueue<Resource> queue)
     {
         super(Resource.class, resource, coralCore, queue);
     }
@@ -31,7 +30,7 @@ public class ResourceRef
      * @param coralCore the Coral core.
      * @param queue reference queue, may be null.
      */
-    public ResourceRef(long id, CoralCore coralCore, ReferenceQueue<Resource> queue)
+    public ResourceRef(long id, CoralCore coralCore, EntityReferenceQueue<Resource> queue)
     {
         super(Resource.class, id, coralCore, queue);
     }
