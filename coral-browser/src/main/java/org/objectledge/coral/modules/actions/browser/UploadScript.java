@@ -1,5 +1,7 @@
 package org.objectledge.coral.modules.actions.browser;
 
+import java.io.IOException;
+
 import org.jcontainer.dna.Logger;
 import org.objectledge.context.Context;
 import org.objectledge.coral.session.CoralSession;
@@ -41,21 +43,22 @@ public class UploadScript extends BaseBrowserAction
      * @param context the context.
      */
     public void execute(Context context, Parameters parameters, MVCContext mvcContext, TemplatingContext templatingContext, CoralSession coralSession)
-    throws ProcessingException
+        throws ProcessingException
     {
         UploadContainer script;
         try
         {
             script = fileUpload.getContainer("script");
+            if(script != null)
+            {
+                templatingContext.put("uploaded", new String(script.getBytes()));
+            }
         }
-        catch(UploadLimitExceededException e)
+        catch(UploadLimitExceededException | IOException e)
         {
-            // TODO http://objectledge.org/jira/browse/CORAL-66 Inform the user abour a problem in file upload
-            throw e;
-        }
-        if(script != null)
-        {
-        	templatingContext.put("uploaded", new String(script.getBytes()));
+            // TODO http://objectledge.org/jira/browse/CORAL-66 Inform the user about a problem in
+            // file upload
+            throw new ProcessingException(e);
         }
     }
 }
