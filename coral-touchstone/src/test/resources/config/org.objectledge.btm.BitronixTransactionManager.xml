@@ -4,10 +4,7 @@
     <serverId>node0</serverId>
     <disableJmx>true</disableJmx>
     <journal>
-      <disk>
-        <logPart1Filename>target/btm/btm1.tlog</logPart1Filename>
-        <logPart2Filename>target/btm/btm2.tlog</logPart2Filename>
-      </disk>
+      <null/>
     </journal>
     <timer>
       <defaultTransactionTimeout>500</defaultTransactionTimeout>
