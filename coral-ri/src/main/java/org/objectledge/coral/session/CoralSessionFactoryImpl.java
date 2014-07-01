@@ -40,6 +40,10 @@ import org.objectledge.coral.CoralConfig;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.security.Subject;
+import org.objectledge.filesystem.FileSystem;
+import org.objectledge.statistics.AbstractMuninGraph;
+import org.objectledge.statistics.MuninGraph;
+import org.objectledge.statistics.StatisticsProvider;
 
 /**
  * An implementation of the Coral session factory.
@@ -47,7 +51,8 @@ import org.objectledge.coral.security.Subject;
  * @author <a href="mailto:rafal@caltha.pl">Rafal Krzewski</a>
  * @version $Id: CoralSessionFactoryImpl.java,v 1.9 2005-02-21 11:51:24 rafal Exp $
  */
-public class CoralSessionFactoryImpl implements CoralSessionFactory
+public class CoralSessionFactoryImpl
+    implements CoralSessionFactory, StatisticsProvider
 {
     private KeyedObjectPool pool;
     
@@ -61,11 +66,12 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
      * @param coral the Coral component hub.
      * @param log the Logger to use.
      */
-    public CoralSessionFactoryImpl(CoralCore coral, Logger log)
+    public CoralSessionFactoryImpl(CoralCore coral, FileSystem fileSystem, Logger log)
     {
         this.coral = coral;
         this.log = log;
         pool = new GenericKeyedObjectPool(new Factory(), poolConfig(coral.getConfig()));
+        graphs = new MuninGraph[] { new SessionPoolGraph(fileSystem) };
     }
 
     private GenericKeyedObjectPool.Config poolConfig(CoralConfig config)
@@ -189,4 +195,37 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
             return new CoralSessionImpl(coral, pool, log);
         }
     }    
+
+    @Override
+    public MuninGraph[] getGraphs()
+    {
+        return graphs;
+    }
+
+    private final MuninGraph[] graphs;
+
+    public class SessionPoolGraph
+        extends AbstractMuninGraph
+    {
+        public SessionPoolGraph(FileSystem fs)
+        {
+            super(fs);
+        }
+
+        @Override
+        public String getId()
+        {
+            return "coral_sessions";
+        }
+
+        public int getActive()
+        {
+            return pool.getNumActive();
+        }
+
+        public int getIdle()
+        {
+            return pool.getNumIdle();
+        }
+    }
 }
