@@ -39,29 +39,31 @@ public class CoralConfig
     private final int sessionEvictionThreashold;
 
     /**
-     * Number of sessions checked for eviction eligibility per single eviction run.
+     * Number of sessions checked for eviction eligibility per single eviction run. When negative
+     * value n is provided roughly -1/n objects in the pool will be tested.
      */
     private final int sessionTestsPerEvictionRun;
 
     /**
      * Default pool size per user.
      */
-    private static final int DEFAULT_SESSION_POOL_SIZE_PER_SUBJECT = 8;
+    private static final int DEFAULT_SESSION_POOL_SIZE_PER_SUBJECT = 0;
 
     /**
      * Default session eviction interval in seconds.
      */
-    private static final int DEFAULT_SESSION_EVICTION_INTERVAL = 60;
+    private static final int DEFAULT_SESSION_EVICTION_INTERVAL = 15;
 
     /**
      * Default session idle time threshold in seconds.
      */
-    private static final int DEFAULT_SESSION_EVICTION_THRESHOLD = 300;
+    private static final int DEFAULT_SESSION_EVICTION_THRESHOLD = 60;
 
     /**
      * Default Number of tests per eviction run.
      */
-    private static final int DEFAULT_SESSION_TESTS_PER_EVICTION_RUN = 1000;
+    private static final int DEFAULT_SESSION_TESTS_PER_EVICTION_RUN = -DEFAULT_SESSION_EVICTION_THRESHOLD
+        / DEFAULT_SESSION_EVICTION_INTERVAL;
 
     /**
      * Creates a default Coral configuration.
