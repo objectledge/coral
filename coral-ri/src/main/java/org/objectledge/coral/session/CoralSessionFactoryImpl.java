@@ -36,6 +36,7 @@ import org.apache.commons.pool.KeyedObjectPool;
 import org.apache.commons.pool.impl.GenericKeyedObjectPool;
 import org.jcontainer.dna.Logger;
 import org.objectledge.coral.BackendException;
+import org.objectledge.coral.CoralConfig;
 import org.objectledge.coral.CoralCore;
 import org.objectledge.coral.entity.EntityDoesNotExistException;
 import org.objectledge.coral.security.Subject;
@@ -64,13 +65,18 @@ public class CoralSessionFactoryImpl implements CoralSessionFactory
     {
         this.coral = coral;
         this.log = log;
+        pool = new GenericKeyedObjectPool(new Factory(), poolConfig(coral.getConfig()));
+    }
+
+    private GenericKeyedObjectPool.Config poolConfig(CoralConfig config)
+    {
         GenericKeyedObjectPool.Config poolConfig = new GenericKeyedObjectPool.Config();
         poolConfig.whenExhaustedAction = GenericKeyedObjectPool.WHEN_EXHAUSTED_GROW;
-        poolConfig.maxIdle = coral.getConfig().getSessionPoolSizePerUser();
-        poolConfig.minEvictableIdleTimeMillis = coral.getConfig().getSessionEvictionThreashold();
-        poolConfig.timeBetweenEvictionRunsMillis = coral.getConfig().getSessionEvictionInterval();
-        poolConfig.numTestsPerEvictionRun = coral.getConfig().getSessionTestsPerEvictionRun();
-        pool = new GenericKeyedObjectPool(new Factory(), poolConfig);
+        poolConfig.maxIdle = config.getSessionPoolSizePerUser();
+        poolConfig.minEvictableIdleTimeMillis = config.getSessionEvictionThreashold() * 1000;
+        poolConfig.timeBetweenEvictionRunsMillis = config.getSessionEvictionInterval() * 1000;
+        poolConfig.numTestsPerEvictionRun = config.getSessionTestsPerEvictionRun();
+        return poolConfig;
     }
     
     /** 
