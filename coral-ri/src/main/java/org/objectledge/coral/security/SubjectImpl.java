@@ -167,12 +167,26 @@ public class SubjectImpl
     public Principal getPrincipal()
     {
         return new Principal()
-        {
-            public String getName()
             {
-                return SubjectImpl.this.getName();
-            }
-        };
+                public String getName()
+                {
+                    return SubjectImpl.this.getName();
+                }
+
+                public int hashCode()
+                {
+                    return SubjectImpl.this.getName().hashCode();
+                }
+
+                public boolean equals(Object that)
+                {
+                    if(that instanceof Principal)
+                    {
+                        return ((Principal)that).getName().equals(SubjectImpl.this.getName());
+                    }
+                    return false;
+                }
+            };
     }
     
 
