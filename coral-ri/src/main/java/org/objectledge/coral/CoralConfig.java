@@ -47,7 +47,7 @@ public class CoralConfig
     /**
      * Default pool size per user.
      */
-    private static final int DEFAULT_SESSION_POOL_SIZE_PER_SUBJECT = 0;
+    private static final int DEFAULT_SESSION_POOL_SIZE_PER_SUBJECT = 8;
 
     /**
      * Default session eviction interval in seconds.
