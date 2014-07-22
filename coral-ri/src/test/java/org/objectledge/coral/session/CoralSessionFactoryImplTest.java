@@ -74,7 +74,7 @@ public class CoralSessionFactoryImplTest extends LedgeTestCase
         mockCoralCore.stubs().method("getRMLParserFactory").will(returnValue(null));
         mockCoralCore.stubs().method("getConfig").will(returnValue(coralConfig));
         
-        coralSessionFactoryImpl = new CoralSessionFactoryImpl(coralCore, null);
+        coralSessionFactoryImpl = new CoralSessionFactoryImpl(coralCore, getFileSystem(), null);
         
         mockPrincipal = mock(Principal.class);
         principal = (Principal)mockPrincipal.proxy();

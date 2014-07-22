@@ -1,0 +1,12 @@
+graph_title Coral session pool
+graph_order active idle
+graph_vlabel sessions
+graph_category coral
+active.label hit
+active.type GAUGE
+active.draw AREA
+active.min 0
+idle.label miss
+idle.type GAUGE
+idle.draw STACK
+idle.min 0
