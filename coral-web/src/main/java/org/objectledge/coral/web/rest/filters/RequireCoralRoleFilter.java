@@ -31,13 +31,20 @@ public class RequireCoralRoleFilter
     public void filter(ContainerRequestContext requestContext)
         throws IOException
     {
-        final Annotation[] annotations = resourceInfo.get().getResourceMethod().getAnnotations();
+        final SecurityConstraintProcessor<RequireCoralRole> processor = new RoleProcessor(
+            coralSessionFactory);
+        ResourceInfo resourceInfoInstance = resourceInfo.get();
+        checkRequirements(processor, resourceInfoInstance.getResourceClass().getAnnotations());
+        checkRequirements(processor, resourceInfoInstance.getResourceMethod().getAnnotations());
+    }
+
+    private void checkRequirements(final SecurityConstraintProcessor<RequireCoralRole> processor,
+        final Annotation[] annotations)
+    {
         for(Annotation annotation : annotations)
         {
             if(annotation instanceof RequireCoralRole)
             {
-                final SecurityConstraintProcessor<RequireCoralRole> processor = new RoleProcessor(
-                    coralSessionFactory);
                 try
                 {
                     processor.process((RequireCoralRole)annotation);
@@ -49,5 +56,4 @@ public class RequireCoralRoleFilter
             }
         }
     }
-
 }
