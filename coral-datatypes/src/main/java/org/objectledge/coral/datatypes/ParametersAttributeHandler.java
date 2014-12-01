@@ -127,8 +127,7 @@ public class ParametersAttributeHandler
             Parameters parameters = dbParametersManager.getParameters(id);
             synchronized(parameters)
             {
-                parameters.remove();
-                parameters.add(value, true);
+                parameters.set(value);
             }   
         }
         catch(DBParametersException e)
