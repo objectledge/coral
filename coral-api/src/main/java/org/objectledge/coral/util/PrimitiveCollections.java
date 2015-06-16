@@ -20,7 +20,6 @@ public class PrimitiveCollections
     {
         return new LongSet()
             {
-
                 public boolean add(long arg0)
                 {
                     throw new UnsupportedOperationException();
@@ -119,16 +118,41 @@ public class PrimitiveCollections
                 {
                     throw new UnsupportedOperationException();
                 }
-                
-                public int hashCode() 
+
+                public int hashCode()
                 {
                     return s.hashCode();
                 }
-                
-                public boolean equals(Object arg0)
+
+                public boolean equals(Object obj)
                 {
-                    return s.equals(arg0);
+                    if(obj instanceof LongSet)
+                    {
+                        return equal(this, (LongSet)obj);
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             };
+    }
+    
+    private static boolean equal(LongSet thisSet, LongSet thatSet)
+    {
+        if(thisSet.size() != thatSet.size())
+        {
+            return false;
+        }
+        LongIterator thisIter = thisSet.iterator();
+        LongIterator thatIter = thatSet.iterator();        
+        while(thisIter.hasNext() && thatIter.hasNext())
+        {
+            if(thisIter.next() != thatIter.next())
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }
