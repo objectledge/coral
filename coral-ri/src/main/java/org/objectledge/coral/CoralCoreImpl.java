@@ -56,6 +56,8 @@ import org.objectledge.coral.schema.CoralSchemaImpl;
 import org.objectledge.coral.script.parser.RMLParserFactory;
 import org.objectledge.coral.security.CoralSecurity;
 import org.objectledge.coral.security.CoralSecurityImpl;
+import org.objectledge.coral.security.RoleContainerManager;
+import org.objectledge.coral.security.RoleContainerManagerImpl;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.CoralStore;
@@ -80,6 +82,8 @@ public class CoralCoreImpl
     implements CoralCore, Startable
 {
     private CoralRegistry coralRegistry;
+    
+    private RoleContainerManager roleContainerManager;
 
     private CoralSchema coralSchema;
 
@@ -202,6 +206,7 @@ public class CoralCoreImpl
         container.registerComponentImplementation(CoralRelationQuery.class,
             CoralRelationQueryImpl.class);
         container.registerComponentImplementation(CoralQuery.class, SQLCoralQueryImpl.class);
+        container.registerComponentImplementation(RoleContainerManager.class, RoleContainerManagerImpl.class);
         // up it goes...
         coralRegistry = (CoralRegistry)container.getComponentInstance(CoralRegistry.class);
         coralSchema = (CoralSchema)container.getComponentInstance(CoralSchema.class);
@@ -212,6 +217,7 @@ public class CoralCoreImpl
         coralRelationQuery = (CoralRelationQuery)container
             .getComponentInstance(CoralRelationQuery.class);
         coralQuery = (CoralQuery)container.getComponentInstance(CoralQuery.class);
+        roleContainerManager = (RoleContainerManager)container.getComponentInstance(RoleContainerManager.class);
 
         this.coralConfig = coralConfig;
     }
@@ -277,6 +283,14 @@ public class CoralCoreImpl
     public CoralRegistry getRegistry()
     {
         return coralRegistry;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public RoleContainerManager getRoleContainerManager()
+    {
+        return roleContainerManager;
     }
 
     /**
