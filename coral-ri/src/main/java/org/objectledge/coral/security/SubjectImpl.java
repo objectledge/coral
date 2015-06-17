@@ -2,6 +2,7 @@ package org.objectledge.coral.security;
 
 import java.security.Principal;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.objectledge.collections.ImmutableHashSet;
@@ -335,6 +336,16 @@ public class SubjectImpl
 
     // private //////////////////////////////////////////////////////////////////////////////////
 
+    private ImmutableSet<Role> roles(ImmutableSet<RoleAssignment> assignments)
+    {
+        Set<Role> roles = new HashSet<>();
+        for(RoleAssignment ra : assignments)
+        {
+            roles.add(ra.getRole());
+        }
+        return new ImmutableHashSet<>(roles);
+    }
+    
     private synchronized ImmutableSet<RoleAssignment> buildRoleAssignments()
     {
         if(roleAssignments == null)
@@ -349,7 +360,7 @@ public class SubjectImpl
     {
         if(roles == null)
         {
-            roles = new RoleContainer(coralEventHub, coral, buildRoleAssignments());
+            roles = new RoleContainer(coralEventHub, coral, roles(buildRoleAssignments()));
         }
         return roles;
     }

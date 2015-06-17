@@ -43,44 +43,21 @@ public class RoleContainer
     private PermissionContainer permissions;
     
     // Initialization ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Creates a new role container.
-     *
-     * @param coralEventHub the even hub.
-     * @param coral the component hub.
-     * 
-     * @param role the role.
-     */
-    public RoleContainer(CoralEventHub coralEventHub, CoralCore coral, 
-        Role role)
-    {
-        this.coralEventHub = coralEventHub;
-        this.coral = coral;
-        explicitRoles.add(role);
-        coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
-        permissions = new PermissionContainer(coralEventHub, coral, this);        
-    }
     
     /**
      * Creates a new role container.
      *
      * @param coralEventHub the even hub.
      * @param coral the component hub.
-     * 
-     * @param data the initial roles
-     * @param roles <code>true</code> if data set contains 
-     *        {@link org.objectledge.coral.security.Role} objects, <code>false</code> if it 
-     *        contains {@link org.objectledge.coral.security.RoleAssignment} objects. 
+     * @param roles the reflected roles
      */
     public RoleContainer(CoralEventHub coralEventHub, CoralCore coral, 
-        ImmutableSet<RoleAssignment> assignments)
+        ImmutableSet<? extends Role> roles)
     {
         this.coralEventHub = coralEventHub;
         this.coral = coral;
-        for(RoleAssignment assignment : assignments)
+        for(Role role : roles)
         {
-            Role role = assignment.getRole();
             explicitRoles.add(role);
             coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
         }

@@ -435,7 +435,7 @@ public class RoleImpl
     {
         if(roles == null)
         {
-            roles = new RoleContainer(coralEventHub, coral, this);
+            roles = new RoleContainer(coralEventHub, coral, ImmutableHashSet.singletonSet(this));
         }
         return roles;
     }
