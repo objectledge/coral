@@ -35,9 +35,6 @@ public class SubjectImpl
     /** The component hub. */
     private CoralCore coral;
     
-    /** The permission container. */
-    private PermissionContainer permissions = null;
-    
     /** The role container. */
     private RoleContainer roles = null;
 
@@ -239,7 +236,7 @@ public class SubjectImpl
      */
     public Permission[] getPermissions(Resource resource)
     {
-        return buildPermissions().getPermissions(resource);
+        return buildRoles().getPermissions().getPermissions(resource);
     }
 
     /**
@@ -253,7 +250,7 @@ public class SubjectImpl
      */
     public boolean hasPermission(Resource resource, Permission permission)
     {
-        return buildPermissions().hasPermission(resource, permission);
+        return buildRoles().getPermissions().hasPermission(resource, permission);
     }
 
     /**
@@ -355,14 +352,5 @@ public class SubjectImpl
             roles = new RoleContainer(coralEventHub, coral, buildRoleAssignments());
         }
         return roles;
-    }
-
-    private synchronized PermissionContainer buildPermissions()
-    {
-        if(permissions == null)
-        {
-            permissions = new PermissionContainer(coralEventHub, coral, buildRoles());
-        }
-        return permissions;
     }
 }

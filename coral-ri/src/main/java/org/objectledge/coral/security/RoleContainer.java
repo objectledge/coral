@@ -58,7 +58,8 @@ public class RoleContainer
         this.coralEventHub = coralEventHub;
         this.coral = coral;
         explicitRoles.add(role);
-        coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);        
+        coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
+        permissions = new PermissionContainer(coralEventHub, coral, this);        
     }
     
     /**
@@ -83,6 +84,7 @@ public class RoleContainer
             explicitRoles.add(role);
             coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
         }
+        permissions = new PermissionContainer(coralEventHub, coral, this);
     }
 
     // public interface //////////////////////////////////////////////////////////////////////////
@@ -191,7 +193,12 @@ public class RoleContainer
         return buildMatchingRoles().contains(role);
     }
     
-    // RoleImplicationChangeListener inteface ///////////////////////////////////////////////////
+    public PermissionContainer getPermissions()
+    {
+        return permissions;
+    }
+    
+    // RoleImplicationChangeListener interface //////////////////////////////////////////////////
 
     /**
      * Called when role implications change.
@@ -221,7 +228,7 @@ public class RoleContainer
                 changed = true;
             }
         }
-        if(permissions != null && changed)
+        if(changed)
         {
             permissions.flush();
         }
@@ -298,11 +305,6 @@ public class RoleContainer
             return match;
         }
         return matchingRoles;
-    }
-
-    void setPermissionContainer(PermissionContainer permissions)
-    {
-        this.permissions = permissions;
     }
 
     public String toString()

@@ -67,7 +67,6 @@ public class PermissionContainer
         this.coralEventHub = coralEventHub;
         this.coral = coral;
         this.roles = roles;
-        roles.setPermissionContainer(this);
     }
 
     // Permissions //////////////////////////////////////////////////////////////////////////////

@@ -47,9 +47,6 @@ public class RoleImpl
     /** The role conatiner. */
     private RoleContainer roles = null;
 
-    /** The permission conatiner. */
-    private PermissionContainer permissions = null;
-
     /** The permission assignments. */
     private ImmutableSet<PermissionAssignment> permissionAssignments;
     
@@ -315,7 +312,6 @@ public class RoleImpl
      */
     public PermissionAssignment[] getPermissionAssignments(Resource resource)    
     {
-        buildPermissions();
         Set<PermissionAssignment> pas = coral.getRegistry().getPermissionAssignments(resource);
 		// filter out inherited grants
 		ArrayList<PermissionAssignment> list = new ArrayList<PermissionAssignment>();
@@ -337,7 +333,7 @@ public class RoleImpl
      */
     public Permission[] getPermissions(Resource resource)
     {
-        return buildPermissions().getPermissions(resource);
+        return buildRoles().getPermissions().getPermissions(resource);
     }
 
     /**
@@ -351,7 +347,7 @@ public class RoleImpl
      */
     public boolean hasPermission(Resource resource, Permission permission)
     {
-        return buildPermissions().hasPermission(resource, permission);
+        return buildRoles().getPermissions().hasPermission(resource, permission);
     }
     
     // PermissionAssignmentChangeListener interface /////////////////////////////////////////////
@@ -442,15 +438,6 @@ public class RoleImpl
             roles = new RoleContainer(coralEventHub, coral, this);
         }
         return roles;
-    }
-
-    private synchronized PermissionContainer buildPermissions()
-    {
-        if(permissions == null)
-        {
-            permissions = new PermissionContainer(coralEventHub, coral, buildRoles());
-        }
-        return permissions;
     }
 
     private synchronized ImmutableSet<PermissionAssignment> buildPermissionAssignments()
