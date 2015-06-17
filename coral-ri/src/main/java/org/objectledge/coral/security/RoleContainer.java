@@ -67,47 +67,6 @@ public class RoleContainer
     // public interface //////////////////////////////////////////////////////////////////////////
 
     /**
-     * Adds a role to the container.
-     *
-     * @param role the role to be assigned explicitly to the container.
-     */
-    public void addRole(Role role)
-    {
-        synchronized(this) 
-        {
-            coralEventHub.getGlobal().addRoleImplicationChangeListener(this, role);
-            explicitRoles.add(role);
-            matchingRoles = null;
-            superRoles = null;
-            subRoles = null;
-        }
-        if(permissions != null)
-        {
-            permissions.flush();
-        }
-    }
-
-    /**
-     * Removes a role from the container.
-     *
-     * @param role the role to be unassigned explicity from the container.
-     */
-    public void removeRole(Role role)
-    { 
-        synchronized(this)
-        {
-            explicitRoles.remove(role);
-            matchingRoles = null;
-            superRoles = null;
-            subRoles = null;
-        }
-        if(permissions != null)
-        {
-            permissions.flush();
-        }
-    }
-
-    /**
      * Returns the superroles of roles in this set.
      * 
      * @return the superroles of roles in this set.

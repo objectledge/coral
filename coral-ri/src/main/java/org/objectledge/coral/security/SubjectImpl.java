@@ -37,10 +37,10 @@ public class SubjectImpl
     private CoralCore coral;
     
     /** The role container. */
-    private RoleContainer roles = null;
+    private volatile RoleContainer roles = null;
 
     /** The role assignments for this subject. */
-    private ImmutableSet<RoleAssignment> roleAssignments = null;
+    private volatile ImmutableSet<RoleAssignment> roleAssignments = null;
 
     // Initialization ///////////////////////////////////////////////////////////////////////////
 
@@ -319,19 +319,12 @@ public class SubjectImpl
         if(added)
         {
             roleAssignments = roleAssignments.add(ra);
-            if(roles != null)
-            {
-                roles.addRole(ra.getRole());
-            }
         }
         else
         {
             roleAssignments = roleAssignments.remove(ra);
-            if(roles != null)
-            {
-                roles.removeRole(ra.getRole());
-            }
         }
+        roles = null;
     }
 
     // private //////////////////////////////////////////////////////////////////////////////////
@@ -360,7 +353,7 @@ public class SubjectImpl
     {
         if(roles == null)
         {
-            roles = new RoleContainer(coralEventHub, coral, roles(buildRoleAssignments()));
+            roles = coral.getRoleContainerManager().getRoleContainer(roles(buildRoleAssignments()));
         }
         return roles;
     }
