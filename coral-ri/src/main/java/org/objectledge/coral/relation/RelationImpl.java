@@ -41,11 +41,12 @@ import org.objectledge.coral.util.PrimitiveCollections;
 import org.objectledge.database.persistence.InputRecord;
 import org.objectledge.database.persistence.Persistence;
 
-import bak.pcj.LongIterator;
-import bak.pcj.map.LongKeyMap;
-import bak.pcj.map.LongKeyMapIterator;
-import bak.pcj.map.LongKeyOpenHashMap;
-import bak.pcj.set.LongOpenHashSet;
+import bak.pcj.IntIterator;
+import bak.pcj.map.IntKeyMap;
+import bak.pcj.map.IntKeyMapIterator;
+import bak.pcj.map.IntKeyOpenHashMap;
+import bak.pcj.set.IntOpenHashSet;
+import bak.pcj.set.IntSet;
 import bak.pcj.set.LongSet;
 
 /**
@@ -55,27 +56,29 @@ import bak.pcj.set.LongSet;
  * @version $Id: RelationImpl.java,v 1.31 2007-06-03 00:06:26 rafal Exp $
  */
 public class RelationImpl
-extends AbstractEntity
-implements Relation
+    extends AbstractEntity
+    implements Relation
 {
     // implementation -----------------------------------------------------------------------------
-    
+
     private static int initialSetCapacity = 128;
 
     private static final long[][] BLANK = new long[0][];
 
     /** Store is used to retrieve resources. */
     private CoralStore store;
-    
+
     /** RelationManager is used to retrieve relation definitions. */
     private CoralRelationManager coralRelationManager;
 
     /** Map r1 -&gt; set of r2. */
-    private LongKeyMap rel = new LongKeyOpenHashMap();
+    private IntKeyMap rel = new IntKeyOpenHashMap();
+
     /** Map r2 -&gt; set of r1. */
-    private LongKeyMap invRel = new LongKeyOpenHashMap();
-	/** Number of unique resource pairs. */
-	private int resourceIdPairsNum = 0;
+    private IntKeyMap invRel = new IntKeyOpenHashMap();
+
+    /** Number of unique resource pairs. */
+    private int resourceIdPairsNum = 0;
 
     // initialization -----------------------------------------------------------------------------
 
@@ -88,7 +91,7 @@ implements Relation
      * @param store used to retrieve resources
      * @param coralRelationManager used to retrieve relation definitions
      */
-    public RelationImpl(Persistence persistence, CoralStore store, 
+    public RelationImpl(Persistence persistence, CoralStore store,
         CoralRelationManager coralRelationManager)
     {
         super(persistence);
@@ -105,7 +108,7 @@ implements Relation
      * @param coralRelationManager used to retrieve relation definitions
      * @param name name of the relation
      */
-    public RelationImpl(Persistence persistence, CoralStore store, 
+    public RelationImpl(Persistence persistence, CoralStore store,
         CoralRelationManager coralRelationManager, String name)
     {
         super(persistence, name);
@@ -161,14 +164,15 @@ implements Relation
      */
     public synchronized boolean hasRef(long id, long idInv)
     {
-        LongSet set = (LongSet)rel.get(id);
+        checkRange(id, idInv);
+        IntSet set = (IntSet)rel.get((int)id);
         if(set != null)
         {
-            return set.contains(idInv);
+            return set.contains((int)idInv);
         }
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -177,13 +181,13 @@ implements Relation
         return calcSetsSizeSum(rel);
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized float getAvgMappingSize()
-	{
-		return getAvgMappingSize(rel, resourceIdPairsNum);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized float getAvgMappingSize()
+    {
+        return getAvgMappingSize(rel, resourceIdPairsNum);
+    }
 
     // persistence api ----------------------------------------------------------------------------
 
@@ -198,11 +202,11 @@ implements Relation
     /**
      * Returns a name of a database table used for storing relations contents.
      * 
-     * @return name of a database table.  
+     * @return name of a database table.
      */
     String getDataTable()
     {
-    	return "coral_relation_data";
+        return "coral_relation_data";
     }
 
     /** The key columns. */
@@ -216,37 +220,39 @@ implements Relation
         return KEY_COLUMNS;
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public synchronized void setData(InputRecord record)
         throws SQLException
-	{
-		super.setData(record);
-		long[] def = coralRelationManager.getRelationDefinition(this);
-        
-        LongSet set1 = makeLongSet(def.length / 4);
-        LongSet set2 = makeLongSet(def.length / 4);
+    {
+        super.setData(record);
+        long[] def = coralRelationManager.getRelationDefinition(this);
 
-        for(int i=0; i<def.length / 2; i++)
+        IntSet set1 = makeIntSet(def.length / 4);
+        IntSet set2 = makeIntSet(def.length / 4);
+
+        for(int i = 0; i < def.length / 2; i++)
         {
-            set1.add(def[2 * i]);
-            set2.add(def[2 * i + 1]);
+            checkRange(def[2 * i], def[2 * i + 1]);
+            set1.add((int)def[2 * i]);
+            set2.add((int)def[2 * i + 1]);
         }
 
-        rel = makeLongKeyMap((int)(set1.size()*1.5));
-        invRel = makeLongKeyMap((int)(set2.size()*1.5));
+        rel = makeIntKeyMap((int)(set1.size() * 1.5));
+        invRel = makeIntKeyMap((int)(set2.size() * 1.5));
 
-        for(int i=0; i<def.length / 2; i++)
+        for(int i = 0; i < def.length / 2; i++)
         {
             long id1 = def[i * 2];
             long id2 = def[2 * i + 1];
+            checkRange(id1, id2);
 
             set1 = maybeCreateSet(rel, id1);
             set2 = maybeCreateSet(invRel, id2);
 
-            set1.add(id2);
-            set2.add(id1);
+            set1.add((int)id2);
+            set2.add((int)id1);
         }
         this.resourceIdPairsNum = calcSetsSizeSum(rel);
     }
@@ -261,11 +267,11 @@ implements Relation
     /**
      * Clears the contents of the relation.
      */
-	synchronized void clear()
+    synchronized void clear()
     {
         rel.clear();
         invRel.clear();
-		resourceIdPairsNum = 0;
+        resourceIdPairsNum = 0;
     }
 
     /**
@@ -274,35 +280,36 @@ implements Relation
      * @param id1 left side of thr relation
      * @param id2 right side of thr relation
      */
-	synchronized void remove(long id1, long id2)
+    synchronized void remove(long id1, long id2)
     {
-        LongSet set1 = (LongSet) rel.get(id1);
-        LongSet set2 = (LongSet) invRel.get(id2);
+        checkRange(id1, id2);
+        IntSet set1 = (IntSet)rel.get((int)id1);
+        IntSet set2 = (IntSet)invRel.get((int)id2);
 
         boolean p1 = false;
         if(set1 != null)
         {
-            p1 = set1.remove(id2);
+            p1 = set1.remove((int)id2);
             if(set1.size() == 0)
             {
-				rel.remove(id1);
+                rel.remove((int)id1);
             }
         }
 
         boolean p2 = false;
         if(set2 != null)
         {
-            p2 = set2.remove(id1);
-			if(set2.size() == 0)
-			{
-				invRel.remove(id2);
-			}
+            p2 = set2.remove((int)id1);
+            if(set2.size() == 0)
+            {
+                invRel.remove((int)id2);
+            }
         }
 
-		if(p1 && p2)
-		{
-			resourceIdPairsNum -= 1F;
-		}
+        if(p1 && p2)
+        {
+            resourceIdPairsNum -= 1F;
+        }
 
         if(p1 != p2)
         {
@@ -318,69 +325,81 @@ implements Relation
      */
     synchronized void add(long id1, long id2)
     {
-        LongSet set1 = maybeCreateSet(rel, id1);
-        LongSet set2 = maybeCreateSet(invRel, id2);
+        checkRange(id1, id2);
+        IntSet set1 = maybeCreateSet(rel, id1);
+        IntSet set2 = maybeCreateSet(invRel, id2);
 
-        boolean p1 = set1.add(id2);
+        boolean p1 = set1.add((int)id2);
         // -- this the moment in which the relationship is directed r1 -> r2
-		boolean p2 = set2.add(id1);
+        boolean p2 = set2.add((int)id1);
 
-		if(p1 && p2)
-		{
-			resourceIdPairsNum += 1F;
-		}
+        if(p1 && p2)
+        {
+            resourceIdPairsNum += 1F;
+        }
 
-		if(p1 != p2)
-		{
-			throw new IllegalStateException("inconsistent state");
-		}
+        if(p1 != p2)
+        {
+            throw new IllegalStateException("inconsistent state");
+        }
     }
 
     // implementation -----------------------------------------------------------------------------
 
-    private static int calcSetsSizeSum(LongKeyMap relation)
+    private static void checkRange(long... vals)
     {
-    	int totalSize = 0;
-    	for(LongKeyMapIterator i = relation.entries(); i.hasNext(); )
-    	{
-    		i.next();
-    		LongSet relSet = (LongSet) i.getValue();
-    		totalSize += relSet.size();
-    	}
-    	return totalSize;
+        for(long val : vals)
+        {
+            if(val > Integer.MAX_VALUE || val < Integer.MIN_VALUE)
+            {
+                throw new IllegalArgumentException("value " + val + " is out of supported range");
+            }
+        }
     }
 
-    private static float getAvgMappingSize(LongKeyMap relation, int numPairs)
+    private static int calcSetsSizeSum(IntKeyMap relation)
     {
-    	int numSets = relation.size();
-    	if(numSets != 0)
-    	{
-    		return (float) numPairs / (float) numSets;
-    	}
-    	else
-    	{
-    		if(numPairs != 0)
-    		{
-    			throw new IllegalStateException("inconsistent state");
-    		}
-    		return 0F;
-    	}
+        int totalSize = 0;
+        for(IntKeyMapIterator i = relation.entries(); i.hasNext();)
+        {
+            i.next();
+            IntSet relSet = (IntSet)i.getValue();
+            totalSize += relSet.size();
+        }
+        return totalSize;
     }
 
-    private static long[][] getPairs(LongKeyMap relation)
+    private static float getAvgMappingSize(IntKeyMap relation, int numPairs)
+    {
+        int numSets = relation.size();
+        if(numSets != 0)
+        {
+            return (float)numPairs / (float)numSets;
+        }
+        else
+        {
+            if(numPairs != 0)
+            {
+                throw new IllegalStateException("inconsistent state");
+            }
+            return 0F;
+        }
+    }
+
+    private static long[][] getPairs(IntKeyMap relation)
     {
         List<long[]> temp = new ArrayList<long[]>();
-        for(LongKeyMapIterator i = relation.entries(); i.hasNext(); )
+        for(IntKeyMapIterator i = relation.entries(); i.hasNext();)
         {
-        	i.next();
-        	LongSet tailSet = (LongSet)i.getValue();
-        	for(LongIterator j = tailSet.iterator(); j.hasNext(); )
-        	{
+            i.next();
+            IntSet tailSet = (IntSet)i.getValue();
+            for(IntIterator j = tailSet.iterator(); j.hasNext();)
+            {
                 long[] pair = new long[2];
-                pair[0] = i.getKey();
-                pair[1] = j.next();
+                pair[0] = (long)i.getKey();
+                pair[1] = (long)j.next();
                 temp.add(pair);
-        	}
+            }
         }
         Collections.sort(temp, PairComparator.INSTANCE);
         return temp.toArray(BLANK);
@@ -389,7 +408,7 @@ implements Relation
     /**
      * Returns a set for a given id key and relation, maybe creates it.
      */
-    private static LongSet maybeCreateSet(LongKeyMap relation, long idk)
+    private static IntSet maybeCreateSet(IntKeyMap relation, long idk)
     {
         return maybeCreateSet(relation, idk, initialSetCapacity);
     }
@@ -397,24 +416,27 @@ implements Relation
     /**
      * Returns a set for a given id key and relation, maybe creates it.
      */
-    private static LongSet maybeCreateSet(LongKeyMap relation, long idk, int initialCapacity)
+    private static IntSet maybeCreateSet(IntKeyMap relation, long idk, int initialCapacity)
     {
-        LongSet set = (LongSet) relation.get(idk);
+        // checkRange(idk) was already performed by the caller
+        IntSet set = (IntSet)relation.get((int)idk);
         if(set == null)
         {
-            set = makeLongSet(initialCapacity);
-            relation.put(idk, set);
+            set = makeIntSet(initialCapacity);
+            relation.put((int)idk, set);
         }
         return set;
     }
 
     /**
      * Returns resources referenced by a given resource in the relation.
+     * 
      * @param store CoralStore
      */
-    private static Resource[] get(LongKeyMap relation, Resource r, CoralStore store)
+    private static Resource[] get(IntKeyMap relation, Resource r, CoralStore store)
     {
-        LongSet set = (LongSet)relation.get(r.getId());
+        checkRange(r.getId());
+        IntSet set = (IntSet)relation.get((int)r.getId());
         if(set != null)
         {
             return instantiate(set, store);
@@ -428,12 +450,13 @@ implements Relation
     /**
      * Return an array of ids contained in the map under given id.
      */
-    private static LongSet get(LongKeyMap relation, long id)
+    private static LongSet get(IntKeyMap relation, long id)
     {
-        LongSet set = (LongSet) relation.get(id);
+        checkRange(id);
+        IntSet set = (IntSet)relation.get((int)id);
         if(set != null)
         {
-        	return PrimitiveCollections.unmodifiableLongSet(set);
+            return PrimitiveCollections.unmodifiableLongSet(set);
         }
         else
         {
@@ -448,15 +471,15 @@ implements Relation
      * @param store CoralStore
      * @return Resource array.
      */
-    static private Resource[] instantiate(LongSet a, CoralStore store)
+    static private Resource[] instantiate(IntSet a, CoralStore store)
     {
         Resource[] res = new Resource[a.size()];
         try
         {
             int i = 0;
-            for (LongIterator iter = a.iterator(); iter.hasNext(); i++)
+            for(IntIterator iter = a.iterator(); iter.hasNext(); i++)
             {
-                long id = iter.next();
+                long id = (long)iter.next();
                 res[i] = store.getResource(id);
             }
         }
@@ -466,36 +489,36 @@ implements Relation
         }
         return res;
     }
-    
-	
-	private static LongKeyMap makeLongKeyMap(int size)
-	{
-		if(size <= 0)
-		{
-			return new LongKeyOpenHashMap();
-		}
-		else
-		{
-			return new LongKeyOpenHashMap(size);
-		}
-	}
-	
-	private static LongSet makeLongSet(int size)
-	{
-		if(size <= 0)
-		{
-			return new LongOpenHashSet();
-		}
-		else
-		{
-			return new LongOpenHashSet(size);
-		}		
-	}
 
-	// relation invertion -------------------------------------------------------------------------
+    private static IntKeyMap makeIntKeyMap(int size)
+    {
+        if(size <= 0)
+        {
+            return new IntKeyOpenHashMap();
+        }
+        else
+        {
+            return new IntKeyOpenHashMap(size);
+        }
+    }
+
+    private static IntSet makeIntSet(int size)
+    {
+        if(size <= 0)
+        {
+            return new IntOpenHashSet();
+        }
+        else
+        {
+            return new IntOpenHashSet(size);
+        }
+    }
+
+    // relation invertion -------------------------------------------------------------------------
 
     /** Represents a reversed relation. */
-    private class InvertedRelation implements Relation
+    private class InvertedRelation
+        implements Relation
     {
         /**
          * {@inheritDoc}
@@ -578,7 +601,7 @@ implements Relation
         {
             return RelationImpl.this.getIdString();
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -586,7 +609,7 @@ implements Relation
         {
             return RelationImpl.this.getName();
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -595,17 +618,17 @@ implements Relation
             return RelationImpl.this.size();
         }
 
-		/**
-		 * {@inheritDoc}
-		 */
-		public float getAvgMappingSize()
-		{
-		    synchronized(RelationImpl.this)
-		    {
-		        return RelationImpl.getAvgMappingSize(invRel, resourceIdPairsNum);
-		    }
-		}
-        
+        /**
+         * {@inheritDoc}
+         */
+        public float getAvgMappingSize()
+        {
+            synchronized(RelationImpl.this)
+            {
+                return RelationImpl.getAvgMappingSize(invRel, resourceIdPairsNum);
+            }
+        }
+
         public long[][] getPairs()
         {
             synchronized(RelationImpl.this)

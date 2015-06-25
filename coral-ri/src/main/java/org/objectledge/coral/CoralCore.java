@@ -39,6 +39,7 @@ import org.objectledge.coral.relation.CoralRelationQuery;
 import org.objectledge.coral.schema.CoralSchema;
 import org.objectledge.coral.script.parser.RMLParserFactory;
 import org.objectledge.coral.security.CoralSecurity;
+import org.objectledge.coral.security.RoleContainerManager;
 import org.objectledge.coral.security.Subject;
 import org.objectledge.coral.session.CoralSession;
 import org.objectledge.coral.store.CoralStore;
@@ -97,6 +98,13 @@ public interface CoralCore
      * @return a CoralRegistry implementation.
      */
     public CoralRegistry getRegistry();
+    
+    /**
+     * Returns a RoleContainerManager implementation.
+     * 
+     * @return a RoleContainerManager implementation.
+     */
+    public RoleContainerManager getRoleContainerManager();
     
     /**
      * Returns a CoralEventWhiteboard implementation.
