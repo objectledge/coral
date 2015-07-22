@@ -1,8 +1,8 @@
 package org.objectledge.coral.security;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import org.objectledge.collections.ImmutableSet;
 import org.objectledge.coral.CoralCore;
@@ -11,7 +11,7 @@ import org.objectledge.coral.event.CoralEventHub;
 public class RoleContainerManagerImpl
     implements RoleContainerManager
 {
-    private Map<ImmutableSet<Role>, WeakReference<RoleContainer>> containers = new WeakHashMap<>();
+    private Map<ImmutableSet<Role>, WeakReference<RoleContainer>> containers = new HashMap<>();
 
     private CoralEventHub coralEventHub;
 
