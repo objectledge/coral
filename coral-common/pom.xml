@@ -5,7 +5,7 @@
   <groupId>org.objectledge.coral</groupId>
   <artifactId>coral-common</artifactId>
   <packaging>pom</packaging>
-  <version>1.1.1</version>
+  <version>1.1.2</version>
   <name>ObjectLedge Coral object oriented database</name>
   <inceptionYear>2003</inceptionYear>
   <description>
