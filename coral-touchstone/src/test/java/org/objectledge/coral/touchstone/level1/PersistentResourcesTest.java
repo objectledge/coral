@@ -341,8 +341,8 @@ public class PersistentResourcesTest
 
         expTable("ledge_parameters", parametersCols);
         expRow(0L, "", "");
-        expRow(0L, "ok", "true");
         expRow(0L, "number", "11");
+        expRow(0L, "ok", "true");
         assertExpTable();
     }
 
@@ -373,8 +373,8 @@ public class PersistentResourcesTest
 
         expTable("ledge_parameters", parametersCols);
         expRow(0L, "", "");
-        expRow(0L, "ok", "true");
         expRow(0L, "number", "22");
+        expRow(0L, "ok", "true");
         assertExpTable();
     }
 
