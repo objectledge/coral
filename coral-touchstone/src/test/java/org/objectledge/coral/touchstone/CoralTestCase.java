@@ -111,6 +111,12 @@ public abstract class CoralTestCase extends TestCase
     {
         expected = new DefaultTable(table, columns);
         query = "SELECT * FROM " + table;
+        StringBuilder order = new StringBuilder();
+        for(Column column : columns)
+        {
+            order.append(column.getColumnName()).append(", ");
+        }
+        query = query.concat(" ORDER BY ").concat(order.substring(0, order.length() - 2));
     }
 
     protected void expQuery(String query, Column... columns)
